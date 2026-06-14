@@ -1,0 +1,12 @@
+export { AvatarIcon } from './avatar';
+export { CheckIcon } from './check';
+export { ChevronIcon } from './chevron';
+export { CloseIcon } from './close';
+export { ContrastIcon } from './contrast';
+export { DownloadIcon } from './download';
+export { PlusIcon } from './plus';
+export { SearchIcon } from './search';
+export { SettingsIcon } from './settings';
+export { SidebarIcon } from './sidebar';
+export { SignOutIcon } from './sign-out';
+export { UploadIcon } from './upload';

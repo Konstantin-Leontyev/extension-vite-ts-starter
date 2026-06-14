@@ -57,7 +57,7 @@ const config: Config[] = defineConfig([
             {
               group: 'internal',
               pattern:
-                '@{components,context,hooks,icons,models,pages,services,styles,ui,utils}/**',
+                '@{components,context,hooks,icons,models,pages,services,styles,ui,utils}{,/**}',
             },
             // Side-effect stylesheet imports (e.g. import './button.css'). ESLint group name is fixed: object.
             {

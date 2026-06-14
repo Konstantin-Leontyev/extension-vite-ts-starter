@@ -19,6 +19,7 @@
       "@components/*": ["./src/components/*"],
       "@context/*": ["./src/context/*"],
       "@hooks/*": ["./src/hooks/*"],
+      "@icons": ["./src/icons/index.ts"],
       "@icons/*": ["./src/icons/*"],
       "@pages/*": ["./src/pages/*"],
       "@ui/*": ["./src/ui/*"]
