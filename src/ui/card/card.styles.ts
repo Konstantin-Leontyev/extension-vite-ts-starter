@@ -61,16 +61,22 @@ export const StyledCard = styled.div.withConfig({
 /** Высота кнопки закрытия — единый источник с пресетом RoundButton в Card. */
 const closeIconSize = spacingRem(roundButtonSizePresets.medium);
 
-export const StyledCardHeader = styled.header.withConfig({
+export const StyledCardHeader = styled.header`
+  display: grid;
+  row-gap: ${SPACING_REM[4]};
+`;
+
+/** Первая строка шапки: заголовок или единственный субзаголовок. */
+export const StyledCardHeaderFirstLine = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== 'hasCloseIcon',
 })<{ hasCloseIcon?: boolean }>`
   display: grid;
-  row-gap: ${SPACING_REM[4]};
+  min-inline-size: 0;
 
-  /* Однострочная шапка центрируется по кнопке закрытия. */
+  /* Только первая строка центрируется по кнопке; grid тянет текст на всю ширину — align работает. */
   ${(props) =>
     props.hasCloseIcon === true
-      ? `min-block-size: ${closeIconSize};\nalign-content: center;`
+      ? `align-content: center;\nmin-block-size: ${closeIconSize};`
       : ''}
 `;
 

@@ -11,7 +11,6 @@ export const StyledProfileMenuHeader = styled.div`
   display: grid;
   gap: ${SPACING_REM[12]};
   place-items: center;
-  margin-block-start: ${SPACING_REM[16]};
 `;
 
 export const StyledProfileMenuContent = styled.div`

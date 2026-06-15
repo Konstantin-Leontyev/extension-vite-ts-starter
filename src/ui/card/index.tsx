@@ -16,6 +16,7 @@ import {
   StyledCard,
   StyledCardBody,
   StyledCardHeader,
+  StyledCardHeaderFirstLine,
   type CardStyleProps,
 } from './card.styles';
 
@@ -96,19 +97,31 @@ export function Card<T extends CardHtmlTag = 'div'>({
   );
 
   const header = hasHeader && (
-    <StyledCardHeader hasCloseIcon={hasCloseIcon}>
-      {Boolean(title) && (
-        <Text
-          align={titleAlign}
-          as="h2"
-          color={titleColor}
-          id={titleId}
-          sizePreset={titleSizePreset ?? 'bold'}
-        >
-          {title}
-        </Text>
-      )}
-      {Boolean(subtitle) && (
+    <StyledCardHeader>
+      <StyledCardHeaderFirstLine hasCloseIcon={hasCloseIcon}>
+        {Boolean(title) && (
+          <Text
+            align={titleAlign}
+            as="h2"
+            color={titleColor}
+            id={titleId}
+            sizePreset={titleSizePreset ?? 'bold'}
+          >
+            {title}
+          </Text>
+        )}
+        {!title && Boolean(subtitle) && (
+          <Text
+            align={subtitleAlign}
+            as="p"
+            color={subtitleColor ?? theme.colors.muted}
+            sizePreset={subtitleSizePreset ?? 'medium'}
+          >
+            {subtitle}
+          </Text>
+        )}
+      </StyledCardHeaderFirstLine>
+      {Boolean(title && subtitle) && (
         <Text
           align={subtitleAlign}
           as="p"
