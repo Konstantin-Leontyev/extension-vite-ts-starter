@@ -25,11 +25,21 @@ export const checkboxSizePresets = {
 export type CheckboxSizePreset = keyof typeof checkboxSizePresets;
 
 const DEFAULT_SIZE_PRESET: CheckboxSizePreset = 'large';
+const DEFAULT_CHECKED_MARK: CheckboxCheckedMark = 'check';
+const DEFAULT_UNCHECKED_MARK: CheckboxUncheckedMark = 'none';
+
+/** Иконка в checked-состоянии; по умолчанию галка. */
+export type CheckboxCheckedMark = 'check' | 'minus';
+
+/** Иконка в unchecked-состоянии; по умолчанию без иконки. */
+export type CheckboxUncheckedMark = 'none' | 'plus';
 
 /** Оси вида бокса (без layout — он на корне). */
 export type CheckboxControlStyleProps = {
+  checkedMark?: CheckboxCheckedMark;
   inverted?: boolean;
   sizePreset?: CheckboxSizePreset;
+  uncheckedMark?: CheckboxUncheckedMark;
 };
 
 /** Публичные пропы: layout — на корень, оси вида — на бокс. */
@@ -37,15 +47,38 @@ export type CheckboxStyleProps = LayoutProps & CheckboxControlStyleProps;
 
 const CHECKBOX_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
+  'checkedMark',
   'inverted',
   'sizePreset',
+  'uncheckedMark',
 ]);
 
-/** SVG-галка как data-URI; `#` в цвете кодируется для URL. */
-function checkIcon(strokeColor: string): string {
+/** SVG-марка как data-URI; `#` в цвете кодируется для URL. */
+function markIcon(pathD: string, strokeColor: string): string {
   const stroke = strokeColor.replace('#', '%23');
 
-  return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath stroke='${stroke}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2.5 6 5 8.5 9.5 3.5'/%3E%3C/svg%3E")`;
+  return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath stroke='${stroke}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='${pathD}'/%3E%3C/svg%3E")`;
+}
+
+function checkIcon(strokeColor: string): string {
+  return markIcon('M2.5 6 5 8.5 9.5 3.5', strokeColor);
+}
+
+function plusIcon(strokeColor: string): string {
+  return markIcon('M3 6h6M6 3v6', strokeColor);
+}
+
+function minusIcon(strokeColor: string): string {
+  return markIcon('M3 6h6', strokeColor);
+}
+
+function markBackground(mark: string, dimension: string): string {
+  return [
+    `background-image: ${mark};`,
+    'background-repeat: no-repeat;',
+    'background-position: center;',
+    `background-size: ${dimension} ${dimension};`,
+  ].join('\n');
 }
 
 /** Габариты, рамка и checked-вид бокса по осям sizePreset/inverted. */
@@ -53,18 +86,24 @@ export function getCheckboxControlStyles(
   props: CheckboxControlStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { inverted = false, sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const {
+    checkedMark = DEFAULT_CHECKED_MARK,
+    inverted = false,
+    sizePreset = DEFAULT_SIZE_PRESET,
+    uncheckedMark = DEFAULT_UNCHECKED_MARK,
+  } = props;
   const preset = checkboxSizePresets[sizePreset];
   const dimension = spacingRem(preset.blockSize);
-  const checkDimension = spacingRem(preset.checkSize);
+  const markDimension = spacingRem(preset.checkSize);
 
-  // inverted: белое поле + primary-галка (подсветка строки); иначе primary-поле + inverse-галка.
+  // inverted: белое поле + primary-иконка (подсветка строки); иначе primary-поле + inverse-иконка.
   const checkedBackground = inverted ? theme.colors.inverse : theme.colors.primary;
-  const checkedIcon = inverted
-    ? checkIcon(theme.colors.primary)
-    : checkIcon(theme.colors.inverse);
+  const uncheckedStroke = inverted ? theme.colors.primary : theme.colors.default;
+  const checkedStroke = inverted ? theme.colors.primary : theme.colors.inverse;
+  const checkedMarkIcon =
+    checkedMark === 'minus' ? minusIcon(checkedStroke) : checkIcon(checkedStroke);
 
-  return [
+  const rules = [
     'flex-shrink: 0;',
     `inline-size: ${dimension};`,
     `block-size: ${dimension};`,
@@ -73,15 +112,25 @@ export function getCheckboxControlStyles(
     `border: 1px solid ${theme.colors.border};`,
     `border-radius: ${SPACING_REM[4]};`,
     `box-shadow: ${theme.shadow.surface};`,
+  ];
+
+  if (uncheckedMark === 'plus') {
+    rules.push(
+      `&:not(:checked) {
+        ${markBackground(plusIcon(uncheckedStroke), markDimension)}
+      }`
+    );
+  }
+
+  rules.push(
     `&:checked {
       background-color: ${checkedBackground};
-      background-image: ${checkedIcon};
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: ${checkDimension} ${checkDimension};
+      ${markBackground(checkedMarkIcon, markDimension)}
       border-color: ${theme.colors.primary};
-    }`,
-  ].join('\n');
+    }`
+  );
+
+  return rules.join('\n');
 }
 
 export const StyledCheckboxRoot = styled.label.withConfig({
