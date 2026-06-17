@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { SPACING_REM, spacingRem, type SpacingPx } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text/text.styles';
-import { getTheme } from '@ui/theme';
+import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -39,9 +39,27 @@ export type TableSizePreset = keyof typeof tableSizePresets;
 
 const DEFAULT_SIZE_PRESET: TableSizePreset = 'normal';
 
-/** Оси вида ячейки: размер (высота/текст/отступ) и выравнивание. */
+const TABLE_BODY_PROP_NAMES = new Set<string>(['$hoverHighlight', '$striped']);
+
+/** Приглушённый фон шапки — контраст с телом таблицы в Card. */
+function tableHeadFill(theme: AppTheme): string {
+  return `color-mix(in srgb, ${theme.colors.border} 22%, ${theme.colors.surface})`;
+}
+
+/** Чётная строка: лёгкая полоса, чтобы строки не сливались. */
+function tableStripeFill(theme: AppTheme): string {
+  return `color-mix(in srgb, ${theme.colors.default} 3%, ${theme.colors.surface})`;
+}
+
+/** Подсветка строки при наведении — лёгкий оттенок primary. */
+function tableRowHoverFill(theme: AppTheme): string {
+  return `color-mix(in srgb, ${theme.colors.primary} 6%, ${theme.colors.surface})`;
+}
+
+/** Оси вида ячейки: размер (высота/текст/отступ), выравнивание, обрезание. */
 type TableCellAxisProps = {
   align?: TableAlign;
+  ellipsis?: boolean;
   sizePreset?: TableSizePreset;
 };
 
@@ -49,11 +67,16 @@ type TableCellAxisProps = {
 export type TableStyleProps = LayoutProps & {
   /** Рамка + surface-фон вокруг таблицы; на main page false (таблица лежит в Card). */
   bordered?: boolean;
+  /** Подсветка строки при наведении. */
+  hoverHighlight?: boolean;
   sizePreset?: TableSizePreset;
+  /** Чередование фона чётных строк тела таблицы. */
+  striped?: boolean;
 };
 
-const TABLE_CELL_PROP_NAMES = new Set<string>(['align', 'sizePreset']);
-const shouldForwardCellProp = (prop: string): boolean => !TABLE_CELL_PROP_NAMES.has(prop);
+const TABLE_CELL_PROP_NAMES = new Set<string>(['align', 'ellipsis', 'sizePreset']);
+const shouldForwardCellProp = (prop: string): boolean =>
+  !TABLE_CELL_PROP_NAMES.has(prop);
 
 /** Размер текста ячейки для оси sizePreset — дефолт живёт здесь. */
 export function tableTextSizePreset(
@@ -66,7 +89,9 @@ function rowBlockSizeRem(sizePreset: TableSizePreset = DEFAULT_SIZE_PRESET): str
   return spacingRem(tableSizePresets[sizePreset].blockSize);
 }
 
-function cellPaddingInlineRem(sizePreset: TableSizePreset = DEFAULT_SIZE_PRESET): string {
+function cellPaddingInlineRem(
+  sizePreset: TableSizePreset = DEFAULT_SIZE_PRESET
+): string {
   return spacingRem(tableSizePresets[sizePreset].cellPaddingInline);
 }
 
@@ -89,19 +114,60 @@ export const StyledTableFrame = styled.div.withConfig({
   ${(props) => getLayoutStyles(props)}
 `;
 
-export const StyledTable = styled.table`
+/** Скругление без рамки (таблица в Card): обрезка фона шапки по углам. */
+export const StyledTableClip = styled.div`
+  overflow: hidden;
+  border-radius: ${SPACING_REM[12]};
+  min-inline-size: 0;
+`;
+
+/** fixed: ширины колонок берутся из colgroup и не зависят от данных (нет скачка при смене view). */
+export const StyledTable = styled.table.withConfig({
+  shouldForwardProp: (prop) => prop !== 'tableLayout',
+})<{ tableLayout?: 'auto' | 'fixed' }>`
   inline-size: 100%;
+  table-layout: ${(props) => props.tableLayout ?? 'auto'};
   border-collapse: collapse;
 `;
 
-export const StyledTableHead = styled.thead`
-  background-color: ${(props) => getTheme(props).colors.surface};
+/** Ширина колонки в colgroup; работает при table-layout: fixed. */
+export const StyledTableCol = styled.col.withConfig({
+  shouldForwardProp: (prop) => prop !== 'inlineSize',
+})<{ inlineSize?: string }>`
+  ${(props) => (props.inlineSize ? `inline-size: ${props.inlineSize};` : '')}
 `;
 
-export const StyledTableBody = styled.tbody`
-  & tr:last-child td {
-    border-block-end: none;
-  }
+export const StyledTableHead = styled.thead``;
+
+export const StyledTableBody = styled.tbody.withConfig({
+  shouldForwardProp: (prop) => !TABLE_BODY_PROP_NAMES.has(prop),
+})<{ $hoverHighlight?: boolean; $striped?: boolean }>`
+  ${(props) => {
+    const theme = getTheme(props);
+    const rules: string[] = [];
+
+    if (props.$striped) {
+      rules.push(
+        `& tr:nth-child(even) {
+          background-color: ${tableStripeFill(theme)};
+        }`
+      );
+    }
+
+    if (props.$hoverHighlight) {
+      rules.push(
+        `& tr:hover {
+          background-color: ${tableRowHoverFill(theme)};
+        }`
+      );
+    }
+
+    rules.push(`& tr:last-child td {
+      border-block-end: none;
+    }`);
+
+    return rules.join('\n');
+  }}
 `;
 
 export const StyledTableRow = styled.tr.withConfig({
@@ -114,12 +180,23 @@ const cellBase = css<TableCellAxisProps>`
   padding-inline: ${(props) => cellPaddingInlineRem(props.sizePreset)};
   text-align: ${(props) => props.align ?? 'start'};
   vertical-align: middle;
+  ${(props) =>
+    props.ellipsis === true
+      ? css`
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        `
+      : css`
+          overflow-wrap: break-word;
+        `}
 `;
 
 export const StyledTableHeadCell = styled.th.withConfig({
   shouldForwardProp: shouldForwardCellProp,
 })<TableCellAxisProps>`
   ${cellBase}
+  background-color: ${(props) => tableHeadFill(getTheme(props))};
   border-block-end: 2px solid ${(props) => getTheme(props).colors.border};
 `;
 
@@ -128,5 +205,110 @@ export const StyledTableCell = styled.td.withConfig({
 })<TableCellAxisProps>`
   ${cellBase}
   border-block-end: 1px solid ${(props) => getTheme(props).colors.border};
-  overflow-wrap: break-word;
+`;
+
+/** Дубль шапки внизу таблицы (после последней строки). */
+export const StyledTableFootHeadCell = styled(StyledTableCell)`
+  background-color: ${(props) => tableHeadFill(getTheme(props))};
+  border-block-start: 2px solid ${(props) => getTheme(props).colors.border};
+`;
+
+export const StyledTableFoot = styled.tfoot``;
+
+function headerMarkIcon(pathD: string, strokeColor: string): string {
+  const stroke = strokeColor.replace('#', '%23');
+
+  return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath stroke='${stroke}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='${pathD}'/%3E%3C/svg%3E")`;
+}
+
+/** Кнопка «+» в шапке Keyword; активна при переданном `onAddRow`, иначе заглушка. */
+export const StyledTableHeaderAddButton = styled.button`
+  flex-shrink: 0;
+  inline-size: ${spacingRem(12)};
+  block-size: ${spacingRem(12)};
+  appearance: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid ${(props) => getTheme(props).colors.border};
+  border-radius: ${SPACING_REM[4]};
+  box-shadow: ${(props) => getTheme(props).shadow.surface};
+  background-color: ${(props) => getTheme(props).colors.surface};
+  background-image: ${(props) =>
+    headerMarkIcon('M3 6h6M6 3v6', getTheme(props).colors.default)};
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: ${spacingRem(8)} ${spacingRem(8)};
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &:not(:disabled):hover {
+    background-color: ${(props) =>
+      `color-mix(in srgb, ${getTheme(props).colors.primary} 6%, ${getTheme(props).colors.surface})`};
+  }
+`;
+
+/** Шапка Keyword: ☐ + label слева, bulk-действия справа. */
+export const StyledTableHeaderKeywordBar = styled.span`
+  display: flex;
+  align-items: center;
+  gap: ${SPACING_REM[12]};
+  inline-size: 100%;
+  min-inline-size: 0;
+
+  & > :first-child {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
+  & > :not(:first-child) {
+    flex: 0 0 auto;
+    max-inline-size: fit-content;
+  }
+`;
+
+/** Чекбокс строки + содержимое ячейки в одной линии. */
+export const StyledTableRowLeading = styled.span`
+  display: inline-flex;
+  gap: ${SPACING_REM[8]};
+  align-items: center;
+  min-inline-size: 0;
+`;
+
+/**
+ * Keyword-ячейка с чекбоксом: чекбокс слева, блок текста+действия на всю оставшуюся ширину
+ * (Delete прижимается к правому краю строки через StyledTableCellWithActions).
+ */
+export const StyledTableCheckableCell = styled.span`
+  display: flex;
+  align-items: center;
+  gap: ${SPACING_REM[8]};
+  inline-size: 100%;
+  min-inline-size: 0;
+
+  & > :nth-child(2) {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+`;
+
+/** Содержимое ячейки + действие выбранной строки справа от текста. */
+export const StyledTableCellWithActions = styled.span`
+  display: flex;
+  align-items: center;
+  gap: ${SPACING_REM[12]};
+  inline-size: 100%;
+  min-inline-size: 0;
+
+  & > :first-child {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
+  & > :not(:first-child) {
+    flex: 0 0 auto;
+    max-inline-size: fit-content;
+  }
 `;
