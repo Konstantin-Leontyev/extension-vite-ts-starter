@@ -1,5 +1,5 @@
 import {
-  useEffect,
+  useCallback,
   useId,
   useLayoutEffect,
   useRef,
@@ -10,6 +10,7 @@ import {
 import { createPortal } from 'react-dom';
 import { useTheme } from 'styled-components';
 
+import { useAnchoredDismiss } from '@hooks/use-anchored-dismiss';
 import { CheckIcon } from '@icons/check';
 import { ChevronIcon } from '@icons/chevron';
 import { Checkbox } from '@ui/checkbox';
@@ -225,35 +226,22 @@ export function Listbox({
   const optionsKey = options.map((option) => option.value).join('\0');
   const textSizePreset = listboxTextSizePreset(sizePreset);
 
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
+  const dismissListbox = useCallback((): void => {
+    setOpen(false);
+  }, []);
 
-    function handlePointerDown(event: PointerEvent): void {
-      const target = event.target as Node;
-      const insideRoot = rootRef.current?.contains(target) ?? false;
-      const insidePanel = panelRef.current?.contains(target) ?? false;
+  const isInsideListbox = useCallback((target: Node): boolean => {
+    return (
+      (rootRef.current?.contains(target) ?? false) ||
+      (panelRef.current?.contains(target) ?? false)
+    );
+  }, []);
 
-      if (!insideRoot && !insidePanel) {
-        setOpen(false);
-      }
-    }
-
-    function handleEscape(event: globalThis.KeyboardEvent): void {
-      if (event.key === 'Escape') {
-        setOpen(false);
-      }
-    }
-
-    window.addEventListener('pointerdown', handlePointerDown);
-    window.addEventListener('keydown', handleEscape);
-
-    return () => {
-      window.removeEventListener('pointerdown', handlePointerDown);
-      window.removeEventListener('keydown', handleEscape);
-    };
-  }, [open]);
+  useAnchoredDismiss({
+    active: open,
+    isInside: isInsideListbox,
+    onDismiss: dismissListbox,
+  });
 
   // Порядок строк (above/below) — при открытии и смене выбора/опций.
   useLayoutEffect(() => {
@@ -327,17 +315,10 @@ export function Listbox({
     const frameId = window.requestAnimationFrame(applyPanelPosition);
 
     window.addEventListener('resize', applyPanelPosition);
-    // capture: ловим скролл любого предка (ScrollPort, страница) — панель fixed,
-    // её привязка к triggerRect иначе разъезжается при прокрутке.
-    window.addEventListener('scroll', applyPanelPosition, {
-      capture: true,
-      passive: true,
-    });
 
     return () => {
       window.cancelAnimationFrame(frameId);
       window.removeEventListener('resize', applyPanelPosition);
-      window.removeEventListener('scroll', applyPanelPosition, { capture: true });
     };
   }, [open, panelOrder]);
 

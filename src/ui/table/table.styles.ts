@@ -137,7 +137,27 @@ export const StyledTableCol = styled.col.withConfig({
   ${(props) => (props.inlineSize ? `inline-size: ${props.inlineSize};` : '')}
 `;
 
-export const StyledTableHead = styled.thead``;
+export const StyledTableHead = styled.thead.withConfig({
+  shouldForwardProp: (prop) => prop !== '$composeHidden',
+})<{ $composeHidden?: boolean }>`
+  ${(props) =>
+    props.$composeHidden
+      ? css`
+          visibility: hidden;
+        `
+      : ''}
+`;
+
+export const StyledTableFoot = styled.tfoot.withConfig({
+  shouldForwardProp: (prop) => prop !== '$composeHidden',
+})<{ $composeHidden?: boolean }>`
+  ${(props) =>
+    props.$composeHidden
+      ? css`
+          visibility: hidden;
+        `
+      : ''}
+`;
 
 export const StyledTableBody = styled.tbody.withConfig({
   shouldForwardProp: (prop) => !TABLE_BODY_PROP_NAMES.has(prop),
@@ -213,7 +233,68 @@ export const StyledTableFootHeadCell = styled(StyledTableCell)`
   border-block-start: 2px solid ${(props) => getTheme(props).colors.border};
 `;
 
-export const StyledTableFoot = styled.tfoot``;
+/** Толщина border compose-панели; при border-box компенсируется в позиционировании. */
+export const COMPOSE_PANEL_BORDER_WIDTH_PX = 1;
+
+/** Панель compose-row: одна рамка как у Listbox (outline + border + radius). */
+export const StyledTableComposePanel = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== 'sizePreset' && prop !== '$hasError',
+})<{ $hasError?: boolean; sizePreset?: TableSizePreset }>`
+  position: fixed;
+  z-index: 2000;
+  overflow: hidden;
+  background-color: ${(props) => getTheme(props).colors.surface};
+  border: 1px solid ${(props) => getTheme(props).colors.border};
+  border-radius: ${SPACING_REM[12]};
+  box-shadow: ${(props) => getTheme(props).shadow.surface};
+  outline: 2px solid
+    ${(props) =>
+      props.$hasError
+        ? getTheme(props).colors.invalidRing
+        : getTheme(props).colors.focusRing};
+  outline-offset: 2px;
+`;
+
+/** Внутренняя таблица панели — без собственной рамки, совпадает с колонками. */
+export const StyledTableComposeInnerTable = styled.table.withConfig({
+  shouldForwardProp: (prop) => prop !== 'tableLayout',
+})<{ tableLayout?: 'auto' | 'fixed' }>`
+  inline-size: 100%;
+  table-layout: ${(props) => props.tableLayout ?? 'fixed'};
+  border-collapse: collapse;
+`;
+
+export const StyledTableComposeInnerHeadCell = styled.th.withConfig({
+  shouldForwardProp: shouldForwardCellProp,
+})<TableCellAxisProps>`
+  ${cellBase}
+  background-color: ${(props) => tableHeadFill(getTheme(props))};
+  border-block-end: 2px solid ${(props) => getTheme(props).colors.border};
+`;
+
+export const StyledTableComposeInnerCell = styled.td.withConfig({
+  shouldForwardProp: shouldForwardCellProp,
+})<TableCellAxisProps>`
+  ${cellBase}
+  border-block-end: none;
+`;
+
+/** Нижняя строка панели compose при якоре foot. */
+export const StyledTableComposeInnerFootCell = styled(StyledTableComposeInnerCell)`
+  background-color: ${(props) => tableHeadFill(getTheme(props))};
+  border-block-start: 2px solid ${(props) => getTheme(props).colors.border};
+`;
+
+/** Общая строка ошибки под полями compose-панели. */
+export const StyledTableComposeErrorCell = styled.td.withConfig({
+  shouldForwardProp: shouldForwardCellProp,
+})<TableCellAxisProps>`
+  padding-block: ${SPACING_REM[8]};
+  padding-inline: ${(props) => cellPaddingInlineRem(props.sizePreset)};
+  text-align: center;
+  vertical-align: middle;
+  border-block-end: none;
+`;
 
 function headerMarkIcon(pathD: string, strokeColor: string): string {
   const stroke = strokeColor.replace('#', '%23');
@@ -248,6 +329,13 @@ export const StyledTableHeaderAddButton = styled.button`
     background-color: ${(props) =>
       `color-mix(in srgb, ${getTheme(props).colors.primary} 6%, ${getTheme(props).colors.surface})`};
   }
+`;
+
+/** Заглушка под чекбокс / «+» в копии шапки внутри compose-панели. */
+export const StyledTableHeaderMarkSpacer = styled.span`
+  flex-shrink: 0;
+  inline-size: ${spacingRem(12)};
+  block-size: ${spacingRem(12)};
 `;
 
 /** Шапка Keyword: ☐ + label слева, bulk-действия справа. */

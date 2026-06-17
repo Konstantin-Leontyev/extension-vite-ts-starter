@@ -1,9 +1,4 @@
-import {
-  useEffect,
-  useRef,
-  type ComponentProps,
-  type ReactNode,
-} from 'react';
+import { useEffect, useRef, type ComponentProps, type ReactNode } from 'react';
 
 import { CloseIcon } from '@icons/close';
 import { Card } from '@ui/card';
