@@ -43,7 +43,7 @@ type SegmentButtonProps = {
 function SegmentButtonPart({
   action,
   shape,
-  sizePreset = 'large',
+  sizePreset,
 }: {
   action: SegmentButtonAction;
   shape?: SegmentButtonShape;
@@ -61,6 +61,7 @@ function SegmentButtonPart({
     onLongPress,
     title,
   } = action;
+  const resolvedSizePreset: SegmentButtonSizePreset = sizePreset ?? 'large';
 
   const { pointerProps, suppressNextClick } = useLongPress({ disabled, onLongPress });
 
@@ -90,7 +91,7 @@ function SegmentButtonPart({
       <Text
         color={color}
         ellipsis
-        sizePreset={segmentButtonSizePresets[sizePreset].textSizePreset}
+        sizePreset={segmentButtonSizePresets[resolvedSizePreset].textSizePreset}
       >
         {text}
       </Text>
@@ -136,3 +137,9 @@ export function SegmentButton({
     </StyledSegmentButton>
   );
 }
+
+export type {
+  SegmentButtonShape,
+  SegmentButtonSizePreset,
+  SegmentButtonStyleProps,
+} from './segment-button.styles';

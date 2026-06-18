@@ -76,3 +76,5 @@ export function Input({
     </StyledInputRoot>
   );
 }
+
+export type { InputShape, InputSizePreset, InputStyleProps } from './input.styles';

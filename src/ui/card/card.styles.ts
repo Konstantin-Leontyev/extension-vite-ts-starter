@@ -1,7 +1,11 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { roundButtonSizePresets } from '@ui/round-button/round-button.styles';
+import {
+  DEFAULT_ROUND_BUTTON_SIZE_PRESET,
+  roundButtonSizePresets,
+  type RoundButtonSizePreset,
+} from '@ui/round-button';
 import { SPACING_REM, spacingRem } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
@@ -58,25 +62,34 @@ export const StyledCard = styled.div.withConfig({
   ${(props) => getLayoutStyles(props)}
 `;
 
-/** Высота кнопки закрытия — единый источник с пресетом RoundButton в Card. */
-const closeIconSize = spacingRem(roundButtonSizePresets.medium);
+/** Высота строки шапки с close — из того же пресета, что у RoundButton в Card. */
+function closeIconHeaderMinBlockSize(sizePreset: RoundButtonSizePreset): string {
+  return spacingRem(roundButtonSizePresets[sizePreset]);
+}
 
 export const StyledCardHeader = styled.header`
   display: grid;
   row-gap: ${SPACING_REM[4]};
 `;
 
+const CARD_HEADER_FIRST_LINE_PROP_NAMES = new Set<string>([
+  'closeIconSizePreset',
+  'hasCloseIcon',
+]);
+
 /** Первая строка шапки: заголовок или единственный субзаголовок. */
 export const StyledCardHeaderFirstLine = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== 'hasCloseIcon',
-})<{ hasCloseIcon?: boolean }>`
+  shouldForwardProp: (prop) => !CARD_HEADER_FIRST_LINE_PROP_NAMES.has(prop),
+})<{ closeIconSizePreset?: RoundButtonSizePreset; hasCloseIcon?: boolean }>`
   display: grid;
   min-inline-size: 0;
 
   /* Только первая строка центрируется по кнопке; grid тянет текст на всю ширину — align работает. */
   ${(props) =>
     props.hasCloseIcon === true
-      ? `align-content: center;\nmin-block-size: ${closeIconSize};`
+      ? `align-content: center;\nmin-block-size: ${closeIconHeaderMinBlockSize(
+          props.closeIconSizePreset ?? DEFAULT_ROUND_BUTTON_SIZE_PRESET
+        )};`
       : ''}
 `;
 

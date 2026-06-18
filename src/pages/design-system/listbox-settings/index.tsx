@@ -3,7 +3,7 @@ import { type ChangeEvent } from 'react';
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import { type ListboxShape, type ListboxSizePreset } from '@ui/listbox/listbox.styles';
+import { type ListboxShape, type ListboxSizePreset } from '@ui/listbox';
 
 import { StyledSettingsForm } from '../design-system.styles';
 import { LISTBOX_DEMO_OPTIONS } from './options';

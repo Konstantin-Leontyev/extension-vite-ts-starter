@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { SPACING_REM, spacingRem, type SpacingPx } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text/text.styles';
+import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -37,7 +37,13 @@ export const tableSizePresets = {
 
 export type TableSizePreset = keyof typeof tableSizePresets;
 
-const DEFAULT_SIZE_PRESET: TableSizePreset = 'normal';
+export const DEFAULT_TABLE_SIZE_PRESET: TableSizePreset = 'large';
+export const DEFAULT_TABLE_BORDERED = true;
+export const DEFAULT_TABLE_HOVER_HIGHLIGHT = false;
+export const DEFAULT_TABLE_STRIPED = false;
+export const DEFAULT_TABLE_NUMBERED = true;
+
+const DEFAULT_SIZE_PRESET = DEFAULT_TABLE_SIZE_PRESET;
 
 const TABLE_BODY_PROP_NAMES = new Set<string>(['$hoverHighlight', '$striped']);
 
@@ -165,8 +171,10 @@ export const StyledTableBody = styled.tbody.withConfig({
   ${(props) => {
     const theme = getTheme(props);
     const rules: string[] = [];
+    const striped = props.$striped ?? DEFAULT_TABLE_STRIPED;
+    const hoverHighlight = props.$hoverHighlight ?? DEFAULT_TABLE_HOVER_HIGHLIGHT;
 
-    if (props.$striped) {
+    if (striped) {
       rules.push(
         `& tr:nth-child(even) {
           background-color: ${tableStripeFill(theme)};
@@ -174,7 +182,7 @@ export const StyledTableBody = styled.tbody.withConfig({
       );
     }
 
-    if (props.$hoverHighlight) {
+    if (hoverHighlight) {
       rules.push(
         `& tr:hover {
           background-color: ${tableRowHoverFill(theme)};

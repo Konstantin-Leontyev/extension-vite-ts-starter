@@ -22,13 +22,12 @@ import {
   StyledListboxChevron,
   StyledListboxIcon,
   StyledListboxOptionButton,
-  StyledListboxOptionLabel,
   StyledListboxOptionRow,
   StyledListboxPanel,
   StyledListboxRoot,
   StyledListboxTrigger,
-  StyledListboxValue,
   listboxTextSizePreset,
+  listboxValuePaddingInline,
   splitLayoutProps,
   type ListboxStyleProps,
 } from './listbox.styles';
@@ -201,8 +200,8 @@ export function Listbox({
   options,
   placeholder = 'Select…',
   reserveErrorSpace = true,
-  shape = 'default',
-  sizePreset = 'large',
+  shape,
+  sizePreset,
   value,
   ...rest
 }: ListboxProps) {
@@ -226,6 +225,7 @@ export function Listbox({
   const selectedIndex = options.findIndex((option) => option.value === selectedValue);
   const optionsKey = options.map((option) => option.value).join('\0');
   const textSizePreset = listboxTextSizePreset(sizePreset);
+  const valuePaddingInline = listboxValuePaddingInline(sizePreset);
 
   const dismissListbox = useCallback((): void => {
     setOpen(false);
@@ -345,7 +345,8 @@ export function Listbox({
         'li[aria-selected="true"] button:not([disabled])'
       );
       const focusTarget =
-        selectedOption ?? getFocusables(panel).find((element) => element.tagName === 'BUTTON');
+        selectedOption ??
+        getFocusables(panel).find((element) => element.tagName === 'BUTTON');
 
       focusTarget?.focus();
     });
@@ -432,9 +433,15 @@ export function Listbox({
                 (document.activeElement as HTMLElement | null)?.blur();
               }}
             />
-            <StyledListboxOptionLabel sizePreset={sizePreset}>
-              <Text sizePreset={textSizePreset}>{option.label}</Text>
-            </StyledListboxOptionLabel>
+            <Text
+              ellipsis
+              minInlineSize="0"
+              paddingInlineEnd={valuePaddingInline}
+              sizePreset={textSizePreset}
+              zIndex="1"
+            >
+              {option.label}
+            </Text>
           </StyledListboxOptionRow>
         </li>
       );
@@ -449,9 +456,15 @@ export function Listbox({
           type="button"
           onClick={() => toggleOption(option)}
         >
-          <StyledListboxOptionLabel sizePreset={sizePreset}>
-            <Text sizePreset={textSizePreset}>{option.label}</Text>
-          </StyledListboxOptionLabel>
+          <Text
+            ellipsis
+            minInlineSize="0"
+            paddingInline={valuePaddingInline}
+            sizePreset={textSizePreset}
+            zIndex="1"
+          >
+            {option.label}
+          </Text>
           {isSelected && (
             <StyledListboxCheck>
               <CheckIcon />
@@ -497,14 +510,15 @@ export function Listbox({
         onClick={() => setOpen((wasOpen) => !wasOpen)}
         onKeyDown={handleTriggerKeyDown}
       >
-        <StyledListboxValue sizePreset={sizePreset}>
-          <Text
-            color={triggerLabel ? undefined : theme.colors.muted}
-            sizePreset={textSizePreset}
-          >
-            {triggerLabel ?? placeholder}
-          </Text>
-        </StyledListboxValue>
+        <Text
+          color={triggerLabel ? undefined : theme.colors.muted}
+          ellipsis
+          minInlineSize="0"
+          paddingInline={valuePaddingInline}
+          sizePreset={textSizePreset}
+        >
+          {triggerLabel ?? placeholder}
+        </Text>
         <StyledListboxIcon sizePreset={sizePreset}>
           <StyledListboxChevron sizePreset={sizePreset}>
             <ChevronIcon />
@@ -533,3 +547,16 @@ export function Listbox({
     </StyledListboxRoot>
   );
 }
+
+/* eslint-disable react-refresh/only-export-components -- публичные типы и пресеты */
+export type {
+  ListboxShape,
+  ListboxSizePreset,
+  ListboxStyleProps,
+} from './listbox.styles';
+export {
+  listboxSizePresets,
+  listboxTextSizePreset,
+  listboxValuePaddingInline,
+} from './listbox.styles';
+/* eslint-enable react-refresh/only-export-components */

@@ -123,13 +123,6 @@ export const StyledSidebar = styled.div.withConfig({
     padding-block-end: ${(p) => rem(p.paddingInlineEnd, DEFAULT_INLINE_END)};
   }
 
-  /* Ширина Card внутри трека; высоту панель берёт от своего maxBlockSize (как контент). */
-  ${StyledSidebarTrack} > * {
-    inline-size: ${SIDEBAR_PANEL_WIDTH};
-    min-inline-size: ${SIDEBAR_PANEL_WIDTH};
-    min-block-size: 0;
-  }
-
   /* Узкий экран: панель — нижний лист на всю ширину. */
   @media (width <= 640px) {
     grid-template-rows: 1fr auto;
@@ -156,12 +149,6 @@ export const StyledSidebar = styled.div.withConfig({
 
     ${StyledSidebarTrack}[data-open='true'] {
       transform: translateY(0);
-    }
-
-    ${StyledSidebarTrack} > * {
-      inline-size: 100%;
-      min-inline-size: 0;
-      max-block-size: min(480px, 60dvb);
     }
   }
 `;

@@ -122,6 +122,9 @@ export function Sidebar({
             iconAriaControls={id}
             iconAriaExpanded={open}
             iconAriaLabel={iconAriaLabel}
+            inlineSize="100%"
+            minBlockSize="0"
+            minInlineSize="0"
             title={title}
             titleId={titleId}
             onIconClick={onClose}

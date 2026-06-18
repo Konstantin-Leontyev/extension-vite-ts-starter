@@ -6,7 +6,7 @@ import { Listbox, type ListboxOption } from '@ui/listbox';
 import {
   type SegmentButtonShape,
   type SegmentButtonSizePreset,
-} from '@ui/segment-button/segment-button.styles';
+} from '@ui/segment-button';
 import { type ThemeColors } from '@ui/theme';
 
 import { StyledSettingsForm } from '../design-system.styles';

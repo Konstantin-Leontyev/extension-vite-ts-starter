@@ -14,10 +14,14 @@ import { useFocusTrap } from '@hooks/use-focus-trap';
 import { Checkbox } from '@ui/checkbox';
 import { ScrollPort } from '@ui/scroll-port';
 import { Text } from '@ui/text';
-import { type TextSizePreset } from '@ui/text/text.styles';
+import { type TextSizePreset } from '@ui/text';
 
 import {
   COMPOSE_PANEL_BORDER_WIDTH_PX,
+  DEFAULT_TABLE_BORDERED,
+  DEFAULT_TABLE_HOVER_HIGHLIGHT,
+  DEFAULT_TABLE_NUMBERED,
+  DEFAULT_TABLE_STRIPED,
   StyledTable,
   StyledTableBody,
   StyledTableCell,
@@ -164,22 +168,27 @@ function TableCheckbox({
 
 export function Table<Row>(props: TableProps<Row>) {
   const {
-    bordered = true,
+    bordered,
     columns,
     composeError,
     composeHint = DEFAULT_COMPOSE_HINT,
     composeRowActive = false,
     composeRowSource,
     composeReserveErrorSpace = true,
-    hoverHighlight = false,
-    numbered = true,
+    hoverHighlight,
+    numbered,
     onComposeCancel,
     renderComposeCell,
     rows,
     sizePreset,
-    striped = false,
+    striped,
     ...rest
   } = props;
+
+  const resolvedBordered = bordered ?? DEFAULT_TABLE_BORDERED;
+  const resolvedHoverHighlight = hoverHighlight ?? DEFAULT_TABLE_HOVER_HIGHLIGHT;
+  const resolvedNumbered = numbered ?? DEFAULT_TABLE_NUMBERED;
+  const resolvedStriped = striped ?? DEFAULT_TABLE_STRIPED;
 
   const theme = useTheme();
   const composeErrorId = useId();
@@ -309,7 +318,7 @@ export function Table<Row>(props: TableProps<Row>) {
           <span className="visually-hidden">Select</span>
         </HeadCell>
       )}
-      {numbered && (
+      {resolvedNumbered && (
         <HeadCell
           align="end"
           sizePreset={sizePreset}
@@ -343,7 +352,9 @@ export function Table<Row>(props: TableProps<Row>) {
       {separateCheckboxColumn && (
         <StyledTableComposeInnerCell align="center" sizePreset={sizePreset} />
       )}
-      {numbered && <StyledTableComposeInnerCell align="end" sizePreset={sizePreset} />}
+      {resolvedNumbered && (
+        <StyledTableComposeInnerCell align="end" sizePreset={sizePreset} />
+      )}
       {columns.map((column) => {
         const composeCellContent = renderComposeCell?.(column, composeCellContext);
         const cellBody =
@@ -378,7 +389,7 @@ export function Table<Row>(props: TableProps<Row>) {
         {separateCheckboxColumn && (
           <StyledTableCol inlineSize={CHECKBOX_COLUMN_INLINE_SIZE} />
         )}
-        {numbered && <StyledTableCol inlineSize={NUMBER_COLUMN_INLINE_SIZE} />}
+        {resolvedNumbered && <StyledTableCol inlineSize={NUMBER_COLUMN_INLINE_SIZE} />}
         {columns.map((column) => (
           <StyledTableCol key={column.key} inlineSize={column.inlineSize} />
         ))}
@@ -386,7 +397,7 @@ export function Table<Row>(props: TableProps<Row>) {
     ) : null;
 
   const composeColumnCount =
-    (separateCheckboxColumn ? 1 : 0) + (numbered ? 1 : 0) + columns.length;
+    (separateCheckboxColumn ? 1 : 0) + (resolvedNumbered ? 1 : 0) + columns.length;
 
   const renderComposeErrorRow = (): ReactNode => {
     if (!hasComposeError && !composeReserveErrorSpace) {
@@ -568,7 +579,10 @@ export function Table<Row>(props: TableProps<Row>) {
             {renderHeaderCells(StyledTableHeadCell, true, 'head', true)}
           </StyledTableRow>
         </StyledTableHead>
-        <StyledTableBody $hoverHighlight={hoverHighlight} $striped={striped}>
+        <StyledTableBody
+          $hoverHighlight={resolvedHoverHighlight}
+          $striped={resolvedStriped}
+        >
           {rows.map((row, rowIndex) => {
             const rowKey = checkable ? props.getRowKey(row) : String(rowIndex);
             const isSelected = checkable && selectedKeys.has(rowKey);
@@ -591,7 +605,7 @@ export function Table<Row>(props: TableProps<Row>) {
                     />
                   </StyledTableCell>
                 )}
-                {numbered && (
+                {resolvedNumbered && (
                   <StyledTableCell align="end" sizePreset={sizePreset}>
                     <Text sizePreset={textSizePreset}>{rowIndex + 1}</Text>
                   </StyledTableCell>
@@ -669,7 +683,7 @@ export function Table<Row>(props: TableProps<Row>) {
     </>
   );
 
-  if (!bordered) {
+  if (!resolvedBordered) {
     return (
       <ScrollPort {...layout}>
         <StyledTableClip>{table}</StyledTableClip>
@@ -683,3 +697,12 @@ export function Table<Row>(props: TableProps<Row>) {
     </StyledTableFrame>
   );
 }
+
+export type { TableAlign, TableSizePreset, TableStyleProps } from './table.styles';
+export {
+  DEFAULT_TABLE_BORDERED,
+  DEFAULT_TABLE_HOVER_HIGHLIGHT,
+  DEFAULT_TABLE_NUMBERED,
+  DEFAULT_TABLE_SIZE_PRESET,
+  DEFAULT_TABLE_STRIPED,
+} from './table.styles';

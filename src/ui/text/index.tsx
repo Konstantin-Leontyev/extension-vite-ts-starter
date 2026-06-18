@@ -1,6 +1,11 @@
 import { createElement, type ComponentPropsWithRef, type ElementType } from 'react';
 
-import { StyledText, type TextStyleProps } from './text.styles';
+import {
+  StyledText,
+  textSizePresets,
+  type TextSizePreset,
+  type TextStyleProps,
+} from './text.styles';
 
 type TextProps<T extends ElementType = 'span'> = {
   as?: T;
@@ -10,3 +15,6 @@ type TextProps<T extends ElementType = 'span'> = {
 export function Text<T extends ElementType = 'span'>(props: TextProps<T>) {
   return createElement(StyledText, props);
 }
+
+// eslint-disable-next-line react-refresh/only-export-components -- публичные типы и пресеты
+export { textSizePresets, type TextSizePreset, type TextStyleProps };

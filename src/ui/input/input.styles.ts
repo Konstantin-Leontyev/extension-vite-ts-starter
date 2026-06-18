@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { SPACING_REM, spacingRem, type SpacingPx } from '@ui/spacing';
-import { textSizePresets, type TextSizePreset } from '@ui/text/text.styles';
+import { textSizePresets, type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';

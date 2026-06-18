@@ -8,9 +8,12 @@ import {
 import { useTheme } from 'styled-components';
 
 import { type InsetValue } from '@ui/positioning';
-import { RoundButton } from '@ui/round-button';
-import { Text } from '@ui/text';
-import { type TextSizePreset } from '@ui/text/text.styles';
+import {
+  DEFAULT_ROUND_BUTTON_SIZE_PRESET,
+  RoundButton,
+  type RoundButtonSizePreset,
+} from '@ui/round-button';
+import { Text, type TextSizePreset } from '@ui/text';
 
 import {
   StyledCard,
@@ -28,6 +31,7 @@ type CardProps<T extends CardHtmlTag = 'div'> = {
   closeIconBottom?: InsetValue;
   closeIconLeft?: InsetValue;
   closeIconRight?: InsetValue;
+  closeIconSizePreset?: RoundButtonSizePreset;
   closeIconTop?: InsetValue;
   icon?: ReactNode;
   iconAriaControls?: string;
@@ -52,6 +56,7 @@ export function Card<T extends CardHtmlTag = 'div'>({
   closeIconBottom,
   closeIconLeft,
   closeIconRight,
+  closeIconSizePreset = DEFAULT_ROUND_BUTTON_SIZE_PRESET,
   closeIconTop,
   icon,
   iconAriaControls,
@@ -84,6 +89,7 @@ export function Card<T extends CardHtmlTag = 'div'>({
       left={closeIconLeft}
       position="absolute"
       right={closeIconRight ?? 16}
+      sizePreset={closeIconSizePreset}
       tabIndex={iconAriaLabel ? undefined : -1}
       top={closeIconTop ?? 16}
       zIndex="1"
@@ -98,7 +104,10 @@ export function Card<T extends CardHtmlTag = 'div'>({
 
   const header = hasHeader && (
     <StyledCardHeader>
-      <StyledCardHeaderFirstLine hasCloseIcon={hasCloseIcon}>
+      <StyledCardHeaderFirstLine
+        closeIconSizePreset={closeIconSizePreset}
+        hasCloseIcon={hasCloseIcon}
+      >
         {Boolean(title) && (
           <Text
             align={titleAlign}

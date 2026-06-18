@@ -60,3 +60,5 @@ export function Checkbox({
     </StyledCheckboxRoot>
   );
 }
+
+export type { CheckboxSizePreset, CheckboxStyleProps } from './checkbox.styles';

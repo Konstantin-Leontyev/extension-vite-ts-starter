@@ -5,14 +5,17 @@ import {
   type ButtonShape,
   type ButtonSizePreset,
   type ButtonTone,
-} from '@ui/button/button.styles';
+} from '@ui/button';
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
-import { type InputShape, type InputSizePreset } from '@ui/input/input.styles';
+import { type InputShape, type InputSizePreset } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import { type ListboxShape, type ListboxSizePreset } from '@ui/listbox/listbox.styles';
-import { type RangeValue, type ResolvedRangeInputValidationMessages } from '@ui/range-input';
-import { textSizePresets, type TextSizePreset } from '@ui/text/text.styles';
+import { type ListboxShape, type ListboxSizePreset } from '@ui/listbox';
+import {
+  type RangeValue,
+  type ResolvedRangeInputValidationMessages,
+} from '@ui/range-input';
+import { textSizePresets, type TextSizePreset } from '@ui/text';
 
 import { StyledSettingsForm } from '../design-system.styles';
 

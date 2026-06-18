@@ -6,7 +6,7 @@ import {
   type ButtonShape,
   type ButtonSizePreset,
   type ButtonTone,
-} from '@ui/button/button.styles';
+} from '@ui/button';
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';

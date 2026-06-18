@@ -5,9 +5,9 @@ import {
   listboxSizePresets,
   type ListboxShape,
   type ListboxSizePreset,
-} from '@ui/listbox/listbox.styles';
+} from '@ui/listbox';
 import { SPACING_REM, spacingRem } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text/text.styles';
+import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -30,7 +30,8 @@ export type RangeInputAxisProps = {
 
 export type RangeInputStyleProps = LayoutProps & RangeInputAxisProps;
 
-const shouldForwardAxis = (prop: string): boolean => !RANGE_INPUT_AXIS_PROP_NAMES.has(prop);
+const shouldForwardAxis = (prop: string): boolean =>
+  !RANGE_INPUT_AXIS_PROP_NAMES.has(prop);
 
 function blockSizeRem(sizePreset: ListboxSizePreset): string {
   return spacingRem(listboxSizePresets[sizePreset].blockSize);
@@ -106,21 +107,6 @@ export const StyledRangeInputTrigger = styled.button.withConfig({
     cursor: not-allowed;
     opacity: 0.55;
   }
-`;
-
-export const StyledRangeInputTriggerLabel = styled.span.withConfig({
-  shouldForwardProp: shouldForwardAxis,
-})<RangeInputAxisProps>`
-  display: grid;
-  align-items: center;
-  min-inline-size: 0;
-  padding-inline: ${(props) =>
-    spacingRem(
-      listboxSizePresets[props.sizePreset ?? DEFAULT_SIZE_PRESET].valuePaddingInline
-    )};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 export const StyledRangeInputChevronBox = styled.span.withConfig({
@@ -261,21 +247,6 @@ export const StyledRangeInputPresetButton = styled.button.withConfig({
     cursor: not-allowed;
     opacity: 0.55;
   }
-`;
-
-export const StyledRangeInputPresetLabel = styled.span.withConfig({
-  shouldForwardProp: shouldForwardAxis,
-})<RangeInputAxisProps>`
-  position: relative;
-  z-index: 1;
-  min-inline-size: 0;
-  padding-inline: ${(props) =>
-    spacingRem(
-      listboxSizePresets[props.sizePreset ?? DEFAULT_SIZE_PRESET].valuePaddingInline
-    )};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 export const StyledRangeInputCustomSection = styled.div`

@@ -1,8 +1,7 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { Input } from '@ui/input';
-import { type InputShape, type InputSizePreset } from '@ui/input/input.styles';
+import { Input, type InputShape, type InputSizePreset } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
 
 import { StyledSettingsForm } from '../design-system.styles';

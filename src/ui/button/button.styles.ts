@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { SPACING_REM, spacingRem, type SpacingPx } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text/text.styles';
+import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme, type ThemeColors } from '@ui/theme';
 
 export type ButtonShape = 'default' | 'round';

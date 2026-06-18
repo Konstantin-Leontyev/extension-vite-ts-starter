@@ -9,6 +9,9 @@ import {
   StyledButtonText,
   buttonTextColor,
   buttonTextSizePreset,
+  type ButtonIconPosition,
+  type ButtonShape,
+  type ButtonSizePreset,
   type ButtonStyleProps,
   type ButtonTone,
 } from './button.styles';
@@ -58,3 +61,12 @@ export function Button({
     </StyledButton>
   );
 }
+
+export type {
+  ButtonIconPosition,
+  ButtonShape,
+  ButtonSizePreset,
+  ButtonStyleProps,
+  ButtonTone,
+};
+export { BUTTON_COLORED_TONES } from './button.styles';

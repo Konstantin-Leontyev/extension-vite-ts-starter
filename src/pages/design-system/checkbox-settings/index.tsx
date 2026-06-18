@@ -1,7 +1,7 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { type CheckboxSizePreset } from '@ui/checkbox/checkbox.styles';
+import { type CheckboxSizePreset } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
 

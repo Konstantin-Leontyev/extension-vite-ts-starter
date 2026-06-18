@@ -33,10 +33,7 @@ import {
   RadioButtonSettings,
   type RadioButtonWidgetState,
 } from './radio-button-settings';
-import {
-  RangeInputSettings,
-  type RangeInputWidgetState,
-} from './range-input-settings';
+import { RangeInputSettings, type RangeInputWidgetState } from './range-input-settings';
 import {
   SegmentButtonSettings,
   type SegmentButtonWidgetState,

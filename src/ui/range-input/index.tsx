@@ -16,17 +16,16 @@ import { useAnchoredDismiss } from '@hooks/use-anchored-dismiss';
 import { useFocusTrap } from '@hooks/use-focus-trap';
 import { ChevronIcon } from '@icons/chevron';
 import { CloseIcon } from '@icons/close';
-import { Button } from '@ui/button';
 import {
+  Button,
   type ButtonShape,
   type ButtonSizePreset,
   type ButtonTone,
-} from '@ui/button/button.styles';
-import { Input } from '@ui/input';
-import { type InputShape, type InputSizePreset } from '@ui/input/input.styles';
+} from '@ui/button';
+import { Input, type InputShape, type InputSizePreset } from '@ui/input';
+import { listboxValuePaddingInline } from '@ui/listbox';
 import { type SpacingPx } from '@ui/spacing';
-import { Text } from '@ui/text';
-import { type TextSizePreset } from '@ui/text/text.styles';
+import { Text, type TextSizePreset } from '@ui/text';
 
 import {
   DEFAULT_RANGE_INPUT_SHAPE,
@@ -40,11 +39,9 @@ import {
   StyledRangeInputFields,
   StyledRangeInputPanel,
   StyledRangeInputPresetButton,
-  StyledRangeInputPresetLabel,
   StyledRangeInputPresetList,
   StyledRangeInputRoot,
   StyledRangeInputTrigger,
-  StyledRangeInputTriggerLabel,
   StyledRangeInputTriggerRow,
   rangeInputTextSizePreset,
   splitLayoutProps,
@@ -107,25 +104,25 @@ export type RangeInputProps = RangeInputStyleProps &
   RangeInputButtonProps &
   RangeInputInputProps &
   RangeInputTitleProps & {
-  defaultValue?: RangeValue;
-  disabled?: boolean;
-  formatActiveLabel: (value: RangeValue) => ReactNode;
-  fromPlaceholder: string;
-  /** Встроенная подпись над триггером (как у Listbox). */
-  label?: string;
-  onChange: (value: RangeValue) => void;
-  onClear?: () => void;
-  placeholder: string;
-  presets?: RangePreset[];
-  /** Резерв высоты под строку ошибки — как у Input/Listbox, для общей сетки с полями формы. */
-  reserveErrorSpace?: boolean;
-  /** Заголовок панели (как title в ProfileMenuSheet). */
-  title: string;
-  toPlaceholder: string;
-  validate?: (value: RangeValue) => string | null;
-  validationMessages?: RangeInputValidationMessages;
-  value?: RangeValue;
-};
+    defaultValue?: RangeValue;
+    disabled?: boolean;
+    formatActiveLabel: (value: RangeValue) => ReactNode;
+    fromPlaceholder: string;
+    /** Встроенная подпись над триггером (как у Listbox). */
+    label?: string;
+    onChange: (value: RangeValue) => void;
+    onClear?: () => void;
+    placeholder: string;
+    presets?: RangePreset[];
+    /** Резерв высоты под строку ошибки — как у Input/Listbox, для общей сетки с полями формы. */
+    reserveErrorSpace?: boolean;
+    /** Заголовок панели (как title в ProfileMenuSheet). */
+    title: string;
+    toPlaceholder: string;
+    validate?: (value: RangeValue) => string | null;
+    validationMessages?: RangeInputValidationMessages;
+    value?: RangeValue;
+  };
 
 function isEmptyRangeValue(value: RangeValue): boolean {
   return value.from.trim() === '' && value.to.trim() === '';
@@ -212,7 +209,7 @@ export function RangeInput({
       ...DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
       ...validationMessagesProp,
     }),
-    [validationMessagesProp],
+    [validationMessagesProp]
   );
   const resolvedShape = shape ?? DEFAULT_RANGE_INPUT_SHAPE;
   const resolvedSizePreset = sizePreset ?? DEFAULT_RANGE_INPUT_SIZE_PRESET;
@@ -245,7 +242,8 @@ export function RangeInput({
   const showClear = isActive && onClear !== undefined && !disabled;
   const showChevron = !showClear;
   const triggerLabel = isActive ? formatActiveLabel(committed) : placeholder;
-  const textSizePreset = rangeInputTextSizePreset(sizePreset);
+  const textSizePreset = rangeInputTextSizePreset(resolvedSizePreset);
+  const valuePaddingInline = listboxValuePaddingInline(resolvedSizePreset);
   const hasPanelError = Boolean(panelError?.trim());
 
   const closePanel = useCallback((): void => {
@@ -458,14 +456,15 @@ export function RangeInput({
           onClick={togglePanel}
           onKeyDown={handleTriggerKeyDown}
         >
-          <StyledRangeInputTriggerLabel {...axisProps}>
-            <Text
-              color={isActive ? undefined : theme.colors.muted}
-              sizePreset={textSizePreset}
-            >
-              {triggerLabel}
-            </Text>
-          </StyledRangeInputTriggerLabel>
+          <Text
+            color={isActive ? undefined : theme.colors.muted}
+            ellipsis
+            minInlineSize="0"
+            paddingInline={valuePaddingInline}
+            sizePreset={textSizePreset}
+          >
+            {triggerLabel}
+          </Text>
           {showChevron && (
             <StyledRangeInputChevronBox {...axisProps}>
               <StyledRangeInputChevron {...axisProps}>
@@ -516,9 +515,15 @@ export function RangeInput({
                         applyPreset(preset);
                       }}
                     >
-                      <StyledRangeInputPresetLabel {...axisProps}>
-                        <Text sizePreset={textSizePreset}>{preset.label}</Text>
-                      </StyledRangeInputPresetLabel>
+                      <Text
+                        ellipsis
+                        minInlineSize="0"
+                        paddingInline={valuePaddingInline}
+                        sizePreset={textSizePreset}
+                        zIndex="1"
+                      >
+                        {preset.label}
+                      </Text>
                     </StyledRangeInputPresetButton>
                   </li>
                 ))}

@@ -14,6 +14,8 @@ export const roundButtonSizePresets = {
 
 export type RoundButtonSizePreset = keyof typeof roundButtonSizePresets;
 
+export const DEFAULT_ROUND_BUTTON_SIZE_PRESET: RoundButtonSizePreset = 'medium';
+
 export type RoundButtonStyleProps = LayoutProps & {
   elevated?: boolean;
   sizePreset?: RoundButtonSizePreset;
@@ -29,7 +31,7 @@ export function getRoundButtonStyles(
   props: RoundButtonStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { elevated = true, sizePreset = 'medium' } = props;
+  const { elevated = true, sizePreset = DEFAULT_ROUND_BUTTON_SIZE_PRESET } = props;
   const sizePx = roundButtonSizePresets[sizePreset];
   const dimension = spacingRem(sizePx);
 
@@ -51,7 +53,10 @@ export const StyledRoundButton = styled.button.withConfig({
   display: grid;
   overflow: hidden;
   place-items: center;
-  padding: ${(props) => spacingRem((props.sizePreset ?? 'medium') === 'huge' ? 16 : 4)};
+  padding: ${(props) =>
+    spacingRem(
+      (props.sizePreset ?? DEFAULT_ROUND_BUTTON_SIZE_PRESET) === 'huge' ? 16 : 4
+    )};
   border-radius: 50%;
 
   &:not(:disabled):hover,

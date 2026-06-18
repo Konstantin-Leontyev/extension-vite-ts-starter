@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { SPACING_REM, spacingRem, type SpacingPx } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text/text.styles';
+import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -65,6 +65,13 @@ export function listboxTextSizePreset(
   return listboxSizePresets[sizePreset].textSizePreset;
 }
 
+/** Горизонтальный отступ значения/опции для оси sizePreset. */
+export function listboxValuePaddingInline(
+  sizePreset: ListboxSizePreset = DEFAULT_SIZE_PRESET
+): SpacingPx {
+  return listboxSizePresets[sizePreset].valuePaddingInline;
+}
+
 function blockSizeRem(sizePreset: ListboxSizePreset): string {
   return spacingRem(listboxSizePresets[sizePreset].blockSize);
 }
@@ -98,21 +105,6 @@ export const StyledListboxIcon = styled.span.withConfig({
   min-inline-size: ${(props) => blockSizeRem(props.sizePreset ?? DEFAULT_SIZE_PRESET)};
   color: ${(props) => getTheme(props).colors.muted};
   border-inline-start: 1px solid ${(props) => getTheme(props).colors.border};
-`;
-
-export const StyledListboxValue = styled.span.withConfig({
-  shouldForwardProp: shouldForwardAxis,
-})<ListboxAxisProps>`
-  display: flex;
-  align-items: center;
-  min-inline-size: 0;
-  padding-inline: ${(props) =>
-    spacingRem(
-      listboxSizePresets[props.sizePreset ?? DEFAULT_SIZE_PRESET].valuePaddingInline
-    )};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 export const StyledListboxTrigger = styled.button.withConfig({
@@ -158,22 +150,6 @@ export const StyledListboxCheck = styled.span`
   block-size: ${SPACING_REM[20]};
   margin-inline-end: ${SPACING_REM[12]};
   color: ${(props) => getTheme(props).colors.primary};
-`;
-
-export const StyledListboxOptionLabel = styled.span.withConfig({
-  shouldForwardProp: shouldForwardAxis,
-})<ListboxAxisProps>`
-  position: relative;
-  z-index: 1;
-  flex: 1 1 auto;
-  min-inline-size: 0;
-  padding-inline: ${(props) =>
-    spacingRem(
-      listboxSizePresets[props.sizePreset ?? DEFAULT_SIZE_PRESET].valuePaddingInline
-    )};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 /** База строки: раскладка + inset-pill подсветки (::before под контентом). */
@@ -237,8 +213,9 @@ export const StyledListboxOptionRow = styled.label.withConfig({
       listboxSizePresets[props.sizePreset ?? DEFAULT_SIZE_PRESET].valuePaddingInline
     )};
 
-  ${StyledListboxOptionLabel} {
-    padding-inline-start: 0;
+  /* Текст-слот заполняет строку (распределение места, как было у label flex:1) — идёт сразу за чекбоксом. */
+  & > :last-child {
+    flex: 1 1 auto;
   }
 
   &:has(input:disabled) {
