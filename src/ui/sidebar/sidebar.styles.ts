@@ -150,5 +150,10 @@ export const StyledSidebar = styled.div.withConfig({
     ${StyledSidebarTrack}[data-open='true'] {
       transform: translateY(0);
     }
+
+    /* Нижний лист: высота панели не больше min(480px, 60dvb) (max-size в роли распределения). */
+    ${StyledSidebarTrack} > :first-child {
+      max-block-size: min(480px, 60dvb);
+    }
   }
 `;

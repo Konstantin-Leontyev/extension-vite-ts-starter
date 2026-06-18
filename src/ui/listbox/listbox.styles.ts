@@ -112,6 +112,7 @@ export const StyledListboxTrigger = styled.button.withConfig({
 })<ListboxAxisProps>`
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
   inline-size: 100%;
   min-block-size: ${(props) => blockSizeRem(props.sizePreset ?? DEFAULT_SIZE_PRESET)};
   text-align: start;

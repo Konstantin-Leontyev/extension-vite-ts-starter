@@ -94,7 +94,7 @@ export const StyledRangeInputTrigger = styled.button.withConfig({
 })<RangeInputAxisProps>`
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  align-items: stretch;
+  align-items: center;
   min-inline-size: 0;
   padding: 0;
   text-align: start;

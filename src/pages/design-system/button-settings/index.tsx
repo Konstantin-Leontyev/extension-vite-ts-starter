@@ -96,7 +96,7 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
       />
 
       <Listbox
-        label="Tone:"
+        label="Button tone:"
         options={TONE_OPTIONS}
         reserveErrorSpace={false}
         value={state.tone}
@@ -104,7 +104,7 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
       />
 
       <Input
-        label="Text:"
+        label="Button text:"
         reserveErrorSpace={false}
         value={state.text}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -113,7 +113,7 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
       />
 
       <Listbox
-        label="Text color:"
+        label="Button text color:"
         options={toToneOptions(textColorOptions)}
         reserveErrorSpace={false}
         value={textColorOptions.includes(state.textColor) ? state.textColor : 'default'}
@@ -122,7 +122,7 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
 
       <Checkbox
         checked={state.withIcon}
-        label="With icon"
+        label="Icon:"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('withIcon', event.target.checked)
         }

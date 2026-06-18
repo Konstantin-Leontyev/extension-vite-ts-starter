@@ -38,6 +38,15 @@ type InputSettingsProps = {
 export function InputSettings({ onChange, state }: InputSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
+      <Input
+        label="Label:"
+        reserveErrorSpace={false}
+        value={state.label}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('label', event.target.value)
+        }
+      />
+
       <Listbox
         label="Size:"
         options={SIZE_OPTIONS}
@@ -55,11 +64,11 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
       />
 
       <Input
-        label="Label:"
+        label="Placeholder:"
         reserveErrorSpace={false}
-        value={state.label}
+        value={state.placeholder}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('label', event.target.value)
+          onChange('placeholder', event.target.value)
         }
       />
 
@@ -69,15 +78,6 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         value={state.value}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('value', event.target.value)
-        }
-      />
-
-      <Input
-        label="Placeholder:"
-        reserveErrorSpace={false}
-        value={state.placeholder}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('placeholder', event.target.value)
         }
       />
 

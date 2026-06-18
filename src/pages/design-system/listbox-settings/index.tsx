@@ -40,6 +40,15 @@ type ListboxSettingsProps = {
 export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
+      <Input
+        label="Label:"
+        reserveErrorSpace={false}
+        value={state.label}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('label', event.target.value)
+        }
+      />
+
       <Listbox
         label="Size:"
         options={SIZE_OPTIONS}
@@ -56,15 +65,6 @@ export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
         onChange={(value) => onChange('shape', value as ListboxShape)}
       />
 
-      <Input
-        label="Label:"
-        reserveErrorSpace={false}
-        value={state.label}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('label', event.target.value)
-        }
-      />
-
       <Listbox
         label="Value:"
         multiple={state.multiple}
@@ -75,10 +75,10 @@ export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
       />
 
       <Checkbox
-        checked={state.multiple}
-        label="Multiple"
+        checked={state.disabled}
+        label="Disabled"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('multiple', event.target.checked)
+          onChange('disabled', event.target.checked)
         }
       />
 
@@ -91,10 +91,10 @@ export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
       />
 
       <Checkbox
-        checked={state.disabled}
-        label="Disabled"
+        checked={state.multiple}
+        label="Multiple"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('disabled', event.target.checked)
+          onChange('multiple', event.target.checked)
         }
       />
     </StyledSettingsForm>

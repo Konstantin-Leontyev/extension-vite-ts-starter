@@ -93,6 +93,15 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
 
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
+      <Input
+        label="Label:"
+        reserveErrorSpace={false}
+        value={state.label}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('label', event.target.value)
+        }
+      />
+
       <Listbox
         label="Size:"
         options={SIZE_OPTIONS}
@@ -107,15 +116,6 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         reserveErrorSpace={false}
         value={state.shape}
         onChange={(value) => onChange('shape', value as ListboxShape)}
-      />
-
-      <Input
-        label="Label:"
-        reserveErrorSpace={false}
-        value={state.label}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('label', event.target.value)
-        }
       />
 
       <Input
@@ -167,42 +167,6 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         value={state.toPlaceholder}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('toPlaceholder', event.target.value)
-        }
-      />
-
-      <Input
-        label="Validation empty bounds:"
-        reserveErrorSpace={false}
-        value={state.validationMessages.emptyBounds}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('validationMessages', {
-            ...state.validationMessages,
-            emptyBounds: event.target.value,
-          })
-        }
-      />
-
-      <Input
-        label="Validation invalid from:"
-        reserveErrorSpace={false}
-        value={state.validationMessages.invalidFrom}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('validationMessages', {
-            ...state.validationMessages,
-            invalidFrom: event.target.value,
-          })
-        }
-      />
-
-      <Input
-        label="Validation invalid to:"
-        reserveErrorSpace={false}
-        value={state.validationMessages.invalidTo}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('validationMessages', {
-            ...state.validationMessages,
-            invalidTo: event.target.value,
-          })
         }
       />
 
@@ -265,6 +229,42 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
             : 'default'
         }
         onChange={(value) => onChange('buttonTextColor', value as ButtonTone)}
+      />
+
+      <Input
+        label="Validation empty bounds:"
+        reserveErrorSpace={false}
+        value={state.validationMessages.emptyBounds}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('validationMessages', {
+            ...state.validationMessages,
+            emptyBounds: event.target.value,
+          })
+        }
+      />
+
+      <Input
+        label="Validation invalid from:"
+        reserveErrorSpace={false}
+        value={state.validationMessages.invalidFrom}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('validationMessages', {
+            ...state.validationMessages,
+            invalidFrom: event.target.value,
+          })
+        }
+      />
+
+      <Input
+        label="Validation invalid to:"
+        reserveErrorSpace={false}
+        value={state.validationMessages.invalidTo}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('validationMessages', {
+            ...state.validationMessages,
+            invalidTo: event.target.value,
+          })
+        }
       />
 
       <Checkbox

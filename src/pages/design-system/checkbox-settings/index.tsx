@@ -33,14 +33,6 @@ type CheckboxSettingsProps = {
 export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
-      <Listbox
-        label="Size:"
-        options={SIZE_OPTIONS}
-        reserveErrorSpace={false}
-        value={state.sizePreset}
-        onChange={(value) => onChange('sizePreset', value as CheckboxSizePreset)}
-      />
-
       <Input
         disabled={state.bare}
         label="Label:"
@@ -51,19 +43,19 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
         }
       />
 
+      <Listbox
+        label="Size:"
+        options={SIZE_OPTIONS}
+        reserveErrorSpace={false}
+        value={state.sizePreset}
+        onChange={(value) => onChange('sizePreset', value as CheckboxSizePreset)}
+      />
+
       <Checkbox
         checked={state.bare}
         label="Bare"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('bare', event.target.checked)
-        }
-      />
-
-      <Checkbox
-        checked={state.inverted}
-        label="Inverted"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('inverted', event.target.checked)
         }
       />
 
@@ -80,6 +72,14 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
         label="Disabled"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('disabled', event.target.checked)
+        }
+      />
+
+      <Checkbox
+        checked={state.inverted}
+        label="Inverted"
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('inverted', event.target.checked)
         }
       />
     </StyledSettingsForm>

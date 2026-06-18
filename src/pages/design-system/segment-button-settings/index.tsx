@@ -94,7 +94,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
       />
 
       <Input
-        label="Left text:"
+        label="Left button text:"
         reserveErrorSpace={false}
         value={state.leftText}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -103,7 +103,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
       />
 
       <Listbox
-        label="Left text color:"
+        label="Left button text color:"
         options={TEXT_COLOR_OPTIONS}
         reserveErrorSpace={false}
         value={state.leftTextColor}
@@ -112,7 +112,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
 
       <Checkbox
         checked={state.leftDisabled}
-        label="Left disabled"
+        label="Left button disabled"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('leftDisabled', event.target.checked)
         }
@@ -121,7 +121,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
       {state.segmentCount === '3' && (
         <>
           <Input
-            label="Center text:"
+            label="Center button text:"
             reserveErrorSpace={false}
             value={state.centerText}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -130,7 +130,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
           />
 
           <Listbox
-            label="Center text color:"
+            label="Center button text color:"
             options={TEXT_COLOR_OPTIONS}
             reserveErrorSpace={false}
             value={state.centerTextColor}
@@ -139,7 +139,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
 
           <Checkbox
             checked={state.centerDisabled}
-            label="Center disabled"
+            label="Center button disabled"
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               onChange('centerDisabled', event.target.checked)
             }
@@ -148,7 +148,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
       )}
 
       <Input
-        label="Right text:"
+        label="Right button text:"
         reserveErrorSpace={false}
         value={state.rightText}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -157,7 +157,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
       />
 
       <Listbox
-        label="Right text color:"
+        label="Right button text color:"
         options={TEXT_COLOR_OPTIONS}
         reserveErrorSpace={false}
         value={state.rightTextColor}
@@ -166,7 +166,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
 
       <Checkbox
         checked={state.rightDisabled}
-        label="Right disabled"
+        label="Right button disabled"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('rightDisabled', event.target.checked)
         }
