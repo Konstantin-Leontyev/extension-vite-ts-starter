@@ -14,8 +14,11 @@ export { splitLayoutProps } from '@ui/layout';
 
 export type { ListboxShape, ListboxSizePreset };
 
-const DEFAULT_SIZE_PRESET: ListboxSizePreset = 'large';
-const DEFAULT_SHAPE: ListboxShape = 'default';
+export const DEFAULT_RANGE_INPUT_SIZE_PRESET: ListboxSizePreset = 'large';
+export const DEFAULT_RANGE_INPUT_SHAPE: ListboxShape = 'default';
+
+const DEFAULT_SIZE_PRESET = DEFAULT_RANGE_INPUT_SIZE_PRESET;
+const DEFAULT_SHAPE = DEFAULT_RANGE_INPUT_SHAPE;
 
 const RANGE_INPUT_AXIS_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
 

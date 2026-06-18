@@ -9,8 +9,11 @@ import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { Listbox } from '@ui/listbox';
 import { RadioButton } from '@ui/radio-button';
-import { RangeInput, type RangeValue } from '@ui/range-input';
-import { DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES } from '@ui/range-input/range-input.validation';
+import {
+  DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
+  RangeInput,
+  type RangeValue,
+} from '@ui/range-input';
 import { ScrollPort } from '@ui/scroll-port';
 import { SegmentButton } from '@ui/segment-button';
 import { Sidebar } from '@ui/sidebar';

@@ -29,6 +29,8 @@ import { Text } from '@ui/text';
 import { type TextSizePreset } from '@ui/text/text.styles';
 
 import {
+  DEFAULT_RANGE_INPUT_SHAPE,
+  DEFAULT_RANGE_INPUT_SIZE_PRESET,
   StyledRangeInputButtonRow,
   StyledRangeInputChevron,
   StyledRangeInputChevronBox,
@@ -48,13 +50,21 @@ import {
   splitLayoutProps,
   type RangeInputStyleProps,
 } from './range-input.styles';
-import {
-  DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
-  type RangeInputValidationMessages,
-  type ResolvedRangeInputValidationMessages,
-} from './range-input.validation';
 
-export type { RangeInputValidationMessages, ResolvedRangeInputValidationMessages } from './range-input.validation';
+// eslint-disable-next-line react-refresh/only-export-components -- публичные дефолты validationMessages
+export const DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES = {
+  emptyBounds: 'Enter at least one bound.',
+  invalidFrom: 'From must be a whole number.',
+  invalidTo: 'To must be a whole number.',
+} as const;
+
+export type RangeInputValidationMessages = {
+  [K in keyof typeof DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES]?: string;
+};
+
+export type ResolvedRangeInputValidationMessages = {
+  [K in keyof typeof DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES]: string;
+};
 
 export type RangeValue = {
   from: string;
@@ -186,8 +196,8 @@ export function RangeInput({
   placeholder,
   presets,
   reserveErrorSpace = true,
-  shape = 'default',
-  sizePreset = 'large',
+  shape,
+  sizePreset,
   title,
   titleAlign = 'center',
   titleSizePreset = 'normal',
@@ -197,14 +207,19 @@ export function RangeInput({
   value,
   ...rest
 }: RangeInputProps) {
-  const validationMessages = {
-    ...DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
-    ...validationMessagesProp,
-  };
-  const buttonShape = buttonShapeProp ?? shape;
-  const buttonSizePreset = buttonSizePresetProp ?? sizePreset;
-  const inputShape = inputShapeProp ?? shape;
-  const inputSizePreset = inputSizePresetProp ?? sizePreset;
+  const validationMessages = useMemo(
+    () => ({
+      ...DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
+      ...validationMessagesProp,
+    }),
+    [validationMessagesProp],
+  );
+  const resolvedShape = shape ?? DEFAULT_RANGE_INPUT_SHAPE;
+  const resolvedSizePreset = sizePreset ?? DEFAULT_RANGE_INPUT_SIZE_PRESET;
+  const buttonShape = buttonShapeProp ?? resolvedShape;
+  const buttonSizePreset = buttonSizePresetProp ?? resolvedSizePreset;
+  const inputShape = inputShapeProp ?? resolvedShape;
+  const inputSizePreset = inputSizePresetProp ?? resolvedSizePreset;
   const theme = useTheme();
   const { layout } = splitLayoutProps(rest);
   const rootRef = useRef<HTMLDivElement>(null);
