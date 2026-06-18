@@ -9,6 +9,8 @@ import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { Listbox } from '@ui/listbox';
 import { RadioButton } from '@ui/radio-button';
+import { RangeInput, type RangeValue } from '@ui/range-input';
+import { DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES } from '@ui/range-input/range-input.validation';
 import { ScrollPort } from '@ui/scroll-port';
 import { SegmentButton } from '@ui/segment-button';
 import { Sidebar } from '@ui/sidebar';
@@ -29,6 +31,10 @@ import {
   type RadioButtonWidgetState,
 } from './radio-button-settings';
 import {
+  RangeInputSettings,
+  type RangeInputWidgetState,
+} from './range-input-settings';
+import {
   SegmentButtonSettings,
   type SegmentButtonWidgetState,
   type SegmentTextColor,
@@ -38,6 +44,7 @@ const SIDEBAR_ID = 'design-system-sidebar';
 const INPUT_WIDGET_TITLE_ID = 'design-system-input-heading';
 const BUTTON_WIDGET_TITLE_ID = 'design-system-button-heading';
 const LISTBOX_WIDGET_TITLE_ID = 'design-system-listbox-heading';
+const RANGE_INPUT_WIDGET_TITLE_ID = 'design-system-range-input-heading';
 const CHECKBOX_WIDGET_TITLE_ID = 'design-system-checkbox-heading';
 const RADIO_BUTTON_WIDGET_TITLE_ID = 'design-system-radio-button-heading';
 const SEGMENT_BUTTON_WIDGET_TITLE_ID = 'design-system-segment-button-heading';
@@ -46,6 +53,7 @@ const RADIO_BUTTON_DEMO_NAME = 'design-system-radio-button-demo';
 type WidgetSettingsKey =
   | 'input'
   | 'listbox'
+  | 'range-input'
   | 'button'
   | 'segment-button'
   | 'checkbox'
@@ -54,6 +62,7 @@ type WidgetSettingsKey =
 const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   input: 'Input',
   listbox: 'Listbox',
+  'range-input': 'Range filter',
   button: 'Button',
   'segment-button': 'Segment button',
   checkbox: 'Checkbox',
@@ -103,6 +112,29 @@ const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
   value: 'default',
 };
 
+const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
+  buttonShape: 'default',
+  buttonSizePreset: 'large',
+  buttonText: 'Apply',
+  buttonTextColor: 'default',
+  buttonTone: 'primary',
+  disabled: false,
+  fromPlaceholder: 'From',
+  inputShape: 'default',
+  inputSizePreset: 'large',
+  label: 'Range filter:',
+  placeholder: 'Range: any',
+  shape: 'default',
+  sizePreset: 'large',
+  title: 'Custom range:',
+  titleAlign: 'center',
+  titleSizePreset: 'normal',
+  toPlaceholder: 'To',
+  validationMessages: { ...DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES },
+  value: { from: '', to: '' },
+  withClear: true,
+};
+
 const DEFAULT_CHECKBOX_STATE: CheckboxWidgetState = {
   bare: false,
   checked: true,
@@ -136,6 +168,36 @@ const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   sizePreset: 'large',
 };
 
+function formatDemoRangeLabel(value: RangeValue): string {
+  const from = value.from.trim();
+  const to = value.to.trim();
+
+  if (from && to) {
+    return `${from}–${to}`;
+  }
+
+  if (from) {
+    return `${from}+`;
+  }
+
+  if (to) {
+    return `≤${to}`;
+  }
+
+  return '';
+}
+
+function validateDemoRange(value: RangeValue): string | null {
+  const from = value.from.trim();
+  const to = value.to.trim();
+
+  if (from !== '' && to !== '' && Number(from) > Number(to)) {
+    return 'From must not exceed To.';
+  }
+
+  return null;
+}
+
 function segmentTextColor(
   color: SegmentTextColor,
   colors: ThemeColors
@@ -149,6 +211,9 @@ export function DesignSystemPage() {
   const [input, setInput] = useState<InputWidgetState>(DEFAULT_INPUT_STATE);
   const [button, setButton] = useState<ButtonWidgetState>(DEFAULT_BUTTON_STATE);
   const [listbox, setListbox] = useState<ListboxWidgetState>(DEFAULT_LISTBOX_STATE);
+  const [rangeInput, setRangeInput] = useState<RangeInputWidgetState>(
+    DEFAULT_RANGE_INPUT_STATE
+  );
   const [checkbox, setCheckbox] = useState<CheckboxWidgetState>(DEFAULT_CHECKBOX_STATE);
   const [radioButton, setRadioButton] = useState<RadioButtonWidgetState>(
     DEFAULT_RADIO_BUTTON_STATE
@@ -216,6 +281,20 @@ export function DesignSystemPage() {
     });
   }
 
+  function updateRangeInput<K extends keyof RangeInputWidgetState>(
+    key: K,
+    value: RangeInputWidgetState[K]
+  ): void {
+    setRangeInput((current) => ({ ...current, [key]: value }));
+  }
+
+  function clearRangeInputValue(): void {
+    setRangeInput((current) => ({
+      ...current,
+      value: { from: '', to: '' },
+    }));
+  }
+
   function updateCheckbox<K extends keyof CheckboxWidgetState>(
     key: K,
     value: CheckboxWidgetState[K]
@@ -244,6 +323,10 @@ export function DesignSystemPage() {
 
     if (activeSettings === 'listbox') {
       return <ListboxSettings state={listbox} onChange={updateListbox} />;
+    }
+
+    if (activeSettings === 'range-input') {
+      return <RangeInputSettings state={rangeInput} onChange={updateRangeInput} />;
     }
 
     if (activeSettings === 'button') {
@@ -336,6 +419,55 @@ export function DesignSystemPage() {
                   sizePreset={listbox.sizePreset}
                   value={listbox.value}
                   onChange={(value) => updateListbox('value', value)}
+                />
+              </Card>
+
+              <Card
+                as="article"
+                aria-labelledby={RANGE_INPUT_WIDGET_TITLE_ID}
+                background="background"
+                icon={<SettingsIcon />}
+                iconAriaControls={SIDEBAR_ID}
+                iconAriaExpanded={activeSettings === 'range-input'}
+                iconAriaLabel={
+                  activeSettings === 'range-input' ? 'Close settings' : 'Open settings'
+                }
+                title="Range filter"
+                titleId={RANGE_INPUT_WIDGET_TITLE_ID}
+                onClick={() => activateSettings('range-input')}
+                onIconClick={() => toggleSettings('range-input')}
+              >
+                <RangeInput
+                  alignSelf="center"
+                  buttonShape={rangeInput.buttonShape}
+                  buttonSizePreset={rangeInput.buttonSizePreset}
+                  buttonText={rangeInput.buttonText}
+                  buttonTextColor={rangeInput.buttonTextColor}
+                  buttonTone={rangeInput.buttonTone}
+                  disabled={rangeInput.disabled}
+                  formatActiveLabel={formatDemoRangeLabel}
+                  fromPlaceholder={rangeInput.fromPlaceholder}
+                  inputShape={rangeInput.inputShape}
+                  inputSizePreset={rangeInput.inputSizePreset}
+                  label={rangeInput.label || undefined}
+                  placeholder={rangeInput.placeholder}
+                  shape={rangeInput.shape}
+                  sizePreset={rangeInput.sizePreset}
+                  title={rangeInput.title}
+                  titleAlign={rangeInput.titleAlign}
+                  titleSizePreset={rangeInput.titleSizePreset}
+                  toPlaceholder={rangeInput.toPlaceholder}
+                  validate={validateDemoRange}
+                  validationMessages={rangeInput.validationMessages}
+                  value={rangeInput.value}
+                  onChange={(next) => updateRangeInput('value', next)}
+                  onClear={
+                    rangeInput.withClear
+                      ? () => {
+                          clearRangeInputValue();
+                        }
+                      : undefined
+                  }
                 />
               </Card>
 

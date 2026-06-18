@@ -11,6 +11,7 @@ import { createPortal } from 'react-dom';
 import { useTheme } from 'styled-components';
 
 import { useAnchoredDismiss } from '@hooks/use-anchored-dismiss';
+import { getFocusables, useFocusTrap } from '@hooks/use-focus-trap';
 import { CheckIcon } from '@icons/check';
 import { ChevronIcon } from '@icons/chevron';
 import { Checkbox } from '@ui/checkbox';
@@ -243,6 +244,12 @@ export function Listbox({
     onDismiss: dismissListbox,
   });
 
+  useFocusTrap({
+    active: open,
+    containerRef: panelRef,
+    returnFocusRef: triggerRef,
+  });
+
   // Порядок строк (above/below) — при открытии и смене выбора/опций.
   useLayoutEffect(() => {
     if (!open) {
@@ -321,6 +328,32 @@ export function Listbox({
       window.removeEventListener('resize', applyPanelPosition);
     };
   }, [open, panelOrder]);
+
+  useLayoutEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      const panel = panelRef.current;
+
+      if (!panel) {
+        return;
+      }
+
+      const selectedOption = panel.querySelector<HTMLElement>(
+        'li[aria-selected="true"] button:not([disabled])'
+      );
+      const focusTarget =
+        selectedOption ?? getFocusables(panel).find((element) => element.tagName === 'BUTTON');
+
+      focusTarget?.focus();
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [open, panelOrder, selectedIndex]);
 
   function commitSelected(next: string[]): void {
     if (!isControlled) {

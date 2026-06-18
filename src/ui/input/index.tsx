@@ -13,6 +13,8 @@ import {
 type InputProps = InputStyleProps & {
   error?: string;
   errorAlign?: CSSProperties['textAlign'];
+  /** invalidRing без текста ошибки — когда сообщение снаружи (RangeInput и т.п.). */
+  invalid?: boolean;
   label?: string;
   /** Резерв высоты под строку ошибки, чтобы появление ошибки не сдвигало соседей. */
   reserveErrorSpace?: boolean;
@@ -22,6 +24,7 @@ export function Input({
   align,
   error,
   errorAlign = 'center',
+  invalid = false,
   label,
   reserveErrorSpace = true,
   shape,
@@ -30,11 +33,15 @@ export function Input({
 }: InputProps) {
   const theme = useTheme();
   const { layout, rest: control } = splitLayoutProps(rest);
+  const { 'aria-describedby': ariaDescribedBy, ...inputControl } = control;
   const fallbackId = useId();
-  const id = control.id ?? fallbackId;
+  const id = inputControl.id ?? fallbackId;
   const errorId = `${id}-error`;
   const hasError = Boolean(error?.trim());
+  const isInvalid = hasError || invalid;
   const showError = hasError || reserveErrorSpace;
+  const describedBy =
+    [hasError ? errorId : null, ariaDescribedBy].filter(Boolean).join(' ') || undefined;
 
   return (
     <StyledInputRoot {...layout}>
@@ -45,10 +52,10 @@ export function Input({
       )}
       <StyledInputControl
         type="text"
-        {...control}
+        {...inputControl}
         align={align}
-        aria-describedby={hasError ? errorId : undefined}
-        aria-invalid={hasError || undefined}
+        aria-describedby={describedBy}
+        aria-invalid={isInvalid || undefined}
         id={id}
         shape={shape}
         sizePreset={sizePreset}
