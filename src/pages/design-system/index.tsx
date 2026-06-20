@@ -350,6 +350,33 @@ export function DesignSystemPage() {
     return null;
   }
 
+  /** Общий скелет карточки виджета: иконка-настройки + aria/toggle-обвязка; различие — ключ и содержимое. */
+  function renderWidgetCard(
+    widgetKey: WidgetSettingsKey,
+    titleId: string,
+    children: ReactNode
+  ): ReactNode {
+    const open = activeSettings === widgetKey;
+
+    return (
+      <Card
+        as="article"
+        aria-labelledby={titleId}
+        background="background"
+        icon={<SettingsIcon />}
+        iconAriaControls={SIDEBAR_ID}
+        iconAriaExpanded={open}
+        iconAriaLabel={open ? 'Close settings' : 'Open settings'}
+        title={SETTINGS_TITLES[widgetKey]}
+        titleId={titleId}
+        onClick={() => activateSettings(widgetKey)}
+        onIconClick={() => toggleSettings(widgetKey)}
+      >
+        {children}
+      </Card>
+    );
+  }
+
   return (
     <StyledMain>
       <Sidebar
@@ -365,21 +392,9 @@ export function DesignSystemPage() {
         <Card as="section" maxBlockSize={PLAYGROUND_MAX_BLOCK_SIZE}>
           <ScrollPort>
             <StyledDesignSystemWidgets>
-              <Card
-                as="article"
-                aria-labelledby={INPUT_WIDGET_TITLE_ID}
-                background="background"
-                icon={<SettingsIcon />}
-                iconAriaControls={SIDEBAR_ID}
-                iconAriaExpanded={activeSettings === 'input'}
-                iconAriaLabel={
-                  activeSettings === 'input' ? 'Close settings' : 'Open settings'
-                }
-                title="Input"
-                titleId={INPUT_WIDGET_TITLE_ID}
-                onClick={() => activateSettings('input')}
-                onIconClick={() => toggleSettings('input')}
-              >
+              {renderWidgetCard(
+                'input',
+                INPUT_WIDGET_TITLE_ID,
                 <Input
                   alignSelf="center"
                   disabled={input.disabled}
@@ -391,23 +406,11 @@ export function DesignSystemPage() {
                   value={input.value}
                   onChange={(event) => updateInput('value', event.target.value)}
                 />
-              </Card>
+              )}
 
-              <Card
-                as="article"
-                aria-labelledby={LISTBOX_WIDGET_TITLE_ID}
-                background="background"
-                icon={<SettingsIcon />}
-                iconAriaControls={SIDEBAR_ID}
-                iconAriaExpanded={activeSettings === 'listbox'}
-                iconAriaLabel={
-                  activeSettings === 'listbox' ? 'Close settings' : 'Open settings'
-                }
-                title="Listbox"
-                titleId={LISTBOX_WIDGET_TITLE_ID}
-                onClick={() => activateSettings('listbox')}
-                onIconClick={() => toggleSettings('listbox')}
-              >
+              {renderWidgetCard(
+                'listbox',
+                LISTBOX_WIDGET_TITLE_ID,
                 <Listbox
                   alignSelf="center"
                   disabled={listbox.disabled}
@@ -420,23 +423,11 @@ export function DesignSystemPage() {
                   value={listbox.value}
                   onChange={(value) => updateListbox('value', value)}
                 />
-              </Card>
+              )}
 
-              <Card
-                as="article"
-                aria-labelledby={RANGE_INPUT_WIDGET_TITLE_ID}
-                background="background"
-                icon={<SettingsIcon />}
-                iconAriaControls={SIDEBAR_ID}
-                iconAriaExpanded={activeSettings === 'range-input'}
-                iconAriaLabel={
-                  activeSettings === 'range-input' ? 'Close settings' : 'Open settings'
-                }
-                title="Range filter"
-                titleId={RANGE_INPUT_WIDGET_TITLE_ID}
-                onClick={() => activateSettings('range-input')}
-                onIconClick={() => toggleSettings('range-input')}
-              >
+              {renderWidgetCard(
+                'range-input',
+                RANGE_INPUT_WIDGET_TITLE_ID,
                 <RangeInput
                   alignSelf="center"
                   buttonShape={rangeInput.buttonShape}
@@ -469,23 +460,11 @@ export function DesignSystemPage() {
                       : undefined
                   }
                 />
-              </Card>
+              )}
 
-              <Card
-                as="article"
-                aria-labelledby={BUTTON_WIDGET_TITLE_ID}
-                background="background"
-                icon={<SettingsIcon />}
-                iconAriaControls={SIDEBAR_ID}
-                iconAriaExpanded={activeSettings === 'button'}
-                iconAriaLabel={
-                  activeSettings === 'button' ? 'Close settings' : 'Open settings'
-                }
-                title="Button"
-                titleId={BUTTON_WIDGET_TITLE_ID}
-                onClick={() => activateSettings('button')}
-                onIconClick={() => toggleSettings('button')}
-              >
+              {renderWidgetCard(
+                'button',
+                BUTTON_WIDGET_TITLE_ID,
                 <Button
                   active={button.active}
                   alignSelf="center"
@@ -502,25 +481,11 @@ export function DesignSystemPage() {
                 >
                   {button.text}
                 </Button>
-              </Card>
+              )}
 
-              <Card
-                as="article"
-                aria-labelledby={SEGMENT_BUTTON_WIDGET_TITLE_ID}
-                background="background"
-                icon={<SettingsIcon />}
-                iconAriaControls={SIDEBAR_ID}
-                iconAriaExpanded={activeSettings === 'segment-button'}
-                iconAriaLabel={
-                  activeSettings === 'segment-button'
-                    ? 'Close settings'
-                    : 'Open settings'
-                }
-                title="Segment button"
-                titleId={SEGMENT_BUTTON_WIDGET_TITLE_ID}
-                onClick={() => activateSettings('segment-button')}
-                onIconClick={() => toggleSettings('segment-button')}
-              >
+              {renderWidgetCard(
+                'segment-button',
+                SEGMENT_BUTTON_WIDGET_TITLE_ID,
                 <SegmentButton
                   alignSelf="center"
                   shape={segmentButton.shape}
@@ -554,23 +519,11 @@ export function DesignSystemPage() {
                     ),
                   }}
                 />
-              </Card>
+              )}
 
-              <Card
-                as="article"
-                aria-labelledby={CHECKBOX_WIDGET_TITLE_ID}
-                background="background"
-                icon={<SettingsIcon />}
-                iconAriaControls={SIDEBAR_ID}
-                iconAriaExpanded={activeSettings === 'checkbox'}
-                iconAriaLabel={
-                  activeSettings === 'checkbox' ? 'Close settings' : 'Open settings'
-                }
-                title="Checkbox"
-                titleId={CHECKBOX_WIDGET_TITLE_ID}
-                onClick={() => activateSettings('checkbox')}
-                onIconClick={() => toggleSettings('checkbox')}
-              >
+              {renderWidgetCard(
+                'checkbox',
+                CHECKBOX_WIDGET_TITLE_ID,
                 <Checkbox
                   bare={checkbox.bare}
                   checked={checkbox.checked}
@@ -581,23 +534,11 @@ export function DesignSystemPage() {
                   sizePreset={checkbox.sizePreset}
                   onChange={(event) => updateCheckbox('checked', event.target.checked)}
                 />
-              </Card>
+              )}
 
-              <Card
-                as="article"
-                aria-labelledby={RADIO_BUTTON_WIDGET_TITLE_ID}
-                background="background"
-                icon={<SettingsIcon />}
-                iconAriaControls={SIDEBAR_ID}
-                iconAriaExpanded={activeSettings === 'radio-button'}
-                iconAriaLabel={
-                  activeSettings === 'radio-button' ? 'Close settings' : 'Open settings'
-                }
-                title="Radio button"
-                titleId={RADIO_BUTTON_WIDGET_TITLE_ID}
-                onClick={() => activateSettings('radio-button')}
-                onIconClick={() => toggleSettings('radio-button')}
-              >
+              {renderWidgetCard(
+                'radio-button',
+                RADIO_BUTTON_WIDGET_TITLE_ID,
                 <StyledRadioButtonDemo>
                   <RadioButton
                     bare={radioButton.bare}
@@ -618,7 +559,7 @@ export function DesignSystemPage() {
                     onChange={() => updateRadioButton('selected', 'b')}
                   />
                 </StyledRadioButtonDemo>
-              </Card>
+              )}
             </StyledDesignSystemWidgets>
           </ScrollPort>
         </Card>

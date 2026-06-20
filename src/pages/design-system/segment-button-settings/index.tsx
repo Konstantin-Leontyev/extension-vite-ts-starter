@@ -3,10 +3,7 @@ import { type ChangeEvent } from 'react';
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import {
-  type SegmentButtonShape,
-  type SegmentButtonSizePreset,
-} from '@ui/segment-button';
+import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { type ThemeColors } from '@ui/theme';
 
 import { StyledSettingsForm } from '../design-system.styles';
@@ -27,8 +24,8 @@ export type SegmentButtonWidgetState = {
   rightText: string;
   rightTextColor: SegmentTextColor;
   segmentCount: '2' | '3';
-  shape: SegmentButtonShape;
-  sizePreset: SegmentButtonSizePreset;
+  shape: ShapePreset;
+  sizePreset: SizePreset;
 };
 
 const SIZE_OPTIONS: ListboxOption[] = [
@@ -72,7 +69,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
         options={SIZE_OPTIONS}
         reserveErrorSpace={false}
         value={state.sizePreset}
-        onChange={(value) => onChange('sizePreset', value as SegmentButtonSizePreset)}
+        onChange={(value) => onChange('sizePreset', value as SizePreset)}
       />
 
       <Listbox
@@ -80,7 +77,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
         options={SHAPE_OPTIONS}
         reserveErrorSpace={false}
         value={state.shape}
-        onChange={(value) => onChange('shape', value as SegmentButtonShape)}
+        onChange={(value) => onChange('shape', value as ShapePreset)}
       />
 
       <Listbox

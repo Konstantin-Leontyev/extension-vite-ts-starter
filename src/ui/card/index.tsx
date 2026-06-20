@@ -102,6 +102,17 @@ export function Card<T extends CardHtmlTag = 'div'>({
     </RoundButton>
   );
 
+  const subtitleNode = Boolean(subtitle) && (
+    <Text
+      align={subtitleAlign}
+      as="p"
+      color={subtitleColor ?? theme.colors.muted}
+      sizePreset={subtitleSizePreset ?? 'medium'}
+    >
+      {subtitle}
+    </Text>
+  );
+
   const header = hasHeader && (
     <StyledCardHeader>
       <StyledCardHeaderFirstLine
@@ -119,27 +130,9 @@ export function Card<T extends CardHtmlTag = 'div'>({
             {title}
           </Text>
         )}
-        {!title && Boolean(subtitle) && (
-          <Text
-            align={subtitleAlign}
-            as="p"
-            color={subtitleColor ?? theme.colors.muted}
-            sizePreset={subtitleSizePreset ?? 'medium'}
-          >
-            {subtitle}
-          </Text>
-        )}
+        {!title && subtitleNode}
       </StyledCardHeaderFirstLine>
-      {Boolean(title && subtitle) && (
-        <Text
-          align={subtitleAlign}
-          as="p"
-          color={subtitleColor ?? theme.colors.muted}
-          sizePreset={subtitleSizePreset ?? 'medium'}
-        >
-          {subtitle}
-        </Text>
-      )}
+      {Boolean(title) && subtitleNode}
     </StyledCardHeader>
   );
 

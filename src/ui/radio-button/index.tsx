@@ -5,7 +5,6 @@ import { Text } from '@ui/text';
 
 import {
   StyledRadioButtonControl,
-  StyledRadioButtonLabel,
   StyledRadioButtonRoot,
   splitLayoutProps,
   type RadioButtonStyleProps,
@@ -33,11 +32,9 @@ export function RadioButton({ bare = false, label, ...rest }: RadioButtonProps) 
     <StyledRadioButtonRoot {...layout}>
       <StyledRadioButtonControl type="radio" {...control} />
       {Boolean(label) && (
-        <StyledRadioButtonLabel>
-          <Text color={theme.colors.muted} sizePreset="thin">
-            {label}
-          </Text>
-        </StyledRadioButtonLabel>
+        <Text color={theme.colors.muted} sizePreset="thin">
+          {label}
+        </Text>
       )}
     </StyledRadioButtonRoot>
   );

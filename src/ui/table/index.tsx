@@ -5,17 +5,25 @@ import {
   useRef,
   type ComponentPropsWithRef,
   type ReactNode,
+  type RefObject,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { useTheme } from 'styled-components';
 
 import { useAnchoredDismiss } from '@hooks/use-anchored-dismiss';
 import { useFocusTrap } from '@hooks/use-focus-trap';
+import { useLongPress } from '@hooks/use-long-press';
 import { Checkbox } from '@ui/checkbox';
+import { textSizePreset as resolveTextSizePreset } from '@ui/presets';
 import { ScrollPort } from '@ui/scroll-port';
 import { Text } from '@ui/text';
 import { type TextSizePreset } from '@ui/text';
 
+import {
+  StyledTableCellLead,
+  TableCell,
+  type TableCellAlign,
+} from './table-cell';
 import {
   COMPOSE_PANEL_BORDER_WIDTH_PX,
   DEFAULT_TABLE_BORDERED,
@@ -24,32 +32,25 @@ import {
   DEFAULT_TABLE_STRIPED,
   StyledTable,
   StyledTableBody,
-  StyledTableCell,
-  StyledTableCellWithActions,
-  StyledTableCheckableCell,
+  StyledTableCellTrailing,
   StyledTableClip,
   StyledTableCol,
   StyledTableComposeErrorCell,
-  StyledTableComposeInnerCell,
-  StyledTableComposeInnerFootCell,
-  StyledTableComposeInnerHeadCell,
   StyledTableComposeInnerTable,
   StyledTableComposePanel,
   StyledTableFoot,
-  StyledTableFootHeadCell,
   StyledTableFrame,
   StyledTableHead,
-  StyledTableHeadCell,
   StyledTableHeaderAddButton,
   StyledTableHeaderKeywordBar,
   StyledTableHeaderMarkSpacer,
   StyledTableRow,
-  StyledTableRowLeading,
   splitLayoutProps,
-  tableTextSizePreset,
-  type TableAlign,
   type TableStyleProps,
 } from './table.styles';
+
+/** Горизонтальное выравнивание ячейки таблицы. */
+export type TableAlign = TableCellAlign;
 
 /** Ширина колонки нумерации в fixed-режиме. */
 const NUMBER_COLUMN_INLINE_SIZE = '3.5rem';
@@ -65,6 +66,8 @@ export type TableAddRowSource = 'foot' | 'head';
 export type TableCellRenderContext = {
   composeError?: string;
   composeErrorId?: string;
+  editError?: string;
+  editErrorId?: string;
   textSizePreset: TextSizePreset;
 };
 
@@ -72,7 +75,11 @@ export type TableColumn<Row> = {
   align?: TableAlign;
   ellipsis?: boolean;
   header: string;
+  /** Горизонтальное выравнивание заголовка; данные — через `align`. */
+  headerAlign?: TableAlign;
   inlineSize?: string;
+  /** Не переносить содержимое ячейки (`white-space: nowrap`). */
+  nowrap?: boolean;
   key: Extract<keyof Row, string>;
   renderCell?: (
     row: Row,
@@ -83,7 +90,11 @@ export type TableColumn<Row> = {
 
 /** Подсказка в строке compose-панели, когда ошибки нет и включён резерв высоты. */
 const DEFAULT_COMPOSE_HINT =
-  'Press Esc to close without saving, or Enter to add a row to the table.';
+  'Press Esc to close without saving, or Enter to add the row. Use Tab to move between fields.';
+
+/** Подсказка в строке edit-панели, когда ошибки нет и включён резерв высоты. */
+const DEFAULT_EDIT_HINT =
+  'Press Esc to close without saving, or Enter to save changes.';
 
 type TableComposeProps<Row> = {
   /** Режим ввода новой строки — панель как у Listbox. */
@@ -101,6 +112,11 @@ type TableComposeProps<Row> = {
    * Как `reserveErrorSpace` у Input.
    */
   composeReserveErrorSpace?: boolean;
+  /**
+   * Запрос на добавление строки по «+» в шапке (`head`) или футере (`foot`).
+   * Без колбэка кнопка «+» видна, но disabled (заглушка). Активна только при `editable`.
+   */
+  onAddRow?: (source: TableAddRowSource) => void;
   onComposeCancel?: () => void;
   renderComposeCell?: (
     column: TableColumn<Row>,
@@ -108,16 +124,36 @@ type TableComposeProps<Row> = {
   ) => ReactNode;
 };
 
+type TableEditProps<Row> = {
+  /** Режим редактирования существующей строки — панель поверх якорной строки. */
+  editRowActive?: boolean;
+  editRowKey?: string;
+  editError?: string;
+  /**
+   * Текст подсказки в зарезервированной строке, пока нет `editError`.
+   * Используется при `editReserveErrorSpace`.
+   */
+  editHint?: string;
+  /**
+   * Резерв высоты под строку подсказки/ошибки, чтобы смена текста не сдвигала панель.
+   * Как `reserveErrorSpace` у Input.
+   */
+  editReserveErrorSpace?: boolean;
+  onEditCancel?: () => void;
+  onEditRow?: (row: Row) => void;
+  renderEditCell?: (
+    column: TableColumn<Row>,
+    row: Row,
+    context: TableCellRenderContext
+  ) => ReactNode;
+};
+
 type TableSelectionProps<Row> = {
   checkable: true;
   getRowKey: (row: Row) => string;
+  isRowSelectable?: (row: Row) => boolean;
   onSelectedKeysChange: (keys: Set<string>) => void;
   renderBulkSelectionActions?: () => ReactNode;
-  /**
-   * Запрос на добавление строки по «+» в шапке (`head`) или футере (`foot`).
-   * Без колбэка кнопка «+» видна, но disabled (заглушка).
-   */
-  onAddRow?: (source: TableAddRowSource) => void;
   renderSelectedRowActions?: (row: Row) => ReactNode;
   rowCheckboxColumnKey?: Extract<keyof Row, string>;
   selectedKeys: ReadonlySet<string>;
@@ -126,20 +162,28 @@ type TableSelectionProps<Row> = {
 
 type TableProps<Row> = {
   columns: TableColumn<Row>[];
+  /** Мастер-переключатель работы со строками (add/edit). false → только вывод строк. */
+  editable?: boolean;
   numbered?: boolean;
   rows: Row[];
 } & TableComposeProps<Row> &
+  TableEditProps<Row> &
   TableStyleProps &
   (
     | ({ checkable?: false } & Omit<
         ComponentPropsWithRef<'table'>,
-        keyof TableStyleProps | keyof TableComposeProps<Row> | 'className' | 'style'
+        | keyof TableStyleProps
+        | keyof TableComposeProps<Row>
+        | keyof TableEditProps<Row>
+        | 'className'
+        | 'style'
       >)
     | (TableSelectionProps<Row> &
         Omit<
           ComponentPropsWithRef<'table'>,
           | keyof TableStyleProps
           | keyof TableComposeProps<Row>
+          | keyof TableEditProps<Row>
           | 'className'
           | 'style'
           | keyof TableSelectionProps<Row>
@@ -166,19 +210,159 @@ function TableCheckbox({
   );
 }
 
+type TableBodyRowProps<Row> = {
+  actionsColumnKey: Extract<keyof Row, string> | undefined;
+  anchorRef: RefObject<HTMLTableRowElement | null>;
+  checkable: boolean;
+  columns: TableColumn<Row>[];
+  editRowActive: boolean;
+  isEditAnchor: boolean;
+  isSelected: boolean;
+  onEditRow: ((row: Row) => void) | undefined;
+  renderSelectedRowActions: ((row: Row) => ReactNode) | undefined;
+  resolvedNumbered: boolean;
+  row: Row;
+  rowCheckboxColumnKey: Extract<keyof Row, string> | undefined;
+  rowIndex: number;
+  rowKey: string;
+  rowSelectable: boolean;
+  separateCheckboxColumn: boolean;
+  showRowActions: boolean;
+  sizePreset: TableStyleProps['sizePreset'];
+  textSizePreset: TextSizePreset;
+  toggleRowKey: (rowKey: string) => void;
+};
+
+function TableBodyRow<Row>({
+  actionsColumnKey,
+  anchorRef,
+  checkable,
+  columns,
+  editRowActive,
+  isEditAnchor,
+  isSelected,
+  onEditRow,
+  renderSelectedRowActions,
+  resolvedNumbered,
+  row,
+  rowCheckboxColumnKey,
+  rowIndex,
+  rowKey,
+  rowSelectable,
+  separateCheckboxColumn,
+  showRowActions,
+  sizePreset,
+  textSizePreset,
+  toggleRowKey,
+}: TableBodyRowProps<Row>): ReactNode {
+  const { pointerProps } = useLongPress({
+    disabled: !onEditRow || editRowActive || !rowSelectable,
+    onLongPress: onEditRow ? () => onEditRow(row) : undefined,
+  });
+
+  return (
+    <StyledTableRow
+      ref={isEditAnchor ? anchorRef : undefined}
+      $editHidden={isEditAnchor}
+      sizePreset={sizePreset}
+      {...(pointerProps ?? {})}
+    >
+      {separateCheckboxColumn && (
+        <TableCell align="center" sizePreset={sizePreset}>
+          {rowSelectable && (
+            <TableCheckbox
+              ariaLabel={`Select row ${rowKey}`}
+              checked={isSelected}
+              onToggle={() => {
+                toggleRowKey(rowKey);
+              }}
+            />
+          )}
+        </TableCell>
+      )}
+      {resolvedNumbered && (
+        <TableCell align="end" sizePreset={sizePreset}>
+          <Text sizePreset={textSizePreset}>{rowIndex + 1}</Text>
+        </TableCell>
+      )}
+      {columns.map((column) => {
+        const cellContent = column.renderCell ? (
+          column.renderCell(row, rowIndex, { textSizePreset })
+        ) : (
+          <Text sizePreset={textSizePreset}>{String(row[column.key] ?? '')}</Text>
+        );
+        const showRowCheckbox =
+          rowSelectable &&
+          checkable &&
+          rowCheckboxColumnKey !== undefined &&
+          column.key === rowCheckboxColumnKey;
+        const showRowActionsInColumn =
+          showRowActions && column.key === actionsColumnKey;
+
+        const rowCheckbox = showRowCheckbox ? (
+          <TableCheckbox
+            ariaLabel={`Select row ${rowKey}`}
+            checked={isSelected}
+            onToggle={() => {
+              toggleRowKey(rowKey);
+            }}
+          />
+        ) : null;
+
+        const bodyContent =
+          (showRowActionsInColumn && (
+            <StyledTableCellTrailing>
+              {cellContent}
+              {renderSelectedRowActions?.(row)}
+            </StyledTableCellTrailing>
+          )) ||
+          cellContent;
+
+        return (
+          <TableCell
+            key={column.key}
+            align={column.align}
+            ellipsis={column.ellipsis && !showRowActionsInColumn}
+            nowrap={column.nowrap}
+            sizePreset={sizePreset}
+          >
+            {(showRowCheckbox && (
+              <StyledTableCellLead>
+                {rowCheckbox}
+                {bodyContent}
+              </StyledTableCellLead>
+            )) ||
+              bodyContent}
+          </TableCell>
+        );
+      })}
+    </StyledTableRow>
+  );
+}
+
 export function Table<Row>(props: TableProps<Row>) {
   const {
     bordered,
     columns,
     composeError,
     composeHint = DEFAULT_COMPOSE_HINT,
-    composeRowActive = false,
+    composeRowActive: composeRowActiveProp = false,
     composeRowSource,
     composeReserveErrorSpace = true,
+    editable = false,
+    editError,
+    editHint = DEFAULT_EDIT_HINT,
+    editReserveErrorSpace = true,
+    editRowActive: editRowActiveProp = false,
+    editRowKey,
     hoverHighlight,
     numbered,
+    onAddRow: onAddRowProp,
     onComposeCancel,
+    onEditCancel,
+    onEditRow: onEditRowProp,
     renderComposeCell,
+    renderEditCell,
     rows,
     sizePreset,
     striped,
@@ -190,12 +374,19 @@ export function Table<Row>(props: TableProps<Row>) {
   const resolvedNumbered = numbered ?? DEFAULT_TABLE_NUMBERED;
   const resolvedStriped = striped ?? DEFAULT_TABLE_STRIPED;
 
+  // Гейт editable: без него таблица — чистый вывод строк (нет add/edit, порталов, long-press).
+  const composeRowActive = editable && composeRowActiveProp;
+  const editRowActive = editable && editRowActiveProp;
+  const onAddRow = editable ? onAddRowProp : undefined;
+  const onEditRow = editable ? onEditRowProp : undefined;
+
   const theme = useTheme();
   const composeErrorId = useId();
+  const editErrorId = useId();
 
   const checkable = props.checkable === true;
   const { layout, rest: tableAttrs } = splitLayoutProps(rest);
-  const textSizePreset = tableTextSizePreset(sizePreset);
+  const textSizePreset = resolveTextSizePreset(sizePreset);
   const rowCheckboxColumnKey = checkable ? props.rowCheckboxColumnKey : undefined;
   const separateCheckboxColumn = checkable && rowCheckboxColumnKey === undefined;
   const fixed =
@@ -204,12 +395,21 @@ export function Table<Row>(props: TableProps<Row>) {
   const headAnchorRef = useRef<HTMLTableSectionElement>(null);
   const footAnchorRef = useRef<HTMLTableSectionElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const editPanelRef = useRef<HTMLDivElement>(null);
+  const editRowAnchorRef = useRef<HTMLTableRowElement>(null);
   const tableRootRef = useRef<HTMLTableElement>(null);
   const headAddButtonRef = useRef<HTMLButtonElement>(null);
   const footAddButtonRef = useRef<HTMLButtonElement>(null);
 
   const selectedKeys = checkable ? props.selectedKeys : new Set<string>();
-  const allRowKeys = checkable ? rows.map((row) => props.getRowKey(row)) : [];
+  const isRowSelectable = checkable
+    ? (props.isRowSelectable ?? (() => true))
+    : () => false;
+  const allRowKeys = checkable
+    ? rows
+        .filter((row) => isRowSelectable(row))
+        .map((row) => props.getRowKey(row))
+    : [];
   const allRowsSelected =
     checkable &&
     selectedKeys.size > 0 &&
@@ -223,11 +423,29 @@ export function Table<Row>(props: TableProps<Row>) {
     composeRowActive &&
     composeRowSource !== undefined &&
     renderComposeCell !== undefined;
+  const editingRow =
+    editRowActive && editRowKey !== undefined
+      ? rows.find((row, rowIndex) =>
+          checkable ? props.getRowKey(row) === editRowKey : String(rowIndex) === editRowKey
+        )
+      : undefined;
+  const showEditPanel =
+    editRowActive &&
+    editRowKey !== undefined &&
+    editingRow !== undefined &&
+    renderEditCell !== undefined;
   const composeErrorMessage = composeError?.trim() ?? '';
   const hasComposeError = composeErrorMessage !== '';
+  const editErrorMessage = editError?.trim() ?? '';
+  const hasEditError = editErrorMessage !== '';
   const composeCellContext: TableCellRenderContext = {
     composeError: hasComposeError ? composeErrorMessage : undefined,
     composeErrorId,
+    textSizePreset,
+  };
+  const editCellContext: TableCellRenderContext = {
+    editError: hasEditError ? editErrorMessage : undefined,
+    editErrorId,
     textSizePreset,
   };
 
@@ -260,15 +478,13 @@ export function Table<Row>(props: TableProps<Row>) {
     props.onSelectedKeysChange(new Set(allRowKeys));
   };
 
-  const onAddRow = checkable ? props.onAddRow : undefined;
-
   const renderKeywordColumnHeader = (
     column: TableColumn<Row>,
     addSource: TableAddRowSource,
     interactive: boolean
   ): ReactNode => (
     <StyledTableHeaderKeywordBar>
-      <StyledTableRowLeading>
+      <StyledTableCellLead>
         {interactive ? (
           <TableCheckbox
             ariaLabel={hasBulkSelection ? 'Clear selection' : 'Select all rows'}
@@ -278,62 +494,61 @@ export function Table<Row>(props: TableProps<Row>) {
         ) : (
           <StyledTableHeaderMarkSpacer aria-hidden="true" />
         )}
-        {interactive ? (
+        {(interactive && editable && (
           <StyledTableHeaderAddButton
             ref={addSource === 'head' ? headAddButtonRef : footAddButtonRef}
             aria-label="Add row"
-            disabled={!onAddRow || composeRowActive}
-            tabIndex={onAddRow && !composeRowActive ? undefined : -1}
+            disabled={!onAddRow || composeRowActive || editRowActive}
+            tabIndex={onAddRow && !composeRowActive && !editRowActive ? undefined : -1}
             type="button"
             onClick={() => {
               onAddRow?.(addSource);
             }}
           />
-        ) : (
-          <StyledTableHeaderMarkSpacer aria-hidden="true" />
-        )}
+        )) ||
+          (!interactive && <StyledTableHeaderMarkSpacer aria-hidden="true" />) ||
+          null}
         <Text sizePreset={textSizePreset}>{column.header}</Text>
-      </StyledTableRowLeading>
+      </StyledTableCellLead>
       {interactive && showBulkActions && props.renderBulkSelectionActions?.()}
     </StyledTableHeaderKeywordBar>
   );
 
   const renderHeaderCells = (
-    HeadCell:
-      | typeof StyledTableHeadCell
-      | typeof StyledTableFootHeadCell
-      | typeof StyledTableComposeInnerHeadCell
-      | typeof StyledTableComposeInnerFootCell,
-    isThead: boolean,
+    head: boolean,
     addSource: TableAddRowSource,
     interactive: boolean
   ): ReactNode => (
     <>
       {separateCheckboxColumn && (
-        <HeadCell
+        <TableCell
           align="center"
+          head={head}
           sizePreset={sizePreset}
-          {...(isThead ? { scope: 'col' as const } : {})}
+          {...(head ? { scope: 'col' as const } : {})}
         >
           <span className="visually-hidden">Select</span>
-        </HeadCell>
+        </TableCell>
       )}
       {resolvedNumbered && (
-        <HeadCell
+        <TableCell
           align="end"
+          head={head}
           sizePreset={sizePreset}
-          {...(isThead ? { scope: 'col' as const } : {})}
+          {...(head ? { scope: 'col' as const } : {})}
         >
           <Text sizePreset={textSizePreset}>#</Text>
-        </HeadCell>
+        </TableCell>
       )}
       {columns.map((column) => (
-        <HeadCell
+        <TableCell
           key={column.key}
-          align={column.align}
+          align={column.headerAlign ?? column.align}
           ellipsis={column.ellipsis}
+          head={head}
+          nowrap={column.nowrap}
           sizePreset={sizePreset}
-          {...(isThead ? { scope: 'col' as const } : {})}
+          {...(head ? { scope: 'col' as const } : {})}
         >
           {checkable &&
           rowCheckboxColumnKey !== undefined &&
@@ -342,7 +557,7 @@ export function Table<Row>(props: TableProps<Row>) {
           ) : (
             <Text sizePreset={textSizePreset}>{column.header}</Text>
           )}
-        </HeadCell>
+        </TableCell>
       ))}
     </>
   );
@@ -350,41 +565,76 @@ export function Table<Row>(props: TableProps<Row>) {
   const renderComposeCells = (): ReactNode => (
     <>
       {separateCheckboxColumn && (
-        <StyledTableComposeInnerCell align="center" sizePreset={sizePreset} />
+        <TableCell align="center" sizePreset={sizePreset} />
       )}
-      {resolvedNumbered && (
-        <StyledTableComposeInnerCell align="end" sizePreset={sizePreset} />
-      )}
+      {resolvedNumbered && <TableCell align="end" sizePreset={sizePreset} />}
       {columns.map((column) => {
         const composeCellContent = renderComposeCell?.(column, composeCellContext);
         const cellBody =
           (checkable &&
             rowCheckboxColumnKey !== undefined &&
             column.key === rowCheckboxColumnKey && (
-              <StyledTableRowLeading>
+              <StyledTableCellLead>
                 <StyledTableHeaderMarkSpacer aria-hidden="true" />
                 <StyledTableHeaderMarkSpacer aria-hidden="true" />
                 {composeCellContent}
-              </StyledTableRowLeading>
+              </StyledTableCellLead>
             )) ||
           composeCellContent;
 
         return (
-          <StyledTableComposeInnerCell
+          <TableCell
             key={column.key}
             align={column.align}
-            ellipsis={false}
+            nowrap={column.nowrap}
             sizePreset={sizePreset}
           >
             {cellBody}
-          </StyledTableComposeInnerCell>
+          </TableCell>
         );
       })}
     </>
   );
 
-  const renderColgroup = (): ReactNode =>
-    fixed ? (
+  const renderEditCells = (row: Row): ReactNode => (
+    <>
+      {separateCheckboxColumn && (
+        <TableCell align="center" sizePreset={sizePreset} />
+      )}
+      {resolvedNumbered && <TableCell align="end" sizePreset={sizePreset} />}
+      {columns.map((column) => {
+        const editCellContent = renderEditCell?.(column, row, editCellContext);
+        const cellBody =
+          (checkable &&
+            rowCheckboxColumnKey !== undefined &&
+            column.key === rowCheckboxColumnKey && (
+              <StyledTableCellLead>
+                <StyledTableHeaderMarkSpacer aria-hidden="true" />
+                {editCellContent}
+              </StyledTableCellLead>
+            )) ||
+          editCellContent;
+
+        return (
+          <TableCell
+            key={column.key}
+            align={column.align}
+            nowrap={column.nowrap}
+            sizePreset={sizePreset}
+          >
+            {cellBody}
+          </TableCell>
+        );
+      })}
+    </>
+  );
+
+  const renderColgroup = (): ReactNode => {
+    if (!fixed) {
+      return null;
+    }
+
+    return (
       <colgroup>
         {separateCheckboxColumn && (
           <StyledTableCol inlineSize={CHECKBOX_COLUMN_INLINE_SIZE} />
@@ -394,20 +644,29 @@ export function Table<Row>(props: TableProps<Row>) {
           <StyledTableCol key={column.key} inlineSize={column.inlineSize} />
         ))}
       </colgroup>
-    ) : null;
+    );
+  };
 
   const composeColumnCount =
     (separateCheckboxColumn ? 1 : 0) + (resolvedNumbered ? 1 : 0) + columns.length;
 
-  const renderComposeErrorRow = (): ReactNode => {
-    if (!hasComposeError && !composeReserveErrorSpace) {
+  const renderErrorRow = (variant: 'compose' | 'edit'): ReactNode => {
+    const isCompose = variant === 'compose';
+    const hasError = isCompose ? hasComposeError : hasEditError;
+    const reserveErrorSpace = isCompose
+      ? composeReserveErrorSpace
+      : editReserveErrorSpace;
+
+    if (!hasError && !reserveErrorSpace) {
       return null;
     }
 
-    const hintMessage = composeHint.trim();
-    const rowMessage = hasComposeError
-      ? composeErrorMessage
-      : composeReserveErrorSpace
+    const hintMessage = (isCompose ? composeHint : editHint).trim();
+    const rowMessage = hasError
+      ? isCompose
+        ? composeErrorMessage
+        : editErrorMessage
+      : reserveErrorSpace
         ? hintMessage
         : null;
 
@@ -415,18 +674,22 @@ export function Table<Row>(props: TableProps<Row>) {
       return null;
     }
 
+    const errorRowProps = isCompose
+      ? { 'data-compose-error': '' }
+      : { 'data-edit-error': '' };
+
     return (
-      <StyledTableRow data-compose-error sizePreset={sizePreset}>
+      <StyledTableRow {...errorRowProps} sizePreset={sizePreset}>
         <StyledTableComposeErrorCell
           colSpan={composeColumnCount}
           sizePreset={sizePreset}
         >
           <Text
             align="center"
-            aria-live={hasComposeError ? 'polite' : undefined}
-            color={hasComposeError ? theme.colors.danger : theme.colors.muted}
-            id={composeErrorId}
-            minBlockSize={composeReserveErrorSpace ? '1.25rem' : undefined}
+            aria-live={hasError ? 'polite' : undefined}
+            color={hasError ? theme.colors.danger : theme.colors.muted}
+            id={isCompose ? composeErrorId : editErrorId}
+            minBlockSize={reserveErrorSpace ? '1.25rem' : undefined}
             sizePreset="thin"
           >
             {rowMessage}
@@ -492,15 +755,60 @@ export function Table<Row>(props: TableProps<Row>) {
     columns.length,
   ]);
 
+  useLayoutEffect(() => {
+    if (!showEditPanel) {
+      return;
+    }
+
+    const anchor = editRowAnchorRef.current;
+    const panel = editPanelRef.current;
+
+    if (!anchor || !panel) {
+      return;
+    }
+
+    function applyEditPanelPosition(): void {
+      const anchorElement = editRowAnchorRef.current;
+      const panelElement = editPanelRef.current;
+
+      if (!anchorElement || !panelElement) {
+        return;
+      }
+
+      const rect = anchorElement.getBoundingClientRect();
+      const rowHeight = rect.height;
+      const errorRow = panelElement.querySelector('[data-edit-error]');
+      const errorRowHeight = errorRow instanceof HTMLElement ? errorRow.offsetHeight : 0;
+      const border = COMPOSE_PANEL_BORDER_WIDTH_PX;
+      const contentHeight = rowHeight + errorRowHeight;
+
+      panelElement.style.inlineSize = `${rect.width + border * 2}px`;
+      panelElement.style.insetInlineStart = `${rect.left - border}px`;
+      panelElement.style.insetBlockStart = `${rect.top - border}px`;
+      panelElement.style.blockSize = `${contentHeight + border * 2}px`;
+    }
+
+    applyEditPanelPosition();
+    window.addEventListener('resize', applyEditPanelPosition);
+
+    return () => {
+      window.removeEventListener('resize', applyEditPanelPosition);
+    };
+  }, [
+    editReserveErrorSpace,
+    editRowKey,
+    hasEditError,
+    showEditPanel,
+    rows.length,
+    columns.length,
+  ]);
+
   const dismissCompose = useCallback(() => {
     onComposeCancel?.();
   }, [onComposeCancel]);
 
   const isInsideComposeLayer = useCallback((target: Node): boolean => {
-    return (
-      (tableRootRef.current?.contains(target) ?? false) ||
-      (panelRef.current?.contains(target) ?? false)
-    );
+    return panelRef.current?.contains(target) ?? false;
   }, []);
 
   useAnchoredDismiss({
@@ -513,6 +821,26 @@ export function Table<Row>(props: TableProps<Row>) {
     active: showComposePanel,
     containerRef: panelRef,
     returnFocusRef: composeRowSource === 'foot' ? footAddButtonRef : headAddButtonRef,
+  });
+
+  const dismissEdit = useCallback(() => {
+    onEditCancel?.();
+  }, [onEditCancel]);
+
+  const isInsideEditLayer = useCallback((target: Node): boolean => {
+    return editPanelRef.current?.contains(target) ?? false;
+  }, []);
+
+  useAnchoredDismiss({
+    active: showEditPanel && onEditCancel !== undefined,
+    isInside: isInsideEditLayer,
+    onDismiss: dismissEdit,
+  });
+
+  useFocusTrap({
+    active: showEditPanel,
+    containerRef: editPanelRef,
+    returnFocusRef: editRowAnchorRef,
   });
 
   const composePanel =
@@ -531,35 +859,50 @@ export function Table<Row>(props: TableProps<Row>) {
           <tbody>
             {composeRowSource === 'head' ? (
               <>
-                <StyledTableRow sizePreset={sizePreset}>
-                  {renderHeaderCells(
-                    StyledTableComposeInnerHeadCell,
-                    true,
-                    'head',
-                    false
-                  )}
+                <StyledTableRow data-compose-header sizePreset={sizePreset}>
+                  {renderHeaderCells(true, 'head', false)}
                 </StyledTableRow>
                 <StyledTableRow data-compose-row sizePreset={sizePreset}>
                   {renderComposeCells()}
                 </StyledTableRow>
-                {renderComposeErrorRow()}
+                {renderErrorRow('compose')}
               </>
             ) : (
               <>
                 <StyledTableRow data-compose-row sizePreset={sizePreset}>
                   {renderComposeCells()}
                 </StyledTableRow>
-                {renderComposeErrorRow()}
+                {renderErrorRow('compose')}
                 <StyledTableRow data-compose-footer sizePreset={sizePreset}>
-                  {renderHeaderCells(
-                    StyledTableComposeInnerFootCell,
-                    false,
-                    'foot',
-                    false
-                  )}
+                  {renderHeaderCells(false, 'foot', false)}
                 </StyledTableRow>
               </>
             )}
+          </tbody>
+        </StyledTableComposeInnerTable>
+      </StyledTableComposePanel>,
+      document.body
+    );
+
+  const editPanel =
+    showEditPanel &&
+    editingRow !== undefined &&
+    createPortal(
+      <StyledTableComposePanel
+        ref={editPanelRef}
+        $hasError={hasEditError}
+        aria-label="Edit row"
+        aria-modal="true"
+        role="dialog"
+        sizePreset={sizePreset}
+      >
+        <StyledTableComposeInnerTable tableLayout={fixed ? 'fixed' : 'auto'}>
+          {renderColgroup()}
+          <tbody>
+            <StyledTableRow data-edit-row sizePreset={sizePreset}>
+              {renderEditCells(editingRow)}
+            </StyledTableRow>
+            {renderErrorRow('edit')}
           </tbody>
         </StyledTableComposeInnerTable>
       </StyledTableComposePanel>,
@@ -576,7 +919,7 @@ export function Table<Row>(props: TableProps<Row>) {
         {renderColgroup()}
         <StyledTableHead $composeHidden={hideHeadAnchor} ref={headAnchorRef}>
           <StyledTableRow sizePreset={sizePreset}>
-            {renderHeaderCells(StyledTableHeadCell, true, 'head', true)}
+            {renderHeaderCells(true, 'head', true)}
           </StyledTableRow>
         </StyledTableHead>
         <StyledTableBody
@@ -591,95 +934,47 @@ export function Table<Row>(props: TableProps<Row>) {
               (selectedKeys.size === 1 || !allRowsSelected) &&
               actionsColumnKey !== undefined &&
               props.renderSelectedRowActions;
+            const isEditAnchor = editRowActive && editRowKey === rowKey;
 
             return (
-              <StyledTableRow key={rowKey} sizePreset={sizePreset}>
-                {separateCheckboxColumn && (
-                  <StyledTableCell align="center" sizePreset={sizePreset}>
-                    <TableCheckbox
-                      ariaLabel={`Select row ${rowKey}`}
-                      checked={isSelected}
-                      onToggle={() => {
-                        toggleRowKey(rowKey);
-                      }}
-                    />
-                  </StyledTableCell>
-                )}
-                {resolvedNumbered && (
-                  <StyledTableCell align="end" sizePreset={sizePreset}>
-                    <Text sizePreset={textSizePreset}>{rowIndex + 1}</Text>
-                  </StyledTableCell>
-                )}
-                {columns.map((column) => {
-                  const cellContent = column.renderCell ? (
-                    column.renderCell(row, rowIndex, { textSizePreset })
-                  ) : (
-                    <Text sizePreset={textSizePreset}>
-                      {String(row[column.key] ?? '')}
-                    </Text>
-                  );
-                  const showRowCheckbox =
-                    checkable &&
-                    rowCheckboxColumnKey !== undefined &&
-                    column.key === rowCheckboxColumnKey;
-                  const showRowActionsInColumn =
-                    showRowActions && column.key === actionsColumnKey;
-
-                  const rowCheckbox = showRowCheckbox ? (
-                    <TableCheckbox
-                      ariaLabel={`Select row ${rowKey}`}
-                      checked={isSelected}
-                      onToggle={() => {
-                        toggleRowKey(rowKey);
-                      }}
-                    />
-                  ) : null;
-
-                  const bodyContent =
-                    (showRowActionsInColumn && (
-                      <StyledTableCellWithActions>
-                        {cellContent}
-                        {props.renderSelectedRowActions?.(row)}
-                      </StyledTableCellWithActions>
-                    )) ||
-                    cellContent;
-
-                  return (
-                    <StyledTableCell
-                      key={column.key}
-                      align={column.align}
-                      ellipsis={column.ellipsis && !showRowActionsInColumn}
-                      sizePreset={sizePreset}
-                    >
-                      {(showRowCheckbox && showRowActionsInColumn && (
-                        <StyledTableCheckableCell>
-                          {rowCheckbox}
-                          {bodyContent}
-                        </StyledTableCheckableCell>
-                      )) ||
-                        (showRowCheckbox && (
-                          <StyledTableRowLeading>
-                            {rowCheckbox}
-                            {bodyContent}
-                          </StyledTableRowLeading>
-                        )) ||
-                        bodyContent}
-                    </StyledTableCell>
-                  );
-                })}
-              </StyledTableRow>
+              <TableBodyRow
+                key={rowKey}
+                actionsColumnKey={actionsColumnKey}
+                anchorRef={editRowAnchorRef}
+                checkable={checkable}
+                columns={columns}
+                editRowActive={editRowActive}
+                isEditAnchor={isEditAnchor}
+                isSelected={isSelected}
+                onEditRow={onEditRow}
+                renderSelectedRowActions={
+                  checkable ? props.renderSelectedRowActions : undefined
+                }
+                resolvedNumbered={resolvedNumbered}
+                row={row}
+                rowCheckboxColumnKey={rowCheckboxColumnKey}
+                rowIndex={rowIndex}
+                rowKey={rowKey}
+                rowSelectable={isRowSelectable(row)}
+                separateCheckboxColumn={separateCheckboxColumn}
+                showRowActions={Boolean(showRowActions)}
+                sizePreset={sizePreset}
+                textSizePreset={textSizePreset}
+                toggleRowKey={toggleRowKey}
+              />
             );
           })}
         </StyledTableBody>
         {checkable && (
           <StyledTableFoot $composeHidden={hideFootAnchor} ref={footAnchorRef}>
             <StyledTableRow sizePreset={sizePreset}>
-              {renderHeaderCells(StyledTableFootHeadCell, false, 'foot', true)}
+              {renderHeaderCells(false, 'foot', true)}
             </StyledTableRow>
           </StyledTableFoot>
         )}
       </StyledTable>
       {composePanel}
+      {editPanel}
     </>
   );
 
@@ -698,7 +993,9 @@ export function Table<Row>(props: TableProps<Row>) {
   );
 }
 
-export type { TableAlign, TableSizePreset, TableStyleProps } from './table.styles';
+export { TableCell } from './table-cell';
+export type { TableCellAlign, TableCellStyleProps } from './table-cell';
+export type { TableSizePreset, TableStyleProps } from './table.styles';
 export {
   DEFAULT_TABLE_BORDERED,
   DEFAULT_TABLE_HOVER_HIGHLIGHT,

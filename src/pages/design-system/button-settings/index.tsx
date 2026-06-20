@@ -3,13 +3,12 @@ import { type ChangeEvent } from 'react';
 import {
   BUTTON_COLORED_TONES,
   type ButtonIconPosition,
-  type ButtonShape,
-  type ButtonSizePreset,
   type ButtonTone,
 } from '@ui/button';
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
+import { type ShapePreset, type SizePreset } from '@ui/presets';
 
 import { StyledSettingsForm } from '../design-system.styles';
 
@@ -20,8 +19,8 @@ export type ButtonWidgetState = {
   iconPosition: ButtonIconPosition;
   iconTone: ButtonTone;
   textColor: ButtonTone;
-  shape: ButtonShape;
-  sizePreset: ButtonSizePreset;
+  shape: ShapePreset;
+  sizePreset: SizePreset;
   text: string;
   tone: ButtonTone;
   withIcon: boolean;
@@ -84,7 +83,7 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
         options={SIZE_OPTIONS}
         reserveErrorSpace={false}
         value={state.sizePreset}
-        onChange={(value) => onChange('sizePreset', value as ButtonSizePreset)}
+        onChange={(value) => onChange('sizePreset', value as SizePreset)}
       />
 
       <Listbox
@@ -92,7 +91,7 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
         options={SHAPE_OPTIONS}
         reserveErrorSpace={false}
         value={state.shape}
-        onChange={(value) => onChange('shape', value as ButtonShape)}
+        onChange={(value) => onChange('shape', value as ShapePreset)}
       />
 
       <Listbox

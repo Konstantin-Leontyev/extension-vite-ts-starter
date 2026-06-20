@@ -1,20 +1,23 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { SPACING_REM, spacingRem, type SpacingPx } from '@ui/spacing';
+import { spacingRem, type SpacingPx } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 /** Единый дефолт inline-end gutter: должен совпадать у корня (margin/вуаль) и вьюпорта (padding). */
 const DEFAULT_PADDING_INLINE_END: SpacingPx = 16;
+
+/** Высота вуали-градиента; дефолт inset контента = ей, чтобы контент не прятался под вуаль. */
+const VEIL_BLOCK_SIZE: SpacingPx = 32;
 
 /** Смещение inline-end трека: уводит скроллбар в правый паддинг карточки. */
 function scrollPortTrackMarginInlineEnd(
   paddingInlineEnd: SpacingPx = DEFAULT_PADDING_INLINE_END
 ): string {
   const gutter = spacingRem(paddingInlineEnd);
-  const halfXs = spacingRem(8);
+  const scrollbarWidth = spacingRem(8);
 
-  return `calc(-1 * (${gutter} - ${halfXs} / 2))`;
+  return `calc(-1 * (${gutter} - ${scrollbarWidth} / 2))`;
 }
 
 export type ScrollPortStyleProps = LayoutProps & {
@@ -60,8 +63,8 @@ function getScrollPortRootStyles(
 
   const rules = [
     'position: relative;',
-    'display: flex;',
-    'flex-direction: column;',
+    'display: grid;',
+    'grid-template-rows: minmax(0, 1fr);',
     'block-size: 100%;',
     'min-block-size: 0;',
     'min-inline-size: 0;',
@@ -70,7 +73,7 @@ function getScrollPortRootStyles(
   ];
 
   if (veil === true) {
-    const veilBlockSize = spacingRem(32);
+    const veilBlockSize = spacingRem(VEIL_BLOCK_SIZE);
     const veilInsetInline = `calc(${spacingRem(4)} * -1) calc(${gutter} - ${spacingRem(4)})`;
 
     rules.push(`
@@ -102,8 +105,8 @@ function getScrollPortRootStyles(
 function getScrollPortViewportStyles(props: ScrollPortStyleProps): string {
   const {
     paddingInlineEnd = DEFAULT_PADDING_INLINE_END,
-    scrollbarInsetBlockEnd = 32,
-    scrollbarInsetBlockStart = 32,
+    scrollbarInsetBlockEnd = VEIL_BLOCK_SIZE,
+    scrollbarInsetBlockStart = VEIL_BLOCK_SIZE,
   } = props;
 
   return [
@@ -126,10 +129,9 @@ export const StyledScrollPort = styled.div.withConfig({
 `;
 
 export const StyledScrollPortContainer = styled.div`
-  flex: 1 1 auto;
   min-block-size: 0;
   min-inline-size: 0;
-  padding-block: ${SPACING_REM[4]};
+  padding-block: ${spacingRem(4)};
 `;
 
 export const StyledScrollPortViewport = styled.div.withConfig({

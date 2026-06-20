@@ -2,50 +2,27 @@ import { type CSSProperties } from 'react';
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { SPACING_REM, spacingRem, type SpacingPx } from '@ui/spacing';
-import { textSizePresets, type TextSizePreset } from '@ui/text';
+import {
+  DEFAULT_SHAPE_PRESET,
+  DEFAULT_SIZE_PRESET,
+  blockSizeRem,
+  controlPaddingInline,
+  controlTextSizePreset,
+  radiusPreset,
+  type ShapePreset,
+  type SizePreset,
+} from '@ui/presets';
+import { spacingRem } from '@ui/spacing';
+import { textSizePresets } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
 
-export type InputShape = 'default' | 'round';
-
-/** Пресеты размера поля: габариты, отступы и размер текста контрола. */
-export const inputSizePresets = {
-  small: {
-    blockSize: 32,
-    controlSizePreset: 'medium',
-    paddingInline: 12,
-  },
-  medium: {
-    blockSize: 40,
-    controlSizePreset: 'normal',
-    paddingInline: 12,
-  },
-  large: {
-    blockSize: 48,
-    controlSizePreset: 'normal',
-    paddingInline: 16,
-  },
-} as const satisfies Record<
-  string,
-  {
-    blockSize: SpacingPx;
-    controlSizePreset: TextSizePreset;
-    paddingInline: SpacingPx;
-  }
->;
-
-export type InputSizePreset = keyof typeof inputSizePresets;
-
-const DEFAULT_SHAPE: InputShape = 'default';
-const DEFAULT_SIZE_PRESET: InputSizePreset = 'large';
-
 /** Оси вида контрола (без layout — он на корне-grid). */
 export type InputControlStyleProps = {
   align?: CSSProperties['textAlign'];
-  shape?: InputShape;
-  sizePreset?: InputSizePreset;
+  shape?: ShapePreset;
+  sizePreset?: SizePreset;
 };
 
 /** Публичные пропы поля: layout — на корень, оси вида — на контрол. */
@@ -58,16 +35,14 @@ export function getInputControlStyles(
   props: InputControlStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { align, shape = DEFAULT_SHAPE, sizePreset = DEFAULT_SIZE_PRESET } = props;
-  const preset = inputSizePresets[sizePreset];
-  const radius = shape === 'round' ? '9999px' : SPACING_REM[8];
+  const { align, shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
 
   const rules = [
-    `min-block-size: ${spacingRem(preset.blockSize)};`,
-    `padding-inline: ${spacingRem(preset.paddingInline)};`,
-    `font-size: ${textSizePresets[preset.controlSizePreset].fontSize};`,
+    `min-block-size: ${blockSizeRem(sizePreset)};`,
+    `padding-inline: ${spacingRem(controlPaddingInline[sizePreset])};`,
+    `font-size: ${textSizePresets[controlTextSizePreset[sizePreset]].fontSize};`,
     `border: 1px solid ${theme.colors.border};`,
-    `border-radius: ${radius};`,
+    `border-radius: ${radiusPreset(shape, sizePreset)};`,
     `background-color: ${theme.colors.surface};`,
     `box-shadow: ${theme.shadow.surface};`,
     `&::placeholder { color: ${theme.colors.muted}; }`,
@@ -84,7 +59,7 @@ export const StyledInputRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
   display: grid;
-  gap: ${SPACING_REM[8]};
+  gap: ${spacingRem(8)};
   inline-size: 100%;
   min-inline-size: 0;
   ${(props) => getLayoutStyles(props)}

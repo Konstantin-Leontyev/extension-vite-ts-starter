@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { SPACING_REM } from '@ui/spacing';
+import { spacingRem } from '@ui/spacing';
 
 export const StyledMain = styled.main`
   display: grid;
@@ -13,7 +13,7 @@ export const StyledMain = styled.main`
 export const StyledDesignSystemWidgets = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(16.75rem, 1fr));
-  gap: ${SPACING_REM[8]};
+  gap: ${spacingRem(8)};
   align-items: start;
 
   > * {
@@ -24,12 +24,12 @@ export const StyledDesignSystemWidgets = styled.div`
 /** Форма настроек виджета в сайдбаре: колонка полей. */
 export const StyledSettingsForm = styled.form`
   display: grid;
-  gap: ${SPACING_REM[16]};
+  gap: ${spacingRem(16)};
 `;
 
 /** Демо двух radio в виджете: вертикальный стек по центру ячейки. */
 export const StyledRadioButtonDemo = styled.div`
   display: grid;
-  gap: ${SPACING_REM[8]};
+  gap: ${spacingRem(8)};
   place-content: center;
 `;

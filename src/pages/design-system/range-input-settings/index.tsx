@@ -1,16 +1,10 @@
 import { type CSSProperties, type ChangeEvent } from 'react';
 
-import {
-  BUTTON_COLORED_TONES,
-  type ButtonShape,
-  type ButtonSizePreset,
-  type ButtonTone,
-} from '@ui/button';
+import { BUTTON_COLORED_TONES, type ButtonTone } from '@ui/button';
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
-import { type InputShape, type InputSizePreset } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import { type ListboxShape, type ListboxSizePreset } from '@ui/listbox';
+import { type ShapePreset, type SizePreset } from '@ui/presets';
 import {
   type RangeValue,
   type ResolvedRangeInputValidationMessages,
@@ -20,19 +14,19 @@ import { textSizePresets, type TextSizePreset } from '@ui/text';
 import { StyledSettingsForm } from '../design-system.styles';
 
 export type RangeInputWidgetState = {
-  buttonShape: ButtonShape;
-  buttonSizePreset: ButtonSizePreset;
+  buttonShape: ShapePreset;
+  buttonSizePreset: SizePreset;
   buttonText: string;
   buttonTextColor: ButtonTone;
   buttonTone: ButtonTone;
   disabled: boolean;
   fromPlaceholder: string;
-  inputShape: InputShape;
-  inputSizePreset: InputSizePreset;
+  inputShape: ShapePreset;
+  inputSizePreset: SizePreset;
   label: string;
   placeholder: string;
-  shape: ListboxShape;
-  sizePreset: ListboxSizePreset;
+  shape: ShapePreset;
+  sizePreset: SizePreset;
   title: string;
   titleAlign: CSSProperties['textAlign'];
   titleSizePreset: TextSizePreset;
@@ -107,7 +101,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         options={SIZE_OPTIONS}
         reserveErrorSpace={false}
         value={state.sizePreset}
-        onChange={(value) => onChange('sizePreset', value as ListboxSizePreset)}
+        onChange={(value) => onChange('sizePreset', value as SizePreset)}
       />
 
       <Listbox
@@ -115,7 +109,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         options={SHAPE_OPTIONS}
         reserveErrorSpace={false}
         value={state.shape}
-        onChange={(value) => onChange('shape', value as ListboxShape)}
+        onChange={(value) => onChange('shape', value as ShapePreset)}
       />
 
       <Input
@@ -175,7 +169,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         options={SIZE_OPTIONS}
         reserveErrorSpace={false}
         value={state.inputSizePreset}
-        onChange={(value) => onChange('inputSizePreset', value as InputSizePreset)}
+        onChange={(value) => onChange('inputSizePreset', value as SizePreset)}
       />
 
       <Listbox
@@ -183,7 +177,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         options={SHAPE_OPTIONS}
         reserveErrorSpace={false}
         value={state.inputShape}
-        onChange={(value) => onChange('inputShape', value as InputShape)}
+        onChange={(value) => onChange('inputShape', value as ShapePreset)}
       />
 
       <Listbox
@@ -191,7 +185,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         options={SIZE_OPTIONS}
         reserveErrorSpace={false}
         value={state.buttonSizePreset}
-        onChange={(value) => onChange('buttonSizePreset', value as ButtonSizePreset)}
+        onChange={(value) => onChange('buttonSizePreset', value as SizePreset)}
       />
 
       <Listbox
@@ -199,7 +193,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         options={SHAPE_OPTIONS}
         reserveErrorSpace={false}
         value={state.buttonShape}
-        onChange={(value) => onChange('buttonShape', value as ButtonShape)}
+        onChange={(value) => onChange('buttonShape', value as ShapePreset)}
       />
 
       <Listbox

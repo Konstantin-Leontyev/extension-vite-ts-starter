@@ -3,7 +3,7 @@ import { type ChangeEvent } from 'react';
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import { type ListboxShape, type ListboxSizePreset } from '@ui/listbox';
+import { type ShapePreset, type SizePreset } from '@ui/presets';
 
 import { StyledSettingsForm } from '../design-system.styles';
 import { LISTBOX_DEMO_OPTIONS } from './options';
@@ -13,8 +13,8 @@ export type ListboxWidgetState = {
   inlineCheckbox: boolean;
   label: string;
   multiple: boolean;
-  shape: ListboxShape;
-  sizePreset: ListboxSizePreset;
+  shape: ShapePreset;
+  sizePreset: SizePreset;
   value: string | string[];
 };
 
@@ -54,7 +54,7 @@ export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
         options={SIZE_OPTIONS}
         reserveErrorSpace={false}
         value={state.sizePreset}
-        onChange={(value) => onChange('sizePreset', value as ListboxSizePreset)}
+        onChange={(value) => onChange('sizePreset', value as SizePreset)}
       />
 
       <Listbox
@@ -62,7 +62,7 @@ export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
         options={SHAPE_OPTIONS}
         reserveErrorSpace={false}
         value={state.shape}
-        onChange={(value) => onChange('shape', value as ListboxShape)}
+        onChange={(value) => onChange('shape', value as ShapePreset)}
       />
 
       <Listbox

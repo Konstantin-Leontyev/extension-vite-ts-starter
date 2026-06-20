@@ -1,49 +1,25 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { SPACING_REM, spacingRem, type SpacingPx } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
+import {
+  DEFAULT_SIZE_PRESET,
+  blockSizeRem,
+  controlPaddingInline,
+  type SizePreset,
+} from '@ui/presets';
+import { spacingRem } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
 
-export type TableAlign = 'center' | 'end' | 'start';
-
-/** Пресеты размера: высота строки, размер текста ячейки, горизонтальный отступ ячейки. */
-export const tableSizePresets = {
-  small: {
-    blockSize: 32,
-    cellPaddingInline: 8,
-    textSizePreset: 'thin',
-  },
-  normal: {
-    blockSize: 40,
-    cellPaddingInline: 12,
-    textSizePreset: 'normal',
-  },
-  large: {
-    blockSize: 48,
-    cellPaddingInline: 12,
-    textSizePreset: 'normal',
-  },
-} as const satisfies Record<
-  string,
-  {
-    blockSize: SpacingPx;
-    cellPaddingInline: SpacingPx;
-    textSizePreset: TextSizePreset;
-  }
->;
-
-export type TableSizePreset = keyof typeof tableSizePresets;
+/** Размерный ряд таблицы — канон контролов проекта. */
+export type TableSizePreset = SizePreset;
 
 export const DEFAULT_TABLE_SIZE_PRESET: TableSizePreset = 'large';
 export const DEFAULT_TABLE_BORDERED = true;
 export const DEFAULT_TABLE_HOVER_HIGHLIGHT = false;
 export const DEFAULT_TABLE_STRIPED = false;
 export const DEFAULT_TABLE_NUMBERED = true;
-
-const DEFAULT_SIZE_PRESET = DEFAULT_TABLE_SIZE_PRESET;
 
 const TABLE_BODY_PROP_NAMES = new Set<string>(['$hoverHighlight', '$striped']);
 
@@ -62,13 +38,6 @@ function tableRowHoverFill(theme: AppTheme): string {
   return `color-mix(in srgb, ${theme.colors.primary} 6%, ${theme.colors.surface})`;
 }
 
-/** Оси вида ячейки: размер (высота/текст/отступ), выравнивание, обрезание. */
-type TableCellAxisProps = {
-  align?: TableAlign;
-  ellipsis?: boolean;
-  sizePreset?: TableSizePreset;
-};
-
 /** Публичные пропы примитива: layout — на корень, размер — на строки/ячейки. */
 export type TableStyleProps = LayoutProps & {
   /** Рамка + surface-фон вокруг таблицы; на main page false (таблица лежит в Card). */
@@ -79,27 +48,6 @@ export type TableStyleProps = LayoutProps & {
   /** Чередование фона чётных строк тела таблицы. */
   striped?: boolean;
 };
-
-const TABLE_CELL_PROP_NAMES = new Set<string>(['align', 'ellipsis', 'sizePreset']);
-const shouldForwardCellProp = (prop: string): boolean =>
-  !TABLE_CELL_PROP_NAMES.has(prop);
-
-/** Размер текста ячейки для оси sizePreset — дефолт живёт здесь. */
-export function tableTextSizePreset(
-  sizePreset: TableSizePreset = DEFAULT_SIZE_PRESET
-): TextSizePreset {
-  return tableSizePresets[sizePreset].textSizePreset;
-}
-
-function rowBlockSizeRem(sizePreset: TableSizePreset = DEFAULT_SIZE_PRESET): string {
-  return spacingRem(tableSizePresets[sizePreset].blockSize);
-}
-
-function cellPaddingInlineRem(
-  sizePreset: TableSizePreset = DEFAULT_SIZE_PRESET
-): string {
-  return spacingRem(tableSizePresets[sizePreset].cellPaddingInline);
-}
 
 /**
  * Опциональная рамка вокруг таблицы (bordered): своё у неё — border/radius/surface.
@@ -116,14 +64,14 @@ export const StyledTableFrame = styled.div.withConfig({
   overflow: hidden;
   background-color: ${(props) => getTheme(props).colors.surface};
   border: 1px solid ${(props) => getTheme(props).colors.border};
-  border-radius: ${SPACING_REM[12]};
+  border-radius: ${spacingRem(12)};
   ${(props) => getLayoutStyles(props)}
 `;
 
 /** Скругление без рамки (таблица в Card): обрезка фона шапки по углам. */
 export const StyledTableClip = styled.div`
   overflow: hidden;
-  border-radius: ${SPACING_REM[12]};
+  border-radius: ${spacingRem(12)};
   min-inline-size: 0;
 `;
 
@@ -140,41 +88,50 @@ export const StyledTable = styled.table.withConfig({
 export const StyledTableCol = styled.col.withConfig({
   shouldForwardProp: (prop) => prop !== 'inlineSize',
 })<{ inlineSize?: string }>`
-  ${(props) => (props.inlineSize ? `inline-size: ${props.inlineSize};` : '')}
+  ${(props) =>
+    props.inlineSize
+      ? `
+          inline-size: ${props.inlineSize};
+          width: ${props.inlineSize};
+        `
+      : ''}
 `;
 
+/** Шапка: фон-контраст и нижняя граница — на уровне секции, не на каждой ячейке. */
 export const StyledTableHead = styled.thead.withConfig({
   shouldForwardProp: (prop) => prop !== '$composeHidden',
 })<{ $composeHidden?: boolean }>`
-  ${(props) =>
-    props.$composeHidden
-      ? css`
-          visibility: hidden;
-        `
-      : ''}
+  & th {
+    background-color: ${(props) => tableHeadFill(getTheme(props))};
+    border-block-end: 2px solid ${(props) => getTheme(props).colors.border};
+  }
+  ${(props) => (props.$composeHidden ? 'visibility: hidden;' : '')}
 `;
 
+/** Футер — дубль шапки внизу: тот же фон, верхняя граница. */
 export const StyledTableFoot = styled.tfoot.withConfig({
   shouldForwardProp: (prop) => prop !== '$composeHidden',
 })<{ $composeHidden?: boolean }>`
-  ${(props) =>
-    props.$composeHidden
-      ? css`
-          visibility: hidden;
-        `
-      : ''}
+  & td {
+    background-color: ${(props) => tableHeadFill(getTheme(props))};
+    border-block-start: 2px solid ${(props) => getTheme(props).colors.border};
+  }
+  ${(props) => (props.$composeHidden ? 'visibility: hidden;' : '')}
 `;
 
+/** Тело: разделители строк, striped и hover — на уровне секции. */
 export const StyledTableBody = styled.tbody.withConfig({
   shouldForwardProp: (prop) => !TABLE_BODY_PROP_NAMES.has(prop),
 })<{ $hoverHighlight?: boolean; $striped?: boolean }>`
   ${(props) => {
     const theme = getTheme(props);
-    const rules: string[] = [];
-    const striped = props.$striped ?? DEFAULT_TABLE_STRIPED;
-    const hoverHighlight = props.$hoverHighlight ?? DEFAULT_TABLE_HOVER_HIGHLIGHT;
+    const rules: string[] = [
+      `& td {
+        border-block-end: 1px solid ${theme.colors.border};
+      }`,
+    ];
 
-    if (striped) {
+    if (props.$striped ?? DEFAULT_TABLE_STRIPED) {
       rules.push(
         `& tr:nth-child(even) {
           background-color: ${tableStripeFill(theme)};
@@ -182,7 +139,7 @@ export const StyledTableBody = styled.tbody.withConfig({
       );
     }
 
-    if (hoverHighlight) {
+    if (props.$hoverHighlight ?? DEFAULT_TABLE_HOVER_HIGHLIGHT) {
       rules.push(
         `& tr:hover {
           background-color: ${tableRowHoverFill(theme)};
@@ -198,47 +155,13 @@ export const StyledTableBody = styled.tbody.withConfig({
   }}
 `;
 
+const TABLE_ROW_PROP_NAMES = new Set<string>(['$editHidden', 'sizePreset']);
+
 export const StyledTableRow = styled.tr.withConfig({
-  shouldForwardProp: shouldForwardCellProp,
-})<{ sizePreset?: TableSizePreset }>`
-  block-size: ${(props) => rowBlockSizeRem(props.sizePreset)};
-`;
-
-const cellBase = css<TableCellAxisProps>`
-  padding-inline: ${(props) => cellPaddingInlineRem(props.sizePreset)};
-  text-align: ${(props) => props.align ?? 'start'};
-  vertical-align: middle;
-  ${(props) =>
-    props.ellipsis === true
-      ? css`
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        `
-      : css`
-          overflow-wrap: break-word;
-        `}
-`;
-
-export const StyledTableHeadCell = styled.th.withConfig({
-  shouldForwardProp: shouldForwardCellProp,
-})<TableCellAxisProps>`
-  ${cellBase}
-  background-color: ${(props) => tableHeadFill(getTheme(props))};
-  border-block-end: 2px solid ${(props) => getTheme(props).colors.border};
-`;
-
-export const StyledTableCell = styled.td.withConfig({
-  shouldForwardProp: shouldForwardCellProp,
-})<TableCellAxisProps>`
-  ${cellBase}
-  border-block-end: 1px solid ${(props) => getTheme(props).colors.border};
-`;
-
-/** Дубль шапки внизу таблицы (после последней строки). */
-export const StyledTableFootHeadCell = styled(StyledTableCell)`
-  background-color: ${(props) => tableHeadFill(getTheme(props))};
-  border-block-start: 2px solid ${(props) => getTheme(props).colors.border};
+  shouldForwardProp: (prop) => !TABLE_ROW_PROP_NAMES.has(prop),
+})<{ $editHidden?: boolean; sizePreset?: TableSizePreset }>`
+  block-size: ${(props) => blockSizeRem(props.sizePreset ?? DEFAULT_SIZE_PRESET)};
+  ${(props) => (props.$editHidden ? 'visibility: hidden;' : '')}
 `;
 
 /** Толщина border compose-панели; при border-box компенсируется в позиционировании. */
@@ -253,7 +176,7 @@ export const StyledTableComposePanel = styled.div.withConfig({
   overflow: hidden;
   background-color: ${(props) => getTheme(props).colors.surface};
   border: 1px solid ${(props) => getTheme(props).colors.border};
-  border-radius: ${SPACING_REM[12]};
+  border-radius: ${spacingRem(12)};
   box-shadow: ${(props) => getTheme(props).shadow.surface};
   outline: 2px solid
     ${(props) =>
@@ -263,42 +186,39 @@ export const StyledTableComposePanel = styled.div.withConfig({
   outline-offset: 2px;
 `;
 
-/** Внутренняя таблица панели — без собственной рамки, совпадает с колонками. */
+/**
+ * Внутренняя таблица панели — без собственной рамки, совпадает с колонками.
+ * Фон/границы шапки и футера панели — по data-маркерам строк (секций в портале нет).
+ */
 export const StyledTableComposeInnerTable = styled.table.withConfig({
   shouldForwardProp: (prop) => prop !== 'tableLayout',
 })<{ tableLayout?: 'auto' | 'fixed' }>`
   inline-size: 100%;
   table-layout: ${(props) => props.tableLayout ?? 'fixed'};
   border-collapse: collapse;
+  ${(props) => {
+    const theme = getTheme(props);
+
+    return [
+      `& [data-compose-header] th {
+        background-color: ${tableHeadFill(theme)};
+        border-block-end: 2px solid ${theme.colors.border};
+      }`,
+      `& [data-compose-footer] td {
+        background-color: ${tableHeadFill(theme)};
+        border-block-start: 2px solid ${theme.colors.border};
+      }`,
+    ].join('\n');
+  }}
 `;
 
-export const StyledTableComposeInnerHeadCell = styled.th.withConfig({
-  shouldForwardProp: shouldForwardCellProp,
-})<TableCellAxisProps>`
-  ${cellBase}
-  background-color: ${(props) => tableHeadFill(getTheme(props))};
-  border-block-end: 2px solid ${(props) => getTheme(props).colors.border};
-`;
-
-export const StyledTableComposeInnerCell = styled.td.withConfig({
-  shouldForwardProp: shouldForwardCellProp,
-})<TableCellAxisProps>`
-  ${cellBase}
-  border-block-end: none;
-`;
-
-/** Нижняя строка панели compose при якоре foot. */
-export const StyledTableComposeInnerFootCell = styled(StyledTableComposeInnerCell)`
-  background-color: ${(props) => tableHeadFill(getTheme(props))};
-  border-block-start: 2px solid ${(props) => getTheme(props).colors.border};
-`;
-
-/** Общая строка ошибки под полями compose-панели. */
+/** Общая строка ошибки под полями compose/edit-панели. */
 export const StyledTableComposeErrorCell = styled.td.withConfig({
-  shouldForwardProp: shouldForwardCellProp,
-})<TableCellAxisProps>`
-  padding-block: ${SPACING_REM[8]};
-  padding-inline: ${(props) => cellPaddingInlineRem(props.sizePreset)};
+  shouldForwardProp: (prop) => prop !== 'sizePreset',
+})<{ sizePreset?: TableSizePreset }>`
+  padding-block: ${spacingRem(8)};
+  padding-inline: ${(props) =>
+    spacingRem(controlPaddingInline[props.sizePreset ?? DEFAULT_SIZE_PRESET])};
   text-align: center;
   vertical-align: middle;
   border-block-end: none;
@@ -319,7 +239,7 @@ export const StyledTableHeaderAddButton = styled.button`
   padding: 0;
   margin: 0;
   border: 1px solid ${(props) => getTheme(props).colors.border};
-  border-radius: ${SPACING_REM[4]};
+  border-radius: ${spacingRem(4)};
   box-shadow: ${(props) => getTheme(props).shadow.surface};
   background-color: ${(props) => getTheme(props).colors.surface};
   background-image: ${(props) =>
@@ -350,7 +270,7 @@ export const StyledTableHeaderMarkSpacer = styled.span`
 export const StyledTableHeaderKeywordBar = styled.span`
   display: flex;
   align-items: center;
-  gap: ${SPACING_REM[12]};
+  gap: ${spacingRem(12)};
   inline-size: 100%;
   min-inline-size: 0;
 
@@ -365,36 +285,11 @@ export const StyledTableHeaderKeywordBar = styled.span`
   }
 `;
 
-/** Чекбокс строки + содержимое ячейки в одной линии. */
-export const StyledTableRowLeading = styled.span`
-  display: inline-flex;
-  gap: ${SPACING_REM[8]};
-  align-items: center;
-  min-inline-size: 0;
-`;
-
-/**
- * Keyword-ячейка с чекбоксом: чекбокс слева, блок текста+действия на всю оставшуюся ширину
- * (Delete прижимается к правому краю строки через StyledTableCellWithActions).
- */
-export const StyledTableCheckableCell = styled.span`
-  display: flex;
-  align-items: center;
-  gap: ${SPACING_REM[8]};
-  inline-size: 100%;
-  min-inline-size: 0;
-
-  & > :nth-child(2) {
-    flex: 1 1 auto;
-    min-inline-size: 0;
-  }
-`;
-
 /** Содержимое ячейки + действие выбранной строки справа от текста. */
-export const StyledTableCellWithActions = styled.span`
+export const StyledTableCellTrailing = styled.span`
   display: flex;
   align-items: center;
-  gap: ${SPACING_REM[12]};
+  gap: ${spacingRem(12)};
   inline-size: 100%;
   min-inline-size: 0;
 

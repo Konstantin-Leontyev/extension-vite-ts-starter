@@ -54,16 +54,12 @@ export function Modal({
     }
   }, [open]);
 
-  function handleClose(): void {
-    onClose();
-  }
-
   return (
-    <StyledModalDialog ref={dialogRef} onClose={handleClose}>
+    <StyledModalDialog ref={dialogRef} onClose={onClose}>
       <Card
         icon={<CloseIcon />}
         iconAriaLabel={closeAriaLabel}
-        onIconClick={handleClose}
+        onIconClick={onClose}
         {...cardProps}
       >
         {children}

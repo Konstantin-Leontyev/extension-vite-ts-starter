@@ -2,30 +2,28 @@ import styled, { css } from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
-  listboxSizePresets,
-  type ListboxShape,
-  type ListboxSizePreset,
-} from '@ui/listbox';
-import { SPACING_REM, spacingRem } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
+  DEFAULT_SHAPE_PRESET,
+  DEFAULT_SIZE_PRESET,
+  blockSizeRem,
+  controlIconSize,
+  radiusPreset,
+  type ShapePreset,
+  type SizePreset,
+} from '@ui/presets';
+import { spacingRem } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
 
-export type { ListboxShape, ListboxSizePreset };
-
-export const DEFAULT_RANGE_INPUT_SIZE_PRESET: ListboxSizePreset = 'large';
-export const DEFAULT_RANGE_INPUT_SHAPE: ListboxShape = 'default';
-
-const DEFAULT_SIZE_PRESET = DEFAULT_RANGE_INPUT_SIZE_PRESET;
-const DEFAULT_SHAPE = DEFAULT_RANGE_INPUT_SHAPE;
+export const DEFAULT_RANGE_INPUT_SIZE_PRESET: SizePreset = DEFAULT_SIZE_PRESET;
+export const DEFAULT_RANGE_INPUT_SHAPE: ShapePreset = DEFAULT_SHAPE_PRESET;
 
 const RANGE_INPUT_AXIS_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
 
 /** Оси вида range-input: общие для триггера и панели. */
 export type RangeInputAxisProps = {
-  shape?: ListboxShape;
-  sizePreset?: ListboxSizePreset;
+  shape?: ShapePreset;
+  sizePreset?: SizePreset;
 };
 
 export type RangeInputStyleProps = LayoutProps & RangeInputAxisProps;
@@ -33,21 +31,12 @@ export type RangeInputStyleProps = LayoutProps & RangeInputAxisProps;
 const shouldForwardAxis = (prop: string): boolean =>
   !RANGE_INPUT_AXIS_PROP_NAMES.has(prop);
 
-function blockSizeRem(sizePreset: ListboxSizePreset): string {
-  return spacingRem(listboxSizePresets[sizePreset].blockSize);
-}
-
-function controlRadius(props: RangeInputAxisProps): string {
-  const { shape = DEFAULT_SHAPE, sizePreset = DEFAULT_SIZE_PRESET } = props;
-
-  return shape === 'round' ? `calc(${blockSizeRem(sizePreset)} / 2)` : SPACING_REM[8];
-}
-
-/** Размер текста триггера/пресета для оси sizePreset. */
-export function rangeInputTextSizePreset(
-  sizePreset: ListboxSizePreset = DEFAULT_SIZE_PRESET
-): TextSizePreset {
-  return listboxSizePresets[sizePreset].textSizePreset;
+/** Радиус контрола из текущих осей вида. */
+function rangeInputRadius(props: RangeInputAxisProps): string {
+  return radiusPreset(
+    props.shape ?? DEFAULT_SHAPE_PRESET,
+    props.sizePreset ?? DEFAULT_SIZE_PRESET
+  );
 }
 
 export const StyledRangeInputRoot = styled.div.withConfig({
@@ -55,7 +44,7 @@ export const StyledRangeInputRoot = styled.div.withConfig({
 })<LayoutProps>`
   position: relative;
   display: grid;
-  gap: ${SPACING_REM[8]};
+  gap: ${spacingRem(8)};
   inline-size: 100%;
   min-inline-size: 0;
   ${(props) => getLayoutStyles(props)}
@@ -76,7 +65,7 @@ export const StyledRangeInputTriggerRow = styled.div.withConfig({
   min-block-size: ${(props) => blockSizeRem(props.sizePreset ?? DEFAULT_SIZE_PRESET)};
   background-color: ${(props) => getTheme(props).colors.surface};
   border: 1px solid ${(props) => getTheme(props).colors.border};
-  border-radius: ${(props) => controlRadius(props)};
+  border-radius: ${(props) => rangeInputRadius(props)};
   box-shadow: ${(props) => getTheme(props).shadow.surface};
 
   &[data-active='true'],
@@ -125,9 +114,9 @@ export const StyledRangeInputChevron = styled.span.withConfig({
 })<RangeInputAxisProps>`
   display: block;
   inline-size: ${(props) =>
-    spacingRem(listboxSizePresets[props.sizePreset ?? DEFAULT_SIZE_PRESET].chevronSize)};
+    spacingRem(controlIconSize[props.sizePreset ?? DEFAULT_SIZE_PRESET])};
   block-size: ${(props) =>
-    spacingRem(listboxSizePresets[props.sizePreset ?? DEFAULT_SIZE_PRESET].chevronSize)};
+    spacingRem(controlIconSize[props.sizePreset ?? DEFAULT_SIZE_PRESET])};
 `;
 
 export const StyledRangeInputClearButton = styled.button.withConfig({
@@ -159,9 +148,9 @@ export const StyledRangeInputClearIcon = styled.span.withConfig({
 })<RangeInputAxisProps>`
   display: block;
   inline-size: ${(props) =>
-    spacingRem(listboxSizePresets[props.sizePreset ?? DEFAULT_SIZE_PRESET].chevronSize)};
+    spacingRem(controlIconSize[props.sizePreset ?? DEFAULT_SIZE_PRESET])};
   block-size: ${(props) =>
-    spacingRem(listboxSizePresets[props.sizePreset ?? DEFAULT_SIZE_PRESET].chevronSize)};
+    spacingRem(controlIconSize[props.sizePreset ?? DEFAULT_SIZE_PRESET])};
 `;
 
 function getPanelStyles(props: RangeInputAxisProps & { theme: AppTheme }): string {
@@ -175,7 +164,7 @@ function getPanelStyles(props: RangeInputAxisProps & { theme: AppTheme }): strin
     'overflow: hidden auto;',
     `background-color: ${theme.colors.surface};`,
     `border: 1px solid ${theme.colors.border};`,
-    `border-radius: ${controlRadius(props)};`,
+    `border-radius: ${rangeInputRadius(props)};`,
     `box-shadow: ${theme.shadow.surface};`,
     `outline: 2px solid ${theme.colors.focusRing};`,
     'outline-offset: 2px;',
@@ -186,8 +175,8 @@ export const StyledRangeInputPanel = styled.div.withConfig({
   shouldForwardProp: shouldForwardAxis,
 })<RangeInputAxisProps>`
   display: grid;
-  gap: ${SPACING_REM[12]};
-  padding: ${SPACING_REM[12]};
+  gap: ${spacingRem(12)};
+  padding: ${spacingRem(12)};
   ${(props) => getPanelStyles(props)}
 `;
 
@@ -214,12 +203,12 @@ const presetRowBase = css<RangeInputAxisProps>`
 
   &::before {
     position: absolute;
-    inset: ${SPACING_REM[4]};
+    inset: ${spacingRem(4)};
     z-index: -1;
     pointer-events: none;
     content: '';
     background-color: transparent;
-    border-radius: calc(${(props) => controlRadius(props)} - ${SPACING_REM[4]});
+    border-radius: calc(${(props) => rangeInputRadius(props)} - ${spacingRem(4)});
     transition: background-color 0.12s ease;
   }
 `;
@@ -251,13 +240,13 @@ export const StyledRangeInputPresetButton = styled.button.withConfig({
 
 export const StyledRangeInputCustomSection = styled.div`
   display: grid;
-  gap: ${SPACING_REM[12]};
+  gap: ${spacingRem(12)};
 `;
 
 export const StyledRangeInputFields = styled.div`
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: ${SPACING_REM[12]};
+  gap: ${spacingRem(12)};
 `;
 
 export const StyledRangeInputButtonRow = styled.div`

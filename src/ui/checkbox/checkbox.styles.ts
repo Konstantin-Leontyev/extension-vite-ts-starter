@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { SPACING_REM, spacingRem, type SpacingPx } from '@ui/spacing';
+import { DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
+import { spacingRem, type SpacingPx } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
 
-/** Пресеты размера: габарит бокса и размер галки. */
+/** Габарит бокса и размер галки — собственный ряд checkbox, мельче общих контролов. */
 export const checkboxSizePresets = {
   small: {
     blockSize: 12,
@@ -20,11 +21,8 @@ export const checkboxSizePresets = {
     blockSize: 20,
     checkSize: 12,
   },
-} as const satisfies Record<string, { blockSize: SpacingPx; checkSize: SpacingPx }>;
+} as const satisfies Record<SizePreset, { blockSize: SpacingPx; checkSize: SpacingPx }>;
 
-export type CheckboxSizePreset = keyof typeof checkboxSizePresets;
-
-const DEFAULT_SIZE_PRESET: CheckboxSizePreset = 'large';
 const DEFAULT_CHECKED_MARK: CheckboxCheckedMark = 'check';
 const DEFAULT_UNCHECKED_MARK: CheckboxUncheckedMark = 'none';
 
@@ -38,7 +36,7 @@ export type CheckboxUncheckedMark = 'none' | 'plus';
 export type CheckboxControlStyleProps = {
   checkedMark?: CheckboxCheckedMark;
   inverted?: boolean;
-  sizePreset?: CheckboxSizePreset;
+  sizePreset?: SizePreset;
   uncheckedMark?: CheckboxUncheckedMark;
 };
 
@@ -110,7 +108,7 @@ export function getCheckboxControlStyles(
     'appearance: none;',
     `background-color: ${theme.colors.surface};`,
     `border: 1px solid ${theme.colors.border};`,
-    `border-radius: ${SPACING_REM[4]};`,
+    `border-radius: ${spacingRem(4)};`,
     `box-shadow: ${theme.shadow.surface};`,
   ];
 
@@ -136,8 +134,12 @@ export function getCheckboxControlStyles(
 export const StyledCheckboxRoot = styled.label.withConfig({
   shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
-  display: inline-flex;
-  gap: ${SPACING_REM[8]};
+  display: inline-grid;
+  grid-auto-flow: column;
+  /* Треки к началу: при растяжении корня родителем (flex/grid-колонка) лейбл
+     остаётся прижат к боксу, а не уезжает в центр раздутой колонки. */
+  justify-content: start;
+  gap: ${spacingRem(8)};
   align-items: center;
   cursor: pointer;
   ${(props) => getLayoutStyles(props)}
@@ -148,13 +150,4 @@ export const StyledCheckboxControl = styled.input.withConfig({
 })<CheckboxStyleProps>`
   ${(props) => getCheckboxControlStyles(props)}
   ${(props) => getLayoutStyles(props)}
-`;
-
-export const StyledCheckboxLabel = styled.span.withConfig({
-  shouldForwardProp: (prop) => prop !== 'sizePreset',
-})<{ sizePreset?: CheckboxSizePreset }>`
-  display: flex;
-  align-items: center;
-  min-block-size: ${(props) =>
-    spacingRem(checkboxSizePresets[props.sizePreset ?? DEFAULT_SIZE_PRESET].blockSize)};
 `;

@@ -16,14 +16,14 @@ import { useAnchoredDismiss } from '@hooks/use-anchored-dismiss';
 import { useFocusTrap } from '@hooks/use-focus-trap';
 import { ChevronIcon } from '@icons/chevron';
 import { CloseIcon } from '@icons/close';
+import { Button, type ButtonTone } from '@ui/button';
+import { Input } from '@ui/input';
 import {
-  Button,
-  type ButtonShape,
-  type ButtonSizePreset,
-  type ButtonTone,
-} from '@ui/button';
-import { Input, type InputShape, type InputSizePreset } from '@ui/input';
-import { listboxValuePaddingInline } from '@ui/listbox';
+  textSizePreset as resolveTextSizePreset,
+  valuePaddingInline as resolveValuePaddingInline,
+  type ShapePreset,
+  type SizePreset,
+} from '@ui/presets';
 import { type SpacingPx } from '@ui/spacing';
 import { Text, type TextSizePreset } from '@ui/text';
 
@@ -43,7 +43,6 @@ import {
   StyledRangeInputRoot,
   StyledRangeInputTrigger,
   StyledRangeInputTriggerRow,
-  rangeInputTextSizePreset,
   splitLayoutProps,
   type RangeInputStyleProps,
 } from './range-input.styles';
@@ -81,8 +80,8 @@ const EMPTY_RANGE_VALUE: RangeValue = { from: '', to: '' };
 export type RangeInputButtonProps = {
   buttonInlineSize?: string;
   buttonPaddingInline?: SpacingPx;
-  buttonShape?: ButtonShape;
-  buttonSizePreset?: ButtonSizePreset;
+  buttonShape?: ShapePreset;
+  buttonSizePreset?: SizePreset;
   buttonText: string;
   buttonTextColor?: ButtonTone;
   buttonTone?: ButtonTone;
@@ -90,8 +89,8 @@ export type RangeInputButtonProps = {
 
 /** Проброс осей полей From/To в Input; по умолчанию — shape/sizePreset триггера. */
 export type RangeInputInputProps = {
-  inputShape?: InputShape;
-  inputSizePreset?: InputSizePreset;
+  inputShape?: ShapePreset;
+  inputSizePreset?: SizePreset;
 };
 
 /** Проброс типографики заголовка панели в Text. */
@@ -242,8 +241,8 @@ export function RangeInput({
   const showClear = isActive && onClear !== undefined && !disabled;
   const showChevron = !showClear;
   const triggerLabel = isActive ? formatActiveLabel(committed) : placeholder;
-  const textSizePreset = rangeInputTextSizePreset(resolvedSizePreset);
-  const valuePaddingInline = listboxValuePaddingInline(resolvedSizePreset);
+  const textSizePreset = resolveTextSizePreset(resolvedSizePreset);
+  const valuePaddingInline = resolveValuePaddingInline(resolvedSizePreset);
   const hasPanelError = Boolean(panelError?.trim());
 
   const closePanel = useCallback((): void => {

@@ -47,6 +47,8 @@ const SIDEBAR_PROP_NAMES = new Set<string>([
  * контейнере контента) — так сделано на странице design-system.
  */
 export const StyledSidebarContent = styled.div`
+  /* flex-column (не grid): вертикальный скролл-контейнер произвольного children
+     (хостит страницу приложения) — поток произвольного контента, не фикс-раскладка. */
   display: flex;
   flex-direction: column;
   min-inline-size: 0;
@@ -70,6 +72,8 @@ export const StyledSidebarSlot = styled.aside`
 
 /** Трек панели: едет по transform; ширина фиксирована шириной панели. */
 export const StyledSidebarTrack = styled.div`
+  /* flex (не grid): прижим панели к краю выезда (flex-end по inline, на мобайле —
+     нижний лист); grid здесь ломает выезд нижнего листа снизу. */
   display: flex;
   justify-content: flex-end;
   inline-size: ${SIDEBAR_PANEL_WIDTH};
@@ -84,14 +88,15 @@ export const StyledSidebarTrack = styled.div`
   }
 `;
 
-const rem = (value: SpacingPx | undefined, fallback: SpacingPx): string =>
+const spacingRemOr = (value: SpacingPx | undefined, fallback: SpacingPx): string =>
   spacingRem(value ?? fallback);
 
 export const StyledSidebar = styled.div.withConfig({
   shouldForwardProp: (prop) => !SIDEBAR_PROP_NAMES.has(prop),
 })<SidebarStyleProps>`
+  position: relative;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr;
   grid-template-rows: minmax(0, 1fr);
   block-size: 100%;
   min-block-size: 0;
@@ -99,46 +104,45 @@ export const StyledSidebar = styled.div.withConfig({
   overflow: hidden;
 
   ${StyledSidebarContent} {
-    padding-block: ${(p) => rem(p.paddingBlockStart, 0)}
-      ${(p) => rem(p.paddingBlockEnd, 0)};
-    padding-inline-start: ${(p) => rem(p.paddingInlineStart, 0)};
+    padding-block: ${(p) => spacingRemOr(p.paddingBlockStart, 0)}
+      ${(p) => spacingRemOr(p.paddingBlockEnd, 0)};
+    padding-inline-start: ${(p) => spacingRemOr(p.paddingInlineStart, 0)};
   }
 
-  /* Закрыт: контент занимает и правый инсет. */
-  &:not(:has(${StyledSidebarSlot}[data-open='true'])) ${StyledSidebarContent} {
-    padding-inline-end: ${(p) => rem(p.paddingInlineEnd, DEFAULT_INLINE_END)};
-  }
+  /* Десктоп: панель в потоке — колонка справа, контент ужимается. */
+  @media (width > 640px) {
+    grid-template-columns: 1fr auto;
 
-  /* Открыт: зазор между контентом и панелью. */
-  &:has(${StyledSidebarSlot}[data-open='true']) {
-    gap: ${(p) => rem(p.offset, DEFAULT_OFFSET)};
-  }
-
-  /* Раскрытый слот: ширина = панель + правый инсет, инсет как падинги. */
-  ${StyledSidebarSlot}[data-open='true'][data-expanded='true'] {
-    inline-size: calc(
-      ${SIDEBAR_PANEL_WIDTH} + ${(p) => rem(p.paddingInlineEnd, DEFAULT_INLINE_END)}
-    );
-    padding-inline-end: ${(p) => rem(p.paddingInlineEnd, DEFAULT_INLINE_END)};
-    padding-block-end: ${(p) => rem(p.paddingInlineEnd, DEFAULT_INLINE_END)};
-  }
-
-  /* Узкий экран: панель — нижний лист на всю ширину. */
-  @media (width <= 640px) {
-    grid-template-rows: 1fr auto;
-    grid-template-columns: 1fr;
-
-    ${StyledSidebarSlot} {
-      inline-size: 100%;
-      max-block-size: 0;
-      transition: max-block-size ${TRANSITION};
+    /* Закрыт: контент занимает и правый инсет. */
+    &:not(:has(${StyledSidebarSlot}[data-open='true'])) ${StyledSidebarContent} {
+      padding-inline-end: ${(p) => spacingRemOr(p.paddingInlineEnd, DEFAULT_INLINE_END)};
     }
 
+    /* Открыт: зазор между контентом и панелью. */
+    &:has(${StyledSidebarSlot}[data-open='true']) {
+      gap: ${(p) => spacingRemOr(p.offset, DEFAULT_OFFSET)};
+    }
+
+    /* Раскрытый слот: ширина = панель + правый инсет, инсет как падинги. */
     ${StyledSidebarSlot}[data-open='true'][data-expanded='true'] {
-      inline-size: 100%;
-      max-block-size: 50dvb;
-      padding-inline: ${(p) => rem(p.paddingInlineStart, 0)}
-        ${(p) => rem(p.paddingInlineEnd, DEFAULT_INLINE_END)};
+      inline-size: calc(
+        ${SIDEBAR_PANEL_WIDTH} + ${(p) => spacingRemOr(p.paddingInlineEnd, DEFAULT_INLINE_END)}
+      );
+      padding-inline-end: ${(p) => spacingRemOr(p.paddingInlineEnd, DEFAULT_INLINE_END)};
+      padding-block-end: ${(p) => spacingRemOr(p.paddingInlineEnd, DEFAULT_INLINE_END)};
+    }
+  }
+
+  /* Узкий экран: панель — нижний лист-оверлей поверх контента (вне потока). */
+  @media (width <= 640px) {
+    ${StyledSidebarSlot} {
+      position: absolute;
+      inset-inline: 0;
+      inset-block-end: 0;
+      z-index: 50;
+      inline-size: auto;
+      padding-inline: ${(p) => spacingRemOr(p.paddingInlineStart, 0)}
+        ${(p) => spacingRemOr(p.paddingInlineEnd, DEFAULT_INLINE_END)};
     }
 
     ${StyledSidebarTrack} {

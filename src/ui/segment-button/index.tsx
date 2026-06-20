@@ -2,15 +2,13 @@ import { Fragment, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { useTheme } from 'styled-components';
 
 import { useLongPress } from '@hooks/use-long-press';
+import { textSizePreset, type ShapePreset, type SizePreset } from '@ui/presets';
 import { Text } from '@ui/text';
 
 import {
   StyledSegmentButton,
   StyledSegmentButtonDivider,
   StyledSegmentButtonPart,
-  segmentButtonSizePresets,
-  type SegmentButtonShape,
-  type SegmentButtonSizePreset,
   type SegmentButtonStyleProps,
 } from './segment-button.styles';
 
@@ -46,8 +44,8 @@ function SegmentButtonPart({
   sizePreset,
 }: {
   action: SegmentButtonAction;
-  shape?: SegmentButtonShape;
-  sizePreset?: SegmentButtonSizePreset;
+  shape?: ShapePreset;
+  sizePreset?: SizePreset;
 }) {
   const theme = useTheme();
   const {
@@ -61,7 +59,6 @@ function SegmentButtonPart({
     onLongPress,
     title,
   } = action;
-  const resolvedSizePreset: SegmentButtonSizePreset = sizePreset ?? 'large';
 
   const { pointerProps, suppressNextClick } = useLongPress({ disabled, onLongPress });
 
@@ -88,11 +85,7 @@ function SegmentButtonPart({
       {...(pointerProps ?? {})}
     >
       {icon}
-      <Text
-        color={color}
-        ellipsis
-        sizePreset={segmentButtonSizePresets[resolvedSizePreset].textSizePreset}
-      >
+      <Text color={color} ellipsis sizePreset={textSizePreset(sizePreset)}>
         {text}
       </Text>
     </StyledSegmentButtonPart>
@@ -138,8 +131,4 @@ export function SegmentButton({
   );
 }
 
-export type {
-  SegmentButtonShape,
-  SegmentButtonSizePreset,
-  SegmentButtonStyleProps,
-} from './segment-button.styles';
+export type { SegmentButtonStyleProps } from './segment-button.styles';

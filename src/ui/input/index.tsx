@@ -77,4 +77,4 @@ export function Input({
   );
 }
 
-export type { InputShape, InputSizePreset, InputStyleProps } from './input.styles';
+export type { InputStyleProps } from './input.styles';

@@ -1,11 +1,18 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { SPACING_REM, spacingRem, type SpacingPx } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
+import {
+  DEFAULT_SHAPE_PRESET,
+  DEFAULT_SIZE_PRESET,
+  controlBlockSize,
+  controlIconSize,
+  controlPaddingInline,
+  radiusPreset,
+  type ShapePreset,
+  type SizePreset,
+} from '@ui/presets';
+import { spacingRem } from '@ui/spacing';
 import { getTheme, type AppTheme, type ThemeColors } from '@ui/theme';
-
-export type ButtonShape = 'default' | 'round';
 
 export type ButtonIconPosition = 'end' | 'start';
 
@@ -29,40 +36,6 @@ export const BUTTON_COLORED_TONES = (
   Object.keys(BUTTON_TONE_BACKGROUND) as ButtonTone[]
 ).filter((tone) => BUTTON_TONE_BACKGROUND[tone] !== undefined);
 
-/** Пресеты размера кнопки: габариты, отступы, размер текста и глифа иконки. */
-export const buttonSizePresets = {
-  small: {
-    blockSize: 32,
-    glyphSize: 16,
-    textSizePreset: 'medium',
-    paddingInline: 12,
-  },
-  medium: {
-    blockSize: 40,
-    glyphSize: 20,
-    textSizePreset: 'normal',
-    paddingInline: 16,
-  },
-  large: {
-    blockSize: 48,
-    glyphSize: 20,
-    textSizePreset: 'normal',
-    paddingInline: 16,
-  },
-} as const satisfies Record<
-  string,
-  {
-    blockSize: SpacingPx;
-    glyphSize: SpacingPx;
-    textSizePreset: TextSizePreset;
-    paddingInline: SpacingPx;
-  }
->;
-
-export type ButtonSizePreset = keyof typeof buttonSizePresets;
-
-const DEFAULT_SHAPE: ButtonShape = 'default';
-const DEFAULT_SIZE_PRESET: ButtonSizePreset = 'large';
 const DEFAULT_TONE: ButtonTone = 'default';
 const DEFAULT_ICON_POSITION: ButtonIconPosition = 'end';
 const DEFAULT_ICON_TONE: ButtonTone = 'default';
@@ -72,8 +45,8 @@ export type ButtonStyleProps = LayoutProps & {
   iconFill?: ButtonTone;
   iconPosition?: ButtonIconPosition;
   iconTone?: ButtonTone;
-  shape?: ButtonShape;
-  sizePreset?: ButtonSizePreset;
+  shape?: ShapePreset;
+  sizePreset?: SizePreset;
   tone?: ButtonTone;
 };
 
@@ -91,13 +64,6 @@ const BUTTON_PROP_NAMES = new Set<string>([
   'sizePreset',
   'tone',
 ]);
-
-/** Размер текста для оси sizePreset — дефолт живёт здесь, не в index. */
-export function buttonTextSizePreset(
-  sizePreset: ButtonSizePreset = DEFAULT_SIZE_PRESET
-): TextSizePreset {
-  return buttonSizePresets[sizePreset].textSizePreset;
-}
 
 /**
  * Тон текста (textColor) → цвет темы. Без override (наследует fg), когда тон
@@ -117,8 +83,14 @@ export function buttonTextColor(
   return key ? theme.colors[key] : undefined;
 }
 
-function buttonRadius(shape: ButtonShape): string {
-  return shape === 'round' ? '9999px' : SPACING_REM[8];
+/** Затемнение цвета: keepPct% исходного + остаток чёрный (hover/active цветных тонов). */
+function darken(color: string, keepPct: number): string {
+  return `color-mix(in srgb, ${color} ${keepPct}%, #000)`;
+}
+
+/** Подмешивание цвета поверх surface (нейтральные hover/active, мягкая подложка иконки). */
+function mixOverSurface(theme: AppTheme, color: string, pct: number): string {
+  return `color-mix(in srgb, ${color} ${pct}%, ${theme.colors.surface})`;
 }
 
 type ToneSurface = { active: string; fg: string; fill: string; hover: string };
@@ -132,8 +104,8 @@ function resolveTone(theme: AppTheme, tone: ButtonTone): ToneSurface {
     return {
       fg: theme.colors.default,
       fill: theme.colors.surface,
-      hover: `color-mix(in srgb, ${theme.colors.border} 28%, ${theme.colors.surface})`,
-      active: `color-mix(in srgb, ${theme.colors.border} 40%, ${theme.colors.surface})`,
+      hover: mixOverSurface(theme, theme.colors.border, 28),
+      active: mixOverSurface(theme, theme.colors.border, 40),
     };
   }
 
@@ -143,8 +115,8 @@ function resolveTone(theme: AppTheme, tone: ButtonTone): ToneSurface {
   return {
     fg: theme.colors.inverse,
     fill: color,
-    hover: `color-mix(in srgb, ${color} 88%, #000)`,
-    active: `color-mix(in srgb, ${color} 80%, #000)`,
+    hover: darken(color, 88),
+    active: darken(color, 80),
   };
 }
 
@@ -176,19 +148,19 @@ function resolveIcon(
   if (!background) {
     bg = theme.colors.surface;
     fg = theme.colors.default;
-    bgHover = `color-mix(in srgb, ${theme.colors.border} 28%, ${theme.colors.surface})`;
+    bgHover = mixOverSurface(theme, theme.colors.border, 28);
 
     const variantKey = BUTTON_TONE_BACKGROUND[tone];
     const variantColor = variantKey ? theme.colors[variantKey] : theme.colors.primary;
 
-    bgActive = `color-mix(in srgb, ${variantColor} 12%, ${theme.colors.surface})`;
+    bgActive = mixOverSurface(theme, variantColor, 12);
   } else {
     const color = theme.colors[background];
 
     bg = color;
     fg = theme.colors.inverse;
-    bgHover = `color-mix(in srgb, ${color} 88%, #000)`;
-    bgActive = `color-mix(in srgb, ${color} 80%, #000)`;
+    bgHover = darken(color, 88);
+    bgActive = darken(color, 80);
   }
 
   // iconFill красит только глиф и применяется, если задан, не default и отличен от iconTone.
@@ -205,7 +177,7 @@ function resolveIcon(
       bgActive,
       bgHover,
       fg,
-      fgHover: `color-mix(in srgb, ${theme.colors[fillKey]} 88%, #000)`,
+      fgHover: darken(theme.colors[fillKey], 88),
     };
   }
 
@@ -213,6 +185,8 @@ function resolveIcon(
 }
 
 export const StyledButtonText = styled.span`
+  /* flex (не grid): центрированный лейбл, сжимаемый с ellipsis; grid с auto-треком
+     тянет трек к max-content и ломает усечение. */
   display: flex;
   flex: 1 1 auto;
   min-inline-size: 0;
@@ -237,12 +211,11 @@ function getButtonSplitStyles(
     iconFill,
     iconPosition = DEFAULT_ICON_POSITION,
     iconTone = DEFAULT_ICON_TONE,
-    shape = DEFAULT_SHAPE,
+    shape = DEFAULT_SHAPE_PRESET,
     sizePreset = DEFAULT_SIZE_PRESET,
     tone = DEFAULT_TONE,
   } = props;
-  const preset = buttonSizePresets[sizePreset];
-  const radius = buttonRadius(shape);
+  const radius = radiusPreset(shape, sizePreset);
   const surface = resolveTone(theme, tone);
   const icon = resolveIcon(theme, tone, iconTone, iconFill);
 
@@ -261,12 +234,12 @@ function getButtonSplitStyles(
     ? `box-shadow: inset -1px 0 0 ${seam};`
     : `box-shadow: inset 1px 0 0 ${seam};`;
 
-  const glyph = spacingRem(preset.glyphSize);
-  const square = spacingRem(preset.blockSize);
+  const glyph = spacingRem(controlIconSize[sizePreset]);
+  const square = spacingRem(controlBlockSize[sizePreset]);
 
   return [
     `${StyledButtonText} {`,
-    `padding-inline: ${spacingRem(preset.paddingInline)};`,
+    `padding-inline: ${spacingRem(controlPaddingInline[sizePreset])};`,
     `background-color: ${surface.fill};`,
     labelRadius,
     `}`,
@@ -308,17 +281,16 @@ export function getButtonStyles(
   const theme = getTheme(props);
   const {
     hasIcon = false,
-    shape = DEFAULT_SHAPE,
+    shape = DEFAULT_SHAPE_PRESET,
     sizePreset = DEFAULT_SIZE_PRESET,
     tone = DEFAULT_TONE,
   } = props;
-  const preset = buttonSizePresets[sizePreset];
   const surface = resolveTone(theme, tone);
 
   const base = [
-    `min-block-size: ${spacingRem(preset.blockSize)};`,
+    `min-block-size: ${spacingRem(controlBlockSize[sizePreset])};`,
     `border: 1px solid ${theme.colors.border};`,
-    `border-radius: ${buttonRadius(shape)};`,
+    `border-radius: ${radiusPreset(shape, sizePreset)};`,
     `box-shadow: ${theme.shadow.surface};`,
     `color: ${surface.fg};`,
   ];
@@ -330,7 +302,7 @@ export function getButtonStyles(
     return base.join('\n');
   }
 
-  base.push(`padding-inline: ${spacingRem(preset.paddingInline)};`);
+  base.push(`padding-inline: ${spacingRem(controlPaddingInline[sizePreset])};`);
   base.push(`background-color: ${surface.fill};`);
   base.push(`&:not(:disabled):hover { background-color: ${surface.hover}; }`);
 
@@ -340,6 +312,9 @@ export function getButtonStyles(
 export const StyledButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !BUTTON_PROP_NAMES.has(prop),
 })<ButtonRootStyleProps>`
+  /* flex (не grid): ряд [иконка?][лейбл][иконка?], лейбл растёт, иконки тянутся на
+     высоту (align-items: stretch), позиция иконки задаётся порядком в JSX; grid
+     потребовал бы динамических шаблонов под наличие/позицию иконки. */
   display: flex;
   inline-size: 100%;
   min-inline-size: 0;

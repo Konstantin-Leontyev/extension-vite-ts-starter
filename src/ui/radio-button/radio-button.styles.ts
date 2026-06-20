@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { SPACING_REM, spacingRem, type SpacingPx } from '@ui/spacing';
+import { spacingRem, type SpacingPx } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -36,8 +36,12 @@ export function getRadioButtonControlStyles(props: { theme: AppTheme }): string 
 export const StyledRadioButtonRoot = styled.label.withConfig({
   shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
-  display: inline-flex;
-  gap: ${SPACING_REM[8]};
+  display: inline-grid;
+  grid-auto-flow: column;
+  /* Треки к началу: при растяжении корня родителем (flex/grid-колонка) лейбл
+     остаётся прижат к боксу, а не уезжает в центр раздутой колонки. */
+  justify-content: start;
+  gap: ${spacingRem(8)};
   align-items: center;
   cursor: pointer;
   ${(props) => getLayoutStyles(props)}
@@ -48,10 +52,4 @@ export const StyledRadioButtonControl = styled.input.withConfig({
 })<LayoutProps>`
   ${(props) => getRadioButtonControlStyles(props)}
   ${(props) => getLayoutStyles(props)}
-`;
-
-export const StyledRadioButtonLabel = styled.span`
-  display: flex;
-  align-items: center;
-  min-block-size: fit-content;
 `;

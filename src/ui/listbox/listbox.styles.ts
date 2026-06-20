@@ -1,56 +1,25 @@
 import styled, { css } from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { SPACING_REM, spacingRem, type SpacingPx } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
+import {
+  DEFAULT_SHAPE_PRESET,
+  DEFAULT_SIZE_PRESET,
+  blockSizeRem,
+  controlIconSize,
+  controlPaddingInline,
+  radiusPreset,
+  type ShapePreset,
+  type SizePreset,
+} from '@ui/presets';
+import { spacingRem } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
 
-export type ListboxShape = 'default' | 'round';
-
-/**
- * Пресеты размера: габарит строки, отступ значения, габарит шеврона и размер текста.
- * chevronSize — интринсик пресета (не публичный проп): меняется размер — меняется шеврон.
- */
-export const listboxSizePresets = {
-  small: {
-    blockSize: 32,
-    chevronSize: 12,
-    textSizePreset: 'thin',
-    valuePaddingInline: 8,
-  },
-  medium: {
-    blockSize: 40,
-    chevronSize: 20,
-    textSizePreset: 'normal',
-    valuePaddingInline: 12,
-  },
-  large: {
-    blockSize: 48,
-    chevronSize: 20,
-    textSizePreset: 'normal',
-    valuePaddingInline: 12,
-  },
-} as const satisfies Record<
-  string,
-  {
-    blockSize: SpacingPx;
-    chevronSize: SpacingPx;
-    textSizePreset: TextSizePreset;
-    valuePaddingInline: SpacingPx;
-  }
->;
-
-export type ListboxSizePreset = keyof typeof listboxSizePresets;
-
-const DEFAULT_SIZE_PRESET: ListboxSizePreset = 'large';
-const DEFAULT_SHAPE: ListboxShape = 'default';
-
 /** Оси вида listbox: общие для корня, панели и строк. */
 export type ListboxAxisProps = {
-  shape?: ListboxShape;
-  sizePreset?: ListboxSizePreset;
+  shape?: ShapePreset;
+  sizePreset?: SizePreset;
 };
 
 /** Публичные пропы: layout — на корень, оси вида — на триггер и панель. */
@@ -58,32 +27,15 @@ export type ListboxStyleProps = LayoutProps & ListboxAxisProps;
 
 const LISTBOX_AXIS_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
 
-/** Размер текста значения/опции для оси sizePreset — дефолт живёт здесь. */
-export function listboxTextSizePreset(
-  sizePreset: ListboxSizePreset = DEFAULT_SIZE_PRESET
-): TextSizePreset {
-  return listboxSizePresets[sizePreset].textSizePreset;
-}
-
-/** Горизонтальный отступ значения/опции для оси sizePreset. */
-export function listboxValuePaddingInline(
-  sizePreset: ListboxSizePreset = DEFAULT_SIZE_PRESET
-): SpacingPx {
-  return listboxSizePresets[sizePreset].valuePaddingInline;
-}
-
-function blockSizeRem(sizePreset: ListboxSizePreset): string {
-  return spacingRem(listboxSizePresets[sizePreset].blockSize);
-}
-
-/** Радиус контрола по оси shape: round = половина высоты строки. */
-function controlRadius(props: ListboxAxisProps): string {
-  const { shape = DEFAULT_SHAPE, sizePreset = DEFAULT_SIZE_PRESET } = props;
-
-  return shape === 'round' ? `calc(${blockSizeRem(sizePreset)} / 2)` : SPACING_REM[8];
-}
-
 const shouldForwardAxis = (prop: string): boolean => !LISTBOX_AXIS_PROP_NAMES.has(prop);
+
+/** Радиус контрола из текущих осей вида. */
+function listboxRadius(props: ListboxAxisProps): string {
+  return radiusPreset(
+    props.shape ?? DEFAULT_SHAPE_PRESET,
+    props.sizePreset ?? DEFAULT_SIZE_PRESET
+  );
+}
 
 /** Габарит обёртки шеврона; svg внутри заполняет её. */
 export const StyledListboxChevron = styled.span.withConfig({
@@ -91,9 +43,9 @@ export const StyledListboxChevron = styled.span.withConfig({
 })<ListboxAxisProps>`
   display: block;
   inline-size: ${(props) =>
-    spacingRem(listboxSizePresets[props.sizePreset ?? DEFAULT_SIZE_PRESET].chevronSize)};
+    spacingRem(controlIconSize[props.sizePreset ?? DEFAULT_SIZE_PRESET])};
   block-size: ${(props) =>
-    spacingRem(listboxSizePresets[props.sizePreset ?? DEFAULT_SIZE_PRESET].chevronSize)};
+    spacingRem(controlIconSize[props.sizePreset ?? DEFAULT_SIZE_PRESET])};
 `;
 
 export const StyledListboxIcon = styled.span.withConfig({
@@ -118,7 +70,7 @@ export const StyledListboxTrigger = styled.button.withConfig({
   text-align: start;
   background-color: ${(props) => getTheme(props).colors.surface};
   border: 1px solid ${(props) => getTheme(props).colors.border};
-  border-radius: ${(props) => controlRadius(props)};
+  border-radius: ${(props) => listboxRadius(props)};
   box-shadow: ${(props) => getTheme(props).shadow.surface};
 
   /* Панель перекрывает триггер; прячем его, сохраняя место под строку. */
@@ -132,7 +84,7 @@ export const StyledListboxRoot = styled.div.withConfig({
 })<LayoutProps>`
   position: relative;
   display: grid;
-  gap: ${SPACING_REM[8]};
+  gap: ${spacingRem(8)};
   inline-size: 100%;
   min-inline-size: 0;
   ${(props) => getLayoutStyles(props)}
@@ -147,9 +99,9 @@ export const StyledListboxCheck = styled.span`
   position: relative;
   z-index: 1;
   flex-shrink: 0;
-  inline-size: ${SPACING_REM[20]};
-  block-size: ${SPACING_REM[20]};
-  margin-inline-end: ${SPACING_REM[12]};
+  inline-size: ${spacingRem(20)};
+  block-size: ${spacingRem(20)};
+  margin-inline-end: ${spacingRem(12)};
   color: ${(props) => getTheme(props).colors.primary};
 `;
 
@@ -158,7 +110,7 @@ const optionRowBase = css<ListboxAxisProps>`
   position: relative;
   z-index: 0;
   display: flex;
-  gap: ${SPACING_REM[12]};
+  gap: ${spacingRem(12)};
   align-items: center;
   justify-content: space-between;
   inline-size: 100%;
@@ -171,12 +123,12 @@ const optionRowBase = css<ListboxAxisProps>`
 
   &::before {
     position: absolute;
-    inset: ${SPACING_REM[4]};
+    inset: ${spacingRem(4)};
     z-index: -1;
     pointer-events: none;
     content: '';
     background-color: transparent;
-    border-radius: calc(${(props) => controlRadius(props)} - ${SPACING_REM[4]});
+    border-radius: calc(${(props) => listboxRadius(props)} - ${spacingRem(4)});
     transition: background-color 0.12s ease;
   }
 `;
@@ -210,9 +162,7 @@ export const StyledListboxOptionRow = styled.label.withConfig({
 })<ListboxAxisProps>`
   ${optionRowBase}
   padding-inline-start: ${(props) =>
-    spacingRem(
-      listboxSizePresets[props.sizePreset ?? DEFAULT_SIZE_PRESET].valuePaddingInline
-    )};
+    spacingRem(controlPaddingInline[props.sizePreset ?? DEFAULT_SIZE_PRESET])};
 
   /* Текст-слот заполняет строку (распределение места, как было у label flex:1) — идёт сразу за чекбоксом. */
   & > :last-child {
@@ -249,7 +199,7 @@ function getPanelStyles(props: ListboxAxisProps & { theme: AppTheme }): string {
     'overflow: hidden auto;',
     `background-color: ${theme.colors.surface};`,
     `border: 1px solid ${theme.colors.border};`,
-    `border-radius: ${controlRadius(props)};`,
+    `border-radius: ${listboxRadius(props)};`,
     `box-shadow: ${theme.shadow.surface};`,
     /* Панель рендерится только в open-состоянии — фокус-кольцо всегда видно. */
     `outline: 2px solid ${theme.colors.focusRing};`,

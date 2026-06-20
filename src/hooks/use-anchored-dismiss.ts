@@ -31,7 +31,19 @@ export function useAnchoredDismiss({
       }
     }
 
-    function handleScroll(): void {
+    function handleScroll(event: Event): void {
+      const activeElement = document.activeElement;
+
+      if (activeElement instanceof Node && isInside(activeElement)) {
+        return;
+      }
+
+      const target = event.target;
+
+      if (target instanceof Node && isInside(target)) {
+        return;
+      }
+
       onDismiss();
     }
 

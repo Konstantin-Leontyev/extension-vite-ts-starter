@@ -1,8 +1,9 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { Input, type InputShape, type InputSizePreset } from '@ui/input';
+import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
+import { type ShapePreset, type SizePreset } from '@ui/presets';
 
 import { StyledSettingsForm } from '../design-system.styles';
 
@@ -11,8 +12,8 @@ export type InputWidgetState = {
   error: string;
   label: string;
   placeholder: string;
-  shape: InputShape;
-  sizePreset: InputSizePreset;
+  shape: ShapePreset;
+  sizePreset: SizePreset;
   value: string;
 };
 
@@ -52,7 +53,7 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         options={SIZE_OPTIONS}
         reserveErrorSpace={false}
         value={state.sizePreset}
-        onChange={(value) => onChange('sizePreset', value as InputSizePreset)}
+        onChange={(value) => onChange('sizePreset', value as SizePreset)}
       />
 
       <Listbox
@@ -60,7 +61,7 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         options={SHAPE_OPTIONS}
         reserveErrorSpace={false}
         value={state.shape}
-        onChange={(value) => onChange('shape', value as InputShape)}
+        onChange={(value) => onChange('shape', value as ShapePreset)}
       />
 
       <Input

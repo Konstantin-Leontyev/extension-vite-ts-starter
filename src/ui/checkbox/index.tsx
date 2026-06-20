@@ -5,7 +5,6 @@ import { Text } from '@ui/text';
 
 import {
   StyledCheckboxControl,
-  StyledCheckboxLabel,
   StyledCheckboxRoot,
   splitLayoutProps,
   type CheckboxStyleProps,
@@ -51,14 +50,12 @@ export function Checkbox({
         {...control}
       />
       {Boolean(label) && (
-        <StyledCheckboxLabel sizePreset={sizePreset}>
-          <Text color={theme.colors.muted} sizePreset="thin">
-            {label}
-          </Text>
-        </StyledCheckboxLabel>
+        <Text color={theme.colors.muted} sizePreset="thin">
+          {label}
+        </Text>
       )}
     </StyledCheckboxRoot>
   );
 }
 
-export type { CheckboxSizePreset, CheckboxStyleProps } from './checkbox.styles';
+export type { CheckboxStyleProps } from './checkbox.styles';

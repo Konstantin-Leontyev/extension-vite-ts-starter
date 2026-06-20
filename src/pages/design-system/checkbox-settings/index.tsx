@@ -1,9 +1,9 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { type CheckboxSizePreset } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
+import { type SizePreset } from '@ui/presets';
 
 import { StyledSettingsForm } from '../design-system.styles';
 
@@ -13,7 +13,7 @@ export type CheckboxWidgetState = {
   disabled: boolean;
   inverted: boolean;
   label: string;
-  sizePreset: CheckboxSizePreset;
+  sizePreset: SizePreset;
 };
 
 const SIZE_OPTIONS: ListboxOption[] = [
@@ -48,7 +48,7 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
         options={SIZE_OPTIONS}
         reserveErrorSpace={false}
         value={state.sizePreset}
-        onChange={(value) => onChange('sizePreset', value as CheckboxSizePreset)}
+        onChange={(value) => onChange('sizePreset', value as SizePreset)}
       />
 
       <Checkbox

@@ -1,6 +1,7 @@
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 import { useTheme } from 'styled-components';
 
+import { textSizePreset } from '@ui/presets';
 import { Text } from '@ui/text';
 
 import {
@@ -8,10 +9,7 @@ import {
   StyledButtonIcon,
   StyledButtonText,
   buttonTextColor,
-  buttonTextSizePreset,
   type ButtonIconPosition,
-  type ButtonShape,
-  type ButtonSizePreset,
   type ButtonStyleProps,
   type ButtonTone,
 } from './button.styles';
@@ -52,7 +50,7 @@ export function Button({
         <Text
           color={buttonTextColor(theme, textColor, tone)}
           ellipsis
-          sizePreset={buttonTextSizePreset(sizePreset)}
+          sizePreset={textSizePreset(sizePreset)}
         >
           {children}
         </Text>
@@ -62,11 +60,5 @@ export function Button({
   );
 }
 
-export type {
-  ButtonIconPosition,
-  ButtonShape,
-  ButtonSizePreset,
-  ButtonStyleProps,
-  ButtonTone,
-};
+export type { ButtonIconPosition, ButtonStyleProps, ButtonTone };
 export { BUTTON_COLORED_TONES } from './button.styles';

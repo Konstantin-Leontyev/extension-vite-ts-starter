@@ -15,6 +15,10 @@ import { getFocusables, useFocusTrap } from '@hooks/use-focus-trap';
 import { CheckIcon } from '@icons/check';
 import { ChevronIcon } from '@icons/chevron';
 import { Checkbox } from '@ui/checkbox';
+import {
+  textSizePreset as resolveTextSizePreset,
+  valuePaddingInline as resolveValuePaddingInline,
+} from '@ui/presets';
 import { Text } from '@ui/text';
 
 import {
@@ -26,8 +30,6 @@ import {
   StyledListboxPanel,
   StyledListboxRoot,
   StyledListboxTrigger,
-  listboxTextSizePreset,
-  listboxValuePaddingInline,
   splitLayoutProps,
   type ListboxStyleProps,
 } from './listbox.styles';
@@ -224,8 +226,8 @@ export function Listbox({
   const selectedValue = selected[0];
   const selectedIndex = options.findIndex((option) => option.value === selectedValue);
   const optionsKey = options.map((option) => option.value).join('\0');
-  const textSizePreset = listboxTextSizePreset(sizePreset);
-  const valuePaddingInline = listboxValuePaddingInline(sizePreset);
+  const textSizePreset = resolveTextSizePreset(sizePreset);
+  const valuePaddingInline = resolveValuePaddingInline(sizePreset);
 
   const dismissListbox = useCallback((): void => {
     setOpen(false);
@@ -548,15 +550,4 @@ export function Listbox({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- публичные типы и пресеты */
-export type {
-  ListboxShape,
-  ListboxSizePreset,
-  ListboxStyleProps,
-} from './listbox.styles';
-export {
-  listboxSizePresets,
-  listboxTextSizePreset,
-  listboxValuePaddingInline,
-} from './listbox.styles';
-/* eslint-enable react-refresh/only-export-components */
+export type { ListboxStyleProps } from './listbox.styles';

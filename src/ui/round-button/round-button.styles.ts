@@ -1,18 +1,18 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
+import { controlBlockSize, type SizePreset } from '@ui/presets';
 import { spacingRem, type SpacingPx } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
-/** Пресеты габаритов круглой кнопки (inline/block-size). */
-export const roundButtonSizePresets = {
-  huge: 80,
-  large: 48,
-  medium: 40,
-  small: 32,
-} as const satisfies Record<string, SpacingPx>;
+/** Круглая кнопка расширяет общий размерный ряд собственным huge. */
+export type RoundButtonSizePreset = SizePreset | 'huge';
 
-export type RoundButtonSizePreset = keyof typeof roundButtonSizePresets;
+/** Габариты круглой кнопки: общая высотная шкала + локальный huge. */
+export const roundButtonSizePresets = {
+  ...controlBlockSize,
+  huge: 80,
+} as const satisfies Record<RoundButtonSizePreset, SpacingPx>;
 
 export const DEFAULT_ROUND_BUTTON_SIZE_PRESET: RoundButtonSizePreset = 'medium';
 
@@ -35,7 +35,11 @@ export function getRoundButtonStyles(
   const sizePx = roundButtonSizePresets[sizePreset];
   const dimension = spacingRem(sizePx);
 
-  const rules: string[] = [`inline-size: ${dimension};`, `block-size: ${dimension};`];
+  const rules: string[] = [
+    `inline-size: ${dimension};`,
+    `block-size: ${dimension};`,
+    `padding: ${spacingRem(sizePreset === 'huge' ? 16 : 4)};`,
+  ];
 
   if (elevated) {
     rules.push(`border: 1px solid ${theme.colors.border};`);
@@ -53,10 +57,6 @@ export const StyledRoundButton = styled.button.withConfig({
   display: grid;
   overflow: hidden;
   place-items: center;
-  padding: ${(props) =>
-    spacingRem(
-      (props.sizePreset ?? DEFAULT_ROUND_BUTTON_SIZE_PRESET) === 'huge' ? 16 : 4
-    )};
   border-radius: 50%;
 
   &:not(:disabled):hover,

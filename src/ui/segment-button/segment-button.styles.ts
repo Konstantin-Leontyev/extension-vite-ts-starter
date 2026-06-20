@@ -1,51 +1,31 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { SPACING_REM, spacingRem, type SpacingPx } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
+import {
+  DEFAULT_SHAPE_PRESET,
+  DEFAULT_SIZE_PRESET,
+  blockSizeRem,
+  controlPaddingInline,
+  radiusPreset,
+  type ShapePreset,
+  type SizePreset,
+} from '@ui/presets';
+import { spacingRem, type SpacingPx } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
-export type SegmentButtonShape = 'default' | 'round';
-
-/** Пресеты размера сегментной кнопки: габариты сегмента и размер текста. */
-export const segmentButtonSizePresets = {
-  small: {
-    blockSize: 32,
-    dividerMarginBlock: 8,
-    gap: 4,
-    textSizePreset: 'medium',
-    paddingInline: 12,
-  },
-  medium: {
-    blockSize: 40,
-    dividerMarginBlock: 8,
-    gap: 8,
-    textSizePreset: 'medium',
-    paddingInline: 12,
-  },
-  large: {
-    blockSize: 48,
-    dividerMarginBlock: 12,
-    gap: 8,
-    textSizePreset: 'normal',
-    paddingInline: 16,
-  },
+/** Зазор между иконкой и текстом сегмента и вертикальный отступ разделителя — оси, уникальные для сегментной кнопки. */
+const segmentButtonLayoutPresets = {
+  small: { dividerMarginBlock: 8, gap: 4 },
+  medium: { dividerMarginBlock: 8, gap: 8 },
+  large: { dividerMarginBlock: 12, gap: 8 },
 } as const satisfies Record<
-  string,
-  {
-    blockSize: SpacingPx;
-    dividerMarginBlock: SpacingPx;
-    gap: SpacingPx;
-    textSizePreset: TextSizePreset;
-    paddingInline: SpacingPx;
-  }
+  SizePreset,
+  { dividerMarginBlock: SpacingPx; gap: SpacingPx }
 >;
 
-export type SegmentButtonSizePreset = keyof typeof segmentButtonSizePresets;
-
 export type SegmentButtonStyleProps = LayoutProps & {
-  shape?: SegmentButtonShape;
-  sizePreset?: SegmentButtonSizePreset;
+  shape?: ShapePreset;
+  sizePreset?: SizePreset;
 };
 
 const SEGMENT_BUTTON_PROP_NAMES = new Set<string>([
@@ -55,55 +35,52 @@ const SEGMENT_BUTTON_PROP_NAMES = new Set<string>([
 ]);
 
 type SegmentViewProps = {
-  shape?: SegmentButtonShape;
-  sizePreset?: SegmentButtonSizePreset;
+  shape?: ShapePreset;
+  sizePreset?: SizePreset;
 };
 
 export function getSegmentButtonStyles(
   props: SegmentViewProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { shape = 'default', sizePreset = 'large' } = props;
-  const preset = segmentButtonSizePresets[sizePreset];
-  const radius = shape === 'round' ? '9999px' : SPACING_REM[8];
+  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
 
   return [
-    `min-block-size: ${spacingRem(preset.blockSize)};`,
+    `min-block-size: ${blockSizeRem(sizePreset)};`,
     `background-color: ${theme.colors.surface};`,
     `border: 1px solid ${theme.colors.border};`,
     `box-shadow: ${theme.shadow.surface};`,
-    `border-radius: ${radius};`,
+    `border-radius: ${radiusPreset(shape, sizePreset)};`,
   ].join('\n');
 }
 
 function getSegmentPartStyles(props: SegmentViewProps): string {
-  const { shape = 'default', sizePreset = 'large' } = props;
-  const preset = segmentButtonSizePresets[sizePreset];
+  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
 
   const rules = [
-    `gap: ${spacingRem(preset.gap)};`,
-    `block-size: ${spacingRem(preset.blockSize)};`,
-    `padding-inline: ${spacingRem(preset.paddingInline)};`,
+    `gap: ${spacingRem(segmentButtonLayoutPresets[sizePreset].gap)};`,
+    `block-size: ${blockSizeRem(sizePreset)};`,
+    `padding-inline: ${spacingRem(controlPaddingInline[sizePreset])};`,
   ];
 
   if (shape === 'default') {
+    const radius = spacingRem(8);
+
     rules.push(
-      `&:first-child {\nborder-start-start-radius: ${SPACING_REM[8]};\nborder-end-start-radius: ${SPACING_REM[8]};\n}`
+      `&:first-child {\nborder-start-start-radius: ${radius};\nborder-end-start-radius: ${radius};\n}`
     );
     rules.push(
-      `&:last-child {\nborder-start-end-radius: ${SPACING_REM[8]};\nborder-end-end-radius: ${SPACING_REM[8]};\n}`
+      `&:last-child {\nborder-start-end-radius: ${radius};\nborder-end-end-radius: ${radius};\n}`
     );
   }
 
   return rules.join('\n');
 }
 
-function getSegmentDividerStyles(props: {
-  sizePreset?: SegmentButtonSizePreset;
-}): string {
-  const { sizePreset = 'large' } = props;
+function getSegmentDividerStyles(props: { sizePreset?: SizePreset }): string {
+  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
 
-  return `margin-block: ${spacingRem(segmentButtonSizePresets[sizePreset].dividerMarginBlock)};`;
+  return `margin-block: ${spacingRem(segmentButtonLayoutPresets[sizePreset].dividerMarginBlock)};`;
 }
 
 export const StyledSegmentButton = styled.div.withConfig({
@@ -132,6 +109,8 @@ export const StyledSegmentButton = styled.div.withConfig({
 export const StyledSegmentButtonPart = styled.button.withConfig({
   shouldForwardProp: (prop) => prop !== 'shape' && prop !== 'sizePreset',
 })<SegmentViewProps>`
+  /* flex (не grid): центрированный ряд [иконка?] + Text, где текст сжимается с ellipsis;
+     grid с auto-колонками тянет трек к max-content и ломает усечение. */
   display: flex;
   min-inline-size: 0;
   align-items: center;
@@ -166,7 +145,7 @@ export const StyledSegmentButtonPart = styled.button.withConfig({
 
 export const StyledSegmentButtonDivider = styled.span.withConfig({
   shouldForwardProp: (prop) => prop !== 'sizePreset',
-})<{ sizePreset?: SegmentButtonSizePreset }>`
+})<{ sizePreset?: SizePreset }>`
   inline-size: 1px;
   background-color: ${(props) => getTheme(props).colors.border};
   ${(props) => getSegmentDividerStyles(props)}

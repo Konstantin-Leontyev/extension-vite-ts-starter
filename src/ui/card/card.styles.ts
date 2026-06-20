@@ -1,12 +1,8 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import {
-  DEFAULT_ROUND_BUTTON_SIZE_PRESET,
-  roundButtonSizePresets,
-  type RoundButtonSizePreset,
-} from '@ui/round-button';
-import { SPACING_REM, spacingRem } from '@ui/spacing';
+import { roundButtonSizePresets, type RoundButtonSizePreset } from '@ui/round-button';
+import { spacingRem } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 /** Заливка карточки: surface, фон страницы или прозрачная (без тени). */
@@ -54,10 +50,10 @@ export const StyledCard = styled.div.withConfig({
   display: grid;
   min-inline-size: 0;
   min-block-size: 0;
-  padding: ${SPACING_REM[16]};
+  padding: ${spacingRem(16)};
   overflow: hidden;
   border: 1px solid ${(props) => getTheme(props).colors.border};
-  border-radius: ${SPACING_REM[12]};
+  border-radius: ${spacingRem(12)};
   ${(props) => getCardStyles(props)}
   ${(props) => getLayoutStyles(props)}
 `;
@@ -69,7 +65,7 @@ function closeIconHeaderMinBlockSize(sizePreset: RoundButtonSizePreset): string 
 
 export const StyledCardHeader = styled.header`
   display: grid;
-  row-gap: ${SPACING_REM[4]};
+  row-gap: ${spacingRem(4)};
 `;
 
 const CARD_HEADER_FIRST_LINE_PROP_NAMES = new Set<string>([
@@ -80,7 +76,7 @@ const CARD_HEADER_FIRST_LINE_PROP_NAMES = new Set<string>([
 /** Первая строка шапки: заголовок или единственный субзаголовок. */
 export const StyledCardHeaderFirstLine = styled.div.withConfig({
   shouldForwardProp: (prop) => !CARD_HEADER_FIRST_LINE_PROP_NAMES.has(prop),
-})<{ closeIconSizePreset?: RoundButtonSizePreset; hasCloseIcon?: boolean }>`
+})<{ closeIconSizePreset: RoundButtonSizePreset; hasCloseIcon?: boolean }>`
   display: grid;
   min-inline-size: 0;
 
@@ -88,7 +84,7 @@ export const StyledCardHeaderFirstLine = styled.div.withConfig({
   ${(props) =>
     props.hasCloseIcon === true
       ? `align-content: center;\nmin-block-size: ${closeIconHeaderMinBlockSize(
-          props.closeIconSizePreset ?? DEFAULT_ROUND_BUTTON_SIZE_PRESET
+          props.closeIconSizePreset
         )};`
       : ''}
 `;
