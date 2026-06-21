@@ -4,14 +4,12 @@ import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
-import { type ThemeColors } from '@ui/theme';
+import {
+  SEGMENT_TEXT_COLOR_OPTIONS,
+  type SegmentTextColor,
+} from '@ui/segment-button';
 
 import { StyledSettingsForm } from '../design-system.styles';
-
-export type SegmentTextColor = keyof Pick<
-  ThemeColors,
-  'default' | 'danger' | 'muted' | 'primary' | 'success' | 'warning'
->;
 
 export type SegmentButtonWidgetState = {
   centerDisabled: boolean;
@@ -42,15 +40,6 @@ const SHAPE_OPTIONS: ListboxOption[] = [
 const SEGMENT_COUNT_OPTIONS: ListboxOption[] = [
   { label: '2', value: '2' },
   { label: '3', value: '3' },
-];
-
-const TEXT_COLOR_OPTIONS: ListboxOption[] = [
-  { label: 'default', value: 'default' },
-  { label: 'muted', value: 'muted' },
-  { label: 'primary', value: 'primary' },
-  { label: 'success', value: 'success' },
-  { label: 'warning', value: 'warning' },
-  { label: 'danger', value: 'danger' },
 ];
 
 type SegmentButtonSettingsProps = {
@@ -101,7 +90,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
 
       <Listbox
         label="Left button text color:"
-        options={TEXT_COLOR_OPTIONS}
+        options={SEGMENT_TEXT_COLOR_OPTIONS}
         reserveErrorSpace={false}
         value={state.leftTextColor}
         onChange={(value) => onChange('leftTextColor', value as SegmentTextColor)}
@@ -128,7 +117,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
 
           <Listbox
             label="Center button text color:"
-            options={TEXT_COLOR_OPTIONS}
+            options={SEGMENT_TEXT_COLOR_OPTIONS}
             reserveErrorSpace={false}
             value={state.centerTextColor}
             onChange={(value) => onChange('centerTextColor', value as SegmentTextColor)}
@@ -155,7 +144,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
 
       <Listbox
         label="Right button text color:"
-        options={TEXT_COLOR_OPTIONS}
+        options={SEGMENT_TEXT_COLOR_OPTIONS}
         reserveErrorSpace={false}
         value={state.rightTextColor}
         onChange={(value) => onChange('rightTextColor', value as SegmentTextColor)}

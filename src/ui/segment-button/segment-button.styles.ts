@@ -12,6 +12,38 @@ import {
 } from '@ui/presets';
 import { spacingRem, type SpacingPx } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
+import {
+  extendedToneOptions,
+  resolveExtendedToneColor,
+  type ExtendedTone,
+  type ToneExtraColors,
+} from '@ui/tones';
+
+/** Локальный слой textColor: канон tone + muted (нейтральный вторичный текст). */
+export type SegmentTextColor = ExtendedTone<'muted'>;
+
+/** Локальные значения textColor вне канона → ключи темы. */
+const SEGMENT_TEXT_EXTRA_COLORS = {
+  muted: 'muted',
+} as const satisfies ToneExtraColors<'muted'>;
+
+export const SEGMENT_TEXT_COLOR_OPTIONS = extendedToneOptions(['muted']);
+
+/**
+ * Цвет текста сегмента: явный `textColor` резолвится через канон тона (нейтральный
+ * `default` → наследование), без override активный сегмент берёт `primary`.
+ */
+export function resolveSegmentTextColor(
+  theme: AppTheme,
+  textColor: SegmentTextColor | undefined,
+  active: boolean | undefined
+): string | undefined {
+  if (textColor !== undefined) {
+    return resolveExtendedToneColor(theme, textColor, SEGMENT_TEXT_EXTRA_COLORS, undefined);
+  }
+
+  return active ? theme.colors.primary : undefined;
+}
 
 /** Зазор между иконкой и текстом сегмента и вертикальный отступ разделителя — оси, уникальные для сегментной кнопки. */
 const segmentButtonLayoutPresets = {

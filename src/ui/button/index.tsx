@@ -3,6 +3,7 @@ import { useTheme } from 'styled-components';
 
 import { textSizePreset } from '@ui/presets';
 import { Text } from '@ui/text';
+import { type TonePreset } from '@ui/tones';
 
 import {
   StyledButton,
@@ -11,13 +12,12 @@ import {
   buttonTextColor,
   type ButtonIconPosition,
   type ButtonStyleProps,
-  type ButtonTone,
 } from './button.styles';
 
 type ButtonProps = {
   children: ReactNode;
   icon?: ReactNode;
-  textColor?: ButtonTone;
+  textColor?: TonePreset;
 } & ButtonStyleProps &
   Omit<ComponentPropsWithRef<'button'>, keyof ButtonStyleProps | 'className' | 'style'>;
 
@@ -60,5 +60,4 @@ export function Button({
   );
 }
 
-export type { ButtonIconPosition, ButtonStyleProps, ButtonTone };
-export { BUTTON_COLORED_TONES } from './button.styles';
+export type { ButtonIconPosition, ButtonStyleProps };

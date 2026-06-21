@@ -418,8 +418,7 @@ export function Table<Row>(props: TableProps<Row>) {
   const hideFootAnchor = composeRowActive && composeRowSource === 'foot';
   const [showFootHeader, setShowFootHeader] = useState(false);
   const showFootHeaderRow =
-    checkable &&
-    (showFootHeader || (composeRowActive && composeRowSource === 'foot'));
+    checkable && (showFootHeader || (composeRowActive && composeRowSource === 'foot'));
   const showComposePanel =
     composeRowActive &&
     composeRowSource !== undefined &&

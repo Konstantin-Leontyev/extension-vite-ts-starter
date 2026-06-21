@@ -1,28 +1,30 @@
 import { type ChangeEvent } from 'react';
 
-import {
-  BUTTON_COLORED_TONES,
-  type ButtonIconPosition,
-  type ButtonTone,
-} from '@ui/button';
+import { type ButtonIconPosition } from '@ui/button';
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
+import {
+  TONE_PRESET_OPTIONS,
+  toTonePresetOptions,
+  tonePresetsExcludingFill,
+  type TonePreset,
+} from '@ui/tones';
 
 import { StyledSettingsForm } from '../design-system.styles';
 
 export type ButtonWidgetState = {
   active: boolean;
   disabled: boolean;
-  iconFill: ButtonTone;
+  iconFill: TonePreset;
   iconPosition: ButtonIconPosition;
-  iconTone: ButtonTone;
-  textColor: ButtonTone;
+  iconTone: TonePreset;
+  textColor: TonePreset;
   shape: ShapePreset;
   sizePreset: SizePreset;
   text: string;
-  tone: ButtonTone;
+  tone: TonePreset;
   withIcon: boolean;
 };
 
@@ -37,32 +39,10 @@ const SHAPE_OPTIONS: ListboxOption[] = [
   { label: 'round', value: 'round' },
 ];
 
-const TONE_OPTIONS: ListboxOption[] = [
-  { label: 'default', value: 'default' },
-  { label: 'primary', value: 'primary' },
-  { label: 'success', value: 'success' },
-  { label: 'warning', value: 'warning' },
-  { label: 'danger', value: 'danger' },
-];
-
 const ICON_POSITION_OPTIONS: ListboxOption[] = [
   { label: 'end', value: 'end' },
   { label: 'start', value: 'start' },
 ];
-
-function toToneOptions(tones: ButtonTone[]): ListboxOption[] {
-  return tones.map((tone) => ({ label: tone, value: tone }));
-}
-
-/** Цвет текста нельзя задать равным заливке кнопки — иначе текст сольётся. */
-function getTextColorOptions(tone: ButtonTone): ButtonTone[] {
-  return ['default', ...BUTTON_COLORED_TONES.filter((value) => value !== tone)];
-}
-
-/** Цвет глифа нельзя задать равным фону иконки — иначе глиф сольётся. */
-function getIconFillOptions(iconTone: ButtonTone): ButtonTone[] {
-  return ['default', ...BUTTON_COLORED_TONES.filter((value) => value !== iconTone)];
-}
 
 type ButtonSettingsProps = {
   onChange: <K extends keyof ButtonWidgetState>(
@@ -73,8 +53,8 @@ type ButtonSettingsProps = {
 };
 
 export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
-  const textColorOptions = getTextColorOptions(state.tone);
-  const iconFillOptions = state.withIcon ? getIconFillOptions(state.iconTone) : [];
+  const textColorOptions = tonePresetsExcludingFill(state.tone);
+  const iconFillOptions = state.withIcon ? tonePresetsExcludingFill(state.iconTone) : [];
 
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
@@ -96,10 +76,10 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
 
       <Listbox
         label="Button tone:"
-        options={TONE_OPTIONS}
+        options={TONE_PRESET_OPTIONS}
         reserveErrorSpace={false}
         value={state.tone}
-        onChange={(value) => onChange('tone', value as ButtonTone)}
+        onChange={(value) => onChange('tone', value as TonePreset)}
       />
 
       <Input
@@ -113,10 +93,10 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
 
       <Listbox
         label="Button text color:"
-        options={toToneOptions(textColorOptions)}
+        options={toTonePresetOptions(textColorOptions)}
         reserveErrorSpace={false}
         value={textColorOptions.includes(state.textColor) ? state.textColor : 'default'}
-        onChange={(value) => onChange('textColor', value as ButtonTone)}
+        onChange={(value) => onChange('textColor', value as TonePreset)}
       />
 
       <Checkbox
@@ -131,18 +111,18 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
         <>
           <Listbox
             label="Icon tone:"
-            options={TONE_OPTIONS}
+            options={TONE_PRESET_OPTIONS}
             reserveErrorSpace={false}
             value={state.iconTone}
-            onChange={(value) => onChange('iconTone', value as ButtonTone)}
+            onChange={(value) => onChange('iconTone', value as TonePreset)}
           />
 
           <Listbox
             label="Icon fill:"
-            options={toToneOptions(iconFillOptions)}
+            options={toTonePresetOptions(iconFillOptions)}
             reserveErrorSpace={false}
             value={iconFillOptions.includes(state.iconFill) ? state.iconFill : 'default'}
-            onChange={(value) => onChange('iconFill', value as ButtonTone)}
+            onChange={(value) => onChange('iconFill', value as TonePreset)}
           />
 
           <Listbox

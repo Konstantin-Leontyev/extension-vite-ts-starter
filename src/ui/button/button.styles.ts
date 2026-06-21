@@ -12,42 +12,25 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import { spacingRem } from '@ui/spacing';
-import { getTheme, type AppTheme, type ThemeColors } from '@ui/theme';
+import { getTheme, type AppTheme } from '@ui/theme';
+import {
+  DEFAULT_TONE_PRESET,
+  toneThemeColorKey,
+  type TonePreset,
+} from '@ui/tones';
 
 export type ButtonIconPosition = 'end' | 'start';
 
-/**
- * Источник истины оси tone: тон → ключ цвета заливки в теме.
- * `default` без заливки — нейтральный (фон surface, текст default).
- * Тип ButtonTone выводится отсюда; `satisfies` держит значения ключами темы.
- */
-const BUTTON_TONE_BACKGROUND = {
-  default: undefined,
-  primary: 'primary',
-  success: 'success',
-  warning: 'warning',
-  danger: 'danger',
-} as const satisfies Record<string, keyof ThemeColors | undefined>;
-
-export type ButtonTone = keyof typeof BUTTON_TONE_BACKGROUND;
-
-/** Цветные тона (с заливкой) — производная карты, единый источник для опций. */
-export const BUTTON_COLORED_TONES = (
-  Object.keys(BUTTON_TONE_BACKGROUND) as ButtonTone[]
-).filter((tone) => BUTTON_TONE_BACKGROUND[tone] !== undefined);
-
-const DEFAULT_TONE: ButtonTone = 'default';
 const DEFAULT_ICON_POSITION: ButtonIconPosition = 'end';
-const DEFAULT_ICON_TONE: ButtonTone = 'default';
 
 export type ButtonStyleProps = LayoutProps & {
   active?: boolean;
-  iconFill?: ButtonTone;
+  iconFill?: TonePreset;
   iconPosition?: ButtonIconPosition;
-  iconTone?: ButtonTone;
+  iconTone?: TonePreset;
   shape?: ShapePreset;
   sizePreset?: SizePreset;
-  tone?: ButtonTone;
+  tone?: TonePreset;
 };
 
 /** hasIcon — внутренняя ось от index: split-раскладка vs solid. */
@@ -71,14 +54,14 @@ const BUTTON_PROP_NAMES = new Set<string>([
  */
 export function buttonTextColor(
   theme: AppTheme,
-  textColor: ButtonTone | undefined,
-  tone: ButtonTone | undefined
+  textColor: TonePreset | undefined,
+  tone: TonePreset | undefined
 ): string | undefined {
-  if (!textColor || textColor === 'default' || textColor === tone) {
+  if (!textColor || textColor === DEFAULT_TONE_PRESET || textColor === tone) {
     return undefined;
   }
 
-  const key = BUTTON_TONE_BACKGROUND[textColor];
+  const key = toneThemeColorKey(textColor);
 
   return key ? theme.colors[key] : undefined;
 }
@@ -96,8 +79,8 @@ function mixOverSurface(theme: AppTheme, color: string, pct: number): string {
 type ToneSurface = { active: string; fg: string; fill: string; hover: string };
 
 /** Заливка/текст/hover/active для тона — нейтральный из surface, цветной из темы. */
-function resolveTone(theme: AppTheme, tone: ButtonTone): ToneSurface {
-  const background = BUTTON_TONE_BACKGROUND[tone];
+function resolveTone(theme: AppTheme, tone: TonePreset): ToneSurface {
+  const background = toneThemeColorKey(tone);
 
   // Нейтральный тон: фон surface, текст default, hover/active подмешивают border.
   if (!background) {
@@ -134,11 +117,11 @@ type IconSurface = {
  */
 function resolveIcon(
   theme: AppTheme,
-  tone: ButtonTone,
-  iconTone: ButtonTone,
-  iconFill: ButtonTone | undefined
+  tone: TonePreset,
+  iconTone: TonePreset,
+  iconFill: TonePreset | undefined
 ): IconSurface {
-  const background = BUTTON_TONE_BACKGROUND[iconTone];
+  const background = toneThemeColorKey(iconTone);
 
   let bg: string;
   let fg: string;
@@ -150,7 +133,7 @@ function resolveIcon(
     fg = theme.colors.default;
     bgHover = mixOverSurface(theme, theme.colors.border, 28);
 
-    const variantKey = BUTTON_TONE_BACKGROUND[tone];
+    const variantKey = toneThemeColorKey(tone);
     const variantColor = variantKey ? theme.colors[variantKey] : theme.colors.primary;
 
     bgActive = mixOverSurface(theme, variantColor, 12);
@@ -165,8 +148,8 @@ function resolveIcon(
 
   // iconFill красит только глиф и применяется, если задан, не default и отличен от iconTone.
   const fillKey =
-    iconFill && iconFill !== 'default' && iconFill !== iconTone
-      ? BUTTON_TONE_BACKGROUND[iconFill]
+    iconFill && iconFill !== DEFAULT_TONE_PRESET && iconFill !== iconTone
+      ? toneThemeColorKey(iconFill)
       : undefined;
 
   if (fillKey) {
@@ -210,10 +193,10 @@ function getButtonSplitStyles(
     active = false,
     iconFill,
     iconPosition = DEFAULT_ICON_POSITION,
-    iconTone = DEFAULT_ICON_TONE,
+    iconTone = DEFAULT_TONE_PRESET,
     shape = DEFAULT_SHAPE_PRESET,
     sizePreset = DEFAULT_SIZE_PRESET,
-    tone = DEFAULT_TONE,
+    tone = DEFAULT_TONE_PRESET,
   } = props;
   const radius = radiusPreset(shape, sizePreset);
   const surface = resolveTone(theme, tone);
@@ -229,7 +212,9 @@ function getButtonSplitStyles(
 
   // Шов виден только когда и кнопка, и иконка нейтральны — иначе контраст цвета достаточен.
   const seam =
-    tone === 'default' && iconTone === 'default' ? theme.colors.border : 'transparent';
+    tone === DEFAULT_TONE_PRESET && iconTone === DEFAULT_TONE_PRESET
+      ? theme.colors.border
+      : 'transparent';
   const seamShadow = isStart
     ? `box-shadow: inset -1px 0 0 ${seam};`
     : `box-shadow: inset 1px 0 0 ${seam};`;
@@ -283,7 +268,7 @@ export function getButtonStyles(
     hasIcon = false,
     shape = DEFAULT_SHAPE_PRESET,
     sizePreset = DEFAULT_SIZE_PRESET,
-    tone = DEFAULT_TONE,
+    tone = DEFAULT_TONE_PRESET,
   } = props;
   const surface = resolveTone(theme, tone);
 

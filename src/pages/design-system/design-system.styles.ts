@@ -33,3 +33,11 @@ export const StyledRadioButtonDemo = styled.div`
   gap: ${spacingRem(8)};
   place-content: center;
 `;
+
+/** Демо fieldset: на всю ширину ячейки, по высоте — контент. */
+export const StyledFieldsetDemo = styled.div`
+  display: grid;
+  inline-size: 100%;
+  min-inline-size: 0;
+  align-content: center;
+`;

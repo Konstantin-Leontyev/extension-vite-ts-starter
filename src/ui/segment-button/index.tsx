@@ -9,7 +9,9 @@ import {
   StyledSegmentButton,
   StyledSegmentButtonDivider,
   StyledSegmentButtonPart,
+  resolveSegmentTextColor,
   type SegmentButtonStyleProps,
+  type SegmentTextColor,
 } from './segment-button.styles';
 
 type SegmentButtonAction = {
@@ -17,7 +19,7 @@ type SegmentButtonAction = {
   disabled?: boolean;
   icon?: ReactNode;
   text: string;
-  textColor?: string;
+  textColor?: SegmentTextColor;
   onClick?: () => void;
   onDoubleClick?: () => void;
   onLongPress?: () => void;
@@ -70,7 +72,7 @@ function SegmentButtonPart({
     onClick?.();
   }
 
-  const color = textColor ?? (active ? theme.colors.primary : undefined);
+  const color = resolveSegmentTextColor(theme, textColor, active);
 
   return (
     <StyledSegmentButtonPart
@@ -131,4 +133,5 @@ export function SegmentButton({
   );
 }
 
-export type { SegmentButtonStyleProps } from './segment-button.styles';
+export type { SegmentButtonStyleProps, SegmentTextColor } from './segment-button.styles';
+export { SEGMENT_TEXT_COLOR_OPTIONS } from './segment-button.styles';

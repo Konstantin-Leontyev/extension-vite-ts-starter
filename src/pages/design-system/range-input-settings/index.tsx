@@ -1,6 +1,5 @@
 import { type CSSProperties, type ChangeEvent } from 'react';
 
-import { BUTTON_COLORED_TONES, type ButtonTone } from '@ui/button';
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
@@ -10,6 +9,12 @@ import {
   type ResolvedRangeInputValidationMessages,
 } from '@ui/range-input';
 import { textSizePresets, type TextSizePreset } from '@ui/text';
+import {
+  TONE_PRESET_OPTIONS,
+  toTonePresetOptions,
+  tonePresetsExcludingFill,
+  type TonePreset,
+} from '@ui/tones';
 
 import { StyledSettingsForm } from '../design-system.styles';
 
@@ -17,8 +22,8 @@ export type RangeInputWidgetState = {
   buttonShape: ShapePreset;
   buttonSizePreset: SizePreset;
   buttonText: string;
-  buttonTextColor: ButtonTone;
-  buttonTone: ButtonTone;
+  buttonTextColor: TonePreset;
+  buttonTone: TonePreset;
   disabled: boolean;
   fromPlaceholder: string;
   inputShape: ShapePreset;
@@ -57,23 +62,6 @@ const TITLE_SIZE_PRESET_OPTIONS: ListboxOption[] = (
   Object.keys(textSizePresets) as TextSizePreset[]
 ).map((preset) => ({ label: preset, value: preset }));
 
-const TONE_OPTIONS: ListboxOption[] = [
-  { label: 'default', value: 'default' },
-  { label: 'primary', value: 'primary' },
-  { label: 'success', value: 'success' },
-  { label: 'warning', value: 'warning' },
-  { label: 'danger', value: 'danger' },
-];
-
-function toToneOptions(tones: ButtonTone[]): ListboxOption[] {
-  return tones.map((tone) => ({ label: tone, value: tone }));
-}
-
-/** Цвет текста нельзя задать равным заливке кнопки — иначе текст сольётся. */
-function getTextColorOptions(tone: ButtonTone): ButtonTone[] {
-  return ['default', ...BUTTON_COLORED_TONES.filter((value) => value !== tone)];
-}
-
 type RangeInputSettingsProps = {
   onChange: <K extends keyof RangeInputWidgetState>(
     key: K,
@@ -83,7 +71,7 @@ type RangeInputSettingsProps = {
 };
 
 export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps) {
-  const buttonTextColorOptions = getTextColorOptions(state.buttonTone);
+  const buttonTextColorOptions = tonePresetsExcludingFill(state.buttonTone);
 
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
@@ -198,10 +186,10 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
 
       <Listbox
         label="Button tone:"
-        options={TONE_OPTIONS}
+        options={TONE_PRESET_OPTIONS}
         reserveErrorSpace={false}
         value={state.buttonTone}
-        onChange={(value) => onChange('buttonTone', value as ButtonTone)}
+        onChange={(value) => onChange('buttonTone', value as TonePreset)}
       />
 
       <Input
@@ -215,14 +203,14 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
 
       <Listbox
         label="Button text color:"
-        options={toToneOptions(buttonTextColorOptions)}
+        options={toTonePresetOptions(buttonTextColorOptions)}
         reserveErrorSpace={false}
         value={
           buttonTextColorOptions.includes(state.buttonTextColor)
             ? state.buttonTextColor
             : 'default'
         }
-        onChange={(value) => onChange('buttonTextColor', value as ButtonTone)}
+        onChange={(value) => onChange('buttonTextColor', value as TonePreset)}
       />
 
       <Input

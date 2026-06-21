@@ -16,7 +16,7 @@ import { useAnchoredDismiss } from '@hooks/use-anchored-dismiss';
 import { useFocusTrap } from '@hooks/use-focus-trap';
 import { ChevronIcon } from '@icons/chevron';
 import { CloseIcon } from '@icons/close';
-import { Button, type ButtonTone } from '@ui/button';
+import { Button } from '@ui/button';
 import { Input } from '@ui/input';
 import {
   textSizePreset as resolveTextSizePreset,
@@ -26,6 +26,7 @@ import {
 } from '@ui/presets';
 import { type SpacingPx } from '@ui/spacing';
 import { Text, type TextSizePreset } from '@ui/text';
+import { type TonePreset } from '@ui/tones';
 
 import {
   DEFAULT_RANGE_INPUT_SHAPE,
@@ -83,8 +84,8 @@ export type RangeInputButtonProps = {
   buttonShape?: ShapePreset;
   buttonSizePreset?: SizePreset;
   buttonText: string;
-  buttonTextColor?: ButtonTone;
-  buttonTone?: ButtonTone;
+  buttonTextColor?: TonePreset;
+  buttonTone?: TonePreset;
 };
 
 /** Проброс осей полей From/To в Input; по умолчанию — shape/sizePreset триггера. */

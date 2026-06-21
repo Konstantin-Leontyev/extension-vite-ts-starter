@@ -1,11 +1,11 @@
 import { useState, type ReactNode } from 'react';
-import { useTheme } from 'styled-components';
 
 import { SearchIcon } from '@icons/search';
 import { SettingsIcon } from '@icons/settings';
 import { Button } from '@ui/button';
 import { Card } from '@ui/card';
 import { Checkbox } from '@ui/checkbox';
+import { Fieldset } from '@ui/fieldset';
 import { Input } from '@ui/input';
 import { Listbox } from '@ui/listbox';
 import { RadioButton } from '@ui/radio-button';
@@ -17,15 +17,16 @@ import {
 import { ScrollPort } from '@ui/scroll-port';
 import { SegmentButton } from '@ui/segment-button';
 import { Sidebar } from '@ui/sidebar';
-import { type ThemeColors } from '@ui/theme';
 
 import { ButtonSettings, type ButtonWidgetState } from './button-settings';
 import { CheckboxSettings, type CheckboxWidgetState } from './checkbox-settings';
 import {
   StyledDesignSystemWidgets,
+  StyledFieldsetDemo,
   StyledMain,
   StyledRadioButtonDemo,
 } from './design-system.styles';
+import { FieldsetSettings, type FieldsetWidgetState } from './fieldset-settings';
 import { InputSettings, type InputWidgetState } from './input-settings';
 import { ListboxSettings, type ListboxWidgetState } from './listbox-settings';
 import { LISTBOX_DEMO_OPTIONS } from './listbox-settings/options';
@@ -37,7 +38,6 @@ import { RangeInputSettings, type RangeInputWidgetState } from './range-input-se
 import {
   SegmentButtonSettings,
   type SegmentButtonWidgetState,
-  type SegmentTextColor,
 } from './segment-button-settings';
 
 const SIDEBAR_ID = 'design-system-sidebar';
@@ -47,8 +47,10 @@ const LISTBOX_WIDGET_TITLE_ID = 'design-system-listbox-heading';
 const RANGE_INPUT_WIDGET_TITLE_ID = 'design-system-range-input-heading';
 const CHECKBOX_WIDGET_TITLE_ID = 'design-system-checkbox-heading';
 const RADIO_BUTTON_WIDGET_TITLE_ID = 'design-system-radio-button-heading';
+const FIELDSET_WIDGET_TITLE_ID = 'design-system-fieldset-heading';
 const SEGMENT_BUTTON_WIDGET_TITLE_ID = 'design-system-segment-button-heading';
 const RADIO_BUTTON_DEMO_NAME = 'design-system-radio-button-demo';
+const FIELDSET_DEMO_NAME = 'design-system-fieldset-demo';
 
 type WidgetSettingsKey =
   | 'input'
@@ -57,7 +59,8 @@ type WidgetSettingsKey =
   | 'button'
   | 'segment-button'
   | 'checkbox'
-  | 'radio-button';
+  | 'radio-button'
+  | 'fieldset';
 
 const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   input: 'Input',
@@ -67,6 +70,7 @@ const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   'segment-button': 'Segment button',
   checkbox: 'Checkbox',
   'radio-button': 'Radio button',
+  fieldset: 'Fieldset',
 };
 
 /**
@@ -122,7 +126,7 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   fromPlaceholder: 'From',
   inputShape: 'default',
   inputSizePreset: 'large',
-  label: 'Range filter:',
+  label: 'Label:',
   placeholder: 'Range: any',
   shape: 'default',
   sizePreset: 'large',
@@ -148,6 +152,16 @@ const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
   bare: false,
   disabledA: false,
   disabledB: false,
+  labelA: 'Option A',
+  labelB: 'Option B',
+  selected: 'a',
+};
+
+const DEFAULT_FIELDSET_STATE: FieldsetWidgetState = {
+  borderTone: 'default',
+  disabledA: false,
+  disabledB: false,
+  label: 'Label:',
   labelA: 'Option A',
   labelB: 'Option B',
   selected: 'a',
@@ -198,15 +212,7 @@ function validateDemoRange(value: RangeValue): string | null {
   return null;
 }
 
-function segmentTextColor(
-  color: SegmentTextColor,
-  colors: ThemeColors
-): string | undefined {
-  return color === 'default' ? undefined : colors[color];
-}
-
 export function DesignSystemPage() {
-  const theme = useTheme();
   const [activeSettings, setActiveSettings] = useState<WidgetSettingsKey | null>(null);
   const [input, setInput] = useState<InputWidgetState>(DEFAULT_INPUT_STATE);
   const [button, setButton] = useState<ButtonWidgetState>(DEFAULT_BUTTON_STATE);
@@ -218,6 +224,7 @@ export function DesignSystemPage() {
   const [radioButton, setRadioButton] = useState<RadioButtonWidgetState>(
     DEFAULT_RADIO_BUTTON_STATE
   );
+  const [fieldset, setFieldset] = useState<FieldsetWidgetState>(DEFAULT_FIELDSET_STATE);
   const [segmentButton, setSegmentButton] = useState<SegmentButtonWidgetState>(
     DEFAULT_SEGMENT_BUTTON_STATE
   );
@@ -309,6 +316,13 @@ export function DesignSystemPage() {
     setRadioButton((current) => ({ ...current, [key]: value }));
   }
 
+  function updateFieldset<K extends keyof FieldsetWidgetState>(
+    key: K,
+    value: FieldsetWidgetState[K]
+  ): void {
+    setFieldset((current) => ({ ...current, [key]: value }));
+  }
+
   function updateSegmentButton<K extends keyof SegmentButtonWidgetState>(
     key: K,
     value: SegmentButtonWidgetState[K]
@@ -345,6 +359,10 @@ export function DesignSystemPage() {
 
     if (activeSettings === 'radio-button') {
       return <RadioButtonSettings state={radioButton} onChange={updateRadioButton} />;
+    }
+
+    if (activeSettings === 'fieldset') {
+      return <FieldsetSettings state={fieldset} onChange={updateFieldset} />;
     }
 
     return null;
@@ -495,28 +513,19 @@ export function DesignSystemPage() {
                       ? {
                           disabled: segmentButton.centerDisabled,
                           text: segmentButton.centerText,
-                          textColor: segmentTextColor(
-                            segmentButton.centerTextColor,
-                            theme.colors
-                          ),
+                          textColor: segmentButton.centerTextColor,
                         }
                       : undefined
                   }
                   left={{
                     disabled: segmentButton.leftDisabled,
                     text: segmentButton.leftText,
-                    textColor: segmentTextColor(
-                      segmentButton.leftTextColor,
-                      theme.colors
-                    ),
+                    textColor: segmentButton.leftTextColor,
                   }}
                   right={{
                     disabled: segmentButton.rightDisabled,
                     text: segmentButton.rightText,
-                    textColor: segmentTextColor(
-                      segmentButton.rightTextColor,
-                      theme.colors
-                    ),
+                    textColor: segmentButton.rightTextColor,
                   }}
                 />
               )}
@@ -559,6 +568,31 @@ export function DesignSystemPage() {
                     onChange={() => updateRadioButton('selected', 'b')}
                   />
                 </StyledRadioButtonDemo>
+              )}
+
+              {renderWidgetCard(
+                'fieldset',
+                FIELDSET_WIDGET_TITLE_ID,
+                <StyledFieldsetDemo>
+                  <Fieldset borderTone={fieldset.borderTone} label={fieldset.label}>
+                    <RadioButton
+                      checked={fieldset.selected === 'a'}
+                      disabled={fieldset.disabledA}
+                      label={fieldset.labelA}
+                      name={FIELDSET_DEMO_NAME}
+                      value="a"
+                      onChange={() => updateFieldset('selected', 'a')}
+                    />
+                    <RadioButton
+                      checked={fieldset.selected === 'b'}
+                      disabled={fieldset.disabledB}
+                      label={fieldset.labelB}
+                      name={FIELDSET_DEMO_NAME}
+                      value="b"
+                      onChange={() => updateFieldset('selected', 'b')}
+                    />
+                  </Fieldset>
+                </StyledFieldsetDemo>
               )}
             </StyledDesignSystemWidgets>
           </ScrollPort>
