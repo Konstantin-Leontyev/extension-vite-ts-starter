@@ -3,6 +3,7 @@ import {
   useId,
   useLayoutEffect,
   useRef,
+  useState,
   type ComponentPropsWithRef,
   type ReactNode,
   type RefObject,
@@ -19,11 +20,7 @@ import { ScrollPort } from '@ui/scroll-port';
 import { Text } from '@ui/text';
 import { type TextSizePreset } from '@ui/text';
 
-import {
-  StyledTableCellLead,
-  TableCell,
-  type TableCellAlign,
-} from './table-cell';
+import { StyledTableCellLead, TableCell, type TableCellAlign } from './table-cell';
 import {
   COMPOSE_PANEL_BORDER_WIDTH_PX,
   DEFAULT_TABLE_BORDERED,
@@ -61,6 +58,9 @@ const CHECKBOX_COLUMN_INLINE_SIZE = '2.75rem';
 /** Минимум выбранных строк, при котором есть «группа»: bulk-действия и групповой чекбокс в шапке. */
 const BULK_SELECTION_MIN = 2;
 
+/** Субпиксельный допуск при сравнении высоты контента с viewport. */
+const SCROLL_OVERFLOW_THRESHOLD_PX = 1;
+
 export type TableAddRowSource = 'foot' | 'head';
 
 export type TableCellRenderContext = {
@@ -93,8 +93,7 @@ const DEFAULT_COMPOSE_HINT =
   'Press Esc to close without saving, or Enter to add the row. Use Tab to move between fields.';
 
 /** Подсказка в строке edit-панели, когда ошибки нет и включён резерв высоты. */
-const DEFAULT_EDIT_HINT =
-  'Press Esc to close without saving, or Enter to save changes.';
+const DEFAULT_EDIT_HINT = 'Press Esc to close without saving, or Enter to save changes.';
 
 type TableComposeProps<Row> = {
   /** Режим ввода новой строки — панель как у Listbox. */
@@ -296,8 +295,7 @@ function TableBodyRow<Row>({
           checkable &&
           rowCheckboxColumnKey !== undefined &&
           column.key === rowCheckboxColumnKey;
-        const showRowActionsInColumn =
-          showRowActions && column.key === actionsColumnKey;
+        const showRowActionsInColumn = showRowActions && column.key === actionsColumnKey;
 
         const rowCheckbox = showRowCheckbox ? (
           <TableCheckbox
@@ -394,6 +392,7 @@ export function Table<Row>(props: TableProps<Row>) {
 
   const headAnchorRef = useRef<HTMLTableSectionElement>(null);
   const footAnchorRef = useRef<HTMLTableSectionElement>(null);
+  const scrollViewportRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const editPanelRef = useRef<HTMLDivElement>(null);
   const editRowAnchorRef = useRef<HTMLTableRowElement>(null);
@@ -406,9 +405,7 @@ export function Table<Row>(props: TableProps<Row>) {
     ? (props.isRowSelectable ?? (() => true))
     : () => false;
   const allRowKeys = checkable
-    ? rows
-        .filter((row) => isRowSelectable(row))
-        .map((row) => props.getRowKey(row))
+    ? rows.filter((row) => isRowSelectable(row)).map((row) => props.getRowKey(row))
     : [];
   const allRowsSelected =
     checkable &&
@@ -419,6 +416,10 @@ export function Table<Row>(props: TableProps<Row>) {
   const actionsColumnKey = checkable ? props.selectedRowActionsColumnKey : undefined;
   const hideHeadAnchor = composeRowActive && composeRowSource === 'head';
   const hideFootAnchor = composeRowActive && composeRowSource === 'foot';
+  const [showFootHeader, setShowFootHeader] = useState(false);
+  const showFootHeaderRow =
+    checkable &&
+    (showFootHeader || (composeRowActive && composeRowSource === 'foot'));
   const showComposePanel =
     composeRowActive &&
     composeRowSource !== undefined &&
@@ -426,7 +427,9 @@ export function Table<Row>(props: TableProps<Row>) {
   const editingRow =
     editRowActive && editRowKey !== undefined
       ? rows.find((row, rowIndex) =>
-          checkable ? props.getRowKey(row) === editRowKey : String(rowIndex) === editRowKey
+          checkable
+            ? props.getRowKey(row) === editRowKey
+            : String(rowIndex) === editRowKey
         )
       : undefined;
   const showEditPanel =
@@ -564,9 +567,7 @@ export function Table<Row>(props: TableProps<Row>) {
 
   const renderComposeCells = (): ReactNode => (
     <>
-      {separateCheckboxColumn && (
-        <TableCell align="center" sizePreset={sizePreset} />
-      )}
+      {separateCheckboxColumn && <TableCell align="center" sizePreset={sizePreset} />}
       {resolvedNumbered && <TableCell align="end" sizePreset={sizePreset} />}
       {columns.map((column) => {
         const composeCellContent = renderComposeCell?.(column, composeCellContext);
@@ -598,9 +599,7 @@ export function Table<Row>(props: TableProps<Row>) {
 
   const renderEditCells = (row: Row): ReactNode => (
     <>
-      {separateCheckboxColumn && (
-        <TableCell align="center" sizePreset={sizePreset} />
-      )}
+      {separateCheckboxColumn && <TableCell align="center" sizePreset={sizePreset} />}
       {resolvedNumbered && <TableCell align="end" sizePreset={sizePreset} />}
       {columns.map((column) => {
         const editCellContent = renderEditCell?.(column, row, editCellContext);
@@ -698,6 +697,54 @@ export function Table<Row>(props: TableProps<Row>) {
       </StyledTableRow>
     );
   };
+
+  // Нижняя шапка нужна только при вертикальном overflow viewport. Сравниваем
+  // интринсивную высоту контента (scrollHeight без самого footer) с clientHeight:
+  // вычитание footer обязательно — иначе показанный footer сам поддерживает
+  // overflow и не исчезает (latch).
+  useLayoutEffect(() => {
+    if (!checkable) {
+      return;
+    }
+
+    const viewport = scrollViewportRef.current;
+    const table = tableRootRef.current;
+
+    if (!viewport || !table) {
+      return;
+    }
+
+    function updateFootHeaderVisibility(): void {
+      const viewportElement = scrollViewportRef.current;
+
+      if (!viewportElement) {
+        return;
+      }
+
+      const footElement = footAnchorRef.current;
+      const intrinsicScroll =
+        viewportElement.scrollHeight - (footElement?.offsetHeight ?? 0);
+      const nextShowFootHeader =
+        intrinsicScroll > viewportElement.clientHeight + SCROLL_OVERFLOW_THRESHOLD_PX;
+
+      setShowFootHeader((current) =>
+        current === nextShowFootHeader ? current : nextShowFootHeader
+      );
+    }
+
+    updateFootHeaderVisibility();
+
+    const resizeObserver = new ResizeObserver(updateFootHeaderVisibility);
+
+    resizeObserver.observe(viewport);
+    resizeObserver.observe(table);
+    window.addEventListener('resize', updateFootHeaderVisibility);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateFootHeaderVisibility);
+    };
+  }, [checkable, columns.length, rows.length]);
 
   useLayoutEffect(() => {
     if (!showComposePanel) {
@@ -965,7 +1012,7 @@ export function Table<Row>(props: TableProps<Row>) {
             );
           })}
         </StyledTableBody>
-        {checkable && (
+        {showFootHeaderRow && (
           <StyledTableFoot $composeHidden={hideFootAnchor} ref={footAnchorRef}>
             <StyledTableRow sizePreset={sizePreset}>
               {renderHeaderCells(false, 'foot', true)}
@@ -980,7 +1027,7 @@ export function Table<Row>(props: TableProps<Row>) {
 
   if (!resolvedBordered) {
     return (
-      <ScrollPort {...layout}>
+      <ScrollPort ref={scrollViewportRef} {...layout}>
         <StyledTableClip>{table}</StyledTableClip>
       </ScrollPort>
     );
@@ -988,7 +1035,7 @@ export function Table<Row>(props: TableProps<Row>) {
 
   return (
     <StyledTableFrame {...layout}>
-      <ScrollPort>{table}</ScrollPort>
+      <ScrollPort ref={scrollViewportRef}>{table}</ScrollPort>
     </StyledTableFrame>
   );
 }
