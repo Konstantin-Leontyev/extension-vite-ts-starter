@@ -4,10 +4,7 @@ import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
-import {
-  SEGMENT_TEXT_COLOR_OPTIONS,
-  type SegmentTextColor,
-} from '@ui/segment-button';
+import { SEGMENT_TEXT_COLOR_OPTIONS, type SegmentTextColor } from '@ui/segment-button';
 
 import { StyledSettingsForm } from '../design-system.styles';
 

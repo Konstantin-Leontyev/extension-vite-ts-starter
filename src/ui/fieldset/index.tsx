@@ -16,7 +16,10 @@ type FieldsetProps = {
   legendColor?: string;
   legendSizePreset?: TextSizePreset;
 } & FieldsetStyleProps &
-  Omit<ComponentPropsWithRef<'fieldset'>, keyof FieldsetStyleProps | 'className' | 'style'>;
+  Omit<
+    ComponentPropsWithRef<'fieldset'>,
+    keyof FieldsetStyleProps | 'className' | 'style'
+  >;
 
 export function Fieldset({
   borderTone,

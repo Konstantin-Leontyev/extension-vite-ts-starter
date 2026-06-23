@@ -13,11 +13,7 @@ import {
 } from '@ui/presets';
 import { spacingRem } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
-import {
-  DEFAULT_TONE_PRESET,
-  toneThemeColorKey,
-  type TonePreset,
-} from '@ui/tones';
+import { DEFAULT_TONE_PRESET, toneThemeColorKey, type TonePreset } from '@ui/tones';
 
 export type ButtonIconPosition = 'end' | 'start';
 

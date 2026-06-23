@@ -49,7 +49,9 @@ function resolveFieldsetBorderColor(
   );
 }
 
-export function getFieldsetStyles(props: FieldsetStyleProps & { theme: AppTheme }): string {
+export function getFieldsetStyles(
+  props: FieldsetStyleProps & { theme: AppTheme }
+): string {
   const theme = getTheme(props);
   const paddingInline = spacingRem(controlPaddingInline[DEFAULT_SIZE_PRESET]);
   const paddingBlock = spacingRem(controlPaddingInline[DEFAULT_SIZE_PRESET]);

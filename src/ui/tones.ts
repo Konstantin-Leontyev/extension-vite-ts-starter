@@ -49,7 +49,10 @@ export function toneThemeColor(
 
 /** Тон текста/глифа: default + цветные, кроме совпадающего с заливкой (иначе сольётся). */
 export function tonePresetsExcludingFill(fillTone: TonePreset): TonePreset[] {
-  return [DEFAULT_TONE_PRESET, ...COLORED_TONE_PRESETS.filter((tone) => tone !== fillTone)];
+  return [
+    DEFAULT_TONE_PRESET,
+    ...COLORED_TONE_PRESETS.filter((tone) => tone !== fillTone),
+  ];
 }
 
 /**

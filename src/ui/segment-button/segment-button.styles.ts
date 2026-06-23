@@ -39,7 +39,12 @@ export function resolveSegmentTextColor(
   active: boolean | undefined
 ): string | undefined {
   if (textColor !== undefined) {
-    return resolveExtendedToneColor(theme, textColor, SEGMENT_TEXT_EXTRA_COLORS, undefined);
+    return resolveExtendedToneColor(
+      theme,
+      textColor,
+      SEGMENT_TEXT_EXTRA_COLORS,
+      undefined
+    );
   }
 
   return active ? theme.colors.primary : undefined;
