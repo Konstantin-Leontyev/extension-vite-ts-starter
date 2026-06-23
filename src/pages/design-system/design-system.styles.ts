@@ -41,3 +41,10 @@ export const StyledFieldsetDemo = styled.div`
   min-inline-size: 0;
   align-content: center;
 `;
+
+/** Демо spinner: по центру свободной области карточки. */
+export const StyledSpinnerDemo = styled.div`
+  display: grid;
+  min-block-size: 0;
+  place-content: center;
+`;

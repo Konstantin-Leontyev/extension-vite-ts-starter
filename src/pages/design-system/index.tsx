@@ -8,6 +8,7 @@ import { Checkbox } from '@ui/checkbox';
 import { Fieldset } from '@ui/fieldset';
 import { Input } from '@ui/input';
 import { Listbox } from '@ui/listbox';
+import { Progress } from '@ui/progress';
 import { RadioButton } from '@ui/radio-button';
 import {
   DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
@@ -17,6 +18,7 @@ import {
 import { ScrollPort } from '@ui/scroll-port';
 import { SegmentButton } from '@ui/segment-button';
 import { Sidebar } from '@ui/sidebar';
+import { Spinner } from '@ui/spinner';
 
 import { ButtonSettings, type ButtonWidgetState } from './button-settings';
 import { CheckboxSettings, type CheckboxWidgetState } from './checkbox-settings';
@@ -25,11 +27,13 @@ import {
   StyledFieldsetDemo,
   StyledMain,
   StyledRadioButtonDemo,
+  StyledSpinnerDemo,
 } from './design-system.styles';
 import { FieldsetSettings, type FieldsetWidgetState } from './fieldset-settings';
 import { InputSettings, type InputWidgetState } from './input-settings';
 import { ListboxSettings, type ListboxWidgetState } from './listbox-settings';
 import { LISTBOX_DEMO_OPTIONS } from './listbox-settings/options';
+import { ProgressSettings, type ProgressWidgetState } from './progress-settings';
 import {
   RadioButtonSettings,
   type RadioButtonWidgetState,
@@ -39,6 +43,7 @@ import {
   SegmentButtonSettings,
   type SegmentButtonWidgetState,
 } from './segment-button-settings';
+import { SpinnerSettings, type SpinnerWidgetState } from './spinner-settings';
 
 const SIDEBAR_ID = 'design-system-sidebar';
 const INPUT_WIDGET_TITLE_ID = 'design-system-input-heading';
@@ -48,6 +53,8 @@ const RANGE_INPUT_WIDGET_TITLE_ID = 'design-system-range-input-heading';
 const CHECKBOX_WIDGET_TITLE_ID = 'design-system-checkbox-heading';
 const RADIO_BUTTON_WIDGET_TITLE_ID = 'design-system-radio-button-heading';
 const FIELDSET_WIDGET_TITLE_ID = 'design-system-fieldset-heading';
+const PROGRESS_WIDGET_TITLE_ID = 'design-system-progress-heading';
+const SPINNER_WIDGET_TITLE_ID = 'design-system-spinner-heading';
 const SEGMENT_BUTTON_WIDGET_TITLE_ID = 'design-system-segment-button-heading';
 const RADIO_BUTTON_DEMO_NAME = 'design-system-radio-button-demo';
 const FIELDSET_DEMO_NAME = 'design-system-fieldset-demo';
@@ -60,7 +67,9 @@ type WidgetSettingsKey =
   | 'segment-button'
   | 'checkbox'
   | 'radio-button'
-  | 'fieldset';
+  | 'fieldset'
+  | 'progress'
+  | 'spinner';
 
 const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   input: 'Input',
@@ -71,6 +80,8 @@ const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   checkbox: 'Checkbox',
   'radio-button': 'Radio button',
   fieldset: 'Fieldset',
+  progress: 'Progress',
+  spinner: 'Spinner',
 };
 
 /**
@@ -167,6 +178,18 @@ const DEFAULT_FIELDSET_STATE: FieldsetWidgetState = {
   selected: 'a',
 };
 
+const DEFAULT_PROGRESS_STATE: ProgressWidgetState = {
+  showLabel: true,
+  sizePreset: 'medium',
+  tone: 'primary',
+  valuePercent: 42,
+};
+
+const DEFAULT_SPINNER_STATE: SpinnerWidgetState = {
+  sizePreset: 'medium',
+  tone: 'primary',
+};
+
 const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   centerDisabled: false,
   centerText: 'Change',
@@ -225,6 +248,8 @@ export function DesignSystemPage() {
     DEFAULT_RADIO_BUTTON_STATE
   );
   const [fieldset, setFieldset] = useState<FieldsetWidgetState>(DEFAULT_FIELDSET_STATE);
+  const [progress, setProgress] = useState<ProgressWidgetState>(DEFAULT_PROGRESS_STATE);
+  const [spinner, setSpinner] = useState<SpinnerWidgetState>(DEFAULT_SPINNER_STATE);
   const [segmentButton, setSegmentButton] = useState<SegmentButtonWidgetState>(
     DEFAULT_SEGMENT_BUTTON_STATE
   );
@@ -323,6 +348,20 @@ export function DesignSystemPage() {
     setFieldset((current) => ({ ...current, [key]: value }));
   }
 
+  function updateProgress<K extends keyof ProgressWidgetState>(
+    key: K,
+    value: ProgressWidgetState[K]
+  ): void {
+    setProgress((current) => ({ ...current, [key]: value }));
+  }
+
+  function updateSpinner<K extends keyof SpinnerWidgetState>(
+    key: K,
+    value: SpinnerWidgetState[K]
+  ): void {
+    setSpinner((current) => ({ ...current, [key]: value }));
+  }
+
   function updateSegmentButton<K extends keyof SegmentButtonWidgetState>(
     key: K,
     value: SegmentButtonWidgetState[K]
@@ -363,6 +402,14 @@ export function DesignSystemPage() {
 
     if (activeSettings === 'fieldset') {
       return <FieldsetSettings state={fieldset} onChange={updateFieldset} />;
+    }
+
+    if (activeSettings === 'progress') {
+      return <ProgressSettings state={progress} onChange={updateProgress} />;
+    }
+
+    if (activeSettings === 'spinner') {
+      return <SpinnerSettings state={spinner} onChange={updateSpinner} />;
     }
 
     return null;
@@ -593,6 +640,26 @@ export function DesignSystemPage() {
                     />
                   </Fieldset>
                 </StyledFieldsetDemo>
+              )}
+
+              {renderWidgetCard(
+                'progress',
+                PROGRESS_WIDGET_TITLE_ID,
+                <Progress
+                  inlineSize="100%"
+                  showLabel={progress.showLabel}
+                  sizePreset={progress.sizePreset}
+                  tone={progress.tone}
+                  value={progress.valuePercent / 100}
+                />
+              )}
+
+              {renderWidgetCard(
+                'spinner',
+                SPINNER_WIDGET_TITLE_ID,
+                <StyledSpinnerDemo>
+                  <Spinner sizePreset={spinner.sizePreset} tone={spinner.tone} />
+                </StyledSpinnerDemo>
               )}
             </StyledDesignSystemWidgets>
           </ScrollPort>
