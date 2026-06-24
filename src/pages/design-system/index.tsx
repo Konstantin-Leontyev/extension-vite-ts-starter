@@ -20,6 +20,7 @@ import { SegmentButton } from '@ui/segment-button';
 import { Sidebar } from '@ui/sidebar';
 import { Spinner } from '@ui/spinner';
 
+import { BrowserAiSmokeProbe } from './browser-ai-smoke-probe';
 import { ButtonSettings, type ButtonWidgetState } from './button-settings';
 import { CheckboxSettings, type CheckboxWidgetState } from './checkbox-settings';
 import {
@@ -661,6 +662,8 @@ export function DesignSystemPage() {
                   <Spinner sizePreset={spinner.sizePreset} tone={spinner.tone} />
                 </StyledSpinnerDemo>
               )}
+
+              <BrowserAiSmokeProbe />
             </StyledDesignSystemWidgets>
           </ScrollPort>
         </Card>
