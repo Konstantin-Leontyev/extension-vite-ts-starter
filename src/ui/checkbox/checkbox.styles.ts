@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
 import { spacingRem, type SpacingPx } from '@ui/spacing';
-import { getTheme, type AppTheme } from '@ui/theme';
+import { DISABLED_OPACITY, getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -143,6 +143,20 @@ export const StyledCheckboxRoot = styled.label.withConfig({
   align-items: center;
   cursor: pointer;
   ${(props) => getLayoutStyles(props)}
+
+  /* disabled приходит на input; корень-label об этом не знает — реагируем
+     структурно через :has, чтобы убрать вводящий в заблуждение pointer и
+     приглушить весь контрол как disabled-кнопку. reset.ts уже глушит сам бокс
+     (DISABLED_OPACITY) — opacity на корне сложилась бы с этим, поэтому боксу
+     возвращаем opacity: 1, итог ровно DISABLED_OPACITY на всём контроле. */
+  &:has(:disabled) {
+    cursor: not-allowed;
+    opacity: ${DISABLED_OPACITY};
+  }
+
+  &:has(:disabled) input:disabled {
+    opacity: 1;
+  }
 `;
 
 export const StyledCheckboxControl = styled.input.withConfig({

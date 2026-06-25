@@ -1,7 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 import { normalize } from 'styled-normalize';
 
-import { getTheme } from '@ui/theme';
+import { DISABLED_OPACITY, getTheme } from '@ui/theme';
 
 export const GlobalResetStyle = createGlobalStyle`
   ${normalize}
@@ -76,7 +76,7 @@ export const GlobalResetStyle = createGlobalStyle`
   button:disabled,
   input:disabled {
     cursor: not-allowed;
-    opacity: 0.55;
+    opacity: ${DISABLED_OPACITY};
   }
 
   a {

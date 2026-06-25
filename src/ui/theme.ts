@@ -80,6 +80,9 @@ export function getTheme(props: { theme: AppTheme }): AppTheme {
   return props.theme;
 }
 
+/** Приглушение disabled-контролов (button/input/checkbox) — единый источник значения. */
+export const DISABLED_OPACITY = 0.55;
+
 export const GlobalThemeStyle = createGlobalStyle`
   body {
     background-color: ${(props) => getTheme(props).colors.background};
