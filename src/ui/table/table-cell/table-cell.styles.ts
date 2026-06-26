@@ -1,10 +1,6 @@
 import styled, { css } from 'styled-components';
 
-import {
-  DEFAULT_SIZE_PRESET,
-  controlPaddingInline,
-  type SizePreset,
-} from '@ui/presets';
+import { DEFAULT_SIZE_PRESET, controlPaddingInline, type SizePreset } from '@ui/presets';
 import { spacingRem } from '@ui/spacing';
 
 export type TableCellAlign = 'center' | 'end' | 'start';

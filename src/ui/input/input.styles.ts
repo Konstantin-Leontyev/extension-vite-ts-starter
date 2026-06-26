@@ -35,7 +35,11 @@ export function getInputControlStyles(
   props: InputControlStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { align, shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const {
+    align,
+    shape = DEFAULT_SHAPE_PRESET,
+    sizePreset = DEFAULT_SIZE_PRESET,
+  } = props;
 
   const rules = [
     `min-block-size: ${blockSizeRem(sizePreset)};`,

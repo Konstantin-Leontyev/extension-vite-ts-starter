@@ -126,7 +126,8 @@ export const StyledSidebar = styled.div.withConfig({
     /* Раскрытый слот: ширина = панель + правый инсет, инсет как падинги. */
     ${StyledSidebarSlot}[data-open='true'][data-expanded='true'] {
       inline-size: calc(
-        ${SIDEBAR_PANEL_WIDTH} + ${(p) => spacingRemOr(p.paddingInlineEnd, DEFAULT_INLINE_END)}
+        ${SIDEBAR_PANEL_WIDTH} +
+          ${(p) => spacingRemOr(p.paddingInlineEnd, DEFAULT_INLINE_END)}
       );
       padding-inline-end: ${(p) => spacingRemOr(p.paddingInlineEnd, DEFAULT_INLINE_END)};
       padding-block-end: ${(p) => spacingRemOr(p.paddingInlineEnd, DEFAULT_INLINE_END)};

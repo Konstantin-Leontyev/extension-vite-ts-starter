@@ -19,6 +19,9 @@ import { ScrollPort } from '@ui/scroll-port';
 import { SegmentButton } from '@ui/segment-button';
 import { Sidebar } from '@ui/sidebar';
 import { Spinner } from '@ui/spinner';
+import { Switch } from '@ui/switch';
+import { Text } from '@ui/text';
+import { Toast } from '@ui/toast';
 
 import { BrowserAiSmokeProbe } from './browser-ai-smoke-probe';
 import { ButtonSettings, type ButtonWidgetState } from './button-settings';
@@ -45,6 +48,8 @@ import {
   type SegmentButtonWidgetState,
 } from './segment-button-settings';
 import { SpinnerSettings, type SpinnerWidgetState } from './spinner-settings';
+import { SwitchSettings, type SwitchWidgetState } from './switch-settings';
+import { ToastSettings, type ToastWidgetState } from './toast-settings';
 
 const SIDEBAR_ID = 'design-system-sidebar';
 const INPUT_WIDGET_TITLE_ID = 'design-system-input-heading';
@@ -57,6 +62,8 @@ const FIELDSET_WIDGET_TITLE_ID = 'design-system-fieldset-heading';
 const PROGRESS_WIDGET_TITLE_ID = 'design-system-progress-heading';
 const SPINNER_WIDGET_TITLE_ID = 'design-system-spinner-heading';
 const SEGMENT_BUTTON_WIDGET_TITLE_ID = 'design-system-segment-button-heading';
+const SWITCH_WIDGET_TITLE_ID = 'design-system-switch-heading';
+const TOAST_WIDGET_TITLE_ID = 'design-system-toast-heading';
 const RADIO_BUTTON_DEMO_NAME = 'design-system-radio-button-demo';
 const FIELDSET_DEMO_NAME = 'design-system-fieldset-demo';
 
@@ -70,7 +77,9 @@ type WidgetSettingsKey =
   | 'radio-button'
   | 'fieldset'
   | 'progress'
-  | 'spinner';
+  | 'spinner'
+  | 'switch'
+  | 'toast';
 
 const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   input: 'Input',
@@ -83,6 +92,8 @@ const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   fieldset: 'Fieldset',
   progress: 'Progress',
   spinner: 'Spinner',
+  switch: 'Switch',
+  toast: 'Toast',
 };
 
 /**
@@ -191,6 +202,19 @@ const DEFAULT_SPINNER_STATE: SpinnerWidgetState = {
   tone: 'primary',
 };
 
+const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
+  checked: true,
+  disabled: false,
+  label: 'Switch',
+  sizePreset: 'large',
+  tone: 'primary',
+};
+
+const DEFAULT_TOAST_STATE: ToastWidgetState = {
+  message: 'Very important message',
+  tone: 'success',
+};
+
 const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   centerDisabled: false,
   centerText: 'Change',
@@ -251,6 +275,9 @@ export function DesignSystemPage() {
   const [fieldset, setFieldset] = useState<FieldsetWidgetState>(DEFAULT_FIELDSET_STATE);
   const [progress, setProgress] = useState<ProgressWidgetState>(DEFAULT_PROGRESS_STATE);
   const [spinner, setSpinner] = useState<SpinnerWidgetState>(DEFAULT_SPINNER_STATE);
+  const [switchState, setSwitchState] =
+    useState<SwitchWidgetState>(DEFAULT_SWITCH_STATE);
+  const [toast, setToast] = useState<ToastWidgetState>(DEFAULT_TOAST_STATE);
   const [segmentButton, setSegmentButton] = useState<SegmentButtonWidgetState>(
     DEFAULT_SEGMENT_BUTTON_STATE
   );
@@ -363,6 +390,20 @@ export function DesignSystemPage() {
     setSpinner((current) => ({ ...current, [key]: value }));
   }
 
+  function updateSwitch<K extends keyof SwitchWidgetState>(
+    key: K,
+    value: SwitchWidgetState[K]
+  ): void {
+    setSwitchState((current) => ({ ...current, [key]: value }));
+  }
+
+  function updateToast<K extends keyof ToastWidgetState>(
+    key: K,
+    value: ToastWidgetState[K]
+  ): void {
+    setToast((current) => ({ ...current, [key]: value }));
+  }
+
   function updateSegmentButton<K extends keyof SegmentButtonWidgetState>(
     key: K,
     value: SegmentButtonWidgetState[K]
@@ -411,6 +452,14 @@ export function DesignSystemPage() {
 
     if (activeSettings === 'spinner') {
       return <SpinnerSettings state={spinner} onChange={updateSpinner} />;
+    }
+
+    if (activeSettings === 'switch') {
+      return <SwitchSettings state={switchState} onChange={updateSwitch} />;
+    }
+
+    if (activeSettings === 'toast') {
+      return <ToastSettings state={toast} onChange={updateToast} />;
     }
 
     return null;
@@ -661,6 +710,28 @@ export function DesignSystemPage() {
                 <StyledSpinnerDemo>
                   <Spinner sizePreset={spinner.sizePreset} tone={spinner.tone} />
                 </StyledSpinnerDemo>
+              )}
+
+              {renderWidgetCard(
+                'switch',
+                SWITCH_WIDGET_TITLE_ID,
+                <Switch
+                  checked={switchState.checked}
+                  disabled={switchState.disabled}
+                  label={switchState.label || undefined}
+                  placeSelf="center"
+                  sizePreset={switchState.sizePreset}
+                  tone={switchState.tone}
+                  onChange={(event) => updateSwitch('checked', event.target.checked)}
+                />
+              )}
+
+              {renderWidgetCard(
+                'toast',
+                TOAST_WIDGET_TITLE_ID,
+                <Toast justifySelf="center" tone={toast.tone}>
+                  <Text sizePreset="thin">{toast.message}</Text>
+                </Toast>
               )}
 
               <BrowserAiSmokeProbe />
