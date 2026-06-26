@@ -20,6 +20,7 @@ import { SegmentButton } from '@ui/segment-button';
 import { Sidebar } from '@ui/sidebar';
 import { Spinner } from '@ui/spinner';
 import { Switch } from '@ui/switch';
+import { Tag } from '@ui/tag';
 import { Text } from '@ui/text';
 import { Toast } from '@ui/toast';
 
@@ -49,6 +50,7 @@ import {
 } from './segment-button-settings';
 import { SpinnerSettings, type SpinnerWidgetState } from './spinner-settings';
 import { SwitchSettings, type SwitchWidgetState } from './switch-settings';
+import { TagSettings, type TagWidgetState } from './tag-settings';
 import { ToastSettings, type ToastWidgetState } from './toast-settings';
 
 const SIDEBAR_ID = 'design-system-sidebar';
@@ -62,6 +64,7 @@ const FIELDSET_WIDGET_TITLE_ID = 'design-system-fieldset-heading';
 const PROGRESS_WIDGET_TITLE_ID = 'design-system-progress-heading';
 const SPINNER_WIDGET_TITLE_ID = 'design-system-spinner-heading';
 const SEGMENT_BUTTON_WIDGET_TITLE_ID = 'design-system-segment-button-heading';
+const TAG_WIDGET_TITLE_ID = 'design-system-tag-heading';
 const SWITCH_WIDGET_TITLE_ID = 'design-system-switch-heading';
 const TOAST_WIDGET_TITLE_ID = 'design-system-toast-heading';
 const RADIO_BUTTON_DEMO_NAME = 'design-system-radio-button-demo';
@@ -73,6 +76,7 @@ type WidgetSettingsKey =
   | 'range-input'
   | 'button'
   | 'segment-button'
+  | 'tag'
   | 'checkbox'
   | 'radio-button'
   | 'fieldset'
@@ -87,6 +91,7 @@ const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   'range-input': 'Range filter',
   button: 'Button',
   'segment-button': 'Segment button',
+  tag: 'Tag',
   checkbox: 'Checkbox',
   'radio-button': 'Radio button',
   fieldset: 'Fieldset',
@@ -230,6 +235,19 @@ const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   sizePreset: 'large',
 };
 
+const DEFAULT_TAG_STATE: TagWidgetState = {
+  borderColor: 'default',
+  dot: true,
+  dotColor: 'default',
+  shape: 'round',
+  sizePreset: 'small',
+  bordered: true,
+  text: 'Tag',
+  textColor: 'default',
+  tinted: false,
+  tone: 'default',
+};
+
 function formatDemoRangeLabel(value: RangeValue): string {
   const from = value.from.trim();
   const to = value.to.trim();
@@ -281,6 +299,7 @@ export function DesignSystemPage() {
   const [segmentButton, setSegmentButton] = useState<SegmentButtonWidgetState>(
     DEFAULT_SEGMENT_BUTTON_STATE
   );
+  const [tag, setTag] = useState<TagWidgetState>(DEFAULT_TAG_STATE);
 
   const settingsOpen = activeSettings !== null;
 
@@ -411,6 +430,13 @@ export function DesignSystemPage() {
     setSegmentButton((current) => ({ ...current, [key]: value }));
   }
 
+  function updateTag<K extends keyof TagWidgetState>(
+    key: K,
+    value: TagWidgetState[K]
+  ): void {
+    setTag((current) => ({ ...current, [key]: value }));
+  }
+
   function renderSettingsPanel(): ReactNode {
     if (activeSettings === 'input') {
       return <InputSettings state={input} onChange={updateInput} />;
@@ -432,6 +458,10 @@ export function DesignSystemPage() {
       return (
         <SegmentButtonSettings state={segmentButton} onChange={updateSegmentButton} />
       );
+    }
+
+    if (activeSettings === 'tag') {
+      return <TagSettings state={tag} onChange={updateTag} />;
     }
 
     if (activeSettings === 'checkbox') {
@@ -477,7 +507,7 @@ export function DesignSystemPage() {
       <Card
         as="article"
         aria-labelledby={titleId}
-        background="background"
+        background="default"
         icon={<SettingsIcon />}
         iconAriaControls={SIDEBAR_ID}
         iconAriaExpanded={open}
@@ -625,6 +655,25 @@ export function DesignSystemPage() {
                     textColor: segmentButton.rightTextColor,
                   }}
                 />
+              )}
+
+              {renderWidgetCard(
+                'tag',
+                TAG_WIDGET_TITLE_ID,
+                <Tag
+                  borderColor={tag.borderColor}
+                  dot={tag.dot}
+                  dotColor={tag.dotColor}
+                  placeSelf="center"
+                  shape={tag.shape}
+                  sizePreset={tag.sizePreset}
+                  bordered={tag.bordered}
+                  tinted={tag.tinted}
+                  textColor={tag.textColor}
+                  tone={tag.tone}
+                >
+                  {tag.text}
+                </Tag>
               )}
 
               {renderWidgetCard(
