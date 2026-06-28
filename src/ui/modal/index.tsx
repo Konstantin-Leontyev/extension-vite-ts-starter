@@ -6,15 +6,7 @@ import { Card } from '@ui/card';
 import { StyledModalDialog } from './modal.styles';
 
 /** Card-пропы панели прокидываются россыпью; своё у модалки — open/onClose. */
-type CardForwardProps = Omit<
-  ComponentProps<typeof Card>,
-  | 'children'
-  | 'icon'
-  | 'iconAriaControls'
-  | 'iconAriaExpanded'
-  | 'iconAriaLabel'
-  | 'onIconClick'
->;
+type CardForwardProps = Omit<ComponentProps<typeof Card>, 'children' | 'headerActions'>;
 
 type ModalProps = CardForwardProps & {
   children: ReactNode;
@@ -57,9 +49,9 @@ export function Modal({
   return (
     <StyledModalDialog ref={dialogRef} onClose={onClose}>
       <Card
-        icon={<CloseIcon />}
-        iconAriaLabel={closeAriaLabel}
-        onIconClick={onClose}
+        headerActions={[
+          { ariaLabel: closeAriaLabel, icon: <CloseIcon />, onClick: onClose },
+        ]}
         {...cardProps}
       >
         {children}

@@ -58,8 +58,8 @@ export const StyledCard = styled.div.withConfig({
   ${(props) => getLayoutStyles(props)}
 `;
 
-/** Высота строки шапки с close — из того же пресета, что у RoundButton в Card. */
-function closeIconHeaderMinBlockSize(sizePreset: RoundButtonSizePreset): string {
+/** Высота строки шапки с действиями — из того же пресета, что у RoundButton в Card. */
+function actionsRowMinBlockSize(sizePreset: RoundButtonSizePreset): string {
   return spacingRem(roundButtonSizePresets[sizePreset]);
 }
 
@@ -68,23 +68,35 @@ export const StyledCardHeader = styled.header`
   row-gap: ${spacingRem(4)};
 `;
 
+/** Ряд кнопок-действий шапки в правом верхнем углу карточки. */
+export const StyledCardHeaderActions = styled.div`
+  position: absolute;
+  z-index: 1;
+  inset-block-start: ${spacingRem(16)};
+  inset-inline-end: ${spacingRem(16)};
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  column-gap: ${spacingRem(8)};
+`;
+
 const CARD_HEADER_FIRST_LINE_PROP_NAMES = new Set<string>([
-  'closeIconSizePreset',
-  'hasCloseIcon',
+  'actionsSizePreset',
+  'hasActions',
 ]);
 
 /** Первая строка шапки: заголовок или единственный субзаголовок. */
 export const StyledCardHeaderFirstLine = styled.div.withConfig({
   shouldForwardProp: (prop) => !CARD_HEADER_FIRST_LINE_PROP_NAMES.has(prop),
-})<{ closeIconSizePreset: RoundButtonSizePreset; hasCloseIcon?: boolean }>`
+})<{ actionsSizePreset: RoundButtonSizePreset; hasActions?: boolean }>`
   display: grid;
   min-inline-size: 0;
 
-  /* Только первая строка центрируется по кнопке; grid тянет текст на всю ширину — align работает. */
+  /* Только первая строка центрируется по кнопкам; grid тянет текст на всю ширину — align работает. */
   ${(props) =>
-    props.hasCloseIcon === true
-      ? `align-content: center;\nmin-block-size: ${closeIconHeaderMinBlockSize(
-          props.closeIconSizePreset
+    props.hasActions === true
+      ? `align-content: center;\nmin-block-size: ${actionsRowMinBlockSize(
+          props.actionsSizePreset
         )};`
       : ''}
 `;

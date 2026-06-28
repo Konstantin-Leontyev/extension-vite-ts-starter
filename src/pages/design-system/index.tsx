@@ -534,14 +534,18 @@ export function DesignSystemPage() {
         as="article"
         aria-labelledby={titleId}
         background="default"
-        icon={<SettingsIcon />}
-        iconAriaControls={SIDEBAR_ID}
-        iconAriaExpanded={open}
-        iconAriaLabel={open ? 'Close settings' : 'Open settings'}
+        headerActions={[
+          {
+            ariaControls: SIDEBAR_ID,
+            ariaExpanded: open,
+            ariaLabel: open ? 'Close settings' : 'Open settings',
+            icon: <SettingsIcon />,
+            onClick: () => toggleSettings(widgetKey),
+          },
+        ]}
         title={SETTINGS_TITLES[widgetKey]}
         titleId={titleId}
         onClick={() => activateSettings(widgetKey)}
-        onIconClick={() => toggleSettings(widgetKey)}
       >
         {children}
       </Card>

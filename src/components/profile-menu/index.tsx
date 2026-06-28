@@ -81,8 +81,13 @@ export function ProfileMenu() {
       {isOpen && (
         <Card
           aria-modal="true"
-          icon={<CloseIcon />}
-          iconAriaLabel="Close profile menu"
+          headerActions={[
+            {
+              ariaLabel: 'Close profile menu',
+              icon: <CloseIcon />,
+              onClick: closeMenu,
+            },
+          ]}
           id={menuId}
           insetBlockStart={40}
           insetInlineEnd={0}
@@ -96,7 +101,6 @@ export function ProfileMenu() {
           subtitle={displayEmail}
           subtitleAlign="center"
           zIndex="20"
-          onIconClick={closeMenu}
         >
           <StyledProfileMenuContent>
             <StyledProfileMenuHeader>

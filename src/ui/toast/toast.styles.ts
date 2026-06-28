@@ -29,8 +29,6 @@ export function getToastStyles(
     /* Высота по канону размерного ряда; контент выше — растягивает (min, не fixed). */
     align-content: center;
     min-block-size: ${blockSizeRem(DEFAULT_SIZE_PRESET)};
-    min-inline-size: min(18rem, calc(100vw - ${spacingRem(32)}));
-    max-inline-size: min(24rem, calc(100vw - ${spacingRem(32)}));
     padding: ${spacingRem(12)} ${spacingRem(16)};
     background-color: ${theme.colors.surface};
     color: ${theme.colors.default};

@@ -21,14 +21,7 @@ import {
 /** Card-пропы панели прокидываются россыпью; своё у сайдбара — управление выездом и иконка. */
 type CardForwardProps = Omit<
   ComponentProps<typeof Card>,
-  | keyof SidebarStyleProps
-  | 'children'
-  | 'icon'
-  | 'iconAriaControls'
-  | 'iconAriaExpanded'
-  | 'id'
-  | 'onIconClick'
-  | 'titleId'
+  keyof SidebarStyleProps | 'children' | 'headerActions' | 'id' | 'titleId'
 >;
 
 type SidebarProps = SidebarStyleProps &
@@ -36,6 +29,7 @@ type SidebarProps = SidebarStyleProps &
     children: ReactNode;
     contentRef?: Ref<HTMLDivElement>;
     icon?: ReactNode;
+    iconAriaLabel?: string;
     id?: string;
     onClose: () => void;
     open: boolean;
@@ -118,16 +112,20 @@ export function Sidebar({
       >
         <StyledSidebarTrack data-open={expanded} onTransitionEnd={handleTransitionEnd}>
           <Card
-            icon={icon ?? <SidebarIcon />}
-            iconAriaControls={id}
-            iconAriaExpanded={open}
-            iconAriaLabel={iconAriaLabel}
+            headerActions={[
+              {
+                ariaControls: id,
+                ariaExpanded: open,
+                ariaLabel: iconAriaLabel,
+                icon: icon ?? <SidebarIcon />,
+                onClick: onClose,
+              },
+            ]}
             inlineSize="100%"
             minBlockSize="0"
             minInlineSize="0"
             title={title}
             titleId={titleId}
-            onIconClick={onClose}
             {...cardProps}
           >
             {sidebarContent}

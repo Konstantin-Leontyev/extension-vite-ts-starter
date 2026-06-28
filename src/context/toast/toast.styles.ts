@@ -17,8 +17,12 @@ export const StyledToastViewport = styled.div`
   gap: ${spacingRem(8)};
   pointer-events: none;
 
-  /* Тосты в стопке кликабельны (клик закрывает) — курсор и интерактивность на хосте. */
+  /*
+   * Ширину тоста задаёт родитель (примитив её не диктует): в углу — фиксированная
+   * комфортная ширина. Тосты кликабельны (клик закрывает) — курсор/интерактивность тоже на хосте.
+   */
   > * {
+    inline-size: min(24rem, calc(100vw - ${spacingRem(32)}));
     pointer-events: auto;
     cursor: pointer;
   }
