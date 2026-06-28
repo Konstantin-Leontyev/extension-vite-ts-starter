@@ -59,6 +59,8 @@ export type ComboboxOption = {
 };
 
 export type ComboboxProps = ComboboxStyleProps & {
+  /** Доступное имя триггера, когда видимый `label` не используется. */
+  'aria-label'?: string;
   defaultValue?: string;
   disabled?: boolean;
   /** Текст при пустом результате поиска. */
@@ -102,6 +104,7 @@ function findEnabledIndex(
 }
 
 export function Combobox({
+  'aria-label': ariaLabel,
   defaultValue,
   disabled = false,
   emptyMessage = DEFAULT_EMPTY_MESSAGE,
@@ -387,6 +390,7 @@ export function Combobox({
         aria-controls={listId}
         aria-expanded={open}
         aria-haspopup="listbox"
+        aria-label={ariaLabel}
         data-open={open}
         disabled={disabled}
         id={triggerId}
