@@ -19,12 +19,15 @@ export type ThemeColors = {
   inverse: string;
   muted: string;
   primary: string;
+  scrollbarThumb: string;
   success: string;
   surface: string;
   warning: string;
 };
 
 export type AppTheme = {
+  /** Режим темы для нативной хром-части (скроллбар и т.п.) через CSS color-scheme. */
+  colorScheme: 'light' | 'dark';
   colors: ThemeColors;
   shadow: {
     surface: string;
@@ -41,6 +44,7 @@ const lightColors: ThemeColors = {
   inverse: '#ffffff',
   muted: '#667085',
   primary: '#1a73e8',
+  scrollbarThumb: '#c1c7d0',
   success: '#188038',
   surface: '#ffffff',
   warning: '#e37400',
@@ -56,12 +60,14 @@ const darkColors: ThemeColors = {
   inverse: '#ffffff',
   muted: '#a8b0bf',
   primary: '#1a73e8',
+  scrollbarThumb: '#3a424d',
   success: '#34a853',
   surface: '#171a21',
   warning: '#f9ab00',
 };
 
 export const styledLightTheme: AppTheme = {
+  colorScheme: 'light',
   colors: { ...lightColors },
   shadow: {
     surface:
@@ -70,6 +76,7 @@ export const styledLightTheme: AppTheme = {
 };
 
 export const styledDarkTheme: AppTheme = {
+  colorScheme: 'dark',
   colors: { ...darkColors },
   shadow: {
     surface: 'none',
@@ -84,6 +91,10 @@ export function getTheme(props: { theme: AppTheme }): AppTheme {
 export const DISABLED_OPACITY = 0.55;
 
 export const GlobalThemeStyle = createGlobalStyle`
+  :root {
+    color-scheme: ${(props) => getTheme(props).colorScheme};
+  }
+
   body {
     background-color: ${(props) => getTheme(props).colors.background};
     color: ${(props) => getTheme(props).colors.default};
