@@ -5,6 +5,7 @@ import { SettingsIcon } from '@icons/settings';
 import { Button } from '@ui/button';
 import { Card } from '@ui/card';
 import { Checkbox } from '@ui/checkbox';
+import { Combobox } from '@ui/combobox';
 import { Fieldset } from '@ui/fieldset';
 import { Input } from '@ui/input';
 import { Listbox } from '@ui/listbox';
@@ -27,6 +28,8 @@ import { Toast } from '@ui/toast';
 import { BrowserAiSmokeProbe } from './browser-ai-smoke-probe';
 import { ButtonSettings, type ButtonWidgetState } from './button-settings';
 import { CheckboxSettings, type CheckboxWidgetState } from './checkbox-settings';
+import { ComboboxSettings, type ComboboxWidgetState } from './combobox-settings';
+import { COMBOBOX_DEMO_OPTIONS } from './combobox-settings/options';
 import {
   StyledDesignSystemWidgets,
   StyledFieldsetDemo,
@@ -57,6 +60,7 @@ const SIDEBAR_ID = 'design-system-sidebar';
 const INPUT_WIDGET_TITLE_ID = 'design-system-input-heading';
 const BUTTON_WIDGET_TITLE_ID = 'design-system-button-heading';
 const LISTBOX_WIDGET_TITLE_ID = 'design-system-listbox-heading';
+const COMBOBOX_WIDGET_TITLE_ID = 'design-system-combobox-heading';
 const RANGE_INPUT_WIDGET_TITLE_ID = 'design-system-range-input-heading';
 const CHECKBOX_WIDGET_TITLE_ID = 'design-system-checkbox-heading';
 const RADIO_BUTTON_WIDGET_TITLE_ID = 'design-system-radio-button-heading';
@@ -73,6 +77,7 @@ const FIELDSET_DEMO_NAME = 'design-system-fieldset-demo';
 type WidgetSettingsKey =
   | 'input'
   | 'listbox'
+  | 'combobox'
   | 'range-input'
   | 'button'
   | 'segment-button'
@@ -88,6 +93,7 @@ type WidgetSettingsKey =
 const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   input: 'Input',
   listbox: 'Listbox',
+  combobox: 'Combobox',
   'range-input': 'Range filter',
   button: 'Button',
   'segment-button': 'Segment button',
@@ -142,6 +148,14 @@ const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
   shape: 'default',
   sizePreset: 'large',
   value: 'default',
+};
+
+const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
+  disabled: false,
+  label: 'Label:',
+  shape: 'default',
+  sizePreset: 'large',
+  value: COMBOBOX_DEMO_OPTIONS[0].value,
 };
 
 const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
@@ -283,6 +297,7 @@ export function DesignSystemPage() {
   const [input, setInput] = useState<InputWidgetState>(DEFAULT_INPUT_STATE);
   const [button, setButton] = useState<ButtonWidgetState>(DEFAULT_BUTTON_STATE);
   const [listbox, setListbox] = useState<ListboxWidgetState>(DEFAULT_LISTBOX_STATE);
+  const [combobox, setCombobox] = useState<ComboboxWidgetState>(DEFAULT_COMBOBOX_STATE);
   const [rangeInput, setRangeInput] = useState<RangeInputWidgetState>(
     DEFAULT_RANGE_INPUT_STATE
   );
@@ -358,6 +373,13 @@ export function DesignSystemPage() {
 
       return next;
     });
+  }
+
+  function updateCombobox<K extends keyof ComboboxWidgetState>(
+    key: K,
+    value: ComboboxWidgetState[K]
+  ): void {
+    setCombobox((current) => ({ ...current, [key]: value }));
   }
 
   function updateRangeInput<K extends keyof RangeInputWidgetState>(
@@ -444,6 +466,10 @@ export function DesignSystemPage() {
 
     if (activeSettings === 'listbox') {
       return <ListboxSettings state={listbox} onChange={updateListbox} />;
+    }
+
+    if (activeSettings === 'combobox') {
+      return <ComboboxSettings state={combobox} onChange={updateCombobox} />;
     }
 
     if (activeSettings === 'range-input') {
@@ -567,6 +593,21 @@ export function DesignSystemPage() {
                   sizePreset={listbox.sizePreset}
                   value={listbox.value}
                   onChange={(value) => updateListbox('value', value)}
+                />
+              )}
+
+              {renderWidgetCard(
+                'combobox',
+                COMBOBOX_WIDGET_TITLE_ID,
+                <Combobox
+                  alignSelf="center"
+                  disabled={combobox.disabled}
+                  label={combobox.label || undefined}
+                  options={COMBOBOX_DEMO_OPTIONS}
+                  shape={combobox.shape}
+                  sizePreset={combobox.sizePreset}
+                  value={combobox.value}
+                  onChange={(value) => updateCombobox('value', value)}
                 />
               )}
 

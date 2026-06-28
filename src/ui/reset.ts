@@ -1,7 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 import { normalize } from 'styled-normalize';
 
-import { spacingRem } from '@ui/spacing';
 import { DISABLED_OPACITY, getTheme } from '@ui/theme';
 
 export const GlobalResetStyle = createGlobalStyle`
@@ -13,26 +12,10 @@ export const GlobalResetStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  /* Скроллбар: тонкий бегунок из токена темы, прозрачный трек — «только бегунок»
-     на любой теме. Без этого объявление ::-webkit-scrollbar-* в ScrollPort уводит
-     вьюпорт в кастомный режим WebKit с дефолтным светлым треком. */
+  /* Скроллбар: thin + scrollbar-color — бегунок из токена темы, прозрачный трек. */
   * {
     scrollbar-width: thin;
     scrollbar-color: ${(props) => getTheme(props).colors.scrollbarThumb} transparent;
-  }
-
-  *::-webkit-scrollbar {
-    inline-size: ${spacingRem(8)};
-    block-size: ${spacingRem(8)};
-  }
-
-  *::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  *::-webkit-scrollbar-thumb {
-    background: ${(props) => getTheme(props).colors.scrollbarThumb};
-    border-radius: ${spacingRem(4)};
   }
 
   html {
