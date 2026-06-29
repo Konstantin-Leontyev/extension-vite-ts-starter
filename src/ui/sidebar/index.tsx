@@ -1,5 +1,6 @@
 import {
   useLayoutEffect,
+  useMemo,
   useState,
   type ComponentProps,
   type ReactNode,
@@ -8,7 +9,7 @@ import {
 } from 'react';
 
 import { SidebarIcon } from '@icons/sidebar';
-import { Card } from '@ui/card';
+import { Card, type CardHeaderAction } from '@ui/card';
 
 import {
   StyledSidebar,
@@ -28,6 +29,8 @@ type SidebarProps = SidebarStyleProps &
   CardForwardProps & {
     children: ReactNode;
     contentRef?: Ref<HTMLDivElement>;
+    /** Доп. кнопки в шапке панели; рендерятся перед кнопкой сворачивания. */
+    headerActions?: CardHeaderAction[];
     icon?: ReactNode;
     iconAriaLabel?: string;
     id?: string;
@@ -39,6 +42,7 @@ type SidebarProps = SidebarStyleProps &
 export function Sidebar({
   children,
   contentRef,
+  headerActions = [],
   icon,
   iconAriaLabel = 'Close panel',
   id,
@@ -54,6 +58,21 @@ export function Sidebar({
   ...cardProps
 }: SidebarProps) {
   const titleId = title && id ? `${id}-title` : undefined;
+
+  /* Пользовательские действия первыми, кнопка сворачивания — последней (крайняя справа). */
+  const cardHeaderActions = useMemo(
+    (): CardHeaderAction[] => [
+      ...headerActions,
+      {
+        ariaControls: id,
+        ariaExpanded: open,
+        ariaLabel: iconAriaLabel,
+        icon: icon ?? <SidebarIcon />,
+        onClick: onClose,
+      },
+    ],
+    [headerActions, icon, iconAriaLabel, id, onClose, open]
+  );
 
   /* rendered — слот в DOM (открыт или доигрывает закрытие); expanded — визуально раскрыт. */
   const [prevOpen, setPrevOpen] = useState(open);
@@ -112,15 +131,7 @@ export function Sidebar({
       >
         <StyledSidebarTrack data-open={expanded} onTransitionEnd={handleTransitionEnd}>
           <Card
-            headerActions={[
-              {
-                ariaControls: id,
-                ariaExpanded: open,
-                ariaLabel: iconAriaLabel,
-                icon: icon ?? <SidebarIcon />,
-                onClick: onClose,
-              },
-            ]}
+            headerActions={cardHeaderActions}
             inlineSize="100%"
             minBlockSize="0"
             minInlineSize="0"
