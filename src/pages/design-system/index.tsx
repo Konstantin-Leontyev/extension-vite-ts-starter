@@ -823,7 +823,7 @@ export function DesignSystemPage() {
               {renderWidgetCard(
                 'toast',
                 TOAST_WIDGET_TITLE_ID,
-                <Toast justifySelf="center" tone={toast.tone}>
+                <Toast alignSelf="center" tone={toast.tone}>
                   <Text sizePreset="thin">{toast.message}</Text>
                 </Toast>
               )}
