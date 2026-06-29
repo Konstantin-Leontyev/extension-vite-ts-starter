@@ -20,6 +20,7 @@ import { ScrollPort } from '@ui/scroll-port';
 import { SegmentButton } from '@ui/segment-button';
 import { Sidebar } from '@ui/sidebar';
 import { Spinner } from '@ui/spinner';
+import { Stepper } from '@ui/stepper';
 import { Switch } from '@ui/switch';
 import { Tag } from '@ui/tag';
 import { Text } from '@ui/text';
@@ -52,6 +53,7 @@ import {
   type SegmentButtonWidgetState,
 } from './segment-button-settings';
 import { SpinnerSettings, type SpinnerWidgetState } from './spinner-settings';
+import { StepperSettings, type StepperWidgetState } from './stepper-settings';
 import { SwitchSettings, type SwitchWidgetState } from './switch-settings';
 import { TagSettings, type TagWidgetState } from './tag-settings';
 import { ToastSettings, type ToastWidgetState } from './toast-settings';
@@ -67,6 +69,7 @@ const RADIO_BUTTON_WIDGET_TITLE_ID = 'design-system-radio-button-heading';
 const FIELDSET_WIDGET_TITLE_ID = 'design-system-fieldset-heading';
 const PROGRESS_WIDGET_TITLE_ID = 'design-system-progress-heading';
 const SPINNER_WIDGET_TITLE_ID = 'design-system-spinner-heading';
+const STEPPER_WIDGET_TITLE_ID = 'design-system-stepper-heading';
 const SEGMENT_BUTTON_WIDGET_TITLE_ID = 'design-system-segment-button-heading';
 const TAG_WIDGET_TITLE_ID = 'design-system-tag-heading';
 const SWITCH_WIDGET_TITLE_ID = 'design-system-switch-heading';
@@ -87,6 +90,7 @@ type WidgetSettingsKey =
   | 'fieldset'
   | 'progress'
   | 'spinner'
+  | 'stepper'
   | 'switch'
   | 'toast';
 
@@ -103,6 +107,7 @@ const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   fieldset: 'Fieldset',
   progress: 'Progress',
   spinner: 'Spinner',
+  stepper: 'Stepper',
   switch: 'Switch',
   toast: 'Toast',
 };
@@ -221,6 +226,14 @@ const DEFAULT_SPINNER_STATE: SpinnerWidgetState = {
   tone: 'primary',
 };
 
+const DEFAULT_STEPPER_STATE: StepperWidgetState = {
+  disabled: false,
+  shape: 'default',
+  sizePreset: 'large',
+  step: 1,
+  value: 10,
+};
+
 const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
   checked: true,
   disabled: false,
@@ -308,6 +321,7 @@ export function DesignSystemPage() {
   const [fieldset, setFieldset] = useState<FieldsetWidgetState>(DEFAULT_FIELDSET_STATE);
   const [progress, setProgress] = useState<ProgressWidgetState>(DEFAULT_PROGRESS_STATE);
   const [spinner, setSpinner] = useState<SpinnerWidgetState>(DEFAULT_SPINNER_STATE);
+  const [stepper, setStepper] = useState<StepperWidgetState>(DEFAULT_STEPPER_STATE);
   const [switchState, setSwitchState] =
     useState<SwitchWidgetState>(DEFAULT_SWITCH_STATE);
   const [toast, setToast] = useState<ToastWidgetState>(DEFAULT_TOAST_STATE);
@@ -431,6 +445,13 @@ export function DesignSystemPage() {
     setSpinner((current) => ({ ...current, [key]: value }));
   }
 
+  function updateStepper<K extends keyof StepperWidgetState>(
+    key: K,
+    value: StepperWidgetState[K]
+  ): void {
+    setStepper((current) => ({ ...current, [key]: value }));
+  }
+
   function updateSwitch<K extends keyof SwitchWidgetState>(
     key: K,
     value: SwitchWidgetState[K]
@@ -508,6 +529,10 @@ export function DesignSystemPage() {
 
     if (activeSettings === 'spinner') {
       return <SpinnerSettings state={spinner} onChange={updateSpinner} />;
+    }
+
+    if (activeSettings === 'stepper') {
+      return <StepperSettings state={stepper} onChange={updateStepper} />;
     }
 
     if (activeSettings === 'switch') {
@@ -804,6 +829,23 @@ export function DesignSystemPage() {
                 <StyledSpinnerDemo>
                   <Spinner sizePreset={spinner.sizePreset} tone={spinner.tone} />
                 </StyledSpinnerDemo>
+              )}
+
+              {renderWidgetCard(
+                'stepper',
+                STEPPER_WIDGET_TITLE_ID,
+                <Stepper
+                  alignSelf="center"
+                  align="center"
+                  aria-label="Demo stepper"
+                  disabled={stepper.disabled}
+                  min={0}
+                  shape={stepper.shape}
+                  sizePreset={stepper.sizePreset}
+                  step={stepper.step}
+                  value={stepper.value}
+                  onChange={(value) => updateStepper('value', value)}
+                />
               )}
 
               {renderWidgetCard(

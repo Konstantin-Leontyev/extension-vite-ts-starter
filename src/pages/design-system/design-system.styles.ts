@@ -27,6 +27,12 @@ export const StyledSettingsForm = styled.form`
   gap: ${spacingRem(16)};
 `;
 
+/** Поле настройки с подписью над контролом, у которого нет встроенного label (Stepper). */
+export const StyledSettingsField = styled.div`
+  display: grid;
+  gap: ${spacingRem(8)};
+`;
+
 /** Демо двух radio в виджете: вертикальный стек по центру ячейки. */
 export const StyledRadioButtonDemo = styled.div`
   display: grid;
