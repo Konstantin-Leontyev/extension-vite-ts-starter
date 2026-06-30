@@ -45,7 +45,7 @@ const BUTTON_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * Тон текста (textColor) → цвет темы. Без override (наследует fg), когда тон
+ * Тон текста (textColor) → цвет темы. Без override (наследует цвет родителя), когда тон
  * `default` или совпадает с `tone` кнопки — иначе текст слился бы с заливкой.
  */
 export function buttonTextColor(

@@ -12,7 +12,7 @@ import {
 } from './progress.styles';
 
 type ProgressProps = ProgressStyleProps & {
-  /** Renders an integer percent label (0–100) beside the track. */
+  /** Рисует целочисленный процент (0–100) рядом с треком. */
   showLabel?: boolean;
 } & Omit<ComponentPropsWithRef<'div'>, keyof ProgressStyleProps | 'className' | 'style'>;
 

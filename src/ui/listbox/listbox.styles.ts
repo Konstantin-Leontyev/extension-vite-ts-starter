@@ -164,7 +164,7 @@ export const StyledListboxOptionRow = styled.label.withConfig({
   padding-inline-start: ${(props) =>
     spacingRem(controlPaddingInline[props.sizePreset ?? DEFAULT_SIZE_PRESET])};
 
-  /* Текст-слот заполняет строку (распределение места, как было у label flex:1) — идёт сразу за чекбоксом. */
+  /* Текст-слот заполняет строку (забирает остаток места) — идёт сразу за чекбоксом. */
   & > :last-child {
     flex: 1 1 auto;
   }

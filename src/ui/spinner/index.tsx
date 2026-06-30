@@ -5,7 +5,7 @@ import { StyledSpinner, type SpinnerStyleProps } from './spinner.styles';
 const DEFAULT_SPINNER_LABEL = 'Loading';
 
 type SpinnerProps = SpinnerStyleProps & {
-  /** Accessible name for the indeterminate loading indicator. */
+  /** Доступное имя индикатора неопределённой загрузки. */
   label?: string;
 } & Omit<ComponentPropsWithRef<'div'>, keyof SpinnerStyleProps | 'className' | 'style'>;
 

@@ -14,7 +14,7 @@ import { Toast } from '@ui/toast';
 import { ToastContext, type ToastContextValue, type ToastInput } from './context';
 import { StyledToastViewport } from './toast.styles';
 
-/** Автоскрытие тоста — единый интервал (5 c, как просили). */
+/** Автоскрытие тоста — единый интервал (5 c). */
 const TOAST_DURATION_MS = 5000;
 
 type ActiveToast = ToastInput & { id: string };

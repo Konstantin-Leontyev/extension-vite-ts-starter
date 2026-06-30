@@ -101,7 +101,7 @@ function resolveTagFill(theme: AppTheme, tone: TonePreset, tinted: boolean): Tag
 }
 
 /**
- * Тон текста → цвет темы. Без override (наследует контрастный fg), когда тон
+ * Тон текста → цвет темы. Без override (наследует контрастный цвет родителя), когда тон
  * `default` или совпадает с `tone` заливки — иначе текст слился бы с заливкой.
  */
 export function resolveTagTextColor(

@@ -308,7 +308,7 @@ function validateDemoRange(value: RangeValue): string | null {
 }
 
 export function DesignSystemPage() {
-  /* autoHide хедера живёт в каркасе; ДС лишь даёт витрину-тумблер (см. header-settings). */
+  /* autoHide хедера живёт в каркасе. ДС лишь даёт витрину-переключатель (см. header-settings). */
   const { autoHide, headerSettingsOpen, setAutoHide, setHeaderSettingsOpen } =
     useShellOutletContext();
   const [activeSettings, setActiveSettings] = useState<WidgetSettingsKey | null>(null);

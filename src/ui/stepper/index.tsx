@@ -128,7 +128,7 @@ export function Stepper({
     [onChange]
   );
 
-  /* По уходу из поля фиксируем нормализованное (клампнутое) значение и показываем value. */
+  /* По уходу из поля фиксируем приведённое к диапазону значение и показываем value. */
   const handleBlur = useCallback((): void => {
     if (draft !== null) {
       const parsed = Number(draft);

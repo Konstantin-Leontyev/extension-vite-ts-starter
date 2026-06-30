@@ -13,10 +13,10 @@ const progressTrackBlockSize = {
 } as const satisfies Record<SizePreset, SpacingPx>;
 
 export type ProgressStyleProps = LayoutProps & {
-  /** Determinate fill ratio in the range 0–1. */
+  /** Доля заполнения в диапазоне 0–1. */
   value: number;
   sizePreset?: SizePreset;
-  /** Semantic tone; `default` resolves to `theme.colors.primary` (fallback). */
+  /** Семантический тон — `default` разрешается в `theme.colors.primary` (fallback). */
   tone?: TonePreset;
 };
 
@@ -66,7 +66,7 @@ export function getProgressFillStyles(
 export const StyledProgressRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !PROGRESS_PROP_NAMES.has(prop),
 })<ProgressStyleProps>`
-  /* Flex: label sits beside the track only when present; absent label takes no space. */
+  /* Flex: лейбл рядом с треком только при наличии — отсутствующий места не занимает. */
   display: flex;
   align-items: center;
   gap: ${spacingRem(12)};

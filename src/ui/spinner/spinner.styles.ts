@@ -20,7 +20,7 @@ const spinnerBorderWidthPx = {
 
 export type SpinnerStyleProps = LayoutProps & {
   sizePreset?: SizePreset;
-  /** Semantic tone; `default` resolves to `theme.colors.primary` (fallback). */
+  /** Семантический тон — `default` разрешается в `theme.colors.primary` (fallback). */
   tone?: TonePreset;
 };
 
