@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 
+import { useShellOutletContext } from '@components/router/use-shell-outlet-context';
 import { SearchIcon } from '@icons/search';
 import { SettingsIcon } from '@icons/settings';
 import { Button } from '@ui/button';
@@ -39,6 +40,7 @@ import {
   StyledSpinnerDemo,
 } from './design-system.styles';
 import { FieldsetSettings, type FieldsetWidgetState } from './fieldset-settings';
+import { HeaderSettings } from './header-settings';
 import { InputSettings, type InputWidgetState } from './input-settings';
 import { ListboxSettings, type ListboxWidgetState } from './listbox-settings';
 import { LISTBOX_DEMO_OPTIONS } from './listbox-settings/options';
@@ -306,6 +308,9 @@ function validateDemoRange(value: RangeValue): string | null {
 }
 
 export function DesignSystemPage() {
+  /* autoHide хедера живёт в каркасе; ДС лишь даёт витрину-тумблер (см. header-settings). */
+  const { autoHide, headerSettingsOpen, setAutoHide, setHeaderSettingsOpen } =
+    useShellOutletContext();
   const [activeSettings, setActiveSettings] = useState<WidgetSettingsKey | null>(null);
   const [input, setInput] = useState<InputWidgetState>(DEFAULT_INPUT_STATE);
   const [button, setButton] = useState<ButtonWidgetState>(DEFAULT_BUTTON_STATE);
@@ -330,18 +335,43 @@ export function DesignSystemPage() {
   );
   const [tag, setTag] = useState<TagWidgetState>(DEFAULT_TAG_STATE);
 
+  /* Витрина хедера приоритетна и при открытии сбрасывает выбранный виджет — один источник
+     истины о содержимом сайдбара (иначе карточка виджета осталась бы aria-expanded под ней). */
+  const [headerSettingsShown, setHeaderSettingsShown] = useState(headerSettingsOpen);
+  if (headerSettingsOpen !== headerSettingsShown) {
+    setHeaderSettingsShown(headerSettingsOpen);
+
+    if (headerSettingsOpen) {
+      setActiveSettings(null);
+    }
+  }
+
   const settingsOpen = activeSettings !== null;
+  /* Витрина хедера и настройки виджета делят один сайдбар, но не показываются вместе. */
+  const panelOpen = settingsOpen || headerSettingsOpen;
+  const panelTitle = headerSettingsOpen
+    ? 'Header'
+    : activeSettings
+      ? SETTINGS_TITLES[activeSettings]
+      : undefined;
 
   function activateSettings(target: WidgetSettingsKey): void {
     if (!settingsOpen) {
       return;
     }
 
+    setHeaderSettingsOpen(false);
     setActiveSettings(target);
   }
 
   function toggleSettings(target: WidgetSettingsKey): void {
+    setHeaderSettingsOpen(false);
     setActiveSettings((current) => (current === target ? null : target));
+  }
+
+  function closePanel(): void {
+    setActiveSettings(null);
+    setHeaderSettingsOpen(false);
   }
 
   function updateInput<K extends keyof InputWidgetState>(
@@ -582,12 +612,19 @@ export function DesignSystemPage() {
       <Sidebar
         id={SIDEBAR_ID}
         maxBlockSize={PLAYGROUND_MAX_BLOCK_SIZE}
-        open={settingsOpen}
+        open={panelOpen}
         paddingBlockEnd={8}
         paddingInlineStart={8}
-        title={activeSettings ? SETTINGS_TITLES[activeSettings] : undefined}
-        sidebarContent={<ScrollPort>{renderSettingsPanel()}</ScrollPort>}
-        onClose={() => setActiveSettings(null)}
+        title={panelTitle}
+        sidebarContent={
+          <ScrollPort>
+            {(headerSettingsOpen && (
+              <HeaderSettings autoHide={autoHide} onChange={setAutoHide} />
+            )) ||
+              renderSettingsPanel()}
+          </ScrollPort>
+        }
+        onClose={closePanel}
       >
         <Card as="section" maxBlockSize={PLAYGROUND_MAX_BLOCK_SIZE}>
           <ScrollPort>
