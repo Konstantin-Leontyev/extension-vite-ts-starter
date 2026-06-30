@@ -1,10 +1,10 @@
 export { AvatarIcon } from './avatar';
 export { CheckIcon } from './check';
-export { ChevronIcon } from './chevron';
 export { ChevronDownIcon } from './chevron-down';
 export { ChevronUpIcon } from './chevron-up';
 export { CloseIcon } from './close';
 export { ContrastIcon } from './contrast';
+export { CopyIcon } from './copy';
 export { DownloadIcon } from './download';
 export { PlusIcon } from './plus';
 export { SearchIcon } from './search';

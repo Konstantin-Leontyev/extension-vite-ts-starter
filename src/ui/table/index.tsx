@@ -148,7 +148,19 @@ type TableEditProps<Row> = {
 };
 
 type TableSelectionProps<Row> = {
+  /**
+   * Полный набор выбираемых ключей вида, ВКЛЮЧАЯ скрытые в свёрнутых группах. Если
+   * задан — «выбрать всё» в шапке и её галка работают над ним (а не только над
+   * видимыми строками): свёрнутые строки тоже выделяются. Иначе — над видимыми.
+   */
+  allSelectableKeys?: string[];
   checkable: true;
+  /**
+   * Ключи строк-членов группы для строки-заголовка (или undefined для обычной
+   * строки). Если непустой — у заголовка появляется групповой чекбокс: отмечает/
+   * снимает все эти строки (в т.ч. свёрнутые); галка «стоит», когда выбраны все.
+   */
+  getRowGroupMemberKeys?: (row: Row) => string[] | undefined;
   getRowKey: (row: Row) => string;
   isRowSelectable?: (row: Row) => boolean;
   onSelectedKeysChange: (keys: Set<string>) => void;
@@ -215,6 +227,8 @@ type TableBodyRowProps<Row> = {
   checkable: boolean;
   columns: TableColumn<Row>[];
   editRowActive: boolean;
+  groupMemberKeys: string[] | undefined;
+  groupSelected: boolean;
   isEditAnchor: boolean;
   isSelected: boolean;
   onEditRow: ((row: Row) => void) | undefined;
@@ -229,6 +243,7 @@ type TableBodyRowProps<Row> = {
   showRowActions: boolean;
   sizePreset: TableStyleProps['sizePreset'];
   textSizePreset: TextSizePreset;
+  toggleGroupKeys: (memberKeys: string[]) => void;
   toggleRowKey: (rowKey: string) => void;
 };
 
@@ -238,6 +253,8 @@ function TableBodyRow<Row>({
   checkable,
   columns,
   editRowActive,
+  groupMemberKeys,
+  groupSelected,
   isEditAnchor,
   isSelected,
   onEditRow,
@@ -252,8 +269,22 @@ function TableBodyRow<Row>({
   showRowActions,
   sizePreset,
   textSizePreset,
+  toggleGroupKeys,
   toggleRowKey,
 }: TableBodyRowProps<Row>): ReactNode {
+  // Заголовок группы с непустым набором членов получает групповой чекбокс
+  // (выбрать/снять всю группу, включая свёрнутые строки).
+  const isGroupSelector =
+    checkable && !rowSelectable && (groupMemberKeys?.length ?? 0) > 0;
+  const groupCheckbox = isGroupSelector ? (
+    <TableCheckbox
+      ariaLabel={groupSelected ? 'Clear group selection' : 'Select group'}
+      checked={groupSelected}
+      onToggle={() => {
+        toggleGroupKeys(groupMemberKeys ?? []);
+      }}
+    />
+  ) : null;
   const { pointerProps } = useLongPress({
     disabled: !onEditRow || editRowActive || !rowSelectable,
     onLongPress: onEditRow ? () => onEditRow(row) : undefined,
@@ -268,7 +299,7 @@ function TableBodyRow<Row>({
     >
       {separateCheckboxColumn && (
         <TableCell align="center" sizePreset={sizePreset}>
-          {rowSelectable && (
+          {(rowSelectable && (
             <TableCheckbox
               ariaLabel={`Select row ${rowKey}`}
               checked={isSelected}
@@ -276,7 +307,8 @@ function TableBodyRow<Row>({
                 toggleRowKey(rowKey);
               }}
             />
-          )}
+          )) ||
+            groupCheckbox}
         </TableCell>
       )}
       {resolvedNumbered && (
@@ -290,11 +322,12 @@ function TableBodyRow<Row>({
         ) : (
           <Text sizePreset={textSizePreset}>{String(row[column.key] ?? '')}</Text>
         );
-        const showRowCheckbox =
-          rowSelectable &&
+        const isCheckboxColumn =
           checkable &&
           rowCheckboxColumnKey !== undefined &&
           column.key === rowCheckboxColumnKey;
+        const showRowCheckbox = rowSelectable && isCheckboxColumn;
+        const showGroupCheckbox = isGroupSelector && isCheckboxColumn;
         const showRowActionsInColumn = showRowActions && column.key === actionsColumnKey;
 
         const rowCheckbox = showRowCheckbox ? (
@@ -306,6 +339,7 @@ function TableBodyRow<Row>({
             }}
           />
         ) : null;
+        const leadCheckbox = rowCheckbox ?? (showGroupCheckbox ? groupCheckbox : null);
 
         const bodyContent =
           (showRowActionsInColumn && (
@@ -324,9 +358,9 @@ function TableBodyRow<Row>({
             nowrap={column.nowrap}
             sizePreset={sizePreset}
           >
-            {(showRowCheckbox && (
+            {(leadCheckbox && (
               <StyledTableCellLead>
-                {rowCheckbox}
+                {leadCheckbox}
                 {bodyContent}
               </StyledTableCellLead>
             )) ||
@@ -404,15 +438,24 @@ export function Table<Row>(props: TableProps<Row>) {
   const isRowSelectable = checkable
     ? (props.isRowSelectable ?? (() => true))
     : () => false;
-  const allRowKeys = checkable
-    ? rows.filter((row) => isRowSelectable(row)).map((row) => props.getRowKey(row))
+  const getRowGroupMemberKeys = checkable ? props.getRowGroupMemberKeys : undefined;
+  // Универсум выбора: полный список ключей (вкл. скрытые в свёрнутых группах), если
+  // его передал call site; иначе — только видимые выбираемые строки.
+  const allSelectableKeys = checkable
+    ? (props.allSelectableKeys ??
+      rows.filter((row) => isRowSelectable(row)).map((row) => props.getRowKey(row)))
     : [];
   const allRowsSelected =
     checkable &&
     selectedKeys.size > 0 &&
-    allRowKeys.every((key) => selectedKeys.has(key));
+    allSelectableKeys.length > 0 &&
+    allSelectableKeys.every((key) => selectedKeys.has(key));
   const hasBulkSelection = checkable && selectedKeys.size >= BULK_SELECTION_MIN;
   const showBulkActions = hasBulkSelection;
+  // Галка в шапке/футере «стоит», когда доступны групповые действия (выбрано 2+) ИЛИ
+  // выбраны все строки таблицы. «Все» закрывает случай одной строки: 1 из 1 = все,
+  // поэтому галка корректно ставится и снимается даже когда строка единственная.
+  const headerSelectionActive = hasBulkSelection || allRowsSelected;
   const actionsColumnKey = checkable ? props.selectedRowActionsColumnKey : undefined;
   const hideHeadAnchor = composeRowActive && composeRowSource === 'head';
   const hideFootAnchor = composeRowActive && composeRowSource === 'foot';
@@ -472,12 +515,33 @@ export function Table<Row>(props: TableProps<Row>) {
       return;
     }
 
-    if (hasBulkSelection) {
+    if (headerSelectionActive) {
       props.onSelectedKeysChange(new Set());
       return;
     }
 
-    props.onSelectedKeysChange(new Set(allRowKeys));
+    props.onSelectedKeysChange(new Set(allSelectableKeys));
+  };
+
+  // Групповой тоггл: если все члены группы уже выбраны — снять их, иначе добавить
+  // (свёрнутые члены тоже попадают в выбор, т.к. memberKeys содержит их ключи).
+  const toggleGroupKeys = (memberKeys: string[]): void => {
+    if (!checkable || memberKeys.length === 0) {
+      return;
+    }
+
+    const next = new Set(props.selectedKeys);
+    const allSelected = memberKeys.every((key) => next.has(key));
+
+    for (const key of memberKeys) {
+      if (allSelected) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+    }
+
+    props.onSelectedKeysChange(next);
   };
 
   const renderKeywordColumnHeader = (
@@ -489,8 +553,8 @@ export function Table<Row>(props: TableProps<Row>) {
       <StyledTableCellLead>
         {interactive ? (
           <TableCheckbox
-            ariaLabel={hasBulkSelection ? 'Clear selection' : 'Select all rows'}
-            checked={hasBulkSelection}
+            ariaLabel={headerSelectionActive ? 'Clear selection' : 'Select all rows'}
+            checked={headerSelectionActive}
             onToggle={toggleAllRows}
           />
         ) : (
@@ -981,6 +1045,10 @@ export function Table<Row>(props: TableProps<Row>) {
               actionsColumnKey !== undefined &&
               props.renderSelectedRowActions;
             const isEditAnchor = editRowActive && editRowKey === rowKey;
+            const groupMemberKeys = getRowGroupMemberKeys?.(row);
+            const groupSelected =
+              (groupMemberKeys?.length ?? 0) > 0 &&
+              (groupMemberKeys ?? []).every((key) => selectedKeys.has(key));
 
             return (
               <TableBodyRow
@@ -990,6 +1058,8 @@ export function Table<Row>(props: TableProps<Row>) {
                 checkable={checkable}
                 columns={columns}
                 editRowActive={editRowActive}
+                groupMemberKeys={groupMemberKeys}
+                groupSelected={groupSelected}
                 isEditAnchor={isEditAnchor}
                 isSelected={isSelected}
                 onEditRow={onEditRow}
@@ -1006,6 +1076,7 @@ export function Table<Row>(props: TableProps<Row>) {
                 showRowActions={Boolean(showRowActions)}
                 sizePreset={sizePreset}
                 textSizePreset={textSizePreset}
+                toggleGroupKeys={toggleGroupKeys}
                 toggleRowKey={toggleRowKey}
               />
             );

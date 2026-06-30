@@ -14,6 +14,7 @@ export type ComboboxWidgetState = {
   shape: ShapePreset;
   sizePreset: SizePreset;
   value: string;
+  withIcon: boolean;
 };
 
 const SIZE_OPTIONS: ListboxOption[] = [
@@ -69,6 +70,14 @@ export function ComboboxSettings({ onChange, state }: ComboboxSettingsProps) {
         reserveErrorSpace={false}
         value={state.value}
         onChange={(value) => onChange('value', value as string)}
+      />
+
+      <Checkbox
+        checked={state.withIcon}
+        label="Icon:"
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('withIcon', event.target.checked)
+        }
       />
 
       <Checkbox

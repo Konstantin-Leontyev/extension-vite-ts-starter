@@ -2,6 +2,7 @@ import { type ChangeEvent } from 'react';
 
 import { type ButtonIconPosition } from '@ui/button';
 import { Checkbox } from '@ui/checkbox';
+import { Combobox } from '@ui/combobox';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
@@ -13,11 +14,17 @@ import {
 } from '@ui/tones';
 
 import { StyledSettingsForm } from '../design-system.styles';
+import {
+  SHOWCASE_ICON_COMBOBOX_OPTIONS,
+  isShowcaseIconKey,
+  type ShowcaseIconKey,
+} from '../showcase-icons';
 
 export type ButtonWidgetState = {
   active: boolean;
   disabled: boolean;
   iconFill: TonePreset;
+  iconKey: ShowcaseIconKey;
   iconPosition: ButtonIconPosition;
   iconTone: TonePreset;
   textColor: TonePreset;
@@ -109,6 +116,18 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
 
       {state.withIcon && (
         <>
+          <Combobox
+            label="Icon:"
+            options={SHOWCASE_ICON_COMBOBOX_OPTIONS}
+            reserveErrorSpace={false}
+            value={state.iconKey}
+            onChange={(value) => {
+              if (isShowcaseIconKey(value)) {
+                onChange('iconKey', value);
+              }
+            }}
+          />
+
           <Listbox
             label="Icon tone:"
             options={TONE_PRESET_OPTIONS}

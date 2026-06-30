@@ -10,6 +10,7 @@ import { Text } from '@ui/text';
 import { StyledSettingsField, StyledSettingsForm } from '../design-system.styles';
 
 const STEP_FIELD_ID = 'design-system-stepper-step';
+const STEP_LABEL_ID = 'design-system-stepper-step-label';
 
 export type StepperWidgetState = {
   disabled: boolean;
@@ -64,16 +65,17 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
           as="label"
           color={theme.colors.muted}
           htmlFor={STEP_FIELD_ID}
+          id={STEP_LABEL_ID}
           sizePreset="medium"
         >
           Step:
         </Text>
         <Stepper
           align="center"
-          aria-label="Step"
+          aria-labelledby={STEP_LABEL_ID}
           id={STEP_FIELD_ID}
           min={1}
-          sizePreset="small"
+          sizePreset="medium"
           step={1}
           value={state.step}
           onChange={(value) => onChange('step', value)}

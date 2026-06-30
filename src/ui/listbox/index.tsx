@@ -13,7 +13,7 @@ import { useTheme } from 'styled-components';
 import { useAnchoredDismiss } from '@hooks/use-anchored-dismiss';
 import { getFocusables, useFocusTrap } from '@hooks/use-focus-trap';
 import { CheckIcon } from '@icons/check';
-import { ChevronIcon } from '@icons/chevron';
+import { ChevronDownIcon } from '@icons/chevron-down';
 import { Checkbox } from '@ui/checkbox';
 import {
   textSizePreset as resolveTextSizePreset,
@@ -523,7 +523,7 @@ export function Listbox({
         </Text>
         <StyledListboxIcon sizePreset={sizePreset}>
           <StyledListboxChevron sizePreset={sizePreset}>
-            <ChevronIcon />
+            <ChevronDownIcon />
           </StyledListboxChevron>
         </StyledListboxIcon>
       </StyledListboxTrigger>

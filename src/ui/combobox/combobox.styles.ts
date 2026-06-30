@@ -107,11 +107,20 @@ export const StyledComboboxTrigger = styled.button.withConfig({
   }
 `;
 
-/** Иконка-слот перед label (флаг локали и т.п.); размер задаёт сам svg. */
-export const StyledComboboxOptionIcon = styled.span`
+/** Иконка-слот перед label (флаг локали и т.п.); глиф — канон controlIconSize. */
+export const StyledComboboxOptionIcon = styled.span.withConfig({
+  shouldForwardProp: shouldForwardAxis,
+})<ComboboxAxisProps>`
   display: inline-grid;
   flex-shrink: 0;
   place-items: center;
+
+  & > svg {
+    inline-size: ${(props) =>
+      spacingRem(controlIconSize[props.sizePreset ?? DEFAULT_SIZE_PRESET])};
+    block-size: ${(props) =>
+      spacingRem(controlIconSize[props.sizePreset ?? DEFAULT_SIZE_PRESET])};
+  }
 `;
 
 export const StyledComboboxPanel = styled.div.withConfig({

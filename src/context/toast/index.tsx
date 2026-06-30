@@ -8,7 +8,6 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 
-import { Text } from '@ui/text';
 import { Toast } from '@ui/toast';
 
 import { ToastContext, type ToastContextValue, type ToastInput } from './context';
@@ -82,9 +81,12 @@ export function ToastProvider({ children }: ToastProviderProps) {
         createPortal(
           <StyledToastViewport>
             {toasts.map((toast) => (
-              <Toast key={toast.id} tone={toast.tone} onClick={() => dismiss(toast.id)}>
-                <Text sizePreset="thin">{toast.message}</Text>
-              </Toast>
+              <Toast
+                key={toast.id}
+                message={toast.message}
+                tone={toast.tone}
+                onClick={() => dismiss(toast.id)}
+              />
             ))}
           </StyledToastViewport>,
           document.body

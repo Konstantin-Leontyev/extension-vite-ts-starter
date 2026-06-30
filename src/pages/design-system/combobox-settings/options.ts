@@ -1,17 +1,18 @@
 import { type ComboboxOption } from '@ui/combobox';
 
-/** Демо-набор для витрины: достаточно длинный, чтобы показать поиск и прокрутку. */
-export const COMBOBOX_DEMO_OPTIONS: ComboboxOption[] = [
-  { label: 'Deutsch', value: 'de' },
-  { label: 'English', value: 'en' },
-  { label: 'Español', value: 'es' },
-  { label: 'Français', value: 'fr' },
-  { label: 'Italiano', value: 'it' },
-  { label: 'Nederlands', value: 'nl' },
-  { label: 'Polski', value: 'pl' },
-  { label: 'Português', value: 'pt' },
-  { label: 'Русский', value: 'ru' },
-  { label: 'Svenska', value: 'sv' },
-  { label: 'Türkçe', value: 'tr' },
-  { label: 'Українська', value: 'uk' },
-];
+import {
+  SHOWCASE_ICON_COMBOBOX_OPTIONS,
+  SHOWCASE_ICON_OPTIONS,
+  formatShowcaseIconLabel,
+  type ShowcaseIconKey,
+} from '../showcase-icons';
+
+/** Демо-набор Combobox в витрине: подписи без слота `icon` (включается чекбоксом Icon). */
+export const COMBOBOX_DEMO_OPTIONS: ComboboxOption[] = SHOWCASE_ICON_OPTIONS.map(
+  ({ value }) => ({
+    label: formatShowcaseIconLabel(value as ShowcaseIconKey),
+    value,
+  })
+);
+
+export { SHOWCASE_ICON_COMBOBOX_OPTIONS };

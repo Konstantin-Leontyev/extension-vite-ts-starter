@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { controlBlockSize, type SizePreset } from '@ui/presets';
+import { controlBlockSize, controlIconSize, type SizePreset } from '@ui/presets';
 import { spacingRem, type SpacingPx } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
@@ -12,6 +12,12 @@ export type RoundButtonSizePreset = SizePreset | 'huge';
 export const roundButtonSizePresets = {
   ...controlBlockSize,
   huge: 80,
+} as const satisfies Record<RoundButtonSizePreset, SpacingPx>;
+
+/** Габарит глифа: канон controlIconSize + локальный huge (inset 16 в кнопке 80). */
+export const roundButtonIconSize = {
+  ...controlIconSize,
+  huge: 48,
 } as const satisfies Record<RoundButtonSizePreset, SpacingPx>;
 
 export const DEFAULT_ROUND_BUTTON_SIZE_PRESET: RoundButtonSizePreset = 'medium';
@@ -32,13 +38,16 @@ export function getRoundButtonStyles(
 ): string {
   const theme = getTheme(props);
   const { elevated = true, sizePreset = DEFAULT_ROUND_BUTTON_SIZE_PRESET } = props;
-  const sizePx = roundButtonSizePresets[sizePreset];
-  const dimension = spacingRem(sizePx);
+  const dimension = spacingRem(roundButtonSizePresets[sizePreset]);
+  const glyph = spacingRem(roundButtonIconSize[sizePreset]);
 
   const rules: string[] = [
     `inline-size: ${dimension};`,
     `block-size: ${dimension};`,
-    `padding: ${spacingRem(sizePreset === 'huge' ? 16 : 4)};`,
+    `& svg {`,
+    `inline-size: ${glyph};`,
+    `block-size: ${glyph};`,
+    `}`,
   ];
 
   if (elevated) {

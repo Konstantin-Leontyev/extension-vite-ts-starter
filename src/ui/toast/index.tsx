@@ -1,12 +1,18 @@
-import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { type ComponentPropsWithRef } from 'react';
+
+import { textSizePreset } from '@ui/presets';
+import { Text } from '@ui/text';
 
 import { StyledToast, type ToastStyleProps } from './toast.styles';
 
 export type ToastProps = ToastStyleProps & {
-  children: ReactNode;
-} & Omit<ComponentPropsWithRef<'div'>, keyof ToastStyleProps | 'className' | 'style'>;
+  message: string;
+} & Omit<
+    ComponentPropsWithRef<'div'>,
+    keyof ToastStyleProps | 'children' | 'className' | 'style'
+  >;
 
-export function Toast({ children, tone, ...rest }: ToastProps) {
+export function Toast({ message, sizePreset, tone, ...rest }: ToastProps) {
   // layout + прочие пропы идут на один и тот же корень — StyledToast сам потребляет
   // layout (getLayoutStyles) и фильтрует их из DOM (shouldForwardProp); сплит не нужен.
   const isDanger = tone === 'danger';
@@ -14,8 +20,15 @@ export function Toast({ children, tone, ...rest }: ToastProps) {
   const ariaLive = isDanger ? 'assertive' : 'polite';
 
   return (
-    <StyledToast role={role} aria-live={ariaLive} tone={tone} {...rest}>
-      {children}
+    <StyledToast
+      role={role}
+      aria-live={ariaLive}
+      sizePreset={sizePreset}
+      tone={tone}
+      {...rest}
+    >
+      {/* Размер текста — по канону ряда (textSizePreset), как у Button/Input. */}
+      <Text sizePreset={textSizePreset(sizePreset)}>{message}</Text>
     </StyledToast>
   );
 }

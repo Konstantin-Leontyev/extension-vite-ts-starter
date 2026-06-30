@@ -16,7 +16,7 @@ import { useTheme } from 'styled-components';
 import { useAnchoredDismiss } from '@hooks/use-anchored-dismiss';
 import { useFocusTrap } from '@hooks/use-focus-trap';
 import { CheckIcon } from '@icons/check';
-import { ChevronIcon } from '@icons/chevron';
+import { ChevronDownIcon } from '@icons/chevron-down';
 import { Input } from '@ui/input';
 import {
   textSizePreset as resolveTextSizePreset,
@@ -402,7 +402,9 @@ export function Combobox({
       >
         <StyledComboboxValue sizePreset={sizePreset}>
           {Boolean(selectedOption?.icon) && (
-            <StyledComboboxOptionIcon>{selectedOption?.icon}</StyledComboboxOptionIcon>
+            <StyledComboboxOptionIcon sizePreset={sizePreset}>
+              {selectedOption?.icon}
+            </StyledComboboxOptionIcon>
           )}
           <Text
             color={selectedOption ? undefined : theme.colors.muted}
@@ -415,7 +417,7 @@ export function Combobox({
         </StyledComboboxValue>
         <StyledComboboxChevronBox sizePreset={sizePreset}>
           <StyledComboboxChevron sizePreset={sizePreset}>
-            <ChevronIcon />
+            <ChevronDownIcon />
           </StyledComboboxChevron>
         </StyledComboboxChevronBox>
       </StyledComboboxTrigger>
@@ -491,7 +493,7 @@ export function Combobox({
                         onMouseMove={() => setActiveIndex(index)}
                       >
                         {Boolean(option.icon) && (
-                          <StyledComboboxOptionIcon>
+                          <StyledComboboxOptionIcon sizePreset={sizePreset}>
                             {option.icon}
                           </StyledComboboxOptionIcon>
                         )}

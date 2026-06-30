@@ -14,7 +14,7 @@ import { useTheme } from 'styled-components';
 
 import { useAnchoredDismiss } from '@hooks/use-anchored-dismiss';
 import { useFocusTrap } from '@hooks/use-focus-trap';
-import { ChevronIcon } from '@icons/chevron';
+import { ChevronDownIcon } from '@icons/chevron-down';
 import { CloseIcon } from '@icons/close';
 import { Button } from '@ui/button';
 import { Input } from '@ui/input';
@@ -468,7 +468,7 @@ export function RangeInput({
           {showChevron && (
             <StyledRangeInputChevronBox {...axisProps}>
               <StyledRangeInputChevron {...axisProps}>
-                <ChevronIcon />
+                <ChevronDownIcon />
               </StyledRangeInputChevron>
             </StyledRangeInputChevronBox>
           )}
