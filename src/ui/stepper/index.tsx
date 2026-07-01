@@ -11,6 +11,7 @@ import { useTheme } from 'styled-components';
 
 import { ChevronDownIcon } from '@icons/chevron-down';
 import { ChevronUpIcon } from '@icons/chevron-up';
+import { textSizePreset } from '@ui/presets';
 import { Text } from '@ui/text';
 
 import {
@@ -217,7 +218,7 @@ export function Stepper({
           onKeyDown={handleKeyDown}
         />
         {Boolean(suffix) && (
-          <Text color={theme.colors.muted} sizePreset="thin">
+          <Text color={theme.colors.muted} sizePreset={textSizePreset(sizePreset)}>
             {suffix}
           </Text>
         )}

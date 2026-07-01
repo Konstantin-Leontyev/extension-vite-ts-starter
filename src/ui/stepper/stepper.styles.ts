@@ -6,15 +6,13 @@ import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
   blockSizeRem,
-  controlIconSize,
   controlPaddingInline,
-  controlTextSizePreset,
+  controlValueTextStyles,
   radiusPreset,
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
-import { spacingRem } from '@ui/spacing';
-import { textSizePresets } from '@ui/text';
+import { spacingRem, type SpacingPx } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -32,6 +30,16 @@ const STEPPER_PROP_NAMES = new Set<string>([
   'shape',
   'sizePreset',
 ]);
+
+/**
+ * Габарит шеврона в половине колонки стрелок — меньше controlIconSize, иначе две
+ * половинки по 16px в строке 32px раздувают высоту выше канона controlBlockSize.
+ */
+const stepperSpinIconSize = {
+  small: 12,
+  medium: 16,
+  large: 20,
+} as const satisfies Record<SizePreset, SpacingPx>;
 
 /** Ячейка значения: поток инпут + опц. суффикс единицы. */
 export const StyledStepperValue = styled.div`
@@ -100,20 +108,20 @@ export function getStepperStyles(
     sizePreset = DEFAULT_SIZE_PRESET,
   } = props;
   const square = blockSizeRem(sizePreset);
-  const glyph = spacingRem(controlIconSize[sizePreset]);
+  const glyph = spacingRem(stepperSpinIconSize[sizePreset]);
 
   return [
-    `min-block-size: ${square};`,
+    `block-size: ${square};`,
     `border: 1px solid ${theme.colors.border};`,
     `border-radius: ${radiusPreset(shape, sizePreset)};`,
     `background-color: ${theme.colors.surface};`,
     `box-shadow: ${theme.shadow.surface};`,
     `${StyledStepperValue} { padding-inline: ${spacingRem(controlPaddingInline[sizePreset])}; }`,
     `${StyledStepperInput} {`,
-    `font-size: ${textSizePresets[controlTextSizePreset[sizePreset]].fontSize};`,
+    controlValueTextStyles(sizePreset),
     align ? `text-align: ${align};` : '',
     `}`,
-    `${StyledStepperSpin} { inline-size: ${square}; }`,
+    `${StyledStepperSpin} { inline-size: ${square}; block-size: 100%; }`,
     `${StyledStepperButton} svg { inline-size: ${glyph}; block-size: ${glyph}; }`,
   ].join('\n');
 }

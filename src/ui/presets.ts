@@ -1,5 +1,5 @@
 import { spacingRem, type SpacingPx } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
+import { textSizePresets, type TextSizePreset } from '@ui/text';
 
 /** Форма строки-поля: прямоугольная со скруглением (`default`) или «таблетка» (`round`). */
 export type ShapePreset = 'default' | 'round';
@@ -54,6 +54,23 @@ export function textSizePreset(
   sizePreset: SizePreset = DEFAULT_SIZE_PRESET
 ): TextSizePreset {
   return controlTextSizePreset[sizePreset];
+}
+
+/**
+ * Полный текстовый пресет значения контрола (font-size + font-weight + line-height)
+ * для нативного input, где текст нельзя вынести в примитив Text. Единый источник
+ * типографики значения: контрол на голом input не берёт часть пресета вручную.
+ */
+export function controlValueTextStyles(
+  sizePreset: SizePreset = DEFAULT_SIZE_PRESET
+): string {
+  const preset = textSizePresets[controlTextSizePreset[sizePreset]];
+
+  return [
+    `font-size: ${preset.fontSize};`,
+    `font-weight: ${preset.fontWeight};`,
+    `line-height: ${preset.lineHeight};`,
+  ].join('\n');
 }
 
 /** Горизонтальный отступ значения/опции для оси sizePreset. */

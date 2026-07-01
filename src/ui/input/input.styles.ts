@@ -7,13 +7,12 @@ import {
   DEFAULT_SIZE_PRESET,
   blockSizeRem,
   controlPaddingInline,
-  controlTextSizePreset,
+  controlValueTextStyles,
   radiusPreset,
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
 import { spacingRem } from '@ui/spacing';
-import { textSizePresets } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -44,7 +43,7 @@ export function getInputControlStyles(
   const rules = [
     `min-block-size: ${blockSizeRem(sizePreset)};`,
     `padding-inline: ${spacingRem(controlPaddingInline[sizePreset])};`,
-    `font-size: ${textSizePresets[controlTextSizePreset[sizePreset]].fontSize};`,
+    controlValueTextStyles(sizePreset),
     `border: 1px solid ${theme.colors.border};`,
     `border-radius: ${radiusPreset(shape, sizePreset)};`,
     `background-color: ${theme.colors.surface};`,
