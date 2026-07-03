@@ -47,7 +47,11 @@ export const StyledStepperValue = styled.div`
   min-inline-size: 0;
   align-items: center;
   gap: ${spacingRem(4)};
+  white-space: nowrap;
 `;
+
+/** Суффикс единицы: не сжимается и не переносится по символам (Text даёт break-word). */
+export const StyledStepperSuffix = styled.span``;
 
 /** Инпут значения: прозрачный, без рамки (рамку и кольцо фокуса несёт корень-поле). */
 export const StyledStepperInput = styled.input`
@@ -120,6 +124,11 @@ export function getStepperStyles(
     `${StyledStepperInput} {`,
     controlValueTextStyles(sizePreset),
     align ? `text-align: ${align};` : '',
+    `}`,
+    `${StyledStepperSuffix} {`,
+    'flex-shrink: 0;',
+    `color: ${theme.colors.muted};`,
+    controlValueTextStyles(sizePreset),
     `}`,
     `${StyledStepperSpin} { inline-size: ${square}; block-size: 100%; }`,
     `${StyledStepperButton} svg { inline-size: ${glyph}; block-size: ${glyph}; }`,

@@ -7,18 +7,16 @@ import {
   type ComponentPropsWithRef,
   type KeyboardEvent,
 } from 'react';
-import { useTheme } from 'styled-components';
 
 import { ChevronDownIcon } from '@icons/chevron-down';
 import { ChevronUpIcon } from '@icons/chevron-up';
-import { textSizePreset } from '@ui/presets';
-import { Text } from '@ui/text';
 
 import {
   StyledStepperButton,
   StyledStepperInput,
   StyledStepperRoot,
   StyledStepperSpin,
+  StyledStepperSuffix,
   StyledStepperValue,
   splitLayoutProps,
   type StepperStyleProps,
@@ -82,7 +80,6 @@ export function Stepper({
   'aria-labelledby': ariaLabelledBy,
   ...rest
 }: StepperProps) {
-  const theme = useTheme();
   const { layout, rest: control } = splitLayoutProps(rest);
 
   /* draft != null — пользователь печатает; иначе показываем актуальное value. */
@@ -237,11 +234,7 @@ export function Stepper({
           onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
-        {Boolean(suffix) && (
-          <Text color={theme.colors.muted} sizePreset={textSizePreset(sizePreset)}>
-            {suffix}
-          </Text>
-        )}
+        {Boolean(suffix) && <StyledStepperSuffix>{suffix}</StyledStepperSuffix>}
       </StyledStepperValue>
 
       <StyledStepperSpin>

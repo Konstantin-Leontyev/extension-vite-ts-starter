@@ -1,5 +1,4 @@
 import { type ComponentPropsWithRef } from 'react';
-import { useTheme } from 'styled-components';
 
 import { Text } from '@ui/text';
 
@@ -20,18 +19,13 @@ export type SwitchProps = SwitchStyleProps & {
   >;
 
 export function Switch({ label, sizePreset, tone, ...rest }: SwitchProps) {
-  const theme = useTheme();
   const { layout, rest: control } = splitLayoutProps(rest);
 
   return (
     <StyledSwitchRoot {...layout}>
       <StyledSwitchInput role="switch" type="checkbox" {...control} />
       <StyledSwitchTrack aria-hidden="true" sizePreset={sizePreset} tone={tone} />
-      {Boolean(label) && (
-        <Text color={theme.colors.muted} sizePreset="thin">
-          {label}
-        </Text>
-      )}
+      {Boolean(label) && <Text sizePreset="medium">{label}</Text>}
     </StyledSwitchRoot>
   );
 }
