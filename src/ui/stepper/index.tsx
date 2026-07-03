@@ -41,6 +41,8 @@ type StepperProps = StepperStyleProps &
   StepperAccessibleName & {
     value: number;
     onChange: (value: number) => void;
+    /** Финальное значение: blur поля и отпускание стрелки (в т.ч. после автоповтора). */
+    onCommit?: (value: number) => void;
     min?: number;
     max?: number;
     step?: number;
@@ -70,6 +72,7 @@ export function Stepper({
   sizePreset,
   value,
   onChange,
+  onCommit,
   min,
   max,
   step = 1,
@@ -108,10 +111,16 @@ export function Stepper({
     [max, min]
   );
 
+  const commit = useCallback((): void => {
+    onCommit?.(clamp(valueRef.current));
+  }, [clamp, onCommit]);
+
   const stepBy = useCallback(
     (direction: 1 | -1): void => {
       setDraft(null);
-      onChange(clamp(valueRef.current + direction * step));
+      const next = clamp(valueRef.current + direction * step);
+      valueRef.current = next;
+      onChange(next);
     },
     [clamp, onChange, step]
   );
@@ -140,7 +149,8 @@ export function Stepper({
     }
 
     setDraft(null);
-  }, [clamp, draft, onChange]);
+    commit();
+  }, [clamp, commit, draft, onChange]);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>): void => {
@@ -160,16 +170,25 @@ export function Stepper({
     timer: null,
     repeated: false,
   });
+  const spinActiveRef = useRef(false);
 
   const stopHold = useCallback((): void => {
     if (holdRef.current.timer !== null) {
       window.clearTimeout(holdRef.current.timer);
       holdRef.current.timer = null;
     }
-  }, []);
+
+    if (spinActiveRef.current) {
+      spinActiveRef.current = false;
+      if (holdRef.current.repeated) {
+        commit();
+      }
+    }
+  }, [commit]);
 
   const startHold = useCallback(
     (direction: 1 | -1): void => {
+      spinActiveRef.current = true;
       holdRef.current.repeated = false;
 
       const tick = (): void => {
@@ -192,8 +211,9 @@ export function Stepper({
       }
 
       stepBy(direction);
+      commit();
     },
-    [stepBy]
+    [commit, stepBy]
   );
 
   useEffect(() => stopHold, [stopHold]);
