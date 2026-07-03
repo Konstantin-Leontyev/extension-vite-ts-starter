@@ -10,14 +10,14 @@ export function AvatarIcon() {
     >
       <g opacity={ICON_MUTED_LAYER_OPACITY} stroke="currentColor">
         <path
-          d="M4.5 20C4.5 16.5 8 14.5 12 14.5C16 14.5 19.5 16.5 19.5 20"
+          d="M2.625 22C2.625 17.625 7 15.125 12 15.125C17 15.125 21.375 17.625 21.375 22"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"
         />
       </g>
       <g stroke="currentColor">
-        <circle cx="12" cy="8" r="3.5" strokeWidth="2" />
+        <circle cx="12" cy="7" r="4.375" strokeWidth="2" />
       </g>
     </svg>
   );

@@ -10,14 +10,20 @@ export function SearchIcon() {
     >
       <g opacity={ICON_MUTED_LAYER_OPACITY} stroke="currentColor">
         <path
-          d="M16.5 16.5L20 20"
+          d="M17.625 17.625L22 22"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"
         />
       </g>
       <g stroke="currentColor">
-        <circle cx="11.5" cy="11.5" r="7" strokeLinejoin="round" strokeWidth="2" />
+        <circle
+          cx="11.375"
+          cy="11.375"
+          r="8.75"
+          strokeLinejoin="round"
+          strokeWidth="2"
+        />
       </g>
     </svg>
   );

@@ -10,7 +10,7 @@ export function SignOutIcon() {
     >
       <g stroke="currentColor">
         <path
-          d="M4.5 20V4H9.5"
+          d="M2.625 22V2H8.875"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"
@@ -18,7 +18,7 @@ export function SignOutIcon() {
       </g>
       <g opacity={ICON_MUTED_LAYER_OPACITY} stroke="currentColor">
         <path
-          d="M11.5 12H19.5M16 8.5L19.5 12L16 15.5"
+          d="M11.375 12H21.375M17 7.625L21.375 12L17 16.375"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"

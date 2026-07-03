@@ -10,7 +10,7 @@ export function DownloadIcon() {
     >
       <g stroke="currentColor">
         <path
-          d="M4 16.5v2.5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2.5"
+          d="M2 17.625v3.125a1.25 1.25 0 0 0 1.25 1.25h17.5a1.25 1.25 0 0 0 1.25-1.25v-3.125"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"
@@ -18,7 +18,7 @@ export function DownloadIcon() {
       </g>
       <g opacity={ICON_MUTED_LAYER_OPACITY} stroke="currentColor">
         <path
-          d="M12 4v10.5M8 10.5L12 14.5L16 10.5"
+          d="M12 2v13.125M7 10.125L12 15.125L17 10.125"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"

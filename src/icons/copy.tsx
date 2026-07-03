@@ -10,14 +10,21 @@ export function CopyIcon() {
     >
       <g stroke="currentColor">
         <path
-          d="M4 16V7c0-1.5 1-3 2.5-3H15"
+          d="M2 17V5.75c0-1.875 1.25-3.75 3.125-3.75H15.75"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"
         />
       </g>
       <g opacity={ICON_MUTED_LAYER_OPACITY} stroke="currentColor">
-        <rect height="11" rx="1.5" strokeWidth="2" width="11" x="9" y="9" />
+        <rect
+          height="13.75"
+          rx="1.875"
+          strokeWidth="2"
+          width="13.75"
+          x="8.25"
+          y="8.25"
+        />
       </g>
     </svg>
   );

@@ -10,7 +10,7 @@ export function UploadIcon() {
     >
       <g stroke="currentColor">
         <path
-          d="M4 16.5v2.5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2.5"
+          d="M2 17.625v3.125a1.25 1.25 0 0 0 1.25 1.25h17.5a1.25 1.25 0 0 0 1.25-1.25v-3.125"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"
@@ -18,7 +18,7 @@ export function UploadIcon() {
       </g>
       <g opacity={ICON_MUTED_LAYER_OPACITY} stroke="currentColor">
         <path
-          d="M12 14.5V4M8 8L12 4L16 8"
+          d="M12 15.125V2M7 7L12 2L17 7"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"
