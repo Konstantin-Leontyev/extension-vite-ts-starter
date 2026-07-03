@@ -1,3 +1,5 @@
+import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
+
 export function DownloadIcon() {
   return (
     <svg
@@ -6,20 +8,22 @@ export function DownloadIcon() {
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path
-        d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-      />
-      <path
-        d="M7 10l5 5 5-5M12 15V3"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-      />
+      <g stroke="currentColor">
+        <path
+          d="M4 16.5v2.5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+        />
+      </g>
+      <g opacity={ICON_MUTED_LAYER_OPACITY} stroke="currentColor">
+        <path
+          d="M12 4v10.5M8 10.5L12 14.5L16 10.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+        />
+      </g>
     </svg>
   );
 }

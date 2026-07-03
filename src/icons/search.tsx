@@ -1,3 +1,5 @@
+import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
+
 export function SearchIcon() {
   return (
     <svg
@@ -6,21 +8,17 @@ export function SearchIcon() {
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <circle
-        cx="11"
-        cy="11"
-        r="6.5"
-        stroke="currentColor"
-        strokeLinejoin="round"
-        strokeWidth="2"
-      />
-      <path
-        d="M16 16l4.5 4.5"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-      />
+      <g opacity={ICON_MUTED_LAYER_OPACITY} stroke="currentColor">
+        <path
+          d="M16.5 16.5L20 20"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+        />
+      </g>
+      <g stroke="currentColor">
+        <circle cx="11.5" cy="11.5" r="7" strokeLinejoin="round" strokeWidth="2" />
+      </g>
     </svg>
   );
 }

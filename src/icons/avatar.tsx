@@ -1,3 +1,5 @@
+import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
+
 export function AvatarIcon() {
   return (
     <svg
@@ -6,13 +8,17 @@ export function AvatarIcon() {
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path
-        d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-      />
+      <g opacity={ICON_MUTED_LAYER_OPACITY} stroke="currentColor">
+        <path
+          d="M4.5 20C4.5 16.5 8 14.5 12 14.5C16 14.5 19.5 16.5 19.5 20"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+        />
+      </g>
+      <g stroke="currentColor">
+        <circle cx="12" cy="8" r="3.5" strokeWidth="2" />
+      </g>
     </svg>
   );
 }

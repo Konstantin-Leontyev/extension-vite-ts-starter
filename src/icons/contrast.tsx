@@ -1,3 +1,5 @@
+import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
+
 export function ContrastIcon() {
   return (
     <svg
@@ -6,8 +8,12 @@ export function ContrastIcon() {
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-      <path d="M12 2a10 10 0 0 1 0 20Z" fill="currentColor" />
+      <g opacity={ICON_MUTED_LAYER_OPACITY} fill="currentColor">
+        <path d="M12 4a8 8 0 0 1 0 16Z" />
+      </g>
+      <g stroke="currentColor">
+        <circle cx="12" cy="12" r="8" strokeWidth="2" />
+      </g>
     </svg>
   );
 }

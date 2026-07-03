@@ -1,3 +1,5 @@
+import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
+
 export function SignOutIcon() {
   return (
     <svg
@@ -6,17 +8,17 @@ export function SignOutIcon() {
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g transform="translate(-1, 0)">
+      <g stroke="currentColor">
         <path
-          d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
-          stroke="currentColor"
+          d="M4.5 20V4H9.5"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"
         />
+      </g>
+      <g opacity={ICON_MUTED_LAYER_OPACITY} stroke="currentColor">
         <path
-          d="M16 17l5-5-5-5M21 12H9"
-          stroke="currentColor"
+          d="M11.5 12H19.5M16 8.5L19.5 12L16 15.5"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"

@@ -1,3 +1,5 @@
+import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
+
 export function CopyIcon() {
   return (
     <svg
@@ -6,22 +8,17 @@ export function CopyIcon() {
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect
-        height="14"
-        rx="2"
-        stroke="currentColor"
-        strokeWidth="2"
-        width="14"
-        x="8"
-        y="8"
-      />
-      <path
-        d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-      />
+      <g stroke="currentColor">
+        <path
+          d="M4 16V7c0-1.5 1-3 2.5-3H15"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+        />
+      </g>
+      <g opacity={ICON_MUTED_LAYER_OPACITY} stroke="currentColor">
+        <rect height="11" rx="1.5" strokeWidth="2" width="11" x="9" y="9" />
+      </g>
     </svg>
   );
 }
