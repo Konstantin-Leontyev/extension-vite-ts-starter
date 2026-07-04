@@ -7,6 +7,8 @@ import { Button } from '@ui/button';
 import { Card } from '@ui/card';
 import { Checkbox } from '@ui/checkbox';
 import { Combobox } from '@ui/combobox';
+import { DateInput, todayUtc } from '@ui/date-input';
+import { DateRangeInput } from '@ui/date-range-input';
 import { Fieldset } from '@ui/fieldset';
 import { Input } from '@ui/input';
 import { Listbox } from '@ui/listbox';
@@ -28,7 +30,6 @@ import { Switch } from '@ui/switch';
 import { Tag } from '@ui/tag';
 import { Toast } from '@ui/toast';
 
-import { BrowserAiSmokeProbe } from './browser-ai-smoke-probe';
 import { ButtonSettings, type ButtonWidgetState } from './button-settings';
 import { CheckboxSettings, type CheckboxWidgetState } from './checkbox-settings';
 import { ComboboxSettings, type ComboboxWidgetState } from './combobox-settings';
@@ -36,6 +37,11 @@ import {
   COMBOBOX_DEMO_OPTIONS,
   SHOWCASE_ICON_COMBOBOX_OPTIONS,
 } from './combobox-settings/options';
+import { DateInputSettings, type DateInputWidgetState } from './date-input-settings';
+import {
+  DateRangeInputSettings,
+  type DateRangeInputWidgetState,
+} from './date-range-input-settings';
 import {
   StyledDesignSystemWidgets,
   StyledFieldsetDemo,
@@ -76,6 +82,8 @@ const ROUND_BUTTON_WIDGET_TITLE_ID = 'design-system-round-button-heading';
 const LISTBOX_WIDGET_TITLE_ID = 'design-system-listbox-heading';
 const COMBOBOX_WIDGET_TITLE_ID = 'design-system-combobox-heading';
 const RANGE_INPUT_WIDGET_TITLE_ID = 'design-system-range-input-heading';
+const DATE_INPUT_WIDGET_TITLE_ID = 'design-system-date-input-heading';
+const DATE_RANGE_INPUT_WIDGET_TITLE_ID = 'design-system-date-range-input-heading';
 const CHECKBOX_WIDGET_TITLE_ID = 'design-system-checkbox-heading';
 const RADIO_BUTTON_WIDGET_TITLE_ID = 'design-system-radio-button-heading';
 const FIELDSET_WIDGET_TITLE_ID = 'design-system-fieldset-heading';
@@ -94,6 +102,8 @@ type WidgetSettingsKey =
   | 'listbox'
   | 'combobox'
   | 'range-input'
+  | 'date-input'
+  | 'date-range-input'
   | 'button'
   | 'round-button'
   | 'segment-button'
@@ -112,6 +122,8 @@ const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   listbox: 'Listbox',
   combobox: 'Combobox',
   'range-input': 'Range filter',
+  'date-input': 'Date input',
+  'date-range-input': 'Date range',
   button: 'Button',
   'round-button': 'Round button',
   'segment-button': 'Segment button',
@@ -207,6 +219,25 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   validationMessages: { ...DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES },
   value: { from: '', to: '' },
   withClear: true,
+};
+
+const DEFAULT_DATE_INPUT_STATE: DateInputWidgetState = {
+  disabled: false,
+  maxDay: todayUtc(),
+  minDay: '',
+  shape: 'default',
+  sizePreset: 'large',
+  value: '',
+};
+
+const DEFAULT_DATE_RANGE_INPUT_STATE: DateRangeInputWidgetState = {
+  disabled: false,
+  endDay: '',
+  maxDay: todayUtc(),
+  minDay: '',
+  shape: 'default',
+  sizePreset: 'large',
+  startDay: '',
 };
 
 const DEFAULT_CHECKBOX_STATE: CheckboxWidgetState = {
@@ -344,6 +375,12 @@ export function DesignSystemPage() {
   const [rangeInput, setRangeInput] = useState<RangeInputWidgetState>(
     DEFAULT_RANGE_INPUT_STATE
   );
+  const [dateInput, setDateInput] = useState<DateInputWidgetState>(
+    DEFAULT_DATE_INPUT_STATE
+  );
+  const [dateRangeInput, setDateRangeInput] = useState<DateRangeInputWidgetState>(
+    DEFAULT_DATE_RANGE_INPUT_STATE
+  );
   const [checkbox, setCheckbox] = useState<CheckboxWidgetState>(DEFAULT_CHECKBOX_STATE);
   const [radioButton, setRadioButton] = useState<RadioButtonWidgetState>(
     DEFAULT_RADIO_BUTTON_STATE
@@ -477,6 +514,20 @@ export function DesignSystemPage() {
     }));
   }
 
+  function updateDateInput<K extends keyof DateInputWidgetState>(
+    key: K,
+    value: DateInputWidgetState[K]
+  ): void {
+    setDateInput((current) => ({ ...current, [key]: value }));
+  }
+
+  function updateDateRangeInput<K extends keyof DateRangeInputWidgetState>(
+    key: K,
+    value: DateRangeInputWidgetState[K]
+  ): void {
+    setDateRangeInput((current) => ({ ...current, [key]: value }));
+  }
+
   function updateCheckbox<K extends keyof CheckboxWidgetState>(
     key: K,
     value: CheckboxWidgetState[K]
@@ -562,6 +613,16 @@ export function DesignSystemPage() {
 
     if (activeSettings === 'range-input') {
       return <RangeInputSettings state={rangeInput} onChange={updateRangeInput} />;
+    }
+
+    if (activeSettings === 'date-input') {
+      return <DateInputSettings state={dateInput} onChange={updateDateInput} />;
+    }
+
+    if (activeSettings === 'date-range-input') {
+      return (
+        <DateRangeInputSettings state={dateRangeInput} onChange={updateDateRangeInput} />
+      );
     }
 
     if (activeSettings === 'button') {
@@ -752,6 +813,50 @@ export function DesignSystemPage() {
                         }
                       : undefined
                   }
+                />
+              )}
+
+              {renderWidgetCard(
+                'date-input',
+                DATE_INPUT_WIDGET_TITLE_ID,
+                <DateInput
+                  alignSelf="center"
+                  aria-label="Demo date"
+                  disabled={dateInput.disabled}
+                  maxDay={dateInput.maxDay || undefined}
+                  minDay={dateInput.minDay || undefined}
+                  shape={dateInput.shape}
+                  sizePreset={dateInput.sizePreset}
+                  value={dateInput.value}
+                  {...(dateInput.dayShape != null
+                    ? { dayShape: dateInput.dayShape }
+                    : {})}
+                  onChange={(value) => updateDateInput('value', value)}
+                  onClear={() => updateDateInput('value', '')}
+                />
+              )}
+
+              {renderWidgetCard(
+                'date-range-input',
+                DATE_RANGE_INPUT_WIDGET_TITLE_ID,
+                <DateRangeInput
+                  alignSelf="center"
+                  disabled={dateRangeInput.disabled}
+                  endDay={dateRangeInput.endDay}
+                  maxDay={dateRangeInput.maxDay || undefined}
+                  minDay={dateRangeInput.minDay || undefined}
+                  shape={dateRangeInput.shape}
+                  sizePreset={dateRangeInput.sizePreset}
+                  startDay={dateRangeInput.startDay}
+                  {...(dateRangeInput.dayShape != null
+                    ? { dayShape: dateRangeInput.dayShape }
+                    : {})}
+                  onClear={() => {
+                    updateDateRangeInput('startDay', '');
+                    updateDateRangeInput('endDay', '');
+                  }}
+                  onEndDayChange={(value) => updateDateRangeInput('endDay', value)}
+                  onStartDayChange={(value) => updateDateRangeInput('startDay', value)}
                 />
               )}
 
@@ -963,8 +1068,6 @@ export function DesignSystemPage() {
                   tone={toast.tone}
                 />
               )}
-
-              <BrowserAiSmokeProbe />
             </StyledDesignSystemWidgets>
           </ScrollPort>
         </Card>

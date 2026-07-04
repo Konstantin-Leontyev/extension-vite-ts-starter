@@ -1,4 +1,9 @@
-import { Fragment, type ComponentPropsWithRef, type ReactNode } from 'react';
+import {
+  Fragment,
+  type ComponentPropsWithRef,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import { useTheme } from 'styled-components';
 
 import { useLongPress } from '@hooks/use-long-press';
@@ -16,8 +21,12 @@ import {
 
 type SegmentButtonAction = {
   active?: boolean;
+  ariaControls?: string;
+  ariaExpanded?: boolean;
+  ariaHaspopup?: 'dialog' | 'listbox';
   disabled?: boolean;
   icon?: ReactNode;
+  ref?: RefObject<HTMLButtonElement | null>;
   text: string;
   textColor?: SegmentTextColor;
   onClick?: () => void;
@@ -32,8 +41,9 @@ type SegmentButtonSegments =
   | { center?: undefined; right: SegmentButtonAction };
 
 type SegmentButtonProps = {
+  embedded?: boolean;
   left: SegmentButtonAction;
-} & Omit<SegmentButtonStyleProps, 'left' | 'right'> &
+} & Omit<SegmentButtonStyleProps, 'embedded' | 'left' | 'right'> &
   SegmentButtonSegments &
   Omit<
     ComponentPropsWithRef<'div'>,
@@ -52,8 +62,12 @@ function SegmentButtonPart({
   const theme = useTheme();
   const {
     active,
+    ariaControls,
+    ariaExpanded,
+    ariaHaspopup,
     disabled,
     icon,
+    ref,
     text,
     textColor,
     onClick,
@@ -76,6 +90,10 @@ function SegmentButtonPart({
 
   return (
     <StyledSegmentButtonPart
+      ref={ref}
+      aria-controls={ariaControls}
+      aria-expanded={ariaExpanded}
+      aria-haspopup={ariaHaspopup}
       aria-current={active ? 'true' : undefined}
       disabled={disabled}
       shape={shape}
@@ -87,7 +105,12 @@ function SegmentButtonPart({
       {...(pointerProps ?? {})}
     >
       {icon}
-      <Text color={color} ellipsis sizePreset={textSizePreset(sizePreset)}>
+      <Text
+        color={color}
+        ellipsis
+        minInlineSize="0"
+        sizePreset={textSizePreset(sizePreset)}
+      >
         {text}
       </Text>
     </StyledSegmentButtonPart>
@@ -96,6 +119,7 @@ function SegmentButtonPart({
 
 export function SegmentButton({
   center,
+  embedded = false,
   left,
   ref,
   right,
@@ -103,11 +127,13 @@ export function SegmentButton({
   sizePreset,
   ...rest
 }: SegmentButtonProps) {
-  const segments = [left, center, right].filter(
-    (segment): segment is SegmentButtonAction => segment != null
-  );
+  const segmentSlots: Array<{ key: string; action: SegmentButtonAction }> = [
+    { key: 'left', action: left },
+    ...(center != null ? [{ key: 'center', action: center }] : []),
+    ...(right != null ? [{ key: 'right', action: right }] : []),
+  ];
 
-  if (segments.length < 2) {
+  if (segmentSlots.length < 2) {
     throw new Error(
       'SegmentButton requires at least two segments. Use a button for a single action.'
     );
@@ -116,17 +142,22 @@ export function SegmentButton({
   return (
     <StyledSegmentButton
       ref={ref}
-      data-segments={segments.length}
+      data-segments={segmentSlots.length}
+      embedded={embedded}
       shape={shape}
       sizePreset={sizePreset}
       {...rest}
     >
-      {segments.map((segment, index) => (
-        <Fragment key={segment.text}>
+      {segmentSlots.map((slot, index) => (
+        <Fragment key={slot.key}>
           {index > 0 && (
             <StyledSegmentButtonDivider aria-hidden="true" sizePreset={sizePreset} />
           )}
-          <SegmentButtonPart action={segment} shape={shape} sizePreset={sizePreset} />
+          <SegmentButtonPart
+            action={slot.action}
+            shape={shape}
+            sizePreset={sizePreset}
+          />
         </Fragment>
       ))}
     </StyledSegmentButton>

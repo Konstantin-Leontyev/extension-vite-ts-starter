@@ -61,17 +61,20 @@ const segmentButtonLayoutPresets = {
 >;
 
 export type SegmentButtonStyleProps = LayoutProps & {
+  embedded?: boolean;
   shape?: ShapePreset;
   sizePreset?: SizePreset;
 };
 
 const SEGMENT_BUTTON_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
+  'embedded',
   'shape',
   'sizePreset',
 ]);
 
 type SegmentViewProps = {
+  embedded?: boolean;
   shape?: ShapePreset;
   sizePreset?: SizePreset;
 };
@@ -80,7 +83,18 @@ export function getSegmentButtonStyles(
   props: SegmentViewProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const {
+    embedded = false,
+    shape = DEFAULT_SHAPE_PRESET,
+    sizePreset = DEFAULT_SIZE_PRESET,
+  } = props;
+
+  if (embedded) {
+    return [
+      `min-block-size: ${blockSizeRem(sizePreset)};`,
+      'background-color: transparent;',
+    ].join('\n');
+  }
 
   return [
     `min-block-size: ${blockSizeRem(sizePreset)};`,
