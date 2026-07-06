@@ -24,7 +24,7 @@ export const controlBlockSize = {
 export const controlIconSize = {
   small: 16,
   medium: 20,
-  large: 20,
+  large: 24,
 } as const satisfies Record<SizePreset, SpacingPx>;
 
 export const controlPaddingInline = {

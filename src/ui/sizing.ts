@@ -49,7 +49,6 @@ const SIZING_CSS = {
   maxBlockSize: 'max-block-size',
 } as const satisfies Record<keyof SizingProps, string>;
 
-
 /**
  * SIZING_PROP_NAMES — это множество (Set) всех имён пропсов из SIZING_CSS.
  * Эти пропсы не импортируются напрямую в компонентах, а входят в состав
