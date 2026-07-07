@@ -6,7 +6,7 @@
  */
 
 /**
- * SPACING_REM — это главный объект (словарь) единый источник истины, где:
+ * SPACING_VALUES — это главный объект (словарь) единый источник истины, где:
  * - Ключ — это значение в пикселях (px), которое передаётся
  *   в пропсы, например <Card padding={16} /> (или любой компонент с LayoutProps).
  * - Значение — это CSS-длина в rem, например '0.25rem', '1rem'.
@@ -17,10 +17,11 @@
  * Все доступные отступы перечислены здесь — это единственное место,
  * где хранится соответствие "px → rem".
  *
- * Таблица приватна для модуля, снаружи значения доступны только через spacingRem(px).
+ * Таблица приватна для модуля, снаружи значения доступны только через getSpacingValue(value).
  * А 'as const' закрепляет для TypeScript что значения и ключи строго фиксированы.
  */
-const SPACING_REM = {
+// prettier-ignore
+const SPACING_VALUES = {
   0: '0',        // 0px = 0rem
   4: '0.25rem',  // 4px = 0.25rem
   8: '0.5rem',   // 8px = 0.5rem
@@ -39,21 +40,21 @@ const SPACING_REM = {
 } as const;
 
 /**
- * SpacingPx — это тип, который представляет собой все возможные ключи (числа) из SPACING_REM.
+ * SpacingValue — это тип, который представляет собой все возможные ключи (числа) из SPACING_VALUES.
  * Например, 4 | 8 | 16 | ... | 80. TypeScript будет подсказывать только эти значения.
  * Это защищает от опечаток и гарантирует, что используется только разрешённый отступ.
  */
-export type SpacingPx = keyof typeof SPACING_REM;
+export type SpacingValue = keyof typeof SPACING_VALUES;
 
 /**
- * SPACING_CSS — это объект, который связывает имена пропсов с реальными CSS-свойствами.
+ * SPACING_PROPERTIES — это объект, который связывает имена пропсов с реальными CSS-свойствами.
  * Необходим для динамической генерации CSS-стилей для каждого переданного пропса.
  *
  * Например:
  *   - Пропс 'margin' → CSS-свойство 'margin'
  *   - Пропс 'marginBlock' → CSS-свойство 'margin-block'
  */
-const SPACING_CSS = {
+const SPACING_PROPERTIES = {
   margin: 'margin',
   marginBlock: 'margin-block',
   marginBlockEnd: 'margin-block-end',
@@ -72,18 +73,18 @@ const SPACING_CSS = {
 
 /**
  * SpacingProps — это тип, который говорит: "Объект с необязательными свойствами,
- * имена которых берутся из SPACING_CSS, а значения должны быть типа SpacingPx".
+ * имена которых берутся из SPACING_PROPERTIES, а значения должны быть типа SpacingValue".
  *
  * Например, вы можете передать { margin: 16, paddingBlock: 8 }.
- * TypeScript проверит, что 16 и 8 есть в SPACING_REM, и что имена пропсов
- * (margin, paddingBlock) существуют в SPACING_CSS.
+ * TypeScript проверит, что 16 и 8 есть в SPACING_VALUES, и что имена пропсов
+ * (margin, paddingBlock) существуют в SPACING_PROPERTIES.
  *
  * Это основной тип для пропсов любого компонента, который поддерживает отступы.
  */
-export type SpacingProps = { [K in keyof typeof SPACING_CSS]?: SpacingPx };
+export type SpacingProps = { [K in keyof typeof SPACING_PROPERTIES]?: SpacingValue };
 
 /**
- * SPACING_PROP_NAMES — это множество (Set) всех имён пропсов из SPACING_CSS.
+ * SPACING_PROPERTY_NAMES — это множество (Set) всех имён пропсов из SPACING_PROPERTIES.
  * Эти пропсы не импортируются напрямую в компонентах, а входят в состав
  * LAYOUT_PROP_NAMES (из @ui/layout) вместе с positioning и sizing.
  *
@@ -93,20 +94,20 @@ export type SpacingProps = { [K in keyof typeof SPACING_CSS]?: SpacingPx };
  * а splitLayoutProps по этому же набору отделяет layout-свойства от остальных
  * (например, для обёртки Input и самого элемента <input>).
  *
- * Set создаётся из Object.keys(SPACING_CSS), чтобы при добавлении нового пропа
+ * Set создаётся из Object.keys(SPACING_PROPERTIES), чтобы при добавлении нового пропа
  * в карту не требовалось обновлять список вручную.
  */
-export const SPACING_PROP_NAMES = new Set<string>(Object.keys(SPACING_CSS));
+export const SPACING_PROPERTY_NAMES = new Set<string>(Object.keys(SPACING_PROPERTIES));
 
 /**
- * spacingRem — простая геттер-функция, которая принимает значение в пикселях и
- * возвращает его строковое представление в rem.
+ * getSpacingValue — геттер-функция, которая принимает метку шкалы и
+ * возвращает её строковое представление в rem.
  *
- * @param px — один из допустимых ключей шкалы SPACING_REM (4 | 8 | 16 | ... | 80)
+ * @param value — один из допустимых ключей шкалы SPACING_VALUES (4 | 8 | 16 | ... | 80)
  * @returns строка с CSS-значением в rem
  */
-export function spacingRem(px: SpacingPx): string {
-  return SPACING_REM[px];
+export function getSpacingValue(value: SpacingValue): string {
+  return SPACING_VALUES[value];
 }
 
 /**
@@ -114,11 +115,11 @@ export function spacingRem(px: SpacingPx): string {
  * в готовую строку CSS-стилей.
  *
  * Как она работает:
- * 1. Проходит по всем записям (ключ-значение) из SPACING_CSS.
+ * 1. Проходит по всем записям (ключ-значение) из SPACING_PROPERTIES.
  *    Ключ — это имя пропса (например, 'margin'), значение — CSS-свойство ('margin');
  * 2. Для каждого пропса смотрит, передан ли он в объекте props.
  *    Если передан (не undefined), берёт значение (например 16),
- *    превращает его в rem с помощью SPACING_REM[значение],
+ *    превращает его в rem с помощью getSpacingValue(значение),
  *    и формирует строку вида "margin: 1rem;";
  * 3. Все такие строки собираем в массив и склеиваем через перенос строки.
  *
@@ -131,14 +132,14 @@ export function getSpacingStyles(props: SpacingProps): string {
   const rules: string[] = [];
 
   // Проходим по всем именам пропсов и их CSS-эквивалентам
-  for (const [prop, property] of Object.entries(SPACING_CSS)) {
+  for (const [prop, property] of Object.entries(SPACING_PROPERTIES)) {
     // Берём значение из переданных пропсов по имени prop
     const value = props[prop as keyof SpacingProps];
 
     // Если значение передано (не undefined), то формируем CSS-правило
     if (value !== undefined) {
-      // SPACING_REM[value] — например, для 16 даст '1rem'
-      rules.push(`${property}: ${SPACING_REM[value]};`);
+      // getSpacingValue(value) — например, для 16 даст '1rem'
+      rules.push(`${property}: ${getSpacingValue(value)};`);
     }
   }
 

@@ -14,14 +14,14 @@
 
 import { type CSSProperties } from 'react';
 
-import { spacingRem, type SpacingPx } from '@ui/spacing';
+import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 
 /**
  * InsetValue — тип для значений отступов позиционирования.
- * Это может быть 'auto' или один из разрешённых ключей из SPACING_REM (SpacingPx).
+ * Это может быть 'auto' или один из разрешённых ключей из SPACING_VALUES (SpacingValue).
  * Например: 'auto', 16, 24, 32.
  */
-export type InsetValue = 'auto' | SpacingPx;
+export type InsetValue = 'auto' | SpacingValue;
 
 /**
  * LayoutDisplay — допустимые значения для CSS-свойства display.
@@ -49,11 +49,11 @@ export type LayoutPosition = 'absolute' | 'fixed' | 'relative' | 'static' | 'sti
  *
  * Значения для inset-свойств (top, left, inset и т.д.) могут быть:
  * - 'auto' — автоматическое позиционирование
- * - числом из SPACING_REM — отступ в rem
+ * - числом из SPACING_VALUES — отступ в rem
  *
- * Для gap-свойств используются только значения из SPACING_REM.
+ * Для gap-свойств используются только значения из SPACING_VALUES.
  * Для raw-свойств значения передаются как есть (строка или число),
- * без преобразования через spacingRem. Это касается:
+ * без преобразования через getSpacingValue. Это касается:
  * - position, display, zIndex (число)
  * - flexDirection, alignItems, justifyContent и других CSS-свойств,
  *   типизированных через CSSProperties
@@ -62,11 +62,11 @@ export type PositioningProps = {
   alignItems?: CSSProperties['alignItems'];
   alignSelf?: CSSProperties['alignSelf'];
   bottom?: InsetValue;
-  columnGap?: SpacingPx;
+  columnGap?: SpacingValue;
   display?: LayoutDisplay;
   flexDirection?: CSSProperties['flexDirection'];
   flexWrap?: CSSProperties['flexWrap'];
-  gap?: SpacingPx;
+  gap?: SpacingValue;
   gridAutoFlow?: CSSProperties['gridAutoFlow'];
   gridTemplateColumns?: CSSProperties['gridTemplateColumns'];
   gridTemplateRows?: CSSProperties['gridTemplateRows'];
@@ -85,7 +85,7 @@ export type PositioningProps = {
   placeSelf?: CSSProperties['placeSelf'];
   position?: LayoutPosition;
   right?: InsetValue;
-  rowGap?: SpacingPx;
+  rowGap?: SpacingValue;
   top?: InsetValue;
   zIndex?: CSSProperties['zIndex'];
 };
@@ -94,13 +94,13 @@ export type PositioningProps = {
  * PositioningValueKind — категория значения для CSS-свойства.
  * Определяет, как нужно обрабатывать переданное значение:
  * - 'raw' — использовать как есть (строка)
- * - 'inset' — может быть 'auto' или число из SPACING_REM
- * - 'spacing' — только число из SPACING_REM (через spacingRem)
+ * - 'inset' — может быть 'auto' или число из SPACING_VALUES
+ * - 'spacing' — только число из SPACING_VALUES (через getSpacingValue)
  */
 type PositioningValueKind = 'inset' | 'raw' | 'spacing';
 
 /**
- * POSITIONING_CSS — объект, который связывает имена пропсов с реальными
+ * POSITIONING_PROPERTIES — объект, который связывает имена пропсов с реальными
  * CSS-свойствами и определяет, как обрабатывать значения.
  *
  * Структура: [CSS-свойство, тип значения (kind)]
@@ -108,7 +108,7 @@ type PositioningValueKind = 'inset' | 'raw' | 'spacing';
  * Например:
  *   - Пропс 'display' → CSS-свойство 'display', тип 'raw' (значение как есть)
  *   - Пропс 'inset' → CSS-свойство 'inset', тип 'inset' (может быть 'auto' или spacing)
- *   - Пропс 'gap' → CSS-свойство 'gap', тип 'spacing' (только из SPACING_REM)
+ *   - Пропс 'gap' → CSS-свойство 'gap', тип 'spacing' (только из SPACING_VALUES)
  *
  * Порядок записей в объекте соответствует порядку генерации CSS-правил.
  * Внутри каждой логической группы шорткаты идут раньше своих лонгхендов:
@@ -120,7 +120,7 @@ type PositioningValueKind = 'inset' | 'raw' | 'spacing';
  * из PositioningProps и только их, а TypeScript будет проверять соответствие
  * структуры типу.
  */
-const POSITIONING_CSS = {
+const POSITIONING_PROPERTIES = {
   display: ['display', 'raw'],
   position: ['position', 'raw'],
   zIndex: ['z-index', 'raw'],
@@ -156,28 +156,30 @@ const POSITIONING_CSS = {
 >;
 
 /**
- * POSITIONING_PROP_NAMES — это множество (Set) всех имён пропсов из POSITIONING_CSS.
+ * POSITIONING_PROPERTY_NAMES — это множество (Set) всех имён пропсов из POSITIONING_PROPERTIES.
  * Эти пропсы не импортируются напрямую в компонентах, а входят в состав
  * LAYOUT_PROP_NAMES (из @ui/layout) вместе с spacing и sizing.
  *
  * Назначение: positioning-пропсы не являются DOM-атрибутами, поэтому styled-components
  * не должен передавать их на HTML-узел.
  * shouldForwardProp в корневом Styled* использует LAYOUT_PROP_NAMES,
- * a splitLayoutProps по этому же набору отделяет layout-свойства от остальных.
+ * а splitLayoutProps по этому же набору отделяет layout-свойства от остальных.
  *
- * Set создаётся из Object.keys(POSITIONING_CSS), чтобы при добавлении нового пропса
+ * Set создаётся из Object.keys(POSITIONING_PROPERTIES), чтобы при добавлении нового пропса
  * в карту не требовалось обновлять список вручную.
  */
-export const POSITIONING_PROP_NAMES = new Set<string>(Object.keys(POSITIONING_CSS));
+export const POSITIONING_PROPERTY_NAMES = new Set<string>(
+  Object.keys(POSITIONING_PROPERTIES)
+);
 
 /**
- * positioningValueCss — вспомогательная функция, которая преобразует значение
- * пропса в строку, пригодную для использования в CSS.
+ * resolvePropertyValue — преобразует значение пропа
+ * в строку для правой части CSS-декларации.
  *
  * В зависимости от типа значения (kind):
  * - 'raw' — возвращает значение как есть (приводит к строке)
- * - 'inset' — если значение 'auto', возвращает 'auto'; иначе преобразует через spacingRem
- * - 'spacing' — всегда преобразует через spacingRem (значение должно быть SpacingPx)
+ * - 'inset' — если значение 'auto', возвращает 'auto'; иначе преобразует через getSpacingValue
+ * - 'spacing' — всегда преобразует через getSpacingValue (значение должно быть SpacingValue)
  *
  * Эта функция используется внутри getPositioningStyles для каждого пропса.
  *
@@ -185,7 +187,7 @@ export const POSITIONING_PROP_NAMES = new Set<string>(Object.keys(POSITIONING_CS
  * @param value — значение пропса (строка, число или 'auto')
  * @returns строка для CSS (например, 'auto', '1rem', 'flex')
  */
-function positioningValueCss(
+function resolvePropertyValue(
   kind: PositioningValueKind,
   value: NonNullable<PositioningProps[keyof PositioningProps]>
 ): string {
@@ -197,8 +199,8 @@ function positioningValueCss(
     return 'auto';
   }
 
-  // Для inset и spacing значение должно быть SpacingPx
-  return spacingRem(value as SpacingPx);
+  // Для inset и spacing значение должно быть SpacingValue
+  return getSpacingValue(value as SpacingValue);
 }
 
 /**
@@ -206,10 +208,10 @@ function positioningValueCss(
  * в готовую строку CSS-стилей.
  *
  * Как она работает:
- * 1. Проходит по всем записям (ключ-значение) из POSITIONING_CSS.
+ * 1. Проходит по всем записям (ключ-значение) из POSITIONING_PROPERTIES.
  *    Ключ — это имя пропса (например, 'display'), значение — массив [CSS-свойство, kind];
  * 2. Для каждого пропса смотрит, передан ли он в объекте props.
- * 3. Если передан (не undefined), вызывает positioningValueCss для преобразования
+ * 3. Если передан (не undefined), вызывает resolvePropertyValue для преобразования
  *    значения в правильный CSS-формат.
  * 4. Формирует строку вида "display: flex;" и добавляет в массив.
  * 5. Все такие строки собирает и склеивает через перенос строки.
@@ -222,11 +224,11 @@ function positioningValueCss(
 export function getPositioningStyles(props: PositioningProps): string {
   const rules: string[] = [];
 
-  for (const [prop, [property, kind]] of Object.entries(POSITIONING_CSS)) {
+  for (const [prop, [property, kind]] of Object.entries(POSITIONING_PROPERTIES)) {
     const value = props[prop as keyof PositioningProps];
 
     if (value !== undefined) {
-      rules.push(`${property}: ${positioningValueCss(kind, value)};`);
+      rules.push(`${property}: ${resolvePropertyValue(kind, value)};`);
     }
   }
 

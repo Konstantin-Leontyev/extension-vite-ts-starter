@@ -29,7 +29,7 @@ export type SizingProps = {
 };
 
 /**
- * SIZING_CSS — объект, который связывает имена пропсов с реальными CSS-свойствами.
+ * SIZING_PROPERTIES — объект, который связывает имена пропсов с реальными CSS-свойствами.
  * Необходим для динамической генерации CSS-стилей для каждого переданного пропса.
  *
  * Например:
@@ -40,7 +40,7 @@ export type SizingProps = {
  * что объект содержит все ключи из SizingProps и только их, а TypeScript
  * будет проверять соответствие структуры типу.
  */
-const SIZING_CSS = {
+const SIZING_PROPERTIES = {
   inlineSize: 'inline-size',
   minInlineSize: 'min-inline-size',
   maxInlineSize: 'max-inline-size',
@@ -50,7 +50,7 @@ const SIZING_CSS = {
 } as const satisfies Record<keyof SizingProps, string>;
 
 /**
- * SIZING_PROP_NAMES — это множество (Set) всех имён пропсов из SIZING_CSS.
+ * SIZING_PROPERTY_NAMES — это множество (Set) всех имён пропсов из SIZING_PROPERTIES.
  * Эти пропсы не импортируются напрямую в компонентах, а входят в состав
  * LAYOUT_PROP_NAMES (из @ui/layout) вместе с spacing и positioning.
  *
@@ -59,17 +59,17 @@ const SIZING_CSS = {
  * shouldForwardProp в корневом Styled* использует LAYOUT_PROP_NAMES,
  * а splitLayoutProps по этому же набору отделяет layout-свойства от остальных.
  *
- * Set создаётся из Object.keys(SIZING_CSS), чтобы при добавлении нового пропса
+ * Set создаётся из Object.keys(SIZING_PROPERTIES), чтобы при добавлении нового пропса
  * в карту не требовалось обновлять список вручную.
  */
-export const SIZING_PROP_NAMES = new Set<string>(Object.keys(SIZING_CSS));
+export const SIZING_PROPERTY_NAMES = new Set<string>(Object.keys(SIZING_PROPERTIES));
 
 /**
  * getSizingStyles — главная функция, которая превращает объект пропсов
  * в готовую строку CSS-стилей.
  *
  * Как она работает:
- * 1. Проходит по всем записям (ключ-значение) из SIZING_CSS.
+ * 1. Проходит по всем записям (ключ-значение) из SIZING_PROPERTIES.
  *    Ключ — это имя пропса (например, 'inlineSize'), значение — CSS-свойство ('inline-size');
  * 2. Для каждого пропса смотрит, передан ли он в объекте props.
  *    Если передан (не undefined), берёт значение (например '100%'),
@@ -84,7 +84,7 @@ export const SIZING_PROP_NAMES = new Set<string>(Object.keys(SIZING_CSS));
 export function getSizingStyles(props: SizingProps): string {
   const rules: string[] = [];
 
-  for (const [prop, property] of Object.entries(SIZING_CSS)) {
+  for (const [prop, property] of Object.entries(SIZING_PROPERTIES)) {
     const value = props[prop as keyof SizingProps];
 
     if (value !== undefined) {

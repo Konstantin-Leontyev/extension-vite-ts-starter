@@ -70,40 +70,42 @@ export type AppTheme = {
  * Все значения — hex-коды или CSS-функции (color-mix).
  * Названия оттенков в inline-комментариях взяты из словаря get-color.ru.
  */
+// prettier-ignore
 const lightColors: ThemeColors = {
-  background: '#f3f4f6',     // Дымчато-белый
-  border: '#e5e4e2',         // Платиновый
-  danger: '#d53032',         // Клубнично-красный
-  default: '#1a162a',        // Темный пурпурно-синий
-  focusRing: 'color-mix(in srgb, #1a73e8 35%, transparent)',
-  invalidRing: 'color-mix(in srgb, #d93025 35%, transparent)',
-  inverse: '#f9fafb',        // Белоснежный
-  muted: '#606e8c',          // Голубино-синий
-  primary: '#1974d2',        // Темно-синий Крайола
-  scrollbarThumb: '#c1caca', // Очень бледный синий
-  success: '#177245',        // Темный весенне-зеленый
-  surface: '#ffffff',        // Белый
-  warning: '#ea7500',        // Темный мандарин
+  background:     '#f3f4f6',                                        // Дымчато-белый
+  border:         '#e5e4e2',                                        // Платиновый
+  danger:         '#d53032',                                        // Клубнично-красный
+  default:        '#1a162a',                                        // Темный пурпурно-синий
+  focusRing:      'color-mix(in srgb, #1a73e8 35%, transparent)',
+  invalidRing:    'color-mix(in srgb, #d93025 35%, transparent)',
+  inverse:        '#f9fafb',                                        // Белоснежный
+  muted:          '#606e8c',                                        // Голубино-синий
+  primary:        '#1974d2',                                        // Темно-синий Крайола
+  scrollbarThumb: '#c1caca',                                        // Очень бледный синий
+  success:        '#177245',                                        // Темный весенне-зеленый
+  surface:        '#ffffff',                                        // Белый
+  warning:        '#ea7500',                                        // Темный мандарин
 };
 
 /**
  * darkColors — цветовая палитра для тёмной темы.
  * Подобрана так, чтобы сохранять контрастность и читаемость.
  */
+// prettier-ignore
 const darkColors: ThemeColors = {
-  background: '#131313',     // Почти черный
-  border: '#2f353b',         // Гранитовый серый
-  danger: '#e34234',         // Китайский красный
-  default: '#f9fafb',        // Белоснежный
-  focusRing: 'color-mix(in srgb, #1a73e8 42%, transparent)',
-  invalidRing: 'color-mix(in srgb, #ea4335 42%, transparent)',
-  inverse: '#f9fafb',        // Белоснежный
-  muted: '#b0b7c6',          // Кадетский синий Крайола
-  primary: '#1974d2',        // Темно-синий Крайола
-  scrollbarThumb: '#414a4c', // Космос
-  success: '#2e8b57',        // Зеленое море
-  surface: '#161a1e',        // Черновато-синий
-  warning: '#f9ab00',        // Дынно-желтый
+  background:     '#131313',                                        // Почти черный
+  border:         '#2f353b',                                        // Гранитовый серый
+  danger:         '#e34234',                                        // Китайский красный
+  default:        '#f9fafb',                                        // Белоснежный
+  focusRing:      'color-mix(in srgb, #1a73e8 42%, transparent)',
+  invalidRing:    'color-mix(in srgb, #ea4335 42%, transparent)',
+  inverse:        '#f9fafb',                                        // Белоснежный
+  muted:          '#b0b7c6',                                        // Кадетский синий Крайола
+  primary:        '#1974d2',                                        // Темно-синий Крайола
+  scrollbarThumb: '#414a4c',                                        // Космос
+  success:        '#2e8b57',                                        // Зеленое море
+  surface:        '#161a1e',                                        // Черновато-синий
+  warning:        '#f9ab00',                                        // Дынно-желтый
 };
 
 /**

@@ -15,23 +15,27 @@
  */
 
 import {
-  POSITIONING_PROP_NAMES,
+  POSITIONING_PROPERTY_NAMES,
   getPositioningStyles,
   type PositioningProps,
 } from '@ui/positioning';
-import { SIZING_PROP_NAMES, getSizingStyles, type SizingProps } from '@ui/sizing';
-import { SPACING_PROP_NAMES, getSpacingStyles, type SpacingProps } from '@ui/spacing';
+import { SIZING_PROPERTY_NAMES, getSizingStyles, type SizingProps } from '@ui/sizing';
+import {
+  SPACING_PROPERTY_NAMES,
+  getSpacingStyles,
+  type SpacingProps,
+} from '@ui/spacing';
 
 /**
  * Реэкспорты из модуля spacing (@ui/spacing)
  * Содержит утилиты для работы с отступами по фиксированной шкале.
  */
 export {
-  SPACING_PROP_NAMES,
+  SPACING_PROPERTY_NAMES,
   getSpacingStyles,
-  spacingRem,
+  getSpacingValue,
   type SpacingProps,
-  type SpacingPx,
+  type SpacingValue,
 } from '@ui/spacing';
 
 /**
@@ -39,7 +43,7 @@ export {
  * Содержит утилиты для позиционирования, flexbox и grid.
  */
 export {
-  POSITIONING_PROP_NAMES,
+  POSITIONING_PROPERTY_NAMES,
   getPositioningStyles,
   type InsetValue,
   type LayoutDisplay,
@@ -51,7 +55,7 @@ export {
  * Реэкспорты из модуля sizing (@ui/sizing)
  * Содержит утилиты для управления размерами элемента.
  */
-export { SIZING_PROP_NAMES, getSizingStyles, type SizingProps } from '@ui/sizing';
+export { SIZING_PROPERTY_NAMES, getSizingStyles, type SizingProps } from '@ui/sizing';
 
 /**
  * LayoutProps — объединённый тип всех пропсов для управления layout-элемента.
@@ -66,7 +70,7 @@ export type LayoutProps = SpacingProps & PositioningProps & SizingProps;
 
 /**
  * LAYOUT_PROP_NAMES — множество (Set) всех имён пропсов для layout.
- * Собирает имена из SPACING_PROP_NAMES, POSITIONING_PROP_NAMES и SIZING_PROP_NAMES.
+ * Собирает имена из SPACING_PROPERTY_NAMES, POSITIONING_PROPERTY_NAMES и SIZING_PROPERTY_NAMES.
  *
  * Используется для:
  * - shouldForwardProp в styled-components — чтобы не передавать layout-пропсы на DOM-узел
@@ -76,9 +80,9 @@ export type LayoutProps = SpacingProps & PositioningProps & SizingProps;
  * при добавлении новых пропсов в дочерние модули.
  */
 export const LAYOUT_PROP_NAMES = new Set<string>([
-  ...SPACING_PROP_NAMES,
-  ...POSITIONING_PROP_NAMES,
-  ...SIZING_PROP_NAMES,
+  ...SPACING_PROPERTY_NAMES,
+  ...POSITIONING_PROPERTY_NAMES,
+  ...SIZING_PROPERTY_NAMES,
 ]);
 
 /**

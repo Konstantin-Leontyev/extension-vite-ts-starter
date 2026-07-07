@@ -1,10 +1,36 @@
+/**
+ * Файл: tones.ts
+ * Этот файл содержит утилиты для работы с семантическими тонами (цветовыми ролями).
+ * Тон — это абстракция над цветами темы, которая позволяет компонентам
+ * использовать единую систему цветовых ролей (primary, danger, success, warning)
+ * без привязки к конкретным hex-значениям.
+ *
+ * Основные задачи:
+ * 1. Определить канонический набор тонов (TonePreset)
+ * 2. Предоставить утилиты для получения цвета темы по тону
+ */
+
 import { type AppTheme, type ThemeColors } from '@ui/theme';
 
 /**
- * Каноническая ось семантического тона: ключ цвета в теме или нейтраль (`default`).
- * Источник union для tone/borderTone/textColor и т.п. у разных примитивов.
+ * TONE_PRESETS — каноническая карта соответствия тонов и ключей цвета в теме.
+ * Для тона 'default' цвет не задан (undefined), так как он использует
+ * контекстный цвет (наследование от родителя).
+ *
+ * Канон включает только основные семантические роли:
+ * - danger, success, warning — статусные цвета
+ * - primary — акцентный цвет
+ * - default — нейтральный (без собственного цвета)
+ *
+ * Используется как единый источник истины для:
+ * - типа TonePreset (ключи карты)
+ * - получения ключа цвета темы для тона
+ *
+ * Экспортируется для расширения спредом в примитивах, которым нужен свой тон
+ * сверх канона (Text: muted). Прямое чтение карты на call site запрещено —
+ * снаружи только getToneKey / getToneColor.
  */
-const TONE_THEME_COLOR = {
+export const TONE_PRESETS = {
   danger: 'danger',
   default: undefined,
   primary: 'primary',
@@ -12,100 +38,51 @@ const TONE_THEME_COLOR = {
   warning: 'warning',
 } as const satisfies Record<string, keyof ThemeColors | undefined>;
 
-export type TonePreset = keyof typeof TONE_THEME_COLOR;
+/**
+ * TonePreset — тип, представляющий все доступные канонические тона.
+ * Используется как основной тип для пропсов, связанных с цветовыми ролями.
+ */
+export type TonePreset = keyof typeof TONE_PRESETS;
 
-export const DEFAULT_TONE_PRESET: TonePreset = 'default';
+/**
+ * DEFAULT_TONE — значение по умолчанию для тона.
+ * 'default' означает нейтральный тон без собственного цвета.
+ */
+export const DEFAULT_TONE: TonePreset = 'default';
 
-const ALL_TONE_PRESETS = Object.keys(TONE_THEME_COLOR) as TonePreset[];
+/**
+ * TONE_PRESET_KEYS — все ключи канонической карты TONE_PRESETS.
+ * Единый источник перечня TonePreset (например, для опций в настройках витрины).
+ */
+export const TONE_PRESET_KEYS = Object.keys(TONE_PRESETS) as TonePreset[];
 
-const COLORED_TONE_PRESETS = ALL_TONE_PRESETS.filter(
-  (tone) => TONE_THEME_COLOR[tone] !== undefined
-);
-
-export function toTonePresetOptions(
-  tones: readonly TonePreset[]
-): { label: string; value: string }[] {
-  return tones.map((tone) => ({ label: tone, value: tone }));
+/**
+ * getToneKey — возвращает ключ цвета в теме для указанного тона.
+ * Для 'default' возвращает undefined (цвет не задан).
+ *
+ * @param tone — тон из канона
+ * @returns ключ цвета темы или undefined
+ */
+export function getToneKey(tone: TonePreset): keyof ThemeColors | undefined {
+  return TONE_PRESETS[tone];
 }
 
-/** Опции listbox/settings: все значения оси tone. */
-export const TONE_PRESET_OPTIONS = toTonePresetOptions(ALL_TONE_PRESETS);
-
-/** Ключ цвета темы для тона; для `default` — undefined. */
-export function toneThemeColorKey(tone: TonePreset): keyof ThemeColors | undefined {
-  return TONE_THEME_COLOR[tone];
-}
-
-/** Цвет темы для тона; для `default` — fallback (рамка, surface и т.д.). */
-export function toneThemeColor(
+/**
+ * getToneColor — возвращает цвет темы для указанного тона.
+ * Если тон имеет цвет в теме (не 'default'), возвращает его.
+ * Иначе возвращает fallbackColor (цвет, переданный как запасной вариант).
+ *
+ * @param theme — текущая тема
+ * @param tone — тон из канона
+ * @param fallbackColor — цвет, который будет использован для 'default'
+ * @returns цвет темы или fallbackColor
+ */
+export function getToneColor(
   theme: AppTheme,
   tone: TonePreset,
   fallbackColor: string
 ): string {
-  const colorKey = toneThemeColorKey(tone);
+  const colorKey = getToneKey(tone);
 
   return colorKey ? theme.colors[colorKey] : fallbackColor;
-}
-
-/** Тон текста/глифа: default + цветные, кроме совпадающего с заливкой (иначе сольётся). */
-export function tonePresetsExcludingFill(fillTone: TonePreset): TonePreset[] {
-  return [
-    DEFAULT_TONE_PRESET,
-    ...COLORED_TONE_PRESETS.filter((tone) => tone !== fillTone),
-  ];
-}
-
-/**
- * Канон локального расширения оси тона. Примитив, которому нужно значение вне
- * канона (Fieldset `inverted`, SegmentButton `muted`), описывает union
- * `TonePreset | Extra` и карту `Extra → ключ темы`. Резолв и опции — через хелперы
- * ниже, без собственной if-цепочки или ручной сборки списка опций.
- */
-export type ExtendedTone<Extra extends string> = TonePreset | Extra;
-
-/** Карта локальных значений тона на ключи темы (`{ inverted: 'inverse' }`). */
-export type ToneExtraColors<Extra extends string> = Record<Extra, keyof ThemeColors>;
-
-/** Опции listbox/settings для расширенной оси: канон + локальные значения. */
-export function extendedToneOptions(
-  extras: readonly string[]
-): { label: string; value: string }[] {
-  return [
-    ...TONE_PRESET_OPTIONS,
-    ...extras.map((extra) => ({ label: extra, value: extra })),
-  ];
-}
-
-/**
- * Резолв расширенного тона в цвет: сначала локальная карта `extras`, затем канон,
- * иначе `fallbackColor`. `fallbackColor: undefined` → вернёт `undefined` для
- * нейтрального тона (наследование цвета родителя), `string` → всегда строка.
- */
-export function resolveExtendedToneColor<Extra extends string>(
-  theme: AppTheme,
-  tone: ExtendedTone<Extra>,
-  extras: ToneExtraColors<Extra>,
-  fallbackColor: string
-): string;
-export function resolveExtendedToneColor<Extra extends string>(
-  theme: AppTheme,
-  tone: ExtendedTone<Extra>,
-  extras: ToneExtraColors<Extra>,
-  fallbackColor: undefined
-): string | undefined;
-export function resolveExtendedToneColor<Extra extends string>(
-  theme: AppTheme,
-  tone: ExtendedTone<Extra>,
-  extras: ToneExtraColors<Extra>,
-  fallbackColor: string | undefined
-): string | undefined {
-  const extraKey = (extras as Record<string, keyof ThemeColors | undefined>)[tone];
-
-  if (extraKey) {
-    return theme.colors[extraKey];
-  }
-
-  const canonicalKey = toneThemeColorKey(tone as TonePreset);
-
-  return canonicalKey ? theme.colors[canonicalKey] : fallbackColor;
 }
