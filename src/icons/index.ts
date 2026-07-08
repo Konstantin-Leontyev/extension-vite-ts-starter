@@ -1,3 +1,5 @@
+export { AddCircleIcon } from './add-circle';
+export { AddIcon } from './add';
 export { AvatarIcon } from './avatar';
 export { CalendarIcon } from './calendar';
 export { CheckIcon } from './check';
@@ -7,7 +9,6 @@ export { CloseIcon } from './close';
 export { ContrastIcon } from './contrast';
 export { CopyIcon } from './copy';
 export { DownloadIcon } from './download';
-export { PlusIcon } from './plus';
 export { SearchIcon } from './search';
 export { SettingsIcon } from './settings';
 export { SidebarIcon } from './sidebar';

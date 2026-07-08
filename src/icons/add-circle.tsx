@@ -1,6 +1,6 @@
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
 
-export function AvatarIcon() {
+export function AddCircleIcon() {
   return (
     <svg
       aria-hidden="true"
@@ -9,13 +9,14 @@ export function AvatarIcon() {
       xmlns="http://www.w3.org/2000/svg"
     >
       <g opacity={ICON_MUTED_LAYER_OPACITY} stroke="currentColor">
-        <path
-          d="M20 17.5C20 19.9853 20 22 12 22C4 22 4 19.9853 4 17.5C4 15.0147 7.58172 13 12 13C16.4183 13 20 15.0147 20 17.5Z"
-          strokeWidth="1.5"
-        />
+        <circle cx="12" cy="12" r="10" strokeWidth="1.5" />
       </g>
       <g stroke="currentColor">
-        <circle cx="12" cy="6" r="4" strokeWidth="1.5" />
+        <path
+          d="M15 12L12 12M12 12L9 12M12 12L12 9M12 12L12 15"
+          strokeLinecap="round"
+          strokeWidth="1.5"
+        />
       </g>
     </svg>
   );

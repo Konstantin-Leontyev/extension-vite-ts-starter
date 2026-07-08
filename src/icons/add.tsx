@@ -1,4 +1,4 @@
-export function PlusIcon() {
+export function AddIcon() {
   return (
     <svg
       aria-hidden="true"
@@ -7,11 +7,10 @@ export function PlusIcon() {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M12 5v14M5 12h14"
+        d="M15 12L12 12M12 12L9 12M12 12L12 9M12 12L12 15"
         stroke="currentColor"
         strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
+        strokeWidth="1.5"
       />
     </svg>
   );

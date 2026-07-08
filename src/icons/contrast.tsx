@@ -12,7 +12,7 @@ export function ContrastIcon() {
         <path d="M12 2a10 10 0 0 1 0 20Z" />
       </g>
       <g stroke="currentColor">
-        <circle cx="12" cy="12" r="10" strokeWidth="2" />
+        <circle cx="12" cy="12" r="10" strokeWidth="1.5" />
       </g>
     </svg>
   );

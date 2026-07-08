@@ -7,11 +7,10 @@ export function CloseIcon() {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M5 5l14 14M19 5 5 19"
+        d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5"
         stroke="currentColor"
         strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
+        strokeWidth="1.5"
       />
     </svg>
   );

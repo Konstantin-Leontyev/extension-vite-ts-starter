@@ -7,11 +7,11 @@ export function ChevronUpIcon() {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M5 15 12 8 19 15"
+        d="M19 15L12 9L5 15"
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth="2"
+        strokeWidth="1.5"
       />
     </svg>
   );
