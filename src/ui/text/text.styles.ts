@@ -10,9 +10,9 @@
  * 4. Предоставить стилизованный компонент StyledText
  *
  * Потребители кроме самого Text:
- * - @ui/presets — textSizePreset, controlValueTextStyles (согласование с SizePreset контрола)
+ * - @ui/presets — getTextSize (согласование SizePreset контрола с TextSizePreset)
  * - ui/table/column-sizing — замер ширины колонки по textSizePresets
- * - ui/table/table-inline-field — типографика ячейки без рендера Text
+ * - ui/table/table-inline-field, ui/input, ui/stepper — getTextProperties на native input
  *
  * В отличие от layout (spacing/sizing/positioning), текстовые стили
  * генерируются отдельной функцией и не входят в LAYOUT_PROP_NAMES.
@@ -26,21 +26,13 @@ import { getTheme, type AppTheme, type ThemeColors } from '@ui/theme';
 import { TONE_PRESETS } from '@ui/tones';
 
 /**
- * TEXT_TONE_PRESETS — карта тонов текста: канонические тоны (TONE_PRESETS)
- * плюс 'muted' — вторичный текст (менее контрастный, чем default).
+ * TEXT_TONE_PRESETS — карта тонов текста: канон (TONE_PRESETS) плюс muted.
+ * Приватна для модуля: снаружi только TEXT_TONE_KEYS, getTextToneKey, getTextToneColor.
  *
- * Используется как единый источник истины для:
- * - типа TextTone (ключи карты)
- * - резолва цвета в getTextStyles (TEXT_TONE_PRESETS[tone] → theme.colors)
- * - списка опций в ДС (ToneListbox: Object.keys(TEXT_TONE_PRESETS))
- *
- * На Text тон передаётся пропом tone. Обёртки контролов (Button, Tag, SegmentButton)
- * наружу отдают textTone (class B) и пробрасывают его в Text как tone.
- *
- * Собран через спред канонической карты тонов, что гарантирует синхронизацию
- * с глобальной системой тонов (@ui/tones).
+ * На Text тон — проп tone. Обёртки (Button, Tag, SegmentButton) отдают textTone (class B)
+ * и пробрасывают в Text как tone.
  */
-export const TEXT_TONE_PRESETS = {
+const TEXT_TONE_PRESETS = {
   ...TONE_PRESETS,
   muted: 'muted',
 } as const satisfies Record<string, keyof ThemeColors | undefined>;
@@ -53,6 +45,30 @@ export const TEXT_TONE_PRESETS = {
 export type TextTone = keyof typeof TEXT_TONE_PRESETS;
 
 /**
+ * TEXT_TONE_KEYS — все ключи карты TEXT_TONE_PRESETS.
+ * Для опций расширенной оси в настройках витрины (ToneListbox tones={...}).
+ */
+export const TEXT_TONE_KEYS = Object.keys(TEXT_TONE_PRESETS) as TextTone[];
+
+/**
+ * getTextToneKey — ключ цвета в теме для TextTone.
+ * default → undefined (наследование цвета родителя).
+ */
+export function getTextToneKey(tone: TextTone): keyof ThemeColors | undefined {
+  return TEXT_TONE_PRESETS[tone];
+}
+
+/**
+ * getTextToneColor — цвет темы для TextTone.
+ * default → undefined (цвет не задаётся, inherit с родителя).
+ */
+export function getTextToneColor(theme: AppTheme, tone: TextTone): string | undefined {
+  const colorKey = getTextToneKey(tone);
+
+  return colorKey ? theme.colors[colorKey] : undefined;
+}
+
+/**
  * textSizePresets — типографические пресеты для текста.
  * Каждый пресет содержит три параметра:
  * - fontSize — размер шрифта в rem
@@ -60,8 +76,8 @@ export type TextTone = keyof typeof TEXT_TONE_PRESETS;
  * - lineHeight — высота строки в rem
  *
  * Ось sizePreset у Text — это TextSizePreset (свой ряд), не SizePreset контрола
- * (small/medium/large). Контролы согласуют размер через textSizePreset(sizePreset)
- * из @ui/presets; Tag — через свою карту tagTextSizePreset.
+ * (small/medium/large). Контролы согласуют размер через getTextSize(sizePreset)
+ * из @ui/presets. Tag — через свою карту tagTextSizePreset (tiny — локальный шаг).
  *
  * Доступные пресеты (по нарастанию размера):
  * - extraLight, light, thin — мелкие (0.75rem) с разной насыщенностью
@@ -112,6 +128,20 @@ export const textSizePresets = {
  * TextSizePreset — тип для выбора доступных типографических пресетов.
  */
 export type TextSizePreset = keyof typeof textSizePresets;
+
+/**
+ * getTextProperties — CSS-свойства текста по TextSizePreset.
+ * Для native input/textarea, где значение нельзя обернуть в Text.
+ */
+export function getTextProperties(sizePreset: TextSizePreset): string {
+  const preset = textSizePresets[sizePreset];
+
+  return [
+    `font-size: ${preset.fontSize};`,
+    `font-weight: ${preset.fontWeight};`,
+    `line-height: ${preset.lineHeight};`,
+  ].join('\n');
+}
 
 /**
  * TextStyleProps — тип пропсов для стилизации текста.
@@ -180,7 +210,7 @@ const TEXT_PROP_NAMES = new Set<string>([
  *    white-space: nowrap
  *
  * @param props — объект с текстовыми пропсами и темой
- * @returns строка с CSS-правилами, каждая с новой строки
+ * @returns строка CSS-стилей, каждая декларация с новой строки
  */
 export function getTextStyles(props: TextStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
@@ -196,48 +226,41 @@ export function getTextStyles(props: TextStyleProps & { theme: AppTheme }): stri
     whiteSpace,
   } = props;
 
-  const rules: string[] = [];
-
-  const preset = textSizePresets[sizePreset];
-
-  rules.push(`font-size: ${preset.fontSize};`);
-  rules.push(`font-weight: ${preset.fontWeight};`);
-  rules.push(`line-height: ${preset.lineHeight};`);
+  const styles: string[] = [getTextProperties(sizePreset)];
 
   if (fontSize !== undefined) {
-    rules.push(`font-size: ${fontSize};`);
+    styles.push(`font-size: ${fontSize};`);
   }
 
   if (fontWeight !== undefined) {
-    rules.push(`font-weight: ${fontWeight};`);
+    styles.push(`font-weight: ${fontWeight};`);
   }
 
   if (lineHeight !== undefined) {
-    rules.push(`line-height: ${lineHeight};`);
+    styles.push(`line-height: ${lineHeight};`);
   }
 
-  const toneKey = tone !== undefined ? TEXT_TONE_PRESETS[tone] : undefined;
-  const resolvedColor = color ?? (toneKey ? theme.colors[toneKey] : undefined);
+  const resolvedColor = color ?? (tone !== undefined ? getTextToneColor(theme, tone) : undefined);
 
   if (resolvedColor !== undefined) {
-    rules.push(`color: ${resolvedColor};`);
+    styles.push(`color: ${resolvedColor};`);
   }
 
   if (align !== undefined) {
-    rules.push(`text-align: ${align};`);
+    styles.push(`text-align: ${align};`);
   }
 
   if (whiteSpace !== undefined) {
-    rules.push(`white-space: ${whiteSpace};`);
+    styles.push(`white-space: ${whiteSpace};`);
   }
 
   if (ellipsis === true) {
-    rules.push('overflow: hidden;');
-    rules.push('text-overflow: ellipsis;');
-    rules.push('white-space: nowrap;');
+    styles.push('overflow: hidden;');
+    styles.push('text-overflow: ellipsis;');
+    styles.push('white-space: nowrap;');
   }
 
-  return rules.join('\n');
+  return styles.join('\n');
 }
 
 /**

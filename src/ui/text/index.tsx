@@ -9,7 +9,7 @@
  *
  * Основные задачи:
  * 1. Экспортировать компонент Text для использования в приложении
- * 2. Реэкспортировать типы и пресеты (TEXT_TONE_PRESETS, textSizePresets) для
+ * 2. Реэкспортировать типы и пресеты (TEXT_TONE_KEYS, textSizePresets) для
  *    контролов, ДС и утилит (@ui/presets, column-sizing)
  * 3. Обеспечить типизацию с поддержкой as-пропа (полиморфный компонент)
  *
@@ -21,7 +21,10 @@ import { createElement, type ComponentPropsWithRef, type ElementType } from 'rea
 
 import {
   StyledText,
-  TEXT_TONE_PRESETS,
+  TEXT_TONE_KEYS,
+  getTextProperties,
+  getTextToneColor,
+  getTextToneKey,
   textSizePresets,
   type TextSizePreset,
   type TextStyleProps,
@@ -61,7 +64,10 @@ export function Text<T extends ElementType = 'span'>(props: TextProps<T>) {
 
 /* eslint-disable react-refresh/only-export-components -- публичные типы и пресеты */
 export {
-  TEXT_TONE_PRESETS,
+  TEXT_TONE_KEYS,
+  getTextProperties,
+  getTextToneColor,
+  getTextToneKey,
   textSizePresets,
   type TextSizePreset,
   type TextStyleProps,

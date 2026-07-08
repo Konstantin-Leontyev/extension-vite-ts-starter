@@ -9,7 +9,7 @@
  * - Базовая сетка для body (grid-оболочка приложения: шапка + контент)
  * - Сброс отступов у заголовков, параграфов, списков
  * - Удаление маркеров у списков
- * - Блочное отображение для мультимедиа; svg — базовый габарит 24×24 (viewBox набора)
+ * - Блочное отображение для мультимедиа (img, picture, video, canvas, svg)
  * - Наследование шрифта и цвета для форм
  * - Стили для кнопок (убраны дефолтные бордеры и фон)
  * - Состояния disabled (opacity + cursor)
@@ -23,7 +23,6 @@
 import { createGlobalStyle } from 'styled-components';
 import { normalize } from 'styled-normalize';
 
-import { getSpacingValue } from '@ui/spacing';
 import { DISABLED_OPACITY, getTheme } from '@ui/theme';
 
 /**
@@ -95,11 +94,6 @@ export const GlobalResetStyle = createGlobalStyle`
   canvas {
     display: block;
     max-inline-size: 100%;
-  }
-
-  svg {
-    inline-size: ${getSpacingValue(24)};
-    block-size: ${getSpacingValue(24)};
   }
 
   button,
