@@ -29,8 +29,9 @@ import { TONE_PRESETS } from '@ui/tones';
  * TEXT_TONE_PRESETS — карта тонов текста: канон (TONE_PRESETS) плюс muted.
  * Приватна для модуля: снаружi только TEXT_TONE_KEYS, getTextToneKey, getTextToneColor.
  *
- * На Text тон — проп tone. Обёртки (Button, Tag, SegmentButton) отдают textTone (class B)
- * и пробрасывают в Text как tone.
+ * Тон текста задаётся пропом `tone` у компонента Text.
+ * Компоненты-обёртки (Button, Tag, SegmentButton) принимают проп `textTone`
+ * и пробрасывают его внутреннему Text как `tone`.
  */
 const TEXT_TONE_PRESETS = {
   ...TONE_PRESETS,
@@ -77,7 +78,7 @@ export function getTextToneColor(theme: AppTheme, tone: TextTone): string | unde
  *
  * Ось sizePreset у Text — это TextSizePreset (свой ряд), не SizePreset контрола
  * (small/medium/large). Контролы согласуют размер через getTextSize(sizePreset)
- * из @ui/presets. Tag — через свою карту tagTextSizePreset (tiny — локальный шаг).
+ * из @ui/presets. Tag — через локальную карту `tagTextSize` (шаг `tiny`).
  *
  * Доступные пресеты (по нарастанию размера):
  * - extraLight, light, thin — мелкие (0.75rem) с разной насыщенностью
@@ -240,7 +241,8 @@ export function getTextStyles(props: TextStyleProps & { theme: AppTheme }): stri
     styles.push(`line-height: ${lineHeight};`);
   }
 
-  const resolvedColor = color ?? (tone !== undefined ? getTextToneColor(theme, tone) : undefined);
+  const resolvedColor =
+    color ?? (tone !== undefined ? getTextToneColor(theme, tone) : undefined);
 
   if (resolvedColor !== undefined) {
     styles.push(`color: ${resolvedColor};`);

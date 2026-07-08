@@ -14,7 +14,8 @@
  * 3. Обеспечить типизацию с поддержкой as-пропа (полиморфный компонент)
  *
  * Типичное использование в kit: Text внутри контрола (Button, Tag, …) — тон
- * задаётся пропом родителя (textTone, class B), размер — у Button через textSize.
+ * задаётся через проп `textTone` родительского компонента, который пробрасывает
+ * его в Text как `tone`; размер управляется через `textSize` у контрола.
  */
 
 import { createElement, type ComponentPropsWithRef, type ElementType } from 'react';
