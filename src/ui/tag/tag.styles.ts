@@ -211,13 +211,13 @@ const TAG_DOT_PROP_NAMES = new Set<string>(['dotTone']);
 
 /**
  * StyledTagDot — круглая точка-индикатор в теге.
- * Размер — `0.5em` от наследованного `font-size` у `StyledTag` (не от текста в `Text`).
- * Цвет — `getTagDotColor` по `dotTone`; иначе `currentColor` с корня.
+ * Цвет — по `dotTone`, иначе `currentColor`.
  */
 export const StyledTagDot = styled.span.withConfig({
   shouldForwardProp: (prop) => !TAG_DOT_PROP_NAMES.has(prop),
 })<{ dotTone?: TonePreset }>`
   flex-shrink: 0;
+  /* Размер — 0.5em от наследованного font-size у StyledTag. */
   inline-size: 0.5em;
   block-size: 0.5em;
   background-color: ${(props) => getTagDotColor(getTheme(props), props.dotTone)};
