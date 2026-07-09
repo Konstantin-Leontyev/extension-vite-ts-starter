@@ -22,10 +22,9 @@ import { Text, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import {
-  DEFAULT_TAG_SIZE_PRESET,
   StyledTag,
   StyledTagDot,
-  tagTextSize,
+  getTagTextSize,
   type TagSizePreset,
   type TagStyleProps,
 } from './tag.styles';
@@ -65,12 +64,10 @@ export function Tag({
   tone,
   ...rest
 }: TagProps) {
-  const resolvedSizePreset = sizePreset ?? DEFAULT_TAG_SIZE_PRESET;
-
   return (
     <StyledTag sizePreset={sizePreset} tone={tone} {...rest}>
       {dot && <StyledTagDot dotTone={dotTone} />}
-      <Text ellipsis sizePreset={tagTextSize[resolvedSizePreset]} tone={textTone}>
+      <Text ellipsis sizePreset={getTagTextSize(sizePreset)} tone={textTone}>
         {children}
       </Text>
     </StyledTag>

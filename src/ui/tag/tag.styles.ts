@@ -47,11 +47,10 @@ const tagPaddingInline = {
 } as const satisfies Record<TagSizePreset, SpacingValue>;
 
 /**
- * Размер текста по `sizePreset` тега.
+ * tagTextSize — размер текста по `sizePreset` тега.
  * `tiny` совпадает с текстом `small` (`medium` в `@ui/text`).
- * Экспорт — только для `./index.tsx`, в баррель `@ui/tag` не входит.
  */
-export const tagTextSize = {
+const tagTextSize = {
   ...textSize,
   tiny: 'medium',
 } as const satisfies Record<TagSizePreset, TextSizePreset>;
@@ -68,6 +67,17 @@ function getTagBlockSize(sizePreset: TagSizePreset): string {
 
 /** Размер по умолчанию — `tiny`; тег компактнее контролов. */
 export const DEFAULT_TAG_SIZE_PRESET: TagSizePreset = 'tiny';
+
+/**
+ * getTagTextSize — размер текста (`TextSizePreset`) для `sizePreset` тега.
+ * Дефолт — `DEFAULT_TAG_SIZE_PRESET`, как в `getTagStyles`.
+ *
+ * @param sizePreset — размер тега (`TagSizePreset`)
+ * @returns `TextSizePreset` для внутреннего `Text`
+ */
+export function getTagTextSize(sizePreset?: TagSizePreset): TextSizePreset {
+  return tagTextSize[sizePreset ?? DEFAULT_TAG_SIZE_PRESET];
+}
 
 /** Форма по умолчанию — таблетка. */
 const DEFAULT_TAG_SHAPE: ShapePreset = 'round';
@@ -101,13 +111,31 @@ function resolveTagTint(color: string, pct: number): string {
   return `color-mix(in srgb, ${color} ${pct}%, transparent)`;
 }
 
-/** Цвет текста и заливки, которые задаёт `resolveTagFill`. */
+/**
+ * Цвета поверхности тега.
+ * - `fg` (foreground) — цвет текста контейнера (`color`)
+ * - `fill` — цвет фона контейнера (`background-color`)
+ */
 type TagSurface = { fg: string; fill: string };
 
 /**
  * resolveTagFill — заливка и цвет контейнера по `tone` и `tinted`.
- * Без `tinted`: нейтраль — прозрачный фон и `default`; цветной — заливка тона и `inverse`.
- * С `tinted`: мягкий тинт (`muted` или цвет тона), текст — `default` или цвет тона.
+ *
+ * Логика строится на двух осях:
+ * 1. `tone` — есть ли ключ в теме:
+ *    - `default` → ключа нет, нейтральный цвет
+ *    - `primary` / `danger` / `success` / `warning` → ключ есть, цветной
+ * 2. `tinted` — режим мягкой заливки:
+ *    - `false` → полноцветная заливка тона, текст `inverse`
+ *    - `true` → полупрозрачный тинт, текст цвета тона
+ *
+ * Без `tinted`:
+ *   - `default` → прозрачный фон, текст `default`
+ *   - цветной → заливка тона, текст `inverse`
+ *
+ * С `tinted`:
+ *   - `default` → тинт `muted` (14%), текст `default`
+ *   - цветной → тинт цвета (16%), текст цвета тона
  *
  * @param theme — текущая тема
  * @param tone — тон заливки
@@ -117,6 +145,7 @@ type TagSurface = { fg: string; fill: string };
 function resolveTagFill(theme: AppTheme, tone: TonePreset, tinted: boolean): TagSurface {
   const key = getToneKey(tone);
 
+  /* tone === default: ключа в теме нет — нейтральный fg, fill по ветке tinted выше. */
   if (!key) {
     return {
       fg: theme.colors.default,
@@ -175,13 +204,13 @@ export function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string
     tone = DEFAULT_TONE,
   } = props;
   const surface = resolveTagFill(theme, tone, tinted);
-  const borderCol = bordered ? getTagBorderColor(theme, borderTone) : 'transparent';
+  const borderColor = bordered ? getTagBorderColor(theme, borderTone) : 'transparent';
   const blockSizeValue = getTagBlockSize(sizePreset);
 
   return [
     `min-block-size: ${blockSizeValue};`,
     `padding-inline: ${getSpacingValue(tagPaddingInline[sizePreset])};`,
-    `border: 1px solid ${borderCol};`,
+    `border: 1px solid ${borderColor};`,
     `border-radius: ${resolveBlockRadius(shape, blockSizeValue)};`,
     `background-color: ${surface.fill};`,
     `color: ${surface.fg};`,

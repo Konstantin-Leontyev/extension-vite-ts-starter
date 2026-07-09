@@ -78,7 +78,7 @@ export function getTextToneColor(theme: AppTheme, tone: TextTone): string | unde
  *
  * Ось sizePreset у Text — это TextSizePreset (свой ряд), не SizePreset контрола
  * (small/medium/large). Контролы согласуют размер через getTextSize(sizePreset)
- * из @ui/presets. Tag — через локальную карту `tagTextSize` (шаг `tiny`).
+ * из @ui/presets. Tag — через `getTagTextSize` (локальный ряд с `tiny`).
  *
  * Доступные пресеты (по нарастанию размера):
  * - extraLight, light, thin — мелкие (0.75rem) с разной насыщенностью
