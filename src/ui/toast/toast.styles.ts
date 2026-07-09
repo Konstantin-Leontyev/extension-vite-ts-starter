@@ -34,15 +34,13 @@ import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
 
 /**
- * ToastViewStyleProps — оси вида тоста.
+ * ToastStyleProps — оси вида тоста и layout-пропы.
  * `tone` — акцентная полоса слева (не заливка), размер — по канону `SizePreset`.
  */
-export type ToastViewStyleProps = {
+export type ToastStyleProps = LayoutProps & {
   sizePreset?: SizePreset;
   tone?: TonePreset;
 };
-
-export type ToastStyleProps = LayoutProps & ToastViewStyleProps;
 
 /** Оси вида для `shouldForwardProp` корня `StyledToast`. */
 const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 'tone']);
@@ -65,9 +63,7 @@ export function getToastTextSize(sizePreset?: SizePreset): TextSizePreset {
  * @param props — оси вида и тема
  * @returns строка CSS-стилей, каждая декларация с новой строки
  */
-export function getToastStyles(
-  props: ToastViewStyleProps & { theme: AppTheme }
-): string {
+export function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
   const { sizePreset = DEFAULT_SIZE_PRESET, tone = DEFAULT_TONE } = props;
   const toastColor = getToneColor(theme, tone, theme.colors.border);
