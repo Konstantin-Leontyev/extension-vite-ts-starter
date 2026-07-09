@@ -1,24 +1,51 @@
+/**
+ * Файл: pages/design-system/toast-settings/index.tsx
+ * Настройки тоста в витрине дизайн-системы.
+ * Позволяет изменять сообщение, размер и тон тоста в реальном времени.
+ *
+ * Потребители: страница дизайн-системы (`pages/design-system/index.tsx`).
+ */
+
 import { type ChangeEvent } from 'react';
 
 import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
 import { type SizePreset } from '@ui/presets';
-import { TONE_PRESET_OPTIONS, type TonePreset } from '@ui/tones';
+import { type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../design-system.styles';
+import { ToneListbox } from '../tone-listbox';
 
+/**
+ * ToastWidgetState — состояние настроек тоста в витрине дизайн-системы.
+ * Используется для синхронизации значений между панелью управления и демонстрационным тостом.
+ */
 export type ToastWidgetState = {
+  /** Текст сообщения тоста. */
   message: string;
+  /** Размер тоста — из канона SizePreset (small, medium, large). */
   sizePreset: SizePreset;
+  /** Семантический тон тоста (default, primary, danger, success, warning). */
   tone: TonePreset;
 };
 
+/**
+ * SIZE_OPTIONS — опции размера для Listbox в настройках тоста.
+ * Значения соответствуют канону SizePreset из `@ui/presets`.
+ */
 const SIZE_OPTIONS: ListboxOption[] = [
   { label: 'small', value: 'small' },
   { label: 'medium', value: 'medium' },
   { label: 'large', value: 'large' },
 ];
 
+/**
+ * ToastSettingsProps — пропсы компонента ToastSettings.
+ *
+ * @property onChange — универсальный обработчик изменения любого поля состояния.
+ *   Дженерик K захватывает ключ, чтобы value строго соответствовало типу этого поля.
+ * @property state — текущее состояние настроек тоста.
+ */
 type ToastSettingsProps = {
   onChange: <K extends keyof ToastWidgetState>(
     key: K,
@@ -27,18 +54,13 @@ type ToastSettingsProps = {
   state: ToastWidgetState;
 };
 
+/**
+ * ToastSettings — панель управления тостом в витрине дизайн-системы.
+ * Позволяет настроить сообщение, размер и тон для демонстрации компонента Toast.
+ */
 export function ToastSettings({ onChange, state }: ToastSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
-      <Input
-        label="Message:"
-        reserveErrorSpace={false}
-        value={state.message}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('message', event.target.value)
-        }
-      />
-
       <Listbox
         label="Size:"
         options={SIZE_OPTIONS}
@@ -47,12 +69,19 @@ export function ToastSettings({ onChange, state }: ToastSettingsProps) {
         onChange={(value) => onChange('sizePreset', value as SizePreset)}
       />
 
-      <Listbox
+      <ToneListbox
         label="Tone:"
-        options={TONE_PRESET_OPTIONS}
-        reserveErrorSpace={false}
         value={state.tone}
-        onChange={(value) => onChange('tone', value as TonePreset)}
+        onChange={(tone) => onChange('tone', tone)}
+      />
+
+      <Input
+        label="Message:"
+        reserveErrorSpace={false}
+        value={state.message}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('message', event.target.value)
+        }
       />
     </StyledSettingsForm>
   );

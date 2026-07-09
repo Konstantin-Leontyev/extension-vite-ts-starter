@@ -1,3 +1,17 @@
+/**
+ * Файл: context/theme/index.tsx
+ * Провайдер темы для приложения.
+ * Управляет состоянием темы, синхронизирует с localStorage и подключает styled-components.
+ *
+ * Основные задачи:
+ * 1. Хранить текущий режим темы в состоянии
+ * 2. Сохранять выбор темы в localStorage (переживает перезагрузку)
+ * 3. Подключать глобальные стили (GlobalResetStyle + GlobalThemeStyle)
+ * 4. Предоставлять API для переключения темы через контекст
+ *
+ * Потребители: корень приложения (`main.tsx`).
+ */
+
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 
@@ -18,7 +32,12 @@ type ThemeProviderProps = {
 /** Ключ, под которым выбранная тема переживает перезагрузку страницы. */
 const THEME_STORAGE_KEY = 'app-theme';
 
-/** Тема из localStorage; при отсутствии/мусоре — светлая. */
+/**
+ * readStoredMode — читает сохранённую тему из localStorage.
+ * При отсутствии значения или некорректном формате возвращает светлую тему.
+ *
+ * @returns сохранённый режим темы или 'light'
+ */
 function readStoredMode(): ThemeMode {
   if (typeof window === 'undefined') {
     return 'light';
@@ -29,6 +48,16 @@ function readStoredMode(): ThemeMode {
   return stored === 'dark' || stored === 'light' ? stored : 'light';
 }
 
+/**
+ * ThemeProvider — провайдер темы для всего приложения.
+ * Оборачивает приложение, предоставляет доступ к теме через контекст
+ * и подключает глобальные стили.
+ *
+ * @example
+ * <ThemeProvider>
+ *   <App />
+ * </ThemeProvider>
+ */
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [mode, setMode] = useState<ThemeMode>(readStoredMode);
 

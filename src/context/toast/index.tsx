@@ -1,3 +1,18 @@
+/**
+ * Файл: context/toast/index.tsx
+ * Провайдер тостов для приложения.
+ * Управляет очередью активных тостов, автоскрытием и закрытием по клику/Esc.
+ *
+ * Основные задачи:
+ * 1. Хранить список активных тостов в состоянии
+ * 2. Предоставлять метод showToast для добавления нового тоста
+ * 3. Автоматически скрывать тосты через TOAST_DURATION_MS
+ * 4. Закрывать все тосты по Escape
+ * 5. Рендерить тосты в портале поверх всех слоёв
+ *
+ * Потребители: корень приложения (`main.tsx`).
+ */
+
 import {
   useCallback,
   useEffect,
@@ -22,10 +37,25 @@ type ToastProviderProps = {
   children: ReactNode;
 };
 
+/**
+ * ToastProvider — провайдер контекста тостов.
+ * Оборачивает приложение и управляет отображением уведомлений.
+ *
+ * @example
+ * <ToastProvider>
+ *   <App />
+ * </ToastProvider>
+ */
 export function ToastProvider({ children }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ActiveToast[]>([]);
   const timersRef = useRef<Map<string, number>>(new Map());
 
+  /**
+   * dismiss — закрывает тост по id.
+   * Удаляет тост из состояния и очищает таймер автоскрытия.
+   *
+   * @param id — идентификатор тоста
+   */
   const dismiss = useCallback((id: string): void => {
     setToasts((current) => current.filter((toast) => toast.id !== id));
 
@@ -37,6 +67,12 @@ export function ToastProvider({ children }: ToastProviderProps) {
     }
   }, []);
 
+  /**
+   * showToast — добавляет новый тост в очередь.
+   * Генерирует уникальный id, добавляет в состояние и запускает таймер автоскрытия.
+   *
+   * @param input — параметры тоста (сообщение, размер, тон)
+   */
   const showToast = useCallback(
     (input: ToastInput): void => {
       const id = crypto.randomUUID();
@@ -48,8 +84,11 @@ export function ToastProvider({ children }: ToastProviderProps) {
     [dismiss]
   );
 
-  // Клавиатурная альтернатива клику: Esc закрывает всю стопку (без preventDefault —
-  // другие Esc-обработчики страницы продолжают работать). Срабатывает только при тостах.
+  /**
+   * Клавиатурная альтернатива клику: Esc закрывает всю стопку.
+   * Без preventDefault — другие Esc-обработчики страницы продолжают работать.
+   * Срабатывает только при наличии тостов.
+   */
   useEffect(() => {
     const timers = timersRef.current;
 
@@ -84,6 +123,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
               <Toast
                 key={toast.id}
                 message={toast.message}
+                sizePreset={toast.sizePreset}
                 tone={toast.tone}
                 onClick={() => dismiss(toast.id)}
               />
