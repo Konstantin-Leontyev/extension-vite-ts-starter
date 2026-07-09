@@ -1,22 +1,46 @@
+/**
+ * Файл: index.tsx
+ * Точка входа для компонента ProgressBar и его публичного API.
+ * Предоставляет компонент индикатора выполнения (determinate).
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент ProgressBar для использования в приложении
+ * 2. Обеспечить типизацию пропсов
+ * 3. Предоставить ARIA-семантику для скринридеров (role="progressbar")
+ * 4. Отображать процент выполнения (опционально)
+ *
+ * Потребители: страницы и виджеты приложения, витрина design-system.
+ */
+
 import { type ComponentPropsWithRef } from 'react';
-import { useTheme } from 'styled-components';
 
 import { Text } from '@ui/text';
 
 import {
-  StyledProgressFill,
-  StyledProgressRoot,
-  StyledProgressTrack,
+  StyledProgressBar,
+  StyledProgressBarFill,
+  StyledProgressBarRoot,
   clampProgressValue,
-  type ProgressStyleProps,
-} from './progress.styles';
+  type ProgressBarStyleProps,
+} from './progress-bar.styles';
 
-type ProgressProps = ProgressStyleProps & {
-  /** Рисует целочисленный процент (0–100) рядом с треком. */
+type ProgressBarProps = ProgressBarStyleProps & {
+  /** Рисует целочисленный процент (0–100) рядом с полосой. */
   showLabel?: boolean;
-} & Omit<ComponentPropsWithRef<'div'>, keyof ProgressStyleProps | 'className' | 'style'>;
+} & Omit<
+    ComponentPropsWithRef<'div'>,
+    keyof ProgressBarStyleProps | 'className' | 'style'
+  >;
 
-export function Progress({
+/**
+ * ProgressBar — компонент индикатора выполнения.
+ * Определённый прогресс (determinate): значение 0–1 отображается заполнением полосы.
+ *
+ * @example
+ * <ProgressBar value={0.75} />
+ * <ProgressBar value={0.5} showLabel tone="success" />
+ */
+export function ProgressBar({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   showLabel = false,
@@ -24,16 +48,21 @@ export function Progress({
   sizePreset,
   tone,
   ...layoutProps
-}: ProgressProps) {
-  const theme = useTheme();
+}: ProgressBarProps) {
   const clampedValue = clampProgressValue(value);
   const percent = Math.round(clampedValue * 100);
-  const axisProps = { sizePreset, tone, value: clampedValue };
 
   return (
-    <StyledProgressRoot {...axisProps} {...layoutProps}>
-      <StyledProgressTrack
-        {...axisProps}
+    <StyledProgressBarRoot
+      sizePreset={sizePreset}
+      tone={tone}
+      value={clampedValue}
+      {...layoutProps}
+    >
+      <StyledProgressBar
+        sizePreset={sizePreset}
+        tone={tone}
+        value={clampedValue}
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
         aria-valuemax={100}
@@ -41,20 +70,17 @@ export function Progress({
         aria-valuenow={percent}
         role="progressbar"
       >
-        <StyledProgressFill {...axisProps} />
-      </StyledProgressTrack>
+        <StyledProgressBarFill
+          sizePreset={sizePreset}
+          tone={tone}
+          value={clampedValue}
+        />
+      </StyledProgressBar>
       {showLabel && (
-        <Text
-          aria-hidden={true}
-          color={theme.colors.muted}
-          sizePreset="medium"
-          whiteSpace="nowrap"
-        >
+        <Text aria-hidden={true} sizePreset="medium" tone="muted" whiteSpace="nowrap">
           {percent}%
         </Text>
       )}
-    </StyledProgressRoot>
+    </StyledProgressBarRoot>
   );
 }
-
-export type { ProgressStyleProps };

@@ -10,7 +10,7 @@
  * 2. Предоставить утилиты для получения цвета темы по тону
  *
  * Потребители: kit-контролы и примитивы (`@ui/button`, `@ui/tag`, `@ui/toast`,
- * `@ui/text`, Progress, Spinner), витрина design-system (`tone-listbox`).
+ * `@ui/text`, ProgressBar, Spinner), витрина design-system (`tone-listbox`).
  */
 
 import { type AppTheme, type ThemeColors } from '@ui/theme';

@@ -10,7 +10,7 @@
  * 3. Генерировать CSS через `getSpacingStyles` и `getSpacingValue`
  *
  * Потребители: `@ui/layout`, `@ui/presets`, `@ui/positioning` (gap, inset),
- * локальные карты размеров в kit-модулях (Tag, Switch, Progress и т.п.).
+ * локальные карты размеров в kit-модулях (Tag, Switch, ProgressBar и т.п.).
  */
 
 /**
