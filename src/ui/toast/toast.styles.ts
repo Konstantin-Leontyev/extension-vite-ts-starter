@@ -10,8 +10,8 @@
  *
  * Особенности:
  * - `tone` — акцентная полоса слева (`border-inline-start`), а не заливка
- * - Отступы 12/16 — фиксированные для Toast, не через `getPaddingInline` (не control row)
- * - Высота — по канону `SizePreset` через `getBlockSize` (min, не fixed)
+ * - min-block-size, padding и текст — по канону `SizePreset` (`getMinBlockSize`, `getPadding`, `getTextSize`)
+ * - Радиус — `resolveBlockRadius(DEFAULT_SHAPE_PRESET, …)` (8 px при default)
  *
  * Потребители: `./index.tsx`.
  */
@@ -20,9 +20,12 @@ import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
+  DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
-  getBlockSize,
+  getMinBlockSize,
+  getPadding,
   getTextSize,
+  resolveBlockRadius,
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
@@ -60,23 +63,26 @@ export function getToastTextSize(sizePreset?: SizePreset): TextSizePreset {
  * Генерирует: размер, отступы, фон, цвет, границу, акцентную полосу, тень.
  *
  * @param props — оси вида и тема
- * @returns строка CSS-стилей
+ * @returns строка CSS-стилей, каждая декларация с новой строки
  */
 export function getToastStyles(
   props: ToastViewStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
   const { sizePreset = DEFAULT_SIZE_PRESET, tone = DEFAULT_TONE } = props;
-  const accentColor = getToneColor(theme, tone, theme.colors.border);
+  const toastColor = getToneColor(theme, tone, theme.colors.border);
+  const minBlockSize = getMinBlockSize(sizePreset);
+  const padding = getPadding(sizePreset);
 
   return [
-    `min-block-size: ${getBlockSize(sizePreset)};`,
-    `padding: ${getSpacingValue(12)} ${getSpacingValue(16)};`,
+    `min-block-size: ${minBlockSize};`,
+    `padding-block: ${padding.block};`,
+    `padding-inline: ${padding.inline};`,
     `background-color: ${theme.colors.surface};`,
     `color: ${theme.colors.default};`,
     `border: 1px solid ${theme.colors.border};`,
-    `border-inline-start: ${getSpacingValue(4)} solid ${accentColor};`,
-    `border-radius: ${getSpacingValue(8)};`,
+    `border-inline-start: ${getSpacingValue(4)} solid ${toastColor};`,
+    `border-radius: ${resolveBlockRadius(DEFAULT_SHAPE_PRESET, minBlockSize)};`,
     `box-shadow: ${theme.shadow.surface};`,
   ].join('\n');
 }

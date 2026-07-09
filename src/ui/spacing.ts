@@ -3,6 +3,14 @@
  * Этот файл содержит утилиты для работы с отступами (spacing).
  * Он определяет, какие значения отступов доступны в проекте, как они задаются
  * через пропсы компонентов, и как превращать эти пропсы в реальные CSS-стили.
+ *
+ * Основные задачи:
+ * 1. Хранить шкалу px → rem (`SPACING_VALUES`)
+ * 2. Типизировать spacing-пропы (`SpacingProps`, `SpacingValue`)
+ * 3. Генерировать CSS через `getSpacingStyles` и `getSpacingValue`
+ *
+ * Потребители: `@ui/layout`, `@ui/presets`, `@ui/positioning` (gap, inset),
+ * локальные карты размеров в kit-модулях (Tag, Switch, Progress и т.п.).
  */
 
 /**
@@ -17,26 +25,37 @@
  * Все доступные отступы перечислены здесь — это единственное место,
  * где хранится соответствие "px → rem".
  *
+ * Шкала (при root 16px):
+ * - 0–20: шаг 2px
+ * - 24–40: шаг 4px
+ * - от 48: шаг 8px (44 в шкале нет)
+ *
  * Таблица приватна для модуля, снаружи значения доступны только через getSpacingValue(value).
  * А 'as const' закрепляет для TypeScript что значения и ключи строго фиксированы.
  */
 // prettier-ignore
 const SPACING_VALUES = {
-  0: '0',        // 0px = 0rem
-  4: '0.25rem',  // 4px = 0.25rem
-  8: '0.5rem',   // 8px = 0.5rem
-  12: '0.75rem', // 12px = 0.75rem
-  16: '1rem',    // 16px = 1rem
-  20: '1.25rem', // 20px = 1.25rem
-  24: '1.5rem',  // 24px = 1.5rem
-  28: '1.75rem', // 28px = 1.75rem
-  32: '2rem',    // 32px = 2rem
-  36: '2.25rem', // 36px = 2.25rem
-  40: '2.5rem',  // 40px = 2.5rem
-  44: '2.75rem', // 44px = 2.75rem
-  48: '3rem',    // 48px = 3rem
-  64: '4rem',    // 64px = 4rem
-  80: '5rem',    // 80px = 5rem
+  0: '0',         // 0px = 0rem
+  2: '0.125rem',  // 2px = 0.125rem
+  4: '0.25rem',   // 4px = 0.25rem
+  6: '0.375rem',  // 6px = 0.375rem
+  8: '0.5rem',    // 8px = 0.5rem
+  10: '0.625rem', // 10px = 0.625rem
+  12: '0.75rem',  // 12px = 0.75rem
+  14: '0.875rem', // 14px = 0.875rem
+  16: '1rem',     // 16px = 1rem
+  18: '1.125rem', // 18px = 1.125rem
+  20: '1.25rem',  // 20px = 1.25rem
+  24: '1.5rem',   // 24px = 1.5rem
+  28: '1.75rem',  // 28px = 1.75rem
+  32: '2rem',     // 32px = 2rem
+  36: '2.25rem',  // 36px = 2.25rem
+  40: '2.5rem',   // 40px = 2.5rem
+  48: '3rem',     // 48px = 3rem
+  56: '3.5rem',   // 56px = 3.5rem
+  64: '4rem',     // 64px = 4rem
+  72: '4.5rem',   // 72px = 4.5rem
+  80: '5rem',     // 80px = 5rem
 } as const;
 
 /**
@@ -75,7 +94,7 @@ const SPACING_PROPERTIES = {
  * SpacingProps — это тип, который говорит: "Объект с необязательными свойствами,
  * имена которых берутся из SPACING_PROPERTIES, а значения должны быть типа SpacingValue".
  *
- * Например, вы можете передать { margin: 16, paddingBlock: 8 }.
+ * Допустим `{ margin: 16, paddingBlock: 8 }`.
  * TypeScript проверит, что 16 и 8 есть в SPACING_VALUES, и что имена пропсов
  * (margin, paddingBlock) существуют в SPACING_PROPERTIES.
  *
@@ -103,7 +122,7 @@ export const SPACING_PROPERTY_NAMES = new Set<string>(Object.keys(SPACING_PROPER
  * getSpacingValue — геттер-функция, которая принимает метку шкалы и
  * возвращает её строковое представление в rem.
  *
- * @param value — один из допустимых ключей шкалы SPACING_VALUES (4 | 8 | 16 | ... | 80)
+ * @param value — один из допустимых ключей шкалы SPACING_VALUES
  * @returns строка с CSS-значением в rem
  */
 export function getSpacingValue(value: SpacingValue): string {

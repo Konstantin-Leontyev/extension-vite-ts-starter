@@ -12,6 +12,9 @@
  * 3. Собрать единый набор имён LAYOUT_PROP_NAMES
  * 4. Предоставить функцию getLayoutStyles для генерации всех стилей сразу
  * 5. Предоставить функцию splitLayoutProps для разделения пропсов
+ *
+ * Потребители: корневые `Styled*` kit-модулей (`shouldForwardProp`, `getLayoutStyles`),
+ * композиты с split layout (`@ui/input`, `@ui/listbox`, `@ui/combobox`).
  */
 
 import {

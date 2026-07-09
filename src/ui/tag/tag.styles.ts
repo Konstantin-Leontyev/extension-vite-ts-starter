@@ -15,8 +15,8 @@ import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
-  blockSize,
-  paddingInline,
+  minBlockSize,
+  padding,
   resolveBlockRadius,
   textSize,
   type ShapePreset,
@@ -34,15 +34,17 @@ import { DEFAULT_TONE, getToneColor, getToneKey, type TonePreset } from '@ui/ton
  */
 export type TagSizePreset = SizePreset | 'tiny';
 
-/** Высота тега по размеру; `tiny` — локальный ключ, остальное из `@ui/presets` `blockSize`. */
-const tagBlockSize = {
-  ...blockSize,
+/** min-block-size тега; `tiny` — локальный ключ, остальное из `@ui/presets` `minBlockSize`. */
+const tagMinBlockSize = {
+  ...minBlockSize,
   tiny: 24,
 } as const satisfies Record<TagSizePreset, SpacingValue>;
 
-/** Горизонтальный отступ; `tiny` — 8, остальное из `@ui/presets` `paddingInline`. */
+/** padding-inline; `tiny` — 8, остальное — inline из `@ui/presets` `padding`. */
 const tagPaddingInline = {
-  ...paddingInline,
+  small: padding.small.inline,
+  medium: padding.medium.inline,
+  large: padding.large.inline,
   tiny: 8,
 } as const satisfies Record<TagSizePreset, SpacingValue>;
 
@@ -56,13 +58,13 @@ const tagTextSize = {
 } as const satisfies Record<TagSizePreset, TextSizePreset>;
 
 /**
- * getTagBlockSize — высота тега (block-size) для `sizePreset`.
+ * getTagMinBlockSize — min-block-size тега для `sizePreset`.
  *
  * @param sizePreset — размер тега
  * @returns CSS-длина в rem
  */
-function getTagBlockSize(sizePreset: TagSizePreset): string {
-  return getSpacingValue(tagBlockSize[sizePreset]);
+function getTagMinBlockSize(sizePreset: TagSizePreset): string {
+  return getSpacingValue(tagMinBlockSize[sizePreset]);
 }
 
 /** Размер по умолчанию — `tiny`; тег компактнее контролов. */
@@ -145,7 +147,7 @@ type TagSurface = { fg: string; fill: string };
 function resolveTagFill(theme: AppTheme, tone: TonePreset, tinted: boolean): TagSurface {
   const key = getToneKey(tone);
 
-  /* tone === default: ключа в теме нет — нейтральный fg, fill по ветке tinted выше. */
+  /* tone === default: ключа в теме нет — нейтральный fg; fill по режиму tinted. */
   if (!key) {
     return {
       fg: theme.colors.default,
@@ -205,13 +207,13 @@ export function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string
   } = props;
   const surface = resolveTagFill(theme, tone, tinted);
   const borderColor = bordered ? getTagBorderColor(theme, borderTone) : 'transparent';
-  const blockSizeValue = getTagBlockSize(sizePreset);
+  const blockSize = getTagMinBlockSize(sizePreset);
 
   return [
-    `min-block-size: ${blockSizeValue};`,
+    `min-block-size: ${blockSize};`,
     `padding-inline: ${getSpacingValue(tagPaddingInline[sizePreset])};`,
     `border: 1px solid ${borderColor};`,
-    `border-radius: ${resolveBlockRadius(shape, blockSizeValue)};`,
+    `border-radius: ${resolveBlockRadius(shape, blockSize)};`,
     `background-color: ${surface.fill};`,
     `color: ${surface.fg};`,
   ].join('\n');
@@ -246,6 +248,7 @@ export const StyledTagDot = styled.span.withConfig({
   shouldForwardProp: (prop) => !TAG_DOT_PROP_NAMES.has(prop),
 })<{ dotTone?: TonePreset }>`
   flex-shrink: 0;
+
   /* Размер — 0.5em от наследованного font-size у StyledTag. */
   inline-size: 0.5em;
   block-size: 0.5em;

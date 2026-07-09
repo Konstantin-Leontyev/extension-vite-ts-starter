@@ -10,6 +10,8 @@
  * - позиционирование (position, inset, top, left и т.д.)
  * - flexbox и grid свойства (display, flexDirection, alignItems, gap и т.д.)
  * - дополнительные свойства (zIndex, overflow)
+ *
+ * Потребители: `@ui/layout`, корневые `Styled*` kit-модулей с раскладкой.
  */
 
 import { type CSSProperties } from 'react';

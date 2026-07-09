@@ -10,9 +10,9 @@
  * 4. Предоставить стилизованный компонент StyledText
  *
  * Потребители кроме самого Text:
- * - @ui/presets — getTextSize (согласование SizePreset контрола с TextSizePreset)
- * - ui/table/column-sizing — замер ширины колонки по textSizePresets
- * - ui/table/table-inline-field, ui/input, ui/stepper — getTextProperties на native input
+ * - @ui/presets — `getTextSize` (согласование `SizePreset` контрола с `TextSizePreset`)
+ * - @ui/table/column-sizing — замер ширины колонки по `textSizePresets`
+ * - @ui/table/table-inline-field, @ui/input, @ui/stepper — `getTextProperties` на native input
  *
  * В отличие от layout (spacing/sizing/positioning), текстовые стили
  * генерируются отдельной функцией и не входят в LAYOUT_PROP_NAMES.
@@ -27,7 +27,7 @@ import { TONE_PRESETS } from '@ui/tones';
 
 /**
  * TEXT_TONE_PRESETS — карта тонов текста: канон (TONE_PRESETS) плюс muted.
- * Приватна для модуля: снаружi только TEXT_TONE_KEYS, getTextToneKey, getTextToneColor.
+ * Приватна для модуля: снаружи только TEXT_TONE_KEYS, getTextToneKey, getTextToneColor.
  *
  * Тон текста задаётся пропом `tone` у компонента Text.
  * Компоненты-обёртки (Button, Tag, SegmentButton) принимают проп `textTone`
@@ -52,16 +52,23 @@ export type TextTone = keyof typeof TEXT_TONE_PRESETS;
 export const TEXT_TONE_KEYS = Object.keys(TEXT_TONE_PRESETS) as TextTone[];
 
 /**
- * getTextToneKey — ключ цвета в теме для TextTone.
- * default → undefined (наследование цвета родителя).
+ * getTextToneKey — ключ цвета в теме для `TextTone`.
+ * `default` → undefined (наследование цвета родителя).
+ *
+ * @param tone — тон текста
+ * @returns ключ в `ThemeColors` или undefined
  */
 export function getTextToneKey(tone: TextTone): keyof ThemeColors | undefined {
   return TEXT_TONE_PRESETS[tone];
 }
 
 /**
- * getTextToneColor — цвет темы для TextTone.
- * default → undefined (цвет не задаётся, inherit с родителя).
+ * getTextToneColor — цвет темы для `TextTone`.
+ * `default` → undefined (цвет не задаётся, inherit с родителя).
+ *
+ * @param theme — текущая тема
+ * @param tone — тон текста
+ * @returns CSS-цвет или undefined
  */
 export function getTextToneColor(theme: AppTheme, tone: TextTone): string | undefined {
   const colorKey = getTextToneKey(tone);
@@ -131,8 +138,11 @@ export const textSizePresets = {
 export type TextSizePreset = keyof typeof textSizePresets;
 
 /**
- * getTextProperties — CSS-свойства текста по TextSizePreset.
- * Для native input/textarea, где значение нельзя обернуть в Text.
+ * getTextProperties — CSS-свойства текста по `TextSizePreset`.
+ * Для native input/textarea, где значение нельзя обернуть в `Text`.
+ *
+ * @param sizePreset — типографический пресет
+ * @returns строка с font-size, font-weight, line-height
  */
 export function getTextProperties(sizePreset: TextSizePreset): string {
   const preset = textSizePresets[sizePreset];
@@ -241,11 +251,11 @@ export function getTextStyles(props: TextStyleProps & { theme: AppTheme }): stri
     styles.push(`line-height: ${lineHeight};`);
   }
 
-  const resolvedColor =
+  const textColor =
     color ?? (tone !== undefined ? getTextToneColor(theme, tone) : undefined);
 
-  if (resolvedColor !== undefined) {
-    styles.push(`color: ${resolvedColor};`);
+  if (textColor !== undefined) {
+    styles.push(`color: ${textColor};`);
   }
 
   if (align !== undefined) {

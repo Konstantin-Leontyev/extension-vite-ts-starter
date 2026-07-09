@@ -18,6 +18,8 @@
  * - Стили для полей ввода с aria-invalid="true"
  * - Утилитарный класс .visually-hidden для скрытия элементов
  *   визуально, но с сохранением доступности для скринридеров
+ *
+ * Потребители: `context/theme/index.tsx` (ThemeProvider), один раз на приложение.
  */
 
 import { createGlobalStyle } from 'styled-components';

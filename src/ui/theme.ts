@@ -10,6 +10,9 @@
  * 3. Обеспечить доступ к текущей теме через getTheme
  * 4. Задать глобальные стили через GlobalThemeStyle
  * 5. Расширить DefaultTheme для корректной работы с TypeScript
+ *
+ * Потребители: все `*.styles.ts` через `getTheme(props)`, `GlobalThemeStyle`
+ * и `GlobalResetStyle` (focus, invalid, disabled) в `context/theme/index.tsx`.
  */
 
 import { createGlobalStyle } from 'styled-components';

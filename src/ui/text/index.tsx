@@ -13,9 +13,9 @@
  *    контролов, ДС и утилит (@ui/presets, column-sizing)
  * 3. Обеспечить типизацию с поддержкой as-пропа (полиморфный компонент)
  *
- * Типичное использование в kit: Text внутри контрола (Button, Tag, …) — тон
+ * Типичное использование в kit: `Text` внутри контрола (Button, Tag, …) — тон
  * задаётся через проп `textTone` родительского компонента, который пробрасывает
- * его в Text как `tone`; размер управляется через `textSize` у контрола.
+ * его в `Text` как `tone`; размер текста контрола — через `getTextSize` из `@ui/presets`.
  */
 
 import { createElement, type ComponentPropsWithRef, type ElementType } from 'react';
