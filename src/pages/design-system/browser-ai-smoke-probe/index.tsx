@@ -9,7 +9,7 @@ import {
 } from '@services/browser-ai';
 import { Button } from '@ui/button';
 import { Card } from '@ui/card';
-import { Progress } from '@ui/progress';
+import { ProgressBar } from '@ui/progress-bar';
 import { Spinner } from '@ui/spinner';
 import { Text } from '@ui/text';
 
@@ -154,7 +154,7 @@ function BrowserAiSmokeProbeActive() {
       )}
 
       {state.phase === 'downloading' && (
-        <Progress
+        <ProgressBar
           aria-labelledby={SMOKE_PROBE_TITLE_ID}
           showLabel={true}
           value={state.downloadRatio}

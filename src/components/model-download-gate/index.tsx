@@ -3,7 +3,7 @@ import { useTheme } from 'styled-components';
 
 import { Button } from '@ui/button';
 import { Card } from '@ui/card';
-import { Progress } from '@ui/progress';
+import { ProgressBar } from '@ui/progress-bar';
 import { Text } from '@ui/text';
 
 import {
@@ -125,7 +125,7 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
           </StyledModelDownloadGateCopy>
 
           {phase === 'downloading' && (
-            <Progress
+            <ProgressBar
               aria-labelledby={GATE_TITLE_ID}
               showLabel={true}
               value={loadedRatio}

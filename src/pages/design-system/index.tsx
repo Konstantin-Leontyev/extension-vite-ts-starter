@@ -12,7 +12,7 @@ import { DateRangeInput } from '@ui/date-range-input';
 import { Fieldset } from '@ui/fieldset';
 import { Input } from '@ui/input';
 import { Listbox } from '@ui/listbox';
-import { Progress } from '@ui/progress';
+import { ProgressBar } from '@ui/progress-bar';
 import { RadioButton } from '@ui/radio-button';
 import {
   DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
@@ -23,7 +23,7 @@ import { RoundButton } from '@ui/round-button';
 import { ScrollPort } from '@ui/scroll-port';
 import { SegmentButton } from '@ui/segment-button';
 import { Sidebar } from '@ui/sidebar';
-import { spacingRem } from '@ui/spacing';
+import { getSpacingValue } from '@ui/spacing';
 import { Spinner } from '@ui/spinner';
 import { Stepper } from '@ui/stepper';
 import { Switch } from '@ui/switch';
@@ -131,7 +131,7 @@ const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   checkbox: 'Checkbox',
   'radio-button': 'Radio button',
   fieldset: 'Fieldset',
-  progress: 'Progress',
+  progress: 'ProgressBar',
   spinner: 'Spinner',
   stepper: 'Stepper',
   switch: 'Switch',
@@ -146,7 +146,7 @@ const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
  * поэтому ScrollPort внутри скролит контент, не растягивая страницу. Каркасная альтернатива —
  * в @ui/sidebar.
  */
-const PLAYGROUND_MAX_BLOCK_SIZE = `calc(100dvb - var(--shell-header-block-size, ${HEADER_BLOCK_SIZE}) - ${spacingRem(8)})`;
+const PLAYGROUND_MAX_BLOCK_SIZE = `calc(100dvb - var(--shell-header-block-size, ${HEADER_BLOCK_SIZE}) - ${getSpacingValue(8)})`;
 
 const DEFAULT_INPUT_STATE: InputWidgetState = {
   disabled: false,
@@ -1010,7 +1010,7 @@ export function DesignSystemPage() {
               {renderWidgetCard(
                 'progress',
                 PROGRESS_WIDGET_TITLE_ID,
-                <Progress
+                <ProgressBar
                   inlineSize="100%"
                   showLabel={progress.showLabel}
                   sizePreset={progress.sizePreset}
