@@ -27,7 +27,7 @@ import { StyledToast, getToastTextSize, type ToastStyleProps } from './toast.sty
  * Остальные оси — из `ToastStyleProps` и нативных атрибутов `div`.
  * `tone === 'danger'` задаёт `role="alert"` и `aria-live="assertive"` на корне.
  */
-export type ToastProps = ToastStyleProps & {
+type ToastProps = ToastStyleProps & {
   message: string;
 } & Omit<
     ComponentPropsWithRef<'div'>,
@@ -61,5 +61,3 @@ export function Toast({ message, sizePreset, tone, ...rest }: ToastProps) {
     </StyledToast>
   );
 }
-
-export type { ToastStyleProps } from './toast.styles';

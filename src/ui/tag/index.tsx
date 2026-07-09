@@ -74,4 +74,4 @@ export function Tag({
   );
 }
 
-export type { TagSizePreset, TagStyleProps };
+export type { TagSizePreset };

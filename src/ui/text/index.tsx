@@ -71,6 +71,5 @@ export {
   getTextToneKey,
   textSizePresets,
   type TextSizePreset,
-  type TextStyleProps,
   type TextTone,
 };

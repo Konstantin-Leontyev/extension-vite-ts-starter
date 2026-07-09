@@ -23,7 +23,7 @@ import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { getTheme, type AppTheme, type ThemeColors } from '@ui/theme';
-import { TONE_PRESETS } from '@ui/tones';
+import { TONE_PRESETS, type TonePreset } from '@ui/tones';
 
 /**
  * TEXT_TONE_PRESETS — карта тонов текста: канон (TONE_PRESETS) плюс muted.
@@ -36,7 +36,7 @@ import { TONE_PRESETS } from '@ui/tones';
 const TEXT_TONE_PRESETS = {
   ...TONE_PRESETS,
   muted: 'muted',
-} as const satisfies Record<string, keyof ThemeColors | undefined>;
+} as const satisfies Record<TonePreset | 'muted', keyof ThemeColors | undefined>;
 
 /**
  * TextTone — тип для тонов текста.

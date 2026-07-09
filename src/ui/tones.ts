@@ -16,6 +16,12 @@
 import { type AppTheme, type ThemeColors } from '@ui/theme';
 
 /**
+ * TonePreset — тип, представляющий все доступные канонические тона.
+ * Используется как основной тип для пропсов, связанных с цветовыми ролями.
+ */
+export type TonePreset = 'danger' | 'default' | 'primary' | 'success' | 'warning';
+
+/**
  * TONE_PRESETS — каноническая карта соответствия тонов и ключей цвета в теме.
  * Для тона 'default' цвет не задан (undefined), так как он использует
  * контекстный цвет (наследование от родителя).
@@ -39,13 +45,7 @@ export const TONE_PRESETS = {
   primary: 'primary',
   success: 'success',
   warning: 'warning',
-} as const satisfies Record<string, keyof ThemeColors | undefined>;
-
-/**
- * TonePreset — тип, представляющий все доступные канонические тона.
- * Используется как основной тип для пропсов, связанных с цветовыми ролями.
- */
-export type TonePreset = keyof typeof TONE_PRESETS;
+} as const satisfies Record<TonePreset, keyof ThemeColors | undefined>;
 
 /**
  * DEFAULT_TONE — значение по умолчанию для тона.
