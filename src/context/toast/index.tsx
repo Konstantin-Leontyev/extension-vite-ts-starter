@@ -28,11 +28,17 @@ import { Toast } from '@ui/toast';
 import { ToastContext, type ToastContextValue, type ToastInput } from './context';
 import { StyledToastViewport } from './toast.styles';
 
-/** Автоскрытие тоста — единый интервал (5 c). */
+/** TOAST_DURATION_MS — время автоскрытия тоста (5 секунд). */
 const TOAST_DURATION_MS = 5000;
 
+/** ActiveToast — активный тост с уникальным идентификатором. */
 type ActiveToast = ToastInput & { id: string };
 
+/**
+ * ToastProviderProps — пропсы компонента ToastProvider.
+ *
+ * @property children — дочерние элементы приложения
+ */
 type ToastProviderProps = {
   children: ReactNode;
 };

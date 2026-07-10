@@ -17,14 +17,24 @@ import { createContext } from 'react';
 import { type SizePreset } from '@ui/presets';
 import { type TonePreset } from '@ui/tones';
 
-/** Запрос на показ тоста: текст, размер и семантический тон (default — нейтральный). */
+/**
+ * ToastInput — запрос на показ тоста.
+ *
+ * @property message — текст уведомления
+ * @property sizePreset — размер тоста (из канона `SizePreset`)
+ * @property tone — семантический тон (`default` — нейтральный)
+ */
 export type ToastInput = {
   message: string;
   sizePreset?: SizePreset;
   tone?: TonePreset;
 };
 
-/** API контекста тостов — единственный метод для показа уведомления. */
+/**
+ * ToastContextValue — API контекста тостов.
+ *
+ * @property showToast — функция для показа уведомления
+ */
 export type ToastContextValue = {
   showToast: (toast: ToastInput) => void;
 };

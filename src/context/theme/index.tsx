@@ -25,11 +25,16 @@ import {
 
 import { ThemeContext, type ThemeContextValue, type ThemeMode } from './context';
 
+/**
+ * ThemeProviderProps — пропсы компонента ThemeProvider.
+ *
+ * @property children — дочерние элементы приложения
+ */
 type ThemeProviderProps = {
   children: ReactNode;
 };
 
-/** Ключ, под которым выбранная тема переживает перезагрузку страницы. */
+/** THEME_STORAGE_KEY — ключ для сохранения выбранной темы в localStorage. */
 const THEME_STORAGE_KEY = 'app-theme';
 
 /**

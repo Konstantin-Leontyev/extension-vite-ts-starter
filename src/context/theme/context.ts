@@ -13,10 +13,15 @@
 
 import { createContext } from 'react';
 
-/** Режим темы: светлая или тёмная. */
+/** ThemeMode — режим темы (светлая или тёмная). */
 export type ThemeMode = 'dark' | 'light';
 
-/** API контекста темы — текущий режим и функция переключения. */
+/**
+ * ThemeContextValue — API контекста темы.
+ *
+ * @property mode — текущий режим темы
+ * @property onThemeChange — функция переключения темы
+ */
 export type ThemeContextValue = {
   mode: ThemeMode;
   onThemeChange: () => void;
