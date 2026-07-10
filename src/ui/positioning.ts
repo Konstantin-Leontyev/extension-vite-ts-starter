@@ -1,15 +1,20 @@
 /**
- * Файл: positioning.ts
- * Этот файл содержит утилиты для работы с позиционированием и раскладкой (layout).
+ * Файл: `src/ui/positioning.ts`
+ * Этот файл содержит утилиты для работы с позиционированием и раскладкой.
  * Он определяет, какие CSS-свойства доступны для управления положением элемента,
  * как они задаются через пропсы компонентов, и как превращать эти пропсы
  * в реальные CSS-стили.
  *
- * В отличие от spacing (фиксированная шкала) и sizing (свободные строки),
+ * Основные задачи:
+ * 1. Типизировать positioning-пропы (`PositioningProps`)
+ * 2. Связать пропсы с CSS-свойствами через `POSITIONING_PROPERTIES`
+ * 3. Генерировать CSS через `getPositioningStyles`
+ *
+ * В отличие от `@ui/spacing` (фиксированная шкала) и `@ui/sizing` (свободные строки),
  * positioning объединяет:
- * - позиционирование (position, inset, top, left и т.д.)
- * - flexbox и grid свойства (display, flexDirection, alignItems, gap и т.д.)
- * - дополнительные свойства (zIndex, overflow)
+ *  - пропы позиционирования (`position`, `inset`, `top`, `left` и т.д.)
+ *  - пропы раскладки `flex`/`grid` (`display`, `flexDirection`, `alignItems`, `gap` и т.д.)
+ *  - пропы наложения и переполнения (`zIndex`, `overflow`)
  *
  * Потребители: `@ui/layout`, корневые `Styled*` kit-модулей с раскладкой.
  */
@@ -19,46 +24,53 @@ import { type CSSProperties } from 'react';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 
 /**
- * InsetValue — тип для значений отступов позиционирования.
- * Это может быть 'auto' или один из разрешённых ключей из SPACING_VALUES (SpacingValue).
- * Например: 'auto', 16, 24, 32.
+ * InsetValue — тип, представляющий значения отступов позиционирования.
+ * Это может быть `auto` или один из разрешённых ключей из `SPACING_VALUES` (`SpacingValue`).
+ * Например: `auto`, `16`, `24`, `32`.
  */
 export type InsetValue = 'auto' | SpacingValue;
 
 /**
- * LayoutDisplay — допустимые значения для CSS-свойства display.
+ * LayoutDisplay — тип, представляющий допустимые значения для CSS-свойства `display`.
  * Ограничены набором, который используется в проекте для построения сеток.
  */
 export type LayoutDisplay = 'block' | 'flex' | 'grid' | 'inline-flex';
 
 /**
- * LayoutPosition — допустимые значения для CSS-свойства position.
+ * LayoutPosition — тип, представляющий допустимые значения для CSS-свойства `position`.
  */
 export type LayoutPosition = 'absolute' | 'fixed' | 'relative' | 'static' | 'sticky';
 
 /**
- * PositioningProps — тип, описывающий все пропсы для управления позиционированием
- * и раскладкой элемента.
+ * PositioningProps — тип, представляющий пропсы для управления позиционированием и раскладкой.
  *
- * Пропсы разделены на несколько логических групп:
- * - display, position, zIndex — базовые свойства
- * - inset, top, right, bottom, left — позиционирование (с поддержкой 'auto' и spacing)
- * - flexDirection, flexWrap, alignItems, justifyContent, placeItems, placeSelf,
- *   alignSelf, justifySelf — flexbox свойства
- * - gridTemplateRows, gridTemplateColumns, gridAutoFlow — grid свойства
- * - gap, rowGap, columnGap — отступы между элементами (из шкалы spacing)
- * - overflow — управление переполнением
+ * @property display — тип отображения (`block`, `flex`, `grid`, `inline-flex`)
+ * @property position — тип позиционирования
+ * @property zIndex — порядок наложения
+ * @property inset — отступ со всех сторон (`auto` или число из шкалы)
+ * @property top — отступ сверху
+ * @property right — отступ справа
+ * @property bottom — отступ снизу
+ * @property left — отступ слева
+ * @property flexDirection — направление flex-потока
+ * @property flexWrap — перенос flex-элементов
+ * @property alignItems — выравнивание по поперечной оси
+ * @property justifyContent — выравнивание по основной оси
+ * @property placeItems — сокращение для `align-items` + `justify-items`
+ * @property placeSelf — сокращение для `align-self` + `justify-self`
+ * @property alignSelf — выравнивание элемента по поперечной оси
+ * @property justifySelf — выравнивание элемента по основной оси
+ * @property gridTemplateRows — шаблон строк сетки
+ * @property gridTemplateColumns — шаблон колонок сетки
+ * @property gridAutoFlow — направление автоматического потока
+ * @property gap — отступ между элементами (из шкалы `spacing`)
+ * @property rowGap — отступ между строками
+ * @property columnGap — отступ между колонками
+ * @property overflow — управление переполнением
  *
- * Значения для inset-свойств (top, left, inset и т.д.) могут быть:
- * - 'auto' — автоматическое позиционирование
- * - числом из SPACING_VALUES — отступ в rem
- *
- * Для gap-свойств используются только значения из SPACING_VALUES.
- * Для raw-свойств значения передаются как есть (строка или число),
- * без преобразования через getSpacingValue. Это касается:
- * - position, display, zIndex (число)
- * - flexDirection, alignItems, justifyContent и других CSS-свойств,
- *   типизированных через CSSProperties
+ * Для `inset`-свойств: `auto` или число из `SPACING_VALUES`.
+ * Для `gap`-свойств: только числа из `SPACING_VALUES`.
+ * Для `raw`-свойств: значения передаются как есть (без преобразования через `getSpacingValue`).
  */
 export type PositioningProps = {
   alignItems?: CSSProperties['alignItems'];
@@ -93,33 +105,33 @@ export type PositioningProps = {
 };
 
 /**
- * PositioningValueKind — категория значения для CSS-свойства.
+ * PositioningValueKind — тип, представляющий категорию значения для CSS-свойства.
  * Определяет, как нужно обрабатывать переданное значение:
- * - 'raw' — использовать как есть (строка)
- * - 'inset' — может быть 'auto' или число из SPACING_VALUES
- * - 'spacing' — только число из SPACING_VALUES (через getSpacingValue)
+ *  - `raw` — использовать как есть (строка)
+ *  - `inset` — может быть `auto` или число из `SPACING_VALUES`
+ *  - `spacing` — только число из `SPACING_VALUES` (через `getSpacingValue`)
  */
 type PositioningValueKind = 'inset' | 'raw' | 'spacing';
 
 /**
- * POSITIONING_PROPERTIES — объект, который связывает имена пропсов с реальными
- * CSS-свойствами и определяет, как обрабатывать значения.
+ * SPACING_PROPERTIES — объект, связывающий имена пропсов с CSS-свойствами.
+ * Необходим для динамической генерации CSS-стилей по каждому переданному пропсу.
  *
- * Структура: [CSS-свойство, тип значения (kind)]
+ * Структура: [CSS-свойство, тип значения (`kind`)]
  *
  * Например:
- *   - Пропс 'display' → CSS-свойство 'display', тип 'raw' (значение как есть)
- *   - Пропс 'inset' → CSS-свойство 'inset', тип 'inset' (может быть 'auto' или spacing)
- *   - Пропс 'gap' → CSS-свойство 'gap', тип 'spacing' (только из SPACING_VALUES)
+ *  - Пропс `display` → CSS-свойство `display`, тип `raw` (значение как есть)
+ *  - Пропс `inset` → CSS-свойство `inset`, тип `inset` (может быть `auto` или `spacing`)
+ *  - Пропс `gap` → CSS-свойство `gap`, тип `spacing` (только из `SPACING_VALUES`)
  *
  * Порядок записей в объекте соответствует порядку генерации CSS-правил.
  * Внутри каждой логической группы шорткаты идут раньше своих лонгхендов:
- * - inset → top/right/bottom/left
- * - gap → rowGap/columnGap
+ *  - `inset` → `top`/`right`/`bottom`/`left`
+ *  - `gap` → `rowGap`/`columnGap`
  *
  * Это важно только для случаев, когда свойства могут переопределять друг друга.
- * Конструкция 'as const satisfies' гарантирует, что объект содержит все ключи
- * из PositioningProps и только их, а TypeScript будет проверять соответствие
+ * Конструкция `as const satisfies` гарантирует, что объект содержит все ключи
+ * из `PositioningProps` и только их, а `TypeScript` будет проверять соответствие
  * структуры типу.
  */
 const POSITIONING_PROPERTIES = {
@@ -158,16 +170,16 @@ const POSITIONING_PROPERTIES = {
 >;
 
 /**
- * POSITIONING_PROPERTY_NAMES — это множество (Set) всех имён пропсов из POSITIONING_PROPERTIES.
+ * POSITIONING_PROPERTY_NAMES — множество всех имён пропсов из `POSITIONING_PROPERTIES`.
  * Эти пропсы не импортируются напрямую в компонентах, а входят в состав
- * LAYOUT_PROP_NAMES (из @ui/layout) вместе с spacing и sizing.
+ * `LAYOUT_PROP_NAMES` (из `@ui/layout`) вместе с `@ui/spacing` и `@ui/sizing`.
  *
- * Назначение: positioning-пропсы не являются DOM-атрибутами, поэтому styled-components
+ * Назначение: positioning-пропсы не являются DOM-атрибутами, поэтому `styled-components`
  * не должен передавать их на HTML-узел.
- * shouldForwardProp в корневом Styled* использует LAYOUT_PROP_NAMES,
- * а splitLayoutProps по этому же набору отделяет layout-свойства от остальных.
+ * `shouldForwardProp` в корневом `Styled*` использует `LAYOUT_PROP_NAMES`,
+ * а `splitLayoutProps` по этому же набору отделяет layout-пропсы от остальных.
  *
- * Set создаётся из Object.keys(POSITIONING_PROPERTIES), чтобы при добавлении нового пропса
+ * `Set` создаётся из `Object.keys(POSITIONING_PROPERTIES)`, чтобы при добавлении нового пропса
  * в карту не требовалось обновлять список вручную.
  */
 export const POSITIONING_PROPERTY_NAMES = new Set<string>(
@@ -175,19 +187,18 @@ export const POSITIONING_PROPERTY_NAMES = new Set<string>(
 );
 
 /**
- * resolvePropertyValue — преобразует значение пропа
- * в строку для правой части CSS-декларации.
+ * resolvePropertyValue — преобразует значение пропа в строку для правой части CSS-декларации.
  *
- * В зависимости от типа значения (kind):
- * - 'raw' — возвращает значение как есть (приводит к строке)
- * - 'inset' — если значение 'auto', возвращает 'auto'; иначе преобразует через getSpacingValue
- * - 'spacing' — всегда преобразует через getSpacingValue (значение должно быть SpacingValue)
+ * В зависимости от типа значения (`kind`):
+ *  - `raw` — возвращает значение как есть (приводит к строке)
+ *  - `inset` — если значение `auto`, возвращает `auto`; иначе преобразует через `getSpacingValue`
+ *  - `spacing` — всегда преобразует через `getSpacingValue` (значение должно быть `SpacingValue`)
  *
- * Эта функция используется внутри getPositioningStyles для каждого пропса.
+ * Эта функция используется внутри `getPositioningStyles` для каждого пропса.
  *
- * @param kind — тип значения ('raw', 'inset', 'spacing')
- * @param value — значение пропса (строка, число или 'auto')
- * @returns строка для CSS (например, 'auto', '1rem', 'flex')
+ * @param kind — тип значения (`raw`, `inset`, `spacing`)
+ * @param value — значение пропса (строка, число или `auto`)
+ * @returns строка для CSS (например, `auto`, `1rem`, `flex`)
  */
 function resolvePropertyValue(
   kind: PositioningValueKind,
@@ -201,26 +212,25 @@ function resolvePropertyValue(
     return 'auto';
   }
 
-  // Для inset и spacing значение должно быть SpacingValue
+  // Для `inset` и `spacing` значение должно быть `SpacingValue`
   return getSpacingValue(value as SpacingValue);
 }
 
 /**
- * getPositioningStyles — главная функция, которая превращает объект пропсов
+ * getPositioningStyles — превращает объект `PositioningProps` в готовую строку CSS-стилей.
  * в готовую строку CSS-стилей.
  *
  * Как она работает:
- * 1. Проходит по всем записям (ключ-значение) из POSITIONING_PROPERTIES.
- *    Ключ — это имя пропса (например, 'display'), значение — массив [CSS-свойство, kind];
- * 2. Для каждого пропса смотрит, передан ли он в объекте props.
- * 3. Если передан (не undefined), вызывает resolvePropertyValue для преобразования
- *    значения в правильный CSS-формат.
- * 4. Формирует строку вида "display: flex;" и добавляет в массив.
- * 5. Все такие строки собирает и склеивает через перенос строки.
+ * 1. Проходит по всем записям (ключ-значение) из `POSITIONING_PROPERTIES`.
+ *    Ключ — это имя пропса (например, `display`), значение — массив [CSS-свойство, `kind`];
+ * 2. Для каждого пропса проверяется, передан ли он в объекте props.
+ *    Если значение передано, `resolvePropertyValue` преобразует его
+ *    в значение для CSS-свойства, и формируется строка вида `display: flex;`;
+ * 3. Все такие строки собираются в массив и склеиваются через перенос строки.
  *
- * Результат — строка, которую можно вставить в атрибут style или в CSS-in-JS.
+ * Результат — строка, которую можно вставить в атрибут `style` или в CSS-in-JS.
  *
- * @param props — объект с positioning-пропсами, например { display: 'flex', gap: 16 }
+ * @param props — объект с positioning-пропсами, например `{ display: 'flex', gap: 16 }`
  * @returns строка с CSS-правилами, каждая с новой строки
  */
 export function getPositioningStyles(props: PositioningProps): string {

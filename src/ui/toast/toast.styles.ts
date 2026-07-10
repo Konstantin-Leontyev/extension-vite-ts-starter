@@ -1,19 +1,19 @@
 /**
- * Файл: toast.styles.ts
+ * Файл: `src/ui/toast/toast.styles.ts`
  * Стилизованные компоненты Toast и утилиты их вида.
  * Определяет размерный ряд (из канона `@ui/presets`) и семантический тон (акцентная полоса).
  *
  * Основные задачи:
- * 1. Предоставить тип ToastStyleProps (layout + оси вида)
- * 2. Предоставить функции getToastStyles и getToastTextSize
- * 3. Предоставить стилизованный компонент StyledToast
+ * 1. Предоставить тип `ToastStyleProps` (layout + оси вида)
+ * 2. Предоставить функции `getToastStyles` и `getToastTextSize`
+ * 3. Предоставить стилизованный компонент `StyledToast`
  *
  * Особенности:
- * - `tone` — акцентная полоса слева (`border-inline-start`), а не заливка
- * - min-block-size, padding и текст — по канону `SizePreset` (`getMinBlockSize`, `getPadding`, `getTextSize`)
- * - Радиус — `resolveBlockRadius(DEFAULT_SHAPE_PRESET, …)` (8 px при default)
+ *  - `tone` — акцентная полоса слева (`border-inline-start`), а не заливка
+ *  - `minBlockSize`, `padding` и `textSize` — по канону `SizePreset` (`getMinBlockSize`, `getPadding`, `getTextSize`)
+ *  - `shape` — `resolveBlockRadius(DEFAULT_SHAPE_PRESET, …)` (значение по умолчанию — 8 px)
  *
- * Потребители: `./index.tsx`.
+ * Потребители: `src/ui/toast/index.tsx`.
  */
 
 import styled from 'styled-components';
@@ -34,34 +34,34 @@ import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
 
 /**
- * ToastStyleProps — оси вида тоста и layout-пропы.
- * `tone` — акцентная полоса слева (не заливка), размер — по канону `SizePreset`.
+ * ToastStyleProps — тип, представляющий пропсы стилизации компонента и layout-пропы.
+ *
+ * @property sizePreset — размер компонента из канона `SizePreset`
+ * @property tone — семантический тон (акцентная полоса слева, не заливка)
  */
 export type ToastStyleProps = LayoutProps & {
   sizePreset?: SizePreset;
   tone?: TonePreset;
 };
 
-/** TOAST_PROP_NAMES — имена пропсов для фильтрации в `shouldForwardProp` корня `StyledToast`. */
+/** TOAST_PROP_NAMES — множество всех имён пропсов для фильтрации в `shouldForwardProp` корня `StyledToast`. */
 const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 'tone']);
 
 /**
- * getToastTextSize — размер текста (`TextSizePreset`) для `sizePreset` тоста.
- * Дефолт — `DEFAULT_SIZE_PRESET`, как в `getToastStyles`.
+ * getToastTextSize — возвращает значение для оси `textSize` по `sizePreset`.
  *
- * @param sizePreset — размер тоста (`SizePreset`)
- * @returns `TextSizePreset` для внутреннего `Text`
+ * @param sizePreset — размер компонента
+ * @returns значение для оси `textSize` по `sizePreset`
  */
 export function getToastTextSize(sizePreset?: SizePreset): TextSizePreset {
   return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
 }
 
 /**
- * getToastStyles — CSS-стили поверхности тоста.
- * Генерирует: размер, отступы, фон, цвет, границу, акцентную полосу, тень.
+* getToastStyles — возвращает строку CSS-стилей компонента: размер, отступы, фон, цвет, границу, акцентную полосу, тень.
  *
- * @param props — оси вида и тема
- * @returns строка CSS-стилей, каждая декларация с новой строки
+ * @param props — пропсы стилизации компонента и тема
+ * @returns строка CSS-стилей, каждая декларация с новой строкой
  */
 export function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
@@ -84,10 +84,10 @@ export function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): st
 }
 
 /**
- * StyledToast — корень тоста.
- * Раскладка — на шаблоне; вид — `getToastStyles`, layout — `getLayoutStyles`.
+ * StyledToast — компонент Toast.
+ * Раскладка — на шаблоне. Вид — `getToastStyles`, layout — `getLayoutStyles`.
  *
- * Поведение по высоте: `min-block-size`, не fixed — контент растягивает Toast,
+ * Поведение по высоте: `min-block-size`, без фиксированного `block-size` — контент растягивает Toast,
  * если текст длиннее минимальной высоты. `ellipsis` не используется, потому что
  * Toast часто показывает сообщения об ошибках/запросах неизвестной длины,
  * и обрезание текста недопустимо.

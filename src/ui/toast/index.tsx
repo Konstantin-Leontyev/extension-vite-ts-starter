@@ -1,5 +1,5 @@
 /**
- * Файл: index.tsx
+ * Файл: `src/ui/toast/index.tsx`
  * Точка входа для компонента Toast и его публичного API.
  * Предоставляет компонент для отображения уведомлений с поддержкой:
  * - размерного ряда (`sizePreset` — из канона `@ui/presets`)
@@ -8,7 +8,7 @@
  * Основные задачи:
  * 1. Экспортировать компонент Toast для использования в приложении
  * 2. Обеспечить типизацию пропсов
- * 3. Автоматически выставлять role/aria-live в зависимости от `tone` (danger → alert)
+ * 3. Автоматически выставлять `role`/`aria-live` в зависимости от `tone` (`danger` → `alert`)
  *
  * Потребители: страницы и виджеты приложения, витрина design-system.
  */
@@ -22,9 +22,9 @@ import { StyledToast, getToastTextSize, type ToastStyleProps } from './toast.sty
 /**
  * ToastProps — пропсы компонента Toast.
  *
- * @property message — текст уведомления; рендерится во внутреннем `Text`
+ * @property message — текст уведомления. Рендерится во внутреннем Text
  *
- * Остальные оси — из `ToastStyleProps` и нативных атрибутов `div`.
+ * Остальные оси — из `ToastStyleProps` и нативных атрибутов `<div>`.
  * `tone === 'danger'` задаёт `role="alert"` и `aria-live="assertive"` на корне.
  */
 type ToastProps = ToastStyleProps & {

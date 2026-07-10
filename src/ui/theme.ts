@@ -1,18 +1,18 @@
 /**
- * Файл: theme.ts
+ * Файл: `src/ui/theme.ts`
  * Этот файл определяет систему тем для приложения.
  * Содержит цветовые палитры для светлой и тёмной тем, тени, глобальные стили
- * и вспомогательные утилиты для работы с темой в styled-components.
+ * и вспомогательные утилиты для работы с темой в `styled-components`.
  *
  * Основные задачи:
- * 1. Определить типы ThemeColors и AppTheme
- * 2. Предоставить готовые объекты styledLightTheme и styledDarkTheme
- * 3. Обеспечить доступ к текущей теме через getTheme
- * 4. Задать глобальные стили через GlobalThemeStyle
- * 5. Расширить DefaultTheme для корректной работы с TypeScript
+ * 1. Определить типы `ThemeColors` и `AppTheme`
+ * 2. Предоставить готовые объекты `styledLightTheme` и `styledDarkTheme`
+ * 3. Обеспечить доступ к текущей теме через `getTheme`
+ * 4. Задать глобальные стили через `GlobalThemeStyle`
+ * 5. Расширить `DefaultTheme` для корректной работы с `TypeScript`
  *
- * Потребители: все `*.styles.ts` через `getTheme(props)`, `GlobalThemeStyle`
- * и `GlobalResetStyle` (focus, invalid, disabled) в `context/theme/index.tsx`.
+ * Потребители: все `*.styles.ts` через `getTheme(props)`, `GlobalThemeStyle` (из `@ui/theme`),
+ * `src/context/theme/index.tsx` (`ThemeProvider`). `GlobalResetStyle` — в `@ui/reset`.
  */
 
 import { createGlobalStyle } from 'styled-components';
@@ -20,20 +20,22 @@ import { createGlobalStyle } from 'styled-components';
 import './fonts/inter.css';
 
 /**
- * ThemeColors — тип, описывающий все цвета в теме.
- * Содержит роли цветов для различных элементов интерфейса.
+ * ThemeColors — цвета темы с ролями для различных элементов интерфейса.
  *
- * Категории цветов:
- * - background / surface — фон страницы и карточек
- * - default / muted — текст на нейтральном фоне
- * - inverse — контрастный текст на цветной заливке (кнопка, плашка)
- * - primary — основной акцентный цвет бренда
- * - danger, success, warning — статусные цвета для уведомлений
- * - border — цвет рамок и разделителей
- * - focusRing / invalidRing — цвета для колец фокуса
- * - scrollbarThumb — цвет бегунка скроллбара
+ * @property background — фон страницы
+ * @property surface — фон карточек и поверхностей
+ * @property default — основной цвет текста
+ * @property muted — второстепенный цвет текста
+ * @property inverse — контрастный текст на цветной заливке (кнопка, плашка)
+ * @property primary — акцентный цвет бренда
+ * @property danger — цвет ошибок и опасных действий
+ * @property success — цвет успешных действий
+ * @property warning — цвет предупреждений
+ * @property border — цвет рамок и разделителей
+ * @property focusRing — цвет кольца фокуса
+ * @property invalidRing — цвет кольца для невалидных полей
+ * @property scrollbarThumb — цвет бегунка скроллбара
  *
- * Названия оттенков в комментариях приведены по словарю https://get-color.ru/
  */
 export type ThemeColors = {
   background: string;
@@ -52,15 +54,14 @@ export type ThemeColors = {
 };
 
 /**
- * AppTheme — основной тип темы приложения.
- * Включает в себя цветовую схему (colorScheme), цвета и тени.
+ * AppTheme — тип темы приложения.
+ * Включает в себя цветовую схему (`colorScheme`), цвета и тени.
  *
- * @property colorScheme — режим темы ('light' | 'dark') для нативной части браузера
- * @property colors — объект с цветами из ThemeColors
- * @property shadow — тени для различных элементов (например, surface)
+ * @property colorScheme — режим темы (`light` | `dark`) для нативной части браузера
+ * @property colors — объект с цветами из `ThemeColors`
+ * @property shadow.surface — тень для поверхностей (используется в `box-shadow`)
  */
 export type AppTheme = {
-  /** Режим темы для нативной хром-части (скроллбар и т.п.) через CSS color-scheme. */
   colorScheme: 'light' | 'dark';
   colors: ThemeColors;
   shadow: {
@@ -70,8 +71,8 @@ export type AppTheme = {
 
 /**
  * lightColors — цветовая палитра для светлой темы.
- * Все значения — hex-коды или CSS-функции (color-mix).
- * Названия оттенков в inline-комментариях взяты из словаря get-color.ru.
+ * Все значения — hex-коды или CSS-функции (`color-mix`).
+ * Названия оттенков в inline-комментариях взяты из словаря `get-color.ru`.
  */
 // prettier-ignore
 const lightColors: ThemeColors = {
@@ -93,6 +94,7 @@ const lightColors: ThemeColors = {
 /**
  * darkColors — цветовая палитра для тёмной темы.
  * Подобрана так, чтобы сохранять контрастность и читаемость.
+ * Названия оттенков в коде приведены по словарю https://get-color.ru/
  */
 // prettier-ignore
 const darkColors: ThemeColors = {
@@ -113,7 +115,7 @@ const darkColors: ThemeColors = {
 
 /**
  * styledLightTheme — готовая светлая тема для использования в приложении.
- * Содержит цветовую схему 'light', все цвета и тени.
+ * Содержит цветовую схему `light`, все цвета и тени.
  */
 export const styledLightTheme: AppTheme = {
   colorScheme: 'light',
@@ -126,7 +128,7 @@ export const styledLightTheme: AppTheme = {
 
 /**
  * styledDarkTheme — готовая тёмная тема для использования в приложении.
- * Содержит цветовую схему 'dark', все цвета и отключённые тени (none).
+ * Содержит цветовую схему `dark`,все цвета. Тени отключены (`shadow: none`).
  */
 export const styledDarkTheme: AppTheme = {
   colorScheme: 'dark',
@@ -137,13 +139,13 @@ export const styledDarkTheme: AppTheme = {
 };
 
 /**
- * getTheme — вспомогательная функция для получения текущей темы в styled-components.
+ * getTheme — возвращает текущую тему.
  *
  * Используется в CSS-шаблонах для доступа к значениям темы.
- * Оборачивает props.theme, чтобы избежать прямого обращения к свойству.
+ * Оборачивает `props.theme`, чтобы избежать прямого обращения к свойству.
  *
- * @param props — объект с полем theme (из styled-components)
- * @returns текущий объект AppTheme
+ * @param props — объект с полем `theme` (из `styled-components`)
+ * @returns текущий объект `AppTheme`
  *
  * @example
  * const StyledDiv = styled.div`
@@ -155,19 +157,19 @@ export function getTheme(props: { theme: AppTheme }): AppTheme {
 }
 
 /**
- * DISABLED_OPACITY — единый источник значения прозрачности для disabled-элементов.
+ * DISABLED_OPACITY — единый источник значения прозрачности для `disabled`-элементов.
  * Используется для кнопок, полей ввода и других контролов.
  */
 export const DISABLED_OPACITY = 0.55;
 
 /**
  * GlobalThemeStyle — глобальные стили, зависящие от темы.
- * Подключается в ThemeProvider после GlobalResetStyle (`context/theme/index.tsx`).
+ * Подключается в `ThemeProvider` (`src/context/theme/index.tsx`) после `GlobalResetStyle` из `@ui/reset`.
  *
  * Устанавливает:
- * - color-scheme — для нативной части браузера (скроллбар, выделение)
- * - background-color и color для body — из текущей темы
- * - Шрифт Inter (локальные файлы в ui/fonts/, import './fonts/inter.css') как основной,
+ *  - `color-scheme` — для нативной части браузера (скроллбар, выделение)
+ *  - `background-color` и `color` для `<body>` — из текущей темы
+ *  - Шрифт `Inter` (локальные файлы в `ui/fonts/`, `import './fonts/inter.css'`) как основной,
  *   с системными fallback-шрифтами
  */
 export const GlobalThemeStyle = createGlobalStyle`
@@ -189,12 +191,12 @@ export const GlobalThemeStyle = createGlobalStyle`
 `;
 
 /**
- * Расширение DefaultTheme для styled-components.
+ * Расширение `DefaultTheme` для `styled-components`.
  *
- * Объявляет, что DefaultTheme (используемый в ThemeProvider) имеет структуру AppTheme.
- * Это позволяет TypeScript правильно типизировать props.theme в styled-components.
+ * Объявляет, что `DefaultTheme` (используемый в `ThemeProvider`) имеет структуру `AppTheme`.
+ * Это позволяет `TypeScript` правильно типизировать `props.theme` в `styled-components`.
  *
- * Сделано по официальной документации styled-components v6:
+ * Сделано по официальной документации `styled-components` v6:
  * https://styled-components.com/docs/api#create-a-declarations-file
  */
 declare module 'styled-components' {
