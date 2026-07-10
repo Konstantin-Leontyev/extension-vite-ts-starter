@@ -52,7 +52,7 @@ export type SpinnerStyleProps = LayoutProps & {
 /** SPINNER_PROP_NAMES — имена пропсов для фильтрации в `shouldForwardProp` корня `StyledSpinner`. */
 const SPINNER_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 'tone']);
 
-/** Вращение спиннера. */
+/** spinnerRotate — ключевые кадры для анимации вращения спиннера. */
 const spinnerRotate = keyframes`
   to {
     transform: rotate(360deg);
