@@ -41,7 +41,9 @@ const ICONS = {
   'sign-out': () => <SignOutIcon />,
 } satisfies Record<string, () => ReactNode>;
 
-/** Доступные иконки для выбора в витрине ДС. */
+/**
+ * IconKey — доступные иконки для выбора в витрине ДС.
+ */
 export type IconKey = keyof typeof ICONS;
 
 /**

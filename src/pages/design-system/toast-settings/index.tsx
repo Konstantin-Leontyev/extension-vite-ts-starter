@@ -19,13 +19,14 @@ import { ToneListbox } from '../tone-listbox';
 /**
  * ToastWidgetState — состояние настроек тоста в витрине дизайн-системы.
  * Используется для синхронизации значений между панелью управления и демонстрационным тостом.
+ *
+ * @property message — текст сообщения тоста
+ * @property sizePreset — размер тоста из канона `SizePreset`
+ * @property tone — семантический тон тоста
  */
 export type ToastWidgetState = {
-  /** Текст сообщения тоста. */
   message: string;
-  /** Размер тоста — из канона SizePreset (small, medium, large). */
   sizePreset: SizePreset;
-  /** Семантический тон тоста (default, primary, danger, success, warning). */
   tone: TonePreset;
 };
 
