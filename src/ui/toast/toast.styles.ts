@@ -42,7 +42,7 @@ export type ToastStyleProps = LayoutProps & {
   tone?: TonePreset;
 };
 
-/** Оси вида для `shouldForwardProp` корня `StyledToast`. */
+/** TOAST_PROP_NAMES — имена пропсов для фильтрации в `shouldForwardProp` корня `StyledToast`. */
 const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 'tone']);
 
 /**

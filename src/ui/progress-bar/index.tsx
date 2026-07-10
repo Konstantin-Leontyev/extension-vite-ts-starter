@@ -24,8 +24,14 @@ import {
   type ProgressBarStyleProps,
 } from './progress-bar.styles';
 
+/**
+ * ProgressBarProps — пропсы компонента ProgressBar.
+ *
+ * @property showLabel — показывает процент выполнения (целое число 0–100) рядом с полосой
+ *
+ * Остальные оси — из `ProgressBarStyleProps` и нативных атрибутов `div`.
+ */
 type ProgressBarProps = ProgressBarStyleProps & {
-  /** Рисует целочисленный процент (0–100) рядом с полосой. */
   showLabel?: boolean;
 } & Omit<
     ComponentPropsWithRef<'div'>,

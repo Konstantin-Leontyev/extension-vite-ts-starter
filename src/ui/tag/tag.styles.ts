@@ -1,7 +1,7 @@
 /**
  * Файл: tag.styles.ts
  * Стилизованные компоненты Tag и утилиты их вида.
- * Определяет локальный размерный ряд, тоны заливки/границы/точки и режимы `tinted`/`bordered`.
+ * Определяет локальный размерный ряд, тоны заливки, границы и точки, а также режимы `tinted` и `bordered`.
  *
  * Основные задачи:
  * 1. Локальный ряд размеров (`tiny` + канон `@ui/presets`)
@@ -29,18 +29,36 @@ import { DEFAULT_TONE, getToneColor, getToneKey, type TonePreset } from '@ui/ton
 
 /**
  * TagSizePreset — размерный ряд тега.
- * Локальное расширение канона: спред `@ui/presets` + ключ `tiny` (24 spacing-токен),
+ * Локальное расширение канона: спред `@ui/presets` ключом `tiny` (24 spacing-токен),
  * без добавления `tiny` в общий `SizePreset` контролов.
  */
 export type TagSizePreset = SizePreset | 'tiny';
 
-/** min-block-size тега; `tiny` — локальный ключ, остальное из `@ui/presets` `minBlockSize`. */
-const tagMinBlockSize = {
+/**
+ * TagStyleProps — оси вида тега и layout-пропы:
+ * - `tone` — заливка
+ * - `borderTone` — цвет границы (при `bordered`)
+ * - `tinted` — режим мягкой заливки
+ */
+export type TagStyleProps = LayoutProps & {
+  borderTone?: TonePreset;
+  shape?: ShapePreset;
+  sizePreset?: TagSizePreset;
+  bordered?: boolean;
+  tinted?: boolean;
+  tone?: TonePreset;
+};
+
+/** Цвет текста и заливки, которые задаёт `resolveTagFill`. */
+type TagSurface = { fg: string; fill: string };
+
+/** min-block-size тега. `tiny` — локальный ключ, остальное из `@ui/presets` `minBlockSize`. */
+const tagBlockSize = {
   ...minBlockSize,
   tiny: 24,
 } as const satisfies Record<TagSizePreset, SpacingValue>;
 
-/** padding-inline; `tiny` — 8, остальное — inline из `@ui/presets` `padding`. */
+/** tagPaddingInline — горизонтальные отступы тега: `tiny` — 8, остальное из `@ui/presets` `padding`. */
 const tagPaddingInline = {
   small: padding.small.inline,
   medium: padding.medium.inline,
@@ -50,25 +68,42 @@ const tagPaddingInline = {
 
 /**
  * tagTextSize — размер текста по `sizePreset` тега.
- * `tiny` совпадает с текстом `small` (`medium` в `@ui/text`).
+ * `tiny` использует `medium` из `@ui/text` (как и `small`).
  */
 const tagTextSize = {
   ...textSize,
   tiny: 'medium',
 } as const satisfies Record<TagSizePreset, TextSizePreset>;
 
+/** DEFAULT_TAG_SIZE_PRESET — размер по умолчанию (`tiny`). Тег компактнее контролов. */
+export const DEFAULT_TAG_SIZE_PRESET: TagSizePreset = 'tiny';
+
+/** DEFAULT_TAG_SHAPE — форма по умолчанию (таблетка). */
+const DEFAULT_TAG_SHAPE: ShapePreset = 'round';
+
+/** TAG_PROP_NAMES — имена пропсов для фильтрации в `shouldForwardProp` корня `StyledTag`. */
+const TAG_PROP_NAMES = new Set<string>([
+  ...LAYOUT_PROP_NAMES,
+  'borderTone',
+  'shape',
+  'sizePreset',
+  'bordered',
+  'tinted',
+  'tone',
+]);
+
+/** TAG_DOT_PROP_NAMES — имена пропсов для `shouldForwardProp` на `StyledTagDot`. */
+const TAG_DOT_PROP_NAMES = new Set<string>(['dotTone']);
+
 /**
- * getTagMinBlockSize — min-block-size тега для `sizePreset`.
+ * getTagBlockSize — высота тега (min-block-size) для `sizePreset`.
  *
  * @param sizePreset — размер тега
  * @returns CSS-длина в rem
  */
-function getTagMinBlockSize(sizePreset: TagSizePreset): string {
-  return getSpacingValue(tagMinBlockSize[sizePreset]);
+function getTagBlockSize(sizePreset: TagSizePreset): string {
+  return getSpacingValue(tagBlockSize[sizePreset]);
 }
-
-/** Размер по умолчанию — `tiny`; тег компактнее контролов. */
-export const DEFAULT_TAG_SIZE_PRESET: TagSizePreset = 'tiny';
 
 /**
  * getTagTextSize — размер текста (`TextSizePreset`) для `sizePreset` тега.
@@ -81,63 +116,15 @@ export function getTagTextSize(sizePreset?: TagSizePreset): TextSizePreset {
   return tagTextSize[sizePreset ?? DEFAULT_TAG_SIZE_PRESET];
 }
 
-/** Форма по умолчанию — таблетка. */
-const DEFAULT_TAG_SHAPE: ShapePreset = 'round';
-
-/**
- * TagStyleProps — оси вида тега и layout-пропы.
- * `tone` — заливка; `borderTone` — при `bordered`; `tinted` — мягкая заливка.
- */
-export type TagStyleProps = LayoutProps & {
-  borderTone?: TonePreset;
-  shape?: ShapePreset;
-  sizePreset?: TagSizePreset;
-  bordered?: boolean;
-  tinted?: boolean;
-  tone?: TonePreset;
-};
-
-/** Оси вида для `shouldForwardProp` корня `StyledTag`. */
-const TAG_PROP_NAMES = new Set<string>([
-  ...LAYOUT_PROP_NAMES,
-  'borderTone',
-  'shape',
-  'sizePreset',
-  'bordered',
-  'tinted',
-  'tone',
-]);
-
-/** Доля цвета в `color-mix` — мягкая заливка в режиме `tinted`. */
+/** resolveTagTint — возвращает цвет с прозрачностью для мягкой заливки в режиме `tinted`. */
 function resolveTagTint(color: string, pct: number): string {
   return `color-mix(in srgb, ${color} ${pct}%, transparent)`;
 }
 
 /**
- * Цвета поверхности тега.
- * - `fg` (foreground) — цвет текста контейнера (`color`)
- * - `fill` — цвет фона контейнера (`background-color`)
- */
-type TagSurface = { fg: string; fill: string };
-
-/**
  * resolveTagFill — заливка и цвет контейнера по `tone` и `tinted`.
- *
- * Логика строится на двух осях:
- * 1. `tone` — есть ли ключ в теме:
- *    - `default` → ключа нет, нейтральный цвет
- *    - `primary` / `danger` / `success` / `warning` → ключ есть, цветной
- * 2. `tinted` — режим мягкой заливки:
- *    - `false` → полноцветная заливка тона, текст `inverse`
- *    - `true` → полупрозрачный тинт, текст цвета тона
- *
- * Без `tinted`:
- *   - `default` → прозрачный фон, текст `default`
- *   - цветной → заливка тона, текст `inverse`
- *
- * С `tinted`:
- *   - `default` → тинт `muted` (14%), текст `default`
- *   - цветной → тинт цвета (16%), текст цвета тона
+ * Без `tinted`: нейтраль — прозрачный фон и `default`. Цветной — заливка тона и `inverse`.
+ * С `tinted`: мягкий тинт (`muted` или цвет тона). Текст — `default` или цвет тона.
  *
  * @param theme — текущая тема
  * @param tone — тон заливки
@@ -147,7 +134,6 @@ type TagSurface = { fg: string; fill: string };
 function resolveTagFill(theme: AppTheme, tone: TonePreset, tinted: boolean): TagSurface {
   const key = getToneKey(tone);
 
-  /* tone === default: ключа в теме нет — нейтральный fg; fill по режиму tinted. */
   if (!key) {
     return {
       fg: theme.colors.default,
@@ -167,7 +153,7 @@ function resolveTagFill(theme: AppTheme, tone: TonePreset, tinted: boolean): Tag
  *
  * @param theme — текущая тема
  * @param borderTone — тон границы
- * @returns CSS-цвет; для `default` — `theme.colors.border`
+ * @returns CSS-цвет. Для `default` — `theme.colors.border`
  */
 function getTagBorderColor(theme: AppTheme, borderTone: TonePreset): string {
   return getToneColor(theme, borderTone, theme.colors.border);
@@ -206,14 +192,14 @@ export function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string
     tone = DEFAULT_TONE,
   } = props;
   const surface = resolveTagFill(theme, tone, tinted);
-  const borderColor = bordered ? getTagBorderColor(theme, borderTone) : 'transparent';
-  const blockSize = getTagMinBlockSize(sizePreset);
+  const borderCol = bordered ? getTagBorderColor(theme, borderTone) : 'transparent';
+  const blockSizeValue = getTagBlockSize(sizePreset);
 
   return [
-    `min-block-size: ${blockSize};`,
+    `min-block-size: ${blockSizeValue};`,
     `padding-inline: ${getSpacingValue(tagPaddingInline[sizePreset])};`,
-    `border: 1px solid ${borderColor};`,
-    `border-radius: ${resolveBlockRadius(shape, blockSize)};`,
+    `border: 1px solid ${borderCol};`,
+    `border-radius: ${resolveBlockRadius(shape, blockSizeValue)};`,
     `background-color: ${surface.fill};`,
     `color: ${surface.fg};`,
   ].join('\n');
@@ -226,7 +212,7 @@ export function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string
 export const StyledTag = styled.span.withConfig({
   shouldForwardProp: (prop) => !TAG_PROP_NAMES.has(prop),
 })<TagStyleProps>`
-  /* flex (не grid): инлайн-ряд [точка?] + текст по центру, как у Button; текст
+  /* flex (не grid): инлайн-ряд [точка?] + текст по центру, как у Button. Текст
      сжимается с ellipsis, grid с auto-треком тянул бы трек к max-content. */
   display: inline-flex;
   gap: ${getSpacingValue(4)};
@@ -237,9 +223,6 @@ export const StyledTag = styled.span.withConfig({
   ${(props) => getLayoutStyles(props)}
 `;
 
-/** Ось `StyledTagDot` для `shouldForwardProp`. */
-const TAG_DOT_PROP_NAMES = new Set<string>(['dotTone']);
-
 /**
  * StyledTagDot — круглая точка-индикатор в теге.
  * Цвет — по `dotTone`, иначе `currentColor`.
@@ -248,7 +231,6 @@ export const StyledTagDot = styled.span.withConfig({
   shouldForwardProp: (prop) => !TAG_DOT_PROP_NAMES.has(prop),
 })<{ dotTone?: TonePreset }>`
   flex-shrink: 0;
-
   /* Размер — 0.5em от наследованного font-size у StyledTag. */
   inline-size: 0.5em;
   block-size: 0.5em;

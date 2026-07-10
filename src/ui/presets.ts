@@ -6,12 +6,15 @@
  * Основные задачи:
  * 1. Определить типы SizePreset и ShapePreset
  * 2. Канонические оси: minBlockSize, padding (inline + block), textSize
- * 3. get* — lookup по sizePreset; resolveBlockRadius — правило радиуса
+ * 3. get* — получение значения по sizePreset, resolveBlockRadius — вычисление радиуса по формуле.
  *
- * Модель высоты: minBlockSize — пол (min-block-size бокса); padding.block — вертикаль
- * внутри бокса; при одной строке пол и padding согласованы, при нескольких padding
- * сохраняет отступ сверху/снизу, пока контент растёт выше пола.
- *
+ * Модель высоты:
+ * - `minBlockSize` — минимальная высота бокса
+ * - `padding.block` — вертикальные отступы внутри бокса
+ * 
+ * При одной строке текст помещается в `minBlockSize`, отступы остаются в пределах заданной высоты.
+ * При переносе строки контент растёт выше `minBlockSize`, а `padding.block` удерживает текст от прилипания к краям.
+ * 
  * Потребители: `@ui/button`, `@ui/input`, `@ui/tag`, `@ui/listbox`, `@ui/combobox`,
  * `@ui/toast`, `@ui/fieldset`, остальные kit-контролы через `getMinBlockSize` / `getPadding`.
  */
@@ -27,26 +30,25 @@ import { type TextSizePreset } from '@ui/text';
 export type ShapePreset = 'default' | 'round';
 
 /**
- * SizePreset — единый размерный ряд контролов проекта.
- * Все размеры контролов строятся на основе трёх предустановок.
+ * SizePreset — единый размерный ряд проекта.
+ * Все размеры строятся на основе трёх предустановок: `small`, `medium`, `large`.
  */
 export type SizePreset = 'small' | 'medium' | 'large';
 
 /**
  * DEFAULT_SIZE_PRESET — размер по умолчанию для контролов.
- * В проекте используется `large` как основной размер.
+ * `large` — используется В проекте как основной размер.
  */
 export const DEFAULT_SIZE_PRESET: SizePreset = 'large';
 
 /**
  * DEFAULT_SHAPE_PRESET — форма по умолчанию для контролов.
- * `default` — прямоугольная форма.
  */
 export const DEFAULT_SHAPE_PRESET: ShapePreset = 'default';
 
 /**
- * minBlockSize — минимальная высота бокса (min-block-size) для sizePreset.
- * Согласован с line-height текста и padding.block при одной строке.
+ * minBlockSize — минимальная высота бокса для sizePreset.
+* При смене размера масштабируется синхронно с line-height текста и padding.block.
  */
 export const minBlockSize = {
   small: 32,
@@ -55,8 +57,9 @@ export const minBlockSize = {
 } as const satisfies Record<SizePreset, SpacingValue>;
 
 /**
- * padding — отступы контрола по sizePreset (spacing-токены в px).
- * inline — padding-inline; block — padding-block.
+ * padding — отступы контрола по sizePreset (spacing-токены в px):
+ * - inline — padding-inline
+ * - block — padding-block
  */
 export const padding = {
   small: { inline: 12, block: 8 },

@@ -31,15 +31,19 @@ const progressBarBlockSize = {
   large: 12,
 } as const satisfies Record<SizePreset, SpacingValue>;
 
+/**
+ * ProgressBarStyleProps — оси вида полосы прогресса и layout-пропы.
+ * - `value` — доля заполнения в диапазоне 0–1
+ * - `sizePreset` — размер полосы из канона `SizePreset`
+ * - `tone` — семантический тон (заливка). `default` разрешается в `theme.colors.primary`
+ */
 export type ProgressBarStyleProps = LayoutProps & {
-  /** Доля заполнения в диапазоне 0–1. */
   value: number;
   sizePreset?: SizePreset;
-  /** Семантический тон — `default` разрешается в `theme.colors.primary` (fallback). */
   tone?: TonePreset;
 };
 
-/** Оси вида для `shouldForwardProp` корня, полосы и заливки ProgressBar. */
+/** PROGRESS_BAR_PROP_NAMES — имена пропсов для фильтрации в `shouldForwardProp` на корне, полосе и заливке ProgressBar. */
 const PROGRESS_BAR_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
   'value',
