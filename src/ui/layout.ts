@@ -1,20 +1,21 @@
 /**
  * Файл: `src/ui/layout.ts`
- * Этот файл является точкой входа для всех layout-утилит проекта.
- * Он объединяет функциональность из трёх модулей:
- *  - `@ui/spacing` — отступы (`margin`, `padding`) с фиксированной шкалой в rem
- *  - `@ui/sizing` — размеры (`inlineSize`, `blockSize`, `min/max`) со свободными строковыми значениями
- *  - `@ui/positioning` — позиционирование и раскладка (`display`, `position`, `inset`, `gap`)
+ * Объединяет layout-утилиты проекта в единую точку входа из трёх модулей:
+ *  - `@ui/spacing` — отступы по фиксированной шкале в rem
+ *  - `@ui/sizing` — размеры со свободными строковыми значениями
+ *  - `@ui/positioning` — позиционирование и раскладка
  *
  * Основные задачи:
- * 1. Реэкспортировать публичный API дочерних модулей
+ * 1. Реэкспортировать API из `@ui/spacing`, `@ui/sizing` и `@ui/positioning`
  * 2. Определить объединённый тип `LayoutProps`
- * 3. Собрать единый набор имён `LAYOUT_PROP_NAMES`
- * 4. Предоставить функцию `getLayoutStyles` для генерации всех стилей сразу
- * 5. Предоставить функцию `splitLayoutProps` для разделения пропсов
+ * 3. Объединить имена всех layout-пропсов в `LAYOUT_PROP_NAMES`
+ * 4. Предоставить `getLayoutStyles` для генерации всех layout-правил
+ * 5. Предоставить `splitLayoutProps` для разделения пропсов
  *
- * Потребители: корневые `Styled*` kit-модулей (`shouldForwardProp`, `getLayoutStyles`),
- * композиты с `splitLayoutProps` (`@ui/input`, `@ui/listbox`, `@ui/combobox`).
+ * Потребители:
+ *  - корневые `Styled*` компонентов — `shouldForwardProp` и `getLayoutStyles`
+ *  - составные компоненты, например Input, Listbox и Stepper —
+ *    разделяют пропсы через `splitLayoutProps`
  */
 
 import {
@@ -29,10 +30,6 @@ import {
   type SpacingProps,
 } from '@ui/spacing';
 
-/**
- * Реэкспорты из модуля `spacing` (`@ui/spacing`)
- * Содержит утилиты для работы с отступами по фиксированной шкале.
- */
 export {
   SPACING_PROPERTY_NAMES,
   getSpacingStyles,
@@ -41,10 +38,6 @@ export {
   type SpacingValue,
 } from '@ui/spacing';
 
-/**
- * Реэкспорты из модуля `positioning` (`@ui/positioning`)
- * Содержит утилиты для позиционирования, `flexbox` и `grid`.
- */
 export {
   POSITIONING_PROPERTY_NAMES,
   getPositioningStyles,
@@ -54,33 +47,28 @@ export {
   type PositioningProps,
 } from '@ui/positioning';
 
-/**
- * Реэкспорты из модуля `sizing` (`@ui/sizing`)
- * Содержит утилиты для управления размерами элемента.
- */
 export { SIZING_PROPERTY_NAMES, getSizingStyles, type SizingProps } from '@ui/sizing';
 
 /**
- * LayoutProps — тип, представляющий объединённый набор всех пропсов для управления layout-элемента.
- * Включает в себя все пропсы из трёх категорий:
- *  - `SpacingProps` — отступы (`margin`, `padding`)
- *  - `PositioningProps` — позиционирование и раскладка (`display`, `position`, `flexDirection`, `gap`)
- *  - `SizingProps` — размеры (`inlineSize`, `blockSize`)
+ * LayoutProps — представляет объединённый набор layout-пропсов элемента.
+ * Объединяет три категории:
+ *  - `SpacingProps` — отступы
+ *  - `PositioningProps` — позиционирование и раскладка
+ *  - `SizingProps` — размеры
  *
- * Используется как основной тип для корневых компонентов, поддерживающих layout.
+ * Используется как основной тип для корневых компонентов с поддержкой layout.
  */
 export type LayoutProps = SpacingProps & PositioningProps & SizingProps;
 
 /**
- * LAYOUT_PROP_NAMES — множество всех имён пропсов для layout.
- * Собирает имена из `SPACING_PROPERTY_NAMES`, `POSITIONING_PROPERTY_NAMES` и `SIZING_PROPERTY_NAMES`.
+ * LAYOUT_PROP_NAMES — объединяет имена всех layout-пропсов из трёх модулей.
  *
- * Используется для:
- *  - `shouldForwardProp` в `styled-components` — чтобы не передавать layout-пропсы на DOM-узел
- *  - `splitLayoutProps` — для отделения layout-пропсов от остальных
+ * Используется в `shouldForwardProp`, чтобы не передавать layout-пропсы на DOM-узел,
+ * и в `splitLayoutProps` для отделения layout-пропсов от остальных.
  *
- * Собран автоматически из трёх источников, что гарантирует синхронизацию
- * при добавлении новых пропсов в дочерние модули.
+ * Собирается из `SPACING_PROPERTY_NAMES`, `POSITIONING_PROPERTY_NAMES`
+ * и `SIZING_PROPERTY_NAMES`, чтобы при добавлении нового пропса в дочерние модули
+ * не требовалось обновлять список вручную.
  */
 export const LAYOUT_PROP_NAMES = new Set<string>([
   ...SPACING_PROPERTY_NAMES,
@@ -89,18 +77,17 @@ export const LAYOUT_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * getLayoutStyles — объединяет стили из всех трёх модулей в единую строку CSS-стилей.
+ * getLayoutStyles — объединяет CSS-правила из модулей отступов, позиционирования и размеров.
  *
- * Как она работает:
+ * Как работает:
  * 1. Вызывает `getSpacingStyles`, `getPositioningStyles` и `getSizingStyles`
- * 2. Каждая функция возвращает строку CSS-правил (или пустую строку)
- * 3. Фильтрует пустые строки
- * 4. Склеивает все строки через перенос строки
+ * 2. Отбрасывает пустые результаты
+ * 3. Склеивает оставшиеся правила через перенос строки
  *
- * Результат — строка, которую можно вставить в атрибут `style` или в CSS-in-JS.
+ * Результат подставляется в CSS-шаблон styled-компонента.
  *
- * @param props — объект с layout-пропсами (любой комбинацией из трёх категорий)
- * @returns строка с CSS-правилами, каждая с новой строки
+ * @param props — объект с layout-пропсами
+ * @returns CSS-правила, каждое с новой строки
  */
 export function getLayoutStyles(props: LayoutProps): string {
   return [getSpacingStyles(props), getPositioningStyles(props), getSizingStyles(props)]
@@ -109,21 +96,20 @@ export function getLayoutStyles(props: LayoutProps): string {
 }
 
 /**
- * splitLayoutProps — разделяет пропсы на две группы:
- * - `layout` — пропсы, относящиеся к layout (из `LAYOUT_PROP_NAMES`)
- * - `rest` — все остальные пропсы
+ * splitLayoutProps — разделяет пропсы на layout и остальные.
  *
- * Используется в компонентах-обёртках, когда нужно отделить layout-стили
- * для корневого элемента от остальных пропсов (например, для передачи
- * атрибутов в DOM-узел или в дочерний компонент).
+ * Используется в компонентах-обёртках, когда layout-стили нужно применить к корневому
+ * элементу, а остальные пропсы передать в DOM-узел или дочерний компонент.
  *
- * Пример: `StyledInputRoot` принимает `{ value: 'text', padding: 16, ... }`
- * `splitLayoutProps` отделит `padding` в `layout`, а `value` в `rest`.
+ * Результат содержит:
+ *  - `layout` — только layout-пропсы из `LAYOUT_PROP_NAMES`
+ *  - `rest` — все остальные пропсы без изменения типов
  *
- * @param props — исходный объект пропсов (обычно все пропсы, переданные в компонент)
- * @returns объект с двумя полями:
- *  - `layout` — объект только с layout-пропсами
- *  - `rest` — объект со всеми остальными пропсами (без изменений типов)
+ * @param props — исходный объект пропсов, обычно все пропсы компонента
+ * @returns объект с полями `layout` и `rest`
+ *
+ * @example
+ * const { layout, rest: control } = splitLayoutProps(rest);
  */
 export function splitLayoutProps<T extends Partial<LayoutProps>>(
   props: T

@@ -1,37 +1,39 @@
 /**
  * Файл: `src/ui/spacing.ts`
- * Этот файл содержит утилиты для работы с отступами.
- * Он определяет, какие значения отступов доступны в проекте, как они задаются
- * через пропсы компонентов, и как превращать эти пропсы в реальные CSS-стили.
+ * Содержит утилиты для работы с отступами.
+ * Определяет, какие значения отступов доступны в проекте, как они задаются
+ * через пропсы компонентов и как эти пропсы преобразуются в CSS-стили.
  *
  * Основные задачи:
- * 1. Хранить шкалу px → rem (`SPACING_VALUES`)
- * 2. Типизировать spacing-пропы (`SpacingProps`, `SpacingValue`)
- * 3. Генерировать CSS через `getSpacingStyles` и `getSpacingValue`
+ * 1. Хранить шкалу px → rem в `SPACING_VALUES`
+ * 2. Типизировать spacing-пропсы: `SpacingProps` и `SpacingValue`
+ * 3. Генерировать CSS-правила через `getSpacingStyles` и значения шкалы через `getSpacingValue`
  *
- * Потребители: `@ui/layout`, `@ui/presets`, `@ui/positioning` (`gap`, `inset`),
- * локальные карты размеров в kit-модулях (Tag, Switch, ProgressBar и т.п.).
+ * Потребители:
+ *  - `@ui/layout` — реэкспортирует публичное API модуля
+ *  - `@ui/presets` — использует шкалу в пресетах размеров
+ *  - `@ui/positioning` — использует шкалу для `gap` и `inset`
+ *  - компоненты со своими наборами размеров, например Tag, Switch и ProgressBar —
+ *    получают значения шкалы через `getSpacingValue`
  */
 
 /**
- * SPACING_VALUES — главный объект (словарь), где:
- *  - Ключ — это значение в пикселях, которое передаётся в пропсы,
- *    например `<Card padding={16} />` (или любой компонент с `LayoutProps`).
- *  - Значение — это CSS-длина в rem, например `0.25rem`, `1rem`.
+ * SPACING_VALUES — хранит шкалу всех доступных в проекте отступов.
+ * Единый источник истины соответствия px → rem, где:
+ *  - Ключ — значение в пикселях для пропсов любого компонента с `LayoutProps`,
+ *    например `<Card padding={16} />`.
+ *  - Значение — CSS-длина в rem, например `0.25rem`, `1rem`.
  *
- * Почему rem? Это относительная единица, которая зависит от размера шрифта
- * корневого элемента `<html>`. Она позволяет сделать дизайн адаптивным.
+ * rem - относительная единица, которая зависит от размера шрифта
+ * корневого элемента `<html>` и позволяет сделать дизайн адаптивным.
  *
- * Все доступные отступы перечислены здесь — это единый источник истины,
- * где хранится соответствие px → rem.
- *
- * Шкала (при root 16px):
+ * Шкала при root 16px:
  *  - 0–20: шаг 2px
  *  - 24–40: шаг 4px
  *  - от 48: шаг 8px
  *
- * Таблица приватна для модуля, снаружи значения доступны только через `getSpacingValue(value)`.
- * А `as const` закрепляет для `TypeScript`, что значения и ключи строго фиксированы.
+ * Таблица приватна для модуля, снаружи значения доступны только через `getSpacingValue`.
+ * А `as const` закрепляет для TypeScript, что значения и ключи строго фиксированы.
  */
 // prettier-ignore
 const SPACING_VALUES = {
@@ -59,14 +61,14 @@ const SPACING_VALUES = {
 } as const;
 
 /**
- * SpacingValue — тип, представляющий все возможные ключи (числа) из `SPACING_VALUES`.
- * Например, `4 | 8 | 16 | ... | 80`. `TypeScript` будет подсказывать только эти значения.
+ * SpacingValue — представляет все возможные числовые ключи из `SPACING_VALUES`,
+ * например `4 | 8 | 16 | ... | 80`. TypeScript будет подсказывать только эти значения.
  * Это защищает от опечаток и гарантирует, что используется только разрешённый отступ.
  */
 export type SpacingValue = keyof typeof SPACING_VALUES;
 
 /**
- * SPACING_PROPERTIES — объект, связывающий имена пропсов с реальными CSS-свойствами.
+ * SPACING_PROPERTIES — связывает имена пропсов с CSS-свойствами.
  * Необходим для динамической генерации CSS-стилей для каждого переданного пропса.
  *
  * Например:
@@ -91,69 +93,68 @@ const SPACING_PROPERTIES = {
 } as const;
 
 /**
- * SpacingProps — тип для пропсов отступов.
- * Имена свойств берутся из `SPACING_PROPERTIES`, значения — `SpacingValue`.
+ * SpacingProps — представляет пропсы отступов.
+ * Имена свойств берутся из `SPACING_PROPERTIES`, значения из `SpacingValue`.
  *
  * Пример: `{ margin: 16, paddingBlock: 8 }`.
  * TypeScript проверит, что `16` и `8` есть в `SPACING_VALUES`, а имена пропсов
- * (`margin`, `paddingBlock`) существуют в `SPACING_PROPERTIES`.
+ * `margin` и `paddingBlock` существуют в `SPACING_PROPERTIES`.
  *
  * Используется в `LayoutProps` для всех компонентов, поддерживающих отступы.
  */
 export type SpacingProps = { [K in keyof typeof SPACING_PROPERTIES]?: SpacingValue };
 
 /**
- * SPACING_PROPERTY_NAMES — множество всех имён пропсов из `SPACING_PROPERTIES`.
+ * SPACING_PROPERTY_NAMES — хранит имена всех пропсов из `SPACING_PROPERTIES`.
  * Эти пропсы не импортируются напрямую в компонентах, а входят в состав
- * `LAYOUT_PROP_NAMES` (из `@ui/layout`) вместе с `@ui/positioning` и `@ui/sizing`.
+ * `LAYOUT_PROP_NAMES` из `@ui/layout` вместе с именами из `@ui/positioning` и `@ui/sizing`.
  *
  * Назначение: `margin`, `padding` и их логические варианты не являются DOM-атрибутами,
- * поэтому `styled-components` не должен передавать их на HTML-узел.
+ * поэтому styled-components не должен передавать их на HTML-узел.
  * `shouldForwardProp` в корневом `Styled*` использует `LAYOUT_PROP_NAMES`,
- * а `splitLayoutProps` по этому же набору отделяет layout-пропсы от остальных
- * (например, для обёртки Input и самого элемента `<input>`).
+ * а `splitLayoutProps` по этому же набору отделяет layout-пропсы от остальных,
+ * например для обёртки Input и самого элемента `<input>`.
  *
- * Создаётся из `Object.keys(SPACING_PROPERTIES)`, чтобы при добавлении нового пропа
- * в карту не требовалось обновлять список вручную (`@ui/layout`).
+ * Создаётся из `Object.keys(SPACING_PROPERTIES)`, чтобы при добавлении нового свойства
+ * не требовалось обновлять список вручную.
  */
 export const SPACING_PROPERTY_NAMES = new Set<string>(Object.keys(SPACING_PROPERTIES));
 
 /**
- * getSpacingValue — принимает метку шкалы и возвращает её строковое представление в rem.
+ * getSpacingValue — принимает метку шкалы и возвращает её значение в rem.
  *
  * @param value — один из допустимых ключей шкалы `SPACING_VALUES`
- * @returns строка с CSS-значением в rem
+ * @returns CSS-длина в rem, например `1rem`
  */
 export function getSpacingValue(value: SpacingValue): string {
   return SPACING_VALUES[value];
 }
 
 /**
- * getSpacingStyles — превращает объект `SpacingProps` в готовую строку CSS-стилей.
+ * getSpacingStyles — преобразует spacing-пропсы в готовые CSS-правила.
  *
- * Как она работает:
- * 1. Проходится по всем записям (ключ-значение) из `SPACING_PROPERTIES`.
- *    Ключ — это имя пропса (например, `margin`), значение — соответствующее CSS-свойство (`margin`);
- * 2. Для каждого пропса проверяется, передан ли он в объекте props.
- *    Если значение передано, берёт его (например, `16`),
- *    получает его эквивалент в rem с помощью `getSpacingValue(value)`,
- *    и формирует строку вида `margin: 1rem;`;
- * 3. Все такие строки собираются в массив и склеиваются через перенос строки.
+ * Как работает:
+ * 1. Проходит по всем записям `SPACING_PROPERTIES`, где ключ — имя пропса,
+ *    а значение — CSS-свойство.
+ * 2. Для каждого пропса проверяет, передан ли он в `props`. Переданное значение,
+ *    например `16`, преобразует в rem через `getSpacingValue` и формирует
+ *    CSS-правило вида `margin: 1rem;`.
+ * 3. Собирает такие правила в массив и склеивает через перенос строки.
  *
- * Результат — строка, которую можно вставить в атрибут `style` или в CSS-in-JS.
+ * Результат подставляется в CSS-шаблон styled-компонента.
  *
- * @param props — объект с spacing-пропсами, например, `{ margin: 16, padding: 8 }`
- * @returns строка с CSS-правилами, каждая с новой строкой
+ * @param props — объект со spacing-пропсами, например `{ margin: 16, padding: 8 }`
+ * @returns CSS-правила, каждое с новой строки
  */
 export function getSpacingStyles(props: SpacingProps): string {
   const rules: string[] = [];
 
-  // Проходится по всем именам пропсов и их CSS-эквивалентам
+  // Проходит по всем именам пропсов и их CSS-эквивалентам
   for (const [prop, property] of Object.entries(SPACING_PROPERTIES)) {
-    // Берётся значение из переданных пропсов по имени `prop`
+    // Берёт значение из переданных пропсов по имени prop
     const value = props[prop as keyof SpacingProps];
 
-    // Если значение передано, то формируется CSS-правило
+    // Если значение передано, то формирует CSS-правило
     if (value !== undefined) {
       // getSpacingValue(value) — например, для 16 даст 1rem
       rules.push(`${property}: ${getSpacingValue(value)};`);

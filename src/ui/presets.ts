@@ -1,12 +1,16 @@
 /**
  * Файл: `src/ui/presets.ts`
- * Система размерных пресетов для контролов и примитивов на оси `SizePreset`.
- * Определяет единый ряд (`small`, `medium`, `large`): `minBlockSize`, `padding`, `textSize`, `shape`.
+ * Определяет размерные пресеты компонентов: единый ряд `small`, `medium`, `large`,
+ * который компонент выбирает через проп `sizePreset`.
+ * Преобразует выбранный размер в согласованные значения высоты, отступов
+ * и размера текста. Задаёт формы строки-поля для пропа `shape`.
  *
  * Основные задачи:
- * 1. Определить типы `SizePreset` и `ShapePreset`
- * 2. Канонические оси: `minBlockSize`, `padding` (inline + block), `textSize`
- * 3. get* — получение значения по `sizePreset`, `resolveBlockRadius` — вычисление радиуса по формуле.
+ * 1. Определить типы `SizePreset`, `ShapePreset` и `ControlPadding`
+ * 2. Хранить канонические значения в `minBlockSize`, `padding` и `textSize`
+ * 3. Задать значения по умолчанию через `DEFAULT_SIZE_PRESET` и `DEFAULT_SHAPE_PRESET`
+ * 4. Предоставить геттеры `getMinBlockSize`, `getPadding`, `getPaddingInline`, `getPaddingBlock` и `getTextSize`
+ * 5. Предоставить `resolveBlockRadius` для вычисления радиуса по форме
  *
  * Модель высоты:
  *  - `minBlockSize` — минимальная высота бокса
@@ -15,29 +19,39 @@
  * При одной строке текст помещается в `minBlockSize`, отступы остаются в пределах заданной высоты.
  * При переносе строки контент растёт выше `minBlockSize`, а `padding.block` удерживает текст от прилипания к краям.
  *
- * Потребители: `@ui/button`, `@ui/input`, `@ui/tag`, `@ui/listbox`, `@ui/combobox`,
- * `@ui/toast`, `@ui/fieldset`, остальные kit-контролы через `getMinBlockSize` / `getPadding`.
+ * Потребители:
+ *  - `@ui/button`, `@ui/input`, `@ui/tag`, `@ui/listbox`, `@ui/combobox`, `@ui/toast`, `@ui/fieldset` —
+ *    задают размер через `sizePreset`
+ *  - все `*.styles.ts` компонентов с пропом `sizePreset` — читают значения через геттеры
+ *  - `src/pages/design-system/*-settings` — опции витрины дизайн-системы
  */
 
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 
 /**
- * ShapePreset — тип, представляющий форму строки-поля.
- *  - `default` — прямоугольная, радиус — `getSpacingValue(8)` (`0.5rem`)
- *  - `round` — таблетка: `calc(min-block-size / 2)`
+ * ShapePreset — представляет форму строки-поля компонента.
+ *
+ * Доступные значения:
+ *  - `default` — прямоугольник со скруглёнными углами
+ *  - `round` — таблетка с полностью скруглёнными торцами
+ *
+ * Радиус для каждой формы вычисляет `resolveBlockRadius`.
  */
 export type ShapePreset = 'default' | 'round';
 
 /**
- * SizePreset — тип, представляющий единый размерный ряд проекта.
- * Все размеры строятся на основе трёх предустановок: `small`, `medium`, `large`.
+ * SizePreset — представляет единый размерный ряд проекта.
+ * Используется как основной тип пропа `sizePreset` в компонентах.
  */
 export type SizePreset = 'small' | 'medium' | 'large';
 
 /**
- * ControlPadding — тип, представляющий отступы контрола: значения для CSS-свойств
- * `padding-inline` (ключ `inline`) и `padding-block` (ключ `block`).
+ * ControlPadding — представляет готовые внутренние отступы компонента.
+ * Значения — CSS-длины в rem, которые возвращает `getPadding`.
+ *
+ * @property inline — значение для CSS-свойства `padding-inline`
+ * @property block — значение для CSS-свойства `padding-block`
  */
 export type ControlPadding = {
   block: string;
@@ -45,50 +59,69 @@ export type ControlPadding = {
 };
 
 /**
- * DEFAULT_SIZE_PRESET — значение по умолчанию для оси `sizePreset`.
- * `large` — используется в проекте как основной размер.
+ * DEFAULT_SIZE_PRESET — задаёт размер по умолчанию для пропа `sizePreset`.
+ * Используется в компонентах, где размер не задан явно.
  */
 export const DEFAULT_SIZE_PRESET: SizePreset = 'large';
 
 /**
- * DEFAULT_SHAPE_PRESET — значение по умолчанию для оси `shape`.
+ * DEFAULT_SHAPE_PRESET — задаёт форму по умолчанию для пропа `shape`.
+ * Используется в компонентах с поддержкой формы строки-поля.
  */
 export const DEFAULT_SHAPE_PRESET: ShapePreset = 'default';
 
 /**
- * minBlockSize — значение для оси `minBlockSize` по `sizePreset`.
+ * minBlockSize — хранит минимальную высоту бокса для каждого размера ряда.
+ * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
  * При смене размера высота строки текста и отступы масштабируются синхронно.
+ *
+ * Конструкция `as const satisfies Record<SizePreset, SpacingValue>` закрепляет
+ * readonly-типы и гарантирует, что значение задано для каждого размера ряда.
+ * Значения заморожены `Object.freeze`: попытка изменить их в рантайме
+ * бросит ошибку в месте записи.
  */
-export const minBlockSize = {
+export const minBlockSize = Object.freeze({
   small: 32,
   medium: 40,
   large: 48,
-} as const satisfies Record<SizePreset, SpacingValue>;
+} as const satisfies Record<SizePreset, SpacingValue>);
 
 /**
- * padding — значения для оси `padding` по `sizePreset`:
- *  - Ключ `inline` → CSS-свойство `padding-inline`
- *  - Ключ `block` → CSS-свойство `padding-block`
+ * padding — хранит внутренние отступы для каждого размера ряда.
+ * Ключ — размер из `SizePreset`, значение — пара ключей шкалы из `@ui/spacing`:
+ *  - `inline` → значение для CSS-свойства `padding-inline`
+ *  - `block` → значение для CSS-свойства `padding-block`
+ *
+ * Конструкция `as const satisfies Record<SizePreset, …>` закрепляет
+ * readonly-типы и гарантирует, что значение задано для каждого размера ряда.
+ * Значения заморожены `Object.freeze` вместе с вложенными парами:
+ * попытка изменить их в рантайме бросит ошибку в месте записи.
  */
-export const padding = {
-  small: { inline: 12, block: 8 },
-  medium: { inline: 16, block: 10 },
-  large: { inline: 16, block: 14 },
-} as const satisfies Record<SizePreset, { inline: SpacingValue; block: SpacingValue }>;
+export const padding = Object.freeze({
+  small: Object.freeze({ inline: 12, block: 8 } as const),
+  medium: Object.freeze({ inline: 16, block: 10 } as const),
+  large: Object.freeze({ inline: 16, block: 14 } as const),
+} as const satisfies Record<SizePreset, { inline: SpacingValue; block: SpacingValue }>);
 
 /**
- * textSize — значения для оси `textSize` по `sizePreset`.
+ * textSize — хранит размер текста для каждого размера ряда.
+ * Ключ — размер из `SizePreset`, значение — метка из `TextSizePreset` компонента Text.
+ *
+ * Конструкция `as const satisfies Record<SizePreset, TextSizePreset>` закрепляет
+ * readonly-типы и гарантирует, что значение задано для каждого размера ряда.
+ * Значения заморожены `Object.freeze`: попытка изменить их в рантайме
+ * бросит ошибку в месте записи.
  */
-export const textSize = {
+export const textSize = Object.freeze({
   small: 'medium',
   medium: 'normal',
   large: 'normal',
-} as const satisfies Record<SizePreset, TextSizePreset>;
+} as const satisfies Record<SizePreset, TextSizePreset>);
 
 /**
  * getMinBlockSize — возвращает значение для CSS-свойства `min-block-size` по `sizePreset`.
  *
- * @param sizePreset — размер контрола
+ * @param sizePreset — размер компонента
  * @returns CSS-длина в rem
  */
 export function getMinBlockSize(sizePreset: SizePreset): string {
@@ -96,9 +129,9 @@ export function getMinBlockSize(sizePreset: SizePreset): string {
 }
 
 /**
- * getPadding — возвращает значения для CSS-свойств `padding-inline` и `padding-block` для `sizePreset`.
+ * getPadding — возвращает значения для CSS-свойств `padding-inline` и `padding-block` по `sizePreset`.
  *
- * @param sizePreset — размер контрола
+ * @param sizePreset — размер компонента
  * @returns значения для CSS-свойств `padding-inline` и `padding-block`
  */
 export function getPadding(sizePreset: SizePreset): ControlPadding {
@@ -111,9 +144,9 @@ export function getPadding(sizePreset: SizePreset): ControlPadding {
 }
 
 /**
- * getPaddingInline — возвращает значение для CSS-свойства `padding-inline` для `sizePreset`.
+ * getPaddingInline — возвращает значение для CSS-свойства `padding-inline` по `sizePreset`.
  *
- * @param sizePreset — размер контрола
+ * @param sizePreset — размер компонента
  * @returns значение для CSS-свойства `padding-inline`
  */
 export function getPaddingInline(sizePreset: SizePreset): string {
@@ -121,9 +154,9 @@ export function getPaddingInline(sizePreset: SizePreset): string {
 }
 
 /**
- * getPaddingBlock — возвращает значение для CSS-свойства `padding-block` для `sizePreset`.
+ * getPaddingBlock — возвращает значение для CSS-свойства `padding-block` по `sizePreset`.
  *
- * @param sizePreset — размер контрола
+ * @param sizePreset — размер компонента
  * @returns значение для CSS-свойства `padding-block`
  */
 export function getPaddingBlock(sizePreset: SizePreset): string {
@@ -131,22 +164,24 @@ export function getPaddingBlock(sizePreset: SizePreset): string {
 }
 
 /**
- * getTextSize — возвращает значение для оси `textSize` по `sizePreset`.
+ * getTextSize — возвращает размер текста по `sizePreset`.
  *
- * @param sizePreset — размер контрола
- * @returns `TextSizePreset` (`normal` | `medium` | ...)
+ * @param sizePreset — размер компонента
+ * @returns метка размера текста из `TextSizePreset`
  */
 export function getTextSize(sizePreset: SizePreset): TextSizePreset {
   return textSize[sizePreset];
 }
 
 /**
- * resolveBlockRadius — возвращает значение для CSS-свойства `border-radius` по `shape` и `minBlockSize`.
- *  - `round` — `calc(minBlockSize / 2)`
- *  - `default` — `getSpacingValue(8)` (`0.5rem`)
+ * resolveBlockRadius — вычисляет значение для CSS-свойства `border-radius` по форме и высоте.
  *
- * @param shape — форма контрола
- * @param minBlockSize — значение CSS-свойства `min-block-size` (из `getMinBlockSize`)
+ * Логика по форме:
+ *  - `round` — `calc(minBlockSize / 2)`
+ *  - `default` — `getSpacingValue(8)`, то есть `0.5rem`
+ *
+ * @param shape — форма компонента
+ * @param minBlockSize — значение CSS-свойства `min-block-size` из `getMinBlockSize`
  * @returns значение для CSS-свойства `border-radius`
  *
  * @example
