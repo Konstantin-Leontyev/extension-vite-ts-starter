@@ -213,7 +213,7 @@ function getTagDotColor(theme: AppTheme, dotTone: TonePreset | undefined): strin
 }
 
 /**
- * getTagStyles — возвращает CSS-правила вида корня `StyledTag`:
+ * getTagStyles — возвращает CSS-правила для корня `StyledTag`:
  * размер, отступы, границу, форму и цвета.
  *
  * @param props — пропсы стилизации тега и тема

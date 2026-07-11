@@ -74,9 +74,6 @@ export const DEFAULT_SHAPE_PRESET: ShapePreset = 'default';
  * minBlockSize — хранит минимальную высоту бокса для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
  * При смене размера высота строки текста и отступы масштабируются синхронно.
- *
- * Конструкция `as const satisfies Record<SizePreset, SpacingValue>` закрепляет
- * readonly-типы и гарантирует, что значение задано для каждого размера ряда.
  */
 export const minBlockSize = Object.freeze({
   small: 32,
@@ -89,9 +86,6 @@ export const minBlockSize = Object.freeze({
  * Ключ — размер из `SizePreset`, значение — пара ключей шкалы из `@ui/spacing`:
  *  - `inline` → значение для CSS-свойства `padding-inline`
  *  - `block` → значение для CSS-свойства `padding-block`
- *
- * Конструкция `as const satisfies Record<SizePreset, …>` закрепляет
- * readonly-типы и гарантирует, что значение задано для каждого размера ряда.
  */
 export const padding = Object.freeze({
   small: Object.freeze({ inline: 12, block: 8 } as const),
@@ -102,9 +96,6 @@ export const padding = Object.freeze({
 /**
  * textSize — хранит размер текста для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — метка из `TextSizePreset` компонента Text.
- *
- * Конструкция `as const satisfies Record<SizePreset, TextSizePreset>` закрепляет
- * readonly-типы и гарантирует, что значение задано для каждого размера ряда.
  */
 export const textSize = Object.freeze({
   small: 'medium',

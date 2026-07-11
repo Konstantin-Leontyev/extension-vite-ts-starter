@@ -136,8 +136,6 @@ type PositioningValueKind = 'inset' | 'raw' | 'spacing';
  * Это важно только для случаев, когда свойства могут переопределять друг друга.
  *
  * Соответствие приватно для модуля, снаружи имена пропсов доступны через `POSITIONING_PROPERTY_NAMES`.
- * Конструкция `as const satisfies Record<keyof PositioningProps, …>` закрепляет
- * readonly-типы и гарантирует, что заданы все ключи `PositioningProps` и только они.
  */
 const POSITIONING_PROPERTIES = {
   display: ['display', 'raw'],

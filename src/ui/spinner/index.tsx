@@ -1,36 +1,44 @@
 /**
- * Файл: index.tsx
- * Точка входа для компонента Spinner и его публичного API.
- * Предоставляет компонент индикатора неопределённой загрузки.
+ * Файл: `src/ui/spinner/index.tsx`
+ * Предоставляет компонент Spinner для отображения индикатора загрузки.
+ *
+ * Поддерживает:
+ *  - layout-пропсы: отступы, позиционирование, размеры
+ *  - размерный ряд через проп `sizePreset`
+ *  - семантический тон через проп `tone`
+ *  - доступное имя для скринридера через проп `label`
  *
  * Основные задачи:
- * 1. Экспортировать компонент Spinner для использования в приложении
- * 2. Обеспечить типизацию пропсов
- * 3. Предоставить ARIA-семантику для скринридеров (role="status" + aria-label)
+ * 1. Экспортировать компонент Spinner
+ * 2. Типизировать пропсы через `SpinnerProps`
+ * 3. Выставлять `role="status"` и `aria-label` для скринридеров
  *
- * Потребители: страницы и виджеты приложения, витрина design-system.
+ * Потребители:
+ *  - страницы и виджеты приложения — показывают состояние загрузки
+ *  - `src/pages/design-system` — демонстрирует состояния в витрине
  */
 
 import { type ComponentPropsWithRef } from 'react';
 
 import { StyledSpinner, type SpinnerStyleProps } from './spinner.styles';
 
-/** EN-дефолт для aria-label (скринридер, не визуальный лейбл). */
+/**
+ * DEFAULT_SPINNER_LABEL — задаёт EN-дефолт для `aria-label`.
+ * Используется, когда вызывающий код не передал проп `label`.
+ */
 const DEFAULT_SPINNER_LABEL = 'Loading';
 
 /**
- * SpinnerProps — пропсы компонента Spinner.
+ * SpinnerProps — представляет пропсы компонента Spinner.
  *
- * @property label — доступное имя для скринридера; EN-дефолт `Loading`
- *
- * Остальные оси — из `SpinnerStyleProps` и нативных атрибутов `div`.
+ * @property label — доступное имя для скринридера
  */
 type SpinnerProps = SpinnerStyleProps & {
   label?: string;
 } & Omit<ComponentPropsWithRef<'div'>, keyof SpinnerStyleProps | 'className' | 'style'>;
 
 /**
- * Spinner — компонент индикатора неопределённой загрузки.
+ * Spinner — отображает индикатор неопределённой загрузки.
  *
  * @example
  * <Spinner />

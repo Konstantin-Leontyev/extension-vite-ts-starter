@@ -1,6 +1,7 @@
 /**
  * Файл: `src/ui/tag/index.tsx`
  * Предоставляет компонент Tag для отображения тегов.
+ *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
@@ -39,8 +40,6 @@ import {
  * @property dot — включает точку-индикатор
  * @property dotTone — тон точки
  * @property textTone — тон текста
- *
- * Остальные пропсы — из `TagStyleProps` и нативных атрибутов элемента.
  */
 type TagProps = {
   children: ReactNode;
@@ -52,7 +51,6 @@ type TagProps = {
 
 /**
  * Tag — отображает тег с заливкой, границей и точкой-индикатором.
- * Рендерит `StyledTag` с внутренним Text.
  *
  * @example
  * <Tag>Метка</Tag>

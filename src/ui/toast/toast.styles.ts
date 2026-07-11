@@ -57,7 +57,7 @@ export function getToastTextSize(sizePreset?: SizePreset): TextSizePreset {
 }
 
 /**
- * getToastStyles — возвращает CSS-правила вида корня `StyledToast`:
+ * getToastStyles — возвращает CSS-правила для корня `StyledToast`:
  * размер, отступы, фон, цвет, границу, акцентную полосу и тень.
  *
  * @param props — пропсы стилизации Toast и тема

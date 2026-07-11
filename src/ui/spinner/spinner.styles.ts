@@ -1,15 +1,15 @@
 /**
- * Файл: spinner.styles.ts
- * Стилизованные компоненты Spinner и утилиты их вида.
- * Определяет локальный размерный ряд по оси `SizePreset` и семантический тон.
+ * Файл: `src/ui/spinner/spinner.styles.ts`
+ * Определяет внешний вид компонента Spinner.
  *
  * Основные задачи:
- * 1. Локальные карты размера и толщины рамки по `SizePreset`
- * 2. Предоставить тип SpinnerStyleProps (layout + оси вида)
- * 3. Предоставить функцию getSpinnerStyles для генерации CSS-стилей
- * 4. Предоставить стилизованный компонент StyledSpinner
+ * 1. Типизировать пропсы через `SpinnerStyleProps`
+ * 2. Хранить размер и толщину рамки в `spinnerBlockSize` и `spinnerBorderWidth`
+ * 3. Предоставить функцию `getSpinnerStyles`
+ * 4. Предоставить styled-узел `StyledSpinner`
  *
- * Потребители: `./index.tsx`.
+ * Потребители:
+ *  - `src/ui/spinner/index.tsx` — собирает компонент Spinner
  */
 
 import { css, keyframes, styled } from 'styled-components';
@@ -21,38 +21,46 @@ import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
 
 /**
- * spinnerBlockSize — размер спиннера по `sizePreset` (px → rem через getSpacingValue).
- * Ряд компактнее контролов: small — 16, medium — 24, large — 32.
+ * spinnerBlockSize — хранит размер спиннера для каждого размера ряда.
+ * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
+ * Ряд компактнее контролов: для `small` — `16px`, для `medium` — `24px`, для `large` — `32px`.
  */
-const spinnerBlockSize = {
+const spinnerBlockSize = Object.freeze({
   small: 16,
   medium: 24,
   large: 32,
-} as const satisfies Record<SizePreset, SpacingValue>;
+} as const satisfies Record<SizePreset, SpacingValue>);
 
 /**
- * spinnerBorderWidth — толщина рамки спиннера в px (вне шкалы spacing).
- * Штрих 2/3 px не выражается токенами spacing — отдельная px-карта по `SizePreset`.
+ * spinnerBorderWidth — хранит толщину рамки спиннера для каждого размера ряда.
+ * Ключ — размер из `SizePreset`, значение — толщина в px.
+ * Толщина штриха не привязана к шкале spacing: это не отступ.
  */
-const spinnerBorderWidth = {
+const spinnerBorderWidth = Object.freeze({
   small: 2,
   medium: 2,
-  large: 3,
-} as const satisfies Record<SizePreset, number>;
+  large: 4,
+} as const satisfies Record<SizePreset, number>);
 
 /**
- * SpinnerStyleProps — оси вида спиннера и layout-пропы.
+ * SpinnerStyleProps — представляет пропсы стилизации спиннера и layout-пропсы.
+ *
+ * @property sizePreset — размер спиннера
+ * @property tone — семантический тон
  */
 export type SpinnerStyleProps = LayoutProps & {
   sizePreset?: SizePreset;
-  /** Семантический тон — `default` разрешается в `theme.colors.primary` (fallback). */
   tone?: TonePreset;
 };
 
-/** SPINNER_PROP_NAMES — имена пропсов для фильтрации в `shouldForwardProp` корня `StyledSpinner`. */
+/**
+ * SPINNER_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Spinner.
+ */
 const SPINNER_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 'tone']);
 
-/** spinnerRotate — ключевые кадры для анимации вращения спиннера. */
+/**
+ * spinnerRotate — задаёт ключевые кадры анимации вращения спиннера.
+ */
 const spinnerRotate = keyframes`
   to {
     transform: rotate(360deg);
@@ -60,10 +68,10 @@ const spinnerRotate = keyframes`
 `;
 
 /**
- * getSpinnerStyles — CSS-стили спиннера.
- * Генерирует размер, толщину и цвет рамки, анимацию вращения.
+ * getSpinnerStyles — возвращает CSS-правила для корня `StyledSpinner`:
+ * размер, рамку и анимацию.
  *
- * @param props — оси вида и тема
+ * @param props — пропсы стилизации спиннера и тема
  * @returns CSS-правила с анимацией
  */
 export function getSpinnerStyles(props: SpinnerStyleProps & { theme: AppTheme }) {
@@ -89,9 +97,17 @@ export function getSpinnerStyles(props: SpinnerStyleProps & { theme: AppTheme })
 }
 
 /**
- * StyledSpinner — корень спиннера.
- * Раскладка — grid (дефолт проекта), защита от сжатия.
- * Вид — `getSpinnerStyles`, layout — `getLayoutStyles`.
+ * StyledSpinner — задаёт корневой узел компонента Spinner.
+ * Базируется на `<div>` и поддерживает все пропсы из `SpinnerStyleProps`.
+ *
+ * Встроенные стили:
+ *  - `display: grid` — раскладка по дефолту проекта
+ *  - `flex-shrink: 0` — спиннер не сжимается при нехватке места
+ *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
+ *
+ * Генерация стилей:
+ *  - `getSpinnerStyles` — размер, рамка, цвет, анимация
+ *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledSpinner = styled.div.withConfig({
   shouldForwardProp: (prop) => !SPINNER_PROP_NAMES.has(prop),

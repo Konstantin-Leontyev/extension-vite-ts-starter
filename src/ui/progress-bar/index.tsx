@@ -1,15 +1,24 @@
 /**
- * Файл: index.tsx
- * Точка входа для компонента ProgressBar и его публичного API.
- * Предоставляет компонент индикатора выполнения (determinate).
+ * Файл: `src/ui/progress-bar/index.tsx`
+ * Предоставляет компонент ProgressBar для отображения индикатора выполнения
+ * с определённым прогрессом.
+ *
+ * Поддерживает:
+ *  - layout-пропсы: отступы, позиционирование, размеры
+ *  - размерный ряд через проп `sizePreset`
+ *  - семантический тон через проп `tone`
+ *  - долю заполнения через проп `value`
+ *  - подпись с процентом через проп `showLabel`
  *
  * Основные задачи:
- * 1. Экспортировать компонент ProgressBar для использования в приложении
- * 2. Обеспечить типизацию пропсов
- * 3. Предоставить ARIA-семантику для скринридеров (role="progressbar")
- * 4. Отображать процент выполнения (опционально)
+ * 1. Экспортировать компонент ProgressBar
+ * 2. Типизировать пропсы через `ProgressBarProps`
+ * 3. Выставлять `role="progressbar"` и `aria-valuenow` для скринридеров
  *
- * Потребители: страницы и виджеты приложения, витрина design-system.
+ * Потребители:
+ *  - `src/components/model-download-gate/index.tsx` — показывает прогресс загрузки модели
+ *  - страницы и виджеты приложения — показывают ход выполнения операций
+ *  - `src/pages/design-system` — демонстрирует состояния в витрине
  */
 
 import { type ComponentPropsWithRef } from 'react';
@@ -25,11 +34,9 @@ import {
 } from './progress-bar.styles';
 
 /**
- * ProgressBarProps — пропсы компонента ProgressBar.
+ * ProgressBarProps — представляет пропсы компонента ProgressBar.
  *
- * @property showLabel — показывает процент выполнения (целое число 0–100) рядом с полосой
- *
- * Остальные оси — из `ProgressBarStyleProps` и нативных атрибутов `div`.
+ * @property showLabel — включает подпись с процентом выполнения рядом с полосой
  */
 type ProgressBarProps = ProgressBarStyleProps & {
   showLabel?: boolean;
@@ -39,8 +46,7 @@ type ProgressBarProps = ProgressBarStyleProps & {
   >;
 
 /**
- * ProgressBar — компонент индикатора выполнения.
- * Определённый прогресс (determinate): значение 0–1 отображается заполнением полосы.
+ * ProgressBar — отображает полосу прогресса с определённым значением заполнения.
  *
  * @example
  * <ProgressBar value={0.75} />

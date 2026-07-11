@@ -1,6 +1,7 @@
 /**
  * Файл: `src/ui/toast/index.tsx`
  * Предоставляет компонент Toast для отображения уведомлений.
+ *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
@@ -26,8 +27,6 @@ import { StyledToast, getToastTextSize, type ToastStyleProps } from './toast.sty
  * ToastProps — представляет пропсы компонента Toast.
  *
  * @property message — текст уведомления
- *
- * Остальные пропсы — из `ToastStyleProps` и нативных атрибутов элемента.
  */
 type ToastProps = ToastStyleProps & {
   message: string;
@@ -38,7 +37,6 @@ type ToastProps = ToastStyleProps & {
 
 /**
  * Toast — отображает уведомление.
- * Рендерит `StyledToast` с внутренним Text.
  *
  * @example
  * <Toast message="Успешно сохранено" />

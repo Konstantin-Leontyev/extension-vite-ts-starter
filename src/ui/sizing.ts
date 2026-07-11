@@ -47,8 +47,6 @@ export type SizingProps = {
  *  - Пропс `blockSize` → CSS-свойство `block-size`
  *
  * Соответствие приватно для модуля, снаружи имена пропсов доступны через `SIZING_PROPERTY_NAMES`.
- * Конструкция `as const satisfies Record<keyof SizingProps, string>` закрепляет
- * readonly-типы и гарантирует, что заданы все ключи `SizingProps` и только они.
  */
 const SIZING_PROPERTIES = Object.freeze({
   inlineSize: 'inline-size',
