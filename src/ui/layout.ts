@@ -65,10 +65,6 @@ export type LayoutProps = SpacingProps & PositioningProps & SizingProps;
  *
  * Используется в `shouldForwardProp`, чтобы не передавать layout-пропсы на DOM-узел,
  * и в `splitLayoutProps` для отделения layout-пропсов от остальных.
- *
- * Собирается из `SPACING_PROPERTY_NAMES`, `POSITIONING_PROPERTY_NAMES`
- * и `SIZING_PROPERTY_NAMES`, чтобы при добавлении нового пропса в дочерние модули
- * не требовалось обновлять список вручную.
  */
 export const LAYOUT_PROP_NAMES = new Set<string>([
   ...SPACING_PROPERTY_NAMES,

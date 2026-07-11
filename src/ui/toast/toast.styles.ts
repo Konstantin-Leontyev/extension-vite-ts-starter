@@ -1,19 +1,14 @@
 /**
  * Файл: `src/ui/toast/toast.styles.ts`
- * Стилизованные компоненты Toast и утилиты их вида.
- * Определяет размерный ряд (из канона `@ui/presets`) и семантический тон (акцентная полоса).
+ * Определяет внешний вид компонента Toast.
  *
  * Основные задачи:
- * 1. Предоставить тип `ToastStyleProps` (layout + оси вида)
+ * 1. Типизировать пропсы через `ToastStyleProps`
  * 2. Предоставить функции `getToastStyles` и `getToastTextSize`
- * 3. Предоставить стилизованный компонент `StyledToast`
+ * 3. Предоставить styled-узел `StyledToast`
  *
- * Особенности:
- *  - `tone` — акцентная полоса слева (`border-inline-start`), а не заливка
- *  - `minBlockSize`, `padding` и `textSize` — по канону `SizePreset` (`getMinBlockSize`, `getPadding`, `getTextSize`)
- *  - `shape` — `resolveBlockRadius(DEFAULT_SHAPE_PRESET, …)` (значение по умолчанию — 8 px)
- *
- * Потребители: `src/ui/toast/index.tsx`.
+ * Потребители:
+ *  - `src/ui/toast/index.tsx` — собирает компонент Toast
  */
 
 import styled from 'styled-components';
@@ -34,34 +29,39 @@ import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
 
 /**
- * ToastStyleProps — тип, представляющий пропсы стилизации компонента и layout-пропы.
+ * ToastStyleProps — представляет пропсы стилизации Toast и layout-пропсы.
  *
  * @property sizePreset — размер компонента из канона `SizePreset`
- * @property tone — семантический тон (акцентная полоса слева, не заливка)
+ * @property tone — семантический тон. Задаёт акцентную полосу слева
+ *   через `border-inline-start`, а не заливку
  */
 export type ToastStyleProps = LayoutProps & {
   sizePreset?: SizePreset;
   tone?: TonePreset;
 };
 
-/** TOAST_PROP_NAMES — множество всех имён пропсов для фильтрации в `shouldForwardProp` корня `StyledToast`. */
+/**
+ * TOAST_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Toast.
+ */
 const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 'tone']);
 
 /**
- * getToastTextSize — возвращает значение для оси `textSize` по `sizePreset`.
+ * getToastTextSize — возвращает размер текста по `sizePreset`.
+ * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
  *
  * @param sizePreset — размер компонента
- * @returns значение для оси `textSize` по `sizePreset`
+ * @returns метка размера текста из `TextSizePreset` для внутреннего Text
  */
 export function getToastTextSize(sizePreset?: SizePreset): TextSizePreset {
   return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
 }
 
 /**
-* getToastStyles — возвращает строку CSS-стилей компонента: размер, отступы, фон, цвет, границу, акцентную полосу, тень.
+ * getToastStyles — возвращает CSS-правила вида корня `StyledToast`:
+ * размер, отступы, фон, цвет, границу, акцентную полосу и тень.
  *
- * @param props — пропсы стилизации компонента и тема
- * @returns строка CSS-стилей, каждая декларация с новой строкой
+ * @param props — пропсы стилизации Toast и тема
+ * @returns CSS-правила, каждое с новой строки
  */
 export function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
@@ -84,12 +84,19 @@ export function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): st
 }
 
 /**
- * StyledToast — компонент Toast.
- * Раскладка — на шаблоне. Вид — `getToastStyles`, layout — `getLayoutStyles`.
+ * StyledToast — задаёт корневой узел компонента Toast.
+ * Базируется на `<div>` и поддерживает все пропсы из `ToastStyleProps`.
  *
- * Поведение по высоте: `min-block-size`, без фиксированного `block-size` — контент растягивает Toast,
- * если текст длиннее минимальной высоты. `ellipsis` не используется, потому что
- * Toast часто показывает сообщения об ошибках/запросах неизвестной длины,
+ * Встроенные стили:
+ *  - `display: grid` и `align-content: center` — центрируют текст по вертикали
+ *
+ * Генерация стилей:
+ *  - `getToastStyles` — размер, отступы, фон, граница, акцентная полоса, тень
+ *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ *
+ * Высота задана через `min-block-size` без фиксированного `block-size`:
+ * контент растягивает Toast, если текст длиннее минимальной высоты.
+ * `ellipsis` не используется, так как Toast показывает сообщения неизвестной длины,
  * и обрезание текста недопустимо.
  */
 export const StyledToast = styled.div.withConfig({

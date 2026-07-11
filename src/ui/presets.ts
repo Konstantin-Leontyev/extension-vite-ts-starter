@@ -77,8 +77,6 @@ export const DEFAULT_SHAPE_PRESET: ShapePreset = 'default';
  *
  * Конструкция `as const satisfies Record<SizePreset, SpacingValue>` закрепляет
  * readonly-типы и гарантирует, что значение задано для каждого размера ряда.
- * Значения заморожены `Object.freeze`: попытка изменить их в рантайме
- * бросит ошибку в месте записи.
  */
 export const minBlockSize = Object.freeze({
   small: 32,
@@ -94,8 +92,6 @@ export const minBlockSize = Object.freeze({
  *
  * Конструкция `as const satisfies Record<SizePreset, …>` закрепляет
  * readonly-типы и гарантирует, что значение задано для каждого размера ряда.
- * Значения заморожены `Object.freeze` вместе с вложенными парами:
- * попытка изменить их в рантайме бросит ошибку в месте записи.
  */
 export const padding = Object.freeze({
   small: Object.freeze({ inline: 12, block: 8 } as const),
@@ -109,8 +105,6 @@ export const padding = Object.freeze({
  *
  * Конструкция `as const satisfies Record<SizePreset, TextSizePreset>` закрепляет
  * readonly-типы и гарантирует, что значение задано для каждого размера ряда.
- * Значения заморожены `Object.freeze`: попытка изменить их в рантайме
- * бросит ошибку в месте записи.
  */
 export const textSize = Object.freeze({
   small: 'medium',

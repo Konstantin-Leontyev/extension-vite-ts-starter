@@ -114,9 +114,6 @@ export type SpacingProps = { [K in keyof typeof SPACING_PROPERTIES]?: SpacingVal
  * `shouldForwardProp` в корневом `Styled*` использует `LAYOUT_PROP_NAMES`,
  * а `splitLayoutProps` по этому же набору отделяет layout-пропсы от остальных,
  * например для обёртки Input и самого элемента `<input>`.
- *
- * Создаётся из `Object.keys(SPACING_PROPERTIES)`, чтобы при добавлении нового свойства
- * не требовалось обновлять список вручную.
  */
 export const SPACING_PROPERTY_NAMES = new Set<string>(Object.keys(SPACING_PROPERTIES));
 

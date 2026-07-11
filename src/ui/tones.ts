@@ -35,10 +35,8 @@ export type TonePreset = 'danger' | 'default' | 'primary' | 'success' | 'warning
  *  - `primary` — акцентный цвет
  *
  * Ключи задают тип `TonePreset`. Соответствие экспортируется для расширения
- * спредом в `@ui/text` и `@ui/fieldset` и заморожено `Object.freeze`:
- * `as const` закрепляет readonly-типы на этапе компиляции, заморозка защищает
- * рантайм — попытка изменить значение бросит ошибку в месте записи.
- * Чтение цвета — через `getToneKey` и `getToneColor`.
+ * спредом в `@ui/text` и `@ui/fieldset`, чтение цвета — через `getToneKey`
+ * и `getToneColor`.
  */
 export const TONE_PRESETS = Object.freeze({
   danger: 'danger',
@@ -57,8 +55,6 @@ export const DEFAULT_TONE: TonePreset = 'default';
 /**
  * TONE_PRESET_KEYS — формирует перечень канонических тонов из ключей `TONE_PRESETS`.
  * Используется в опциях витрины дизайн-системы.
- * Создаётся из `Object.keys(TONE_PRESETS)`, чтобы при добавлении нового тона
- * не требовалось обновлять перечень вручную.
  */
 export const TONE_PRESET_KEYS = Object.keys(TONE_PRESETS) as TonePreset[];
 

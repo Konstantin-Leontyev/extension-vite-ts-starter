@@ -183,9 +183,6 @@ const POSITIONING_PROPERTIES = {
  * не должен передавать их на HTML-узел.
  * `shouldForwardProp` в корневом `Styled*` использует `LAYOUT_PROP_NAMES`,
  * а `splitLayoutProps` по этому же набору отделяет layout-пропсы от остальных.
- *
- * Создаётся из `Object.keys(POSITIONING_PROPERTIES)`, чтобы при добавлении нового свойства
- * не требовалось обновлять список вручную.
  */
 export const POSITIONING_PROPERTY_NAMES = new Set<string>(
   Object.keys(POSITIONING_PROPERTIES)

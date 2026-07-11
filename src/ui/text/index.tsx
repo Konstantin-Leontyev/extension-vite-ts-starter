@@ -1,21 +1,23 @@
 /**
- * Файл: index.tsx
- * Это точка входа для компонента Text и его публичного API.
- * Предоставляет компонент для отображения текста с поддержкой:
- * - типографических пресетов (sizePreset — TextSizePreset)
- * - семантических тонов (tone — TextTone)
- * - layout-свойств (отступы, позиционирование, размеры)
- * - переопределения корневого элемента через as-проп
+ * Файл: `src/ui/text/index.tsx`
+ * Предоставляет компонент Text для отображения текста.
+ * Поддерживает:
+ *  - layout-пропсы: отступы, позиционирование, размеры
+ *  - размерный ряд через проп `sizePreset`
+ *  - семантический тон через проп `tone`
+ *  - переопределение корневого элемента через проп `as`
  *
  * Основные задачи:
- * 1. Экспортировать компонент Text для использования в приложении
- * 2. Реэкспортировать типы и пресеты (TEXT_TONE_KEYS, textSizePresets) для
- *    контролов, ДС и утилит (@ui/presets, column-sizing)
- * 3. Обеспечить типизацию с поддержкой as-пропа (полиморфный компонент)
+ * 1. Экспортировать полиморфный компонент Text
+ * 2. Типизировать пропсы через `TextProps`
+ * 3. Реэкспортировать публичное API стилей: `TEXT_TONE_KEYS`, `textSizePresets`,
+ *    `getTextProperties`, `getTextToneKey`, `getTextToneColor` и типы
  *
- * Типичное использование в kit: `Text` внутри контрола (Button, Tag, …) — тон
- * задаётся через проп `textTone` родительского компонента, который пробрасывает
- * его в `Text` как `tone`; размер текста контрола — через `getTextSize` из `@ui/presets`.
+ * Потребители:
+ *  - контролы, например Button, Tag и Listbox — рендерят текст внутри себя
+ *  - страницы и виджеты приложения — рендерят подписи, заголовки и лейблы
+ *  - `@ui/presets` и `@ui/table/column-sizing` — используют реэкспорты типографики
+ *  - `src/pages/design-system` — демонстрирует состояния в витрине
  */
 
 import { createElement, type ComponentPropsWithRef, type ElementType } from 'react';
@@ -33,14 +35,13 @@ import {
 } from './text.styles';
 
 /**
- * TextProps — тип пропсов компонента Text.
- * Поддерживает все пропсы из TextStyleProps (размер, тон, layout, стили)
- * и стандартные атрибуты DOM-элемента через ComponentPropsWithRef.
+ * TextProps — представляет пропсы компонента Text.
  *
- * @template T — тип корневого элемента (по умолчанию 'span')
+ * @template T — тип корневого элемента, по умолчанию `span`
  *
- * @property as — переопределяет корневой HTML-тег (например, 'p', 'div', 'h1')
- * Остальные пропсы — из TextStyleProps и нативных атрибутов элемента
+ * @property as — переопределяет корневой HTML-тег, например `<p>`, `<div>`, `<h1>`
+ *
+ * Остальные пропсы — из `TextStyleProps` и нативных атрибутов элемента.
  */
 type TextProps<T extends ElementType = 'span'> = {
   as?: T;
@@ -48,15 +49,15 @@ type TextProps<T extends ElementType = 'span'> = {
   Omit<ComponentPropsWithRef<T>, keyof TextStyleProps | 'className' | 'style'>;
 
 /**
- * Text — основной компонент для отображения текста.
- * Использует StyledText из text.styles.ts и поддерживает все его пропсы.
+ * Text — отображает текст с типографикой и тоном из темы.
+ * Рендерит `StyledText` и поддерживает все его пропсы.
  *
  * @example
- * // Прямой call site (подписи, заголовки, muted-лейблы)
+ * // Прямое использование: подписи, заголовки, muted-лейблы
  * <Text>Обычный текст</Text>
  * <Text as="h1" sizePreset="bold" tone="primary">Заголовок</Text>
  * <Text as="label" sizePreset="medium" tone="muted">Подпись поля</Text>
- * // Внутри контрола — через пропы родителя, не tone на Text снаружи:
+ * // Внутри контрола — через пропсы родителя, не tone на Text снаружи:
  * <Button textTone="primary" sizePreset="large">Сохранить</Button>
  */
 export function Text<T extends ElementType = 'span'>(props: TextProps<T>) {

@@ -1,16 +1,19 @@
 /**
  * Файл: `src/ui/toast/index.tsx`
- * Точка входа для компонента Toast и его публичного API.
- * Предоставляет компонент для отображения уведомлений с поддержкой:
- * - размерного ряда (`sizePreset` — из канона `@ui/presets`)
- * - семантического тона (`tone` — акцентная полоса слева, не заливка)
+ * Предоставляет компонент Toast для отображения уведомлений.
+ * Поддерживает:
+ *  - layout-пропсы: отступы, позиционирование, размеры
+ *  - размерный ряд через проп `sizePreset`
+ *  - семантический тон через проп `tone`
  *
  * Основные задачи:
- * 1. Экспортировать компонент Toast для использования в приложении
- * 2. Обеспечить типизацию пропсов
- * 3. Автоматически выставлять `role`/`aria-live` в зависимости от `tone` (`danger` → `alert`)
+ * 1. Экспортировать компонент Toast
+ * 2. Типизировать пропсы через `ToastProps`
+ * 3. Выставлять `role` и `aria-live` по тону: для `danger` — `alert` и `assertive`
  *
- * Потребители: страницы и виджеты приложения, витрина design-system.
+ * Потребители:
+ *  - `src/context/toast/index.tsx` — рендерит Toast в стеке уведомлений
+ *  - `src/pages/design-system` — демонстрирует состояния в витрине
  */
 
 import { type ComponentPropsWithRef } from 'react';
@@ -20,12 +23,11 @@ import { Text } from '@ui/text';
 import { StyledToast, getToastTextSize, type ToastStyleProps } from './toast.styles';
 
 /**
- * ToastProps — пропсы компонента Toast.
+ * ToastProps — представляет пропсы компонента Toast.
  *
- * @property message — текст уведомления. Рендерится во внутреннем Text
+ * @property message — текст уведомления
  *
- * Остальные оси — из `ToastStyleProps` и нативных атрибутов `<div>`.
- * `tone === 'danger'` задаёт `role="alert"` и `aria-live="assertive"` на корне.
+ * Остальные пропсы — из `ToastStyleProps` и нативных атрибутов элемента.
  */
 type ToastProps = ToastStyleProps & {
   message: string;
@@ -35,10 +37,8 @@ type ToastProps = ToastStyleProps & {
   >;
 
 /**
- * Toast — компонент для отображения уведомлений.
- * `tone` определяет акцентную полосу слева (не заливку).
- * Layout-пропы и оси вида идут на один корень — `StyledToast` потребляет layout
- * через `getLayoutStyles` и фильтрует их из DOM (`shouldForwardProp`); split не нужен.
+ * Toast — отображает уведомление.
+ * Рендерит `StyledToast` с внутренним Text.
  *
  * @example
  * <Toast message="Успешно сохранено" />

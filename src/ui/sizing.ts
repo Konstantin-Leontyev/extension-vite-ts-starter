@@ -49,8 +49,6 @@ export type SizingProps = {
  * Соответствие приватно для модуля, снаружи имена пропсов доступны через `SIZING_PROPERTY_NAMES`.
  * Конструкция `as const satisfies Record<keyof SizingProps, string>` закрепляет
  * readonly-типы и гарантирует, что заданы все ключи `SizingProps` и только они.
- * Значения заморожены `Object.freeze`: попытка изменить их в рантайме
- * бросит ошибку в месте записи.
  */
 const SIZING_PROPERTIES = Object.freeze({
   inlineSize: 'inline-size',
@@ -70,9 +68,6 @@ const SIZING_PROPERTIES = Object.freeze({
  * не должен передавать их на HTML-узел.
  * `shouldForwardProp` в корневом `Styled*` использует `LAYOUT_PROP_NAMES`,
  * а `splitLayoutProps` по этому же набору отделяет layout-пропсы от остальных.
- *
- * Создаётся из `Object.keys(SIZING_PROPERTIES)`, чтобы при добавлении нового свойства
- * не требовалось обновлять список вручную.
  */
 export const SIZING_PROPERTY_NAMES = new Set<string>(Object.keys(SIZING_PROPERTIES));
 
