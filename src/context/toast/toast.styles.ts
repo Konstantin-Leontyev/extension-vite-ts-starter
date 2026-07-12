@@ -1,14 +1,13 @@
 /**
- * Файл: context/toast/toast.styles.ts
- * Стили для вьюпорта тостов — контейнера, в котором отображаются уведомления.
+ * Файл: `src/context/toast/toast.styles.ts`
+ * Определяет внешний вид контейнера уведомлений
+ * в правом верхнем углу.
  *
  * Основные задачи:
- * 1. Закрепить вьюпорт в правом верхнем углу поверх всех слоёв (z-index: 2100)
- * 2. Выровнять тосты по вертикали на уровне шапки (HEADER_BLOCK_SIZE)
- * 3. Обеспечить кликабельность тостов при отключенных событиях контейнера
- * 4. Ограничить ширину тостов для комфортного чтения
+ * 1. Предоставить styled-узел `StyledToastViewport`
  *
- * Потребители: `ToastProvider` для портала тостов.
+ * Потребители:
+ *  - `src/context/toast/index.tsx` — рендерит уведомления в портале внутри `StyledToastViewport`
  */
 
 import styled from 'styled-components';
@@ -17,10 +16,13 @@ import { HEADER_BLOCK_SIZE } from '@components/header/header.styles';
 import { getSpacingValue } from '@ui/spacing';
 
 /**
- * StyledToastViewport — контейнер для тостов, закреплён в правом верхнем углу.
- * Высота совпадает с шапкой (`HEADER_BLOCK_SIZE`), чтобы тост перекрывал кнопки шапки.
- * `pointer-events: none` на контейнере не мешает кликам по странице. Сами тосты
- * возвращают `pointer-events: auto`, чтобы клик по тосту закрывал его.
+ * StyledToastViewport — задаёт контейнер уведомлений.
+ *
+ * Встроенные стили:
+ *  - `position: fixed` в правом верхнем углу — уведомления поверх страницы
+ *  - `z-index: 2100` — поверх всех слоёв приложения
+ *  - `block-size` из `HEADER_BLOCK_SIZE` — уведомление перекрывает кнопки шапки
+ *  - `pointer-events: none` — контейнер не перехватывает клики по странице
  */
 export const StyledToastViewport = styled.div`
   position: fixed;
@@ -35,9 +37,11 @@ export const StyledToastViewport = styled.div`
   pointer-events: none;
 
   /*
-   * Ширина тоста задаётся родителем. Фиксированная комфортная ширина в углу.
-   * Клик по тосту закрывает его.
+   * Уведомления ограничены по ширине для комфортного чтения.
+   * pointer-events: auto снова включает клики, отключённые на контейнере,
+   * чтобы клик по уведомлению закрывал его.
    */
+
   > * {
     inline-size: min(24rem, calc(100vw - ${getSpacingValue(32)}));
     pointer-events: auto;

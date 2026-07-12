@@ -1,15 +1,17 @@
 /**
- * Файл: context/theme/index.tsx
- * Провайдер темы для приложения.
- * Управляет состоянием темы, синхронизирует с localStorage и подключает styled-components.
+ * Файл: `src/context/theme/index.tsx`
+ * Предоставляет компонент ThemeProvider для управления темой приложения.
+ * Хранит выбранный режим темы и передаёт его в styled-components.
  *
  * Основные задачи:
- * 1. Хранить текущий режим темы в состоянии
- * 2. Сохранять выбор темы в localStorage (переживает перезагрузку)
- * 3. Подключать глобальные стили (GlobalResetStyle + GlobalThemeStyle)
- * 4. Предоставлять API для переключения темы через контекст
+ * 1. Экспортировать компонент ThemeProvider
+ * 2. Типизировать пропсы через `ThemeProviderProps`
+ * 3. Сохранять выбор темы в `localStorage`, чтобы он переживал перезагрузку
+ * 4. Подключать глобальные стили: сначала `GlobalResetStyle`, затем `GlobalThemeStyle`
+ * 5. Предоставлять API переключения темы через `ThemeContext`
  *
- * Потребители: корень приложения (`main.tsx`).
+ * Потребители:
+ *  - `src/main.tsx` — оборачивает приложение провайдером
  */
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
@@ -26,7 +28,7 @@ import {
 import { ThemeContext, type ThemeContextValue, type ThemeMode } from './context';
 
 /**
- * ThemeProviderProps — пропсы компонента ThemeProvider.
+ * ThemeProviderProps — представляет пропсы компонента ThemeProvider.
  *
  * @property children — дочерние элементы приложения
  */
@@ -34,14 +36,14 @@ type ThemeProviderProps = {
   children: ReactNode;
 };
 
-/** THEME_STORAGE_KEY — ключ для сохранения выбранной темы в localStorage. */
+/** THEME_STORAGE_KEY — задаёт ключ для сохранения выбранной темы в `localStorage`. */
 const THEME_STORAGE_KEY = 'app-theme';
 
 /**
- * readStoredMode — читает сохранённую тему из localStorage.
+ * readStoredMode — возвращает сохранённый режим темы из `localStorage`.
  * При отсутствии значения или некорректном формате возвращает светлую тему.
  *
- * @returns сохранённый режим темы или 'light'
+ * @returns сохранённый режим темы или `light`
  */
 function readStoredMode(): ThemeMode {
   if (typeof window === 'undefined') {
@@ -54,9 +56,7 @@ function readStoredMode(): ThemeMode {
 }
 
 /**
- * ThemeProvider — провайдер темы для всего приложения.
- * Оборачивает приложение, предоставляет доступ к теме через контекст
- * и подключает глобальные стили.
+ * ThemeProvider — оборачивает приложение контекстом темы.
  *
  * @example
  * <ThemeProvider>
@@ -66,7 +66,7 @@ function readStoredMode(): ThemeMode {
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [mode, setMode] = useState<ThemeMode>(readStoredMode);
 
-  /* Сохраняем выбор темы — побочный эффект без влияния на разметку. */
+  // Сохраняет выбор темы — побочный эффект без влияния на разметку
   useEffect(() => {
     window.localStorage.setItem(THEME_STORAGE_KEY, mode);
   }, [mode]);

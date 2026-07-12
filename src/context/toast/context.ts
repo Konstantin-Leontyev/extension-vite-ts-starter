@@ -1,15 +1,16 @@
 /**
- * Файл: context/toast/context.ts
- * Контекст для управления тостами в приложении.
+ * Файл: `src/context/toast/context.ts`
+ * Определяет контекст для уведомлений приложения.
  * Предоставляет единую точку входа для показа уведомлений из любого компонента.
  *
  * Основные задачи:
- * 1. Определить тип ToastInput — запрос на показ тоста
- * 2. Определить тип ToastContextValue — API для показа тоста
- * 3. Предоставить контекст ToastContext
+ * 1. Типизировать параметры показа уведомления через `ToastInput`
+ * 2. Типизировать API показа уведомления через `ToastContextValue`
+ * 3. Предоставить контекст `ToastContext`
  *
- * Потребители: компоненты приложения через `useToast()` хук,
- * `ToastProvider` в корне приложения.
+ * Потребители:
+ *  - `src/context/toast/index.tsx` — наполняет контекст в `ToastProvider`
+ *  - `src/hooks/use-toast.ts` — читает контекст в хуке `useToast`
  */
 
 import { createContext } from 'react';
@@ -18,11 +19,11 @@ import { type SizePreset } from '@ui/presets';
 import { type TonePreset } from '@ui/tones';
 
 /**
- * ToastInput — запрос на показ тоста.
+ * ToastInput — представляет параметры уведомления.
  *
  * @property message — текст уведомления
- * @property sizePreset — размер тоста (из канона `SizePreset`)
- * @property tone — семантический тон (`default` — нейтральный)
+ * @property sizePreset — размер уведомления
+ * @property tone — семантический тон
  */
 export type ToastInput = {
   message: string;
@@ -31,16 +32,16 @@ export type ToastInput = {
 };
 
 /**
- * ToastContextValue — API контекста тостов.
+ * ToastContextValue — представляет API контекста уведомлений.
  *
- * @property showToast — функция для показа уведомления
+ * @property showToast — показывает уведомление
  */
 export type ToastContextValue = {
   showToast: (toast: ToastInput) => void;
 };
 
 /**
- * ToastContext — контекст для доступа к API показа тостов.
- * Используется через хук-обёртку, проверяющую наличие провайдера.
+ * ToastContext — предоставляет доступ к API показа уведомлений.
+ * Читается через хук `useToast`, который проверяет наличие провайдера.
  */
 export const ToastContext = createContext<ToastContextValue | null>(null);

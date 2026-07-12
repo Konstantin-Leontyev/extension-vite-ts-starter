@@ -1,26 +1,27 @@
 /**
- * Файл: context/theme/context.ts
- * Контекст для управления темой приложения (светлая/тёмная).
+ * Файл: `src/context/theme/context.ts`
+ * Определяет контекст темы приложения.
  *
  * Основные задачи:
- * 1. Определить тип ThemeMode — режим темы
- * 2. Определить тип ThemeContextValue — API для чтения и переключения темы
- * 3. Предоставить контекст ThemeContext
+ * 1. Типизировать режим темы через `ThemeMode`
+ * 2. Типизировать API чтения и переключения темы через `ThemeContextValue`
+ * 3. Предоставить контекст `ThemeContext`
  *
- * Потребители: компоненты приложения через хук-обёртку,
- * ThemeProvider в корне приложения.
+ * Потребители:
+ *  - `src/context/theme/index.tsx` — наполняет контекст в `ThemeProvider`
+ *  - `src/hooks/use-theme-mode.ts` — читает контекст в хуке `useThemeMode`
  */
 
 import { createContext } from 'react';
 
-/** ThemeMode — режим темы (светлая или тёмная). */
+/** ThemeMode — представляет режим темы. */
 export type ThemeMode = 'dark' | 'light';
 
 /**
- * ThemeContextValue — API контекста темы.
+ * ThemeContextValue — представляет API контекста темы.
  *
  * @property mode — текущий режим темы
- * @property onThemeChange — функция переключения темы
+ * @property onThemeChange — переключает режим темы
  */
 export type ThemeContextValue = {
   mode: ThemeMode;
@@ -28,7 +29,7 @@ export type ThemeContextValue = {
 };
 
 /**
- * ThemeContext — контекст для доступа к текущей теме и переключения.
- * Используется через хук-обёртку, проверяющую наличие провайдера.
+ * ThemeContext — предоставляет доступ к API чтения и переключения темы.
+ * Читается через хук `useThemeMode`, который проверяет наличие провайдера.
  */
 export const ThemeContext = createContext<ThemeContextValue | null>(null);

@@ -1,16 +1,19 @@
 /**
- * Файл: context/toast/index.tsx
- * Провайдер тостов для приложения.
- * Управляет очередью активных тостов, автоскрытием и закрытием по клику/Esc.
+ * Файл: `src/context/toast/index.tsx`
+ * Предоставляет компонент ToastProvider для показа уведомлений.
+ * Управляет очередью активных уведомлений, автоскрытием и закрытием
+ * по клику и по Escape.
  *
  * Основные задачи:
- * 1. Хранить список активных тостов в состоянии
- * 2. Предоставлять метод showToast для добавления нового тоста
- * 3. Автоматически скрывать тосты через TOAST_DURATION_MS
- * 4. Закрывать все тосты по Escape
- * 5. Рендерить тосты в портале поверх всех слоёв
+ * 1. Экспортировать компонент ToastProvider
+ * 2. Типизировать пропсы через `ToastProviderProps`
+ * 3. Предоставлять метод `showToast` через `ToastContext`
+ * 4. Автоматически скрывать уведомления через `TOAST_DURATION_MS`
+ * 5. Закрывать все уведомления по Escape
+ * 6. Рендерить уведомления в портале поверх всех слоёв
  *
- * Потребители: корень приложения (`main.tsx`).
+ * Потребители:
+ *  - `src/main.tsx` — оборачивает приложение провайдером
  */
 
 import {
@@ -28,14 +31,14 @@ import { Toast } from '@ui/toast';
 import { ToastContext, type ToastContextValue, type ToastInput } from './context';
 import { StyledToastViewport } from './toast.styles';
 
-/** TOAST_DURATION_MS — время автоскрытия тоста (5 секунд). */
+/** TOAST_DURATION_MS — задаёт время автоскрытия уведомления. */
 const TOAST_DURATION_MS = 5000;
 
-/** ActiveToast — активный тост с уникальным идентификатором. */
+/** ActiveToast — представляет активное уведомление с уникальным идентификатором. */
 type ActiveToast = ToastInput & { id: string };
 
 /**
- * ToastProviderProps — пропсы компонента ToastProvider.
+ * ToastProviderProps — представляет пропсы компонента ToastProvider.
  *
  * @property children — дочерние элементы приложения
  */
@@ -44,8 +47,7 @@ type ToastProviderProps = {
 };
 
 /**
- * ToastProvider — провайдер контекста тостов.
- * Оборачивает приложение и управляет отображением уведомлений.
+ * ToastProvider — оборачивает приложение контекстом показа уведомлений.
  *
  * @example
  * <ToastProvider>
@@ -57,10 +59,10 @@ export function ToastProvider({ children }: ToastProviderProps) {
   const timersRef = useRef<Map<string, number>>(new Map());
 
   /**
-   * dismiss — закрывает тост по id.
-   * Удаляет тост из состояния и очищает таймер автоскрытия.
+   * dismiss — закрывает уведомление по id.
+   * Удаляет уведомление из состояния и очищает таймер автоскрытия.
    *
-   * @param id — идентификатор тоста
+   * @param id — идентификатор уведомления
    */
   const dismiss = useCallback((id: string): void => {
     setToasts((current) => current.filter((toast) => toast.id !== id));
@@ -74,10 +76,10 @@ export function ToastProvider({ children }: ToastProviderProps) {
   }, []);
 
   /**
-   * showToast — добавляет новый тост в очередь.
+   * showToast — добавляет новое уведомление в очередь.
    * Генерирует уникальный id, добавляет в состояние и запускает таймер автоскрытия.
    *
-   * @param input — параметры тоста (сообщение, размер, тон)
+   * @param input — параметры уведомления
    */
   const showToast = useCallback(
     (input: ToastInput): void => {
@@ -91,9 +93,9 @@ export function ToastProvider({ children }: ToastProviderProps) {
   );
 
   /**
-   * Клавиатурная альтернатива клику: Esc закрывает всю стопку.
-   * Без preventDefault — другие Esc-обработчики страницы продолжают работать.
-   * Срабатывает только при наличии тостов.
+   * Клавиатурная альтернатива клику: `Escape` закрывает всю стопку.
+   * Без `preventDefault` — другие обработчики `Escape` на странице продолжают работать.
+   * Срабатывает только при наличии уведомлений.
    */
   useEffect(() => {
     const timers = timersRef.current;
