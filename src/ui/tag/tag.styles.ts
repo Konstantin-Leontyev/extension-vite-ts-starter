@@ -260,8 +260,6 @@ export function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string
 export const StyledTag = styled.span.withConfig({
   shouldForwardProp: (prop) => !TAG_PROP_NAMES.has(prop),
 })<TagStyleProps>`
-  /* flex (не grid): инлайн-ряд [точка?] + текст по центру, как у Button. Текст
-     сжимается с ellipsis, grid с auto-треком тянул бы трек к max-content. */
   display: inline-flex;
   gap: ${getSpacingValue(4)};
   align-items: center;
@@ -277,6 +275,8 @@ export const StyledTag = styled.span.withConfig({
  *
  * Встроенные стили:
  *  - `flex-shrink: 0` — точка не сжимается при нехватке места
+ *  - `inline-size` и `block-size: 0.5em` — единица `em` берёт размер
+ *    от `font-size` родителя `StyledTag`, точка — половина высоты шрифта
  *  - `border-radius: 50%` — круглая форма
  *
  * Генерация стилей:
@@ -286,8 +286,6 @@ export const StyledTagDot = styled.span.withConfig({
   shouldForwardProp: (prop) => !TAG_DOT_PROP_NAMES.has(prop),
 })<{ dotTone?: TonePreset }>`
   flex-shrink: 0;
-
-  /* Размер — 0.5em от наследованного font-size у StyledTag. */
   inline-size: 0.5em;
   block-size: 0.5em;
   background-color: ${(props) => getTagDotColor(getTheme(props), props.dotTone)};

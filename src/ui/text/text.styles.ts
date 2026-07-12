@@ -28,7 +28,7 @@ import { TONE_PRESETS, type TonePreset } from '@ui/tones';
  * TEXT_TONE_PRESETS — связывает тоны текста с ключами цвета в теме.
  * Расширяет канон `TONE_PRESETS` спредом, добавляя тон `muted` для вторичного текста.
  *
- * Соответствие приватно для модуля, снаружи тона доступны только через `getTextToneKey`,
+ * Соответствие приватно для модуля, доступ к тонам — только через `getTextToneKey`,
  * `getTextToneColor` и перечень `TEXT_TONE_KEYS`.
  */
 const TEXT_TONE_PRESETS = Object.freeze({
@@ -107,6 +107,7 @@ export type TextSizePreset = keyof typeof textSizePresets;
 
 /**
  * TextStyleProps — представляет пропсы стилизации текста и layout-пропсы.
+ * Без `color` и `tone` цвет наследуется от родителя.
  *
  * @property align — выравнивание текста
  * @property color — прямое переопределение цвета, приоритетнее `tone`
@@ -117,8 +118,6 @@ export type TextSizePreset = keyof typeof textSizePresets;
  * @property sizePreset — типографический пресет
  * @property tone — цвет текста из темы
  * @property whiteSpace — управление переносами
- *
- * Без `color` и `tone` цвет наследуется от родителя.
  */
 export type TextStyleProps = LayoutProps & {
   align?: CSSProperties['textAlign'];

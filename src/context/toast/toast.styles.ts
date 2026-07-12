@@ -23,6 +23,9 @@ import { getSpacingValue } from '@ui/spacing';
  *  - `z-index: 2100` — поверх всех слоёв приложения
  *  - `block-size` из `HEADER_BLOCK_SIZE` — уведомление перекрывает кнопки шапки
  *  - `pointer-events: none` — контейнер не перехватывает клики по странице
+ *  - `inline-size` дочерних уведомлений ограничена — для комфортного чтения
+ *  - `pointer-events: auto` на дочерних — снова включает клики, отключённые
+ *    на контейнере, чтобы клик по уведомлению закрывал его
  */
 export const StyledToastViewport = styled.div`
   position: fixed;
@@ -35,12 +38,6 @@ export const StyledToastViewport = styled.div`
   justify-items: end;
   block-size: ${HEADER_BLOCK_SIZE};
   pointer-events: none;
-
-  /*
-   * Уведомления ограничены по ширине для комфортного чтения.
-   * pointer-events: auto снова включает клики, отключённые на контейнере,
-   * чтобы клик по уведомлению закрывал его.
-   */
 
   > * {
     inline-size: min(24rem, calc(100vw - ${getSpacingValue(32)}));

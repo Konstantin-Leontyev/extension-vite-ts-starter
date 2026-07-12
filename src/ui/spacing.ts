@@ -6,7 +6,7 @@
  *
  * Основные задачи:
  * 1. Хранить шкалу px → rem в `SPACING_VALUES`
- * 2. Типизировать spacing-пропсы: `SpacingProps` и `SpacingValue`
+ * 2. Типизировать spacing-пропсы через `SpacingProps` и `SpacingValue`
  * 3. Генерировать CSS-правила через `getSpacingStyles` и значения шкалы через `getSpacingValue`
  *
  * Потребители:
@@ -24,7 +24,7 @@
  *    например `<Card padding={16} />`.
  *  - Значение — CSS-длина в rem, например `0.25rem`, `1rem`.
  *
- * rem - относительная единица, которая зависит от размера шрифта
+ * rem — относительная единица, которая зависит от размера шрифта
  * корневого элемента `<html>` и позволяет сделать дизайн адаптивным.
  *
  * Шкала при root 16px:
@@ -32,8 +32,7 @@
  *  - 24–40: шаг 4px
  *  - от 48: шаг 8px
  *
- * Таблица приватна для модуля, снаружи значения доступны только через `getSpacingValue`.
- * А `as const` закрепляет для TypeScript, что значения и ключи строго фиксированы.
+ * Таблица приватна для модуля, доступ к отступам — только через `getSpacingValue`.
  */
 // prettier-ignore
 const SPACING_VALUES = {
@@ -95,12 +94,11 @@ const SPACING_PROPERTIES = {
 /**
  * SpacingProps — представляет пропсы отступов.
  * Имена свойств берутся из `SPACING_PROPERTIES`, значения из `SpacingValue`.
+ * Используется в `LayoutProps` для всех компонентов, поддерживающих отступы.
  *
  * Пример: `{ margin: 16, paddingBlock: 8 }`.
  * TypeScript проверит, что `16` и `8` есть в `SPACING_VALUES`, а имена пропсов
  * `margin` и `paddingBlock` существуют в `SPACING_PROPERTIES`.
- *
- * Используется в `LayoutProps` для всех компонентов, поддерживающих отступы.
  */
 export type SpacingProps = { [K in keyof typeof SPACING_PROPERTIES]?: SpacingValue };
 
@@ -120,7 +118,7 @@ export const SPACING_PROPERTY_NAMES = new Set<string>(Object.keys(SPACING_PROPER
 /**
  * getSpacingValue — принимает метку шкалы и возвращает её значение в rem.
  *
- * @param value — один из допустимых ключей шкалы `SPACING_VALUES`
+ * @param value — метка шкалы отступов
  * @returns CSS-длина в rem, например `1rem`
  */
 export function getSpacingValue(value: SpacingValue): string {
@@ -137,8 +135,7 @@ export function getSpacingValue(value: SpacingValue): string {
  *    например `16`, преобразует в rem через `getSpacingValue` и формирует
  *    CSS-правило вида `margin: 1rem;`.
  * 3. Собирает такие правила в массив и склеивает через перенос строки.
- *
- * Результат подставляется в CSS-шаблон styled-компонента.
+ * 4. Отдаёт результат для подстановки в CSS-шаблон styled-компонента.
  *
  * @param props — объект со spacing-пропсами, например `{ margin: 16, padding: 8 }`
  * @returns CSS-правила, каждое с новой строки

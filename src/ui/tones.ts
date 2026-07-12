@@ -4,7 +4,7 @@
  * Тон задаёт цветовую роль без привязки к конкретным hex-значениям.
  *
  * Основные задачи:
- * 1. Определить тип `TonePreset`
+ * 1. Типизировать канонические тоны через `TonePreset`
  * 2. Связать тоны с ключами цвета через `TONE_PRESETS`
  * 3. Задать значение по умолчанию через `DEFAULT_TONE`
  * 4. Предоставить перечень тонов через `TONE_PRESET_KEYS`
@@ -27,7 +27,6 @@ export type TonePreset = 'danger' | 'default' | 'primary' | 'success' | 'warning
 
 /**
  * TONE_PRESETS — связывает канонические тона с ключами цвета в теме.
- * Значение `undefined` для тона по умолчанию означает отсутствие собственного цвета.
  *
  * Канон включает основные семантические роли:
  *  - `default` — нейтральный тон, цвет наследуется от родителя
@@ -62,7 +61,7 @@ export const TONE_PRESET_KEYS = Object.keys(TONE_PRESETS) as TonePreset[];
  * getToneKey — возвращает ключ цвета в теме для указанного тона.
  * Для тона по умолчанию возвращает `undefined`.
  *
- * @param tone — тон из канона
+ * @param tone — семантический тон
  * @returns ключ цвета темы или `undefined`
  */
 export function getToneKey(tone: TonePreset): keyof ThemeColors | undefined {
@@ -75,7 +74,7 @@ export function getToneKey(tone: TonePreset): keyof ThemeColors | undefined {
  * для тона по умолчанию — запасной цвет из `fallbackColor`.
  *
  * @param theme — текущая тема
- * @param tone — тон из канона
+ * @param tone — семантический тон
  * @param fallbackColor — цвет, который подставляется для тона по умолчанию
  * @returns цвет темы или `fallbackColor`
  */

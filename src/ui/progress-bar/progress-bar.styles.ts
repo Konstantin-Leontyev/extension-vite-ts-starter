@@ -117,15 +117,13 @@ export function getProgressBarFillStyles(
  * Базируется на `<div>` и поддерживает все пропсы из `ProgressBarStyleProps`.
  *
  * Встроенные стили:
- *  - `display: flex` — полоса и подпись в ряд
+ *  - `display: flex` — оправданное исключение из grid по умолчанию: подпись идёт
+ *    в потоке и не резервирует место, когда она не отображается
  *  - `align-items: center` — подпись по центру относительно полосы
  *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
  *
  * Генерация стилей:
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
- *
- * Оправданное исключение из grid по умолчанию: flex нужен, чтобы подпись шла
- * в потоке и не резервировала место, когда она не отображается.
  */
 export const StyledProgressBarRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !PROGRESS_BAR_PROP_NAMES.has(prop),

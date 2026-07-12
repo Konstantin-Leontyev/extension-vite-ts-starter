@@ -7,7 +7,7 @@
  *
  * Основные задачи:
  * 1. Реэкспортировать API из `@ui/spacing`, `@ui/sizing` и `@ui/positioning`
- * 2. Определить объединённый тип `LayoutProps`
+ * 2. Типизировать layout-пропсы через `LayoutProps`
  * 3. Объединить имена всех layout-пропсов в `LAYOUT_PROP_NAMES`
  * 4. Предоставить `getLayoutStyles` для генерации всех layout-правил
  * 5. Предоставить `splitLayoutProps` для разделения пропсов
@@ -51,18 +51,17 @@ export { SIZING_PROPERTY_NAMES, getSizingStyles, type SizingProps } from '@ui/si
 
 /**
  * LayoutProps — представляет объединённый набор layout-пропсов элемента.
+ * Используется как основной тип для корневых компонентов с поддержкой layout.
+ *
  * Объединяет три категории:
  *  - `SpacingProps` — отступы
  *  - `PositioningProps` — позиционирование и раскладка
  *  - `SizingProps` — размеры
- *
- * Используется как основной тип для корневых компонентов с поддержкой layout.
  */
 export type LayoutProps = SpacingProps & PositioningProps & SizingProps;
 
 /**
  * LAYOUT_PROP_NAMES — объединяет имена всех layout-пропсов из трёх модулей.
- *
  * Используется в `shouldForwardProp`, чтобы не передавать layout-пропсы на DOM-узел,
  * и в `splitLayoutProps` для отделения layout-пропсов от остальных.
  */
@@ -79,8 +78,7 @@ export const LAYOUT_PROP_NAMES = new Set<string>([
  * 1. Вызывает `getSpacingStyles`, `getPositioningStyles` и `getSizingStyles`
  * 2. Отбрасывает пустые результаты
  * 3. Склеивает оставшиеся правила через перенос строки
- *
- * Результат подставляется в CSS-шаблон styled-компонента.
+ * 4. Отдаёт результат для подстановки в CSS-шаблон styled-компонента
  *
  * @param props — объект с layout-пропсами
  * @returns CSS-правила, каждое с новой строки
@@ -93,7 +91,6 @@ export function getLayoutStyles(props: LayoutProps): string {
 
 /**
  * splitLayoutProps — разделяет пропсы на layout и остальные.
- *
  * Используется в компонентах-обёртках, когда layout-стили нужно применить к корневому
  * элементу, а остальные пропсы передать в DOM-узел или дочерний компонент.
  *

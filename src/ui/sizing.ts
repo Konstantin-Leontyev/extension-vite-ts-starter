@@ -19,6 +19,7 @@
  * SizingProps — представляет пропсы размеров элемента.
  * Значения — произвольные CSS-значения, например `100%`, `max-content`, `min(360px, 50vh)`.
  * В отличие от `@ui/spacing`, размеры не ограничены фиксированной шкалой.
+ * Названия соответствуют логическим CSS-свойствам и зависят от направления письма.
  *
  * @property inlineSize — ширина
  * @property minInlineSize — минимальная ширина
@@ -26,8 +27,6 @@
  * @property blockSize — высота
  * @property minBlockSize — минимальная высота
  * @property maxBlockSize — максимальная высота
- *
- * Названия соответствуют логическим CSS-свойствам и зависят от направления письма.
  */
 export type SizingProps = {
   blockSize?: string;
@@ -46,7 +45,7 @@ export type SizingProps = {
  *  - Пропс `inlineSize` → CSS-свойство `inline-size`
  *  - Пропс `blockSize` → CSS-свойство `block-size`
  *
- * Соответствие приватно для модуля, снаружи имена пропсов доступны через `SIZING_PROPERTY_NAMES`.
+ * Соответствие приватно для модуля, доступ к именам пропсов — только через `SIZING_PROPERTY_NAMES`.
  */
 const SIZING_PROPERTIES = Object.freeze({
   inlineSize: 'inline-size',
@@ -79,8 +78,7 @@ export const SIZING_PROPERTY_NAMES = new Set<string>(Object.keys(SIZING_PROPERTI
  *    например `100%`, подставляет как есть и формирует CSS-правило вида
  *    `inline-size: 100%;`.
  * 3. Собирает такие правила в массив и склеивает через перенос строки.
- *
- * Результат подставляется в CSS-шаблон styled-компонента.
+ * 4. Отдаёт результат для подстановки в CSS-шаблон styled-компонента.
  *
  * @param props — объект с sizing-пропсами, например `{ inlineSize: '100%', blockSize: '100%' }`
  * @returns CSS-правила, каждое с новой строки

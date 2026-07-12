@@ -45,6 +45,9 @@ export type LayoutPosition = 'absolute' | 'fixed' | 'relative' | 'static' | 'sti
 
 /**
  * PositioningProps — представляет пропсы позиционирования и раскладки.
+ * Для inset-свойств допускаются `auto` или ключ из `SPACING_VALUES`.
+ * Для gap-свойств — только ключи из `SPACING_VALUES`.
+ * Для raw-свойств значения передаются как есть, без преобразования через `getSpacingValue`.
  *
  * @property display — тип отображения
  * @property position — тип позиционирования
@@ -69,10 +72,6 @@ export type LayoutPosition = 'absolute' | 'fixed' | 'relative' | 'static' | 'sti
  * @property rowGap — отступ между строками
  * @property columnGap — отступ между колонками
  * @property overflow — управление переполнением
- *
- * Для inset-свойств допускаются `auto` или ключ из `SPACING_VALUES`.
- * Для gap-свойств — только ключи из `SPACING_VALUES`.
- * Для raw-свойств значения передаются как есть, без преобразования через `getSpacingValue`.
  */
 export type PositioningProps = {
   alignItems?: CSSProperties['alignItems'];
@@ -129,13 +128,12 @@ type PositioningValueKind = 'inset' | 'raw' | 'spacing';
  *  - Пропс `gap` → CSS-свойство `gap`, категория `spacing`
  *
  * Порядок записей соответствует порядку генерации CSS-правил.
- * Внутри каждой логической группы шорткаты идут раньше своих лонгхендов:
+ * Внутри каждой логической группы шорткаты идут раньше своих лонгхендов —
+ * это важно, когда свойства могут переопределять друг друга:
  *  - `inset` → `top`, `right`, `bottom`, `left`
  *  - `gap` → `rowGap`, `columnGap`
  *
- * Это важно только для случаев, когда свойства могут переопределять друг друга.
- *
- * Соответствие приватно для модуля, снаружи имена пропсов доступны через `POSITIONING_PROPERTY_NAMES`.
+ * Соответствие приватно для модуля, доступ к именам пропсов — только через `POSITIONING_PROPERTY_NAMES`.
  */
 const POSITIONING_PROPERTIES = {
   display: ['display', 'raw'],
@@ -188,13 +186,12 @@ export const POSITIONING_PROPERTY_NAMES = new Set<string>(
 
 /**
  * resolvePropertyValue — преобразует значение пропса в правую часть CSS-декларации.
+ * Используется внутри `getPositioningStyles` для каждого переданного пропса.
  *
  * В зависимости от категории `kind`:
  *  - `raw` — возвращает значение как есть
  *  - `inset` — для `auto` возвращает `auto`, иначе преобразует через `getSpacingValue`
  *  - `spacing` — всегда преобразует через `getSpacingValue`
- *
- * Используется внутри `getPositioningStyles` для каждого переданного пропса.
  *
  * @param kind — категория значения: `raw`, `inset` или `spacing`
  * @param value — значение пропса
@@ -225,8 +222,7 @@ function resolvePropertyValue(
  * 2. Для каждого пропса проверяет, передан ли он в `props`. Переданное значение
  *    преобразует через `resolvePropertyValue` и формирует CSS-правило вида `display: flex;`.
  * 3. Собирает такие правила в массив и склеивает через перенос строки.
- *
- * Результат подставляется в CSS-шаблон styled-компонента.
+ * 4. Отдаёт результат для подстановки в CSS-шаблон styled-компонента.
  *
  * @param props — объект с positioning-пропсами, например `{ display: 'flex', gap: 16 }`
  * @returns CSS-правила, каждое с новой строки

@@ -1,12 +1,19 @@
 /**
- * Файл: pages/design-system/showcase-icon-options.tsx
- * Утилиты для работы с иконками в витрине дизайн-системы.
+ * Файл: `src/pages/design-system/showcase-icon-options.tsx`
+ * Определяет опции выбора иконок для витрины дизайн-системы.
  *
  * Основные задачи:
- * 1. Предоставить карту иконок для рендеринга
- * 2. Предоставить опции для Listbox (без иконки) и Combobox (с иконкой)
+ * 1. Связать ключи иконок с функциями рендеринга в `ICONS`
+ * 2. Типизировать ключи иконок через `IconKey`
+ * 3. Предоставить функции `formatIconLabel` и `getIcon`
+ * 4. Сформировать опции `LIST_OPTIONS` и `COMBOBOX_OPTIONS` для Listbox и Combobox
  *
- * Потребители: страницы дизайн-системы (настройки Button, RoundButton, Card, Combobox).
+ * Потребители:
+ *  - `src/pages/design-system/button-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
+ *  - `src/pages/design-system/round-button-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
+ *  - `src/pages/design-system/card-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
+ *  - `src/pages/design-system/combobox-settings/index.tsx` — использует `LIST_OPTIONS` для поля Value
+ *  - `src/pages/design-system/index.tsx` — подставляет иконки в превью Combobox
  */
 
 import { type ReactNode } from 'react';
@@ -26,10 +33,10 @@ import { type ComboboxOption } from '@ui/combobox';
 import { type ListboxOption } from '@ui/listbox';
 
 /**
- * ICONS — карта иконок по ключу.
- * Единственный источник истины для списка доступных иконок.
+ * ICONS — связывает ключи иконок с функциями рендеринга React-узлов.
+ * Соответствие приватно для модуля, доступ к иконкам — только через `getIcon`.
  */
-const ICONS = {
+const ICONS = Object.freeze({
   close: () => <CloseIcon />,
   'chevron-down': () => <ChevronDownIcon />,
   'chevron-up': () => <ChevronUpIcon />,
@@ -39,18 +46,18 @@ const ICONS = {
   search: () => <SearchIcon />,
   settings: () => <SettingsIcon />,
   'sign-out': () => <SignOutIcon />,
-} satisfies Record<string, () => ReactNode>;
+} satisfies Record<string, () => ReactNode>);
 
 /**
- * IconKey — доступные иконки для выбора в витрине ДС.
+ * IconKey — представляет доступные ключи иконок витрины дизайн-системы.
  */
 export type IconKey = keyof typeof ICONS;
 
 /**
- * formatIconLabel — форматирует ключ иконки в читаемый лейбл.
+ * formatIconLabel — преобразует ключ иконки в читаемую подпись.
  *
  * @param key — ключ иконки
- * @returns лейбл с заглавной буквы
+ * @returns подпись с заглавной первой буквой
  */
 export function formatIconLabel(key: IconKey): string {
   return key.charAt(0).toUpperCase() + key.slice(1);
@@ -67,9 +74,8 @@ export function getIcon(key: IconKey): ReactNode {
 }
 
 /**
- * LIST_OPTIONS — опции для Listbox: только подпись.
- * Используется в настройках Combobox (поле Value)
- * и в превью Combobox без иконок (`withIcon: false`) как `ComboboxOption[]`.
+ * LIST_OPTIONS — формирует опции Listbox с подписью без иконки из ключей `ICONS`.
+ * Используется в настройках Combobox для поля Value и в превью Combobox без иконок.
  */
 export const LIST_OPTIONS: ListboxOption[] = Object.keys(ICONS).map((key) => ({
   label: formatIconLabel(key as IconKey),
@@ -77,9 +83,9 @@ export const LIST_OPTIONS: ListboxOption[] = Object.keys(ICONS).map((key) => ({
 }));
 
 /**
- * COMBOBOX_OPTIONS — опции для Combobox: иконка + подпись.
- * Используется в пикере иконки (Button, RoundButton, Card)
- * и в превью Combobox с иконками (`withIcon: true`).
+ * COMBOBOX_OPTIONS — формирует опции Combobox с иконкой и подписью из ключей `ICONS`.
+ * Используется в выборе иконки в настройках Button, RoundButton и Card
+ * и в превью Combobox с иконками.
  */
 export const COMBOBOX_OPTIONS: ComboboxOption[] = Object.keys(ICONS).map((key) => ({
   icon: getIcon(key as IconKey),

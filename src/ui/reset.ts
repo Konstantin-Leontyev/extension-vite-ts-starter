@@ -20,13 +20,13 @@ import { DISABLED_OPACITY, getTheme } from '@ui/theme';
  * `createGlobalStyle` создаёт `<style>` в `<head>`, действующий на всё приложение.
  * `${normalize}` вставляет базовый сброс из styled-normalize,
  * последующие правила переопределяют и дополняют его.
- *
  * Подключается в `ThemeProvider` из `src/context/theme/index.tsx`:
  * сначала `GlobalResetStyle`, затем `GlobalThemeStyle` из `@ui/theme`.
  *
  * Устанавливает:
  *  - `box-sizing: border-box` для всех элементов
- *  - скроллбар с тонкой полосой и цветом бегунка из темы
+ *  - скроллбар через `scrollbar-width: thin` и `scrollbar-color` —
+ *    бегунок из темы, прозрачный трек
  *  - базовую сетку для `<body>` — grid-оболочка приложения: шапка и контент
  *  - сброс отступов у заголовков, параграфов, списков и удаление маркеров списков
  *  - блочное отображение мультимедиа: `<img>`, `<picture>`, `<video>`, `<canvas>`, `<svg>`
@@ -48,7 +48,6 @@ export const GlobalResetStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  /* Скроллбар: thin + scrollbar-color — бегунок из токена темы, прозрачный трек. */
   * {
     scrollbar-width: thin;
     scrollbar-color: ${(props) => getTheme(props).colors.scrollbarThumb} transparent;

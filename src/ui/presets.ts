@@ -6,7 +6,7 @@
  * и размера текста. Задаёт формы строки-поля для пропа `shape`.
  *
  * Основные задачи:
- * 1. Определить типы `SizePreset`, `ShapePreset` и `ControlPadding`
+ * 1. Типизировать пресеты через `SizePreset`, `ShapePreset` и `ControlPadding`
  * 2. Хранить канонические значения в `minBlockSize`, `padding` и `textSize`
  * 3. Задать значения по умолчанию через `DEFAULT_SIZE_PRESET` и `DEFAULT_SHAPE_PRESET`
  * 4. Предоставить геттеры `getMinBlockSize`, `getPadding`, `getPaddingInline`, `getPaddingBlock` и `getTextSize`
@@ -166,7 +166,7 @@ export function getTextSize(sizePreset: SizePreset): TextSizePreset {
  *  - `default` — `getSpacingValue(8)`, то есть `0.5rem`
  *
  * @param shape — форма компонента
- * @param minBlockSize — значение CSS-свойства `min-block-size` из `getMinBlockSize`
+ * @param minBlockSize — минимальная высота блока
  * @returns значение для CSS-свойства `border-radius`
  *
  * @example

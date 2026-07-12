@@ -5,7 +5,7 @@
  * и вспомогательные утилиты для работы с темой в styled-components.
  *
  * Основные задачи:
- * 1. Определить типы `ThemeColors` и `AppTheme`
+ * 1. Типизировать тему через `ThemeColors` и `AppTheme`
  * 2. Предоставить готовые объекты `styledLightTheme` и `styledDarkTheme`
  * 3. Обеспечить доступ к текущей теме через `getTheme`
  * 4. Задать глобальные стили через `GlobalThemeStyle`
@@ -150,9 +150,8 @@ export const styledDarkTheme: AppTheme = {
 
 /**
  * getTheme — возвращает текущую тему.
- *
- * Используется в CSS-шаблонах для доступа к значениям темы.
  * Оборачивает `props.theme`, чтобы избежать прямого обращения к свойству.
+ * Используется в CSS-шаблонах для доступа к значениям темы.
  *
  * @param props — объект с полем `theme` из styled-components
  * @returns текущая тема `AppTheme`
@@ -168,7 +167,6 @@ export function getTheme(props: { theme: AppTheme }): AppTheme {
 
 /**
  * GlobalThemeStyle — задаёт глобальные стили, зависящие от темы.
- *
  * Подключается в `ThemeProvider` из `src/context/theme/index.tsx`:
  * сначала `GlobalResetStyle` из `@ui/reset`, затем `GlobalThemeStyle`.
  *
