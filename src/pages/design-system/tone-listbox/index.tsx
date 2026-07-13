@@ -18,7 +18,7 @@
  *     - `src/pages/design-system/fieldset-settings/index.tsx`
  *     - `src/pages/design-system/toast-settings/index.tsx`
  *     - `src/pages/design-system/text-settings/index.tsx`
- *     - `src/pages/design-system/progress-settings/index.tsx`
+ *     - `src/pages/design-system/progress-bar-settings/index.tsx`
  *     - `src/pages/design-system/spinner-settings/index.tsx`
  *     - `src/pages/design-system/switch-settings/index.tsx`
  */
