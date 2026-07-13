@@ -13,7 +13,7 @@
  * Основные задачи:
  * 1. Экспортировать компонент Tag
  * 2. Типизировать пропсы через `TagProps`
- * 3. Реэкспортировать тип `TagSizePreset`
+ * 3. Реэкспортировать публичное API стилей: `TAG_SIZE_PRESET_KEYS` и тип `TagSizePreset`
  *
  * Потребители:
  *  - страницы и виджеты приложения — показывают статусы и метки
@@ -28,6 +28,7 @@ import { type TonePreset } from '@ui/tones';
 import {
   StyledTag,
   StyledTagDot,
+  TAG_SIZE_PRESET_KEYS,
   getTagTextSize,
   type TagSizePreset,
   type TagStyleProps,
@@ -76,4 +77,4 @@ export function Tag({
   );
 }
 
-export type { TagSizePreset };
+export { TAG_SIZE_PRESET_KEYS, type TagSizePreset };

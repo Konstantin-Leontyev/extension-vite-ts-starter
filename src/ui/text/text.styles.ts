@@ -106,6 +106,12 @@ export const textSizePresets = Object.freeze({
 export type TextSizePreset = keyof typeof textSizePresets;
 
 /**
+ * TEXT_SIZE_PRESET_KEYS — формирует перечень типографических пресетов из ключей `textSizePresets`.
+ * Используется в панелях настроек витрины design-system: `SizeListbox` принимает его пропом `sizes`.
+ */
+export const TEXT_SIZE_PRESET_KEYS = Object.keys(textSizePresets) as TextSizePreset[];
+
+/**
  * TextStyleProps — представляет пропсы стилизации текста и layout-пропсы.
  * Без `color` и `tone` цвет наследуется от родителя.
  *

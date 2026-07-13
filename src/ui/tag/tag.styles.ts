@@ -73,6 +73,12 @@ const tagBlockSize = Object.freeze({
 } as const satisfies Record<TagSizePreset, SpacingValue>);
 
 /**
+ * TAG_SIZE_PRESET_KEYS — формирует перечень размеров тега из ключей `tagBlockSize`.
+ * Используется в панелях настроек витрины design-system: `SizeListbox` принимает его пропом `sizes`.
+ */
+export const TAG_SIZE_PRESET_KEYS = Object.keys(tagBlockSize) as TagSizePreset[];
+
+/**
  * tagPaddingInline — хранит горизонтальные отступы тега для каждого размера ряда.
  * Ключи канона берёт из `padding` в `@ui/presets`, `tiny` задаёт локально.
  */

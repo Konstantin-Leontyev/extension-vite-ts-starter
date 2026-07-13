@@ -16,7 +16,7 @@
  *
  * Потребители:
  *  - контролы, например Button, Tag и Listbox — рендерят текст внутри себя
- *  - страницы и виджеты приложения — рендерят подписи, заголовки и лейблы
+ *  - страницы и виджеты приложения, например Home — рендерят подписи, заголовки и лейблы
  *  - `@ui/presets` и `@ui/table/column-sizing` — используют реэкспорты типографики
  *  - `src/pages/design-system` — демонстрирует состояния в витрине
  */
@@ -25,6 +25,7 @@ import { createElement, type ComponentPropsWithRef, type ElementType } from 'rea
 
 import {
   StyledText,
+  TEXT_SIZE_PRESET_KEYS,
   TEXT_TONE_KEYS,
   getTextProperties,
   getTextToneColor,
@@ -64,6 +65,7 @@ export function Text<T extends ElementType = 'span'>(props: TextProps<T>) {
 
 /* eslint-disable react-refresh/only-export-components -- публичные типы и пресеты */
 export {
+  TEXT_SIZE_PRESET_KEYS,
   TEXT_TONE_KEYS,
   getTextProperties,
   getTextToneColor,

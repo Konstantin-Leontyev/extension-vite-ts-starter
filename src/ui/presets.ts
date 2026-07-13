@@ -23,7 +23,8 @@
  *  - `@ui/button`, `@ui/input`, `@ui/tag`, `@ui/listbox`, `@ui/combobox`, `@ui/toast`, `@ui/fieldset` —
  *    задают размер через `sizePreset`
  *  - все `*.styles.ts` компонентов с пропом `sizePreset` — читают значения через геттеры
- *  - `src/pages/design-system/*-settings` — опции витрины дизайн-системы
+ *  - панели настроек витрины design-system — передают `SIZE_PRESET_KEYS` в `SizeListbox`
+ *    и `SHAPE_PRESET_KEYS` в `ShapeListbox`
  */
 
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
@@ -71,6 +72,15 @@ export const DEFAULT_SIZE_PRESET: SizePreset = 'large';
 export const DEFAULT_SHAPE_PRESET: ShapePreset = 'default';
 
 /**
+ * SHAPE_PRESET_KEYS — задаёт перечень канонических форм строки-поля.
+ * Используется в панелях настроек витрины design-system: `ShapeListbox` принимает его пропом `shapes`.
+ */
+export const SHAPE_PRESET_KEYS = [
+  'default',
+  'round',
+] as const satisfies readonly ShapePreset[];
+
+/**
  * minBlockSize — хранит минимальную высоту бокса для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
  * При смене размера высота строки текста и отступы масштабируются синхронно.
@@ -80,6 +90,12 @@ export const minBlockSize = Object.freeze({
   medium: 40,
   large: 48,
 } as const satisfies Record<SizePreset, SpacingValue>);
+
+/**
+ * SIZE_PRESET_KEYS — формирует перечень канонических размеров из ключей `minBlockSize`.
+ * Используется в панелях настроек витрины design-system: `SizeListbox` принимает его пропом `sizes`.
+ */
+export const SIZE_PRESET_KEYS = Object.keys(minBlockSize) as SizePreset[];
 
 /**
  * padding — хранит внутренние отступы для каждого размера ряда.
