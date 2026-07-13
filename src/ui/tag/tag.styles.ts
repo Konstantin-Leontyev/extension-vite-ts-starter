@@ -41,7 +41,7 @@ export type TagSizePreset = SizePreset | 'tiny';
  *
  * @property tone — тон заливки
  * @property borderTone — тон границы в режиме `bordered`
- * @property shape — форма строки-поля
+ * @property shape — форма метки
  * @property sizePreset — размер тега
  * @property bordered — режим с границей
  * @property tinted — режим мягкой заливки
@@ -74,7 +74,7 @@ const tagBlockSize = Object.freeze({
 
 /**
  * TAG_SIZE_PRESET_KEYS — формирует перечень размеров тега из ключей `tagBlockSize`.
- * Используется в панелях настроек витрины design-system: `SizeListbox` принимает его пропом `sizes`.
+ * Используется в панелях настроек витрины дизайн-системы: `SizeListbox` принимает его пропом `sizes`.
  */
 export const TAG_SIZE_PRESET_KEYS = Object.keys(tagBlockSize) as TagSizePreset[];
 

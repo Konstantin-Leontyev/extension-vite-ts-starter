@@ -45,7 +45,7 @@ export type TextTone = keyof typeof TEXT_TONE_PRESETS;
 
 /**
  * TEXT_TONE_KEYS — формирует перечень тонов текста из ключей `TEXT_TONE_PRESETS`.
- * Используется в панелях настроек витрины design-system: `ToneListbox` принимает его пропом `tones`.
+ * Используется в панелях настроек витрины дизайн-системы: `ToneListbox` принимает его пропом `tones`.
  */
 export const TEXT_TONE_KEYS = Object.keys(TEXT_TONE_PRESETS) as TextTone[];
 
@@ -108,7 +108,7 @@ export type TextSizePreset = keyof typeof textSizePresets;
 
 /**
  * TEXT_SIZE_PRESET_KEYS — формирует перечень типографических пресетов из ключей `textSizePresets`.
- * Используется в панелях настроек витрины design-system: `SizeListbox` принимает его пропом `sizes`.
+ * Используется в панелях настроек витрины дизайн-системы: `SizeListbox` принимает его пропом `sizes`.
  */
 export const TEXT_SIZE_PRESET_KEYS = Object.keys(textSizePresets) as TextSizePreset[];
 
@@ -119,7 +119,7 @@ export type TextAlignPreset = 'start' | 'center' | 'end';
 
 /**
  * TEXT_ALIGN_PRESET_KEYS — задаёт перечень канонических выравниваний текста.
- * Используется в панелях настроек витрины design-system: `AlignListbox` принимает его пропом `aligns`.
+ * Используется в панелях настроек витрины дизайн-системы: `AlignListbox` принимает его пропом `aligns`.
  */
 export const TEXT_ALIGN_PRESET_KEYS = [
   'start',
