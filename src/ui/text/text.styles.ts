@@ -6,7 +6,8 @@
  * 1. Типизировать пропсы через `TextStyleProps`, `TextTone` и `TextSizePreset`
  * 2. Хранить тоны текста в `TEXT_TONE_PRESETS` и пресеты типографики в `textSizePresets`
  * 3. Предоставить функции `getTextStyles`, `getTextProperties`, `getTextToneKey`
- *    и `getTextToneColor`, а также перечень `TEXT_TONE_KEYS`
+ *    и `getTextToneColor`, а также перечни `TEXT_TONE_KEYS`, `TEXT_SIZE_PRESET_KEYS`
+ *    и `TEXT_ALIGN_PRESET_KEYS`
  * 4. Предоставить styled-узел `StyledText`
  *
  * Потребители:
@@ -112,6 +113,21 @@ export type TextSizePreset = keyof typeof textSizePresets;
 export const TEXT_SIZE_PRESET_KEYS = Object.keys(textSizePresets) as TextSizePreset[];
 
 /**
+ * TextAlignPreset — представляет выравнивание текста в каноническом ряду проекта.
+ */
+export type TextAlignPreset = 'start' | 'center' | 'end';
+
+/**
+ * TEXT_ALIGN_PRESET_KEYS — задаёт перечень канонических выравниваний текста.
+ * Используется в панелях настроек витрины design-system: `AlignListbox` принимает его пропом `aligns`.
+ */
+export const TEXT_ALIGN_PRESET_KEYS = [
+  'start',
+  'center',
+  'end',
+] as const satisfies readonly TextAlignPreset[];
+
+/**
  * TextStyleProps — представляет пропсы стилизации текста и layout-пропсы.
  * Без `color` и `tone` цвет наследуется от родителя.
  *
@@ -201,17 +217,17 @@ export function getTextProperties(sizePreset: TextSizePreset): string {
  * getTextStyles — преобразует текстовые пропсы в готовые CSS-правила.
  *
  * Как работает:
- * 1. Получает текущую тему через `getTheme`.
+ * 1. Получает текущую тему через `getTheme`
  * 2. Выбирает пресет по `sizePreset`, по умолчанию `normal`, и применяет
- *    его типографику через `getTextProperties`.
+ *    его типографику через `getTextProperties`
  * 3. Переопределяет типографику прямыми пропсами `fontSize`, `fontWeight`
- *    и `lineHeight`, если они переданы.
+ *    и `lineHeight`, если они переданы
  * 4. Выбирает цвет: `color`, иначе цвет тона из темы. Без обоих правило
  *    `color` не добавляется — работает наследование через `color: inherit`
- *    у `StyledText`, типичное внутри цветного контрола.
- * 5. Добавляет правила для `align` и `whiteSpace`.
+ *    у `StyledText`, типичное внутри цветного контрола
+ * 5. Добавляет правила для `align` и `whiteSpace`
  * 6. Для `ellipsis` добавляет `overflow: hidden`, `text-overflow: ellipsis`
- *    и `white-space: nowrap`.
+ *    и `white-space: nowrap`
  *
  * @param props — объект с текстовыми пропсами и темой
  * @returns CSS-правила, каждое с новой строки
