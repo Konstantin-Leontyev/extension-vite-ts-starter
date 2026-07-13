@@ -14,7 +14,9 @@
  *  - `@ui/button`, `@ui/tag`, `@ui/toast`, `@ui/text`, `@ui/progress-bar`, `@ui/spinner` —
  *    задают цвет контролов через тон
  *  - `@ui/fieldset` — расширяет канонический набор тонов
- *  - `src/pages/design-system/tone-listbox` — опции витрины дизайн-системы
+ *  - панели настроек витрины design-system — передают `TONE_PRESET_KEYS` в `ToneListbox`
+ *  - `src/pages/design-system/tone-listbox` — фильтрует тоны и подставляет запасной
+ *    через `DEFAULT_TONE`
  */
 
 import { type AppTheme, type ThemeColors } from '@ui/theme';

@@ -31,7 +31,7 @@ import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
 /**
  * ToastStyleProps — представляет пропсы стилизации Toast и layout-пропсы.
  *
- * @property sizePreset — размер компонента из канона `SizePreset`
+ * @property sizePreset — размер компонента
  * @property tone — семантический тон. Задаёт акцентную полосу слева
  *   через `border-inline-start`, а не заливку
  */

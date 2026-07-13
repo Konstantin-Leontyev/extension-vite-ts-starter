@@ -44,7 +44,7 @@ export type TextTone = keyof typeof TEXT_TONE_PRESETS;
 
 /**
  * TEXT_TONE_KEYS — формирует перечень тонов текста из ключей `TEXT_TONE_PRESETS`.
- * Используется в опциях витрины design-system: ToneListbox принимает его пропом `tones`.
+ * Используется в панелях настроек витрины design-system: `ToneListbox` принимает его пропом `tones`.
  */
 export const TEXT_TONE_KEYS = Object.keys(TEXT_TONE_PRESETS) as TextTone[];
 

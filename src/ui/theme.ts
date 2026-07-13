@@ -62,7 +62,7 @@ export type ThemeColors = {
  * Включает в себя цветовую схему, цвета и тени.
  *
  * @property colorScheme — режим темы для нативной части браузера
- * @property colors — объект с цветами из `ThemeColors`
+ * @property colors — объект с цветами текущей темы
  * @property shadow.surface — тень для поверхностей, используется в `box-shadow`
  */
 export type AppTheme = {
