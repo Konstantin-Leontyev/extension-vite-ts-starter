@@ -57,7 +57,7 @@ export const DEFAULT_TONE: TonePreset = 'default';
  * TONE_PRESET_KEYS — формирует перечень канонических тонов из ключей `TONE_PRESETS`.
  * Используется в панелях настроек витрины дизайн-системы: `ToneListbox` принимает его пропом `tones`.
  */
-export const TONE_PRESET_KEYS = Object.keys(TONE_PRESETS) as TonePreset[];
+export const TONE_PRESET_KEYS = Object.freeze(Object.keys(TONE_PRESETS) as TonePreset[]);
 
 /**
  * getToneKey — возвращает ключ цвета в теме для указанного тона.

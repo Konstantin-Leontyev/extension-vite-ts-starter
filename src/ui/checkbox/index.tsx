@@ -114,4 +114,3 @@ function Checkbox({
 
 /* eslint-disable react-refresh/only-export-components -- реэкспорт пресетов и моста размера текста */
 export { Checkbox, checkboxSizePresets, getCheckboxTextSize };
-/* eslint-enable react-refresh/only-export-components */

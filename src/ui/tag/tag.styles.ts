@@ -67,37 +67,39 @@ type TagSurface = { fg: string; fill: string };
  * tagBlockSize — хранит минимальную высоту метки для каждого размера ряда.
  * Расширяет `minBlockSize` из `@ui/presets` спредом, добавляя локальный ключ `tiny`.
  */
-const tagBlockSize = Object.freeze({
+const tagBlockSize = {
   ...minBlockSize,
   tiny: 24,
-} as const satisfies Record<TagSizePreset, SpacingValue>);
+} as const satisfies Record<TagSizePreset, SpacingValue>;
 
 /**
  * TAG_SIZE_PRESET_KEYS — формирует перечень размеров метки из ключей `tagBlockSize`.
  * Используется в панелях настроек витрины дизайн-системы: `SizeListbox` принимает его пропом `sizes`.
  */
-export const TAG_SIZE_PRESET_KEYS = Object.keys(tagBlockSize) as TagSizePreset[];
+export const TAG_SIZE_PRESET_KEYS = Object.freeze(
+  Object.keys(tagBlockSize) as TagSizePreset[]
+);
 
 /**
  * tagPaddingInline — хранит горизонтальные отступы метки для каждого размера ряда.
  * Ключи канона берёт из `padding` в `@ui/presets`, `tiny` задаёт локально.
  */
-const tagPaddingInline = Object.freeze({
+const tagPaddingInline = {
   small: padding.small.inline,
   medium: padding.medium.inline,
   large: padding.large.inline,
   tiny: 8,
-} as const satisfies Record<TagSizePreset, SpacingValue>);
+} as const satisfies Record<TagSizePreset, SpacingValue>;
 
 /**
  * tagTextSize — хранит размер текста для каждого размера ряда метки.
  * Расширяет `textSize` из `@ui/presets` спредом, добавляя ключ `tiny`,
  * который использует `medium`, как и `small`.
  */
-const tagTextSize = Object.freeze({
+const tagTextSize = {
   ...textSize,
   tiny: 'medium',
-} as const satisfies Record<TagSizePreset, TextSizePreset>);
+} as const satisfies Record<TagSizePreset, TextSizePreset>;
 
 /**
  * DEFAULT_TAG_SIZE_PRESET — задаёт размер по умолчанию для пропа `sizePreset` метки.

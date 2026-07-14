@@ -28,22 +28,22 @@ export { splitLayoutProps } from '@ui/layout';
  * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
  * Ряд компактнее контролов.
  */
-const spinnerBlockSize = Object.freeze({
+const spinnerBlockSize = {
   small: 16,
   medium: 24,
   large: 32,
-} as const satisfies Record<SizePreset, SpacingValue>);
+} as const satisfies Record<SizePreset, SpacingValue>;
 
 /**
  * spinnerBorderWidth — хранит толщину рамки спиннера для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — толщина в px.
  * Толщина штриха не привязана к шкале spacing: это не отступ.
  */
-const spinnerBorderWidth = Object.freeze({
+const spinnerBorderWidth = {
   small: 2,
   medium: 2,
   large: 4,
-} as const satisfies Record<SizePreset, number>);
+} as const satisfies Record<SizePreset, number>;
 
 /**
  * SpinnerStyleProps — представляет пропсы стилизации спиннера и layout-пропсы.

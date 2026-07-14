@@ -1,27 +1,76 @@
+/**
+ * Файл: `src/pages/design-system/fieldset-settings/index.tsx`
+ * Определяет панель настроек компонента Fieldset в витрине дизайн-системы.
+ * Содержит контролы для изменения тона рамки, заголовка, демо-опций и состояний
+ * в реальном времени.
+ *
+ * Основные задачи:
+ * 1. Типизировать состояние витрины через `FieldsetWidgetState`
+ * 2. Экспортировать компонент `FieldsetSettings`
+ *
+ * Потребители:
+ *  - `src/pages/design-system/index.tsx` — подключает панель и синхронизирует состояние с превью виджета группы полей
+ */
+
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { FIELDSET_BORDER_TONE_OPTIONS, type FieldsetBorderTone } from '@ui/fieldset';
+import { FIELDSET_BORDER_TONE_KEYS, type FieldsetBorderTone } from '@ui/fieldset';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
+import { type TextSizePreset, type TextTone } from '@ui/text';
 
 import { StyledSettingsForm } from '../design-system.styles';
+import { TextGroup } from '../text-group';
+import { ToneListbox } from '../tone-listbox';
 
+/**
+ * FieldsetWidgetState — представляет состояние настроек компонента Fieldset в витрине дизайн-системы.
+ * Ключи совпадают с именами пропов компонента Fieldset, кроме витринных ключей:
+ * `selected`, `textA`, `textB`, `disabledA` и `disabledB` задают демо-группу RadioButton
+ * в превью.
+ * Используется для синхронизации значений между панелью управления и демонстрационной
+ * группой полей.
+ *
+ * @property borderTone — тон рамки
+ * @property disabledA — включает недоступное состояние варианта A
+ * @property disabledB — включает недоступное состояние варианта B
+ * @property label — заголовок в `<legend>`
+ * @property legendItalic — включает курсив заголовка
+ * @property legendSizePreset — размер заголовка
+ * @property legendTone — тон заголовка
+ * @property selected — активный вариант в демо-группе
+ * @property textA — подпись варианта A
+ * @property textB — подпись варианта B
+ */
 export type FieldsetWidgetState = {
   borderTone: FieldsetBorderTone;
   disabledA: boolean;
   disabledB: boolean;
   label: string;
-  labelA: string;
-  labelB: string;
+  legendItalic: boolean;
+  legendSizePreset: TextSizePreset;
+  legendTone: TextTone;
   selected: 'a' | 'b';
+  textA: string;
+  textB: string;
 };
 
+/**
+ * SELECTED_OPTIONS — хранит опции Listbox для выбора активного переключателя в демо.
+ * Используется в панели настроек для поля Selected.
+ */
 const SELECTED_OPTIONS: ListboxOption[] = [
   { label: 'Option A', value: 'a' },
   { label: 'Option B', value: 'b' },
 ];
 
+/**
+ * FieldsetSettingsProps — представляет пропсы компонента FieldsetSettings.
+ *
+ * @property onChange — обработчик изменения поля состояния витрины
+ * @property state — текущее состояние настроек группы полей
+ */
 type FieldsetSettingsProps = {
   onChange: <K extends keyof FieldsetWidgetState>(
     key: K,
@@ -30,42 +79,20 @@ type FieldsetSettingsProps = {
   state: FieldsetWidgetState;
 };
 
+/**
+ * FieldsetSettings — отображает панель настроек Fieldset в витрине дизайн-системы.
+ *
+ * @example
+ * <FieldsetSettings state={fieldset} onChange={updateFieldset} />
+ */
 export function FieldsetSettings({ onChange, state }: FieldsetSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
-      <Input
-        label="Label:"
-        reserveErrorSpace={false}
-        value={state.label}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('label', event.target.value)
-        }
-      />
-
-      <Input
-        label="Label A:"
-        reserveErrorSpace={false}
-        value={state.labelA}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('labelA', event.target.value)
-        }
-      />
-
-      <Input
-        label="Label B:"
-        reserveErrorSpace={false}
-        value={state.labelB}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('labelB', event.target.value)
-        }
-      />
-
-      <Listbox
+      <ToneListbox
         label="Border tone:"
-        options={FIELDSET_BORDER_TONE_OPTIONS}
-        reserveErrorSpace={false}
+        tones={FIELDSET_BORDER_TONE_KEYS}
         value={state.borderTone}
-        onChange={(value) => onChange('borderTone', value as FieldsetBorderTone)}
+        onChange={(tone) => onChange('borderTone', tone)}
       />
 
       <Listbox
@@ -78,21 +105,59 @@ export function FieldsetSettings({ onChange, state }: FieldsetSettingsProps) {
         }
       />
 
-      <Checkbox
-        checked={state.disabledA}
-        label="Disable A"
+      <TextGroup
+        contents={[
+          {
+            label: 'Text:',
+            value: state.label,
+            onChange: (value) => onChange('label', value),
+          },
+        ]}
+        italic={state.legendItalic}
+        size={state.legendSizePreset}
+        tone={state.legendTone}
+        onItalicChange={(value) => onChange('legendItalic', value)}
+        onSizeChange={(size) => onChange('legendSizePreset', size)}
+        onToneChange={(tone) => onChange('legendTone', tone)}
+      />
+
+      <Input
+        label="Text A:"
+        reserveErrorSpace={false}
+        value={state.textA}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('disabledA', event.target.checked)
+          onChange('textA', event.target.value)
+        }
+      />
+
+      <Input
+        label="Text B:"
+        reserveErrorSpace={false}
+        value={state.textB}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('textB', event.target.value)
         }
       />
 
       <Checkbox
+        checked={state.disabledA}
+        sizePreset="medium"
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('disabledA', event.target.checked)
+        }
+      >
+        Disable A
+      </Checkbox>
+
+      <Checkbox
         checked={state.disabledB}
-        label="Disable B"
+        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('disabledB', event.target.checked)
         }
-      />
+      >
+        Disable B
+      </Checkbox>
     </StyledSettingsForm>
   );
 }

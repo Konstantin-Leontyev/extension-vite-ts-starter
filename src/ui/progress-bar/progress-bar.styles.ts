@@ -28,11 +28,11 @@ import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
  * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
  * Ряд компактнее контролов.
  */
-const progressBarBlockSize = Object.freeze({
+const progressBarBlockSize = {
   small: 4,
   medium: 8,
   large: 12,
-} as const satisfies Record<SizePreset, SpacingValue>);
+} as const satisfies Record<SizePreset, SpacingValue>;
 
 /**
  * ProgressBarStyleProps — представляет пропсы стилизации полосы прогресса и layout-пропсы.

@@ -47,14 +47,14 @@ export type SizingProps = {
  *
  * Соответствие приватно для модуля, доступ к именам пропсов — только через `SIZING_PROPERTY_NAMES`.
  */
-const SIZING_PROPERTIES = Object.freeze({
+const SIZING_PROPERTIES = {
   inlineSize: 'inline-size',
   minInlineSize: 'min-inline-size',
   maxInlineSize: 'max-inline-size',
   blockSize: 'block-size',
   minBlockSize: 'min-block-size',
   maxBlockSize: 'max-block-size',
-} as const satisfies Record<keyof SizingProps, string>);
+} as const satisfies Record<keyof SizingProps, string>;
 
 /**
  * SIZING_PROPERTY_NAMES — хранит имена всех пропсов из `SIZING_PROPERTIES`.

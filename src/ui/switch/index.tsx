@@ -1,33 +1,98 @@
-import { type ComponentPropsWithRef } from 'react';
+/**
+ * Файл: `src/ui/switch/index.tsx`
+ * Предоставляет компонент Switch для отображения тумблера.
+ *
+ * Поддерживает:
+ *  - layout-пропсы: отступы, позиционирование, размеры
+ *  - размерный ряд через проп `sizePreset`
+ *  - семантический тон через проп `tone`
+ *  - подпись справа от дорожки через `children`. Без `children` — дорожка без подписи
+ *  - тон подписи через проп `textTone`
+ *  - размер подписи через проп `textSize`
+ *  - курсив подписи через проп `textItalic`
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент Switch
+ * 2. Типизировать пропсы через `SwitchProps`
+ * 3. Выставлять `role="switch"` на скрытом input
+ * 4. Реэкспортировать мост размера текста `getSwitchTextSize`
+ *
+ * Потребители:
+ *  - `src/pages/design-system/header-settings` — переключает режим autoHide хедера
+ *  - страницы и виджеты приложения — рендерят тумблеры настроек
+ *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ */
 
-import { Text } from '@ui/text';
+import { type ComponentPropsWithRef, type ReactNode } from 'react';
+
+import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 
 import {
-  StyledSwitchInput,
   StyledSwitchRoot,
   StyledSwitchTrack,
+  getSwitchTextSize,
   splitLayoutProps,
   type SwitchStyleProps,
 } from './switch.styles';
 
-export type SwitchProps = SwitchStyleProps & {
-  /** Видимая подпись. Без неё доступное имя задаётся через `aria-label`. */
-  label?: string;
+/**
+ * DEFAULT_SWITCH_TEXT_TONE — задаёт тон подписи по умолчанию.
+ * Подпись контрола — вторичный текст, поэтому `muted`.
+ */
+const DEFAULT_SWITCH_TEXT_TONE: TextTone = 'muted';
+
+/**
+ * SwitchProps — представляет пропсы компонента Switch.
+ *
+ * @property children — подпись справа от дорожки
+ * @property textItalic — включает курсив подписи
+ * @property textSize — размер подписи
+ * @property textTone — тон подписи
+ */
+type SwitchProps = SwitchStyleProps & {
+  children?: ReactNode;
+  textItalic?: boolean;
+  textSize?: TextSizePreset;
+  textTone?: TextTone;
 } & Omit<
     ComponentPropsWithRef<'input'>,
-    keyof SwitchStyleProps | 'className' | 'style' | 'type'
+    keyof SwitchStyleProps | 'children' | 'className' | 'style' | 'type'
   >;
 
-export function Switch({ label, sizePreset, tone, ...rest }: SwitchProps) {
+/**
+ * Switch — отображает тумблер с опциональной подписью.
+ *
+ * @example
+ * <Switch checked={enabled} onChange={handleChange}>Notifications</Switch>
+ * <Switch checked={enabled} onChange={handleChange} aria-label="Notifications" />
+ */
+function Switch({
+  children,
+  sizePreset,
+  textItalic,
+  textSize,
+  textTone = DEFAULT_SWITCH_TEXT_TONE,
+  tone,
+  ...rest
+}: SwitchProps) {
   const { layout, rest: control } = splitLayoutProps(rest);
 
   return (
     <StyledSwitchRoot {...layout}>
-      <StyledSwitchInput role="switch" type="checkbox" {...control} />
+      <input className="visually-hidden" role="switch" type="checkbox" {...control} />
       <StyledSwitchTrack aria-hidden="true" sizePreset={sizePreset} tone={tone} />
-      {Boolean(label) && <Text sizePreset="medium">{label}</Text>}
+      {Boolean(children) && (
+        <Text
+          italic={textItalic}
+          sizePreset={textSize ?? getSwitchTextSize(sizePreset)}
+          tone={textTone}
+        >
+          {children}
+        </Text>
+      )}
     </StyledSwitchRoot>
   );
 }
 
-export type { SwitchStyleProps } from './switch.styles';
+/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
+export { Switch, getSwitchTextSize };

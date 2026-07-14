@@ -1,27 +1,64 @@
+/**
+ * Файл: `src/pages/design-system/switch-settings/index.tsx`
+ * Определяет панель настроек компонента Switch в витрине дизайн-системы.
+ * Содержит контролы для изменения размера, тона, подписи и состояний
+ * в реальном времени.
+ *
+ * Основные задачи:
+ * 1. Типизировать состояние витрины через `SwitchWidgetState`
+ * 2. Экспортировать компонент `SwitchSettings`
+ *
+ * Потребители:
+ *  - `src/pages/design-system/index.tsx` — подключает панель и синхронизирует состояние с превью виджета тумблера
+ */
+
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { Input } from '@ui/input';
-import { Listbox, type ListboxOption } from '@ui/listbox';
-import { type SizePreset } from '@ui/presets';
-import { TONE_PRESET_OPTIONS, type TonePreset } from '@ui/tones';
+import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
+import { getSwitchTextSize } from '@ui/switch';
+import { type TextSizePreset, type TextTone } from '@ui/text';
+import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../design-system.styles';
+import { SizeListbox } from '../size-listbox';
+import { TextGroup } from '../text-group';
+import { ToneListbox } from '../tone-listbox';
 
+/**
+ * SwitchWidgetState — представляет состояние настроек компонента Switch в витрине дизайн-системы.
+ * Ключи совпадают с именами пропов компонента Switch, кроме витринных ключей:
+ * `showText` управляет передачей подписи в превью, `text` хранит содержимое `children`.
+ * Используется для синхронизации значений между панелью управления и демонстрационным тумблером.
+ *
+ * @property checked — включает тумблер
+ * @property disabled — включает недоступное состояние
+ * @property showText — витринный ключ показа подписи. Выключенный — дорожка без подписи
+ * @property sizePreset — размер дорожки
+ * @property text — подпись тумблера
+ * @property textItalic — включает курсив подписи
+ * @property textSize — размер подписи
+ * @property textTone — тон подписи
+ * @property tone — тон включённого состояния
+ */
 export type SwitchWidgetState = {
   checked: boolean;
   disabled: boolean;
-  label: string;
+  showText: boolean;
   sizePreset: SizePreset;
+  text: string;
+  textItalic: boolean;
+  textSize: TextSizePreset;
+  textTone: TextTone;
   tone: TonePreset;
 };
 
-const SIZE_OPTIONS: ListboxOption[] = [
-  { label: 'small', value: 'small' },
-  { label: 'medium', value: 'medium' },
-  { label: 'large', value: 'large' },
-];
-
+/**
+ * SwitchSettingsProps — представляет пропсы компонента SwitchSettings.
+ *
+ * @property onChange — обработчик изменения поля состояния витрины
+ * @property state — текущее состояние настроек тумблера
+ */
 type SwitchSettingsProps = {
   onChange: <K extends keyof SwitchWidgetState>(
     key: K,
@@ -30,49 +67,71 @@ type SwitchSettingsProps = {
   state: SwitchWidgetState;
 };
 
+/**
+ * SwitchSettings — отображает панель настроек Switch в витрине дизайн-системы.
+ *
+ * @example
+ * <SwitchSettings state={switchState} onChange={updateSwitch} />
+ */
 export function SwitchSettings({ onChange, state }: SwitchSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
-      <Input
-        label="Label:"
-        reserveErrorSpace={false}
-        value={state.label}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('label', event.target.value)
-        }
-      />
-
-      <Listbox
+      <SizeListbox
         label="Size:"
-        options={SIZE_OPTIONS}
-        reserveErrorSpace={false}
+        sizes={SIZE_PRESET_KEYS}
         value={state.sizePreset}
-        onChange={(value) => onChange('sizePreset', value as SizePreset)}
+        onChange={(size) => {
+          onChange('sizePreset', size);
+          onChange('textSize', getSwitchTextSize(size));
+        }}
       />
 
-      <Listbox
+      <ToneListbox
         label="Tone:"
-        options={TONE_PRESET_OPTIONS}
-        reserveErrorSpace={false}
+        tones={TONE_PRESET_KEYS}
         value={state.tone}
-        onChange={(value) => onChange('tone', value as TonePreset)}
+        onChange={(tone) => onChange('tone', tone)}
+      />
+
+      <TextGroup
+        contents={[
+          {
+            label: 'Text:',
+            value: state.text,
+            onChange: (value) => onChange('text', value),
+          },
+        ]}
+        italic={state.textItalic}
+        show={{
+          checked: state.showText,
+          onChange: (checked) => onChange('showText', checked),
+        }}
+        size={state.textSize}
+        tone={state.textTone}
+        onItalicChange={(value) => onChange('textItalic', value)}
+        onSizeChange={(size) => onChange('textSize', size)}
+        onToneChange={(tone) => onChange('textTone', tone)}
       />
 
       <Checkbox
         checked={state.checked}
-        label="Checked"
+        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('checked', event.target.checked)
         }
-      />
+      >
+        Checked
+      </Checkbox>
 
       <Checkbox
         checked={state.disabled}
-        label="Disabled"
+        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('disabled', event.target.checked)
         }
-      />
+      >
+        Disabled
+      </Checkbox>
     </StyledSettingsForm>
   );
 }

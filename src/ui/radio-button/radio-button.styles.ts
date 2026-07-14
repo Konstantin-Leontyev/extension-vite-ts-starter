@@ -23,14 +23,14 @@ import { getTheme, type AppTheme } from '@ui/theme';
 export { splitLayoutProps } from '@ui/layout';
 
 /**
- * radioBlockSize — хранит размер кружка для каждого размерного ряда.
+ * radioBlockSize — хранит размер кружка для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
  */
-const radioBlockSize = Object.freeze({
+const radioBlockSize = {
   small: 16,
   medium: 20,
   large: 24,
-} as const satisfies Record<SizePreset, SpacingValue>);
+} as const satisfies Record<SizePreset, SpacingValue>;
 
 /**
  * RadioButtonStyleProps — представляет пропсы стилизации RadioButton и layout-пропсы.

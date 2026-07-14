@@ -36,7 +36,7 @@ import { type ListboxOption } from '@ui/listbox';
  * ICONS — связывает ключи иконок с функциями рендеринга React-узлов.
  * Соответствие приватно для модуля, доступ к иконкам — только через `getIcon`.
  */
-const ICONS = Object.freeze({
+const ICONS = {
   close: () => <CloseIcon />,
   'chevron-down': () => <ChevronDownIcon />,
   'chevron-up': () => <ChevronUpIcon />,
@@ -46,7 +46,7 @@ const ICONS = Object.freeze({
   search: () => <SearchIcon />,
   settings: () => <SettingsIcon />,
   'sign-out': () => <SignOutIcon />,
-} satisfies Record<string, () => ReactNode>);
+} satisfies Record<string, () => ReactNode>;
 
 /**
  * IconKey — представляет доступные ключи иконок витрины дизайн-системы.

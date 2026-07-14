@@ -75,10 +75,10 @@ export const DEFAULT_SHAPE_PRESET: ShapePreset = 'default';
  * SHAPE_PRESET_KEYS — задаёт перечень канонических форм строки-поля.
  * Используется в панелях настроек витрины дизайн-системы: `ShapeListbox` принимает его пропом `shapes`.
  */
-export const SHAPE_PRESET_KEYS = [
+export const SHAPE_PRESET_KEYS = Object.freeze([
   'default',
   'round',
-] as const satisfies readonly ShapePreset[];
+] as const satisfies readonly ShapePreset[]);
 
 /**
  * minBlockSize — хранит минимальную высоту бокса для каждого размера ряда.
@@ -95,7 +95,7 @@ export const minBlockSize = Object.freeze({
  * SIZE_PRESET_KEYS — формирует перечень канонических размеров из ключей `minBlockSize`.
  * Используется в панелях настроек витрины дизайн-системы: `SizeListbox` принимает его пропом `sizes`.
  */
-export const SIZE_PRESET_KEYS = Object.keys(minBlockSize) as SizePreset[];
+export const SIZE_PRESET_KEYS = Object.freeze(Object.keys(minBlockSize) as SizePreset[]);
 
 /**
  * padding — хранит внутренние отступы для каждого размера ряда.

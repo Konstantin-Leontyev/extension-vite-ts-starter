@@ -32,10 +32,10 @@ import { TONE_PRESETS, type TonePreset } from '@ui/tones';
  * Соответствие приватно для модуля, доступ к тонам — только через `getTextToneKey`,
  * `getTextToneColor` и перечень `TEXT_TONE_KEYS`.
  */
-const TEXT_TONE_PRESETS = Object.freeze({
+const TEXT_TONE_PRESETS = {
   ...TONE_PRESETS,
   muted: 'muted',
-} as const satisfies Record<TonePreset | 'muted', keyof ThemeColors | undefined>);
+} as const satisfies Record<TonePreset | 'muted', keyof ThemeColors | undefined>;
 
 /**
  * TextTone — представляет тоны текста.
@@ -47,7 +47,9 @@ export type TextTone = keyof typeof TEXT_TONE_PRESETS;
  * TEXT_TONE_KEYS — формирует перечень тонов текста из ключей `TEXT_TONE_PRESETS`.
  * Используется в панелях настроек витрины дизайн-системы: `ToneListbox` принимает его пропом `tones`.
  */
-export const TEXT_TONE_KEYS = Object.keys(TEXT_TONE_PRESETS) as TextTone[];
+export const TEXT_TONE_KEYS = Object.freeze(
+  Object.keys(TEXT_TONE_PRESETS) as TextTone[]
+);
 
 /**
  * textSizePresets — хранит типографические пресеты текста.
@@ -110,7 +112,14 @@ export type TextSizePreset = keyof typeof textSizePresets;
  * TEXT_SIZE_PRESET_KEYS — формирует перечень типографических пресетов из ключей `textSizePresets`.
  * Используется в панелях настроек витрины дизайн-системы: `SizeListbox` принимает его пропом `sizes`.
  */
-export const TEXT_SIZE_PRESET_KEYS = Object.keys(textSizePresets) as TextSizePreset[];
+export const TEXT_SIZE_PRESET_KEYS = Object.freeze(
+  Object.keys(textSizePresets) as TextSizePreset[]
+);
+
+/**
+ * DEFAULT_TEXT_SIZE_PRESET — задаёт типографический пресет по умолчанию для пропа `sizePreset`.
+ */
+const DEFAULT_TEXT_SIZE_PRESET: TextSizePreset = 'normal';
 
 /**
  * TextAlignPreset — представляет выравнивание текста в каноническом ряду проекта.
@@ -121,11 +130,11 @@ export type TextAlignPreset = 'start' | 'center' | 'end';
  * TEXT_ALIGN_PRESET_KEYS — задаёт перечень канонических выравниваний текста.
  * Используется в панелях настроек витрины дизайн-системы: `AlignListbox` принимает его пропом `aligns`.
  */
-export const TEXT_ALIGN_PRESET_KEYS = [
+export const TEXT_ALIGN_PRESET_KEYS = Object.freeze([
   'start',
   'center',
   'end',
-] as const satisfies readonly TextAlignPreset[];
+] as const satisfies readonly TextAlignPreset[]);
 
 /**
  * TextStyleProps — представляет пропсы стилизации текста и layout-пропсы.
@@ -257,7 +266,7 @@ export function getTextStyles(props: TextStyleProps & { theme: AppTheme }): stri
     fontWeight,
     italic,
     lineHeight,
-    sizePreset = 'normal',
+    sizePreset = DEFAULT_TEXT_SIZE_PRESET,
     tone,
     whiteSpace,
   } = props;

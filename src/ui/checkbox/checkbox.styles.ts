@@ -25,7 +25,7 @@ import { DISABLED_OPACITY, getTheme, type AppTheme } from '@ui/theme';
 export { splitLayoutProps } from '@ui/layout';
 
 /**
- * checkboxSizePresets — хранит габарит бокса и размер иконки для каждого размерного ряда.
+ * checkboxSizePresets — хранит габарит бокса и размер иконки для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — пара ключей шкалы из `@ui/spacing`:
  *  - `blockSize` → габарит бокса
  *  - `iconSize` → размер иконки марки
@@ -121,8 +121,8 @@ export function getCheckboxTextSize(sizePreset?: SizePreset): TextSizePreset {
 /**
  * markIcon — преобразует SVG-путь и цвет обводки в data-URI для `background-image`.
  * Марка рисуется CSS-фоном, потому что бокс — нативный `<input>`: это пустой элемент,
- * SVG-компонент внутрь не вкладывается. Разметка SVG закодирована для URL
- * (`%3C` → `<`, `%23` → `#`); `#` в цвете обводки кодируется здесь же.
+ * SVG-компонент внутрь не вкладывается. Разметка SVG закодирована для URL:
+ * `%3C` → `<`, `%23` → `#`. Символ `#` в цвете обводки кодируется здесь же.
  *
  * @param pathD — атрибут `d` SVG-пути
  * @param strokeColor — цвет обводки марки
