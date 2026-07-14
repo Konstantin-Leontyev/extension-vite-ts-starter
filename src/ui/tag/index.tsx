@@ -40,7 +40,7 @@ import {
 /**
  * TagProps — представляет пропсы компонента Tag.
  *
- * @property children — содержимое метки
+ * @property children — содержимое метки. Без `children` рендерится только точка-индикатор
  * @property dot — включает точку-индикатор
  * @property dotTone — тон точки
  * @property textItalic — включает курсив текста
@@ -48,7 +48,7 @@ import {
  * @property textTone — тон текста
  */
 type TagProps = {
-  children: ReactNode;
+  children?: ReactNode;
   dot?: boolean;
   dotTone?: TonePreset;
   textItalic?: boolean;
@@ -79,14 +79,16 @@ export function Tag({
   return (
     <StyledTag sizePreset={sizePreset} tone={tone} {...rest}>
       {dot && <StyledTagDot dotTone={dotTone} />}
-      <Text
-        ellipsis
-        italic={textItalic}
-        sizePreset={textSize ?? getTagTextSize(sizePreset)}
-        tone={textTone}
-      >
-        {children}
-      </Text>
+      {Boolean(children) && (
+        <Text
+          ellipsis
+          italic={textItalic}
+          sizePreset={textSize ?? getTagTextSize(sizePreset)}
+          tone={textTone}
+        >
+          {children}
+        </Text>
+      )}
     </StyledTag>
   );
 }

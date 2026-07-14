@@ -6,6 +6,7 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - семантический тон через проп `tone`
+ *  - текст сообщения через `children`
  *  - тон текста сообщения через проп `textTone`
  *  - размер текста сообщения через проп `textSize`
  *  - курсив текста сообщения через проп `textItalic`
@@ -21,7 +22,7 @@
  *  - `src/pages/design-system` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef } from 'react';
+import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 
@@ -30,13 +31,13 @@ import { StyledToast, getToastTextSize, type ToastStyleProps } from './toast.sty
 /**
  * ToastProps — представляет пропсы компонента Toast.
  *
- * @property message — текст уведомления
+ * @property children — текст уведомления
  * @property textItalic — включает курсив текста сообщения
  * @property textSize — размер текста сообщения
  * @property textTone — тон текста сообщения
  */
 type ToastProps = ToastStyleProps & {
-  message: string;
+  children: ReactNode;
   textItalic?: boolean;
   textSize?: TextSizePreset;
   textTone?: TextTone;
@@ -49,11 +50,11 @@ type ToastProps = ToastStyleProps & {
  * Toast — отображает уведомление.
  *
  * @example
- * <Toast message="Успешно сохранено" />
- * <Toast message="Ошибка" tone="danger" />
+ * <Toast>Успешно сохранено</Toast>
+ * <Toast tone="danger">Ошибка</Toast>
  */
 function Toast({
-  message,
+  children,
   sizePreset,
   textItalic,
   textSize,
@@ -78,7 +79,7 @@ function Toast({
         sizePreset={textSize ?? getToastTextSize(sizePreset)}
         tone={textTone}
       >
-        {message}
+        {children}
       </Text>
     </StyledToast>
   );

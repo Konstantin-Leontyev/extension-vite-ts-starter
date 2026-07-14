@@ -138,7 +138,7 @@ export const StyledRadioButtonRoot = styled.label.withConfig({
  *
  * Генерация стилей:
  *  - `getRadioButtonControlStyles` — габариты, рамка, состояние `checked`
- *  - `getLayoutStyles` — отступы, позиционирование, размеры в режиме `bare`
+ *  - `getLayoutStyles` — отступы, позиционирование, размеры при рендере без обёртки
  */
 export const StyledRadioButtonControl = styled.input.withConfig({
   shouldForwardProp: (prop) => !RADIO_BUTTON_CONTROL_PROP_NAMES.has(prop),

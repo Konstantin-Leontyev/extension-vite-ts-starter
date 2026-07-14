@@ -14,34 +14,31 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { Input } from '@ui/input';
 import { SHAPE_PRESET_KEYS, type ShapePreset } from '@ui/presets';
 import { TAG_SIZE_PRESET_KEYS, getTagTextSize, type TagSizePreset } from '@ui/tag';
-import {
-  TEXT_SIZE_PRESET_KEYS,
-  TEXT_TONE_KEYS,
-  type TextSizePreset,
-  type TextTone,
-} from '@ui/text';
+import { type TextSizePreset, type TextTone } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../design-system.styles';
 import { ShapeListbox } from '../shape-listbox';
 import { SizeListbox } from '../size-listbox';
+import { TextGroup } from '../text-group';
 import { ToneListbox } from '../tone-listbox';
 
 /**
  * TagWidgetState — представляет состояние настроек компонента Tag в витрине дизайн-системы.
- * Ключи совпадают с именами пропов компонента Tag.
+ * Ключи совпадают с именами пропов компонента Tag, кроме витринных ключей:
+ * `showText` управляет передачей содержимого в превью, `text` хранит содержимое `children`.
  * Используется для синхронизации значений между панелью управления и демонстрационной меткой.
  *
  * @property borderTone — тон границы в режиме `bordered`
  * @property bordered — включает режим с границей
- * @property children — содержимое метки
  * @property dot — включает точку-индикатор
  * @property dotTone — тон точки
  * @property shape — форма метки
+ * @property showText — витринный ключ показа текста. Выключенный — метка без текста
  * @property sizePreset — размер метки
+ * @property text — содержимое метки
  * @property textItalic — включает курсив текста метки
  * @property textSize — размер текста метки
  * @property textTone — тон текста метки
@@ -51,11 +48,12 @@ import { ToneListbox } from '../tone-listbox';
 export type TagWidgetState = {
   borderTone: TonePreset;
   bordered: boolean;
-  children: string;
   dot: boolean;
   dotTone: TonePreset;
   shape: ShapePreset;
+  showText: boolean;
   sizePreset: TagSizePreset;
+  text: string;
   textItalic: boolean;
   textSize: TextSizePreset;
   textTone: TextTone;
@@ -107,36 +105,15 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
         onChange={(tone) => onChange('tone', tone)}
       />
 
-      <Input
-        label="Text:"
-        reserveErrorSpace={false}
-        value={state.children}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('children', event.target.value)
-        }
-      />
-
-      <SizeListbox
-        label="Text size:"
-        sizes={TEXT_SIZE_PRESET_KEYS}
-        value={state.textSize}
-        onChange={(size) => onChange('textSize', size)}
-      />
-
-      <ToneListbox
-        label="Text tone:"
-        tones={TEXT_TONE_KEYS}
-        value={state.textTone}
-        onChange={(tone) => onChange('textTone', tone)}
-      />
-
       <Checkbox
-        checked={state.textItalic}
-        label="Show italic"
+        checked={state.bordered}
+        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('textItalic', event.target.checked)
+          onChange('bordered', event.target.checked)
         }
-      />
+      >
+        Show border
+      </Checkbox>
 
       {state.bordered && (
         <ToneListbox
@@ -146,6 +123,16 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
           onChange={(tone) => onChange('borderTone', tone)}
         />
       )}
+
+      <Checkbox
+        checked={state.dot}
+        sizePreset="medium"
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('dot', event.target.checked)
+        }
+      >
+        Show dot
+      </Checkbox>
 
       {state.dot && (
         <ToneListbox
@@ -157,27 +144,33 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
       )}
 
       <Checkbox
-        checked={state.bordered}
-        label="Show border"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('bordered', event.target.checked)
-        }
-      />
-
-      <Checkbox
-        checked={state.dot}
-        label="Show dot"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('dot', event.target.checked)
-        }
-      />
-
-      <Checkbox
         checked={state.tinted}
-        label="Show tinted"
+        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('tinted', event.target.checked)
         }
+      >
+        Show tinted
+      </Checkbox>
+
+      <TextGroup
+        contents={[
+          {
+            label: 'Text:',
+            value: state.text,
+            onChange: (value) => onChange('text', value),
+          },
+        ]}
+        italic={state.textItalic}
+        show={{
+          checked: state.showText,
+          onChange: (checked) => onChange('showText', checked),
+        }}
+        size={state.textSize}
+        tone={state.textTone}
+        onItalicChange={(value) => onChange('textItalic', value)}
+        onSizeChange={(size) => onChange('textSize', size)}
+        onToneChange={(tone) => onChange('textTone', tone)}
       />
     </StyledSettingsForm>
   );

@@ -1,7 +1,7 @@
 /**
  * Файл: `src/pages/design-system/toast-settings/index.tsx`
- * Определяет панель настроек виджета Toast в витрине дизайн-системы.
- * Содержит контролы для изменения размера, тона, сообщения и текста в реальном времени.
+ * Определяет панель настроек компонента Toast в витрине дизайн-системы.
+ * Содержит контролы для изменения размера, тона и текста сообщения в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `ToastWidgetState`
@@ -11,27 +11,21 @@
  *  - `src/pages/design-system/index.tsx` — подключает панель и синхронизирует состояние с превью виджета уведомлений
  */
 
-import { type ChangeEvent } from 'react';
-
-import { Checkbox } from '@ui/checkbox';
-import { Input } from '@ui/input';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
-import {
-  TEXT_SIZE_PRESET_KEYS,
-  TEXT_TONE_KEYS,
-  type TextSizePreset,
-  type TextTone,
-} from '@ui/text';
+import { type TextSizePreset, type TextTone } from '@ui/text';
 import { getToastTextSize } from '@ui/toast';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../design-system.styles';
 import { SizeListbox } from '../size-listbox';
+import { TextGroup } from '../text-group';
 import { ToneListbox } from '../tone-listbox';
 
 /**
  * ToastWidgetState — представляет состояние настроек компонента уведомлений в витрине дизайн-системы.
- * Ключи совпадают с именами пропов компонента уведомлений.
+ * Ключи совпадают с именами пропов компонента уведомлений, кроме `message`:
+ * это поле запроса `ToastInput`, состояние целиком уходит в `showToast`,
+ * а в превью передаётся как `children`.
  * Используется для синхронизации значений между панелью управления и демонстрационным уведомлением.
  *
  * @property message — текст сообщения в уведомлении
@@ -90,35 +84,20 @@ export function ToastSettings({ onChange, state }: ToastSettingsProps) {
         onChange={(tone) => onChange('tone', tone)}
       />
 
-      <Input
-        label="Text:"
-        reserveErrorSpace={false}
-        value={state.message}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('message', event.target.value)
-        }
-      />
-
-      <SizeListbox
-        label="Text size:"
-        sizes={TEXT_SIZE_PRESET_KEYS}
-        value={state.textSize}
-        onChange={(size) => onChange('textSize', size)}
-      />
-
-      <ToneListbox
-        label="Text tone:"
-        tones={TEXT_TONE_KEYS}
-        value={state.textTone}
-        onChange={(tone) => onChange('textTone', tone)}
-      />
-
-      <Checkbox
-        checked={state.textItalic}
-        label="Show italic"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('textItalic', event.target.checked)
-        }
+      <TextGroup
+        contents={[
+          {
+            label: 'Text:',
+            value: state.message,
+            onChange: (value) => onChange('message', value),
+          },
+        ]}
+        italic={state.textItalic}
+        size={state.textSize}
+        tone={state.textTone}
+        onItalicChange={(value) => onChange('textItalic', value)}
+        onSizeChange={(size) => onChange('textSize', size)}
+        onToneChange={(tone) => onChange('textTone', tone)}
       />
     </StyledSettingsForm>
   );

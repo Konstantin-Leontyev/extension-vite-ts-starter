@@ -8,7 +8,7 @@
  *  - размерный ряд через проп `sizePreset`
  *  - семантический тон через проп `tone`
  *  - долю заполнения через проп `value`
- *  - подпись с процентом через проп `showLabel`
+ *  - подпись с процентом через проп `showText`
  *  - тон подписи через проп `textTone`
  *  - размер подписи через проп `textSize`
  *  - курсив подписи через проп `textItalic`
@@ -47,13 +47,13 @@ const DEFAULT_PROGRESS_BAR_TEXT_TONE: TextTone = 'muted';
 /**
  * ProgressBarProps — представляет пропсы компонента ProgressBar.
  *
- * @property showLabel — включает подпись с процентом выполнения рядом с полосой
+ * @property showText — включает подпись с процентом выполнения рядом с полосой
  * @property textItalic — включает курсив подписи
  * @property textSize — размер подписи
  * @property textTone — тон подписи
  */
 type ProgressBarProps = ProgressBarStyleProps & {
-  showLabel?: boolean;
+  showText?: boolean;
   textItalic?: boolean;
   textSize?: TextSizePreset;
   textTone?: TextTone;
@@ -67,12 +67,12 @@ type ProgressBarProps = ProgressBarStyleProps & {
  *
  * @example
  * <ProgressBar value={0.75} />
- * <ProgressBar value={0.5} showLabel tone="success" />
+ * <ProgressBar value={0.5} showText tone="success" />
  */
 function ProgressBar({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
-  showLabel = false,
+  showText = false,
   sizePreset,
   textItalic,
   textSize,
@@ -108,7 +108,7 @@ function ProgressBar({
           value={clampedValue}
         />
       </StyledProgressBar>
-      {showLabel && (
+      {showText && (
         <Text
           aria-hidden={true}
           italic={textItalic}

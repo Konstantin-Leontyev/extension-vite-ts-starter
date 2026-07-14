@@ -14,27 +14,24 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { Input } from '@ui/input';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 import { getSpinnerTextSize } from '@ui/spinner';
-import {
-  TEXT_SIZE_PRESET_KEYS,
-  TEXT_TONE_KEYS,
-  type TextSizePreset,
-  type TextTone,
-} from '@ui/text';
+import { type TextSizePreset, type TextTone } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../design-system.styles';
 import { SizeListbox } from '../size-listbox';
+import { TextGroup } from '../text-group';
 import { ToneListbox } from '../tone-listbox';
 
 /**
  * SpinnerWidgetState — представляет состояние настроек компонента Spinner в витрине дизайн-системы.
- * Ключи совпадают с именами пропов компонента Spinner.
+ * Ключи совпадают с именами пропов компонента Spinner, кроме витринных ключей:
+ * `showText` управляет передачей подписи в превью, `text` хранит содержимое `children`.
  * Используется для синхронизации значений между панелью управления и демонстрационным индикатором.
  *
  * @property reserveTextSpace — включает резерв высоты под подпись
+ * @property showText — витринный ключ показа подписи. Выключенный — индикатор без текста
  * @property sizePreset — размер спиннера
  * @property text — подпись под индикатором
  * @property textItalic — включает курсив подписи
@@ -44,6 +41,7 @@ import { ToneListbox } from '../tone-listbox';
  */
 export type SpinnerWidgetState = {
   reserveTextSpace: boolean;
+  showText: boolean;
   sizePreset: SizePreset;
   text: string;
   textItalic: boolean;
@@ -92,44 +90,35 @@ export function SpinnerSettings({ onChange, state }: SpinnerSettingsProps) {
         onChange={(tone) => onChange('tone', tone)}
       />
 
-      <Input
-        label="Text:"
-        reserveErrorSpace={false}
-        value={state.text}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('text', event.target.value)
-        }
-      />
-
-      <SizeListbox
-        label="Text size:"
-        sizes={TEXT_SIZE_PRESET_KEYS}
-        value={state.textSize}
-        onChange={(size) => onChange('textSize', size)}
-      />
-
-      <ToneListbox
-        label="Text tone:"
-        tones={TEXT_TONE_KEYS}
-        value={state.textTone}
-        onChange={(tone) => onChange('textTone', tone)}
-      />
-
-      <Checkbox
-        checked={state.textItalic}
-        label="Show italic"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('textItalic', event.target.checked)
-        }
+      <TextGroup
+        contents={[
+          {
+            label: 'Text:',
+            value: state.text,
+            onChange: (value) => onChange('text', value),
+          },
+        ]}
+        italic={state.textItalic}
+        show={{
+          checked: state.showText,
+          onChange: (checked) => onChange('showText', checked),
+        }}
+        size={state.textSize}
+        tone={state.textTone}
+        onItalicChange={(value) => onChange('textItalic', value)}
+        onSizeChange={(size) => onChange('textSize', size)}
+        onToneChange={(tone) => onChange('textTone', tone)}
       />
 
       <Checkbox
         checked={state.reserveTextSpace}
-        label="Reserve text space"
+        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('reserveTextSpace', event.target.checked)
         }
-      />
+      >
+        Reserve text space
+      </Checkbox>
     </StyledSettingsForm>
   );
 }

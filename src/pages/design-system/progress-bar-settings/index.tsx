@@ -13,20 +13,15 @@
 
 import { type ChangeEvent } from 'react';
 
-import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 import { getProgressBarTextSize } from '@ui/progress-bar';
-import {
-  TEXT_SIZE_PRESET_KEYS,
-  TEXT_TONE_KEYS,
-  type TextSizePreset,
-  type TextTone,
-} from '@ui/text';
+import { type TextSizePreset, type TextTone } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../design-system.styles';
 import { SizeListbox } from '../size-listbox';
+import { TextGroup } from '../text-group';
 import { ToneListbox } from '../tone-listbox';
 
 /**
@@ -34,7 +29,7 @@ import { ToneListbox } from '../tone-listbox';
  * Ключи совпадают с именами пропов компонента ProgressBar.
  * Используется для синхронизации значений между панелью управления и демонстрационной полосой прогресса.
  *
- * @property showLabel — включает подпись с процентом выполнения
+ * @property showText — включает подпись с процентом выполнения
  * @property sizePreset — размер полосы
  * @property textItalic — включает курсив подписи
  * @property textSize — размер подписи
@@ -43,7 +38,7 @@ import { ToneListbox } from '../tone-listbox';
  * @property value — доля заполнения от 0 до 1
  */
 export type ProgressBarWidgetState = {
-  showLabel: boolean;
+  showText: boolean;
   sizePreset: SizePreset;
   textItalic: boolean;
   textSize: TextSizePreset;
@@ -118,7 +113,7 @@ export function ProgressBarSettings({ onChange, state }: ProgressBarSettingsProp
 
       <Input
         inputMode="numeric"
-        label="Text:"
+        label="Value:"
         reserveErrorSpace={false}
         value={String(Math.round(state.value * 100))}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -126,34 +121,17 @@ export function ProgressBarSettings({ onChange, state }: ProgressBarSettingsProp
         }
       />
 
-      <SizeListbox
-        label="Text size:"
-        sizes={TEXT_SIZE_PRESET_KEYS}
-        value={state.textSize}
-        onChange={(size) => onChange('textSize', size)}
-      />
-
-      <ToneListbox
-        label="Text tone:"
-        tones={TEXT_TONE_KEYS}
-        value={state.textTone}
-        onChange={(tone) => onChange('textTone', tone)}
-      />
-
-      <Checkbox
-        checked={state.showLabel}
-        label="Show text"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('showLabel', event.target.checked)
-        }
-      />
-
-      <Checkbox
-        checked={state.textItalic}
-        label="Show italic"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('textItalic', event.target.checked)
-        }
+      <TextGroup
+        italic={state.textItalic}
+        show={{
+          checked: state.showText,
+          onChange: (checked) => onChange('showText', checked),
+        }}
+        size={state.textSize}
+        tone={state.textTone}
+        onItalicChange={(value) => onChange('textItalic', value)}
+        onSizeChange={(size) => onChange('textSize', size)}
+        onToneChange={(tone) => onChange('textTone', tone)}
       />
     </StyledSettingsForm>
   );

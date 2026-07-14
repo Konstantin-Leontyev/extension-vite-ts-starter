@@ -101,19 +101,23 @@ export function TextSettings({ onChange, state }: TextSettingsProps) {
 
       <Checkbox
         checked={state.ellipsis}
-        label="Show ellipsis"
+        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('ellipsis', event.target.checked)
         }
-      />
+      >
+        Show ellipsis
+      </Checkbox>
 
       <Checkbox
         checked={state.italic}
-        label="Show italic"
+        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('italic', event.target.checked)
         }
-      />
+      >
+        Show italic
+      </Checkbox>
     </StyledSettingsForm>
   );
 }

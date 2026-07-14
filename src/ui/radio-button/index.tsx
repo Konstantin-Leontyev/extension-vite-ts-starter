@@ -5,10 +5,11 @@
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
+ *  - подпись справа от кружка через `children`. Без `children` рендерится один кружок
+ *    без обёртки
  *  - тон подписи через проп `textTone`
  *  - размер подписи через проп `textSize`
  *  - курсив подписи через проп `textItalic`
- *  - режим `bare` — один кружок без обёртки и подписи
  *
  * Основные задачи:
  * 1. Экспортировать компонент RadioButton
@@ -21,7 +22,7 @@
  *  - `src/pages/design-system` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef } from 'react';
+import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 
@@ -42,40 +43,37 @@ const DEFAULT_RADIO_BUTTON_TEXT_TONE: TextTone = 'muted';
 /**
  * RadioButtonProps — представляет пропсы компонента RadioButton.
  *
- * @property bare — включает режим без обёртки и подписи
- * @property label — текстовая подпись справа от кружка
+ * @property children — подпись справа от кружка
  * @property textItalic — включает курсив подписи
  * @property textSize — размер подписи
  * @property textTone — тон подписи
  */
 type RadioButtonProps = RadioButtonStyleProps & {
-  bare?: boolean;
-  label?: string;
+  children?: ReactNode;
   textItalic?: boolean;
   textSize?: TextSizePreset;
   textTone?: TextTone;
 } & Omit<
     ComponentPropsWithRef<'input'>,
-    keyof RadioButtonStyleProps | 'className' | 'style' | 'type'
+    keyof RadioButtonStyleProps | 'children' | 'className' | 'style' | 'type'
   >;
 
 /**
  * RadioButton — отображает переключатель одного значения с опциональной подписью.
  *
  * @example
- * <RadioButton name="plan" value="a" label="Option A" />
- * <RadioButton bare name="plan" value="b" />
+ * <RadioButton name="plan" value="a">Option A</RadioButton>
+ * <RadioButton name="plan" value="b" />
  */
 function RadioButton({
-  bare = false,
-  label,
+  children,
   sizePreset,
   textItalic,
   textSize,
   textTone = DEFAULT_RADIO_BUTTON_TEXT_TONE,
   ...rest
 }: RadioButtonProps) {
-  if (bare) {
+  if (!children) {
     return <StyledRadioButtonControl sizePreset={sizePreset} type="radio" {...rest} />;
   }
 
@@ -84,15 +82,13 @@ function RadioButton({
   return (
     <StyledRadioButtonRoot {...layout}>
       <StyledRadioButtonControl sizePreset={sizePreset} type="radio" {...control} />
-      {Boolean(label) && (
-        <Text
-          italic={textItalic}
-          sizePreset={textSize ?? getRadioButtonTextSize(sizePreset)}
-          tone={textTone}
-        >
-          {label}
-        </Text>
-      )}
+      <Text
+        italic={textItalic}
+        sizePreset={textSize ?? getRadioButtonTextSize(sizePreset)}
+        tone={textTone}
+      >
+        {children}
+      </Text>
     </StyledRadioButtonRoot>
   );
 }

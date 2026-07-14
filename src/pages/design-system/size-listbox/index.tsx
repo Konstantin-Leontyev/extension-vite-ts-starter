@@ -20,7 +20,7 @@
  *     - `src/pages/design-system/checkbox-settings/index.tsx`
  *     - `src/pages/design-system/switch-settings/index.tsx`
  *     - `src/pages/design-system/spinner-settings/index.tsx`
- *     - `src/pages/design-system/progress-settings/index.tsx`
+ *     - `src/pages/design-system/progress-bar-settings/index.tsx`
  *     - `src/pages/design-system/stepper-settings/index.tsx`
  *     - `src/pages/design-system/segment-button-settings/index.tsx`
  *     - `src/pages/design-system/range-input-settings/index.tsx`

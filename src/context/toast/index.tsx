@@ -134,14 +134,15 @@ export function ToastProvider({ children }: ToastProviderProps) {
             {toasts.map((toast) => (
               <Toast
                 key={toast.id}
-                message={toast.message}
                 sizePreset={toast.sizePreset}
                 textItalic={toast.textItalic}
                 textSize={toast.textSize}
                 textTone={toast.textTone}
                 tone={toast.tone}
                 onClick={() => dismiss(toast.id)}
-              />
+              >
+                {toast.message}
+              </Toast>
             ))}
           </StyledToastViewport>,
           document.body

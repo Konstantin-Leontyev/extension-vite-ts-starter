@@ -1,7 +1,8 @@
 /**
  * Файл: `src/pages/design-system/radio-button-settings/index.tsx`
  * Определяет панель настроек компонента RadioButton в витрине дизайн-системы.
- * Содержит контролы для изменения размера, подписей, выбора варианта и режима `bare` в реальном времени.
+ * Содержит контролы для изменения размера, выбора варианта, подписей и состояний
+ * в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `RadioButtonWidgetState`
@@ -14,45 +15,41 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { Input } from '@ui/input';
 import { Listbox, type ListboxOption } from '@ui/listbox';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 import { getRadioButtonTextSize } from '@ui/radio-button';
-import {
-  TEXT_SIZE_PRESET_KEYS,
-  TEXT_TONE_KEYS,
-  type TextSizePreset,
-  type TextTone,
-} from '@ui/text';
+import { type TextSizePreset, type TextTone } from '@ui/text';
 
 import { StyledSettingsForm } from '../design-system.styles';
 import { SizeListbox } from '../size-listbox';
-import { ToneListbox } from '../tone-listbox';
+import { TextGroup } from '../text-group';
 
 /**
  * RadioButtonWidgetState — представляет состояние настроек компонента RadioButton в витрине дизайн-системы.
  * Часть ключей задаёт общие пропсы обоих переключателей в демо, остальные — отдельные параметры вариантов A и B.
+ * Витринные ключи: `showText` управляет передачей подписей в превью, `textA` и `textB`
+ * хранят содержимое `children` вариантов.
  * Используется для синхронизации значений между панелью управления и демонстрационной парой переключателей.
  *
- * @property bare — включает режим без обёртки и подписи
  * @property disabledA — включает disabled для варианта A
  * @property disabledB — включает disabled для варианта B
- * @property labelA — подпись варианта A
- * @property labelB — подпись варианта B
  * @property selected — активный вариант в группе
+ * @property showText — витринный ключ показа подписей. Выключенный — кружки без обёртки
  * @property sizePreset — размер переключателя
+ * @property textA — подпись варианта A
+ * @property textB — подпись варианта B
  * @property textItalic — включает курсив подписи
  * @property textSize — размер подписи
  * @property textTone — тон подписи
  */
 export type RadioButtonWidgetState = {
-  bare: boolean;
   disabledA: boolean;
   disabledB: boolean;
-  labelA: string;
-  labelB: string;
   selected: 'a' | 'b';
+  showText: boolean;
   sizePreset: SizePreset;
+  textA: string;
+  textB: string;
   textItalic: boolean;
   textSize: TextSizePreset;
   textTone: TextTone;
@@ -110,71 +107,50 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
         }
       />
 
-      <Input
-        disabled={state.bare}
-        label="Text A:"
-        reserveErrorSpace={false}
-        value={state.labelA}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('labelA', event.target.value)
-        }
-      />
-
-      <Input
-        disabled={state.bare}
-        label="Text B:"
-        reserveErrorSpace={false}
-        value={state.labelB}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('labelB', event.target.value)
-        }
-      />
-
-      <SizeListbox
-        label="Text size:"
-        sizes={TEXT_SIZE_PRESET_KEYS}
-        value={state.textSize}
-        onChange={(size) => onChange('textSize', size)}
-      />
-
-      <ToneListbox
-        label="Text tone:"
-        tones={TEXT_TONE_KEYS}
-        value={state.textTone}
-        onChange={(tone) => onChange('textTone', tone)}
-      />
-
-      <Checkbox
-        checked={state.textItalic}
-        label="Show italic"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('textItalic', event.target.checked)
-        }
-      />
-
-      <Checkbox
-        checked={state.bare}
-        label="Show bare"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('bare', event.target.checked)
-        }
+      <TextGroup
+        contents={[
+          {
+            label: 'Text A:',
+            value: state.textA,
+            onChange: (value) => onChange('textA', value),
+          },
+          {
+            label: 'Text B:',
+            value: state.textB,
+            onChange: (value) => onChange('textB', value),
+          },
+        ]}
+        italic={state.textItalic}
+        show={{
+          checked: state.showText,
+          onChange: (checked) => onChange('showText', checked),
+        }}
+        size={state.textSize}
+        tone={state.textTone}
+        onItalicChange={(value) => onChange('textItalic', value)}
+        onSizeChange={(size) => onChange('textSize', size)}
+        onToneChange={(tone) => onChange('textTone', tone)}
       />
 
       <Checkbox
         checked={state.disabledA}
-        label="Disable A"
+        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('disabledA', event.target.checked)
         }
-      />
+      >
+        Disable A
+      </Checkbox>
 
       <Checkbox
         checked={state.disabledB}
-        label="Disable B"
+        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('disabledB', event.target.checked)
         }
-      />
+      >
+        Disable B
+      </Checkbox>
     </StyledSettingsForm>
   );
 }
