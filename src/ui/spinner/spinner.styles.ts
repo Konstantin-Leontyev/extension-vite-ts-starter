@@ -5,8 +5,8 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `SpinnerStyleProps`
  * 2. Хранить размер и толщину рамки в `spinnerBlockSize` и `spinnerBorderWidth`
- * 3. Предоставить функцию `getSpinnerStyles`
- * 4. Предоставить styled-узел `StyledSpinner`
+ * 3. Предоставить функции `getSpinnerStyles` и `getSpinnerTextSize`
+ * 4. Предоставить styled-узлы `StyledSpinnerRoot` и `StyledSpinner`
  *
  * Потребители:
  *  - `src/ui/spinner/index.tsx` — собирает компонент Spinner
@@ -15,15 +15,18 @@
 import { css, keyframes, styled } from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
+import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
+import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
+
+export { splitLayoutProps } from '@ui/layout';
 
 /**
  * spinnerBlockSize — хранит размер спиннера для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
- * Ряд компактнее контролов: для `small` — `16px`, для `medium` — `24px`, для `large` — `32px`.
+ * Ряд компактнее контролов.
  */
 const spinnerBlockSize = Object.freeze({
   small: 16,
@@ -54,9 +57,25 @@ export type SpinnerStyleProps = LayoutProps & {
 };
 
 /**
- * SPINNER_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Spinner.
+ * SPINNER_ROOT_PROP_NAMES — объединяет имена layout-пропсов корня Spinner.
+ */
+const SPINNER_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
+
+/**
+ * SPINNER_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации индикатора Spinner.
  */
 const SPINNER_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 'tone']);
+
+/**
+ * getSpinnerTextSize — возвращает размер подписи по `sizePreset`.
+ * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
+ *
+ * @param sizePreset — размер спиннера
+ * @returns метка размера текста из `TextSizePreset` для подписи под индикатором
+ */
+export function getSpinnerTextSize(sizePreset?: SizePreset): TextSizePreset {
+  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
+}
 
 /**
  * spinnerRotate — задаёт ключевые кадры анимации вращения спиннера.
@@ -68,7 +87,7 @@ const spinnerRotate = keyframes`
 `;
 
 /**
- * getSpinnerStyles — возвращает CSS-правила для корня `StyledSpinner`:
+ * getSpinnerStyles — возвращает CSS-правила для индикатора `StyledSpinner`:
  * размер, рамку и анимацию.
  *
  * @param props — пропсы стилизации спиннера и тема
@@ -97,24 +116,42 @@ export function getSpinnerStyles(props: SpinnerStyleProps & { theme: AppTheme })
 }
 
 /**
- * StyledSpinner — задаёт корневой узел компонента Spinner.
- * Базируется на `<div>` и поддерживает все пропсы из `SpinnerStyleProps`.
+ * StyledSpinnerRoot — задаёт корневой узел компонента Spinner.
+ * Базируется на `<div>` и поддерживает пропсы из `LayoutProps`.
  *
  * Встроенные стили:
  *  - `display: grid` — раскладка по дефолту проекта
- *  - `flex-shrink: 0` — спиннер не сжимается при нехватке места
+ *  - `justify-items: center` — центрирует индикатор и подпись
  *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
  *
  * Генерация стилей:
- *  - `getSpinnerStyles` — размер, рамка, цвет, анимация
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ */
+export const StyledSpinnerRoot = styled.div.withConfig({
+  shouldForwardProp: (prop) => !SPINNER_ROOT_PROP_NAMES.has(prop),
+})<LayoutProps>`
+  display: grid;
+  gap: ${getSpacingValue(8)};
+  justify-items: center;
+  min-inline-size: 0;
+  ${(props) => getLayoutStyles(props)}
+`;
+
+/**
+ * StyledSpinner — задаёт индикатор компонента Spinner.
+ * Базируется на `<div>` и поддерживает пропсы из `SpinnerStyleProps`.
+ *
+ * Встроенные стили:
+ *  - `flex-shrink: 0` — индикатор не сжимается при нехватке места
+ *
+ * Генерация стилей:
+ *  - `getSpinnerStyles` — размер, рамка, цвет, анимация
+ *  - `getLayoutStyles` — отступы, позиционирование, размеры в одиночном режиме
  */
 export const StyledSpinner = styled.div.withConfig({
   shouldForwardProp: (prop) => !SPINNER_PROP_NAMES.has(prop),
 })<SpinnerStyleProps>`
-  display: grid;
   flex-shrink: 0;
-  min-inline-size: 0;
   ${(props) => getSpinnerStyles(props)}
   ${(props) => getLayoutStyles(props)}
 `;

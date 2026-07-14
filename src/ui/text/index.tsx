@@ -6,6 +6,7 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - семантический тон через проп `tone`
+ *  - курсивное начертание через проп `italic`
  *  - переопределение корневого элемента через проп `as`
  *
  * Основные задачи:
@@ -29,6 +30,7 @@ import {
   TEXT_ALIGN_PRESET_KEYS,
   TEXT_SIZE_PRESET_KEYS,
   TEXT_TONE_KEYS,
+  getTextLineHeight,
   getTextProperties,
   getTextToneColor,
   getTextToneKey,
@@ -71,6 +73,7 @@ export {
   TEXT_ALIGN_PRESET_KEYS,
   TEXT_SIZE_PRESET_KEYS,
   TEXT_TONE_KEYS,
+  getTextLineHeight,
   getTextProperties,
   getTextToneColor,
   getTextToneKey,

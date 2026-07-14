@@ -35,7 +35,8 @@ import { ToneListbox } from '../tone-listbox';
  *
  * @property align — выравнивание текста
  * @property children — содержимое текста
- * @property ellipsis — однострочное обрезание с многоточием
+ * @property ellipsis — включает однострочное обрезание с многоточием
+ * @property italic — включает курсивное начертание
  * @property sizePreset — типографический пресет
  * @property tone — тон текста
  */
@@ -43,6 +44,7 @@ export type TextWidgetState = {
   align: CSSProperties['textAlign'];
   children: string;
   ellipsis: boolean;
+  italic: boolean;
   sizePreset: TextSizePreset;
   tone: TextTone;
 };
@@ -68,17 +70,10 @@ export function TextSettings({ onChange, state }: TextSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
       <SizeListbox
-        label="Size preset:"
+        label="Size:"
         sizes={TEXT_SIZE_PRESET_KEYS}
         value={state.sizePreset}
         onChange={(size) => onChange('sizePreset', size)}
-      />
-
-      <ToneListbox
-        label="Tone:"
-        tones={TEXT_TONE_KEYS}
-        value={state.tone}
-        onChange={(tone) => onChange('tone', tone)}
       />
 
       <AlignListbox
@@ -86,6 +81,13 @@ export function TextSettings({ onChange, state }: TextSettingsProps) {
         aligns={TEXT_ALIGN_PRESET_KEYS}
         value={state.align ?? 'start'}
         onChange={(align) => onChange('align', align)}
+      />
+
+      <ToneListbox
+        label="Tone:"
+        tones={TEXT_TONE_KEYS}
+        value={state.tone}
+        onChange={(tone) => onChange('tone', tone)}
       />
 
       <Input
@@ -102,6 +104,14 @@ export function TextSettings({ onChange, state }: TextSettingsProps) {
         label="Show ellipsis"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('ellipsis', event.target.checked)
+        }
+      />
+
+      <Checkbox
+        checked={state.italic}
+        label="Show italic"
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('italic', event.target.checked)
         }
       />
     </StyledSettingsForm>

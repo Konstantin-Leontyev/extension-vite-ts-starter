@@ -4,7 +4,7 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `ToastStyleProps`
- * 2. Предоставить функции `getToastStyles` и `getToastTextSize`
+ * 2. Предоставить функции `getToastTextSize` и `getToastStyles`
  * 3. Предоставить styled-узел `StyledToast`
  *
  * Потребители:
@@ -46,11 +46,11 @@ export type ToastStyleProps = LayoutProps & {
 const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 'tone']);
 
 /**
- * getToastTextSize — возвращает размер текста по `sizePreset`.
+ * getToastTextSize — возвращает размер текста сообщения по `sizePreset`.
  * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
  *
- * @param sizePreset — размер компонента
- * @returns метка размера текста из `TextSizePreset` для внутреннего Text
+ * @param sizePreset — размер уведомления
+ * @returns метка размера текста из `TextSizePreset` для сообщения
  */
 export function getToastTextSize(sizePreset?: SizePreset): TextSizePreset {
   return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);

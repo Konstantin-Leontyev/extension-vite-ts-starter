@@ -174,7 +174,8 @@ export function getTheme(props: { theme: AppTheme }): AppTheme {
  *  - `color-scheme` — для нативной части браузера: скроллбар, выделение
  *  - `background-color` и `color` для `<body>` — из текущей темы
  *  - шрифт `Inter` как основной с системными fallback-шрифтами. Локальные файлы
- *    шрифта живут в `ui/fonts/` и подключаются через `import './fonts/inter.css'`
+ *    шрифта живут в `ui/fonts/` и подключаются через `import './fonts/inter.css'`.
+ *    Курсивные начертания подключены отдельными `@font-face` с `font-style: italic`
  */
 export const GlobalThemeStyle = createGlobalStyle`
   :root {

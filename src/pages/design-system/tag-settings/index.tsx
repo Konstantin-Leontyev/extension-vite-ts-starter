@@ -16,8 +16,13 @@ import { type ChangeEvent } from 'react';
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { SHAPE_PRESET_KEYS, type ShapePreset } from '@ui/presets';
-import { TAG_SIZE_PRESET_KEYS, type TagSizePreset } from '@ui/tag';
-import { TEXT_TONE_KEYS, type TextTone } from '@ui/text';
+import { TAG_SIZE_PRESET_KEYS, getTagTextSize, type TagSizePreset } from '@ui/tag';
+import {
+  TEXT_SIZE_PRESET_KEYS,
+  TEXT_TONE_KEYS,
+  type TextSizePreset,
+  type TextTone,
+} from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../design-system.styles';
@@ -37,7 +42,9 @@ import { ToneListbox } from '../tone-listbox';
  * @property dotTone — тон точки
  * @property shape — форма метки
  * @property sizePreset — размер метки
- * @property textTone — тон текста
+ * @property textItalic — включает курсив текста метки
+ * @property textSize — размер текста метки
+ * @property textTone — тон текста метки
  * @property tinted — включает режим мягкой заливки
  * @property tone — тон заливки
  */
@@ -49,6 +56,8 @@ export type TagWidgetState = {
   dotTone: TonePreset;
   shape: ShapePreset;
   sizePreset: TagSizePreset;
+  textItalic: boolean;
+  textSize: TextSizePreset;
   textTone: TextTone;
   tinted: boolean;
   tone: TonePreset;
@@ -78,7 +87,10 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
         label="Size:"
         sizes={TAG_SIZE_PRESET_KEYS}
         value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
+        onChange={(size) => {
+          onChange('sizePreset', size);
+          onChange('textSize', getTagTextSize(size));
+        }}
       />
 
       <ShapeListbox
@@ -95,8 +107,23 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
         onChange={(tone) => onChange('tone', tone)}
       />
 
+      <Input
+        label="Text:"
+        reserveErrorSpace={false}
+        value={state.children}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('children', event.target.value)
+        }
+      />
+
+      <SizeListbox
+        label="Text size:"
+        sizes={TEXT_SIZE_PRESET_KEYS}
+        value={state.textSize}
+        onChange={(size) => onChange('textSize', size)}
+      />
+
       <ToneListbox
-        excludeTone={state.tone}
         label="Text tone:"
         tones={TEXT_TONE_KEYS}
         value={state.textTone}
@@ -104,10 +131,10 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
       />
 
       <Checkbox
-        checked={state.bordered}
-        label="Show border"
+        checked={state.textItalic}
+        label="Show italic"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('bordered', event.target.checked)
+          onChange('textItalic', event.target.checked)
         }
       />
 
@@ -120,14 +147,6 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
         />
       )}
 
-      <Checkbox
-        checked={state.dot}
-        label="Show dot"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('dot', event.target.checked)
-        }
-      />
-
       {state.dot && (
         <ToneListbox
           label="Dot tone:"
@@ -138,19 +157,26 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
       )}
 
       <Checkbox
+        checked={state.bordered}
+        label="Show border"
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('bordered', event.target.checked)
+        }
+      />
+
+      <Checkbox
+        checked={state.dot}
+        label="Show dot"
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('dot', event.target.checked)
+        }
+      />
+
+      <Checkbox
         checked={state.tinted}
         label="Show tinted"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('tinted', event.target.checked)
-        }
-      />
-
-      <Input
-        label="Tag text:"
-        reserveErrorSpace={false}
-        value={state.children}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('children', event.target.value)
         }
       />
     </StyledSettingsForm>

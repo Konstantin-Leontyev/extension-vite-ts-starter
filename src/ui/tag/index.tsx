@@ -1,19 +1,22 @@
 /**
  * Файл: `src/ui/tag/index.tsx`
- * Предоставляет компонент Tag для отображения тегов.
+ * Предоставляет компонент Tag для отображения меток.
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - семантический тон через проп `tone`
  *  - тон текста через проп `textTone`
+ *  - размер текста через проп `textSize`
+ *  - курсив текста через проп `textItalic`
  *  - точку-индикатор через проп `dot` с отдельным тоном `dotTone`
  *  - режимы `bordered` и `tinted`
  *
  * Основные задачи:
  * 1. Экспортировать компонент Tag
  * 2. Типизировать пропсы через `TagProps`
- * 3. Реэкспортировать публичное API стилей: `TAG_SIZE_PRESET_KEYS` и тип `TagSizePreset`
+ * 3. Реэкспортировать публичное API стилей: `TAG_SIZE_PRESET_KEYS`, `getTagTextSize`
+ *    и тип `TagSizePreset`
  *
  * Потребители:
  *  - страницы и виджеты приложения — показывают статусы и метки
@@ -22,7 +25,7 @@
 
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
-import { Text, type TextTone } from '@ui/text';
+import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import {
@@ -37,21 +40,25 @@ import {
 /**
  * TagProps — представляет пропсы компонента Tag.
  *
- * @property children — содержимое тега
+ * @property children — содержимое метки
  * @property dot — включает точку-индикатор
  * @property dotTone — тон точки
+ * @property textItalic — включает курсив текста
+ * @property textSize — размер текста
  * @property textTone — тон текста
  */
 type TagProps = {
   children: ReactNode;
   dot?: boolean;
   dotTone?: TonePreset;
+  textItalic?: boolean;
+  textSize?: TextSizePreset;
   textTone?: TextTone;
 } & TagStyleProps &
   Omit<ComponentPropsWithRef<'span'>, keyof TagStyleProps | 'className' | 'style'>;
 
 /**
- * Tag — отображает тег с заливкой, границей и точкой-индикатором.
+ * Tag — отображает метку с заливкой, границей и точкой-индикатором.
  *
  * @example
  * <Tag>Метка</Tag>
@@ -63,6 +70,8 @@ export function Tag({
   dot,
   dotTone,
   sizePreset,
+  textItalic,
+  textSize,
   textTone,
   tone,
   ...rest
@@ -70,11 +79,17 @@ export function Tag({
   return (
     <StyledTag sizePreset={sizePreset} tone={tone} {...rest}>
       {dot && <StyledTagDot dotTone={dotTone} />}
-      <Text ellipsis sizePreset={getTagTextSize(sizePreset)} tone={textTone}>
+      <Text
+        ellipsis
+        italic={textItalic}
+        sizePreset={textSize ?? getTagTextSize(sizePreset)}
+        tone={textTone}
+      >
         {children}
       </Text>
     </StyledTag>
   );
 }
 
-export { TAG_SIZE_PRESET_KEYS, type TagSizePreset };
+/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
+export { TAG_SIZE_PRESET_KEYS, getTagTextSize, type TagSizePreset };

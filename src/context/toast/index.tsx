@@ -34,7 +34,11 @@ import { StyledToastViewport } from './toast.styles';
 /** TOAST_DURATION_MS — задаёт время автоскрытия уведомления. */
 const TOAST_DURATION_MS = 5000;
 
-/** ActiveToast — представляет активное уведомление с уникальным идентификатором. */
+/**
+ * ActiveToast — представляет активное уведомление в очереди.
+ *
+ * @property id — уникальный идентификатор уведомления
+ */
 type ActiveToast = ToastInput & { id: string };
 
 /**
@@ -132,6 +136,9 @@ export function ToastProvider({ children }: ToastProviderProps) {
                 key={toast.id}
                 message={toast.message}
                 sizePreset={toast.sizePreset}
+                textItalic={toast.textItalic}
+                textSize={toast.textSize}
+                textTone={toast.textTone}
                 tone={toast.tone}
                 onClick={() => dismiss(toast.id)}
               />

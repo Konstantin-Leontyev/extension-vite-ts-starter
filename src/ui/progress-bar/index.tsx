@@ -9,14 +9,17 @@
  *  - семантический тон через проп `tone`
  *  - долю заполнения через проп `value`
  *  - подпись с процентом через проп `showLabel`
+ *  - тон подписи через проп `textTone`
+ *  - размер подписи через проп `textSize`
+ *  - курсив подписи через проп `textItalic`
  *
  * Основные задачи:
  * 1. Экспортировать компонент ProgressBar
  * 2. Типизировать пропсы через `ProgressBarProps`
  * 3. Выставлять `role="progressbar"` и `aria-valuenow` для скринридеров
+ * 4. Реэкспортировать мост размера текста `getProgressBarTextSize`
  *
  * Потребители:
- *  - `src/components/model-download-gate/index.tsx` — показывает прогресс загрузки модели
  *  - страницы и виджеты приложения, например ModelDownloadGate — показывают ход
  *    выполнения операций
  *  - `src/pages/design-system` — демонстрирует состояния в витрине
@@ -24,23 +27,36 @@
 
 import { type ComponentPropsWithRef } from 'react';
 
-import { Text } from '@ui/text';
+import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 
 import {
   StyledProgressBar,
   StyledProgressBarFill,
   StyledProgressBarRoot,
   clampProgressValue,
+  getProgressBarTextSize,
   type ProgressBarStyleProps,
 } from './progress-bar.styles';
+
+/**
+ * DEFAULT_PROGRESS_BAR_TEXT_TONE — задаёт тон подписи по умолчанию.
+ * Подпись контрола — вторичный текст, поэтому `muted`.
+ */
+const DEFAULT_PROGRESS_BAR_TEXT_TONE: TextTone = 'muted';
 
 /**
  * ProgressBarProps — представляет пропсы компонента ProgressBar.
  *
  * @property showLabel — включает подпись с процентом выполнения рядом с полосой
+ * @property textItalic — включает курсив подписи
+ * @property textSize — размер подписи
+ * @property textTone — тон подписи
  */
 type ProgressBarProps = ProgressBarStyleProps & {
   showLabel?: boolean;
+  textItalic?: boolean;
+  textSize?: TextSizePreset;
+  textTone?: TextTone;
 } & Omit<
     ComponentPropsWithRef<'div'>,
     keyof ProgressBarStyleProps | 'className' | 'style'
@@ -53,13 +69,16 @@ type ProgressBarProps = ProgressBarStyleProps & {
  * <ProgressBar value={0.75} />
  * <ProgressBar value={0.5} showLabel tone="success" />
  */
-export function ProgressBar({
+function ProgressBar({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   showLabel = false,
-  value,
   sizePreset,
+  textItalic,
+  textSize,
+  textTone = DEFAULT_PROGRESS_BAR_TEXT_TONE,
   tone,
+  value,
   ...layoutProps
 }: ProgressBarProps) {
   const clampedValue = clampProgressValue(value);
@@ -90,10 +109,19 @@ export function ProgressBar({
         />
       </StyledProgressBar>
       {showLabel && (
-        <Text aria-hidden={true} sizePreset="medium" tone="muted" whiteSpace="nowrap">
+        <Text
+          aria-hidden={true}
+          italic={textItalic}
+          sizePreset={textSize ?? getProgressBarTextSize(sizePreset)}
+          tone={textTone}
+          whiteSpace="nowrap"
+        >
           {percent}%
         </Text>
       )}
     </StyledProgressBarRoot>
   );
 }
+
+/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
+export { ProgressBar, getProgressBarTextSize };

@@ -1,7 +1,7 @@
 /**
  * Файл: `src/pages/design-system/toast-settings/index.tsx`
  * Определяет панель настроек виджета Toast в витрине дизайн-системы.
- * Содержит контролы для изменения сообщения, размера и тона в реальном времени.
+ * Содержит контролы для изменения размера, тона, сообщения и текста в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `ToastWidgetState`
@@ -13,8 +13,16 @@
 
 import { type ChangeEvent } from 'react';
 
+import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
+import {
+  TEXT_SIZE_PRESET_KEYS,
+  TEXT_TONE_KEYS,
+  type TextSizePreset,
+  type TextTone,
+} from '@ui/text';
+import { getToastTextSize } from '@ui/toast';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../design-system.styles';
@@ -28,11 +36,17 @@ import { ToneListbox } from '../tone-listbox';
  *
  * @property message — текст сообщения в уведомлении
  * @property sizePreset — размер уведомления
+ * @property textItalic — включает курсив текста сообщения
+ * @property textSize — размер текста сообщения
+ * @property textTone — тон текста сообщения
  * @property tone — семантический тон уведомления
  */
 export type ToastWidgetState = {
   message: string;
   sizePreset: SizePreset;
+  textItalic: boolean;
+  textSize: TextSizePreset;
+  textTone: TextTone;
   tone: TonePreset;
 };
 
@@ -63,7 +77,10 @@ export function ToastSettings({ onChange, state }: ToastSettingsProps) {
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
         value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
+        onChange={(size) => {
+          onChange('sizePreset', size);
+          onChange('textSize', getToastTextSize(size));
+        }}
       />
 
       <ToneListbox
@@ -74,11 +91,33 @@ export function ToastSettings({ onChange, state }: ToastSettingsProps) {
       />
 
       <Input
-        label="Message:"
+        label="Text:"
         reserveErrorSpace={false}
         value={state.message}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('message', event.target.value)
+        }
+      />
+
+      <SizeListbox
+        label="Text size:"
+        sizes={TEXT_SIZE_PRESET_KEYS}
+        value={state.textSize}
+        onChange={(size) => onChange('textSize', size)}
+      />
+
+      <ToneListbox
+        label="Text tone:"
+        tones={TEXT_TONE_KEYS}
+        value={state.textTone}
+        onChange={(tone) => onChange('textTone', tone)}
+      />
+
+      <Checkbox
+        checked={state.textItalic}
+        label="Show italic"
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('textItalic', event.target.checked)
         }
       />
     </StyledSettingsForm>

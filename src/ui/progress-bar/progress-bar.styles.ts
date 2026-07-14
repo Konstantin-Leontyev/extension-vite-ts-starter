@@ -5,8 +5,8 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `ProgressBarStyleProps`
  * 2. Хранить высоту полосы в `progressBarBlockSize`
- * 3. Предоставить функции `clampProgressValue`, `getProgressBarStyles`
- *    и `getProgressBarFillStyles`
+ * 3. Предоставить функции `clampProgressValue`, `getProgressBarTextSize`,
+ *    `getProgressBarStyles` и `getProgressBarFillStyles`
  * 4. Предоставить styled-узлы `StyledProgressBarRoot`, `StyledProgressBar`
  *    и `StyledProgressBarFill`
  *
@@ -17,15 +17,16 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
+import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
+import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
 
 /**
  * progressBarBlockSize — хранит высоту полосы прогресса для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
- * Ряд компактнее контролов: для `small` — `4px`, для `medium` — `8px`, для `large` — `12px`.
+ * Ряд компактнее контролов.
  */
 const progressBarBlockSize = Object.freeze({
   small: 4,
@@ -55,6 +56,17 @@ const PROGRESS_BAR_PROP_NAMES = new Set<string>([
   'sizePreset',
   'tone',
 ]);
+
+/**
+ * getProgressBarTextSize — возвращает размер подписи по `sizePreset`.
+ * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
+ *
+ * @param sizePreset — размер полосы
+ * @returns метка размера текста из `TextSizePreset` для подписи с процентом
+ */
+export function getProgressBarTextSize(sizePreset?: SizePreset): TextSizePreset {
+  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
+}
 
 /**
  * clampProgressValue — ограничивает значение диапазоном от 0 до 1.

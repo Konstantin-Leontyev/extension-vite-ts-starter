@@ -133,9 +133,10 @@ export const TEXT_ALIGN_PRESET_KEYS = [
  *
  * @property align — выравнивание текста
  * @property color — прямое переопределение цвета, приоритетнее `tone`
- * @property ellipsis — однострочное обрезание с многоточием
+ * @property ellipsis — включает однострочное обрезание с многоточием
  * @property fontSize — размер шрифта, переопределяет `sizePreset`
  * @property fontWeight — насыщенность шрифта, переопределяет `sizePreset`
+ * @property italic — включает курсивное начертание
  * @property lineHeight — высота строки, переопределяет `sizePreset`
  * @property sizePreset — типографический пресет
  * @property tone — цвет текста из темы
@@ -147,6 +148,7 @@ export type TextStyleProps = LayoutProps & {
   ellipsis?: boolean;
   fontSize?: string;
   fontWeight?: CSSProperties['fontWeight'];
+  italic?: boolean;
   lineHeight?: CSSProperties['lineHeight'];
   sizePreset?: TextSizePreset;
   tone?: TextTone;
@@ -163,6 +165,7 @@ const TEXT_PROP_NAMES = new Set<string>([
   'ellipsis',
   'fontSize',
   'fontWeight',
+  'italic',
   'lineHeight',
   'sizePreset',
   'tone',
@@ -214,6 +217,17 @@ export function getTextProperties(sizePreset: TextSizePreset): string {
 }
 
 /**
+ * getTextLineHeight — возвращает высоту строки для типографического пресета.
+ * Используется для резерва места под однострочный Text без захардкоженных значений.
+ *
+ * @param sizePreset — типографический пресет
+ * @returns значение для CSS-свойства `line-height`
+ */
+export function getTextLineHeight(sizePreset: TextSizePreset): string {
+  return textSizePresets[sizePreset].lineHeight;
+}
+
+/**
  * getTextStyles — преобразует текстовые пропсы в готовые CSS-правила.
  *
  * Как работает:
@@ -222,11 +236,12 @@ export function getTextProperties(sizePreset: TextSizePreset): string {
  *    его типографику через `getTextProperties`
  * 3. Переопределяет типографику прямыми пропсами `fontSize`, `fontWeight`
  *    и `lineHeight`, если они переданы
- * 4. Выбирает цвет: `color`, иначе цвет тона из темы. Без обоих правило
+ * 4. Добавляет `font-style: italic`, если передан проп `italic`
+ * 5. Выбирает цвет: `color`, иначе цвет тона из темы. Без обоих правило
  *    `color` не добавляется — работает наследование через `color: inherit`
  *    у `StyledText`, типичное внутри цветного контрола
- * 5. Добавляет правила для `align` и `whiteSpace`
- * 6. Для `ellipsis` добавляет `overflow: hidden`, `text-overflow: ellipsis`
+ * 6. Добавляет правила для `align` и `whiteSpace`
+ * 7. Для `ellipsis` добавляет `overflow: hidden`, `text-overflow: ellipsis`
  *    и `white-space: nowrap`
  *
  * @param props — объект с текстовыми пропсами и темой
@@ -240,6 +255,7 @@ export function getTextStyles(props: TextStyleProps & { theme: AppTheme }): stri
     ellipsis,
     fontSize,
     fontWeight,
+    italic,
     lineHeight,
     sizePreset = 'normal',
     tone,
@@ -258,6 +274,10 @@ export function getTextStyles(props: TextStyleProps & { theme: AppTheme }): stri
 
   if (lineHeight !== undefined) {
     styles.push(`line-height: ${lineHeight};`);
+  }
+
+  if (italic === true) {
+    styles.push('font-style: italic;');
   }
 
   const textColor =
