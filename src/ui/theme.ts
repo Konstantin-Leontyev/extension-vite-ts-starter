@@ -28,18 +28,19 @@ import './fonts/inter.css';
  * Содержит цветовые роли для элементов интерфейса.
  *
  * @property background — фон страницы
- * @property surface — фон карточек и поверхностей
- * @property default — основной цвет текста
- * @property muted — второстепенный цвет текста
- * @property inverse — контрастный текст на цветной заливке, например на кнопке или плашке
- * @property primary — акцентный цвет бренда
- * @property danger — цвет ошибок и опасных действий
- * @property success — цвет успешных действий
- * @property warning — цвет предупреждений
  * @property border — цвет рамок и разделителей
+ * @property danger — цвет ошибок и опасных действий
+ * @property default — основной цвет текста
  * @property focusRing — цвет кольца фокуса
+ * @property hoverSurface — фон нейтрального интерактива при наведении и фокусе
  * @property invalidRing — цвет кольца для невалидных полей
+ * @property inverse — контрастный текст на цветной заливке, например на кнопке или плашке
+ * @property muted — второстепенный цвет текста
+ * @property primary — акцентный цвет бренда
  * @property scrollbarThumb — цвет бегунка скроллбара
+ * @property success — цвет успешных действий
+ * @property surface — фон карточек и поверхностей
+ * @property warning — цвет предупреждений
  */
 export type ThemeColors = {
   background: string;
@@ -47,6 +48,7 @@ export type ThemeColors = {
   danger: string;
   default: string;
   focusRing: string;
+  hoverSurface: string;
   invalidRing: string;
   inverse: string;
   muted: string;
@@ -91,6 +93,7 @@ const lightColors: ThemeColors = {
   danger:         '#d53032',                                        // Клубнично-красный
   default:        '#1a162a',                                        // Темный пурпурно-синий
   focusRing:      'color-mix(in srgb, #1a73e8 35%, transparent)',
+  hoverSurface:   'color-mix(in srgb, #e5e4e2 30%, #ffffff)',
   invalidRing:    'color-mix(in srgb, #d93025 35%, transparent)',
   inverse:        '#f9fafb',                                        // Белоснежный
   muted:          '#606e8c',                                        // Голубино-синий
@@ -113,6 +116,7 @@ const darkColors: ThemeColors = {
   danger:         '#e34234',                                        // Китайский красный
   default:        '#f9fafb',                                        // Белоснежный
   focusRing:      'color-mix(in srgb, #1a73e8 42%, transparent)',
+  hoverSurface:   'color-mix(in srgb, #2f353b 30%, #161a1e)',
   invalidRing:    'color-mix(in srgb, #ea4335 42%, transparent)',
   inverse:        '#f9fafb',                                        // Белоснежный
   muted:          '#b0b7c6',                                        // Кадетский синий Крайола

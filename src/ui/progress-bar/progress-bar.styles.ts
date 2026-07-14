@@ -88,18 +88,22 @@ export function clampProgressValue(value: number): number {
 
 /**
  * getProgressBarStyles — возвращает CSS-правила для узла `StyledProgressBar`:
- * высоту и скругление.
+ * высоту, скругление и цвет дорожки.
  *
- * @param props — пропсы стилизации полосы прогресса
+ * @param props — пропсы стилизации полосы прогресса и тема
  * @returns CSS-правила
  */
-export function getProgressBarStyles(props: ProgressBarStyleProps): string {
+export function getProgressBarStyles(
+  props: ProgressBarStyleProps & { theme: AppTheme }
+): string {
+  const theme = getTheme(props);
   const sizePreset = props.sizePreset ?? DEFAULT_SIZE_PRESET;
   const blockSize = getSpacingValue(progressBarBlockSize[sizePreset]);
 
   return `
     block-size: ${blockSize};
     border-radius: ${blockSize};
+    background-color: ${theme.colors.border};
   `;
 }
 
@@ -156,10 +160,9 @@ export const StyledProgressBarRoot = styled.div.withConfig({
  *  - `flex-grow: 1` — полоса занимает всё доступное место
  *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
  *  - `overflow: hidden` — обрезает заливку по границе полосы
- *  - `background-color` — цвет дорожки из темы
  *
  * Генерация стилей:
- *  - `getProgressBarStyles` — высота и скругление
+ *  - `getProgressBarStyles` — высота, скругление и цвет дорожки
  */
 export const StyledProgressBar = styled.div.withConfig({
   shouldForwardProp: (prop) => !PROGRESS_BAR_PROP_NAMES.has(prop),
@@ -168,7 +171,6 @@ export const StyledProgressBar = styled.div.withConfig({
   flex-grow: 1;
   min-inline-size: 0;
   overflow: hidden;
-  background-color: ${(props) => getTheme(props).colors.border};
   ${(props) => getProgressBarStyles(props)}
 `;
 

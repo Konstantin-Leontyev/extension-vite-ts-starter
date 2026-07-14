@@ -5,7 +5,7 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `TagStyleProps` и `TagSizePreset`
  * 2. Хранить локальный ряд размеров в `tagBlockSize`, `tagPaddingInline` и `tagTextSize`
- * 3. Предоставить функции `getTagStyles` и `getTagTextSize`,
+ * 3. Предоставить функции `getTagStyles`, `getTagDotStyles` и `getTagTextSize`,
  *    дефолт `DEFAULT_TAG_SIZE_PRESET` и перечень `TAG_SIZE_PRESET_KEYS`
  * 4. Предоставить styled-узлы `StyledTag` и `StyledTagDot`
  *
@@ -221,6 +221,19 @@ function getTagDotColor(theme: AppTheme, dotTone: TonePreset | undefined): strin
 }
 
 /**
+ * getTagDotStyles — возвращает CSS-правила для узла `StyledTagDot`: цвет точки.
+ *
+ * @param props — проп `dotTone` и тема
+ * @returns CSS-правило цвета точки
+ */
+export function getTagDotStyles(props: {
+  dotTone?: TonePreset;
+  theme: AppTheme;
+}): string {
+  return `background-color: ${getTagDotColor(getTheme(props), props.dotTone)};`;
+}
+
+/**
  * getTagStyles — возвращает CSS-правила для корня `StyledTag`:
  * размер, отступы, границу, форму и цвета.
  *
@@ -288,7 +301,7 @@ export const StyledTag = styled.span.withConfig({
  *  - `border-radius: 50%` — круглая форма
  *
  * Генерация стилей:
- *  - `getTagDotColor` — цвет точки: по `dotTone`, иначе `currentColor`
+ *  - `getTagDotStyles` — цвет точки: по `dotTone`, иначе `currentColor`
  */
 export const StyledTagDot = styled.span.withConfig({
   shouldForwardProp: (prop) => !TAG_DOT_PROP_NAMES.has(prop),
@@ -296,6 +309,6 @@ export const StyledTagDot = styled.span.withConfig({
   flex-shrink: 0;
   inline-size: 0.5em;
   block-size: 0.5em;
-  background-color: ${(props) => getTagDotColor(getTheme(props), props.dotTone)};
   border-radius: 50%;
+  ${(props) => getTagDotStyles(props)}
 `;

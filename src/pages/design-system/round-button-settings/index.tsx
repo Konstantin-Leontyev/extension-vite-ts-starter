@@ -1,30 +1,53 @@
+/**
+ * Файл: `src/pages/design-system/round-button-settings/index.tsx`
+ * Определяет панель настроек компонента RoundButton в витрине дизайн-системы.
+ * Содержит контролы для изменения размера, иконки, режима с границей и состояния `disabled` в реальном времени.
+ *
+ * Основные задачи:
+ * 1. Типизировать состояние витрины через `RoundButtonWidgetState`
+ * 2. Экспортировать компонент `RoundButtonSettings`
+ *
+ * Потребители:
+ *  - `src/pages/design-system/index.tsx` — подключает панель и синхронизирует состояние с превью круглой кнопки
+ */
+
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { Combobox } from '@ui/combobox';
-import { Listbox, type ListboxOption } from '@ui/listbox';
-import { type RoundButtonSizePreset } from '@ui/round-button';
+import {
+  ROUND_BUTTON_SIZE_PRESET_KEYS,
+  type RoundButtonSizePreset,
+} from '@ui/round-button';
 
 import { StyledSettingsForm } from '../design-system.styles';
-import {
-  SHOWCASE_ICON_COMBOBOX_OPTIONS,
-  isShowcaseIconKey,
-  type ShowcaseIconKey,
-} from '../showcase-icons';
+import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
+import { SizeListbox } from '../size-listbox';
 
+/**
+ * RoundButtonWidgetState — представляет состояние настроек компонента RoundButton в витрине дизайн-системы.
+ * Ключи совпадают с именами пропов компонента RoundButton, кроме витринных ключей:
+ * `iconKey` выбирает иконку для `children` в превью.
+ * Используется для синхронизации значений между панелью управления и демонстрационной круглой кнопкой.
+ *
+ * @property bordered — включает режим с границей
+ * @property disabled — включает недоступное состояние
+ * @property iconKey — витринный ключ выбора иконки для превью
+ * @property sizePreset — размер кнопки
+ */
 export type RoundButtonWidgetState = {
+  bordered: boolean;
   disabled: boolean;
-  iconKey: ShowcaseIconKey;
+  iconKey: IconKey;
   sizePreset: RoundButtonSizePreset;
 };
 
-const SIZE_OPTIONS: ListboxOption[] = [
-  { label: 'small', value: 'small' },
-  { label: 'medium', value: 'medium' },
-  { label: 'large', value: 'large' },
-  { label: 'huge', value: 'huge' },
-];
-
+/**
+ * RoundButtonSettingsProps — представляет пропсы компонента RoundButtonSettings.
+ *
+ * @property onChange — обработчик изменения поля состояния витрины
+ * @property state — текущее состояние настроек круглой кнопки
+ */
 type RoundButtonSettingsProps = {
   onChange: <K extends keyof RoundButtonWidgetState>(
     key: K,
@@ -33,36 +56,49 @@ type RoundButtonSettingsProps = {
   state: RoundButtonWidgetState;
 };
 
+/**
+ * RoundButtonSettings — отображает панель настроек RoundButton в витрине дизайн-системы.
+ *
+ * @example
+ * <RoundButtonSettings state={roundButton} onChange={updateRoundButton} />
+ */
 export function RoundButtonSettings({ onChange, state }: RoundButtonSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
-      <Listbox
+      <SizeListbox
         label="Size:"
-        options={SIZE_OPTIONS}
-        reserveErrorSpace={false}
+        sizes={ROUND_BUTTON_SIZE_PRESET_KEYS}
         value={state.sizePreset}
-        onChange={(value) => onChange('sizePreset', value as RoundButtonSizePreset)}
+        onChange={(size) => onChange('sizePreset', size)}
       />
 
       <Combobox
         label="Icon:"
-        options={SHOWCASE_ICON_COMBOBOX_OPTIONS}
+        options={COMBOBOX_OPTIONS}
         reserveErrorSpace={false}
         value={state.iconKey}
-        onChange={(value) => {
-          if (isShowcaseIconKey(value)) {
-            onChange('iconKey', value);
-          }
-        }}
+        onChange={(value) => onChange('iconKey', value as IconKey)}
       />
 
       <Checkbox
+        checked={state.bordered}
+        sizePreset="medium"
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('bordered', event.target.checked)
+        }
+      >
+        Show border
+      </Checkbox>
+
+      <Checkbox
         checked={state.disabled}
-        label="Disabled"
+        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('disabled', event.target.checked)
         }
-      />
+      >
+        Disabled
+      </Checkbox>
     </StyledSettingsForm>
   );
 }
