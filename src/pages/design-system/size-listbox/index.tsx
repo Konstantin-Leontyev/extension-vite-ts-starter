@@ -13,7 +13,7 @@
  *     - `src/pages/design-system/tag-settings/index.tsx`
  *     - `src/pages/design-system/toast-settings/index.tsx`
  *     - `src/pages/design-system/text-settings/index.tsx`
- *     - `src/pages/design-system/card-settings/index.tsx`
+ *     - `src/pages/design-system/heading-group/index.tsx`
  *     - `src/pages/design-system/input-settings/index.tsx`
  *     - `src/pages/design-system/listbox-settings/index.tsx`
  *     - `src/pages/design-system/combobox-settings/index.tsx`

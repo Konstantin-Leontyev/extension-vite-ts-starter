@@ -36,6 +36,7 @@ import './fonts/inter.css';
  * @property invalidRing — цвет кольца для невалидных полей
  * @property inverse — контрастный текст на цветной заливке, например на кнопке или плашке
  * @property muted — второстепенный цвет текста
+ * @property overlay — затемнение страницы под модальным слоем, например в `::backdrop`
  * @property primary — акцентный цвет бренда
  * @property scrollbarThumb — цвет бегунка скроллбара
  * @property success — цвет успешных действий
@@ -52,6 +53,7 @@ export type ThemeColors = {
   invalidRing: string;
   inverse: string;
   muted: string;
+  overlay: string;
   primary: string;
   scrollbarThumb: string;
   success: string;
@@ -97,6 +99,7 @@ const lightColors: ThemeColors = {
   invalidRing:    'color-mix(in srgb, #d93025 35%, transparent)',
   inverse:        '#f9fafb',                                        // Белоснежный
   muted:          '#606e8c',                                        // Голубино-синий
+  overlay:        'rgb(0 0 0 / 50%)',
   primary:        '#1974d2',                                        // Темно-синий Крайола
   scrollbarThumb: '#c1caca',                                        // Очень бледный синий
   success:        '#177245',                                        // Темный весенне-зеленый
@@ -120,6 +123,7 @@ const darkColors: ThemeColors = {
   invalidRing:    'color-mix(in srgb, #ea4335 42%, transparent)',
   inverse:        '#f9fafb',                                        // Белоснежный
   muted:          '#b0b7c6',                                        // Кадетский синий Крайола
+  overlay:        'rgb(0 0 0 / 50%)',
   primary:        '#1974d2',                                        // Темно-синий Крайола
   scrollbarThumb: '#414a4c',                                        // Космос
   success:        '#2e8b57',                                        // Зеленое море
@@ -178,7 +182,7 @@ export function getTheme(props: { theme: AppTheme }): AppTheme {
  *  - `color-scheme` — для нативной части браузера: скроллбар, выделение
  *  - `background-color` и `color` для `<body>` — из текущей темы
  *  - шрифт `Inter` как основной с системными fallback-шрифтами. Локальные файлы
- *    шрифта живут в `ui/fonts/` и подключаются через `import './fonts/inter.css'`.
+ *    шрифта живут в `src/ui/fonts/` и подключаются через `import './fonts/inter.css'`.
  *    Курсивные начертания подключены отдельными `@font-face` с `font-style: italic`
  */
 export const GlobalThemeStyle = createGlobalStyle`

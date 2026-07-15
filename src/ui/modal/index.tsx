@@ -1,13 +1,53 @@
-import { useEffect, useRef, type ComponentProps, type ReactNode } from 'react';
+/**
+ * Файл: `src/ui/modal/index.tsx`
+ * Предоставляет компонент Modal для отображения модального диалога.
+ *
+ * Поддерживает:
+ *  - layout-пропсы: отступы, позиционирование, размеры
+ *  - заливку через проп `background`
+ *  - заголовок и подзаголовок через пропы `title` и `subtitle`
+ *  - размер, выравнивание и тон заголовка и подзаголовка
+ *  - id заголовка для `aria-labelledby` через проп `titleId`
+ *  - тело через `children`
+ *  - видимость через проп `open` и закрытие через `onClose`
+ *  - доступное имя кнопки закрытия через проп `closeAriaLabel`
+ *  - переопределение корневого элемента Card через проп `as`
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент Modal
+ * 2. Типизировать пропсы через `ModalProps`
+ * 3. Связывать заголовок и диалог через `aria-labelledby`
+ *
+ * Потребители:
+ *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ */
+
+import { useEffect, useId, useRef, type ComponentProps, type ReactNode } from 'react';
 
 import { CloseIcon } from '@icons/close';
 import { Card } from '@ui/card';
 
 import { StyledModalDialog } from './modal.styles';
 
-/** Card-пропы панели прокидываются россыпью; своё у модалки — open/onClose. */
+/**
+ * DEFAULT_MODAL_CLOSE_ARIA_LABEL — задаёт доступное имя кнопки закрытия по умолчанию.
+ * Используется, когда вызывающий код не передал проп `closeAriaLabel`.
+ */
+const DEFAULT_MODAL_CLOSE_ARIA_LABEL = 'Close';
+
+/**
+ * CardForwardProps — представляет пропсы Card без `children` и `headerActions`.
+ */
 type CardForwardProps = Omit<ComponentProps<typeof Card>, 'children' | 'headerActions'>;
 
+/**
+ * ModalProps — представляет пропсы компонента Modal.
+ *
+ * @property children — содержимое тела модального окна
+ * @property closeAriaLabel — доступное имя кнопки закрытия
+ * @property onClose — обработчик закрытия модального окна
+ * @property open — включает видимость модального окна
+ */
 type ModalProps = CardForwardProps & {
   children: ReactNode;
   closeAriaLabel?: string;
@@ -15,15 +55,31 @@ type ModalProps = CardForwardProps & {
   open: boolean;
 };
 
-export function Modal({
+/**
+ * Modal — отображает модальный диалог с Card и кнопкой закрытия.
+ *
+ * @example
+ * <Modal open={isOpen} title="Confirm" onClose={() => setIsOpen(false)}>
+ *   Content
+ * </Modal>
+ */
+function Modal({
   children,
-  closeAriaLabel = 'Close',
+  closeAriaLabel = DEFAULT_MODAL_CLOSE_ARIA_LABEL,
   onClose,
   open,
+  title,
+  titleId: titleIdProp,
   ...cardProps
 }: ModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const generatedTitleId = useId();
+  const titleId = title ? (titleIdProp ?? generatedTitleId) : undefined;
 
+  /**
+   * Синхронизирует видимость с пропом `open` через `showModal` и `close`.
+   * Задаёт `closedby="any"`, чтобы закрытие работало по Escape и клику по backdrop.
+   */
   useEffect(() => {
     const dialog = dialogRef.current;
 
@@ -47,11 +103,13 @@ export function Modal({
   }, [open]);
 
   return (
-    <StyledModalDialog ref={dialogRef} onClose={onClose}>
+    <StyledModalDialog ref={dialogRef} aria-labelledby={titleId} onClose={onClose}>
       <Card
         headerActions={[
           { ariaLabel: closeAriaLabel, icon: <CloseIcon />, onClick: onClose },
         ]}
+        title={title}
+        titleId={titleId}
         {...cardProps}
       >
         {children}
@@ -59,3 +117,5 @@ export function Modal({
     </StyledModalDialog>
   );
 }
+
+export { Modal };

@@ -14,7 +14,7 @@
  *     - `src/pages/design-system/tag-settings/index.tsx`
  *     - `src/pages/design-system/range-input-settings/index.tsx`
  *     - `src/pages/design-system/segment-button-settings/index.tsx`
- *     - `src/pages/design-system/card-settings/index.tsx`
+ *     - `src/pages/design-system/heading-group/index.tsx`
  *     - `src/pages/design-system/fieldset-settings/index.tsx`
  *     - `src/pages/design-system/toast-settings/index.tsx`
  *     - `src/pages/design-system/text-settings/index.tsx`

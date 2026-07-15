@@ -15,24 +15,15 @@
 import { Fragment, type CSSProperties, type ChangeEvent } from 'react';
 
 import { Button } from '@ui/button';
-import { CARD_BACKGROUND_KEYS, type CardBackground } from '@ui/card';
+import { type CardBackground } from '@ui/card';
 import { Checkbox } from '@ui/checkbox';
 import { Combobox } from '@ui/combobox';
-import { Input } from '@ui/input';
-import { Listbox, type ListboxOption } from '@ui/listbox';
-import {
-  TEXT_ALIGN_PRESET_KEYS,
-  TEXT_SIZE_PRESET_KEYS,
-  TEXT_TONE_KEYS,
-  type TextSizePreset,
-  type TextTone,
-} from '@ui/text';
+import { type TextSizePreset, type TextTone } from '@ui/text';
 
-import { AlignListbox } from '../align-listbox';
+import { BackgroundListbox } from '../background-listbox';
 import { StyledSettingsForm } from '../design-system.styles';
+import { HeadingGroup } from '../heading-group';
 import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
-import { SizeListbox } from '../size-listbox';
-import { ToneListbox } from '../tone-listbox';
 
 /**
  * CardHeaderActionState — представляет одно действие шапки в состоянии витрины
@@ -78,15 +69,6 @@ export type CardWidgetState = {
 };
 
 /**
- * BACKGROUND_OPTIONS — формирует опции выбора фона из `CARD_BACKGROUND_KEYS`.
- * Используется в панели настроек для поля Background.
- */
-const BACKGROUND_OPTIONS: ListboxOption[] = CARD_BACKGROUND_KEYS.map((background) => ({
-  label: background,
-  value: background,
-}));
-
-/**
  * CardSettingsProps — представляет пропсы компонента CardSettings.
  *
  * @property onChange — обработчик изменения поля состояния витрины
@@ -129,12 +111,9 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
 
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
-      <Listbox
-        label="Background:"
-        options={BACKGROUND_OPTIONS}
-        reserveErrorSpace={false}
+      <BackgroundListbox
         value={state.background}
-        onChange={(value) => onChange('background', value as CardBackground)}
+        onChange={(background) => onChange('background', background)}
       />
 
       {state.headerActions.map((action, index) => (
@@ -164,34 +143,16 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
         Add header action
       </Button>
 
-      <Input
-        label="Title:"
-        reserveErrorSpace={false}
-        value={state.title}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('title', event.target.value)
-        }
-      />
-
-      <SizeListbox
-        label="Title size:"
-        sizes={TEXT_SIZE_PRESET_KEYS}
-        value={state.titleSizePreset}
-        onChange={(size) => onChange('titleSizePreset', size)}
-      />
-
-      <AlignListbox
-        label="Title align:"
-        aligns={TEXT_ALIGN_PRESET_KEYS}
-        value={state.titleAlign}
-        onChange={(align) => onChange('titleAlign', align)}
-      />
-
-      <ToneListbox
-        label="Title tone:"
-        tones={TEXT_TONE_KEYS}
-        value={state.titleTone}
-        onChange={(tone) => onChange('titleTone', tone)}
+      <HeadingGroup
+        align={state.titleAlign}
+        labelPrefix="Title"
+        size={state.titleSizePreset}
+        text={state.title}
+        tone={state.titleTone}
+        onAlignChange={(align) => onChange('titleAlign', align)}
+        onSizeChange={(size) => onChange('titleSizePreset', size)}
+        onTextChange={(text) => onChange('title', text)}
+        onToneChange={(tone) => onChange('titleTone', tone)}
       />
 
       <Checkbox
@@ -205,37 +166,17 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
       </Checkbox>
 
       {state.showSubtitle && (
-        <>
-          <Input
-            label="Subtitle:"
-            reserveErrorSpace={false}
-            value={state.subtitle}
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              onChange('subtitle', event.target.value)
-            }
-          />
-
-          <SizeListbox
-            label="Subtitle size:"
-            sizes={TEXT_SIZE_PRESET_KEYS}
-            value={state.subtitleSizePreset}
-            onChange={(size) => onChange('subtitleSizePreset', size)}
-          />
-
-          <AlignListbox
-            label="Subtitle align:"
-            aligns={TEXT_ALIGN_PRESET_KEYS}
-            value={state.subtitleAlign}
-            onChange={(align) => onChange('subtitleAlign', align)}
-          />
-
-          <ToneListbox
-            label="Subtitle tone:"
-            tones={TEXT_TONE_KEYS}
-            value={state.subtitleTone}
-            onChange={(tone) => onChange('subtitleTone', tone)}
-          />
-        </>
+        <HeadingGroup
+          align={state.subtitleAlign}
+          labelPrefix="Subtitle"
+          size={state.subtitleSizePreset}
+          text={state.subtitle}
+          tone={state.subtitleTone}
+          onAlignChange={(align) => onChange('subtitleAlign', align)}
+          onSizeChange={(size) => onChange('subtitleSizePreset', size)}
+          onTextChange={(text) => onChange('subtitle', text)}
+          onToneChange={(tone) => onChange('subtitleTone', tone)}
+        />
       )}
     </StyledSettingsForm>
   );
