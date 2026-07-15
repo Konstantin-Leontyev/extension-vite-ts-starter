@@ -2,10 +2,23 @@ import js from '@eslint/js';
 import { defineConfig, globalIgnores, type Config } from 'eslint/config';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import importX from 'eslint-plugin-import-x';
+// @ts-expect-error eslint-plugin-jsx-a11y ships without TypeScript types
+import jsxA11y from 'eslint-plugin-jsx-a11y';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+
+const deepImportPatterns = [
+  {
+    group: ['@ui/*/*', '@ui/*/*/**'],
+    message: 'Import UI kit modules only via barrel @ui/<name>.',
+  },
+  {
+    group: ['@services/*/*', '@services/*/*/**'],
+    message: 'Import services only via barrel @services/<name>.',
+  },
+];
 
 const config: Config[] = defineConfig([
   globalIgnores(['dist']),
@@ -14,6 +27,7 @@ const config: Config[] = defineConfig([
     extends: [
       js.configs.recommended,
       ...tseslint.configs.recommended,
+      jsxA11y.flatConfigs.recommended,
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
@@ -33,6 +47,7 @@ const config: Config[] = defineConfig([
         },
       ],
       'import-x/consistent-type-specifier-style': ['error', 'prefer-inline'],
+      'import-x/no-duplicates': 'error',
       'import-x/order': [
         'error',
         {
@@ -68,6 +83,25 @@ const config: Config[] = defineConfig([
           ],
           pathGroupsExcludedImportTypes: ['type'],
           warnOnUnassignedImports: true,
+        },
+      ],
+      'no-restricted-imports': ['error', { patterns: deepImportPatterns }],
+    },
+  },
+  {
+    files: ['src/ui/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            ...deepImportPatterns,
+            {
+              group: ['../*', '../**'],
+              message:
+                'Cross-primitive relative imports are forbidden; use @ui/<name> barrel.',
+            },
+          ],
         },
       ],
     },
