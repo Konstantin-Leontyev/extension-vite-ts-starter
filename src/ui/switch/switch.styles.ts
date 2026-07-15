@@ -7,6 +7,7 @@
  * 2. Хранить габариты дорожки и бегунка в `switchSizePresets`
  * 3. Предоставить функции `getSwitchTextSize` и `getSwitchTrackStyles`
  * 4. Предоставить styled-узлы `StyledSwitchRoot` и `StyledSwitchTrack`
+ * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/switch/index.tsx` — собирает компонент Switch и реэкспортирует публичное API

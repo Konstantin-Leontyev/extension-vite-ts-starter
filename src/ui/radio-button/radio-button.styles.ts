@@ -7,6 +7,7 @@
  * 2. Хранить размер кружка в `radioBlockSize`
  * 3. Предоставить функции `getRadioButtonTextSize` и `getRadioButtonControlStyles`
  * 4. Предоставить styled-узлы `StyledRadioButtonRoot` и `StyledRadioButtonControl`
+ * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/radio-button/index.tsx` — собирает компонент RadioButton

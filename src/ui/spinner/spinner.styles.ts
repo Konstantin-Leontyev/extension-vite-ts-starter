@@ -7,6 +7,7 @@
  * 2. Хранить размер и толщину рамки в `spinnerBlockSize` и `spinnerBorderWidth`
  * 3. Предоставить функции `getSpinnerStyles` и `getSpinnerTextSize`
  * 4. Предоставить styled-узлы `StyledSpinnerRoot` и `StyledSpinner`
+ * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/spinner/index.tsx` — собирает компонент Spinner
