@@ -92,15 +92,15 @@ function Checkbox({
     );
   }
 
-  const { layout, rest: control } = splitLayoutProps(rest);
+  const { layoutProps, restProps } = splitLayoutProps(rest);
 
   return (
-    <StyledCheckboxRoot {...layout}>
+    <StyledCheckboxRoot {...layoutProps}>
       <StyledCheckboxControl
         type="checkbox"
         inverted={inverted}
         sizePreset={sizePreset}
-        {...control}
+        {...restProps}
       />
       <Text
         italic={textItalic}

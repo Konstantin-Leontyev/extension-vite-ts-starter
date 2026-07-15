@@ -113,8 +113,8 @@ export function Input({
   sizePreset,
   ...rest
 }: InputProps) {
-  const { layout, rest: control } = splitLayoutProps(rest);
-  const { 'aria-describedby': ariaDescribedBy, ...inputControl } = control;
+  const { layoutProps, restProps } = splitLayoutProps(rest);
+  const { 'aria-describedby': ariaDescribedBy, ...inputControl } = restProps;
   const fallbackId = useId();
   const id = inputControl.id ?? fallbackId;
   const errorId = `${id}-error`;
@@ -125,7 +125,7 @@ export function Input({
     [hasError ? errorId : null, ariaDescribedBy].filter(Boolean).join(' ') || undefined;
 
   return (
-    <StyledInputRoot {...layout}>
+    <StyledInputRoot {...layoutProps}>
       {Boolean(label) && (
         <Text
           as="label"

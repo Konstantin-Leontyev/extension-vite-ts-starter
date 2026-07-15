@@ -95,31 +95,31 @@ export function getLayoutStyles(props: LayoutProps): string {
  * элементу, а остальные пропсы передать в DOM-узел или дочерний компонент.
  *
  * Результат содержит:
- *  - `layout` — только layout-пропсы из `LAYOUT_PROP_NAMES`
- *  - `rest` — все остальные пропсы без изменения типов
+ *  - `layoutProps` — только layout-пропсы из `LAYOUT_PROP_NAMES`
+ *  - `restProps` — все остальные пропсы без изменения типов
  *
  * @param props — исходный объект пропсов, обычно все пропсы компонента
- * @returns объект с полями `layout` и `rest`
+ * @returns объект с полями `layoutProps` и `restProps`
  *
  * @example
- * const { layout, rest: control } = splitLayoutProps(rest);
+ * const { layoutProps, restProps } = splitLayoutProps(rest);
  */
 export function splitLayoutProps<T extends Partial<LayoutProps>>(
   props: T
-): { layout: LayoutProps; rest: Omit<T, keyof LayoutProps> } {
-  const layout: Record<string, unknown> = {};
-  const rest: Record<string, unknown> = {};
+): { layoutProps: LayoutProps; restProps: Omit<T, keyof LayoutProps> } {
+  const layoutProps: Record<string, unknown> = {};
+  const restProps: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(props)) {
     if (LAYOUT_PROP_NAMES.has(key)) {
-      layout[key] = value;
+      layoutProps[key] = value;
     } else {
-      rest[key] = value;
+      restProps[key] = value;
     }
   }
 
   return {
-    layout: layout as LayoutProps,
-    rest: rest as Omit<T, keyof LayoutProps>,
+    layoutProps: layoutProps as LayoutProps,
+    restProps: restProps as Omit<T, keyof LayoutProps>,
   };
 }

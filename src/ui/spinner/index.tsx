@@ -88,19 +88,19 @@ function Spinner({
   tone,
   ...rest
 }: SpinnerProps) {
-  const { layout, rest: indicatorRest } = splitLayoutProps(rest);
+  const { layoutProps, restProps } = splitLayoutProps(rest);
   const resolvedTextSize = textSize ?? getSpinnerTextSize(sizePreset);
   const hasText = Boolean(typeof children === 'string' ? children.trim() : children);
   const showText = hasText || reserveTextSpace;
 
   return (
-    <StyledSpinnerRoot {...layout}>
+    <StyledSpinnerRoot {...layoutProps}>
       <StyledSpinner
         aria-label={ariaLabel}
         role="status"
         sizePreset={sizePreset}
         tone={tone}
-        {...indicatorRest}
+        {...restProps}
       />
       {showText && (
         <Text

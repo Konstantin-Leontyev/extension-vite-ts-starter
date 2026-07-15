@@ -77,11 +77,11 @@ function RadioButton({
     return <StyledRadioButtonControl sizePreset={sizePreset} type="radio" {...rest} />;
   }
 
-  const { layout, rest: control } = splitLayoutProps(rest);
+  const { layoutProps, restProps } = splitLayoutProps(rest);
 
   return (
-    <StyledRadioButtonRoot {...layout}>
-      <StyledRadioButtonControl sizePreset={sizePreset} type="radio" {...control} />
+    <StyledRadioButtonRoot {...layoutProps}>
+      <StyledRadioButtonControl sizePreset={sizePreset} type="radio" {...restProps} />
       <Text
         italic={textItalic}
         sizePreset={textSize ?? getRadioButtonTextSize(sizePreset)}

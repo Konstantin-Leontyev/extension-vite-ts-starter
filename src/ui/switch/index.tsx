@@ -75,11 +75,11 @@ function Switch({
   tone,
   ...rest
 }: SwitchProps) {
-  const { layout, rest: control } = splitLayoutProps(rest);
+  const { layoutProps, restProps } = splitLayoutProps(rest);
 
   return (
-    <StyledSwitchRoot {...layout}>
-      <input className="visually-hidden" role="switch" type="checkbox" {...control} />
+    <StyledSwitchRoot {...layoutProps}>
+      <input className="visually-hidden" role="switch" type="checkbox" {...restProps} />
       <StyledSwitchTrack aria-hidden="true" sizePreset={sizePreset} tone={tone} />
       {Boolean(children) && (
         <Text
