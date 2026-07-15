@@ -5,17 +5,19 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `TextStyleProps`, `TextTone` и `TextSizePreset`
  * 2. Хранить тоны текста в `TEXT_TONE_PRESETS` и пресеты типографики в `textSizePresets`
- * 3. Предоставить функции `getTextStyles`, `getTextProperties`, `getTextToneKey`
- *    и `getTextToneColor`, а также перечни `TEXT_TONE_KEYS`, `TEXT_SIZE_PRESET_KEYS`
- *    и `TEXT_ALIGN_PRESET_KEYS`
+ * 3. Предоставить функции `getTextStyles`, `getTextProperties`, `getTextLineHeight`,
+ *    `getTextToneKey` и `getTextToneColor`, а также перечни `TEXT_TONE_KEYS`,
+ *    `TEXT_SIZE_PRESET_KEYS` и `TEXT_ALIGN_PRESET_KEYS`
  * 4. Предоставить styled-узел `StyledText`
  *
  * Потребители:
  *  - `src/ui/text/index.tsx` — собирает компонент Text и реэкспортирует публичное API
- *  - `@ui/presets` — согласует `SizePreset` контрола с `TextSizePreset` через `getTextSize`
+ *  - `@ui/presets` — собирает типографику контрола через `getTextProperties`
  *  - `@ui/table/column-sizing` — замеряет ширину колонки по `textSizePresets`
- *  - `@ui/table/table-inline-field`, `@ui/input`, `@ui/stepper` — стилизуют нативные
+ *  - `@ui/table/table-inline-field`, `@ui/stepper` — стилизуют нативные
  *    поля ввода через `getTextProperties`
+ *  - `@ui/input`, `@ui/combobox`, `@ui/listbox`, `@ui/range-input`, `@ui/spinner`,
+ *    `@ui/table` — резервируют место под однострочный текст через `getTextLineHeight`
  */
 
 import { type CSSProperties } from 'react';

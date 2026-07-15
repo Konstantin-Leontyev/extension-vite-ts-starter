@@ -21,7 +21,7 @@ export type ThemeMode = 'dark' | 'light';
  * ThemeContextValue — представляет API контекста темы.
  *
  * @property mode — текущий режим темы
- * @property onThemeChange — переключает режим темы
+ * @property onThemeChange — обработчик переключения режима темы
  */
 export type ThemeContextValue = {
   mode: ThemeMode;

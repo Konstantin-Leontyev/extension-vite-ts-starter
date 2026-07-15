@@ -47,7 +47,7 @@ const spinnerBorderWidth = {
 } as const satisfies Record<SizePreset, number>;
 
 /**
- * SpinnerStyleProps — представляет пропсы стилизации спиннера и layout-пропсы.
+ * SpinnerStyleProps — представляет пропсы стилизации Spinner и layout-пропсы.
  *
  * @property sizePreset — размер спиннера
  * @property tone — семантический тон

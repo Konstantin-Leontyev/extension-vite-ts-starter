@@ -35,7 +35,7 @@ const progressBarBlockSize = {
 } as const satisfies Record<SizePreset, SpacingValue>;
 
 /**
- * ProgressBarStyleProps — представляет пропсы стилизации полосы прогресса и layout-пропсы.
+ * ProgressBarStyleProps — представляет пропсы стилизации ProgressBar и layout-пропсы.
  *
  * @property value — доля заполнения от 0 до 1
  * @property sizePreset — размер полосы

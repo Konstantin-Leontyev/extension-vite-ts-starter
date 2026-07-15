@@ -6,8 +6,14 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - заливку через проп `background`
  *  - тело карточки через `children`
- *  - заголовок и подзаголовок через пропы `title` и `subtitle`
- *  - размер, выравнивание и тон заголовка и подзаголовка
+ *  - заголовок через проп `title`
+ *  - подзаголовок через проп `subtitle`
+ *  - размер заголовка через проп `titleSizePreset`
+ *  - выравнивание заголовка через проп `titleAlign`
+ *  - тон заголовка через проп `titleTone`
+ *  - размер подзаголовка через проп `subtitleSizePreset`
+ *  - выравнивание подзаголовка через проп `subtitleAlign`
+ *  - тон подзаголовка через проп `subtitleTone`
  *  - id заголовка для `aria-labelledby` через проп `titleId`
  *  - ряд действий в шапке через проп `headerActions`
  *  - переопределение корневого элемента через проп `as`
@@ -173,8 +179,8 @@ function Card<T extends CardHtmlTag = 'div'>({
           aria-expanded={action.ariaExpanded}
           aria-hidden={action.ariaLabel ? undefined : true}
           aria-label={action.ariaLabel}
-          bordered={false}
           disabled={action.disabled}
+          showBorder={false}
           sizePreset={action.sizePreset ?? DEFAULT_ROUND_BUTTON_SIZE_PRESET}
           tabIndex={action.ariaLabel ? undefined : -1}
           onClick={(event: MouseEvent<HTMLButtonElement>) => {

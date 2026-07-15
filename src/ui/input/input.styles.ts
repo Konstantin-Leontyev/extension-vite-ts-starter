@@ -56,7 +56,7 @@ const INPUT_CONTROL_PROP_NAMES = new Set<string>(['align', 'shape', 'sizePreset'
  * стандартный бокс однострочного контрола, рамку, фон, тень, плейсхолдер
  * и условное выравнивание значения.
  *
- * @param props — пропсы стилизации поля и тема
+ * @param props — пропсы стилизации нативного поля ввода и тема
  * @returns CSS-правила, каждое с новой строки
  */
 export function getInputControlStyles(

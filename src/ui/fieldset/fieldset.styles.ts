@@ -43,7 +43,10 @@ const FIELDSET_BORDER_TONE_PRESETS = {
  */
 export type FieldsetBorderTone = keyof typeof FIELDSET_BORDER_TONE_PRESETS;
 
-/** DEFAULT_FIELDSET_BORDER_TONE — задаёт тон рамки по умолчанию. */
+/**
+ * DEFAULT_FIELDSET_BORDER_TONE — задаёт тон рамки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `borderTone`.
+ */
 const DEFAULT_FIELDSET_BORDER_TONE: FieldsetBorderTone = DEFAULT_TONE;
 
 /**

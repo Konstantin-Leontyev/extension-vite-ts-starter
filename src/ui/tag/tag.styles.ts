@@ -102,14 +102,14 @@ const tagTextSize = {
 } as const satisfies Record<TagSizePreset, TextSizePreset>;
 
 /**
- * DEFAULT_TAG_SIZE_PRESET — задаёт размер по умолчанию для пропа `sizePreset` метки.
+ * DEFAULT_TAG_SIZE_PRESET — задаёт размер по умолчанию.
  * Метка компактнее контролов, поэтому дефолт мельче канонического.
  */
 export const DEFAULT_TAG_SIZE_PRESET: TagSizePreset = 'tiny';
 
 /**
  * DEFAULT_TAG_SHAPE — задаёт форму по умолчанию.
- * Используется в `getTagStyles`, когда вызывающий код не передал проп `shape`.
+ * Используется, когда вызывающий код не передал проп `shape`.
  */
 const DEFAULT_TAG_SHAPE: ShapePreset = 'round';
 

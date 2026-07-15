@@ -41,10 +41,16 @@ export const checkboxSizePresets = Object.freeze({
   { blockSize: SpacingValue; iconSize: SpacingValue }
 >);
 
-/** DEFAULT_CHECKED_MARK — задаёт иконку по умолчанию для checked-состояния. */
+/**
+ * DEFAULT_CHECKED_MARK — задаёт иконку checked-состояния по умолчанию.
+ * Используется, когда вызывающий код не передал проп `checkedMark`.
+ */
 const DEFAULT_CHECKED_MARK: CheckboxCheckedMark = 'check';
 
-/** DEFAULT_UNCHECKED_MARK — задаёт иконку по умолчанию для unchecked-состояния. */
+/**
+ * DEFAULT_UNCHECKED_MARK — задаёт иконку unchecked-состояния по умолчанию.
+ * Используется, когда вызывающий код не передал проп `uncheckedMark`.
+ */
 const DEFAULT_UNCHECKED_MARK: CheckboxUncheckedMark = 'none';
 
 /**

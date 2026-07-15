@@ -41,7 +41,6 @@ export function getModalDialogStyles(props: { theme: AppTheme }): string {
  *  - `margin: auto` — центрирует dialog в viewport
  *
  * Генерация стилей:
- *  - `getSpacingValue` — отступ 32 px от краёв viewport в `calc`
  *  - `getModalDialogStyles` — затемнение `::backdrop` из токена `overlay` темы
  */
 export const StyledModalDialog = styled.dialog`

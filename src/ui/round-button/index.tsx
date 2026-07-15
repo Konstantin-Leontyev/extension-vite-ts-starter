@@ -5,12 +5,12 @@
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
- *  - режим с границей через проп `bordered`
+ *  - границу через проп `showBorder`
  *
  * Основные задачи:
  * 1. Экспортировать компонент RoundButton
  * 2. Типизировать пропсы через `RoundButtonProps`
- * 3. Реэкспортировать публичное API стилей: `DEFAULT_ROUND_BUTTON_BORDERED`,
+ * 3. Реэкспортировать публичное API стилей: `DEFAULT_ROUND_BUTTON_SHOW_BORDER`,
  *    `DEFAULT_ROUND_BUTTON_SIZE_PRESET`, `ROUND_BUTTON_SIZE_PRESET_KEYS`, `roundButtonPresets`
  *    и тип `RoundButtonSizePreset`
  *
@@ -23,7 +23,7 @@
 import { createElement, type ComponentPropsWithRef } from 'react';
 
 import {
-  DEFAULT_ROUND_BUTTON_BORDERED,
+  DEFAULT_ROUND_BUTTON_SHOW_BORDER,
   DEFAULT_ROUND_BUTTON_SIZE_PRESET,
   ROUND_BUTTON_SIZE_PRESET_KEYS,
   StyledRoundButton,
@@ -48,7 +48,7 @@ type RoundButtonProps = RoundButtonStyleProps &
  * <RoundButton aria-label="Settings">
  *   <SettingsIcon />
  * </RoundButton>
- * <RoundButton aria-label="Close" bordered={false} sizePreset="small">
+ * <RoundButton aria-label="Close" showBorder={false} sizePreset="small">
  *   <CloseIcon />
  * </RoundButton>
  */
@@ -58,7 +58,7 @@ export function RoundButton(props: RoundButtonProps) {
 
 /* eslint-disable react-refresh/only-export-components -- публичные типы и пресеты */
 export {
-  DEFAULT_ROUND_BUTTON_BORDERED,
+  DEFAULT_ROUND_BUTTON_SHOW_BORDER,
   DEFAULT_ROUND_BUTTON_SIZE_PRESET,
   ROUND_BUTTON_SIZE_PRESET_KEYS,
   roundButtonPresets,

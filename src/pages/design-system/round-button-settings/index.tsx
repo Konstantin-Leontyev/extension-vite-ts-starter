@@ -30,15 +30,15 @@ import { SizeListbox } from '../size-listbox';
  * `iconKey` выбирает иконку для `children` в превью.
  * Используется для синхронизации значений между панелью управления и демонстрационной круглой кнопкой.
  *
- * @property bordered — включает режим с границей
  * @property disabled — включает недоступное состояние
  * @property iconKey — витринный ключ выбора иконки для превью
+ * @property showBorder — включает границу
  * @property sizePreset — размер кнопки
  */
 export type RoundButtonWidgetState = {
-  bordered: boolean;
   disabled: boolean;
   iconKey: IconKey;
+  showBorder: boolean;
   sizePreset: RoundButtonSizePreset;
 };
 
@@ -81,10 +81,10 @@ export function RoundButtonSettings({ onChange, state }: RoundButtonSettingsProp
       />
 
       <Checkbox
-        checked={state.bordered}
+        checked={state.showBorder}
         sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('bordered', event.target.checked)
+          onChange('showBorder', event.target.checked)
         }
       >
         Show border

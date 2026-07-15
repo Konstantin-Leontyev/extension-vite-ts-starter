@@ -185,7 +185,7 @@ export const POSITIONING_PROPERTY_NAMES = new Set<string>(
 );
 
 /**
- * resolvePropertyValue — преобразует значение пропса в правую часть CSS-декларации.
+ * resolvePropertyValue — преобразует значение пропса в значение для CSS-свойства.
  * Используется внутри `getPositioningStyles` для каждого переданного пропса.
  *
  * В зависимости от категории `kind`:
@@ -195,7 +195,7 @@ export const POSITIONING_PROPERTY_NAMES = new Set<string>(
  *
  * @param kind — категория значения: `raw`, `inset` или `spacing`
  * @param value — значение пропса
- * @returns значение для правой части CSS-декларации, например `auto`, `1rem`, `flex`
+ * @returns значение для CSS-свойства, например `auto`, `1rem`, `flex`
  */
 function resolvePropertyValue(
   kind: PositioningValueKind,

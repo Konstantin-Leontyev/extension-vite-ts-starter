@@ -48,7 +48,7 @@ export const TONE_PRESETS = Object.freeze({
 } as const satisfies Record<TonePreset, keyof ThemeColors | undefined>);
 
 /**
- * DEFAULT_TONE — задаёт тон по умолчанию для пропа `tone`.
+ * DEFAULT_TONE — задаёт тон по умолчанию.
  * Используется в контролах, где тон опционален.
  */
 export const DEFAULT_TONE: TonePreset = 'default';

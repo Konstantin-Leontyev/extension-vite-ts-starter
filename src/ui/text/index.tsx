@@ -7,18 +7,25 @@
  *  - размерный ряд через проп `sizePreset`
  *  - семантический тон через проп `tone`
  *  - курсивное начертание через проп `italic`
+ *  - выравнивание через проп `align`
+ *  - перенос строк через проп `whiteSpace`
+ *  - обрезку с многоточием через проп `showEllipsis`
+ *  - переопределение цвета через проп `color`
+ *  - переопределение размера шрифта через проп `fontSize`
+ *  - переопределение насыщенности через проп `fontWeight`
+ *  - переопределение высоты строки через проп `lineHeight`
  *  - переопределение корневого элемента через проп `as`
  *
  * Основные задачи:
  * 1. Экспортировать полиморфный компонент Text
  * 2. Типизировать пропсы через `TextProps`
  * 3. Реэкспортировать публичное API стилей: `TEXT_ALIGN_PRESET_KEYS`, `TEXT_SIZE_PRESET_KEYS`,
- *    `TEXT_TONE_KEYS`, `textSizePresets`, `getTextProperties`, `getTextToneKey`,
- *    `getTextToneColor` и типы
+ *    `TEXT_TONE_KEYS`, `textSizePresets`, `getTextLineHeight`, `getTextProperties`,
+ *    `getTextToneKey`, `getTextToneColor` и типы
  *
  * Потребители:
  *  - контролы, например Button, Tag и Listbox — рендерят текст внутри себя
- *  - страницы и виджеты приложения, например Home — рендерят подписи, заголовки и лейблы
+ *  - страницы и виджеты приложения, например HomePage — рендерят подписи, заголовки и лейблы
  *  - `@ui/presets` и `@ui/table/column-sizing` — используют реэкспорты типографики
  *  - `src/pages/design-system` — демонстрирует состояния в витрине
  */

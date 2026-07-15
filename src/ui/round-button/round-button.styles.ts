@@ -6,7 +6,7 @@
  * 1. Типизировать пропсы через `RoundButtonStyleProps` и `RoundButtonSizePreset`
  * 2. Хранить локальный ряд размеров в `roundButtonPresets`
  * 3. Предоставить функцию `getRoundButtonStyles`, дефолты `DEFAULT_ROUND_BUTTON_SIZE_PRESET`
- *    и `DEFAULT_ROUND_BUTTON_BORDERED`, перечень `ROUND_BUTTON_SIZE_PRESET_KEYS`
+ *    и `DEFAULT_ROUND_BUTTON_SHOW_BORDER`, перечень `ROUND_BUTTON_SIZE_PRESET_KEYS`
  * 4. Предоставить styled-узел `StyledRoundButton`
  *
  * Потребители:
@@ -29,13 +29,13 @@ import { getTheme, type AppTheme } from '@ui/theme';
 export type RoundButtonSizePreset = SizePreset | 'huge';
 
 /**
- * RoundButtonStyleProps — представляет пропсы стилизации круглой кнопки и layout-пропсы.
+ * RoundButtonStyleProps — представляет пропсы стилизации RoundButton и layout-пропсы.
  *
- * @property bordered — включает режим с границей
+ * @property showBorder — включает границу
  * @property sizePreset — размер кнопки
  */
 export type RoundButtonStyleProps = LayoutProps & {
-  bordered?: boolean;
+  showBorder?: boolean;
   sizePreset?: RoundButtonSizePreset;
 };
 
@@ -79,23 +79,23 @@ export const ROUND_BUTTON_SIZE_PRESET_KEYS = Object.freeze(
 );
 
 /**
- * DEFAULT_ROUND_BUTTON_SIZE_PRESET — задаёт размер по умолчанию для пропа `sizePreset`.
- * Используется в `getRoundButtonStyles`, когда размер не передан.
+ * DEFAULT_ROUND_BUTTON_SIZE_PRESET — задаёт размер по умолчанию.
+ * Используется, когда вызывающий код не передал проп `sizePreset`.
  */
 export const DEFAULT_ROUND_BUTTON_SIZE_PRESET: RoundButtonSizePreset = 'medium';
 
 /**
- * DEFAULT_ROUND_BUTTON_BORDERED — задаёт режим с границей по умолчанию для пропа `bordered`.
- * Используется в `getRoundButtonStyles`, когда режим не передан.
+ * DEFAULT_ROUND_BUTTON_SHOW_BORDER — задаёт показ границы по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showBorder`.
  */
-export const DEFAULT_ROUND_BUTTON_BORDERED = true;
+export const DEFAULT_ROUND_BUTTON_SHOW_BORDER = true;
 
 /**
  * ROUND_BUTTON_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации RoundButton.
  */
 const ROUND_BUTTON_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
-  'bordered',
+  'showBorder',
   'sizePreset',
 ]);
 
@@ -113,7 +113,7 @@ export function getRoundButtonStyles(
 ): string {
   const theme = getTheme(props);
   const {
-    bordered = DEFAULT_ROUND_BUTTON_BORDERED,
+    showBorder = DEFAULT_ROUND_BUTTON_SHOW_BORDER,
     sizePreset = DEFAULT_ROUND_BUTTON_SIZE_PRESET,
   } = props;
   const preset = roundButtonPresets[sizePreset];
@@ -125,7 +125,7 @@ export function getRoundButtonStyles(
     `padding: ${getSpacingValue(preset.iconPadding)};`,
   ];
 
-  if (bordered) {
+  if (showBorder) {
     styles.push(`border: 1px solid ${theme.colors.border};`);
     styles.push(`box-shadow: ${theme.shadow.surface};`);
   } else {

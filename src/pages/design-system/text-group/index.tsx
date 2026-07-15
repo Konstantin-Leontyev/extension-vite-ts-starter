@@ -18,6 +18,8 @@
  *     - `src/pages/design-system/progress-bar-settings/index.tsx`
  *     - `src/pages/design-system/checkbox-settings/index.tsx`
  *     - `src/pages/design-system/radio-button-settings/index.tsx`
+ *     - `src/pages/design-system/switch-settings/index.tsx`
+ *     - `src/pages/design-system/fieldset-settings/index.tsx`
  */
 
 import { type ChangeEvent } from 'react';
@@ -74,7 +76,6 @@ type TextGroupProps = {
 
 /**
  * TextGroup — отображает текстовую группу настроек в витрине дизайн-системы.
- * При выключенном флаге `show` скрывает поля ввода содержимого и настройки вида текста.
  *
  * @example
  * <TextGroup

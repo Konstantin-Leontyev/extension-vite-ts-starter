@@ -13,13 +13,6 @@
  * 5. Предоставить `resolveBlockRadius` для вычисления радиуса по форме
  * 6. Предоставить `getControlBoxStyles` для сборки полного бокса однострочного контрола
  *
- * Модель высоты:
- *  - `minBlockSize` — минимальная высота бокса
- *  - `padding.block` — вертикальные отступы внутри бокса
- *
- * При одной строке текст помещается в `minBlockSize`, отступы остаются в пределах заданной высоты.
- * При переносе строки контент растёт выше `minBlockSize`, а `padding.block` удерживает текст от прилипания к краям.
- *
  * Потребители:
  *  - `@ui/button`, `@ui/input`, `@ui/tag`, `@ui/listbox`, `@ui/combobox`, `@ui/toast`, `@ui/fieldset` —
  *    задают размер через `sizePreset`
@@ -61,13 +54,13 @@ export type ControlPadding = {
 };
 
 /**
- * DEFAULT_SIZE_PRESET — задаёт размер по умолчанию для пропа `sizePreset`.
+ * DEFAULT_SIZE_PRESET — задаёт размер по умолчанию.
  * Используется в компонентах, где размер не задан явно.
  */
 export const DEFAULT_SIZE_PRESET: SizePreset = 'large';
 
 /**
- * DEFAULT_SHAPE_PRESET — задаёт форму по умолчанию для пропа `shape`.
+ * DEFAULT_SHAPE_PRESET — задаёт форму по умолчанию.
  * Используется в компонентах с поддержкой формы строки-поля.
  */
 export const DEFAULT_SHAPE_PRESET: ShapePreset = 'default';
@@ -100,6 +93,10 @@ export const SIZE_PRESET_KEYS = Object.freeze(Object.keys(minBlockSize) as SizeP
 
 /**
  * padding — хранит внутренние отступы для каждого размера ряда.
+ * Вместе с `minBlockSize` задаёт модель высоты бокса: при одной строке текст
+ * помещается в `minBlockSize`, а отступы остаются в пределах заданной высоты.
+ * При переносе строки контент растёт выше `minBlockSize`, и `padding.block`
+ * удерживает текст от прилипания к краям.
  * Ключ — размер из `SizePreset`, значение — пара ключей шкалы из `@ui/spacing`:
  *  - `inline` → значение для CSS-свойства `padding-inline`
  *  - `block` → значение для CSS-свойства `padding-block`
