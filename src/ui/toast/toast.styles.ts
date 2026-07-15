@@ -70,7 +70,7 @@ export function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): st
   const minBlockSize = getMinBlockSize(sizePreset);
   const padding = getPadding(sizePreset);
 
-  return [
+  const styles = [
     `min-block-size: ${minBlockSize};`,
     `padding-block: ${padding.block};`,
     `padding-inline: ${padding.inline};`,
@@ -80,7 +80,9 @@ export function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): st
     `border-inline-start: ${getSpacingValue(4)} solid ${toastColor};`,
     `border-radius: ${resolveBlockRadius(DEFAULT_SHAPE_PRESET, minBlockSize)};`,
     `box-shadow: ${theme.shadow.surface};`,
-  ].join('\n');
+  ];
+
+  return styles.join('\n');
 }
 
 /**

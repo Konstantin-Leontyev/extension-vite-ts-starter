@@ -11,6 +11,7 @@
  * 3. Задать значения по умолчанию через `DEFAULT_SIZE_PRESET` и `DEFAULT_SHAPE_PRESET`
  * 4. Предоставить геттеры `getMinBlockSize`, `getPadding`, `getPaddingInline`, `getPaddingBlock` и `getTextSize`
  * 5. Предоставить `resolveBlockRadius` для вычисления радиуса по форме
+ * 6. Предоставить `getControlBoxStyles` для сборки полного бокса однострочного контрола
  *
  * Модель высоты:
  *  - `minBlockSize` — минимальная высота бокса
@@ -28,7 +29,7 @@
  */
 
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
+import { getTextProperties, type TextSizePreset } from '@ui/text';
 
 /**
  * ShapePreset — представляет форму строки-поля компонента.
@@ -191,4 +192,32 @@ export function getTextSize(sizePreset: SizePreset): TextSizePreset {
  */
 export function resolveBlockRadius(shape: ShapePreset, minBlockSize: string): string {
   return shape === 'round' ? `calc(${minBlockSize} / 2)` : getSpacingValue(8);
+}
+
+/**
+ * getControlBoxStyles — возвращает CSS-правила стандартного бокса однострочного контрола:
+ * `min-block-size`, `padding-inline`, типографику через `getTextProperties(getTextSize(…))`
+ * и `border-radius` через `resolveBlockRadius`.
+ *
+ * Границы применения:
+ *  - полный стандартный бокс, например поле ввода и триггер, — `getControlBoxStyles`
+ *  - часть набора, например квадрат из `getMinBlockSize` и `padding-inline` строки-опции, — отдельные геттеры
+ *  - многострочный бокс с ростом контента — `getPadding` с парой `inline`/`block`
+ *
+ * `padding-block` не входит в набор: высоту однострочного контрола держит `min-block-size`,
+ * центровку — сетка узла.
+ *
+ * @param sizePreset — размер компонента
+ * @param shape — форма строки-поля
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getControlBoxStyles(sizePreset: SizePreset, shape: ShapePreset): string {
+  const styles = [
+    `min-block-size: ${getMinBlockSize(sizePreset)};`,
+    `padding-inline: ${getPaddingInline(sizePreset)};`,
+    getTextProperties(getTextSize(sizePreset)),
+    `border-radius: ${resolveBlockRadius(shape, getMinBlockSize(sizePreset))};`,
+  ];
+
+  return styles.join('\n');
 }

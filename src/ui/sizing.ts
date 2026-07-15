@@ -84,15 +84,15 @@ export const SIZING_PROPERTY_NAMES = new Set<string>(Object.keys(SIZING_PROPERTI
  * @returns CSS-правила, каждое с новой строки
  */
 export function getSizingStyles(props: SizingProps): string {
-  const rules: string[] = [];
+  const styles: string[] = [];
 
   for (const [prop, property] of Object.entries(SIZING_PROPERTIES)) {
     const value = props[prop as keyof SizingProps];
 
     if (value !== undefined) {
-      rules.push(`${property}: ${value};`);
+      styles.push(`${property}: ${value};`);
     }
   }
 
-  return rules.join('\n');
+  return styles.join('\n');
 }

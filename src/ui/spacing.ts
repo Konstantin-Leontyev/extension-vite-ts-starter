@@ -141,7 +141,7 @@ export function getSpacingValue(value: SpacingValue): string {
  * @returns CSS-правила, каждое с новой строки
  */
 export function getSpacingStyles(props: SpacingProps): string {
-  const rules: string[] = [];
+  const styles: string[] = [];
 
   // Проходит по всем именам пропсов и их CSS-эквивалентам
   for (const [prop, property] of Object.entries(SPACING_PROPERTIES)) {
@@ -151,10 +151,10 @@ export function getSpacingStyles(props: SpacingProps): string {
     // Если значение передано, то формирует CSS-правило
     if (value !== undefined) {
       // getSpacingValue(value) — например, для 16 даст 1rem
-      rules.push(`${property}: ${getSpacingValue(value)};`);
+      styles.push(`${property}: ${getSpacingValue(value)};`);
     }
   }
 
   // Склеивает все правила в одну строку с переносами
-  return rules.join('\n');
+  return styles.join('\n');
 }

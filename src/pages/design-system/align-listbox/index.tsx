@@ -33,18 +33,27 @@ function getAlignListboxOptions<Align extends string>(
 }
 
 /**
+ * DEFAULT_ALIGN_LISTBOX_VALUE — задаёт выравнивание по умолчанию.
+ * Проп выравнивания компонента без значения не добавляет CSS-правил,
+ * что совпадает с браузерным умолчанием `start`. Панели передают состояние
+ * как есть, не дублируя это умолчание запасными значениями.
+ * Используется, когда вызывающий код не передал проп `value`.
+ */
+const DEFAULT_ALIGN_LISTBOX_VALUE: TextAlignPreset = 'start';
+
+/**
  * AlignListboxProps — представляет пропсы компонента AlignListbox.
  *
  * @property label — текст подписи над листбоксом
  * @property aligns — перечень допустимых выравниваний из настраиваемого компонента,
  *   например `TEXT_ALIGN_PRESET_KEYS`
- * @property value — текущее выбранное выравнивание
+ * @property value — текущее выбранное выравнивание, по умолчанию `start`
  * @property onChange — обработчик изменения выбранного выравнивания
  */
 type AlignListboxProps<Align extends string> = {
   label: string;
   aligns: readonly Align[];
-  value: Align;
+  value?: Align;
   onChange: (align: Align) => void;
 };
 
@@ -55,14 +64,14 @@ type AlignListboxProps<Align extends string> = {
  * <AlignListbox
  *   label="Align:"
  *   aligns={TEXT_ALIGN_PRESET_KEYS}
- *   value={align ?? 'start'}
+ *   value={align}
  *   onChange={(nextAlign) => onChange('align', nextAlign)}
  * />
  */
 export function AlignListbox<Align extends string = TextAlignPreset>({
   label,
   aligns,
-  value,
+  value = DEFAULT_ALIGN_LISTBOX_VALUE as Align,
   onChange,
 }: AlignListboxProps<Align>) {
   return (

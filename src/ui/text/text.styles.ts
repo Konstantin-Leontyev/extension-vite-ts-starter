@@ -218,11 +218,13 @@ export function getTextToneColor(theme: AppTheme, tone: TextTone): string | unde
 export function getTextProperties(sizePreset: TextSizePreset): string {
   const preset = textSizePresets[sizePreset];
 
-  return [
+  const styles = [
     `font-size: ${preset.fontSize};`,
     `font-weight: ${preset.fontWeight};`,
     `line-height: ${preset.lineHeight};`,
-  ].join('\n');
+  ];
+
+  return styles.join('\n');
 }
 
 /**

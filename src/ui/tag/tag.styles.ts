@@ -254,14 +254,16 @@ export function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string
   const borderCol = bordered ? getTagBorderColor(theme, borderTone) : 'transparent';
   const blockSizeValue = getTagBlockSize(sizePreset);
 
-  return [
+  const styles = [
     `min-block-size: ${blockSizeValue};`,
     `padding-inline: ${getSpacingValue(tagPaddingInline[sizePreset])};`,
     `border: 1px solid ${borderCol};`,
     `border-radius: ${resolveBlockRadius(shape, blockSizeValue)};`,
     `background-color: ${surface.fill};`,
     `color: ${surface.fg};`,
-  ].join('\n');
+  ];
+
+  return styles.join('\n');
 }
 
 /**

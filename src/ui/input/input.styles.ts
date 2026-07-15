@@ -1,3 +1,17 @@
+/**
+ * Файл: `src/ui/input/input.styles.ts`
+ * Определяет внешний вид компонента Input.
+ *
+ * Основные задачи:
+ * 1. Типизировать пропсы через `InputControlStyleProps` и `InputStyleProps`
+ * 2. Предоставить функцию `getInputControlStyles`
+ * 3. Предоставить styled-узлы `StyledInputRoot` и `StyledInputControl`
+ * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ *
+ * Потребители:
+ *  - `src/ui/input/index.tsx` — собирает компонент Input
+ */
+
 import { type CSSProperties } from 'react';
 import styled from 'styled-components';
 
@@ -5,31 +19,46 @@ import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
-  blockSizeRem,
-  controlPaddingInline,
-  controlValueTextStyles,
-  radiusPreset,
+  getControlBoxStyles,
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
-import { spacingRem } from '@ui/spacing';
+import { getSpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
 
-/** Оси вида контрола (без layout — он на корне-grid). */
-export type InputControlStyleProps = {
+/**
+ * InputControlStyleProps — представляет пропсы стилизации нативного поля ввода.
+ *
+ * @property align — горизонтальное выравнивание значения
+ * @property shape — форма строки-поля
+ * @property sizePreset — размер контрола
+ */
+type InputControlStyleProps = {
   align?: CSSProperties['textAlign'];
   shape?: ShapePreset;
   sizePreset?: SizePreset;
 };
 
-/** Публичные пропы поля: layout — на корень, оси вида — на контрол. */
+/**
+ * InputStyleProps — представляет пропсы стилизации Input и layout-пропсы.
+ */
 export type InputStyleProps = LayoutProps & InputControlStyleProps;
 
+/**
+ * INPUT_CONTROL_PROP_NAMES — хранит имена пропсов стилизации нативного поля ввода.
+ */
 const INPUT_CONTROL_PROP_NAMES = new Set<string>(['align', 'shape', 'sizePreset']);
 
-/** Габариты, рамка и типографика контрола по оси sizePreset/shape. */
+/**
+ * getInputControlStyles — возвращает CSS-правила для узла `StyledInputControl`:
+ * стандартный бокс однострочного контрола, рамку, фон, тень, плейсхолдер
+ * и условное выравнивание значения.
+ *
+ * @param props — пропсы стилизации поля и тема
+ * @returns CSS-правила, каждое с новой строки
+ */
 export function getInputControlStyles(
   props: InputControlStyleProps & { theme: AppTheme }
 ): string {
@@ -40,34 +69,48 @@ export function getInputControlStyles(
     sizePreset = DEFAULT_SIZE_PRESET,
   } = props;
 
-  const rules = [
-    `min-block-size: ${blockSizeRem(sizePreset)};`,
-    `padding-inline: ${spacingRem(controlPaddingInline[sizePreset])};`,
-    controlValueTextStyles(sizePreset),
+  const styles = [
+    getControlBoxStyles(sizePreset, shape),
     `border: 1px solid ${theme.colors.border};`,
-    `border-radius: ${radiusPreset(shape, sizePreset)};`,
     `background-color: ${theme.colors.surface};`,
     `box-shadow: ${theme.shadow.surface};`,
     `&::placeholder { color: ${theme.colors.muted}; }`,
   ];
 
   if (align !== undefined) {
-    rules.push(`text-align: ${align};`);
+    styles.push(`text-align: ${align};`);
   }
 
-  return rules.join('\n');
+  return styles.join('\n');
 }
 
+/**
+ * StyledInputRoot — задаёт корневой узел компонента Input.
+ * Базируется на `<div>` и поддерживает все пропсы из `LayoutProps`.
+ *
+ * Встроенные стили:
+ *  - `display: grid` — вертикальный поток подписи, поля и строки ошибки
+ *
+ * Генерация стилей:
+ *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ */
 export const StyledInputRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
   display: grid;
-  gap: ${spacingRem(8)};
+  gap: ${getSpacingValue(8)};
   inline-size: 100%;
   min-inline-size: 0;
   ${(props) => getLayoutStyles(props)}
 `;
 
+/**
+ * StyledInputControl — задаёт нативное поле ввода компонента Input.
+ * Базируется на `<input>` и поддерживает все пропсы из `InputControlStyleProps`.
+ *
+ * Генерация стилей:
+ *  - `getInputControlStyles` — бокс, рамка, фон, тень, плейсхолдер, выравнивание
+ */
 export const StyledInputControl = styled.input.withConfig({
   shouldForwardProp: (prop) => !INPUT_CONTROL_PROP_NAMES.has(prop),
 })<InputControlStyleProps>`

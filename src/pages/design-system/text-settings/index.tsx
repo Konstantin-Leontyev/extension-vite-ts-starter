@@ -79,7 +79,7 @@ export function TextSettings({ onChange, state }: TextSettingsProps) {
       <AlignListbox
         label="Align:"
         aligns={TEXT_ALIGN_PRESET_KEYS}
-        value={state.align ?? 'start'}
+        value={state.align}
         onChange={(align) => onChange('align', align)}
       />
 

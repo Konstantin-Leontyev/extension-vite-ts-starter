@@ -228,15 +228,15 @@ function resolvePropertyValue(
  * @returns CSS-правила, каждое с новой строки
  */
 export function getPositioningStyles(props: PositioningProps): string {
-  const rules: string[] = [];
+  const styles: string[] = [];
 
   for (const [prop, [property, kind]] of Object.entries(POSITIONING_PROPERTIES)) {
     const value = props[prop as keyof PositioningProps];
 
     if (value !== undefined) {
-      rules.push(`${property}: ${resolvePropertyValue(kind, value)};`);
+      styles.push(`${property}: ${resolvePropertyValue(kind, value)};`);
     }
   }
 
-  return rules.join('\n');
+  return styles.join('\n');
 }

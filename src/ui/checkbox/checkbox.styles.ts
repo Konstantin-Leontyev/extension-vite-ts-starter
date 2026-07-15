@@ -9,6 +9,7 @@
  * 3. Предоставить функции `getCheckboxTextSize`, `getCheckboxControlStyles`
  *    и вспомогательные генераторы марок
  * 4. Предоставить styled-узлы `StyledCheckboxRoot` и `StyledCheckboxControl`
+ * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/checkbox/index.tsx` — собирает компонент Checkbox
@@ -172,12 +173,14 @@ function minusIcon(strokeColor: string): string {
  * @returns CSS-правила для `background-image`, позиции и размера
  */
 function markBackground(mark: string, dimension: string): string {
-  return [
+  const styles = [
     `background-image: ${mark};`,
     'background-repeat: no-repeat;',
     'background-position: center;',
     `background-size: ${dimension} ${dimension};`,
-  ].join('\n');
+  ];
+
+  return styles.join('\n');
 }
 
 /**
