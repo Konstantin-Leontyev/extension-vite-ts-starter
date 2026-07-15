@@ -117,7 +117,8 @@ export const TEXT_SIZE_PRESET_KEYS = Object.freeze(
 );
 
 /**
- * DEFAULT_TEXT_SIZE_PRESET — задаёт типографический пресет по умолчанию для пропа `sizePreset`.
+ * DEFAULT_TEXT_SIZE_PRESET — задаёт типографический пресет по умолчанию.
+ * Используется, когда вызывающий код не передал проп `sizePreset`.
  */
 const DEFAULT_TEXT_SIZE_PRESET: TextSizePreset = 'normal';
 
@@ -137,16 +138,16 @@ export const TEXT_ALIGN_PRESET_KEYS = Object.freeze([
 ] as const satisfies readonly TextAlignPreset[]);
 
 /**
- * TextStyleProps — представляет пропсы стилизации текста и layout-пропсы.
+ * TextStyleProps — представляет пропсы стилизации Text и layout-пропсы.
  * Без `color` и `tone` цвет наследуется от родителя.
  *
  * @property align — выравнивание текста
  * @property color — прямое переопределение цвета, приоритетнее `tone`
- * @property ellipsis — включает однострочное обрезание с многоточием
  * @property fontSize — размер шрифта, переопределяет `sizePreset`
  * @property fontWeight — насыщенность шрифта, переопределяет `sizePreset`
  * @property italic — включает курсивное начертание
  * @property lineHeight — высота строки, переопределяет `sizePreset`
+ * @property showEllipsis — включает однострочное обрезание с многоточием
  * @property sizePreset — типографический пресет
  * @property tone — цвет текста из темы
  * @property whiteSpace — управление переносами
@@ -154,28 +155,28 @@ export const TEXT_ALIGN_PRESET_KEYS = Object.freeze([
 export type TextStyleProps = LayoutProps & {
   align?: CSSProperties['textAlign'];
   color?: string;
-  ellipsis?: boolean;
   fontSize?: string;
   fontWeight?: CSSProperties['fontWeight'];
   italic?: boolean;
   lineHeight?: CSSProperties['lineHeight'];
+  showEllipsis?: boolean;
   sizePreset?: TextSizePreset;
   tone?: TextTone;
   whiteSpace?: CSSProperties['whiteSpace'];
 };
 
 /**
- * TEXT_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации текста.
+ * TEXT_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Text.
  */
 const TEXT_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
   'align',
   'color',
-  'ellipsis',
   'fontSize',
   'fontWeight',
   'italic',
   'lineHeight',
+  'showEllipsis',
   'sizePreset',
   'tone',
   'whiteSpace',
@@ -252,7 +253,7 @@ export function getTextLineHeight(sizePreset: TextSizePreset): string {
  *    `color` не добавляется — работает наследование через `color: inherit`
  *    у `StyledText`, типичное внутри цветного контрола
  * 6. Добавляет правила для `align` и `whiteSpace`
- * 7. Для `ellipsis` добавляет `overflow: hidden`, `text-overflow: ellipsis`
+ * 7. Для `showEllipsis` добавляет `overflow: hidden`, `text-overflow: ellipsis`
  *    и `white-space: nowrap`
  *
  * @param props — объект с текстовыми пропсами и темой
@@ -263,11 +264,11 @@ export function getTextStyles(props: TextStyleProps & { theme: AppTheme }): stri
   const {
     align,
     color,
-    ellipsis,
     fontSize,
     fontWeight,
     italic,
     lineHeight,
+    showEllipsis,
     sizePreset = DEFAULT_TEXT_SIZE_PRESET,
     tone,
     whiteSpace,
@@ -306,7 +307,7 @@ export function getTextStyles(props: TextStyleProps & { theme: AppTheme }): stri
     styles.push(`white-space: ${whiteSpace};`);
   }
 
-  if (ellipsis === true) {
+  if (showEllipsis === true) {
     styles.push('overflow: hidden;');
     styles.push('text-overflow: ellipsis;');
     styles.push('white-space: nowrap;');

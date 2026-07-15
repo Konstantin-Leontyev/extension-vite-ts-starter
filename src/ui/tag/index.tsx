@@ -9,8 +9,8 @@
  *  - тон текста через проп `textTone`
  *  - размер текста через проп `textSize`
  *  - курсив текста через проп `textItalic`
- *  - точку-индикатор через проп `dot` с отдельным тоном `dotTone`
- *  - режимы `bordered` и `tinted`
+ *  - точку-индикатор через проп `showDot` с отдельным тоном `dotTone`
+ *  - границу через проп `showBorder` и режим мягкой заливки `tinted`
  *
  * Основные задачи:
  * 1. Экспортировать компонент Tag
@@ -41,16 +41,16 @@ import {
  * TagProps — представляет пропсы компонента Tag.
  *
  * @property children — содержимое метки. Без `children` рендерится только точка-индикатор
- * @property dot — включает точку-индикатор
  * @property dotTone — тон точки
+ * @property showDot — включает точку-индикатор
  * @property textItalic — включает курсив текста
  * @property textSize — размер текста
  * @property textTone — тон текста
  */
 type TagProps = {
   children?: ReactNode;
-  dot?: boolean;
   dotTone?: TonePreset;
+  showDot?: boolean;
   textItalic?: boolean;
   textSize?: TextSizePreset;
   textTone?: TextTone;
@@ -62,13 +62,13 @@ type TagProps = {
  *
  * @example
  * <Tag>Метка</Tag>
- * <Tag tone="primary" dot>Статус</Tag>
- * <Tag tone="success" tinted bordered>Активно</Tag>
+ * <Tag tone="primary" showDot>Статус</Tag>
+ * <Tag tone="success" tinted showBorder>Активно</Tag>
  */
 export function Tag({
   children,
-  dot,
   dotTone,
+  showDot,
   sizePreset,
   textItalic,
   textSize,
@@ -78,11 +78,11 @@ export function Tag({
 }: TagProps) {
   return (
     <StyledTag sizePreset={sizePreset} tone={tone} {...rest}>
-      {dot && <StyledTagDot dotTone={dotTone} />}
+      {showDot && <StyledTagDot dotTone={dotTone} />}
       {Boolean(children) && (
         <Text
-          ellipsis
           italic={textItalic}
+          showEllipsis
           sizePreset={textSize ?? getTagTextSize(sizePreset)}
           tone={textTone}
         >

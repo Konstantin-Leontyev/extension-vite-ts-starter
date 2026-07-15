@@ -37,20 +37,20 @@ import { DEFAULT_TONE, getToneColor, getToneKey, type TonePreset } from '@ui/ton
 export type TagSizePreset = SizePreset | 'tiny';
 
 /**
- * TagStyleProps — представляет пропсы стилизации метки и layout-пропсы.
+ * TagStyleProps — представляет пропсы стилизации Tag и layout-пропсы.
  *
- * @property borderTone — тон границы в режиме `bordered`
+ * @property borderTone — тон границы при включённом `showBorder`
  * @property shape — форма метки
+ * @property showBorder — включает границу
  * @property sizePreset — размер метки
- * @property bordered — включает режим с границей
  * @property tinted — включает режим мягкой заливки
  * @property tone — тон заливки
  */
 export type TagStyleProps = LayoutProps & {
   borderTone?: TonePreset;
   shape?: ShapePreset;
+  showBorder?: boolean;
   sizePreset?: TagSizePreset;
-  bordered?: boolean;
   tinted?: boolean;
   tone?: TonePreset;
 };
@@ -108,19 +108,20 @@ const tagTextSize = {
 export const DEFAULT_TAG_SIZE_PRESET: TagSizePreset = 'tiny';
 
 /**
- * DEFAULT_TAG_SHAPE — задаёт форму по умолчанию для пропа `shape` метки — таблетку.
+ * DEFAULT_TAG_SHAPE — задаёт форму по умолчанию.
+ * Используется в `getTagStyles`, когда вызывающий код не передал проп `shape`.
  */
 const DEFAULT_TAG_SHAPE: ShapePreset = 'round';
 
 /**
- * TAG_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации метки.
+ * TAG_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Tag.
  */
 const TAG_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
   'borderTone',
   'shape',
+  'showBorder',
   'sizePreset',
-  'bordered',
   'tinted',
   'tone',
 ]);
@@ -142,11 +143,11 @@ function getTagBlockSize(sizePreset: TagSizePreset): string {
 }
 
 /**
- * getTagTextSize — возвращает размер текста по `sizePreset` метки.
- * Подставляет `DEFAULT_TAG_SIZE_PRESET`, когда размер не задан — как в `getTagStyles`.
+ * getTagTextSize — возвращает размер текста по `sizePreset`.
+ * Подставляет `DEFAULT_TAG_SIZE_PRESET`, когда размер не задан.
  *
  * @param sizePreset — размер метки
- * @returns метка размера текста из `TextSizePreset` для внутреннего Text
+ * @returns метка размера текста из `TextSizePreset` для текста метки
  */
 export function getTagTextSize(sizePreset?: TagSizePreset): TextSizePreset {
   return tagTextSize[sizePreset ?? DEFAULT_TAG_SIZE_PRESET];
@@ -237,7 +238,7 @@ export function getTagDotStyles(props: {
  * getTagStyles — возвращает CSS-правила для корня `StyledTag`:
  * размер, отступы, границу, форму и цвета.
  *
- * @param props — пропсы стилизации метки и тема
+ * @param props — пропсы стилизации Tag и тема
  * @returns CSS-правила, каждое с новой строки
  */
 export function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string {
@@ -245,13 +246,13 @@ export function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string
   const {
     borderTone = DEFAULT_TONE,
     shape = DEFAULT_TAG_SHAPE,
+    showBorder = false,
     sizePreset = DEFAULT_TAG_SIZE_PRESET,
-    bordered = false,
     tinted = false,
     tone = DEFAULT_TONE,
   } = props;
   const surface = resolveTagFill(theme, tone, tinted);
-  const borderCol = bordered ? getTagBorderColor(theme, borderTone) : 'transparent';
+  const borderCol = showBorder ? getTagBorderColor(theme, borderTone) : 'transparent';
   const blockSizeValue = getTagBlockSize(sizePreset);
 
   const styles = [
@@ -274,7 +275,7 @@ export function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string
  *  - `display: inline-flex` — инлайн-ряд из точки и текста, grid с auto-треком
  *    тянул бы трек к max-content
  *  - `white-space: nowrap` — метка не переносит текст, длинное содержимое
- *    обрезает внутренний Text с `ellipsis`
+ *    обрезает внутренний Text с `showEllipsis`
  *
  * Генерация стилей:
  *  - `getTagStyles` — размер, отступы, граница, форма и цвета

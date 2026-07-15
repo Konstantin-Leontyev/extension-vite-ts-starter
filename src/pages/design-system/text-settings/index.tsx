@@ -35,16 +35,16 @@ import { ToneListbox } from '../tone-listbox';
  *
  * @property align — выравнивание текста
  * @property children — содержимое текста
- * @property ellipsis — включает однострочное обрезание с многоточием
  * @property italic — включает курсивное начертание
+ * @property showEllipsis — включает однострочное обрезание с многоточием
  * @property sizePreset — типографический пресет
  * @property tone — тон текста
  */
 export type TextWidgetState = {
   align: CSSProperties['textAlign'];
   children: string;
-  ellipsis: boolean;
   italic: boolean;
+  showEllipsis: boolean;
   sizePreset: TextSizePreset;
   tone: TextTone;
 };
@@ -100,10 +100,10 @@ export function TextSettings({ onChange, state }: TextSettingsProps) {
       />
 
       <Checkbox
-        checked={state.ellipsis}
+        checked={state.showEllipsis}
         sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('ellipsis', event.target.checked)
+          onChange('showEllipsis', event.target.checked)
         }
       >
         Show ellipsis

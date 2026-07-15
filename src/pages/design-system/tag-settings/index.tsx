@@ -31,11 +31,11 @@ import { ToneListbox } from '../tone-listbox';
  * `showText` управляет передачей содержимого в превью, `text` хранит содержимое `children`.
  * Используется для синхронизации значений между панелью управления и демонстрационной меткой.
  *
- * @property borderTone — тон границы в режиме `bordered`
- * @property bordered — включает режим с границей
- * @property dot — включает точку-индикатор
+ * @property borderTone — тон границы при включённом `showBorder`
  * @property dotTone — тон точки
  * @property shape — форма метки
+ * @property showBorder — включает границу
+ * @property showDot — включает точку-индикатор
  * @property showText — витринный ключ показа текста. Выключенный — метка без текста
  * @property sizePreset — размер метки
  * @property text — содержимое метки
@@ -47,10 +47,10 @@ import { ToneListbox } from '../tone-listbox';
  */
 export type TagWidgetState = {
   borderTone: TonePreset;
-  bordered: boolean;
-  dot: boolean;
   dotTone: TonePreset;
   shape: ShapePreset;
+  showBorder: boolean;
+  showDot: boolean;
   showText: boolean;
   sizePreset: TagSizePreset;
   text: string;
@@ -106,16 +106,16 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
       />
 
       <Checkbox
-        checked={state.bordered}
+        checked={state.showBorder}
         sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('bordered', event.target.checked)
+          onChange('showBorder', event.target.checked)
         }
       >
         Show border
       </Checkbox>
 
-      {state.bordered && (
+      {state.showBorder && (
         <ToneListbox
           label="Border tone:"
           tones={TONE_PRESET_KEYS}
@@ -125,16 +125,16 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
       )}
 
       <Checkbox
-        checked={state.dot}
+        checked={state.showDot}
         sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('dot', event.target.checked)
+          onChange('showDot', event.target.checked)
         }
       >
         Show dot
       </Checkbox>
 
-      {state.dot && (
+      {state.showDot && (
         <ToneListbox
           label="Dot tone:"
           tones={TONE_PRESET_KEYS}

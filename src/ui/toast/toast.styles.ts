@@ -50,7 +50,7 @@ const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 't
  * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
  *
  * @param sizePreset — размер уведомления
- * @returns метка размера текста из `TextSizePreset` для сообщения
+ * @returns метка размера текста из `TextSizePreset` для текста сообщения
  */
 export function getToastTextSize(sizePreset?: SizePreset): TextSizePreset {
   return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
@@ -98,7 +98,7 @@ export function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): st
  *
  * Высота задана через `min-block-size` без фиксированного `block-size`:
  * контент растягивает Toast, если текст длиннее минимальной высоты.
- * `ellipsis` не используется, так как Toast показывает сообщения неизвестной длины,
+ * `showEllipsis` не используется, так как Toast показывает сообщения неизвестной длины,
  * и обрезание текста недопустимо.
  */
 export const StyledToast = styled.div.withConfig({
