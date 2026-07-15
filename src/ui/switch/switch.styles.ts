@@ -18,7 +18,7 @@ import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout
 import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
-import { DISABLED_OPACITY, getTheme, type AppTheme } from '@ui/theme';
+import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -203,7 +203,6 @@ export const StyledSwitchTrack = styled.span.withConfig({
  *  - `align-items: center` и `justify-content: start` — при растяжении корня родителем
  *    подпись остаётся прижатой к дорожке
  *  - `cursor: pointer` — кликабельная область корня
- *  - `&:has(:disabled)` — приглушает весь контрол при disabled на input, курсор `not-allowed`
  *
  * Генерация стилей:
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
@@ -218,9 +217,4 @@ export const StyledSwitchRoot = styled.label.withConfig({
   justify-content: start;
   cursor: pointer;
   ${(props) => getLayoutStyles(props)}
-
-  &:has(:disabled) {
-    cursor: not-allowed;
-    opacity: ${DISABLED_OPACITY};
-  }
 `;

@@ -7,7 +7,7 @@
  * 1. Предоставить глобальные стили сброса через `GlobalResetStyle`
  *
  * Потребители:
- *  - `ThemeProvider` из `src/context/theme/index.tsx` — подключает один раз на все приложение
+ *  - `ThemeProvider` из `src/context/theme/index.tsx` — подключает один раз на всё приложение
  */
 
 import { createGlobalStyle } from 'styled-components';
@@ -32,7 +32,9 @@ import { DISABLED_OPACITY, getTheme } from '@ui/theme';
  *  - блочное отображение мультимедиа: `<img>`, `<picture>`, `<video>`, `<canvas>`, `<svg>`
  *  - наследование шрифта и цвета для элементов форм
  *  - сброс дефолтных рамок и фона кнопок
- *  - состояния `disabled` — курсор и прозрачность из `DISABLED_OPACITY`
+ *  - состояния `disabled` — курсор и прозрачность из `DISABLED_OPACITY`. Обёртка
+ *    `<label>` с disabled-input приглушается целиком, двойное приглушение самого input
+ *    компенсируется `opacity: 1`
  *  - стили для ссылок: цвет, подчёркивание, наведение, фокус
  *  - фокус-кольца для интерактивных элементов с цветами из темы
  *  - подсветку невалидных полей с `aria-invalid="true"`
@@ -118,6 +120,15 @@ export const GlobalResetStyle = createGlobalStyle`
   input:disabled {
     cursor: not-allowed;
     opacity: ${DISABLED_OPACITY};
+  }
+
+  label:has(:disabled) {
+    cursor: not-allowed;
+    opacity: ${DISABLED_OPACITY};
+  }
+
+  label:has(:disabled) input:disabled {
+    opacity: 1;
   }
 
   a {

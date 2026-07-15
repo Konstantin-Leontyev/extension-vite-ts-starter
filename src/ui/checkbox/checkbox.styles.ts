@@ -20,7 +20,7 @@ import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout
 import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
-import { DISABLED_OPACITY, getTheme, type AppTheme } from '@ui/theme';
+import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -245,9 +245,6 @@ export function getCheckboxControlStyles(
  *  - `display: inline-grid` — раскладка по дефолту проекта
  *  - `grid-auto-flow: column` — бокс и подпись в одной строке
  *  - `justify-content: start` — при растяжении родителем подпись остаётся у бокса
- *  - `&:has(:disabled)` — приглушает весь контрол при disabled на input, курсор `not-allowed`
- *  - `&:has(:disabled) input:disabled { opacity: 1 }` — отменяет двойное приглушение бокса,
- *    так как `reset.ts` уже задаёт `DISABLED_OPACITY` на самом input
  *
  * Генерация стилей:
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
@@ -262,15 +259,6 @@ export const StyledCheckboxRoot = styled.label.withConfig({
   justify-content: start;
   cursor: pointer;
   ${(props) => getLayoutStyles(props)}
-
-  &:has(:disabled) {
-    cursor: not-allowed;
-    opacity: ${DISABLED_OPACITY};
-  }
-
-  &:has(:disabled) input:disabled {
-    opacity: 1;
-  }
 `;
 
 /**
