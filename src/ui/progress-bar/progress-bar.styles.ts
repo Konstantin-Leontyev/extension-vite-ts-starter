@@ -91,7 +91,7 @@ export function clampProgressValue(value: number): number {
  * высоту, скругление и цвет дорожки.
  *
  * @param props — пропсы стилизации полосы прогресса и тема
- * @returns CSS-правила
+ * @returns CSS-правила, каждое с новой строки
  */
 export function getProgressBarStyles(
   props: ProgressBarStyleProps & { theme: AppTheme }
@@ -100,11 +100,13 @@ export function getProgressBarStyles(
   const sizePreset = props.sizePreset ?? DEFAULT_SIZE_PRESET;
   const blockSize = getSpacingValue(progressBarBlockSize[sizePreset]);
 
-  return `
-    block-size: ${blockSize};
-    border-radius: ${blockSize};
-    background-color: ${theme.colors.border};
-  `;
+  const styles = [
+    `block-size: ${blockSize};`,
+    `border-radius: ${blockSize};`,
+    `background-color: ${theme.colors.border};`,
+  ];
+
+  return styles.join('\n');
 }
 
 /**
@@ -112,7 +114,7 @@ export function getProgressBarStyles(
  * ширину по значению и цвет по тону.
  *
  * @param props — пропсы стилизации полосы прогресса и тема
- * @returns CSS-правила
+ * @returns CSS-правила, каждое с новой строки
  */
 export function getProgressBarFillStyles(
   props: ProgressBarStyleProps & { theme: AppTheme }
@@ -120,12 +122,13 @@ export function getProgressBarFillStyles(
   const theme = getTheme(props);
   const tone = props.tone ?? DEFAULT_TONE;
   const progressColor = getToneColor(theme, tone, theme.colors.primary);
-  const value = clampProgressValue(props.value);
 
-  return `
-    inline-size: ${value * 100}%;
-    background-color: ${progressColor};
-  `;
+  const styles = [
+    `inline-size: ${props.value * 100}%;`,
+    `background-color: ${progressColor};`,
+  ];
+
+  return styles.join('\n');
 }
 
 /**

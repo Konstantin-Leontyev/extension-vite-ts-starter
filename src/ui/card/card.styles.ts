@@ -25,10 +25,10 @@ import {
 } from '@ui/presets';
 import {
   DEFAULT_ROUND_BUTTON_SIZE_PRESET,
-  roundButtonPresets,
+  getRoundButtonMinBlockSize,
   type RoundButtonSizePreset,
 } from '@ui/round-button';
-import { getSpacingValue, type SpacingValue } from '@ui/spacing';
+import { getSpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 /**
@@ -138,17 +138,6 @@ export const StyledCard = styled.div.withConfig({
 `;
 
 /**
- * getRoundButtonMinBlockSize — возвращает ключ шкалы минимальной высоты RoundButton
- * для согласования высоты первой строки шапки карточки.
- *
- * @param sizePreset — размер RoundButton в ряду действий
- * @returns ключ шкалы `minBlockSize` из `@ui/round-button`
- */
-function getRoundButtonMinBlockSize(sizePreset: RoundButtonSizePreset): SpacingValue {
-  return roundButtonPresets[sizePreset].minBlockSize;
-}
-
-/**
  * resolveLargestHeaderActionSizePreset — вычисляет наибольший пресет в ряду действий
  * шапки. Под него резервируется высота первой строки, когда действия присутствуют.
  *
@@ -250,6 +239,7 @@ export const StyledCardHeaderActions = styled.div`
 /**
  * StyledCardHeaderFirstLine — задаёт первую строку шапки: заголовок
  * или единственный подзаголовок без заголовка.
+ * Базируется на `<div>`.
  *
  * Встроенные стили:
  *  - `display: grid` — раскладка по дефолту проекта

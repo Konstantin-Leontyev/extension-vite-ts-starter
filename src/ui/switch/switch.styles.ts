@@ -3,7 +3,7 @@
  * Определяет внешний вид компонента Switch.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `SwitchTrackStyleProps` и `SwitchStyleProps`
+ * 1. Типизировать пропсы через `SwitchStyleProps`
  * 2. Хранить габариты дорожки и бегунка в `switchSizePresets`
  * 3. Предоставить функции `getSwitchTextSize` и `getSwitchTrackStyles`
  * 4. Предоставить styled-узлы `StyledSwitchRoot` и `StyledSwitchTrack`
@@ -47,7 +47,7 @@ const switchSizePresets = {
  * @property sizePreset — размер дорожки
  * @property tone — тон включённого состояния
  */
-export type SwitchTrackStyleProps = {
+type SwitchTrackStyleProps = {
   sizePreset?: SizePreset;
   tone?: TonePreset;
 };
@@ -115,7 +115,7 @@ export function getSwitchTextSize(sizePreset?: SizePreset): TextSizePreset {
  * Состояния читаются со скрытого соседнего input через селектор `input:checked + &`.
  *
  * @param props — пропсы стилизации дорожки и тема
- * @returns CSS-правила дорожки и псевдоэлемента бегунка
+ * @returns CSS-правила, каждое с новой строки
  */
 export function getSwitchTrackStyles(
   props: SwitchTrackStyleProps & { theme: AppTheme }
@@ -132,20 +132,19 @@ export function getSwitchTrackStyles(
   const knobTravel = `calc(${trackInline} - ${trackBlock})`;
   const checkedBackground = getToneColor(theme, tone, theme.colors.primary);
 
-  return `
-    position: relative;
-    display: inline-block;
-    flex-shrink: 0;
-    inline-size: ${trackInline};
-    block-size: ${trackBlock};
-    background-color: ${theme.colors.border};
-    border: ${TRACK_BORDER} solid ${theme.colors.border};
-    border-radius: calc(${trackBlock} / 2);
-    transition:
+  const styles = [
+    'position: relative;',
+    'display: inline-block;',
+    'flex-shrink: 0;',
+    `inline-size: ${trackInline};`,
+    `block-size: ${trackBlock};`,
+    `background-color: ${theme.colors.border};`,
+    `border: ${TRACK_BORDER} solid ${theme.colors.border};`,
+    `border-radius: calc(${trackBlock} / 2);`,
+    `transition:
       background-color 0.15s ease,
-      border-color 0.15s ease;
-
-    &::after {
+      border-color 0.15s ease;`,
+    `&::after {
       position: absolute;
       inset-block-start: ${knobInset};
       inset-inline-start: ${knobInset};
@@ -156,30 +155,28 @@ export function getSwitchTrackStyles(
       border-radius: 50%;
       box-shadow: ${theme.shadow.surface};
       transition: transform 0.15s ease;
-    }
-
-    input:checked + & {
+    }`,
+    `input:checked + & {
       background-color: ${checkedBackground};
       border-color: ${checkedBackground};
-    }
-
-    input:checked + &::after {
+    }`,
+    `input:checked + &::after {
       transform: translateX(${knobTravel});
-    }
-
-    input:focus-visible + & {
+    }`,
+    `input:focus-visible + & {
       outline: 2px solid ${theme.colors.focusRing};
       outline-offset: 2px;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
+    }`,
+    `@media (prefers-reduced-motion: reduce) {
       transition-duration: 0.3s;
 
       &::after {
         transition-duration: 0.3s;
       }
-    }
-  `;
+    }`,
+  ];
+
+  return styles.join('\n');
 }
 
 /**

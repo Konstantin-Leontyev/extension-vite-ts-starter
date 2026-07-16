@@ -6,8 +6,7 @@
  * 1. Типизировать пропсы через `TextStyleProps`, `TextTone` и `TextSizePreset`
  * 2. Хранить тоны текста в `TEXT_TONE_PRESETS` и пресеты типографики в `textSizePresets`
  * 3. Предоставить функции `getTextStyles`, `getTextProperties`, `getTextLineHeight`,
- *    `getTextToneKey` и `getTextToneColor`, а также перечни `TEXT_TONE_KEYS`,
- *    `TEXT_SIZE_PRESET_KEYS` и `TEXT_ALIGN_PRESET_KEYS`
+ *    а также перечни `TEXT_TONE_KEYS`, `TEXT_SIZE_PRESET_KEYS` и `TEXT_ALIGN_PRESET_KEYS`
  * 4. Предоставить styled-узел `StyledText`
  *
  * Потребители:
@@ -31,8 +30,8 @@ import { TONE_PRESETS, type TonePreset } from '@ui/tones';
  * TEXT_TONE_PRESETS — связывает тоны текста с ключами цвета в теме.
  * Расширяет канон `TONE_PRESETS` спредом, добавляя тон `muted` для вторичного текста.
  *
- * Соответствие приватно для модуля, доступ к тонам — только через `getTextToneKey`,
- * `getTextToneColor` и перечень `TEXT_TONE_KEYS`.
+ * Соответствие приватно для модуля. Экспортируется только перечень `TEXT_TONE_KEYS`,
+ * цвет подставляют приватные `getTextToneKey` и `getTextToneColor`.
  */
 const TEXT_TONE_PRESETS = {
   ...TONE_PRESETS,
@@ -191,7 +190,7 @@ const TEXT_PROP_NAMES = new Set<string>([
  * @param tone — тон текста
  * @returns ключ цвета темы или `undefined`
  */
-export function getTextToneKey(tone: TextTone): keyof ThemeColors | undefined {
+function getTextToneKey(tone: TextTone): keyof ThemeColors | undefined {
   return TEXT_TONE_PRESETS[tone];
 }
 
@@ -203,7 +202,7 @@ export function getTextToneKey(tone: TextTone): keyof ThemeColors | undefined {
  * @param tone — тон текста
  * @returns CSS-цвет или `undefined`
  */
-export function getTextToneColor(theme: AppTheme, tone: TextTone): string | undefined {
+function getTextToneColor(theme: AppTheme, tone: TextTone): string | undefined {
   const colorKey = getTextToneKey(tone);
 
   return colorKey ? theme.colors[colorKey] : undefined;

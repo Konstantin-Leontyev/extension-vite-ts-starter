@@ -3,11 +3,9 @@
  * Определяет внешний вид компонента Checkbox.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `CheckboxStyleProps`, `CheckboxControlStyleProps`,
- *    `CheckboxCheckedMark` и `CheckboxUncheckedMark`
+ * 1. Типизировать пропсы через `CheckboxStyleProps`
  * 2. Хранить габариты бокса и размер иконки в `checkboxSizePresets`
- * 3. Предоставить функции `getCheckboxTextSize`, `getCheckboxControlStyles`
- *    и вспомогательные генераторы марок
+ * 3. Предоставить функции `getCheckboxTextSize` и `getCheckboxControlStyles`
  * 4. Предоставить styled-узлы `StyledCheckboxRoot` и `StyledCheckboxControl`
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
@@ -56,12 +54,12 @@ const DEFAULT_UNCHECKED_MARK: CheckboxUncheckedMark = 'none';
 /**
  * CheckboxCheckedMark — представляет иконку в checked-состоянии.
  */
-export type CheckboxCheckedMark = 'check' | 'minus';
+type CheckboxCheckedMark = 'check' | 'minus';
 
 /**
  * CheckboxUncheckedMark — представляет иконку в unchecked-состоянии.
  */
-export type CheckboxUncheckedMark = 'none' | 'plus';
+type CheckboxUncheckedMark = 'none' | 'plus';
 
 /**
  * CheckboxControlStyleProps — представляет пропсы стилизации бокса Checkbox.
@@ -71,7 +69,7 @@ export type CheckboxUncheckedMark = 'none' | 'plus';
  * @property sizePreset — размер бокса
  * @property uncheckedMark — иконка в unchecked-состоянии
  */
-export type CheckboxControlStyleProps = {
+type CheckboxControlStyleProps = {
   checkedMark?: CheckboxCheckedMark;
   inverted?: boolean;
   sizePreset?: SizePreset;
@@ -176,7 +174,7 @@ function minusIcon(strokeColor: string): string {
  *
  * @param mark — data-URI иконки
  * @param dimension — размер марки в rem
- * @returns CSS-правила для `background-image`, позиции и размера
+ * @returns CSS-правила, каждое с новой строки
  */
 function markBackground(mark: string, dimension: string): string {
   const styles = [
@@ -194,7 +192,7 @@ function markBackground(mark: string, dimension: string): string {
  * габариты, рамку, марки unchecked и checked.
  *
  * @param props — пропсы стилизации бокса и тема
- * @returns CSS-правила для нативного `input[type="checkbox"]`
+ * @returns CSS-правила, каждое с новой строки
  */
 export function getCheckboxControlStyles(
   props: CheckboxControlStyleProps & { theme: AppTheme }

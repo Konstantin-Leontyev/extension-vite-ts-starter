@@ -6,7 +6,7 @@
  * 1. Типизировать пропсы через `TagStyleProps` и `TagSizePreset`
  * 2. Хранить локальный ряд размеров в `tagBlockSize`, `tagPaddingInline` и `tagTextSize`
  * 3. Предоставить функции `getTagStyles`, `getTagDotStyles` и `getTagTextSize`,
- *    дефолт `DEFAULT_TAG_SIZE_PRESET` и перечень `TAG_SIZE_PRESET_KEYS`
+ *    а также перечень `TAG_SIZE_PRESET_KEYS`
  * 4. Предоставить styled-узлы `StyledTag` и `StyledTagDot`
  *
  * Потребители:
@@ -105,7 +105,7 @@ const tagTextSize = {
  * DEFAULT_TAG_SIZE_PRESET — задаёт размер по умолчанию.
  * Метка компактнее контролов, поэтому дефолт мельче канонического.
  */
-export const DEFAULT_TAG_SIZE_PRESET: TagSizePreset = 'tiny';
+const DEFAULT_TAG_SIZE_PRESET: TagSizePreset = 'tiny';
 
 /**
  * DEFAULT_TAG_SHAPE — задаёт форму по умолчанию.

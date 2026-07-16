@@ -5,8 +5,9 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `RoundButtonStyleProps` и `RoundButtonSizePreset`
  * 2. Хранить локальный ряд размеров в `roundButtonPresets`
- * 3. Предоставить функцию `getRoundButtonStyles`, дефолты `DEFAULT_ROUND_BUTTON_SIZE_PRESET`
- *    и `DEFAULT_ROUND_BUTTON_SHOW_BORDER`, перечень `ROUND_BUTTON_SIZE_PRESET_KEYS`
+ * 3. Предоставить функции `getRoundButtonStyles` и `getRoundButtonMinBlockSize`,
+ *    дефолты `DEFAULT_ROUND_BUTTON_SIZE_PRESET` и `DEFAULT_ROUND_BUTTON_SHOW_BORDER`,
+ *    перечень `ROUND_BUTTON_SIZE_PRESET_KEYS`
  * 4. Предоставить styled-узел `StyledRoundButton`
  *
  * Потребители:
@@ -40,34 +41,15 @@ export type RoundButtonStyleProps = LayoutProps & {
 };
 
 /**
- * roundButtonPresets — хранит габарит кнопки и внутренний отступ под иконку
- * для каждого размера ряда.
- * Ключ — размер из `RoundButtonSizePreset`, значение — пара ключей шкалы из `@ui/spacing`:
- *  - `minBlockSize` → габарит кнопки
- *  - `iconPadding` → внутренний отступ под иконку
- * Размеры `small`, `medium` и `large` берут `minBlockSize` из `@ui/presets`.
+ * roundButtonPresets — хранит габарит кнопки для каждого размера ряда.
+ * Расширяет `minBlockSize` из `@ui/presets` спредом, добавляя локальный ключ `huge`.
+ * Отступ под иконку кнопка не задаёт: вызывающий код передаёт в `children` svg,
+ * уже обёрнутый в `Icon`, — окно иконки держит обёртка.
  */
-export const roundButtonPresets = Object.freeze({
-  small: Object.freeze({
-    minBlockSize: minBlockSize.small,
-    iconPadding: 4,
-  } as const),
-  medium: Object.freeze({
-    minBlockSize: minBlockSize.medium,
-    iconPadding: 4,
-  } as const),
-  large: Object.freeze({
-    minBlockSize: minBlockSize.large,
-    iconPadding: 4,
-  } as const),
-  huge: Object.freeze({
-    minBlockSize: 80,
-    iconPadding: 8,
-  } as const),
-} as const satisfies Record<
-  RoundButtonSizePreset,
-  { minBlockSize: SpacingValue; iconPadding: SpacingValue }
->);
+const roundButtonPresets = {
+  ...minBlockSize,
+  huge: 80,
+} as const satisfies Record<RoundButtonSizePreset, SpacingValue>;
 
 /**
  * ROUND_BUTTON_SIZE_PRESET_KEYS — формирует перечень размеров круглой кнопки
@@ -77,6 +59,20 @@ export const roundButtonPresets = Object.freeze({
 export const ROUND_BUTTON_SIZE_PRESET_KEYS = Object.freeze(
   Object.keys(roundButtonPresets) as RoundButtonSizePreset[]
 );
+
+/**
+ * getRoundButtonMinBlockSize — возвращает ключ шкалы габарита RoundButton
+ * по `sizePreset`. Используется генератором стилей и вызывающим кодом
+ * для согласования высоты соседних узлов с рядом кнопок.
+ *
+ * @param sizePreset — размер круглой кнопки
+ * @returns ключ шкалы отступов из `@ui/spacing`
+ */
+export function getRoundButtonMinBlockSize(
+  sizePreset: RoundButtonSizePreset
+): SpacingValue {
+  return roundButtonPresets[sizePreset];
+}
 
 /**
  * DEFAULT_ROUND_BUTTON_SIZE_PRESET — задаёт размер по умолчанию.
@@ -101,12 +97,12 @@ const ROUND_BUTTON_PROP_NAMES = new Set<string>([
 
 /**
  * getRoundButtonStyles — возвращает CSS-правила для корня `StyledRoundButton`:
- * габарит, отступ под иконку, оформление в режиме с границей или без неё
+ * габарит, оформление в режиме с границей или без неё
  * и подсветку `:not(:disabled):hover` и `:focus-visible` — отдельная проверка
  * disabled в focus-правиле не нужна, потому что disabled-кнопка не фокусируется.
  *
  * @param props — пропсы стилизации круглой кнопки и тема
- * @returns CSS-правила габарита, режима с границей и подсветки
+ * @returns CSS-правила, каждое с новой строки
  */
 export function getRoundButtonStyles(
   props: RoundButtonStyleProps & { theme: AppTheme }
@@ -116,14 +112,9 @@ export function getRoundButtonStyles(
     showBorder = DEFAULT_ROUND_BUTTON_SHOW_BORDER,
     sizePreset = DEFAULT_ROUND_BUTTON_SIZE_PRESET,
   } = props;
-  const preset = roundButtonPresets[sizePreset];
-  const dimension = getSpacingValue(preset.minBlockSize);
+  const dimension = getSpacingValue(getRoundButtonMinBlockSize(sizePreset));
 
-  const styles: string[] = [
-    `inline-size: ${dimension};`,
-    `block-size: ${dimension};`,
-    `padding: ${getSpacingValue(preset.iconPadding)};`,
-  ];
+  const styles: string[] = [`inline-size: ${dimension};`, `block-size: ${dimension};`];
 
   if (showBorder) {
     styles.push(`border: 1px solid ${theme.colors.border};`);
@@ -154,7 +145,7 @@ export function getRoundButtonStyles(
  *  - `border-radius: 50%` — окружность для квадратного габарита
  *
  * Генерация стилей:
- *  - `getRoundButtonStyles` — габарит, отступ, режим с границей и подсветка
+ *  - `getRoundButtonStyles` — габарит, режим с границей и подсветка
  *    наведения и фокуса
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */

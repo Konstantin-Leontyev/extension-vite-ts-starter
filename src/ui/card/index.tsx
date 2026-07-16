@@ -36,6 +36,7 @@ import {
   type ReactNode,
 } from 'react';
 
+import { Icon } from '@ui/icon';
 import {
   DEFAULT_ROUND_BUTTON_SIZE_PRESET,
   RoundButton,
@@ -92,7 +93,7 @@ const DEFAULT_CARD_HEADER_ACTIONS: CardHeaderAction[] = [];
  * @property ariaExpanded — состояние раскрытия для `aria-expanded`
  * @property ariaLabel — доступное имя кнопки
  * @property disabled — включает недоступное состояние
- * @property icon — иконка действия
+ * @property icon — svg иконки действия
  * @property onClick — обработчик клика
  * @property sizePreset — размер RoundButton
  */
@@ -105,6 +106,21 @@ type CardHeaderAction = {
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   sizePreset?: RoundButtonSizePreset;
 };
+
+/**
+ * handleHeaderActionClick — останавливает всплытие клика по действию шапки
+ * и вызывает обработчик действия, если он задан.
+ *
+ * @param action — действие шапки
+ * @param event — событие клика по кнопке действия
+ */
+function handleHeaderActionClick(
+  action: CardHeaderAction,
+  event: MouseEvent<HTMLButtonElement>
+) {
+  event.stopPropagation();
+  action.onClick?.(event);
+}
 
 /**
  * CardProps — представляет пропсы компонента Card.
@@ -181,14 +197,13 @@ function Card<T extends CardHtmlTag = 'div'>({
           aria-label={action.ariaLabel}
           disabled={action.disabled}
           showBorder={false}
-          sizePreset={action.sizePreset ?? DEFAULT_ROUND_BUTTON_SIZE_PRESET}
+          sizePreset={actionSizePresets[index]}
           tabIndex={action.ariaLabel ? undefined : -1}
-          onClick={(event: MouseEvent<HTMLButtonElement>) => {
-            event.stopPropagation();
-            action.onClick?.(event);
-          }}
+          onClick={(event) => handleHeaderActionClick(action, event)}
         >
-          {action.icon}
+          <Icon blockSize="100%" inlineSize="100%" padding={4}>
+            {action.icon}
+          </Icon>
         </RoundButton>
       ))}
     </StyledCardHeaderActions>

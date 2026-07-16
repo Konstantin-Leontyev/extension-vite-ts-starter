@@ -18,7 +18,7 @@
  * 4. Реэкспортировать мост размера текста `getSwitchTextSize`
  *
  * Потребители:
- *  - `src/pages/design-system/header-settings` — переключает режим autoHide хедера
+ *  - `src/pages/design-system/header-settings` — переключает режим autoHide шапки
  *  - страницы и виджеты приложения — рендерят тумблеры настроек
  *  - `src/pages/design-system` — демонстрирует состояния в витрине
  */
