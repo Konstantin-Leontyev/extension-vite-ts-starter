@@ -8,7 +8,7 @@
  *
  * Потребители:
  *  - `src/main.tsx` — подключает `router` через `RouterProvider`
- *  - `src/pages/design-system/index.tsx` — читает контекст outlet для настроек хедера
+ *  - `src/pages/design-system/index.tsx` — читает контекст outlet для настроек шапки
  */
 
 import { router } from './router';

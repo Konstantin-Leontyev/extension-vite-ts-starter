@@ -8,7 +8,7 @@
  * 2. Передавать состояние шапки страницам через контекст outlet
  *
  * Потребители:
- *  - `src/components/router/router.tsx` — монтирует layout как корневой элемент маршрутов
+ *  - `src/components/router/router.tsx` — рендерит layout как корневой элемент маршрутов
  */
 
 import { useState } from 'react';
@@ -19,7 +19,10 @@ import { ModelDownloadGate } from '@components/model-download-gate';
 
 import { type ShellOutletContext } from './use-shell-outlet-context';
 
-/** DESIGN_SYSTEM_PATH — задаёт путь маршрута витрины дизайн-системы. */
+/**
+ * DESIGN_SYSTEM_PATH — задаёт путь маршрута витрины дизайн-системы.
+ * Используется в `RouterLayout` для сравнения с текущим путём и перехода на витрину.
+ */
 const DESIGN_SYSTEM_PATH = '/design-system';
 
 /**
@@ -32,17 +35,17 @@ export function RouterLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [autoHide, setAutoHide] = useState(true);
-  const [headerSettingsOpen, setHeaderSettingsOpen] = useState(false);
+  const [isHeaderSettingsOpen, setIsHeaderSettingsOpen] = useState(false);
 
   const isDesignSystem = location.pathname === DESIGN_SYSTEM_PATH;
 
-  // Обвязка витрины: на странице дизайн-системы шестерёнка открывает панель настроек хедера,
-  // где в реальном времени виден autoHide; на остальных страницах ведёт на витрину.
-  // В продуктовом коде такой развилки не нужно — поведение хедера задаётся пропом autoHide у Header.
+  // Обвязка витрины: на странице дизайн-системы шестерёнка открывает панель настроек шапки,
+  // где в реальном времени виден autoHide. На остальных страницах ведёт на витрину.
+  // В продуктовом коде такой развилки не нужно — поведение шапки задаётся пропом autoHide у Header.
   // Не переносить развилку в продуктовый код.
   const handleSettingsClick = (): void => {
     if (isDesignSystem) {
-      setHeaderSettingsOpen(true);
+      setIsHeaderSettingsOpen(true);
       return;
     }
 
@@ -51,9 +54,9 @@ export function RouterLayout() {
 
   const outletContext: ShellOutletContext = {
     autoHide,
-    headerSettingsOpen,
+    isHeaderSettingsOpen,
     setAutoHide,
-    setHeaderSettingsOpen,
+    setIsHeaderSettingsOpen,
   };
 
   return (

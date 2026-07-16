@@ -4,7 +4,7 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `SidebarStyleProps`
- * 2. Хранить ширину панели в `SIDEBAR_PANEL_WIDTH` и длительность анимации в `TRANSITION`
+ * 2. Хранить ширину панели в `SIDEBAR_PANEL_WIDTH`
  * 3. Предоставить styled-узлы `StyledSidebar`, `StyledSidebarContent`, `StyledSidebarSlot`
  *    и `StyledSidebarTrack`
  *
@@ -14,6 +14,7 @@
 
 import styled from 'styled-components';
 
+import { getShellTransitionStyles } from '@ui/motion';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 
 /**
@@ -33,12 +34,6 @@ const DEFAULT_OFFSET: SpacingValue = 8;
  * Используется, когда вызывающий код не передал проп `padding`.
  */
 const DEFAULT_INLINE_END: SpacingValue = 8;
-
-/**
- * TRANSITION — задаёт длительность и кривую анимации выезда панели.
- * Завершение перехода по `transform` размонтирует слот в Sidebar.
- */
-const TRANSITION = '0.25s ease';
 
 /**
  * SidebarStyleProps — представляет пропсы стилизации Sidebar.
@@ -83,8 +78,8 @@ function resolveSpacingCSSValue(
  *
  * Внутренний скролл работает только при заданной высоте у предков. Без явной высоты
  * трек `minmax(0, 1fr)` раздувается под контент, и скроллится вся страница.
- * Каркасный фикс задаётся в `@ui/reset` и на страницах-`main`, либо локально через
- * `max-block-size` в `dvb`, как на странице витрины дизайн-системы
+ * Каркасный фикс задаётся в `@ui/reset` и на страницах с корневым `<main>`, либо локально
+ * через `max-block-size` в dvb, как на странице витрины дизайн-системы.
  */
 const StyledSidebarContent = styled.div`
   display: flex;
@@ -101,8 +96,10 @@ const StyledSidebarContent = styled.div`
  * Встроенные стили:
  *  - `inline-size: 0` — колонка свёрнута, пока панель не раскрыта
  *  - `overflow: hidden` — обрезает трек при анимации ширины
- *  - `transition` по `inline-size` — анимирует ширину слота
- *  - `display: none` при `data-open='false'` — скрывает слот, пока панель не смонтирована
+ *  - `display: none` при `data-open='false'` — скрывает слот, пока панель не в DOM
+ *
+ * Генерация стилей:
+ *  - `getShellTransitionStyles` — переход по `inline-size`
  */
 const StyledSidebarSlot = styled.aside`
   align-self: stretch;
@@ -110,7 +107,7 @@ const StyledSidebarSlot = styled.aside`
   min-inline-size: 0;
   min-block-size: 0;
   overflow: hidden;
-  transition: inline-size ${TRANSITION};
+  ${getShellTransitionStyles('inline-size')}
 
   &[data-open='false'] {
     display: none;
@@ -126,10 +123,12 @@ const StyledSidebarSlot = styled.aside`
  *    Flex вместо grid: иначе ломается выезд нижнего листа на узком экране
  *  - `inline-size` из `SIDEBAR_PANEL_WIDTH` — фиксированная ширина трека
  *  - `transform: translateX(100%)` — стартовое положение за правым краем
- *  - `transition` по `transform` — анимация выезда
  *  - `transform: translateX(0)` при `data-open='true'` — панель на месте
  *  - `inline-size: 100%`, `min-inline-size: 0` и `min-block-size: 0` на первом
  *    ребёнке — Card заполняет трек и сжимается ниже min-content, не распирая трек
+ *
+ * Генерация стилей:
+ *  - `getShellTransitionStyles` — переход по `transform`
  */
 const StyledSidebarTrack = styled.div`
   display: flex;
@@ -138,7 +137,7 @@ const StyledSidebarTrack = styled.div`
   block-size: 100%;
   min-block-size: 0;
   transform: translateX(100%);
-  transition: transform ${TRANSITION};
+  ${getShellTransitionStyles('transform')}
 
   &[data-open='true'] {
     transform: translateX(0);

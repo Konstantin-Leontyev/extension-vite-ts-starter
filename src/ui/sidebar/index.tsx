@@ -71,7 +71,7 @@ const DEFAULT_SIDEBAR_HEADER_ACTIONS: CardHeaderAction[] = [];
 const DEFAULT_SIDEBAR_ICON_ARIA_LABEL = 'Close panel';
 
 /**
- * CardForwardProps — представляет пропсы Card, которые Sidebar передаёт во внутреннюю панель.
+ * CardForwardProps — представляет пропсы Card, доступные панели Sidebar.
  */
 type CardForwardProps = Omit<
   ComponentProps<typeof Card>,
@@ -105,7 +105,7 @@ type SidebarProps = SidebarStyleProps &
   };
 
 /**
- * Sidebar — отображает страницу с выезжающей панелью на базе Card.
+ * Sidebar — отображает страницу с выезжающей панелью.
  *
  * @example
  * <Sidebar open={open} onClose={closePanel} sidebarContent={<Settings />}>
@@ -151,24 +151,24 @@ export function Sidebar({
     },
   ];
 
-  // rendered — слот в DOM, открыт или доигрывает закрытие; expanded — визуально раскрыт.
+  // isRendered — слот в DOM, открыт или доигрывает закрытие. isExpanded — визуально раскрыт.
   const [prevOpen, setPrevOpen] = useState(open);
-  const [rendered, setRendered] = useState(open);
-  const [expanded, setExpanded] = useState(false);
+  const [isRendered, setIsRendered] = useState(open);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  // Синхронизирует состояние во время рендера: при открытии монтирует, при закрытии сворачивает.
+  // Синхронизирует состояние во время рендера: при открытии добавляет слот в DOM, при закрытии сворачивает.
   if (open !== prevOpen) {
     setPrevOpen(open);
 
     if (open) {
-      setRendered(true);
+      setIsRendered(true);
     } else {
-      setExpanded(false);
+      setIsExpanded(false);
     }
   }
 
   /**
-   * После монтирования при `open` раскрывает панель на следующем кадре,
+   * После появления слота в DOM при `open` раскрывает панель на следующем кадре,
    * чтобы сыграла enter-анимация.
    */
   useLayoutEffect(() => {
@@ -176,9 +176,9 @@ export function Sidebar({
       return;
     }
 
-    // Кадр задержки: монтирует закрытым, затем раскрывает — иначе enter-анимация не играет.
+    // Кадр задержки: сначала слот в DOM закрыт, затем раскрывает — иначе enter-анимация не играет.
     const frameId = requestAnimationFrame(() => {
-      setExpanded(true);
+      setIsExpanded(true);
     });
 
     return () => {
@@ -187,9 +187,9 @@ export function Sidebar({
   }, [open]);
 
   function handleTransitionEnd(event: TransitionEvent<HTMLDivElement>): void {
-    // Размонтирует слот только после завершения сворачивания.
+    // Убирает слот из DOM только после завершения сворачивания.
     if (event.propertyName === 'transform' && !open) {
-      setRendered(false);
+      setIsRendered(false);
     }
   }
 
@@ -198,13 +198,13 @@ export function Sidebar({
       <StyledSidebarContent ref={contentRef}>{children}</StyledSidebarContent>
 
       <StyledSidebarSlot
-        aria-hidden={!rendered}
+        aria-hidden={!isRendered}
         aria-labelledby={titleId}
-        data-expanded={expanded}
-        data-open={rendered}
+        data-expanded={isExpanded}
+        data-open={isRendered}
         id={id}
       >
-        <StyledSidebarTrack data-open={expanded} onTransitionEnd={handleTransitionEnd}>
+        <StyledSidebarTrack data-open={isExpanded} onTransitionEnd={handleTransitionEnd}>
           <Card
             headerActions={cardHeaderActions}
             title={title}

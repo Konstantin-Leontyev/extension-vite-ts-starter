@@ -8,26 +8,26 @@
  *
  * Потребители:
  *  - `src/components/router/router-layout.tsx` — формирует контекст outlet по типу `ShellOutletContext`
- *  - `src/pages/design-system/index.tsx` — переключает режим хедера в витрине
+ *  - `src/pages/design-system/index.tsx` — переключает режим шапки в витрине
  */
 
 import { useOutletContext } from 'react-router-dom';
 
 /**
  * ShellOutletContext — представляет контекст outlet каркаса приложения.
- * Поля `autoHide` и `headerSettingsOpen` нужны витрине дизайн-системы для настройки
- * хедера в реальном времени.
+ * Поля `autoHide` и `isHeaderSettingsOpen` нужны витрине дизайн-системы для настройки
+ * шапки в реальном времени.
  *
  * @property autoHide — включает автоскрытие шапки
- * @property headerSettingsOpen — включает панель настроек хедера в витрине
+ * @property isHeaderSettingsOpen — включает открытое состояние панели настроек шапки в витрине
  * @property setAutoHide — меняет значение `autoHide`
- * @property setHeaderSettingsOpen — меняет значение `headerSettingsOpen`
+ * @property setIsHeaderSettingsOpen — меняет значение `isHeaderSettingsOpen`
  */
 export type ShellOutletContext = {
   autoHide: boolean;
-  headerSettingsOpen: boolean;
+  isHeaderSettingsOpen: boolean;
   setAutoHide: (value: boolean) => void;
-  setHeaderSettingsOpen: (value: boolean) => void;
+  setIsHeaderSettingsOpen: (value: boolean) => void;
 };
 
 /**
