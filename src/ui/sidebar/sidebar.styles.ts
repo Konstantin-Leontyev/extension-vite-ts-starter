@@ -1,54 +1,92 @@
+/**
+ * Файл: `src/ui/sidebar/sidebar.styles.ts`
+ * Определяет внешний вид компонента Sidebar.
+ *
+ * Основные задачи:
+ * 1. Типизировать пропсы через `SidebarStyleProps`
+ * 2. Хранить ширину панели в `SIDEBAR_PANEL_WIDTH` и длительность анимации в `TRANSITION`
+ * 3. Предоставить styled-узлы `StyledSidebar`, `StyledSidebarContent`, `StyledSidebarSlot`
+ *    и `StyledSidebarTrack`
+ *
+ * Потребители:
+ *  - `src/ui/sidebar/index.tsx` — собирает компонент Sidebar
+ */
+
 import styled from 'styled-components';
 
-import { spacingRem, type SpacingPx } from '@ui/spacing';
-
-/** Ширина выезжающей панели — единый источник для трека и размеров Card. */
-export const SIDEBAR_PANEL_WIDTH = '20rem';
-
-/** Зазор между контентом и панелью + правый инсет страницы (панель садится в него). */
-const DEFAULT_OFFSET: SpacingPx = 8;
-const DEFAULT_INLINE_END: SpacingPx = 8;
-
-/** Длительность выезда/сворачивания; transitionend по transform завершает размонтирование. */
-const TRANSITION = '0.25s ease';
-
-/** Инсеты области контента (children); правый — ещё и гаттер панели. */
-export type SidebarStyleProps = {
-  offset?: SpacingPx;
-  paddingBlockEnd?: SpacingPx;
-  paddingBlockStart?: SpacingPx;
-  paddingInlineEnd?: SpacingPx;
-  paddingInlineStart?: SpacingPx;
-};
-
-const SIDEBAR_PROP_NAMES = new Set<string>([
-  'offset',
-  'paddingBlockEnd',
-  'paddingBlockStart',
-  'paddingInlineEnd',
-  'paddingInlineStart',
-]);
+import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 
 /**
- * Левая область страницы: скроллит свой контент внутри себя, не утягивая сайдбар.
- *
- * Внутренний скролл активируется ТОЛЬКО когда у предков есть definite-высота.
- * Из-за `min-height` (без явной `height`) grid-каркас авторазмерен по контенту:
- * трек `minmax(0, 1fr)` раздувается под высокий контент, `overflow` не цепляется,
- * скролится вся страница и сайдбар уезжает вниз.
- *
- * Каркасный фикс (когда на этих примитивах строится приложение, напр. встроенный
- * ИИ-ассистент, где в `children` рендерится скроллимая страница) — в @ui/reset:
- *   body { block-size: 100dvb; overflow: hidden }   // app-shell = вьюпорт
- * и каждой странице-`main` (кроме хостящей Sidebar): { overflow-y: auto; min-block-size: 0 }
- * чтобы её контент скролился сам, а не через body.
- *
- * Без каркасного фикса высоту ограничивают локально (`max-block-size` в `dvb` на
- * контейнере контента) — так сделано на странице design-system.
+ * SIDEBAR_PANEL_WIDTH — задаёт ширину выезжающей панели.
+ * Используется в `StyledSidebarTrack` и при расчёте ширины `StyledSidebarSlot`.
  */
-export const StyledSidebarContent = styled.div`
-  /* flex-column (не grid): вертикальный скролл-контейнер произвольного children
-     (хостит страницу приложения) — поток произвольного контента, не фикс-раскладка. */
+const SIDEBAR_PANEL_WIDTH = '20rem';
+
+/**
+ * DEFAULT_OFFSET — задаёт зазор между контентом и панелью по умолчанию.
+ * Используется, когда вызывающий код не передал проп `offset`.
+ */
+const DEFAULT_OFFSET: SpacingValue = 8;
+
+/**
+ * DEFAULT_INLINE_END — задаёт отступ области контента и панели от правого края по умолчанию.
+ * Используется, когда вызывающий код не передал проп `padding`.
+ */
+const DEFAULT_INLINE_END: SpacingValue = 8;
+
+/**
+ * TRANSITION — задаёт длительность и кривую анимации выезда панели.
+ * Завершение перехода по `transform` размонтирует слот в Sidebar.
+ */
+const TRANSITION = '0.25s ease';
+
+/**
+ * SidebarStyleProps — представляет пропсы стилизации Sidebar.
+ *
+ * @property offset — зазор между областью контента и панелью
+ * @property padding — единый отступ всех зон каркаса
+ */
+export type SidebarStyleProps = {
+  offset?: SpacingValue;
+  padding?: SpacingValue;
+};
+
+/**
+ * SIDEBAR_PROP_NAMES — хранит имена пропсов стилизации Sidebar.
+ */
+const SIDEBAR_PROP_NAMES = new Set<string>(['offset', 'padding']);
+
+/**
+ * resolveSpacingCSSValue — принимает метку шкалы или запасное значение и возвращает длину в rem.
+ *
+ * @param value — переданное значение шкалы или `undefined`
+ * @param fallback — запасное значение шкалы, когда проп не передан
+ * @returns значение для CSS-свойства в rem
+ */
+function resolveSpacingCSSValue(
+  value: SpacingValue | undefined,
+  fallback: SpacingValue
+): string {
+  return getSpacingValue(value ?? fallback);
+}
+
+/**
+ * StyledSidebarContent — задаёт область контента компонента Sidebar.
+ * Базируется на `<div>`.
+ *
+ * Встроенные стили:
+ *  - `display: flex` и `flex-direction: column` — вертикальный скролл-контейнер
+ *    произвольного содержимого. Flex вместо grid: поток произвольного контента,
+ *    а не фиксированная раскладка
+ *  - `min-inline-size: 0` и `min-block-size: 0` — позволяют сжиматься в grid-каркасе
+ *  - `overflow-y: auto` — внутренний скролл области контента без утягивания панели
+ *
+ * Внутренний скролл работает только при заданной высоте у предков. Без явной высоты
+ * трек `minmax(0, 1fr)` раздувается под контент, и скроллится вся страница.
+ * Каркасный фикс задаётся в `@ui/reset` и на страницах-`main`, либо локально через
+ * `max-block-size` в `dvb`, как на странице витрины дизайн-системы
+ */
+const StyledSidebarContent = styled.div`
   display: flex;
   flex-direction: column;
   min-inline-size: 0;
@@ -56,8 +94,17 @@ export const StyledSidebarContent = styled.div`
   overflow-y: auto;
 `;
 
-/** Слот-колонка: анимирует ширину; скрыт, пока панель не смонтирована. */
-export const StyledSidebarSlot = styled.aside`
+/**
+ * StyledSidebarSlot — задаёт слот-колонку выезжающей панели компонента Sidebar.
+ * Базируется на `<aside>`.
+ *
+ * Встроенные стили:
+ *  - `inline-size: 0` — колонка свёрнута, пока панель не раскрыта
+ *  - `overflow: hidden` — обрезает трек при анимации ширины
+ *  - `transition` по `inline-size` — анимирует ширину слота
+ *  - `display: none` при `data-open='false'` — скрывает слот, пока панель не смонтирована
+ */
+const StyledSidebarSlot = styled.aside`
   align-self: stretch;
   inline-size: 0;
   min-inline-size: 0;
@@ -70,95 +117,129 @@ export const StyledSidebarSlot = styled.aside`
   }
 `;
 
-/** Трек панели: едет по transform; ширина фиксирована шириной панели. */
-export const StyledSidebarTrack = styled.div`
-  /* flex (не grid): прижим панели к краю выезда (flex-end по inline, на мобайле —
-     нижний лист); grid здесь ломает выезд нижнего листа снизу. */
+/**
+ * StyledSidebarTrack — задаёт трек выезжающей панели компонента Sidebar.
+ * Базируется на `<div>`.
+ *
+ * Встроенные стили:
+ *  - `display: flex` и `justify-content: flex-end` — прижимает панель к краю выезда.
+ *    Flex вместо grid: иначе ломается выезд нижнего листа на узком экране
+ *  - `inline-size` из `SIDEBAR_PANEL_WIDTH` — фиксированная ширина трека
+ *  - `transform: translateX(100%)` — стартовое положение за правым краем
+ *  - `transition` по `transform` — анимация выезда
+ *  - `transform: translateX(0)` при `data-open='true'` — панель на месте
+ *  - `inline-size: 100%`, `min-inline-size: 0` и `min-block-size: 0` на первом
+ *    ребёнке — Card заполняет трек и сжимается ниже min-content, не распирая трек
+ */
+const StyledSidebarTrack = styled.div`
   display: flex;
   justify-content: flex-end;
   inline-size: ${SIDEBAR_PANEL_WIDTH};
   block-size: 100%;
   min-block-size: 0;
-  overflow: visible;
   transform: translateX(100%);
   transition: transform ${TRANSITION};
 
   &[data-open='true'] {
     transform: translateX(0);
   }
+
+  > :first-child {
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: 0;
+  }
 `;
 
-const spacingRemOr = (value: SpacingPx | undefined, fallback: SpacingPx): string =>
-  spacingRem(value ?? fallback);
+/**
+ * getSidebarStyles — возвращает CSS-правила для корня `StyledSidebar`: отступы зон
+ * каркаса, зазор при открытой панели, ширина слота и поведение на узком экране.
+ *
+ * @param props — пропсы стилизации Sidebar
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getSidebarStyles(props: SidebarStyleProps): string {
+  const { offset, padding } = props;
+  const paddingValue = resolveSpacingCSSValue(padding, 0);
+  const paddingInlineEndValue = resolveSpacingCSSValue(padding, DEFAULT_INLINE_END);
+  const offsetValue = resolveSpacingCSSValue(offset, DEFAULT_OFFSET);
 
+  const styles = [
+    `${StyledSidebarContent} {`,
+    `padding-block: ${paddingValue};`,
+    `padding-inline-start: ${paddingValue};`,
+    `}`,
+    `@media (width > 640px) {`,
+    `&:not(:has(${StyledSidebarSlot}[data-open='true'])) ${StyledSidebarContent} {`,
+    `padding-inline-end: ${paddingInlineEndValue};`,
+    `}`,
+    `&:has(${StyledSidebarSlot}[data-open='true']) {`,
+    `gap: ${offsetValue};`,
+    `}`,
+    `${StyledSidebarSlot}[data-open='true'][data-expanded='true'] {`,
+    `inline-size: calc(${SIDEBAR_PANEL_WIDTH} + ${paddingInlineEndValue});`,
+    `padding-block-end: ${paddingInlineEndValue};`,
+    `padding-inline-end: ${paddingInlineEndValue};`,
+    `}`,
+    `}`,
+    `@media (width <= 640px) {`,
+    `${StyledSidebarSlot} {`,
+    `position: absolute;`,
+    `inset-block-end: 0;`,
+    `inset-inline: 0;`,
+    `z-index: 50;`,
+    `inline-size: auto;`,
+    `padding-inline: ${paddingValue} ${paddingInlineEndValue};`,
+    `}`,
+    `${StyledSidebarTrack} {`,
+    `inline-size: 100%;`,
+    `block-size: 50dvb;`,
+    `transform: translateY(100%);`,
+    `}`,
+    `${StyledSidebarTrack}[data-open='true'] {`,
+    `transform: translateY(0);`,
+    `}`,
+    `${StyledSidebarTrack} > :first-child {`,
+    `max-block-size: min(480px, 60dvb);`,
+    `}`,
+    `}`,
+  ];
+
+  return styles.join('\n');
+}
+
+/**
+ * StyledSidebar — задаёт корневой узел компонента Sidebar.
+ * Базируется на `<div>` и поддерживает все пропсы из `SidebarStyleProps`.
+ *
+ * Встроенные стили:
+ *  - `display: grid` — каркас из области контента и слота панели
+ *  - `block-size: 100%` — заполняет родителя. Заданную высоту обеспечивает обёртка
+ *    вызывающего кода
+ *  - `overflow: hidden` — обрезает выезд панели по границе каркаса
+ *  - `grid-template-columns: 1fr auto` при ширине больше `640px` — панель
+ *    в потоке справа, контент ужимается
+ *
+ * Генерация стилей:
+ *  - `getSidebarStyles` — отступы зон, зазор, ширина слота, узкий экран
+ */
 export const StyledSidebar = styled.div.withConfig({
   shouldForwardProp: (prop) => !SIDEBAR_PROP_NAMES.has(prop),
 })<SidebarStyleProps>`
   position: relative;
   display: grid;
-  grid-template-columns: 1fr;
   grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: 1fr;
+  min-inline-size: 0;
   block-size: 100%;
   min-block-size: 0;
-  min-inline-size: 0;
   overflow: hidden;
 
-  ${StyledSidebarContent} {
-    padding-block: ${(p) => spacingRemOr(p.paddingBlockStart, 0)}
-      ${(p) => spacingRemOr(p.paddingBlockEnd, 0)};
-    padding-inline-start: ${(p) => spacingRemOr(p.paddingInlineStart, 0)};
-  }
+  ${(props) => getSidebarStyles(props)}
 
-  /* Десктоп: панель в потоке — колонка справа, контент ужимается. */
   @media (width > 640px) {
     grid-template-columns: 1fr auto;
-
-    /* Закрыт: контент занимает и правый инсет. */
-    &:not(:has(${StyledSidebarSlot}[data-open='true'])) ${StyledSidebarContent} {
-      padding-inline-end: ${(p) => spacingRemOr(p.paddingInlineEnd, DEFAULT_INLINE_END)};
-    }
-
-    /* Открыт: зазор между контентом и панелью. */
-    &:has(${StyledSidebarSlot}[data-open='true']) {
-      gap: ${(p) => spacingRemOr(p.offset, DEFAULT_OFFSET)};
-    }
-
-    /* Раскрытый слот: ширина = панель + правый инсет, инсет как падинги. */
-    ${StyledSidebarSlot}[data-open='true'][data-expanded='true'] {
-      inline-size: calc(
-        ${SIDEBAR_PANEL_WIDTH} +
-          ${(p) => spacingRemOr(p.paddingInlineEnd, DEFAULT_INLINE_END)}
-      );
-      padding-inline-end: ${(p) => spacingRemOr(p.paddingInlineEnd, DEFAULT_INLINE_END)};
-      padding-block-end: ${(p) => spacingRemOr(p.paddingInlineEnd, DEFAULT_INLINE_END)};
-    }
-  }
-
-  /* Узкий экран: панель — нижний лист-оверлей поверх контента (вне потока). */
-  @media (width <= 640px) {
-    ${StyledSidebarSlot} {
-      position: absolute;
-      inset-inline: 0;
-      inset-block-end: 0;
-      z-index: 50;
-      inline-size: auto;
-      padding-inline: ${(p) => spacingRemOr(p.paddingInlineStart, 0)}
-        ${(p) => spacingRemOr(p.paddingInlineEnd, DEFAULT_INLINE_END)};
-    }
-
-    ${StyledSidebarTrack} {
-      inline-size: 100%;
-      block-size: 50dvb;
-      transform: translateY(100%);
-    }
-
-    ${StyledSidebarTrack}[data-open='true'] {
-      transform: translateY(0);
-    }
-
-    /* Нижний лист: высота панели не больше min(480px, 60dvb) (max-size в роли распределения). */
-    ${StyledSidebarTrack} > :first-child {
-      max-block-size: min(480px, 60dvb);
-    }
   }
 `;
+
+export { StyledSidebarContent, StyledSidebarSlot, StyledSidebarTrack };

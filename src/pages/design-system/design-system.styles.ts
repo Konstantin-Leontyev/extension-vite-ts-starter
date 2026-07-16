@@ -3,12 +3,13 @@
  * Определяет layout страницы и styled-обёртки витрины дизайн-системы.
  *
  * Основные задачи:
- * 1. Предоставить styled-узел `StyledMain` для корневого landmark страницы
- * 2. Предоставить styled-узлы `StyledDesignSystemWidgets` и `StyledDesignSystemWidgetFullRow`
+ * 1. Предоставить максимальную высоту страницы витрины через `PLAYGROUND_MAX_BLOCK_SIZE`
+ * 2. Предоставить styled-узел `StyledMain` для корневого landmark страницы
+ * 3. Предоставить styled-узлы `StyledDesignSystemWidgets` и `StyledDesignSystemWidgetFullRow`
  *    для сетки виджетов
- * 3. Предоставить styled-узлы `StyledSettingsForm` и `StyledSettingsField` для панели
+ * 4. Предоставить styled-узлы `StyledSettingsForm` и `StyledSettingsField` для панели
  *    настроек в сайдбаре
- * 4. Предоставить styled-узлы демо-превью `StyledRadioButtonDemo`, `StyledFieldsetDemo`,
+ * 5. Предоставить styled-узлы демо-превью `StyledRadioButtonDemo`, `StyledFieldsetDemo`,
  *    `StyledTextDemo` и `StyledSpinnerDemo`
  *
  * Потребители:
@@ -19,7 +20,20 @@
  */
 import styled from 'styled-components';
 
+import { HEADER_BLOCK_SIZE } from '@components/header/header.styles';
 import { getSpacingValue } from '@ui/spacing';
+
+/**
+ * PLAYGROUND_MAX_BLOCK_SIZE — задаёт максимальную высоту страницы витрины.
+ * Высота равна вьюпорту минус живая высота шапки из CSS-переменной
+ * `--shell-header-block-size`, которую публикует шапка. При сворачивании шапки
+ * в `autoHide` переменная уменьшается, и каркас занимает весь экран.
+ * Единица `dvb` не зависит от grid-каркаса body, поэтому ScrollPort внутри
+ * скроллит контент, не растягивая страницу. Каркасная альтернатива описана
+ * в `@ui/sidebar`.
+ * Используется в `StyledMain` как значение `max-block-size`.
+ */
+export const PLAYGROUND_MAX_BLOCK_SIZE = `calc(100dvb - var(--shell-header-block-size, ${HEADER_BLOCK_SIZE}))`;
 
 /**
  * StyledMain — задаёт корневой landmark витрины дизайн-системы.
@@ -29,6 +43,8 @@ import { getSpacingValue } from '@ui/spacing';
  *  - `display: grid` — раскладка по дефолту проекта
  *  - `grid-template-rows` и `grid-template-columns: minmax(0, 1fr)` — занимает доступную
  *    высоту и ширину без переполнения
+ *  - `max-block-size` из `PLAYGROUND_MAX_BLOCK_SIZE` — заданная высота для каркаса Sidebar:
+ *    габариты задаёт страница, сам Sidebar пропсов размеров не имеет
  *  - `min-block-size: 0` — предотвращает переполнение во flex-контейнерах
  */
 export const StyledMain = styled.main`
@@ -36,6 +52,7 @@ export const StyledMain = styled.main`
   grid-template-rows: minmax(0, 1fr);
   grid-template-columns: minmax(0, 1fr);
   min-block-size: 0;
+  max-block-size: ${PLAYGROUND_MAX_BLOCK_SIZE};
 `;
 
 /**

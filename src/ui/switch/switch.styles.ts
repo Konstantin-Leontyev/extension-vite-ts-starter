@@ -64,7 +64,7 @@ const SWITCH_TRACK_PROP_NAMES = new Set<string>(['sizePreset', 'tone']);
 
 /**
  * TRACK_BORDER — задаёт ширину рамки дорожки.
- * Вычитается из инсета бегунка, иначе `border-box` смещает его вниз.
+ * Вычитается из смещения бегунка, иначе `border-box` смещает его вниз.
  */
 const TRACK_BORDER = '1px';
 
@@ -125,8 +125,8 @@ export function getSwitchTrackStyles(
   const trackInline = getSwitchTrackInline(sizePreset);
   const trackBlock = getSwitchTrackBlock(sizePreset);
   const knob = getSwitchKnob(sizePreset);
-  // Бегунок центрируется инсетом: из расчёта вычитается рамка, потому что inset
-  // отсчитывается от padding-края
+  // Бегунок центрируется смещением от края: из расчёта вычитается рамка,
+  // потому что inset отсчитывается от padding-края
   // Ход бегунка равен trackInline минус trackBlock — обе позиции смещены рамкой одинаково
   const knobInset = `calc((${trackBlock} - ${knob}) / 2 - ${TRACK_BORDER})`;
   const knobTravel = `calc(${trackInline} - ${trackBlock})`;
