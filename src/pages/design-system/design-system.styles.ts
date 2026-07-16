@@ -20,7 +20,7 @@
  */
 import styled from 'styled-components';
 
-import { HEADER_BLOCK_SIZE } from '@components/header/header.styles';
+import { HEADER_BLOCK_SIZE } from '@components/header';
 import { getSpacingValue } from '@ui/spacing';
 
 /**

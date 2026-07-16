@@ -7,7 +7,7 @@ export function AddIcon() {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M15 12L12 12M12 12L9 12M12 12L12 9M12 12L12 15"
+        d="M19 12L12 12M12 12L5 12M12 12L12 5M12 12L12 19"
         stroke="currentColor"
         strokeLinecap="round"
         strokeWidth="1.5"

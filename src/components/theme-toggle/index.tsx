@@ -8,11 +8,12 @@
  * 3. Связать `RoundButton` с `useThemeMode`
  *
  * Потребители:
- *  - `src/components/header/index.tsx` — показывает переключатель в блоке действий шапки
+ *  - `src/components/header/index.tsx` — показывает кнопку переключения темы в блоке действий шапки
  */
 
 import { useThemeMode } from '@hooks/use-theme-mode';
 import { ContrastIcon } from '@icons/contrast';
+import { Icon } from '@ui/icon';
 import { RoundButton } from '@ui/round-button';
 
 /**
@@ -42,7 +43,9 @@ export function ThemeToggle() {
       aria-label={isDark ? THEME_TOGGLE_DARK_ARIA_LABEL : THEME_TOGGLE_LIGHT_ARIA_LABEL}
       onClick={onThemeChange}
     >
-      <ContrastIcon />
+      <Icon blockSize="100%" inlineSize="100%" padding={4}>
+        <ContrastIcon />
+      </Icon>
     </RoundButton>
   );
 }
