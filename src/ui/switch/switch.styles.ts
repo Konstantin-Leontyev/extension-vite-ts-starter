@@ -27,18 +27,18 @@ export { splitLayoutProps } from '@ui/layout';
 /**
  * switchSizePresets — хранит габариты дорожки и бегунка для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — ключи шкалы из `@ui/spacing`:
- *  - `trackInline` → ширина дорожки
- *  - `trackBlock` → высота дорожки
- *  - `knob` → диаметр бегунка
+ *  - `trackInlineSize` → ширина дорожки
+ *  - `trackBlockSize` → высота дорожки
+ *  - `knobSize` → диаметр бегунка
  * Ряд компактнее контролов.
  */
 const switchSizePresets = {
-  small: { trackInline: 28, trackBlock: 16, knob: 12 },
-  medium: { trackInline: 36, trackBlock: 20, knob: 16 },
-  large: { trackInline: 48, trackBlock: 24, knob: 20 },
+  small: { trackInlineSize: 28, trackBlockSize: 16, knobSize: 12 },
+  medium: { trackInlineSize: 36, trackBlockSize: 20, knobSize: 16 },
+  large: { trackInlineSize: 48, trackBlockSize: 24, knobSize: 20 },
 } as const satisfies Record<
   SizePreset,
-  { knob: SpacingValue; trackBlock: SpacingValue; trackInline: SpacingValue }
+  { knobSize: SpacingValue; trackBlockSize: SpacingValue; trackInlineSize: SpacingValue }
 >;
 
 /**
@@ -69,40 +69,40 @@ const SWITCH_TRACK_PROP_NAMES = new Set<string>(['sizePreset', 'tone']);
 const TRACK_BORDER = '1px';
 
 /**
- * getSwitchTrackInline — возвращает CSS-ширину дорожки.
+ * getSwitchTrackInlineSize — возвращает CSS-ширину дорожки.
  *
- * @param sizePreset — размер из ряда контролов
+ * @param sizePreset размер из ряда контролов
  * @returns ширина дорожки в rem
  */
-function getSwitchTrackInline(sizePreset: SizePreset): string {
-  return getSpacingValue(switchSizePresets[sizePreset].trackInline);
+function getSwitchTrackInlineSize(sizePreset: SizePreset): string {
+  return getSpacingValue(switchSizePresets[sizePreset].trackInlineSize);
 }
 
 /**
- * getSwitchTrackBlock — возвращает CSS-высоту дорожки.
+ * getSwitchTrackBlockSize — возвращает CSS-высоту дорожки.
  *
- * @param sizePreset — размер из ряда контролов
+ * @param sizePreset размер из ряда контролов
  * @returns высота дорожки в rem
  */
-function getSwitchTrackBlock(sizePreset: SizePreset): string {
-  return getSpacingValue(switchSizePresets[sizePreset].trackBlock);
+function getSwitchTrackBlockSize(sizePreset: SizePreset): string {
+  return getSpacingValue(switchSizePresets[sizePreset].trackBlockSize);
 }
 
 /**
- * getSwitchKnob — возвращает CSS-диаметр бегунка.
+ * getSwitchKnobSize — возвращает CSS-диаметр бегунка.
  *
- * @param sizePreset — размер из ряда контролов
+ * @param sizePreset размер из ряда контролов
  * @returns диаметр бегунка в rem
  */
-function getSwitchKnob(sizePreset: SizePreset): string {
-  return getSpacingValue(switchSizePresets[sizePreset].knob);
+function getSwitchKnobSize(sizePreset: SizePreset): string {
+  return getSpacingValue(switchSizePresets[sizePreset].knobSize);
 }
 
 /**
  * getSwitchTextSize — возвращает размер подписи по `sizePreset`.
  * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
  *
- * @param sizePreset — размер дорожки
+ * @param sizePreset размер дорожки
  * @returns метка размера текста из `TextSizePreset` для подписи справа от дорожки
  */
 export function getSwitchTextSize(sizePreset?: SizePreset): TextSizePreset {
@@ -114,7 +114,7 @@ export function getSwitchTextSize(sizePreset?: SizePreset): TextSizePreset {
  * габариты, бегунок и checked/focus-вид по пропам `sizePreset` и `tone`.
  * Состояния читаются со скрытого соседнего input через селектор `input:checked + &`.
  *
- * @param props — пропсы стилизации дорожки и тема
+ * @param props пропсы стилизации дорожки и тема
  * @returns CSS-правила, каждое с новой строки
  */
 export function getSwitchTrackStyles(
@@ -122,25 +122,25 @@ export function getSwitchTrackStyles(
 ): string {
   const theme = getTheme(props);
   const { sizePreset = DEFAULT_SIZE_PRESET, tone = DEFAULT_TONE } = props;
-  const trackInline = getSwitchTrackInline(sizePreset);
-  const trackBlock = getSwitchTrackBlock(sizePreset);
-  const knob = getSwitchKnob(sizePreset);
+  const trackInlineSize = getSwitchTrackInlineSize(sizePreset);
+  const trackBlockSize = getSwitchTrackBlockSize(sizePreset);
+  const knobSize = getSwitchKnobSize(sizePreset);
   // Бегунок центрируется смещением от края: из расчёта вычитается рамка,
   // потому что inset отсчитывается от padding-края
-  // Ход бегунка равен trackInline минус trackBlock — обе позиции смещены рамкой одинаково
-  const knobInset = `calc((${trackBlock} - ${knob}) / 2 - ${TRACK_BORDER})`;
-  const knobTravel = `calc(${trackInline} - ${trackBlock})`;
+  // Ход бегунка равен ширине дорожки минус её высота — обе позиции смещены рамкой одинаково
+  const knobInset = `calc((${trackBlockSize} - ${knobSize}) / 2 - ${TRACK_BORDER})`;
+  const knobTravel = `calc(${trackInlineSize} - ${trackBlockSize})`;
   const checkedBackground = getToneColor(theme, tone, theme.colors.primary);
 
   const styles = [
     'position: relative;',
     'display: inline-block;',
     'flex-shrink: 0;',
-    `inline-size: ${trackInline};`,
-    `block-size: ${trackBlock};`,
+    `inline-size: ${trackInlineSize};`,
+    `block-size: ${trackBlockSize};`,
     `background-color: ${theme.colors.border};`,
     `border: ${TRACK_BORDER} solid ${theme.colors.border};`,
-    `border-radius: calc(${trackBlock} / 2);`,
+    `border-radius: calc(${trackBlockSize} / 2);`,
     `transition:
       background-color 0.15s ease,
       border-color 0.15s ease;`,
@@ -148,8 +148,8 @@ export function getSwitchTrackStyles(
       position: absolute;
       inset-block-start: ${knobInset};
       inset-inline-start: ${knobInset};
-      inline-size: ${knob};
-      block-size: ${knob};
+      inline-size: ${knobSize};
+      block-size: ${knobSize};
       content: '';
       background-color: ${theme.colors.surface};
       border-radius: 50%;
@@ -198,6 +198,7 @@ export const StyledSwitchTrack = styled.span.withConfig({
  *
  * Встроенные стили:
  *  - `display: inline-grid` и `grid-auto-flow: column` — дорожка и подпись в одной строке
+ *  - `gap` — отступ между дорожкой и подписью
  *  - `align-items: center` и `justify-content: start` — при растяжении корня родителем
  *    подпись остаётся прижатой к дорожке
  *  - `cursor: pointer` — кликабельная область корня

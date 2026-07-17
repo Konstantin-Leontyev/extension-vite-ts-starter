@@ -50,7 +50,7 @@ export type ProgressBarWidgetState = {
 /**
  * parseValueFromPercent — преобразует строку с процентом в долю заполнения для пропа `value`.
  *
- * @param raw — введённое значение в процентах
+ * @param raw введённое значение в процентах
  * @returns доля заполнения от 0 до 1
  */
 function parseValueFromPercent(raw: string): number {

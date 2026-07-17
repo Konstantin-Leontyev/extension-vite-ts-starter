@@ -27,7 +27,7 @@ import { getTheme, type AppTheme } from '@ui/theme';
  * Расширяет канонический `SizePreset` ключом `huge`, не добавляя его
  * в общий ряд контролов.
  */
-export type RoundButtonSizePreset = SizePreset | 'huge';
+export type RoundButtonSizePreset = 'huge' | SizePreset;
 
 /**
  * RoundButtonStyleProps — представляет пропсы стилизации RoundButton и layout-пропсы.
@@ -65,7 +65,7 @@ export const ROUND_BUTTON_SIZE_PRESET_KEYS = Object.freeze(
  * по `sizePreset`. Используется генератором стилей и вызывающим кодом
  * для согласования высоты соседних узлов с рядом кнопок.
  *
- * @param sizePreset — размер круглой кнопки
+ * @param sizePreset размер круглой кнопки
  * @returns ключ шкалы отступов из `@ui/spacing`
  */
 export function getRoundButtonMinBlockSize(
@@ -101,7 +101,7 @@ const ROUND_BUTTON_PROP_NAMES = new Set<string>([
  * и подсветку `:not(:disabled):hover` и `:focus-visible` — отдельная проверка
  * disabled в focus-правиле не нужна, потому что disabled-кнопка не фокусируется.
  *
- * @param props — пропсы стилизации круглой кнопки и тема
+ * @param props пропсы стилизации круглой кнопки и тема
  * @returns CSS-правила, каждое с новой строки
  */
 export function getRoundButtonStyles(

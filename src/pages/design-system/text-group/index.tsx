@@ -40,13 +40,13 @@ import { ToneListbox } from '../tone-listbox';
  * TextGroupContent — представляет одно поле ввода содержимого текстовой группы.
  *
  * @property label — подпись поля, например `Text:` или `Text A:`
- * @property value — текущее содержимое
  * @property onChange — обработчик изменения содержимого
+ * @property value — текущее содержимое
  */
 type TextGroupContent = {
   label: string;
-  value: string;
   onChange: (value: string) => void;
+  value: string;
 };
 
 /**
@@ -55,23 +55,23 @@ type TextGroupContent = {
  * @property contents — поля ввода содержимого. Отсутствуют, когда содержимое
  *   генерируется компонентом из значения, как процент ProgressBar
  * @property italic — текущее значение курсива
+ * @property onItalicChange — обработчик изменения курсива
+ * @property onSizeChange — обработчик изменения размера текста
+ * @property onToneChange — обработчик изменения тона текста
  * @property show — флаг показа текста. Без него текст компонента неотключаем
  *   и группа рендерится всегда
  * @property size — текущий размер текста
  * @property tone — текущий тон текста
- * @property onItalicChange — обработчик изменения курсива
- * @property onSizeChange — обработчик изменения размера текста
- * @property onToneChange — обработчик изменения тона текста
  */
 type TextGroupProps = {
   contents?: readonly TextGroupContent[];
   italic: boolean;
-  show?: { checked: boolean; onChange: (checked: boolean) => void };
-  size: TextSizePreset;
-  tone: TextTone;
   onItalicChange: (value: boolean) => void;
   onSizeChange: (size: TextSizePreset) => void;
   onToneChange: (tone: TextTone) => void;
+  show?: { checked: boolean; onChange: (checked: boolean) => void };
+  size: TextSizePreset;
+  tone: TextTone;
 };
 
 /**
@@ -94,12 +94,12 @@ type TextGroupProps = {
 export function TextGroup({
   contents,
   italic,
-  show,
-  size,
-  tone,
   onItalicChange,
   onSizeChange,
   onToneChange,
+  show,
+  size,
+  tone,
 }: TextGroupProps) {
   const expanded = !show || show.checked;
 

@@ -31,8 +31,8 @@ import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
  * При переданном `excludeTone` исключает совпадающий тон.
  * Значение `default` остаётся всегда.
  *
- * @param tones — исходный перечень тонов
- * @param excludeTone — тон, исключаемый из результата
+ * @param tones исходный перечень тонов
+ * @param excludeTone тон, исключаемый из результата
  * @returns отфильтрованный перечень тонов
  */
 function getAvailableTones<Tone extends string>(
@@ -49,8 +49,8 @@ function getAvailableTones<Tone extends string>(
 /**
  * getToneListboxOptions — преобразует перечень тонов в опции Listbox.
  *
- * @param tones — исходный перечень тонов
- * @param excludeTone — тон, исключаемый из опций
+ * @param tones исходный перечень тонов
+ * @param excludeTone тон, исключаемый из опций
  * @returns опции для Listbox
  */
 function getToneListboxOptions<Tone extends string>(
@@ -67,9 +67,9 @@ function getToneListboxOptions<Tone extends string>(
  * getToneListboxValue — возвращает выбранный тон, если он есть в допустимом перечне.
  * Иначе возвращает `default`, если тон выпал из списка после смены `excludeTone`.
  *
- * @param value — текущий выбранный тон
- * @param tones — исходный перечень тонов
- * @param excludeTone — тон, исключаемый из допустимого перечня
+ * @param value текущий выбранный тон
+ * @param tones исходный перечень тонов
+ * @param excludeTone тон, исключаемый из допустимого перечня
  * @returns тон для значения Listbox
  */
 function getToneListboxValue<Tone extends string>(
@@ -88,17 +88,17 @@ function getToneListboxValue<Tone extends string>(
  * @property excludeTone — тон, исключаемый из списка опций, чтобы вторичный выбор
  *   не совпадал с уже выбранным тоном. Значение `default` остаётся всегда
  * @property label — текст подписи над листбоксом
+ * @property onChange — обработчик изменения выбранного тона
  * @property tones — перечень допустимых тонов из настраиваемого компонента,
  *   например `TONE_PRESET_KEYS` или `TEXT_TONE_KEYS`
  * @property value — текущий выбранный тон
- * @property onChange — обработчик изменения выбранного тона
  */
 type ToneListboxProps<Tone extends string> = {
   excludeTone?: Tone;
   label: string;
+  onChange: (tone: Tone) => void;
   tones: readonly Tone[];
   value: Tone;
-  onChange: (tone: Tone) => void;
 };
 
 /**
@@ -122,9 +122,9 @@ type ToneListboxProps<Tone extends string> = {
 export function ToneListbox<Tone extends string = TonePreset>({
   excludeTone,
   label,
+  onChange,
   tones,
   value,
-  onChange,
 }: ToneListboxProps<Tone>) {
   return (
     <Listbox

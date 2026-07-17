@@ -8,7 +8,7 @@
  * 2. Связать тоны с ключами цвета через `TONE_PRESETS`
  * 3. Задать значение по умолчанию через `DEFAULT_TONE`
  * 4. Предоставить перечень тонов через `TONE_PRESET_KEYS`
- * 5. Предоставить утилиты `getToneKey` и `getToneColor`
+ * 5. Предоставить утилиты `getToneColorKey` и `getToneColor`
  *
  * Потребители:
  *  - `@ui/button`, `@ui/tag`, `@ui/toast`, `@ui/text`, `@ui/progress-bar`, `@ui/spinner` —
@@ -36,7 +36,7 @@ export type TonePreset = 'danger' | 'default' | 'primary' | 'success' | 'warning
  *  - `primary` — акцентный цвет
  *
  * Ключи задают тип `TonePreset`. Соответствие экспортируется для расширения
- * спредом в `@ui/text` и `@ui/fieldset`, чтение цвета — через `getToneKey`
+ * спредом в `@ui/text` и `@ui/fieldset`, чтение цвета — через `getToneColorKey`
  * и `getToneColor`.
  */
 export const TONE_PRESETS = Object.freeze({
@@ -60,13 +60,13 @@ export const DEFAULT_TONE: TonePreset = 'default';
 export const TONE_PRESET_KEYS = Object.freeze(Object.keys(TONE_PRESETS) as TonePreset[]);
 
 /**
- * getToneKey — возвращает ключ цвета в теме для указанного тона.
+ * getToneColorKey — возвращает ключ цвета в теме для указанного тона.
  * Для тона по умолчанию возвращает `undefined`.
  *
- * @param tone — семантический тон
+ * @param tone семантический тон
  * @returns ключ цвета темы или `undefined`
  */
-export function getToneKey(tone: TonePreset): keyof ThemeColors | undefined {
+export function getToneColorKey(tone: TonePreset): keyof ThemeColors | undefined {
   return TONE_PRESETS[tone];
 }
 
@@ -75,9 +75,9 @@ export function getToneKey(tone: TonePreset): keyof ThemeColors | undefined {
  * Для тона с собственным цветом в теме возвращает этот цвет,
  * для тона по умолчанию — запасной цвет из `fallbackColor`.
  *
- * @param theme — текущая тема
- * @param tone — семантический тон
- * @param fallbackColor — цвет, который подставляется для тона по умолчанию
+ * @param theme текущая тема
+ * @param tone семантический тон
+ * @param fallbackColor цвет, который подставляется для тона по умолчанию
  * @returns цвет темы или `fallbackColor`
  */
 export function getToneColor(
@@ -85,7 +85,7 @@ export function getToneColor(
   tone: TonePreset,
   fallbackColor: string
 ): string {
-  const colorKey = getToneKey(tone);
+  const colorKey = getToneColorKey(tone);
 
   return colorKey ? theme.colors[colorKey] : fallbackColor;
 }

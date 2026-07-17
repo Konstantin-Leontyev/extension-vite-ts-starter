@@ -1,5 +1,25 @@
+/**
+ * Файл: `src/icons/upload.tsx`
+ * Предоставляет svg-иконку загрузки.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент `UploadIcon`
+ *
+ * Потребители:
+ *  - `src/pages/design-system/showcase-icon-options.tsx` — включает в опции витрины
+ *  - `src/icons/index.ts` — реэкспортирует `UploadIcon`
+ */
+
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
 
+/**
+ * UploadIcon — отображает svg-иконку загрузки.
+ *
+ * @example
+ * <Icon>
+ *   <UploadIcon />
+ * </Icon>
+ */
 export function UploadIcon() {
   return (
     <svg

@@ -1,8 +1,9 @@
 /**
  * Файл: `src/pages/design-system/modal-settings/index.tsx`
  * Определяет панель настроек компонента Modal в витрине дизайн-системы.
- * Содержит контролы для изменения размера, фона, заголовка, подзаголовка
- * и текста тела в реальном времени.
+ * Содержит контролы для изменения размера, фона, заголовка и подзаголовка
+ * в реальном времени. Тело модального окна — `children`, панелью не настраивается:
+ * превью передаёт витринный плейсхолдер.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `ModalWidgetState`
@@ -16,7 +17,6 @@ import { type CSSProperties, type ChangeEvent } from 'react';
 
 import { type CardBackground } from '@ui/card';
 import { Checkbox } from '@ui/checkbox';
-import { Input } from '@ui/input';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 import { type TextSizePreset, type TextTone } from '@ui/text';
 
@@ -29,7 +29,7 @@ import { SizeListbox } from '../size-listbox';
  * ModalWidgetState — представляет состояние настроек компонента Modal в витрине дизайн-системы.
  * Ключи совпадают с именами пропов компонента Modal, кроме витринных ключей:
  * `showSubtitle` управляет передачей подзаголовка в превью, `sizePreset` задаёт ширину
- * через `inlineSize` в родительской витрине, `text` хранит содержимое `children`.
+ * через `inlineSize` в родительской витрине.
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Modal.
  *
  * @property background — заливка карточки
@@ -39,7 +39,6 @@ import { SizeListbox } from '../size-listbox';
  * @property subtitleAlign — выравнивание подзаголовка
  * @property subtitleSizePreset — размер подзаголовка
  * @property subtitleTone — тон подзаголовка
- * @property text — содержимое тела модального окна
  * @property title — заголовок
  * @property titleAlign — выравнивание заголовка
  * @property titleSizePreset — размер заголовка
@@ -53,7 +52,6 @@ export type ModalWidgetState = {
   subtitleAlign: CSSProperties['textAlign'];
   subtitleSizePreset: TextSizePreset;
   subtitleTone: TextTone;
-  text: string;
   title: string;
   titleAlign: CSSProperties['textAlign'];
   titleSizePreset: TextSizePreset;
@@ -130,15 +128,6 @@ export function ModalSettings({ onChange, state }: ModalSettingsProps) {
           onToneChange={(tone) => onChange('subtitleTone', tone)}
         />
       )}
-
-      <Input
-        label="Text:"
-        reserveErrorSpace={false}
-        value={state.text}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('text', event.target.value)
-        }
-      />
     </StyledSettingsForm>
   );
 }

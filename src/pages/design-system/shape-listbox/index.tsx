@@ -27,7 +27,7 @@ import { type ShapePreset } from '@ui/presets';
 /**
  * getShapeListboxOptions — преобразует перечень форм в опции Listbox.
  *
- * @param shapes — исходный перечень форм
+ * @param shapes исходный перечень форм
  * @returns опции для Listbox
  */
 function getShapeListboxOptions<Shape extends string>(
@@ -43,16 +43,16 @@ function getShapeListboxOptions<Shape extends string>(
  * ShapeListboxProps — представляет пропсы компонента ShapeListbox.
  *
  * @property label — текст подписи над листбоксом
+ * @property onChange — обработчик изменения выбранной формы
  * @property shapes — перечень допустимых форм из настраиваемого компонента,
  *   например `SHAPE_PRESET_KEYS`
  * @property value — текущая выбранная форма
- * @property onChange — обработчик изменения выбранной формы
  */
 type ShapeListboxProps<Shape extends string> = {
   label: string;
+  onChange: (shape: Shape) => void;
   shapes: readonly Shape[];
   value: Shape;
-  onChange: (shape: Shape) => void;
 };
 
 /**
@@ -68,9 +68,9 @@ type ShapeListboxProps<Shape extends string> = {
  */
 export function ShapeListbox<Shape extends string = ShapePreset>({
   label,
+  onChange,
   shapes,
   value,
-  onChange,
 }: ShapeListboxProps<Shape>) {
   return (
     <Listbox

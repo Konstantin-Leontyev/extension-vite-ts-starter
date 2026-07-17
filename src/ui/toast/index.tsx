@@ -43,7 +43,7 @@ type ToastProps = ToastStyleProps & {
   textTone?: TextTone;
 } & Omit<
     ComponentPropsWithRef<'div'>,
-    keyof ToastStyleProps | 'children' | 'className' | 'style'
+    'children' | 'className' | 'style' | keyof ToastStyleProps
   >;
 
 /**
@@ -68,8 +68,8 @@ function Toast({
 
   return (
     <StyledToast
-      role={role}
       aria-live={ariaLive}
+      role={role}
       sizePreset={sizePreset}
       tone={tone}
       {...rest}

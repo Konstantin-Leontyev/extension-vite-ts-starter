@@ -71,7 +71,7 @@ const SPINNER_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 
  * getSpinnerTextSize — возвращает размер подписи по `sizePreset`.
  * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
  *
- * @param sizePreset — размер спиннера
+ * @param sizePreset размер спиннера
  * @returns метка размера текста из `TextSizePreset` для подписи под индикатором
  */
 export function getSpinnerTextSize(sizePreset?: SizePreset): TextSizePreset {
@@ -91,22 +91,20 @@ const spinnerRotate = keyframes`
  * getSpinnerStyles — возвращает CSS-правила для индикатора `StyledSpinner`:
  * размер, рамку и анимацию.
  *
- * @param props — пропсы стилизации спиннера и тема
- * @returns CSS-правила с анимацией
+ * @param props пропсы стилизации спиннера и тема
+ * @returns CSS-правила, каждое с новой строки
  */
 export function getSpinnerStyles(props: SpinnerStyleProps & { theme: AppTheme }) {
   const theme = getTheme(props);
   const sizePreset = props.sizePreset ?? DEFAULT_SIZE_PRESET;
   const tone = props.tone ?? DEFAULT_TONE;
   const blockSize = getSpacingValue(spinnerBlockSize[sizePreset]);
-  const borderWidth = `${spinnerBorderWidth[sizePreset]}px`;
-  const spinnerColor = getToneColor(theme, tone, theme.colors.primary);
 
   return css`
     inline-size: ${blockSize};
     block-size: ${blockSize};
-    border: ${borderWidth} solid ${theme.colors.border};
-    border-block-start-color: ${spinnerColor};
+    border: ${spinnerBorderWidth[sizePreset]}px solid ${theme.colors.border};
+    border-block-start-color: ${getToneColor(theme, tone, theme.colors.primary)};
     border-radius: 50%;
     animation: ${spinnerRotate} 0.8s linear infinite;
 

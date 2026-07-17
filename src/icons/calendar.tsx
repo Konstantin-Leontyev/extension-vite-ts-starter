@@ -1,5 +1,27 @@
+/**
+ * Файл: `src/icons/calendar.tsx`
+ * Предоставляет svg-иконку календаря.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент `CalendarIcon`
+ *
+ * Потребители:
+ *  - поля даты — показывают триггер календаря:
+ *     - `src/ui/date-input/index.tsx`
+ *     - `src/ui/date-range-input/index.tsx`
+ *  - `src/icons/index.ts` — реэкспортирует `CalendarIcon`
+ */
+
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
 
+/**
+ * CalendarIcon — отображает svg-иконку календаря.
+ *
+ * @example
+ * <Icon>
+ *   <CalendarIcon />
+ * </Icon>
+ */
 export function CalendarIcon() {
   return (
     <svg

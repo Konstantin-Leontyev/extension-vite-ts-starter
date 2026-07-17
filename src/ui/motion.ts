@@ -37,7 +37,7 @@ const SHELL_MOTION_REDUCED_DURATION = '0.6s';
  * getShellTransitionStyles — возвращает CSS-правила перехода для каркасного свойства.
  * Под `prefers-reduced-motion: reduce` длительность удваивается.
  *
- * @param property — анимируемое CSS-свойство, например `transform`
+ * @param property анимируемое CSS-свойство, например `transform`
  * @returns CSS-правила, каждое с новой строки
  */
 export function getShellTransitionStyles(property: string): string {

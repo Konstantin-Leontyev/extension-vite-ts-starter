@@ -56,7 +56,7 @@ type SwitchProps = SwitchStyleProps & {
   textTone?: TextTone;
 } & Omit<
     ComponentPropsWithRef<'input'>,
-    keyof SwitchStyleProps | 'children' | 'className' | 'style' | 'type'
+    'children' | 'className' | 'style' | 'type' | keyof SwitchStyleProps
   >;
 
 /**

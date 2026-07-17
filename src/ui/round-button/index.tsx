@@ -39,7 +39,7 @@ import {
 type RoundButtonProps = RoundButtonStyleProps &
   Omit<
     ComponentPropsWithRef<'button'>,
-    keyof RoundButtonStyleProps | 'className' | 'style' | 'type'
+    'className' | 'style' | 'type' | keyof RoundButtonStyleProps
   >;
 
 /**

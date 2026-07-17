@@ -1,5 +1,25 @@
+/**
+ * Файл: `src/icons/add-circle.tsx`
+ * Предоставляет svg-иконку добавления в круге.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент `AddCircleIcon`
+ *
+ * Потребители:
+ *  - `src/components/profile-menu/index.tsx` — показывает действие профиля
+ *  - `src/icons/index.ts` — реэкспортирует `AddCircleIcon`
+ */
+
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
 
+/**
+ * AddCircleIcon — отображает svg-иконку добавления в круге.
+ *
+ * @example
+ * <Icon>
+ *   <AddCircleIcon />
+ * </Icon>
+ */
 export function AddCircleIcon() {
   return (
     <svg

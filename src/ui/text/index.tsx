@@ -48,14 +48,14 @@ import {
 /**
  * TextProps — представляет пропсы компонента Text.
  *
- * @template T — тип корневого элемента, по умолчанию `span`
+ * @template T тип корневого элемента, по умолчанию `span`
  *
  * @property as — переопределяет корневой HTML-тег, например `<p>`, `<div>`, `<h1>`
  */
 type TextProps<T extends ElementType = 'span'> = {
   as?: T;
 } & TextStyleProps &
-  Omit<ComponentPropsWithRef<T>, keyof TextStyleProps | 'className' | 'style'>;
+  Omit<ComponentPropsWithRef<T>, 'className' | 'style' | keyof TextStyleProps>;
 
 /**
  * Text — отображает текст с типографикой и тоном из темы.
@@ -65,7 +65,7 @@ type TextProps<T extends ElementType = 'span'> = {
  * <Text>Обычный текст</Text>
  * <Text as="h1" sizePreset="bold" tone="primary">Заголовок</Text>
  * <Text as="label" sizePreset="medium" tone="muted">Подпись поля</Text>
- * // Внутри контрола — через пропсы родителя, не tone на Text снаружи:
+ * // Внутри контрола — через пропсы родителя, не tone на Text из вызывающего кода:
  * <Button textTone="primary" sizePreset="large">Сохранить</Button>
  */
 export function Text<T extends ElementType = 'span'>(props: TextProps<T>) {

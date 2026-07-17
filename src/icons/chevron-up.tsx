@@ -1,3 +1,23 @@
+/**
+ * Файл: `src/icons/chevron-up.tsx`
+ * Предоставляет svg-иконку шеврона вверх.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент `ChevronUpIcon`
+ *
+ * Потребители:
+ *  - `src/ui/stepper/index.tsx` — показывает стрелку увеличения
+ *  - `src/icons/index.ts` — реэкспортирует `ChevronUpIcon`
+ */
+
+/**
+ * ChevronUpIcon — отображает svg-иконку шеврона вверх.
+ *
+ * @example
+ * <Icon>
+ *   <ChevronUpIcon />
+ * </Icon>
+ */
 export function ChevronUpIcon() {
   return (
     <svg

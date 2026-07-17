@@ -10,11 +10,10 @@
  * Основные задачи:
  * 1. Экспортировать компонент Icon
  * 2. Типизировать пропсы через `IconProps`
- * 3. Реэкспортировать публичное API стилей: `StyledIcon`
  *
  * Потребители:
  *  - контролы с иконочными узлами, например Listbox, Stepper и DateInput —
- *    расширяют `StyledIcon` спецификой узла
+ *    кладут Icon внутрь своего узла-места: колонка триггера, кнопка-половинка
  *  - вызывающий код RoundButton, например Header, ThemeToggle и Card —
  *    передаёт в кнопку svg, обёрнутый в Icon
  */
@@ -27,7 +26,7 @@ import { StyledIcon, type IconStyleProps } from './icon.styles';
  * IconProps — представляет пропсы компонента Icon.
  */
 type IconProps = IconStyleProps &
-  Omit<ComponentPropsWithRef<'span'>, keyof IconStyleProps | 'className' | 'style'>;
+  Omit<ComponentPropsWithRef<'span'>, 'className' | 'style' | keyof IconStyleProps>;
 
 /**
  * Icon — отображает окно иконки.
@@ -43,5 +42,3 @@ type IconProps = IconStyleProps &
 export function Icon(props: IconProps) {
   return createElement(StyledIcon, props);
 }
-
-export { StyledIcon };

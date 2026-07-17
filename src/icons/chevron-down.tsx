@@ -1,3 +1,23 @@
+/**
+ * Файл: `src/icons/chevron-down.tsx`
+ * Предоставляет svg-иконку шеврона вниз.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент `ChevronDownIcon`
+ *
+ * Потребители:
+ *  - контролы с раскрытием, например Listbox, Combobox, Stepper и DateInput — показывают направление
+ *  - `src/icons/index.ts` — реэкспортирует `ChevronDownIcon`
+ */
+
+/**
+ * ChevronDownIcon — отображает svg-иконку шеврона вниз.
+ *
+ * @example
+ * <Icon>
+ *   <ChevronDownIcon />
+ * </Icon>
+ */
 export function ChevronDownIcon() {
   return (
     <svg

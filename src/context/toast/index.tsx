@@ -66,7 +66,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
    * dismiss — закрывает уведомление по id.
    * Удаляет уведомление из состояния и очищает таймер автоскрытия.
    *
-   * @param id — идентификатор уведомления
+   * @param id идентификатор уведомления
    */
   const dismiss = useCallback((id: string): void => {
     setToasts((current) => current.filter((toast) => toast.id !== id));
@@ -83,7 +83,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
    * showToast — добавляет новое уведомление в очередь.
    * Генерирует уникальный id, добавляет в состояние и запускает таймер автоскрытия.
    *
-   * @param input — параметры уведомления
+   * @param input параметры уведомления
    */
   const showToast = useCallback(
     (input: ToastInput): void => {

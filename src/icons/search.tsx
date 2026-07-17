@@ -1,5 +1,25 @@
+/**
+ * Файл: `src/icons/search.tsx`
+ * Предоставляет svg-иконку поиска.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент `SearchIcon`
+ *
+ * Потребители:
+ *  - `src/pages/design-system/showcase-icon-options.tsx` — включает в опции витрины
+ *  - `src/icons/index.ts` — реэкспортирует `SearchIcon`
+ */
+
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
 
+/**
+ * SearchIcon — отображает svg-иконку поиска.
+ *
+ * @example
+ * <Icon>
+ *   <SearchIcon />
+ * </Icon>
+ */
 export function SearchIcon() {
   return (
     <svg

@@ -110,7 +110,7 @@ function Modal({
   }, [open]);
 
   return (
-    <StyledModalDialog ref={dialogRef} aria-labelledby={titleId} onClose={onClose}>
+    <StyledModalDialog aria-labelledby={titleId} ref={dialogRef} onClose={onClose}>
       <Card
         headerActions={[
           { ariaLabel: closeAriaLabel, icon: <CloseIcon />, onClick: onClose },

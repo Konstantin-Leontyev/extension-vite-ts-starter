@@ -4,13 +4,13 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `TagStyleProps` и `TagSizePreset`
- * 2. Хранить локальный ряд размеров в `tagBlockSize`, `tagPaddingInline` и `tagTextSize`
+ * 2. Хранить локальный ряд размеров в `tagMinBlockSize`, `tagPaddingInline` и `tagTextSize`
  * 3. Предоставить функции `getTagStyles`, `getTagDotStyles` и `getTagTextSize`,
  *    а также перечень `TAG_SIZE_PRESET_KEYS`
  * 4. Предоставить styled-узлы `StyledTag` и `StyledTagDot`
  *
  * Потребители:
- *  - `src/ui/tag/index.tsx` — собирает компонент Tag
+ *  - `src/ui/tag/index.tsx` — собирает компонент Tag и реэкспортирует публичное API
  */
 
 import styled from 'styled-components';
@@ -27,14 +27,14 @@ import {
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { DEFAULT_TONE, getToneColor, getToneKey, type TonePreset } from '@ui/tones';
+import { DEFAULT_TONE, getToneColor, getToneColorKey, type TonePreset } from '@ui/tones';
 
 /**
  * TagSizePreset — представляет размерный ряд метки.
  * Расширяет канонический `SizePreset` ключом `tiny`, не добавляя его
  * в общий ряд контролов.
  */
-export type TagSizePreset = SizePreset | 'tiny';
+export type TagSizePreset = 'tiny' | SizePreset;
 
 /**
  * TagStyleProps — представляет пропсы стилизации Tag и layout-пропсы.
@@ -56,28 +56,28 @@ export type TagStyleProps = LayoutProps & {
 };
 
 /**
- * TagSurface — представляет пару цветов метки, которую возвращает `resolveTagFill`.
+ * TagSurface — представляет пару цветов метки, которую возвращает `resolveTagSurface`.
  *
- * @property fg — цвет текста
- * @property fill — цвет заливки
+ * @property textColor — цвет текста
+ * @property backgroundColor — цвет фона
  */
-type TagSurface = { fg: string; fill: string };
+type TagSurface = { backgroundColor: string; textColor: string };
 
 /**
- * tagBlockSize — хранит минимальную высоту метки для каждого размера ряда.
+ * tagMinBlockSize — хранит минимальную высоту метки для каждого размера ряда.
  * Расширяет `minBlockSize` из `@ui/presets` спредом, добавляя локальный ключ `tiny`.
  */
-const tagBlockSize = {
+const tagMinBlockSize = {
   ...minBlockSize,
   tiny: 24,
 } as const satisfies Record<TagSizePreset, SpacingValue>;
 
 /**
- * TAG_SIZE_PRESET_KEYS — формирует перечень размеров метки из ключей `tagBlockSize`.
+ * TAG_SIZE_PRESET_KEYS — формирует перечень размеров метки из ключей `tagMinBlockSize`.
  * Используется в панелях настроек витрины дизайн-системы: `SizeListbox` принимает его пропом `sizes`.
  */
 export const TAG_SIZE_PRESET_KEYS = Object.freeze(
-  Object.keys(tagBlockSize) as TagSizePreset[]
+  Object.keys(tagMinBlockSize) as TagSizePreset[]
 );
 
 /**
@@ -111,7 +111,7 @@ const DEFAULT_TAG_SIZE_PRESET: TagSizePreset = 'tiny';
  * DEFAULT_TAG_SHAPE — задаёт форму по умолчанию.
  * Используется, когда вызывающий код не передал проп `shape`.
  */
-const DEFAULT_TAG_SHAPE: ShapePreset = 'round';
+const DEFAULT_TAG_SHAPE: ShapePreset = 'pill';
 
 /**
  * TAG_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Tag.
@@ -132,21 +132,21 @@ const TAG_PROP_NAMES = new Set<string>([
 const TAG_DOT_PROP_NAMES = new Set<string>(['dotTone']);
 
 /**
- * getTagBlockSize — возвращает значение для CSS-свойства `min-block-size`
+ * getTagMinBlockSize — возвращает значение для CSS-свойства `min-block-size`
  * по `sizePreset` метки.
  *
- * @param sizePreset — размер метки
+ * @param sizePreset размер метки
  * @returns CSS-длина в rem
  */
-function getTagBlockSize(sizePreset: TagSizePreset): string {
-  return getSpacingValue(tagBlockSize[sizePreset]);
+function getTagMinBlockSize(sizePreset: TagSizePreset): string {
+  return getSpacingValue(tagMinBlockSize[sizePreset]);
 }
 
 /**
  * getTagTextSize — возвращает размер текста по `sizePreset`.
  * Подставляет `DEFAULT_TAG_SIZE_PRESET`, когда размер не задан.
  *
- * @param sizePreset — размер метки
+ * @param sizePreset размер метки
  * @returns метка размера текста из `TextSizePreset` для текста метки
  */
 export function getTagTextSize(sizePreset?: TagSizePreset): TextSizePreset {
@@ -154,50 +154,54 @@ export function getTagTextSize(sizePreset?: TagSizePreset): TextSizePreset {
 }
 
 /**
- * resolveTagTint — возвращает цвет с прозрачностью для мягкой заливки в режиме `tinted`.
+ * resolveTagTint — преобразует исходный CSS-цвет в цвет с прозрачностью через `color-mix`.
  *
- * @param color — исходный CSS-цвет
- * @param pct — доля цвета в процентах, остальное прозрачно
- * @returns CSS-цвет через `color-mix`
+ * @param color исходный CSS-цвет
+ * @param opacityPercent доля цвета в процентах, остальное прозрачно
+ * @returns CSS-цвет с заданной долей исходного цвета в смеси
  */
-function resolveTagTint(color: string, pct: number): string {
-  return `color-mix(in srgb, ${color} ${pct}%, transparent)`;
+function resolveTagTint(color: string, opacityPercent: number): string {
+  return `color-mix(in srgb, ${color} ${opacityPercent}%, transparent)`;
 }
 
 /**
- * resolveTagFill — вычисляет цвет текста и заливку метки по `tone` и `tinted`.
+ * resolveTagSurface — вычисляет цвет текста и цвет фона метки по `tone` и `tinted`.
  * Без `tinted` нейтральный тон даёт прозрачный фон и цвет `default`,
- * цветной — заливку тона и цвет `inverse`.
+ * цветной — фон цвета тона и текст `inverse`.
  * С `tinted` фон — мягкий тинт из `muted` или цвета тона,
  * текст — `default` или цвет тона.
  *
- * @param theme — текущая тема
- * @param tone — тон заливки
- * @param tinted — режим мягкой заливки
- * @returns пара `TagSurface`: цвет текста и заливка
+ * @param theme текущая тема
+ * @param tone тон фона
+ * @param tinted режим мягкой заливки
+ * @returns пара `TagSurface`: цвет текста и цвет фона
  */
-function resolveTagFill(theme: AppTheme, tone: TonePreset, tinted: boolean): TagSurface {
-  const key = getToneKey(tone);
+function resolveTagSurface(
+  theme: AppTheme,
+  tone: TonePreset,
+  tinted: boolean
+): TagSurface {
+  const colorKey = getToneColorKey(tone);
 
-  if (!key) {
+  if (!colorKey) {
     return {
-      fg: theme.colors.default,
-      fill: tinted ? resolveTagTint(theme.colors.muted, 14) : 'transparent',
+      textColor: theme.colors.default,
+      backgroundColor: tinted ? resolveTagTint(theme.colors.muted, 14) : 'transparent',
     };
   }
 
-  const color = theme.colors[key];
+  const color = theme.colors[colorKey];
 
   return tinted
-    ? { fg: color, fill: resolveTagTint(color, 16) }
-    : { fg: theme.colors.inverse, fill: color };
+    ? { textColor: color, backgroundColor: resolveTagTint(color, 16) }
+    : { textColor: theme.colors.inverse, backgroundColor: color };
 }
 
 /**
  * getTagBorderColor — возвращает цвет границы по `borderTone`.
  *
- * @param theme — текущая тема
- * @param borderTone — тон границы
+ * @param theme текущая тема
+ * @param borderTone тон границы
  * @returns CSS-цвет. Для тона по умолчанию — `theme.colors.border`
  */
 function getTagBorderColor(theme: AppTheme, borderTone: TonePreset): string {
@@ -209,8 +213,8 @@ function getTagBorderColor(theme: AppTheme, borderTone: TonePreset): string {
  * Без `dotTone` или при тоне по умолчанию возвращает `currentColor` —
  * точка наследует цвет текста корня `StyledTag`.
  *
- * @param theme — текущая тема
- * @param dotTone — тон точки
+ * @param theme текущая тема
+ * @param dotTone тон точки
  * @returns CSS-цвет точки
  */
 function getTagDotColor(theme: AppTheme, dotTone: TonePreset | undefined): string {
@@ -224,8 +228,8 @@ function getTagDotColor(theme: AppTheme, dotTone: TonePreset | undefined): strin
 /**
  * getTagDotStyles — возвращает CSS-правила для узла `StyledTagDot`: цвет точки.
  *
- * @param props — проп `dotTone` и тема
- * @returns CSS-правило цвета точки
+ * @param props проп `dotTone` и тема
+ * @returns CSS-правила, каждое с новой строки
  */
 export function getTagDotStyles(props: {
   dotTone?: TonePreset;
@@ -238,7 +242,7 @@ export function getTagDotStyles(props: {
  * getTagStyles — возвращает CSS-правила для корня `StyledTag`:
  * размер, отступы, границу, форму и цвета.
  *
- * @param props — пропсы стилизации Tag и тема
+ * @param props пропсы стилизации Tag и тема
  * @returns CSS-правила, каждое с новой строки
  */
 export function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string {
@@ -251,17 +255,14 @@ export function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string
     tinted = false,
     tone = DEFAULT_TONE,
   } = props;
-  const surface = resolveTagFill(theme, tone, tinted);
-  const borderCol = showBorder ? getTagBorderColor(theme, borderTone) : 'transparent';
-  const blockSizeValue = getTagBlockSize(sizePreset);
-
+  const surface = resolveTagSurface(theme, tone, tinted);
   const styles = [
-    `min-block-size: ${blockSizeValue};`,
+    `min-block-size: ${getTagMinBlockSize(sizePreset)};`,
     `padding-inline: ${getSpacingValue(tagPaddingInline[sizePreset])};`,
-    `border: 1px solid ${borderCol};`,
-    `border-radius: ${resolveBlockRadius(shape, blockSizeValue)};`,
-    `background-color: ${surface.fill};`,
-    `color: ${surface.fg};`,
+    `border: 1px solid ${showBorder ? getTagBorderColor(theme, borderTone) : 'transparent'};`,
+    `border-radius: ${resolveBlockRadius(shape, getTagMinBlockSize(sizePreset))};`,
+    `background-color: ${surface.backgroundColor};`,
+    `color: ${surface.textColor};`,
   ];
 
   return styles.join('\n');
@@ -272,6 +273,7 @@ export function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string
  * Базируется на `<span>` и поддерживает все пропсы из `TagStyleProps`.
  *
  * Встроенные стили:
+ *  - `gap` — отступ между точкой и текстом
  *  - `display: inline-flex` — инлайн-ряд из точки и текста, grid с auto-треком
  *    тянул бы трек к max-content
  *  - `white-space: nowrap` — метка не переносит текст, длинное содержимое

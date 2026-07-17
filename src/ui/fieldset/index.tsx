@@ -62,7 +62,7 @@ type FieldsetProps = {
 } & FieldsetStyleProps &
   Omit<
     ComponentPropsWithRef<'fieldset'>,
-    keyof FieldsetStyleProps | 'className' | 'style'
+    'className' | 'style' | keyof FieldsetStyleProps
   >;
 
 /**

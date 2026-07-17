@@ -51,4 +51,4 @@ export type ToastContextValue = {
  * ToastContext — предоставляет доступ к API показа уведомлений.
  * Читается через хук `useToast`, который проверяет наличие провайдера.
  */
-export const ToastContext = createContext<ToastContextValue | null>(null);
+export const ToastContext = createContext<null | ToastContextValue>(null);

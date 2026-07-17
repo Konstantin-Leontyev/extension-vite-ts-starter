@@ -56,7 +56,7 @@ export type IconKey = keyof typeof ICONS;
 /**
  * formatIconLabel — преобразует ключ иконки в читаемую подпись.
  *
- * @param key — ключ иконки
+ * @param key ключ иконки
  * @returns подпись с заглавной первой буквой
  */
 export function formatIconLabel(key: IconKey): string {
@@ -66,7 +66,7 @@ export function formatIconLabel(key: IconKey): string {
 /**
  * getIcon — возвращает React-узел иконки по ключу.
  *
- * @param key — ключ иконки
+ * @param key ключ иконки
  * @returns React-узел иконки
  */
 export function getIcon(key: IconKey): ReactNode {

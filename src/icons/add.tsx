@@ -1,3 +1,22 @@
+/**
+ * Файл: `src/icons/add.tsx`
+ * Предоставляет svg-иконку добавления.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент `AddIcon`
+ *
+ * Потребители:
+ *  - `src/icons/index.ts` — реэкспортирует `AddIcon`
+ */
+
+/**
+ * AddIcon — отображает svg-иконку добавления.
+ *
+ * @example
+ * <Icon>
+ *   <AddIcon />
+ * </Icon>
+ */
 export function AddIcon() {
   return (
     <svg

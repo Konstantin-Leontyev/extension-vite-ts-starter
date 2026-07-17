@@ -37,7 +37,7 @@ import {
 } from './spinner.styles';
 
 /**
- * DEFAULT_SPINNER_ARIA_LABEL — задаёт EN-дефолт для `aria-label`.
+ * DEFAULT_SPINNER_ARIA_LABEL — задаёт доступное имя для скринридера по умолчанию.
  * Используется, когда вызывающий код не передал проп `ariaLabel`.
  */
 const DEFAULT_SPINNER_ARIA_LABEL = 'Loading';
@@ -67,7 +67,7 @@ type SpinnerProps = SpinnerStyleProps & {
   textTone?: TextTone;
 } & Omit<
     ComponentPropsWithRef<'div'>,
-    keyof SpinnerStyleProps | 'children' | 'className' | 'style'
+    'children' | 'className' | 'style' | keyof SpinnerStyleProps
   >;
 
 /**

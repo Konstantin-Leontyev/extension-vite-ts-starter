@@ -1,5 +1,25 @@
+/**
+ * Файл: `src/icons/settings.tsx`
+ * Предоставляет svg-иконку настроек.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент `SettingsIcon`
+ *
+ * Потребители:
+ *  - `src/components/header/index.tsx` и `src/pages/design-system/index.tsx` — показывают вход в настройки
+ *  - `src/icons/index.ts` — реэкспортирует `SettingsIcon`
+ */
+
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
 
+/**
+ * SettingsIcon — отображает svg-иконку настроек.
+ *
+ * @example
+ * <Icon>
+ *   <SettingsIcon />
+ * </Icon>
+ */
 export function SettingsIcon() {
   return (
     <svg

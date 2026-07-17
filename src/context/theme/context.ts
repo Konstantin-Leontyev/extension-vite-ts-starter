@@ -32,4 +32,4 @@ export type ThemeContextValue = {
  * ThemeContext — предоставляет доступ к API чтения и переключения темы.
  * Читается через хук `useThemeMode`, который проверяет наличие провайдера.
  */
-export const ThemeContext = createContext<ThemeContextValue | null>(null);
+export const ThemeContext = createContext<null | ThemeContextValue>(null);

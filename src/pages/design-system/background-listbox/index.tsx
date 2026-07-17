@@ -29,12 +29,12 @@ const BACKGROUND_LISTBOX_OPTIONS: ListboxOption[] = CARD_BACKGROUND_KEYS.map(
 /**
  * BackgroundListboxProps — представляет пропсы компонента BackgroundListbox.
  *
- * @property value — текущая выбранная заливка
  * @property onChange — обработчик изменения выбранной заливки
+ * @property value — текущая выбранная заливка
  */
 type BackgroundListboxProps = {
-  value: CardBackground;
   onChange: (background: CardBackground) => void;
+  value: CardBackground;
 };
 
 /**
@@ -46,7 +46,7 @@ type BackgroundListboxProps = {
  *   onChange={(background) => onChange('background', background)}
  * />
  */
-export function BackgroundListbox({ value, onChange }: BackgroundListboxProps) {
+export function BackgroundListbox({ onChange, value }: BackgroundListboxProps) {
   return (
     <Listbox
       label="Background:"

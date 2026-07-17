@@ -8,7 +8,7 @@
  * 3. Предоставить styled-узел `StyledToast`
  *
  * Потребители:
- *  - `src/ui/toast/index.tsx` — собирает компонент Toast
+ *  - `src/ui/toast/index.tsx` — собирает компонент Toast и реэкспортирует публичное API
  */
 
 import styled from 'styled-components';
@@ -49,7 +49,7 @@ const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 't
  * getToastTextSize — возвращает размер текста сообщения по `sizePreset`.
  * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
  *
- * @param sizePreset — размер уведомления
+ * @param sizePreset размер уведомления
  * @returns метка размера текста из `TextSizePreset` для текста сообщения
  */
 export function getToastTextSize(sizePreset?: SizePreset): TextSizePreset {
@@ -60,13 +60,12 @@ export function getToastTextSize(sizePreset?: SizePreset): TextSizePreset {
  * getToastStyles — возвращает CSS-правила для корня `StyledToast`:
  * размер, отступы, фон, цвет, границу, акцентную полосу и тень.
  *
- * @param props — пропсы стилизации Toast и тема
+ * @param props пропсы стилизации Toast и тема
  * @returns CSS-правила, каждое с новой строки
  */
 export function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
   const { sizePreset = DEFAULT_SIZE_PRESET, tone = DEFAULT_TONE } = props;
-  const toastColor = getToneColor(theme, tone, theme.colors.border);
   const minBlockSize = getMinBlockSize(sizePreset);
   const padding = getPadding(sizePreset);
 
@@ -77,7 +76,7 @@ export function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): st
     `background-color: ${theme.colors.surface};`,
     `color: ${theme.colors.default};`,
     `border: 1px solid ${theme.colors.border};`,
-    `border-inline-start: ${getSpacingValue(4)} solid ${toastColor};`,
+    `border-inline-start: ${getSpacingValue(4)} solid ${getToneColor(theme, tone, theme.colors.border)};`,
     `border-radius: ${resolveBlockRadius(DEFAULT_SHAPE_PRESET, minBlockSize)};`,
     `box-shadow: ${theme.shadow.surface};`,
   ];
@@ -93,7 +92,7 @@ export function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): st
  *  - `display: grid` и `align-content: center` — центрируют текст по вертикали
  *
  * Генерация стилей:
- *  - `getToastStyles` — размер, отступы, фон, граница, акцентная полоса, тень
+ *  - `getToastStyles` — размер, отступы, фон, цвет, граница, акцентная полоса, тень
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *
  * Высота задана через `min-block-size` без фиксированного `block-size`:

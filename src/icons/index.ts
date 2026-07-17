@@ -1,3 +1,15 @@
+/**
+ * Файл: `src/icons/index.ts`
+ * Содержит точку входа набора svg-иконок.
+ *
+ * Основные задачи:
+ * 1. Реэкспортировать компоненты иконок набора
+ *
+ * Потребители:
+ *  - страницы, виджеты и контролы приложения — импортируют иконки через `@icons`
+ *  - `src/pages/design-system/showcase-icon-options.tsx` — собирает опции витрины
+ */
+
 export { AddCircleIcon } from './add-circle';
 export { AddIcon } from './add';
 export { AvatarIcon } from './avatar';

@@ -38,7 +38,7 @@ import {
 type ScrollPortProps = ScrollPortStyleProps &
   Omit<
     ComponentPropsWithRef<'div'>,
-    keyof ScrollPortStyleProps | 'children' | 'className' | 'style'
+    'children' | 'className' | 'style' | keyof ScrollPortStyleProps
   > & {
     children: ReactNode;
   };
@@ -74,8 +74,8 @@ export function ScrollPort({
     >
       <StyledScrollPortContainer>
         <StyledScrollPortViewport
-          ref={ref}
           paddingInlineEnd={paddingInlineEnd}
+          ref={ref}
           scrollbarInsetBlockEnd={scrollbarInsetBlockEnd}
           scrollbarInsetBlockStart={scrollbarInsetBlockStart}
         >

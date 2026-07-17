@@ -31,12 +31,12 @@ import { TONE_PRESETS, type TonePreset } from '@ui/tones';
  * Расширяет канон `TONE_PRESETS` спредом, добавляя тон `muted` для вторичного текста.
  *
  * Соответствие приватно для модуля. Экспортируется только перечень `TEXT_TONE_KEYS`,
- * цвет подставляют приватные `getTextToneKey` и `getTextToneColor`.
+ * цвет подставляют приватные `getTextToneColorKey` и `getTextToneColor`.
  */
 const TEXT_TONE_PRESETS = {
   ...TONE_PRESETS,
   muted: 'muted',
-} as const satisfies Record<TonePreset | 'muted', keyof ThemeColors | undefined>;
+} as const satisfies Record<'muted' | TonePreset, keyof ThemeColors | undefined>;
 
 /**
  * TextTone — представляет тоны текста.
@@ -126,7 +126,7 @@ const DEFAULT_TEXT_SIZE_PRESET: TextSizePreset = 'normal';
 /**
  * TextAlignPreset — представляет выравнивание текста в каноническом ряду проекта.
  */
-export type TextAlignPreset = 'start' | 'center' | 'end';
+export type TextAlignPreset = 'center' | 'end' | 'start';
 
 /**
  * TEXT_ALIGN_PRESET_KEYS — задаёт перечень канонических выравниваний текста.
@@ -184,13 +184,13 @@ const TEXT_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * getTextToneKey — возвращает ключ цвета в теме для указанного тона текста.
+ * getTextToneColorKey — возвращает ключ цвета в теме для указанного тона текста.
  * Для тона по умолчанию возвращает `undefined` — цвет наследуется от родителя.
  *
- * @param tone — тон текста
+ * @param tone тон текста
  * @returns ключ цвета темы или `undefined`
  */
-function getTextToneKey(tone: TextTone): keyof ThemeColors | undefined {
+function getTextToneColorKey(tone: TextTone): keyof ThemeColors | undefined {
   return TEXT_TONE_PRESETS[tone];
 }
 
@@ -198,12 +198,12 @@ function getTextToneKey(tone: TextTone): keyof ThemeColors | undefined {
  * getTextToneColor — возвращает цвет темы для указанного тона текста.
  * Для тона по умолчанию возвращает `undefined` — цвет наследуется от родителя.
  *
- * @param theme — текущая тема
- * @param tone — тон текста
+ * @param theme текущая тема
+ * @param tone тон текста
  * @returns CSS-цвет или `undefined`
  */
 function getTextToneColor(theme: AppTheme, tone: TextTone): string | undefined {
-  const colorKey = getTextToneKey(tone);
+  const colorKey = getTextToneColorKey(tone);
 
   return colorKey ? theme.colors[colorKey] : undefined;
 }
@@ -214,7 +214,7 @@ function getTextToneColor(theme: AppTheme, tone: TextTone): string | undefined {
  * Используется для нативных `<input>` и `<textarea>`, которые нельзя обернуть
  * в компонент Text.
  *
- * @param sizePreset — типографический пресет
+ * @param sizePreset типографический пресет
  * @returns значения для CSS-свойств `font-size`, `font-weight`, `line-height`
  */
 export function getTextProperties(sizePreset: TextSizePreset): string {
@@ -233,7 +233,7 @@ export function getTextProperties(sizePreset: TextSizePreset): string {
  * getTextLineHeight — возвращает высоту строки для типографического пресета.
  * Используется для резерва места под однострочный Text без захардкоженных значений.
  *
- * @param sizePreset — типографический пресет
+ * @param sizePreset типографический пресет
  * @returns значение для CSS-свойства `line-height`
  */
 export function getTextLineHeight(sizePreset: TextSizePreset): string {
@@ -257,7 +257,7 @@ export function getTextLineHeight(sizePreset: TextSizePreset): string {
  * 7. Для `showEllipsis` добавляет `overflow: hidden`, `text-overflow: ellipsis`
  *    и `white-space: nowrap`
  *
- * @param props — объект с текстовыми пропсами и темой
+ * @param props объект с текстовыми пропсами и темой
  * @returns CSS-правила, каждое с новой строки
  */
 export function getTextStyles(props: TextStyleProps & { theme: AppTheme }): string {

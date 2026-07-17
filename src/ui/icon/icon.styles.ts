@@ -48,7 +48,7 @@ const ICON_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset']);
  * getIconStyles — возвращает CSS-правила для корня `StyledIcon`: габарит
  * и внутренний отступ.
  *
- * @param props — пропсы стилизации Icon
+ * @param props пропсы стилизации Icon
  * @returns CSS-правила, каждое с новой строки
  */
 function getIconStyles(props: IconStyleProps): string {
@@ -74,8 +74,6 @@ function getIconStyles(props: IconStyleProps): string {
  *  - `flex-shrink: 0` — окно не сжимается во flex-рядах
  *  - `max-block-size: 100%` на `& svg` — вертикальный зажим svg; reset зажимает
  *    только `max-inline-size`
- *  - `outline: none` на `:focus-visible` — снимает собственное кольцо у
- *    интерактивных наследников, кольцо фокуса несёт родитель
  *
  * Генерация стилей:
  *  - `getIconStyles` — габарит и внутренний отступ
@@ -95,9 +93,5 @@ export const StyledIcon = styled.span.withConfig({
 
   & svg {
     max-block-size: 100%;
-  }
-
-  &:focus-visible {
-    outline: none;
   }
 `;

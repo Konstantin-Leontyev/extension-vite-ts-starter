@@ -58,7 +58,7 @@ const RADIO_BUTTON_CONTROL_PROP_NAMES = new Set<string>([
 /**
  * getRadioBlockSize — возвращает ключ шкалы отступов для размера кружка.
  *
- * @param sizePreset — размер из ряда контролов
+ * @param sizePreset размер из ряда контролов
  * @returns ключ шкалы отступов
  */
 function getRadioBlockSize(sizePreset: SizePreset): SpacingValue {
@@ -69,7 +69,7 @@ function getRadioBlockSize(sizePreset: SizePreset): SpacingValue {
  * getRadioButtonTextSize — возвращает размер подписи по `sizePreset`.
  * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
  *
- * @param sizePreset — размер кружка
+ * @param sizePreset размер кружка
  * @returns метка размера текста из `TextSizePreset` для подписи справа от кружка
  */
 export function getRadioButtonTextSize(sizePreset?: SizePreset): TextSizePreset {
@@ -80,8 +80,8 @@ export function getRadioButtonTextSize(sizePreset?: SizePreset): TextSizePreset 
  * getRadioButtonControlStyles — возвращает CSS-правила для кружка `StyledRadioButtonControl`:
  * габариты, рамку и состояние `checked`.
  *
- * @param props — пропсы стилизации RadioButton и тема
- * @returns CSS-правила для нативного `input[type="radio"]`
+ * @param props пропсы стилизации RadioButton и тема
+ * @returns CSS-правила, каждое с новой строки
  */
 export function getRadioButtonControlStyles(
   props: RadioButtonStyleProps & { theme: AppTheme }

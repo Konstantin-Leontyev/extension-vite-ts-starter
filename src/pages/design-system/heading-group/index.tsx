@@ -37,24 +37,24 @@ import { ToneListbox } from '../tone-listbox';
  *
  * @property align — текущее выравнивание заголовка
  * @property labelPrefix — префикс подписей контролов, например `Title` или `Subtitle`
- * @property size — текущий размер заголовка
- * @property text — текущее содержимое заголовка
- * @property tone — текущий тон заголовка
  * @property onAlignChange — обработчик изменения выравнивания
  * @property onSizeChange — обработчик изменения размера
  * @property onTextChange — обработчик изменения содержимого
  * @property onToneChange — обработчик изменения тона
+ * @property size — текущий размер заголовка
+ * @property text — текущее содержимое заголовка
+ * @property tone — текущий тон заголовка
  */
 type HeadingGroupProps = {
   align: CSSProperties['textAlign'];
   labelPrefix: string;
-  size: TextSizePreset;
-  text: string;
-  tone: TextTone;
   onAlignChange: (align: CSSProperties['textAlign']) => void;
   onSizeChange: (size: TextSizePreset) => void;
   onTextChange: (text: string) => void;
   onToneChange: (tone: TextTone) => void;
+  size: TextSizePreset;
+  text: string;
+  tone: TextTone;
 };
 
 /**
@@ -76,13 +76,13 @@ type HeadingGroupProps = {
 export function HeadingGroup({
   align,
   labelPrefix,
-  size,
-  text,
-  tone,
   onAlignChange,
   onSizeChange,
   onTextChange,
   onToneChange,
+  size,
+  text,
+  tone,
 }: HeadingGroupProps) {
   return (
     <>
@@ -103,8 +103,8 @@ export function HeadingGroup({
       />
 
       <AlignListbox
-        label={`${labelPrefix} align:`}
         aligns={TEXT_ALIGN_PRESET_KEYS}
+        label={`${labelPrefix} align:`}
         value={align}
         onChange={onAlignChange}
       />

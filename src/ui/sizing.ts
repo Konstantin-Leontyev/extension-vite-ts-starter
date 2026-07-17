@@ -21,12 +21,12 @@
  * В отличие от `@ui/spacing`, размеры не ограничены фиксированной шкалой.
  * Названия соответствуют логическим CSS-свойствам и зависят от направления письма.
  *
- * @property inlineSize — ширина
- * @property minInlineSize — минимальная ширина
- * @property maxInlineSize — максимальная ширина
  * @property blockSize — высота
- * @property minBlockSize — минимальная высота
+ * @property inlineSize — ширина
  * @property maxBlockSize — максимальная высота
+ * @property maxInlineSize — максимальная ширина
+ * @property minBlockSize — минимальная высота
+ * @property minInlineSize — минимальная ширина
  */
 export type SizingProps = {
   blockSize?: string;
@@ -80,7 +80,7 @@ export const SIZING_PROPERTY_NAMES = new Set<string>(Object.keys(SIZING_PROPERTI
  * 3. Собирает такие правила в массив и склеивает через перенос строки
  * 4. Отдаёт результат для подстановки в CSS-шаблон styled-компонента
  *
- * @param props — объект с sizing-пропсами, например `{ inlineSize: '100%', blockSize: '100%' }`
+ * @param props объект с sizing-пропсами, например `{ inlineSize: '100%', blockSize: '100%' }`
  * @returns CSS-правила, каждое с новой строки
  */
 export function getSizingStyles(props: SizingProps): string {

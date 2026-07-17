@@ -4,8 +4,12 @@ import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import importX from 'eslint-plugin-import-x';
 // @ts-expect-error eslint-plugin-jsx-a11y ships without TypeScript types
 import jsxA11y from 'eslint-plugin-jsx-a11y';
+import perfectionist from 'eslint-plugin-perfectionist';
+import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
+// @ts-expect-error eslint-plugin-sort-destructure-keys ships without TypeScript types
+import sortDestructureKeys from 'eslint-plugin-sort-destructure-keys';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -33,9 +37,17 @@ const config: Config[] = defineConfig([
     ],
     plugins: {
       'import-x': importX,
+      perfectionist,
+      react,
+      'sort-destructure-keys': sortDestructureKeys,
     },
     languageOptions: {
       globals: globals.browser,
+    },
+    settings: {
+      react: {
+        version: 'detect',
+      },
     },
     rules: {
       '@typescript-eslint/consistent-type-imports': [
@@ -86,6 +98,15 @@ const config: Config[] = defineConfig([
         },
       ],
       'no-restricted-imports': ['error', { patterns: deepImportPatterns }],
+      // Сортируются только перечислимые списки без собственной семантики порядка.
+      // Литералы объектов (таблицы пресетов, карты «проп → CSS-свойство») не сортируются:
+      // их порядок семантический (ряд размеров, шорткат раньше лонгхендов).
+      // Порядок объявлений верхнего уровня линтером не сортируется — он смысловой
+      // и держится вручную по канону: зависимость раньше использования, композит последним.
+      'perfectionist/sort-object-types': 'error',
+      'perfectionist/sort-union-types': 'error',
+      'react/jsx-sort-props': ['error', { callbacksLast: true }],
+      'sort-destructure-keys/sort-destructure-keys': 'error',
     },
   },
   {

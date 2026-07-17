@@ -55,7 +55,7 @@ type RadioButtonProps = RadioButtonStyleProps & {
   textTone?: TextTone;
 } & Omit<
     ComponentPropsWithRef<'input'>,
-    keyof RadioButtonStyleProps | 'children' | 'className' | 'style' | 'type'
+    'children' | 'className' | 'style' | 'type' | keyof RadioButtonStyleProps
   >;
 
 /**

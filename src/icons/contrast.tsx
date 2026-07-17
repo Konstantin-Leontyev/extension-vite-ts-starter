@@ -1,5 +1,25 @@
+/**
+ * Файл: `src/icons/contrast.tsx`
+ * Предоставляет svg-иконку контраста.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент `ContrastIcon`
+ *
+ * Потребители:
+ *  - `src/components/theme-toggle/index.tsx` — показывает переключение темы
+ *  - `src/icons/index.ts` — реэкспортирует `ContrastIcon`
+ */
+
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
 
+/**
+ * ContrastIcon — отображает svg-иконку контраста.
+ *
+ * @example
+ * <Icon>
+ *   <ContrastIcon />
+ * </Icon>
+ */
 export function ContrastIcon() {
   return (
     <svg
@@ -8,7 +28,7 @@ export function ContrastIcon() {
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g opacity={ICON_MUTED_LAYER_OPACITY} fill="currentColor">
+      <g fill="currentColor" opacity={ICON_MUTED_LAYER_OPACITY}>
         <path d="M12 2a10 10 0 0 1 0 20Z" />
       </g>
       <g stroke="currentColor">

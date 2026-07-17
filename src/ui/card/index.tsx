@@ -111,8 +111,8 @@ type CardHeaderAction = {
  * handleHeaderActionClick — останавливает всплытие клика по действию шапки
  * и вызывает обработчик действия, если он задан.
  *
- * @param action — действие шапки
- * @param event — событие клика по кнопке действия
+ * @param action действие шапки
+ * @param event событие клика по кнопке действия
  */
 function handleHeaderActionClick(
   action: CardHeaderAction,
@@ -125,7 +125,7 @@ function handleHeaderActionClick(
 /**
  * CardProps — представляет пропсы компонента Card.
  *
- * @template T — тип корневого элемента, по умолчанию `div`
+ * @template T тип корневого элемента, по умолчанию `div`
  *
  * @property as — переопределяет корневой HTML-тег, например `<article>`, `<section>`
  * @property children — содержимое тела карточки
@@ -154,7 +154,7 @@ type CardProps<T extends CardHtmlTag = 'div'> = {
   titleSizePreset?: TextSizePreset;
   titleTone?: TextTone;
 } & Omit<CardStyleProps, 'hasHeader'> &
-  Omit<ComponentPropsWithRef<T>, keyof CardStyleProps | 'className' | 'style' | 'title'>;
+  Omit<ComponentPropsWithRef<T>, 'className' | 'style' | 'title' | keyof CardStyleProps>;
 
 /**
  * Card — отображает поверхность с опциональной шапкой, рядом действий и телом.
@@ -190,12 +190,12 @@ function Card<T extends CardHtmlTag = 'div'>({
     <StyledCardHeaderActions>
       {headerActions.map((action, index) => (
         <RoundButton
-          key={index}
           aria-controls={action.ariaControls}
           aria-expanded={action.ariaExpanded}
           aria-hidden={action.ariaLabel ? undefined : true}
           aria-label={action.ariaLabel}
           disabled={action.disabled}
+          key={index}
           showBorder={false}
           sizePreset={actionSizePresets[index]}
           tabIndex={action.ariaLabel ? undefined : -1}

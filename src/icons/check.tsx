@@ -1,3 +1,23 @@
+/**
+ * Файл: `src/icons/check.tsx`
+ * Предоставляет svg-иконку галочки.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент `CheckIcon`
+ *
+ * Потребители:
+ *  - контролы выбора, например Listbox и Combobox — показывают выбранный пункт
+ *  - `src/icons/index.ts` — реэкспортирует `CheckIcon`
+ */
+
+/**
+ * CheckIcon — отображает svg-иконку галочки.
+ *
+ * @example
+ * <Icon>
+ *   <CheckIcon />
+ * </Icon>
+ */
 export function CheckIcon() {
   return (
     <svg

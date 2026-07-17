@@ -1,5 +1,25 @@
+/**
+ * Файл: `src/icons/copy.tsx`
+ * Предоставляет svg-иконку копирования.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент `CopyIcon`
+ *
+ * Потребители:
+ *  - `src/pages/design-system/showcase-icon-options.tsx` — включает в опции витрины
+ *  - `src/icons/index.ts` — реэкспортирует `CopyIcon`
+ */
+
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
 
+/**
+ * CopyIcon — отображает svg-иконку копирования.
+ *
+ * @example
+ * <Icon>
+ *   <CopyIcon />
+ * </Icon>
+ */
 export function CopyIcon() {
   return (
     <svg

@@ -52,21 +52,6 @@ export type SidebarStyleProps = {
 const SIDEBAR_PROP_NAMES = new Set<string>(['offset', 'padding']);
 
 /**
- * resolveSpacingCSSValue — возвращает длину в rem по метке шкалы, подставляя
- * запасное значение, когда проп не передан.
- *
- * @param value — переданное значение шкалы или `undefined`
- * @param fallback — запасное значение шкалы, когда проп не передан
- * @returns значение для CSS-свойства в rem
- */
-function resolveSpacingCSSValue(
-  value: SpacingValue | undefined,
-  fallback: SpacingValue
-): string {
-  return getSpacingValue(value ?? fallback);
-}
-
-/**
  * StyledSidebarContent — задаёт область контента компонента Sidebar.
  * Базируется на `<div>`.
  *
@@ -155,14 +140,13 @@ const StyledSidebarTrack = styled.div`
  * getSidebarStyles — возвращает CSS-правила для корня `StyledSidebar`: отступы зон
  * каркаса, зазор при открытой панели, ширину слота и поведение на узком экране.
  *
- * @param props — пропсы стилизации Sidebar
+ * @param props пропсы стилизации Sidebar
  * @returns CSS-правила, каждое с новой строки
  */
 function getSidebarStyles(props: SidebarStyleProps): string {
   const { offset, padding } = props;
-  const paddingValue = resolveSpacingCSSValue(padding, 0);
-  const paddingInlineEndValue = resolveSpacingCSSValue(padding, DEFAULT_INLINE_END);
-  const offsetValue = resolveSpacingCSSValue(offset, DEFAULT_OFFSET);
+  const paddingValue = getSpacingValue(padding ?? 0);
+  const paddingInlineEndValue = getSpacingValue(padding ?? DEFAULT_INLINE_END);
 
   const styles = [
     `${StyledSidebarContent} {`,
@@ -174,7 +158,7 @@ function getSidebarStyles(props: SidebarStyleProps): string {
     `padding-inline-end: ${paddingInlineEndValue};`,
     `}`,
     `&:has(${StyledSidebarSlot}[data-open='true']) {`,
-    `gap: ${offsetValue};`,
+    `gap: ${getSpacingValue(offset ?? DEFAULT_OFFSET)};`,
     `}`,
     `${StyledSidebarSlot}[data-open='true'][data-expanded='true'] {`,
     `inline-size: calc(${SIDEBAR_PANEL_WIDTH} + ${paddingInlineEndValue});`,

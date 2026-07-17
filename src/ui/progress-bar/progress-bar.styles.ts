@@ -37,14 +37,14 @@ const progressBarBlockSize = {
 /**
  * ProgressBarStyleProps — представляет пропсы стилизации ProgressBar и layout-пропсы.
  *
- * @property value — доля заполнения от 0 до 1
  * @property sizePreset — размер полосы
  * @property tone — семантический тон заливки
+ * @property value — доля заполнения от 0 до 1
  */
 export type ProgressBarStyleProps = LayoutProps & {
-  value: number;
   sizePreset?: SizePreset;
   tone?: TonePreset;
+  value: number;
 };
 
 /**
@@ -61,7 +61,7 @@ const PROGRESS_BAR_PROP_NAMES = new Set<string>([
  * getProgressBarTextSize — возвращает размер подписи по `sizePreset`.
  * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
  *
- * @param sizePreset — размер полосы
+ * @param sizePreset размер полосы
  * @returns метка размера текста из `TextSizePreset` для подписи с процентом
  */
 export function getProgressBarTextSize(sizePreset?: SizePreset): TextSizePreset {
@@ -71,7 +71,7 @@ export function getProgressBarTextSize(sizePreset?: SizePreset): TextSizePreset 
 /**
  * clampProgressValue — ограничивает значение диапазоном от 0 до 1.
  *
- * @param value — число для ограничения
+ * @param value число для ограничения
  * @returns число в диапазоне от 0 до 1
  */
 export function clampProgressValue(value: number): number {
@@ -90,7 +90,7 @@ export function clampProgressValue(value: number): number {
  * getProgressBarStyles — возвращает CSS-правила для узла `StyledProgressBar`:
  * высоту, скругление и цвет дорожки.
  *
- * @param props — пропсы стилизации полосы прогресса и тема
+ * @param props пропсы стилизации полосы прогресса и тема
  * @returns CSS-правила, каждое с новой строки
  */
 export function getProgressBarStyles(
@@ -113,7 +113,7 @@ export function getProgressBarStyles(
  * getProgressBarFillStyles — возвращает CSS-правила для узла `StyledProgressBarFill`:
  * ширину по значению и цвет по тону.
  *
- * @param props — пропсы стилизации полосы прогресса и тема
+ * @param props пропсы стилизации полосы прогресса и тема
  * @returns CSS-правила, каждое с новой строки
  */
 export function getProgressBarFillStyles(
@@ -121,11 +121,10 @@ export function getProgressBarFillStyles(
 ): string {
   const theme = getTheme(props);
   const tone = props.tone ?? DEFAULT_TONE;
-  const progressColor = getToneColor(theme, tone, theme.colors.primary);
 
   const styles = [
     `inline-size: ${props.value * 100}%;`,
-    `background-color: ${progressColor};`,
+    `background-color: ${getToneColor(theme, tone, theme.colors.primary)};`,
   ];
 
   return styles.join('\n');

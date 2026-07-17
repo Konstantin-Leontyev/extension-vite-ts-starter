@@ -95,7 +95,7 @@ const CHECKBOX_CONTROL_PROP_NAMES = new Set<string>([
 /**
  * getCheckboxBlockSize — возвращает ключ шкалы отступов для габарита бокса.
  *
- * @param sizePreset — размер из ряда контролов
+ * @param sizePreset размер из ряда контролов
  * @returns ключ шкалы отступов для `blockSize`
  */
 function getCheckboxBlockSize(sizePreset: SizePreset): SpacingValue {
@@ -105,7 +105,7 @@ function getCheckboxBlockSize(sizePreset: SizePreset): SpacingValue {
 /**
  * getCheckboxIconSize — возвращает ключ шкалы отступов для размера иконки марки.
  *
- * @param sizePreset — размер из ряда контролов
+ * @param sizePreset размер из ряда контролов
  * @returns ключ шкалы отступов для `iconSize`
  */
 function getCheckboxIconSize(sizePreset: SizePreset): SpacingValue {
@@ -116,7 +116,7 @@ function getCheckboxIconSize(sizePreset: SizePreset): SpacingValue {
  * getCheckboxTextSize — возвращает размер подписи по `sizePreset`.
  * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
  *
- * @param sizePreset — размер бокса
+ * @param sizePreset размер бокса
  * @returns метка размера текста из `TextSizePreset` для подписи справа от бокса
  */
 export function getCheckboxTextSize(sizePreset?: SizePreset): TextSizePreset {
@@ -129,8 +129,8 @@ export function getCheckboxTextSize(sizePreset?: SizePreset): TextSizePreset {
  * SVG-компонент внутрь не вкладывается. Разметка SVG закодирована для URL:
  * `%3C` → `<`, `%23` → `#`. Символ `#` в цвете обводки кодируется здесь же.
  *
- * @param pathD — атрибут `d` SVG-пути
- * @param strokeColor — цвет обводки марки
+ * @param pathD атрибут `d` SVG-пути
+ * @param strokeColor цвет обводки марки
  * @returns значение для CSS-свойства `background-image`
  */
 function markIcon(pathD: string, strokeColor: string): string {
@@ -142,7 +142,7 @@ function markIcon(pathD: string, strokeColor: string): string {
 /**
  * checkIcon — возвращает data-URI галки для checked-состояния.
  *
- * @param strokeColor — цвет обводки
+ * @param strokeColor цвет обводки
  * @returns значение для CSS-свойства `background-image`
  */
 function checkIcon(strokeColor: string): string {
@@ -152,7 +152,7 @@ function checkIcon(strokeColor: string): string {
 /**
  * plusIcon — возвращает data-URI плюса для unchecked-состояния.
  *
- * @param strokeColor — цвет обводки
+ * @param strokeColor цвет обводки
  * @returns значение для CSS-свойства `background-image`
  */
 function plusIcon(strokeColor: string): string {
@@ -162,7 +162,7 @@ function plusIcon(strokeColor: string): string {
 /**
  * minusIcon — возвращает data-URI минуса для checked-состояния.
  *
- * @param strokeColor — цвет обводки
+ * @param strokeColor цвет обводки
  * @returns значение для CSS-свойства `background-image`
  */
 function minusIcon(strokeColor: string): string {
@@ -172,8 +172,8 @@ function minusIcon(strokeColor: string): string {
 /**
  * markBackground — возвращает CSS-правила фоновой иконки марки.
  *
- * @param mark — data-URI иконки
- * @param dimension — размер марки в rem
+ * @param mark data-URI иконки
+ * @param dimension размер марки в rem
  * @returns CSS-правила, каждое с новой строки
  */
 function markBackground(mark: string, dimension: string): string {
@@ -191,7 +191,7 @@ function markBackground(mark: string, dimension: string): string {
  * getCheckboxControlStyles — возвращает CSS-правила для бокса `StyledCheckboxControl`:
  * габариты, рамку, марки unchecked и checked.
  *
- * @param props — пропсы стилизации бокса и тема
+ * @param props пропсы стилизации бокса и тема
  * @returns CSS-правила, каждое с новой строки
  */
 export function getCheckboxControlStyles(

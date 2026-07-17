@@ -1,5 +1,25 @@
+/**
+ * Файл: `src/icons/download.tsx`
+ * Предоставляет svg-иконку скачивания.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент `DownloadIcon`
+ *
+ * Потребители:
+ *  - `src/pages/design-system/showcase-icon-options.tsx` — включает в опции витрины
+ *  - `src/icons/index.ts` — реэкспортирует `DownloadIcon`
+ */
+
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
 
+/**
+ * DownloadIcon — отображает svg-иконку скачивания.
+ *
+ * @example
+ * <Icon>
+ *   <DownloadIcon />
+ * </Icon>
+ */
 export function DownloadIcon() {
   return (
     <svg

@@ -61,7 +61,7 @@ type CheckboxProps = CheckboxStyleProps & {
   textTone?: TextTone;
 } & Omit<
     ComponentPropsWithRef<'input'>,
-    keyof CheckboxStyleProps | 'children' | 'className' | 'style' | 'type'
+    'children' | 'className' | 'style' | 'type' | keyof CheckboxStyleProps
   >;
 
 /**
@@ -84,9 +84,9 @@ function Checkbox({
   if (!children) {
     return (
       <StyledCheckboxControl
-        type="checkbox"
         inverted={inverted}
         sizePreset={sizePreset}
+        type="checkbox"
         {...rest}
       />
     );
@@ -97,9 +97,9 @@ function Checkbox({
   return (
     <StyledCheckboxRoot {...layoutProps}>
       <StyledCheckboxControl
-        type="checkbox"
         inverted={inverted}
         sizePreset={sizePreset}
+        type="checkbox"
         {...restProps}
       />
       <Text

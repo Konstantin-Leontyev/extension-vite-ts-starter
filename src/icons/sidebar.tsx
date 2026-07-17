@@ -1,5 +1,25 @@
+/**
+ * Файл: `src/icons/sidebar.tsx`
+ * Предоставляет svg-иконку боковой панели.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент `SidebarIcon`
+ *
+ * Потребители:
+ *  - `src/ui/sidebar/index.tsx` — показывает кнопку открытия панели
+ *  - `src/icons/index.ts` — реэкспортирует `SidebarIcon`
+ */
+
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
 
+/**
+ * SidebarIcon — отображает svg-иконку боковой панели.
+ *
+ * @example
+ * <Icon>
+ *   <SidebarIcon />
+ * </Icon>
+ */
 export function SidebarIcon() {
   return (
     <svg

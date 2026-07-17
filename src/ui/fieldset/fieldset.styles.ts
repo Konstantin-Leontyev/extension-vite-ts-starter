@@ -36,7 +36,7 @@ import { DEFAULT_TONE, TONE_PRESETS, type TonePreset } from '@ui/tones';
 const FIELDSET_BORDER_TONE_PRESETS = {
   ...TONE_PRESETS,
   inverted: 'inverse',
-} as const satisfies Record<TonePreset | 'inverted', keyof ThemeColors | undefined>;
+} as const satisfies Record<'inverted' | TonePreset, keyof ThemeColors | undefined>;
 
 /**
  * FieldsetBorderTone — представляет тон рамки Fieldset, включая расширение `inverted`.
@@ -78,25 +78,25 @@ const FIELDSET_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'borderTone']
  * Ключ цвета читается из `FIELDSET_BORDER_TONE_PRESETS`. Тон по умолчанию
  * даёт `undefined` — подставляется нейтральный цвет рамки из темы.
  *
- * @param theme — текущая тема
- * @param borderTone — тон рамки
+ * @param theme текущая тема
+ * @param borderTone тон рамки
  * @returns CSS-цвет рамки
  */
 function getFieldsetBorderColor(
   theme: AppTheme,
   borderTone: FieldsetBorderTone
 ): string {
-  const toneKey = FIELDSET_BORDER_TONE_PRESETS[borderTone];
+  const colorKey = FIELDSET_BORDER_TONE_PRESETS[borderTone];
 
-  return toneKey === undefined ? theme.colors.border : theme.colors[toneKey];
+  return colorKey === undefined ? theme.colors.border : theme.colors[colorKey];
 }
 
 /**
  * getFieldsetStyles — возвращает CSS-правила для корня `StyledFieldset`: габариты, отступы
  * и рамка.
  *
- * @param props — пропсы стилизации Fieldset и тема
- * @returns CSS-правила корневого fieldset
+ * @param props пропсы стилизации Fieldset и тема
+ * @returns CSS-правила, каждое с новой строки
  */
 export function getFieldsetStyles(
   props: FieldsetStyleProps & { theme: AppTheme }
@@ -104,7 +104,6 @@ export function getFieldsetStyles(
   const theme = getTheme(props);
   const { borderTone = DEFAULT_FIELDSET_BORDER_TONE } = props;
   const padding = getPadding(DEFAULT_SIZE_PRESET);
-  const borderColor = getFieldsetBorderColor(theme, borderTone);
 
   const styles = [
     'margin: 0;',
@@ -112,7 +111,7 @@ export function getFieldsetStyles(
     'min-inline-size: 0;',
     `padding-block: ${padding.block};`,
     `padding-inline: ${padding.inline};`,
-    `border: 1px solid ${borderColor};`,
+    `border: 1px solid ${getFieldsetBorderColor(theme, borderTone)};`,
     `border-radius: ${resolveBlockRadius(DEFAULT_SHAPE_PRESET, getMinBlockSize(DEFAULT_SIZE_PRESET))};`,
   ];
 

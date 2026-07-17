@@ -75,7 +75,7 @@ const DEFAULT_SIDEBAR_ICON_ARIA_LABEL = 'Close panel';
  */
 type CardForwardProps = Omit<
   ComponentProps<typeof Card>,
-  keyof SidebarStyleProps | 'children' | 'headerActions' | 'id' | 'titleId'
+  'children' | 'headerActions' | 'id' | 'titleId' | keyof SidebarStyleProps
 >;
 
 /**

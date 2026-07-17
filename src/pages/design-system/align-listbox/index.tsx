@@ -20,7 +20,7 @@ import { type TextAlignPreset } from '@ui/text';
 /**
  * getAlignListboxOptions — преобразует перечень выравниваний в опции Listbox.
  *
- * @param aligns — исходный перечень выравниваний
+ * @param aligns исходный перечень выравниваний
  * @returns опции для Listbox
  */
 function getAlignListboxOptions<Align extends string>(
@@ -44,17 +44,17 @@ const DEFAULT_ALIGN_LISTBOX_VALUE: TextAlignPreset = 'start';
 /**
  * AlignListboxProps — представляет пропсы компонента AlignListbox.
  *
- * @property label — текст подписи над листбоксом
  * @property aligns — перечень допустимых выравниваний из настраиваемого компонента,
  *   например `TEXT_ALIGN_PRESET_KEYS`
- * @property value — текущее выбранное выравнивание, по умолчанию `start`
+ * @property label — текст подписи над листбоксом
  * @property onChange — обработчик изменения выбранного выравнивания
+ * @property value — текущее выбранное выравнивание, по умолчанию `start`
  */
 type AlignListboxProps<Align extends string> = {
-  label: string;
   aligns: readonly Align[];
-  value?: Align;
+  label: string;
   onChange: (align: Align) => void;
+  value?: Align;
 };
 
 /**
@@ -69,10 +69,10 @@ type AlignListboxProps<Align extends string> = {
  * />
  */
 export function AlignListbox<Align extends string = TextAlignPreset>({
-  label,
   aligns,
-  value = DEFAULT_ALIGN_LISTBOX_VALUE as Align,
+  label,
   onChange,
+  value = DEFAULT_ALIGN_LISTBOX_VALUE as Align,
 }: AlignListboxProps<Align>) {
   return (
     <Listbox

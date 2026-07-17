@@ -60,7 +60,7 @@ type TagProps = {
   textSize?: TextSizePreset;
   textTone?: TextTone;
 } & TagStyleProps &
-  Omit<ComponentPropsWithRef<'span'>, keyof TagStyleProps | 'className' | 'style'>;
+  Omit<ComponentPropsWithRef<'span'>, 'className' | 'style' | keyof TagStyleProps>;
 
 /**
  * Tag — отображает метку с заливкой, границей и точкой-индикатором.

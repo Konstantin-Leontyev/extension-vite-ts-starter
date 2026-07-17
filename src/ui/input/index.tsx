@@ -6,7 +6,7 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - форму строки-поля через проп `shape`
- *  - горизонтальное выравнивание значения через проп `align`
+ *  - горизонтальное выравнивание значения через проп `textAlign`
  *  - подпись над полем через проп `label`
  *  - встроенную строку ошибки через проп `error`
  *  - выравнивание строки ошибки через проп `errorAlign`
@@ -93,7 +93,7 @@ type InputProps = InputStyleProps & {
   invalid?: boolean;
   label?: string;
   reserveErrorSpace?: boolean;
-} & Omit<ComponentPropsWithRef<'input'>, keyof InputStyleProps | 'className' | 'style'>;
+} & Omit<ComponentPropsWithRef<'input'>, 'className' | 'style' | keyof InputStyleProps>;
 
 /**
  * Input — отображает однострочное текстовое поле с подписью и строкой ошибки.
@@ -103,7 +103,6 @@ type InputProps = InputStyleProps & {
  * <Input error="Required field" reserveErrorSpace />
  */
 export function Input({
-  align,
   error,
   errorAlign = DEFAULT_INPUT_ERROR_ALIGN,
   invalid = DEFAULT_INPUT_INVALID,
@@ -111,6 +110,7 @@ export function Input({
   reserveErrorSpace = DEFAULT_INPUT_RESERVE_ERROR_SPACE,
   shape,
   sizePreset,
+  textAlign,
   ...rest
 }: InputProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
@@ -139,12 +139,12 @@ export function Input({
       <StyledInputControl
         type="text"
         {...inputControl}
-        align={align}
         aria-describedby={describedBy}
         aria-invalid={isInvalid || undefined}
         id={id}
         shape={shape}
         sizePreset={sizePreset}
+        textAlign={textAlign}
       />
       {showError && (
         <Text

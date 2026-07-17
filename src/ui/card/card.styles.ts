@@ -78,7 +78,7 @@ const CARD_PROP_NAMES = new Set<string>([
  * getCardStyles — возвращает CSS-правила для корня `StyledCard`: grid-ряды,
  * заливку, тень и рамку.
  *
- * @param props — пропсы стилизации Card и тема
+ * @param props пропсы стилизации Card и тема
  * @returns CSS-правила, каждое с новой строки
  */
 export function getCardStyles(props: CardStyleProps & { theme: AppTheme }): string {
@@ -141,7 +141,7 @@ export const StyledCard = styled.div.withConfig({
  * resolveLargestHeaderActionSizePreset — вычисляет наибольший пресет в ряду действий
  * шапки. Под него резервируется высота первой строки, когда действия присутствуют.
  *
- * @param sizePresets — пресеты действий с уже подставленным дефолтом RoundButton
+ * @param sizePresets пресеты действий с уже подставленным дефолтом RoundButton
  * @returns наибольший пресет ряда
  */
 export function resolveLargestHeaderActionSizePreset(
@@ -177,7 +177,7 @@ type CardHeaderFirstLineStyleProps = {
  * getCardHeaderFirstLineStyles — возвращает CSS-правила для узла `StyledCardHeaderFirstLine`:
  * центрирование по высоте ряда действий и минимальную высоту строки.
  *
- * @param props — пропсы стилизации первой строки шапки
+ * @param props пропсы стилизации первой строки шапки
  * @returns CSS-правила, каждое с новой строки
  */
 export function getCardHeaderFirstLineStyles(

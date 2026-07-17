@@ -1,3 +1,23 @@
+/**
+ * Файл: `src/icons/close.tsx`
+ * Предоставляет svg-иконку закрытия.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент `CloseIcon`
+ *
+ * Потребители:
+ *  - контролы с очисткой и закрытием, например Modal, DateInput и RangeInput — показывают действие закрытия
+ *  - `src/icons/index.ts` — реэкспортирует `CloseIcon`
+ */
+
+/**
+ * CloseIcon — отображает svg-иконку закрытия.
+ *
+ * @example
+ * <Icon>
+ *   <CloseIcon />
+ * </Icon>
+ */
 export function CloseIcon() {
   return (
     <svg

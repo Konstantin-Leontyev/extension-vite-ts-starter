@@ -31,14 +31,14 @@ export { splitLayoutProps } from '@ui/layout';
 /**
  * InputControlStyleProps — представляет пропсы стилизации нативного поля ввода.
  *
- * @property align — горизонтальное выравнивание значения
  * @property shape — форма строки-поля
  * @property sizePreset — размер контрола
+ * @property textAlign — горизонтальное выравнивание значения
  */
 type InputControlStyleProps = {
-  align?: CSSProperties['textAlign'];
   shape?: ShapePreset;
   sizePreset?: SizePreset;
+  textAlign?: CSSProperties['textAlign'];
 };
 
 /**
@@ -49,14 +49,14 @@ export type InputStyleProps = LayoutProps & InputControlStyleProps;
 /**
  * INPUT_CONTROL_PROP_NAMES — хранит имена пропсов стилизации нативного поля ввода.
  */
-const INPUT_CONTROL_PROP_NAMES = new Set<string>(['align', 'shape', 'sizePreset']);
+const INPUT_CONTROL_PROP_NAMES = new Set<string>(['shape', 'sizePreset', 'textAlign']);
 
 /**
  * getInputControlStyles — возвращает CSS-правила для узла `StyledInputControl`:
  * стандартный бокс однострочного контрола, рамку, фон, тень, плейсхолдер
  * и условное выравнивание значения.
  *
- * @param props — пропсы стилизации нативного поля ввода и тема
+ * @param props пропсы стилизации нативного поля ввода и тема
  * @returns CSS-правила, каждое с новой строки
  */
 export function getInputControlStyles(
@@ -64,9 +64,9 @@ export function getInputControlStyles(
 ): string {
   const theme = getTheme(props);
   const {
-    align,
     shape = DEFAULT_SHAPE_PRESET,
     sizePreset = DEFAULT_SIZE_PRESET,
+    textAlign,
   } = props;
 
   const styles = [
@@ -77,8 +77,8 @@ export function getInputControlStyles(
     `&::placeholder { color: ${theme.colors.muted}; }`,
   ];
 
-  if (align !== undefined) {
-    styles.push(`text-align: ${align};`);
+  if (textAlign !== undefined) {
+    styles.push(`text-align: ${textAlign};`);
   }
 
   return styles.join('\n');

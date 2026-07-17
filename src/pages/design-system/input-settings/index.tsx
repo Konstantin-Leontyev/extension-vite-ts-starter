@@ -34,7 +34,6 @@ import { SizeListbox } from '../size-listbox';
  * Ключи совпадают с именами пропов компонента Input.
  * Используется для синхронизации значений между панелью управления и демонстрационным полем ввода.
  *
- * @property align — горизонтальное выравнивание значения
  * @property disabled — включает недоступное состояние поля
  * @property error — текст ошибки под полем
  * @property errorAlign — горизонтальное выравнивание строки ошибки
@@ -44,10 +43,10 @@ import { SizeListbox } from '../size-listbox';
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки
  * @property shape — форма строки-поля
  * @property sizePreset — размер контрола
+ * @property textAlign — горизонтальное выравнивание значения
  * @property value — значение поля
  */
 export type InputWidgetState = {
-  align?: TextAlignPreset;
   disabled: boolean;
   error: string;
   errorAlign: TextAlignPreset;
@@ -57,6 +56,7 @@ export type InputWidgetState = {
   reserveErrorSpace: boolean;
   shape: ShapePreset;
   sizePreset: SizePreset;
+  textAlign?: TextAlignPreset;
   value: string;
 };
 
@@ -97,13 +97,6 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         onChange={(shape) => onChange('shape', shape)}
       />
 
-      <AlignListbox
-        label="Align:"
-        aligns={TEXT_ALIGN_PRESET_KEYS}
-        value={state.align}
-        onChange={(align) => onChange('align', align)}
-      />
-
       <Input
         label="Label:"
         reserveErrorSpace={false}
@@ -142,12 +135,19 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
 
       {state.error.trim() !== '' && (
         <AlignListbox
-          label="Error align:"
           aligns={TEXT_ALIGN_PRESET_KEYS}
+          label="Error align:"
           value={state.errorAlign}
           onChange={(align) => onChange('errorAlign', align)}
         />
       )}
+
+      <AlignListbox
+        aligns={TEXT_ALIGN_PRESET_KEYS}
+        label="Text align:"
+        value={state.textAlign}
+        onChange={(align) => onChange('textAlign', align)}
+      />
 
       <Checkbox
         checked={state.invalid}

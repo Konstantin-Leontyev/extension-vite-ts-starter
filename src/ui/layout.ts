@@ -80,7 +80,7 @@ export const LAYOUT_PROP_NAMES = new Set<string>([
  * 3. Склеивает оставшиеся правила через перенос строки
  * 4. Отдаёт результат для подстановки в CSS-шаблон styled-компонента
  *
- * @param props — объект с layout-пропсами
+ * @param props объект с layout-пропсами
  * @returns CSS-правила, каждое с новой строки
  */
 export function getLayoutStyles(props: LayoutProps): string {
@@ -98,7 +98,7 @@ export function getLayoutStyles(props: LayoutProps): string {
  *  - `layoutProps` — только layout-пропсы из `LAYOUT_PROP_NAMES`
  *  - `restProps` — все остальные пропсы без изменения типов
  *
- * @param props — исходный объект пропсов, обычно все пропсы компонента
+ * @param props исходный объект пропсов, обычно все пропсы компонента
  * @returns объект с полями `layoutProps` и `restProps`
  *
  * @example

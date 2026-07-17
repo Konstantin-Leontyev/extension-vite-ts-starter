@@ -37,7 +37,7 @@ import { type SizePreset } from '@ui/presets';
 /**
  * getSizeListboxOptions — преобразует перечень размеров в опции Listbox.
  *
- * @param sizes — исходный перечень размеров
+ * @param sizes исходный перечень размеров
  * @returns опции для Listbox
  */
 function getSizeListboxOptions<Size extends string>(
@@ -53,16 +53,16 @@ function getSizeListboxOptions<Size extends string>(
  * SizeListboxProps — представляет пропсы компонента SizeListbox.
  *
  * @property label — текст подписи над листбоксом
+ * @property onChange — обработчик изменения выбранного размера
  * @property sizes — перечень допустимых размеров из настраиваемого компонента,
  *   например `SIZE_PRESET_KEYS`, `TAG_SIZE_PRESET_KEYS` или `TEXT_SIZE_PRESET_KEYS`
  * @property value — текущий выбранный размер
- * @property onChange — обработчик изменения выбранного размера
  */
 type SizeListboxProps<Size extends string> = {
   label: string;
+  onChange: (size: Size) => void;
   sizes: readonly Size[];
   value: Size;
-  onChange: (size: Size) => void;
 };
 
 /**
@@ -84,9 +84,9 @@ type SizeListboxProps<Size extends string> = {
  */
 export function SizeListbox<Size extends string = SizePreset>({
   label,
+  onChange,
   sizes,
   value,
-  onChange,
 }: SizeListboxProps<Size>) {
   return (
     <Listbox

@@ -65,13 +65,13 @@ export type ThemeColors = {
  * AppTheme — представляет тему приложения.
  * Включает в себя цветовую схему, цвета и тени.
  *
- * @property colorScheme — режим темы для нативной части браузера
  * @property colors — объект с цветами текущей темы
+ * @property colorScheme — режим темы для нативной части браузера
  * @property shadow.surface — тень для поверхностей, используется в `box-shadow`
  */
 export type AppTheme = {
-  colorScheme: 'light' | 'dark';
   colors: ThemeColors;
+  colorScheme: 'dark' | 'light';
   shadow: {
     surface: string;
   };
@@ -161,7 +161,7 @@ export const styledDarkTheme: AppTheme = {
  * Оборачивает `props.theme`, чтобы избежать прямого обращения к свойству.
  * Используется в CSS-шаблонах для доступа к значениям темы.
  *
- * @param props — объект с полем `theme` из styled-components
+ * @param props объект с полем `theme` из styled-components
  * @returns текущая тема `AppTheme`
  *
  * @example

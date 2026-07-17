@@ -118,7 +118,7 @@ export const SPACING_PROPERTY_NAMES = new Set<string>(Object.keys(SPACING_PROPER
 /**
  * getSpacingValue — принимает метку шкалы и возвращает её значение в rem.
  *
- * @param value — метка шкалы отступов
+ * @param value метка шкалы отступов
  * @returns CSS-длина в rem, например `1rem`
  */
 export function getSpacingValue(value: SpacingValue): string {
@@ -137,7 +137,7 @@ export function getSpacingValue(value: SpacingValue): string {
  * 3. Собирает такие правила в массив и склеивает через перенос строки
  * 4. Отдаёт результат для подстановки в CSS-шаблон styled-компонента
  *
- * @param props — объект со spacing-пропсами, например `{ margin: 16, padding: 8 }`
+ * @param props объект со spacing-пропсами, например `{ margin: 16, padding: 8 }`
  * @returns CSS-правила, каждое с новой строки
  */
 export function getSpacingStyles(props: SpacingProps): string {

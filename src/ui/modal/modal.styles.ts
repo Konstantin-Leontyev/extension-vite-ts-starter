@@ -18,7 +18,7 @@ import { getTheme, type AppTheme } from '@ui/theme';
  * getModalDialogStyles — возвращает CSS-правила для узла `StyledModalDialog`:
  * затемнение страницы под модальным окном через псевдоэлемент `::backdrop`.
  *
- * @param props — объект с полем `theme` из styled-components
+ * @param props объект с полем `theme` из styled-components
  * @returns CSS-правило псевдоэлемента `::backdrop`
  */
 export function getModalDialogStyles(props: { theme: AppTheme }): string {

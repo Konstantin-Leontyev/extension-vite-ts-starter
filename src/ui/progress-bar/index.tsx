@@ -59,7 +59,7 @@ type ProgressBarProps = ProgressBarStyleProps & {
   textTone?: TextTone;
 } & Omit<
     ComponentPropsWithRef<'div'>,
-    keyof ProgressBarStyleProps | 'className' | 'style'
+    'className' | 'style' | keyof ProgressBarStyleProps
   >;
 
 /**
@@ -92,15 +92,15 @@ function ProgressBar({
       {...layoutProps}
     >
       <StyledProgressBar
-        sizePreset={sizePreset}
-        tone={tone}
-        value={clampedValue}
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
         aria-valuemax={100}
         aria-valuemin={0}
         aria-valuenow={percent}
         role="progressbar"
+        sizePreset={sizePreset}
+        tone={tone}
+        value={clampedValue}
       >
         <StyledProgressBarFill
           sizePreset={sizePreset}

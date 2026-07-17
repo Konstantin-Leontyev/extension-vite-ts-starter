@@ -49,29 +49,29 @@ export type LayoutPosition = 'absolute' | 'fixed' | 'relative' | 'static' | 'sti
  * Для gap-свойств — только ключи из `SPACING_VALUES`.
  * Для raw-свойств значения передаются как есть, без преобразования через `getSpacingValue`.
  *
- * @property display — тип отображения
- * @property position — тип позиционирования
- * @property zIndex — порядок наложения
- * @property inset — отступ со всех сторон
- * @property top — отступ сверху
- * @property right — отступ справа
+ * @property alignItems — выравнивание по поперечной оси
+ * @property alignSelf — выравнивание элемента по поперечной оси
  * @property bottom — отступ снизу
- * @property left — отступ слева
+ * @property columnGap — отступ между колонками
+ * @property display — тип отображения
  * @property flexDirection — направление flex-потока
  * @property flexWrap — перенос flex-элементов
- * @property alignItems — выравнивание по поперечной оси
+ * @property gap — отступ между элементами из шкалы spacing
+ * @property gridAutoFlow — направление автоматического потока
+ * @property gridTemplateColumns — шаблон колонок сетки
+ * @property gridTemplateRows — шаблон строк сетки
+ * @property inset — отступ со всех сторон
  * @property justifyContent — выравнивание по основной оси
+ * @property justifySelf — выравнивание элемента по основной оси
+ * @property left — отступ слева
+ * @property overflow — управление переполнением
  * @property placeItems — сокращение для `align-items` и `justify-items`
  * @property placeSelf — сокращение для `align-self` и `justify-self`
- * @property alignSelf — выравнивание элемента по поперечной оси
- * @property justifySelf — выравнивание элемента по основной оси
- * @property gridTemplateRows — шаблон строк сетки
- * @property gridTemplateColumns — шаблон колонок сетки
- * @property gridAutoFlow — направление автоматического потока
- * @property gap — отступ между элементами из шкалы spacing
+ * @property position — тип позиционирования
+ * @property right — отступ справа
  * @property rowGap — отступ между строками
- * @property columnGap — отступ между колонками
- * @property overflow — управление переполнением
+ * @property top — отступ сверху
+ * @property zIndex — порядок наложения
  */
 export type PositioningProps = {
   alignItems?: CSSProperties['alignItems'];
@@ -193,8 +193,8 @@ export const POSITIONING_PROPERTY_NAMES = new Set<string>(
  *  - `inset` — для `auto` возвращает `auto`, иначе преобразует через `getSpacingValue`
  *  - `spacing` — всегда преобразует через `getSpacingValue`
  *
- * @param kind — категория значения: `raw`, `inset` или `spacing`
- * @param value — значение пропса
+ * @param kind категория значения: `raw`, `inset` или `spacing`
+ * @param value значение пропса
  * @returns значение для CSS-свойства, например `auto`, `1rem`, `flex`
  */
 function resolvePropertyValue(
@@ -224,7 +224,7 @@ function resolvePropertyValue(
  * 3. Собирает такие правила в массив и склеивает через перенос строки
  * 4. Отдаёт результат для подстановки в CSS-шаблон styled-компонента
  *
- * @param props — объект с positioning-пропсами, например `{ display: 'flex', gap: 16 }`
+ * @param props объект с positioning-пропсами, например `{ display: 'flex', gap: 16 }`
  * @returns CSS-правила, каждое с новой строки
  */
 export function getPositioningStyles(props: PositioningProps): string {
