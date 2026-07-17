@@ -118,12 +118,6 @@ export const TEXT_SIZE_PRESET_KEYS = Object.freeze(
 );
 
 /**
- * DEFAULT_TEXT_SIZE_PRESET — задаёт типографический пресет по умолчанию.
- * Используется, когда вызывающий код не передал проп `sizePreset`.
- */
-const DEFAULT_TEXT_SIZE_PRESET: TextSizePreset = 'normal';
-
-/**
  * TextAlignPreset — представляет выравнивание текста в каноническом ряду проекта.
  */
 export type TextAlignPreset = 'center' | 'end' | 'start';
@@ -137,6 +131,12 @@ export const TEXT_ALIGN_PRESET_KEYS = Object.freeze([
   'center',
   'end',
 ] as const satisfies readonly TextAlignPreset[]);
+
+/**
+ * DEFAULT_TEXT_SIZE_PRESET — задаёт типографический пресет по умолчанию.
+ * Используется, когда вызывающий код не передал проп `sizePreset`.
+ */
+const DEFAULT_TEXT_SIZE_PRESET: TextSizePreset = 'normal';
 
 /**
  * TextStyleProps — представляет пропсы стилизации Text и layout-пропсы.
