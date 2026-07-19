@@ -33,16 +33,16 @@ import {
 } from './fieldset.styles';
 
 /**
- * DEFAULT_FIELDSET_LEGEND_TONE — задаёт тон заголовка по умолчанию.
- * Заголовок группы — вторичный текст, поэтому `muted`.
- */
-const DEFAULT_FIELDSET_LEGEND_TONE: TextTone = 'muted';
-
-/**
  * DEFAULT_FIELDSET_LEGEND_SIZE_PRESET — задаёт размер заголовка по умолчанию.
  * Заголовок группы — служебный текст, поэтому мельче основного.
  */
 const DEFAULT_FIELDSET_LEGEND_SIZE_PRESET: TextSizePreset = 'thin';
+
+/**
+ * DEFAULT_FIELDSET_LEGEND_TONE — задаёт тон заголовка по умолчанию.
+ * Заголовок группы — вторичный текст, поэтому `muted`.
+ */
+const DEFAULT_FIELDSET_LEGEND_TONE: TextTone = 'muted';
 
 /**
  * FieldsetProps — представляет пропсы компонента Fieldset.

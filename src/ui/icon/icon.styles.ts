@@ -19,15 +19,6 @@ import { DEFAULT_SIZE_PRESET, getMinBlockSize, type SizePreset } from '@ui/prese
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 
 /**
- * IconStyleProps — представляет пропсы стилизации Icon и layout-пропсы.
- *
- * @property sizePreset — размер окна иконки
- */
-export type IconStyleProps = LayoutProps & {
-  sizePreset?: SizePreset;
-};
-
-/**
  * iconPadding — хранит внутренний отступ окна иконки для каждого размера ряда.
  * Вместе с квадратом из `getMinBlockSize` задаёт окно под svg: 24/32/32
  * для small/medium/large — значения подобраны зрительно.
@@ -38,6 +29,25 @@ const iconPadding = {
   medium: 4,
   large: 8,
 } as const satisfies Record<SizePreset, SpacingValue>;
+
+/**
+ * getIconPadding — возвращает CSS-значение внутреннего отступа окна иконки.
+ *
+ * @param sizePreset размер из ряда контролов
+ * @returns отступ в rem
+ */
+function getIconPadding(sizePreset: SizePreset): string {
+  return getSpacingValue(iconPadding[sizePreset]);
+}
+
+/**
+ * IconStyleProps — представляет пропсы стилизации Icon и layout-пропсы.
+ *
+ * @property sizePreset — размер окна иконки
+ */
+export type IconStyleProps = LayoutProps & {
+  sizePreset?: SizePreset;
+};
 
 /**
  * ICON_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Icon.
@@ -52,13 +62,13 @@ const ICON_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset']);
  * @returns CSS-правила, каждое с новой строки
  */
 function getIconStyles(props: IconStyleProps): string {
-  const sizePreset = props.sizePreset ?? DEFAULT_SIZE_PRESET;
-  const dimension = getMinBlockSize(sizePreset);
+  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const size = getMinBlockSize(sizePreset);
 
   const styles = [
-    `inline-size: ${dimension};`,
-    `block-size: ${dimension};`,
-    `padding: ${getSpacingValue(iconPadding[sizePreset])};`,
+    `inline-size: ${size};`,
+    `block-size: ${size};`,
+    `padding: ${getIconPadding(sizePreset)};`,
   ];
 
   return styles.join('\n');

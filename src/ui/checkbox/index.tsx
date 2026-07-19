@@ -18,7 +18,8 @@
  * 1. Экспортировать компонент Checkbox
  * 2. Типизировать пропсы через `CheckboxProps`
  * 3. Разделять layout-пропсы между корнем и боксом в обычном режиме
- * 4. Реэкспортировать пресеты `checkboxSizePresets` и мост размера текста `getCheckboxTextSize`
+ * 4. Реэкспортировать пресеты `checkboxSizePresets`, перечни марок и мост размера текста
+ *    `getCheckboxTextSize`
  *
  * Потребители:
  *  - контролы и панели настроек витрины дизайн-системы, например FieldsetSettings и SwitchSettings —
@@ -32,12 +33,16 @@ import { type ComponentPropsWithRef, type ReactNode } from 'react';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 
 import {
+  CHECKBOX_CHECKED_MARK_KEYS,
+  CHECKBOX_UNCHECKED_MARK_KEYS,
   StyledCheckboxControl,
   StyledCheckboxRoot,
   checkboxSizePresets,
   getCheckboxTextSize,
   splitLayoutProps,
+  type CheckboxCheckedMark,
   type CheckboxStyleProps,
+  type CheckboxUncheckedMark,
 } from './checkbox.styles';
 
 /**
@@ -73,20 +78,24 @@ type CheckboxProps = CheckboxStyleProps & {
  * <Checkbox inverted checkedMark="minus">Опция</Checkbox>
  */
 function Checkbox({
+  checkedMark,
   children,
   inverted,
   sizePreset,
   textItalic,
   textSize,
   textTone = DEFAULT_CHECKBOX_TEXT_TONE,
+  uncheckedMark,
   ...rest
 }: CheckboxProps) {
   if (!children) {
     return (
       <StyledCheckboxControl
+        checkedMark={checkedMark}
         inverted={inverted}
         sizePreset={sizePreset}
         type="checkbox"
+        uncheckedMark={uncheckedMark}
         {...rest}
       />
     );
@@ -97,9 +106,11 @@ function Checkbox({
   return (
     <StyledCheckboxRoot {...layoutProps}>
       <StyledCheckboxControl
+        checkedMark={checkedMark}
         inverted={inverted}
         sizePreset={sizePreset}
         type="checkbox"
+        uncheckedMark={uncheckedMark}
         {...restProps}
       />
       <Text
@@ -113,5 +124,13 @@ function Checkbox({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт пресетов и моста размера текста */
-export { Checkbox, checkboxSizePresets, getCheckboxTextSize };
+/* eslint-disable react-refresh/only-export-components -- реэкспорт пресетов, перечней марок и моста размера текста */
+export {
+  CHECKBOX_CHECKED_MARK_KEYS,
+  CHECKBOX_UNCHECKED_MARK_KEYS,
+  Checkbox,
+  checkboxSizePresets,
+  getCheckboxTextSize,
+  type CheckboxCheckedMark,
+  type CheckboxUncheckedMark,
+};

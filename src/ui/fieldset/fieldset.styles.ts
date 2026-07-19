@@ -6,7 +6,7 @@
  * 1. Типизировать пропсы через `FieldsetStyleProps` и тон рамки через `FieldsetBorderTone`
  * 2. Хранить расширенный ряд тонов рамки в `FIELDSET_BORDER_TONE_PRESETS`
  * 3. Предоставить перечень `FIELDSET_BORDER_TONE_KEYS` для витрины
- * 4. Предоставить функцию `getFieldsetStyles` и styled-узел `StyledFieldset`
+ * 4. Предоставить styled-узел `StyledFieldset`
  *
  * Потребители:
  *  - `src/ui/fieldset/index.tsx` — собирает компонент Fieldset и реэкспортирует публичное API
@@ -44,12 +44,6 @@ const FIELDSET_BORDER_TONE_PRESETS = {
 export type FieldsetBorderTone = keyof typeof FIELDSET_BORDER_TONE_PRESETS;
 
 /**
- * DEFAULT_FIELDSET_BORDER_TONE — задаёт тон рамки по умолчанию.
- * Используется, когда вызывающий код не передал проп `borderTone`.
- */
-const DEFAULT_FIELDSET_BORDER_TONE: FieldsetBorderTone = DEFAULT_TONE;
-
-/**
  * FIELDSET_BORDER_TONE_KEYS — формирует перечень тонов рамки из ключей
  * `FIELDSET_BORDER_TONE_PRESETS`.
  * Используется в панелях настроек витрины дизайн-системы: `ToneListbox` принимает его
@@ -58,20 +52,6 @@ const DEFAULT_FIELDSET_BORDER_TONE: FieldsetBorderTone = DEFAULT_TONE;
 export const FIELDSET_BORDER_TONE_KEYS = Object.freeze(
   Object.keys(FIELDSET_BORDER_TONE_PRESETS) as FieldsetBorderTone[]
 );
-
-/**
- * FieldsetStyleProps — представляет пропсы стилизации Fieldset и layout-пропсы.
- *
- * @property borderTone — тон рамки
- */
-export type FieldsetStyleProps = LayoutProps & {
-  borderTone?: FieldsetBorderTone;
-};
-
-/**
- * FIELDSET_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Fieldset.
- */
-const FIELDSET_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'borderTone']);
 
 /**
  * getFieldsetBorderColor — возвращает цвет рамки по `borderTone`.
@@ -92,15 +72,33 @@ function getFieldsetBorderColor(
 }
 
 /**
+ * FieldsetStyleProps — представляет пропсы стилизации Fieldset и layout-пропсы.
+ *
+ * @property borderTone — тон рамки
+ */
+export type FieldsetStyleProps = LayoutProps & {
+  borderTone?: FieldsetBorderTone;
+};
+
+/**
+ * FIELDSET_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Fieldset.
+ */
+const FIELDSET_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'borderTone']);
+
+/**
+ * DEFAULT_FIELDSET_BORDER_TONE — задаёт тон рамки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `borderTone`.
+ */
+const DEFAULT_FIELDSET_BORDER_TONE: FieldsetBorderTone = DEFAULT_TONE;
+
+/**
  * getFieldsetStyles — возвращает CSS-правила для корня `StyledFieldset`: габариты, отступы
  * и рамка.
  *
  * @param props пропсы стилизации Fieldset и тема
  * @returns CSS-правила, каждое с новой строки
  */
-export function getFieldsetStyles(
-  props: FieldsetStyleProps & { theme: AppTheme }
-): string {
+function getFieldsetStyles(props: FieldsetStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
   const { borderTone = DEFAULT_FIELDSET_BORDER_TONE } = props;
   const padding = getPadding(DEFAULT_SIZE_PRESET);

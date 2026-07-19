@@ -4,8 +4,8 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `RoundButtonStyleProps` и `RoundButtonSizePreset`
- * 2. Хранить локальный ряд размеров в `roundButtonPresets`
- * 3. Предоставить функции `getRoundButtonStyles` и `getRoundButtonMinBlockSize`,
+ * 2. Хранить локальный ряд размеров в `roundButtonMinBlockSize`
+ * 3. Предоставить функцию `getRoundButtonMinBlockSize`,
  *    дефолты `DEFAULT_ROUND_BUTTON_SIZE_PRESET` и `DEFAULT_ROUND_BUTTON_SHOW_BORDER`,
  *    перечень `ROUND_BUTTON_SIZE_PRESET_KEYS`
  * 4. Предоставить styled-узел `StyledRoundButton`
@@ -30,35 +30,30 @@ import { getTheme, type AppTheme } from '@ui/theme';
 export type RoundButtonSizePreset = 'huge' | SizePreset;
 
 /**
- * RoundButtonStyleProps — представляет пропсы стилизации RoundButton и layout-пропсы.
- *
- * @property showBorder — включает границу
- * @property sizePreset — размер кнопки
- */
-export type RoundButtonStyleProps = LayoutProps & {
-  showBorder?: boolean;
-  sizePreset?: RoundButtonSizePreset;
-};
-
-/**
- * roundButtonPresets — хранит габарит кнопки для каждого размера ряда.
+ * roundButtonMinBlockSize — хранит габарит кнопки для каждого размера ряда.
  * Расширяет `minBlockSize` из `@ui/presets` спредом, добавляя локальный ключ `huge`.
  * Отступ под иконку кнопка не задаёт: вызывающий код передаёт в `children` svg,
  * уже обёрнутый в `Icon`, — окно иконки держит обёртка.
  */
-const roundButtonPresets = {
+const roundButtonMinBlockSize = {
   ...minBlockSize,
   huge: 80,
 } as const satisfies Record<RoundButtonSizePreset, SpacingValue>;
 
 /**
  * ROUND_BUTTON_SIZE_PRESET_KEYS — формирует перечень размеров круглой кнопки
- * из ключей `roundButtonPresets`. Используется в панелях настроек витрины
+ * из ключей `roundButtonMinBlockSize`. Используется в панелях настроек витрины
  * дизайн-системы: `SizeListbox` принимает его пропом `sizes`.
  */
 export const ROUND_BUTTON_SIZE_PRESET_KEYS = Object.freeze(
-  Object.keys(roundButtonPresets) as RoundButtonSizePreset[]
+  Object.keys(roundButtonMinBlockSize) as RoundButtonSizePreset[]
 );
+
+/**
+ * DEFAULT_ROUND_BUTTON_SIZE_PRESET — задаёт размер по умолчанию.
+ * Используется, когда вызывающий код не передал проп `sizePreset`.
+ */
+export const DEFAULT_ROUND_BUTTON_SIZE_PRESET: RoundButtonSizePreset = 'medium';
 
 /**
  * getRoundButtonMinBlockSize — возвращает ключ шкалы габарита RoundButton
@@ -71,20 +66,19 @@ export const ROUND_BUTTON_SIZE_PRESET_KEYS = Object.freeze(
 export function getRoundButtonMinBlockSize(
   sizePreset: RoundButtonSizePreset
 ): SpacingValue {
-  return roundButtonPresets[sizePreset];
+  return roundButtonMinBlockSize[sizePreset];
 }
 
 /**
- * DEFAULT_ROUND_BUTTON_SIZE_PRESET — задаёт размер по умолчанию.
- * Используется, когда вызывающий код не передал проп `sizePreset`.
+ * RoundButtonStyleProps — представляет пропсы стилизации RoundButton и layout-пропсы.
+ *
+ * @property showBorder — включает границу
+ * @property sizePreset — размер кнопки
  */
-export const DEFAULT_ROUND_BUTTON_SIZE_PRESET: RoundButtonSizePreset = 'medium';
-
-/**
- * DEFAULT_ROUND_BUTTON_SHOW_BORDER — задаёт показ границы по умолчанию.
- * Используется, когда вызывающий код не передал проп `showBorder`.
- */
-export const DEFAULT_ROUND_BUTTON_SHOW_BORDER = true;
+export type RoundButtonStyleProps = LayoutProps & {
+  showBorder?: boolean;
+  sizePreset?: RoundButtonSizePreset;
+};
 
 /**
  * ROUND_BUTTON_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации RoundButton.
@@ -96,6 +90,12 @@ const ROUND_BUTTON_PROP_NAMES = new Set<string>([
 ]);
 
 /**
+ * DEFAULT_ROUND_BUTTON_SHOW_BORDER — задаёт показ границы по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showBorder`.
+ */
+export const DEFAULT_ROUND_BUTTON_SHOW_BORDER = true;
+
+/**
  * getRoundButtonStyles — возвращает CSS-правила для корня `StyledRoundButton`:
  * габарит, оформление в режиме с границей или без неё
  * и подсветку `:not(:disabled):hover` и `:focus-visible` — отдельная проверка
@@ -104,7 +104,7 @@ const ROUND_BUTTON_PROP_NAMES = new Set<string>([
  * @param props пропсы стилизации круглой кнопки и тема
  * @returns CSS-правила, каждое с новой строки
  */
-export function getRoundButtonStyles(
+function getRoundButtonStyles(
   props: RoundButtonStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);

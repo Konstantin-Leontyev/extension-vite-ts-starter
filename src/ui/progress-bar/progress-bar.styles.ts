@@ -5,8 +5,7 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `ProgressBarStyleProps`
  * 2. Хранить высоту полосы в `progressBarBlockSize`
- * 3. Предоставить функции `clampProgressValue`, `getProgressBarTextSize`,
- *    `getProgressBarStyles` и `getProgressBarFillStyles`
+ * 3. Предоставить функции `clampProgressValue` и `getProgressBarTextSize`
  * 4. Предоставить styled-узлы `StyledProgressBarRoot`, `StyledProgressBar`
  *    и `StyledProgressBarFill`
  *
@@ -35,27 +34,14 @@ const progressBarBlockSize = {
 } as const satisfies Record<SizePreset, SpacingValue>;
 
 /**
- * ProgressBarStyleProps — представляет пропсы стилизации ProgressBar и layout-пропсы.
+ * getProgressBarBlockSize — возвращает CSS-высоту полосы прогресса.
  *
- * @property sizePreset — размер полосы
- * @property tone — семантический тон заливки
- * @property value — доля заполнения от 0 до 1
+ * @param sizePreset размер из ряда контролов
+ * @returns высота полосы в rem
  */
-export type ProgressBarStyleProps = LayoutProps & {
-  sizePreset?: SizePreset;
-  tone?: TonePreset;
-  value: number;
-};
-
-/**
- * PROGRESS_BAR_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации ProgressBar.
- */
-const PROGRESS_BAR_PROP_NAMES = new Set<string>([
-  ...LAYOUT_PROP_NAMES,
-  'value',
-  'sizePreset',
-  'tone',
-]);
+function getProgressBarBlockSize(sizePreset: SizePreset): string {
+  return getSpacingValue(progressBarBlockSize[sizePreset]);
+}
 
 /**
  * getProgressBarTextSize — возвращает размер подписи по `sizePreset`.
@@ -87,52 +73,26 @@ export function clampProgressValue(value: number): number {
 }
 
 /**
- * getProgressBarStyles — возвращает CSS-правила для узла `StyledProgressBar`:
- * высоту, скругление и цвет дорожки.
+ * ProgressBarStyleProps — представляет пропсы стилизации ProgressBar и layout-пропсы.
  *
- * @param props пропсы стилизации полосы прогресса и тема
- * @returns CSS-правила, каждое с новой строки
+ * @property sizePreset — размер полосы
+ * @property tone — семантический тон заливки
+ * @property value — доля заполнения от 0 до 1
  */
-export function getProgressBarStyles(
-  props: ProgressBarStyleProps & { theme: AppTheme }
-): string {
-  const theme = getTheme(props);
-  const sizePreset = props.sizePreset ?? DEFAULT_SIZE_PRESET;
-  const blockSize = getSpacingValue(progressBarBlockSize[sizePreset]);
-
-  const styles = [
-    `block-size: ${blockSize};`,
-    `border-radius: ${blockSize};`,
-    `background-color: ${theme.colors.border};`,
-  ];
-
-  return styles.join('\n');
-}
+export type ProgressBarStyleProps = LayoutProps & {
+  sizePreset?: SizePreset;
+  tone?: TonePreset;
+  value: number;
+};
 
 /**
- * getProgressBarFillStyles — возвращает CSS-правила для узла `StyledProgressBarFill`:
- * ширину по значению и цвет по тону.
- *
- * @param props пропсы стилизации полосы прогресса и тема
- * @returns CSS-правила, каждое с новой строки
+ * PROGRESS_BAR_ROOT_PROP_NAMES — объединяет имена layout-пропсов корня ProgressBar.
  */
-export function getProgressBarFillStyles(
-  props: ProgressBarStyleProps & { theme: AppTheme }
-): string {
-  const theme = getTheme(props);
-  const tone = props.tone ?? DEFAULT_TONE;
-
-  const styles = [
-    `inline-size: ${props.value * 100}%;`,
-    `background-color: ${getToneColor(theme, tone, theme.colors.primary)};`,
-  ];
-
-  return styles.join('\n');
-}
+const PROGRESS_BAR_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
 
 /**
  * StyledProgressBarRoot — задаёт корневой узел компонента ProgressBar.
- * Базируется на `<div>` и поддерживает все пропсы из `ProgressBarStyleProps`.
+ * Базируется на `<div>` и поддерживает пропсы из `LayoutProps`.
  *
  * Встроенные стили:
  *  - `display: flex` — оправданное исключение из grid по умолчанию: подпись идёт
@@ -144,8 +104,8 @@ export function getProgressBarFillStyles(
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledProgressBarRoot = styled.div.withConfig({
-  shouldForwardProp: (prop) => !PROGRESS_BAR_PROP_NAMES.has(prop),
-})<ProgressBarStyleProps>`
+  shouldForwardProp: (prop) => !PROGRESS_BAR_ROOT_PROP_NAMES.has(prop),
+})<LayoutProps>`
   display: flex;
   gap: ${getSpacingValue(12)};
   align-items: center;
@@ -154,8 +114,36 @@ export const StyledProgressBarRoot = styled.div.withConfig({
 `;
 
 /**
+ * PROGRESS_BAR_PROP_NAMES — хранит имена пропсов стилизации полосы ProgressBar.
+ */
+const PROGRESS_BAR_PROP_NAMES = new Set<string>(['sizePreset']);
+
+/**
+ * getProgressBarStyles — возвращает CSS-правила для узла `StyledProgressBar`:
+ * высоту, скругление и цвет дорожки.
+ *
+ * @param props пропсы стилизации полосы прогресса и тема
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getProgressBarStyles(
+  props: Pick<ProgressBarStyleProps, 'sizePreset'> & { theme: AppTheme }
+): string {
+  const theme = getTheme(props);
+  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const blockSize = getProgressBarBlockSize(sizePreset);
+
+  const styles = [
+    `block-size: ${blockSize};`,
+    `border-radius: ${blockSize};`,
+    `background-color: ${theme.colors.border};`,
+  ];
+
+  return styles.join('\n');
+}
+
+/**
  * StyledProgressBar — задаёт полосу прогресса компонента ProgressBar.
- * Базируется на `<div>` и поддерживает все пропсы из `ProgressBarStyleProps`.
+ * Базируется на `<div>` и принимает проп `sizePreset`.
  *
  * Встроенные стили:
  *  - `display: grid` — раскладка по дефолту проекта
@@ -168,7 +156,7 @@ export const StyledProgressBarRoot = styled.div.withConfig({
  */
 export const StyledProgressBar = styled.div.withConfig({
   shouldForwardProp: (prop) => !PROGRESS_BAR_PROP_NAMES.has(prop),
-})<ProgressBarStyleProps>`
+})<Pick<ProgressBarStyleProps, 'sizePreset'>>`
   display: grid;
   flex-grow: 1;
   min-inline-size: 0;
@@ -177,8 +165,39 @@ export const StyledProgressBar = styled.div.withConfig({
 `;
 
 /**
+ * ProgressBarFillStyleProps — представляет пропсы стилизации заливки ProgressBar.
+ */
+type ProgressBarFillStyleProps = Pick<ProgressBarStyleProps, 'tone' | 'value'>;
+
+/**
+ * PROGRESS_BAR_FILL_PROP_NAMES — хранит имена пропсов стилизации заливки ProgressBar.
+ */
+const PROGRESS_BAR_FILL_PROP_NAMES = new Set<string>(['tone', 'value']);
+
+/**
+ * getProgressBarFillStyles — возвращает CSS-правила для узла `StyledProgressBarFill`:
+ * ширину по значению и цвет по тону.
+ *
+ * @param props пропсы стилизации заливки полосы прогресса и тема
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getProgressBarFillStyles(
+  props: ProgressBarFillStyleProps & { theme: AppTheme }
+): string {
+  const theme = getTheme(props);
+  const { tone = DEFAULT_TONE, value } = props;
+
+  const styles = [
+    `inline-size: ${value * 100}%;`,
+    `background-color: ${getToneColor(theme, tone, theme.colors.primary)};`,
+  ];
+
+  return styles.join('\n');
+}
+
+/**
  * StyledProgressBarFill — задаёт заливку полосы компонента ProgressBar.
- * Базируется на `<div>` и поддерживает все пропсы из `ProgressBarStyleProps`.
+ * Базируется на `<div>` и поддерживает пропсы из `ProgressBarFillStyleProps`.
  *
  * Встроенные стили:
  *  - `block-size: 100%` — заливка на всю высоту полосы
@@ -189,8 +208,8 @@ export const StyledProgressBar = styled.div.withConfig({
  *  - `getProgressBarFillStyles` — ширина и цвет заливки
  */
 export const StyledProgressBarFill = styled.div.withConfig({
-  shouldForwardProp: (prop) => !PROGRESS_BAR_PROP_NAMES.has(prop),
-})<ProgressBarStyleProps>`
+  shouldForwardProp: (prop) => !PROGRESS_BAR_FILL_PROP_NAMES.has(prop),
+})<ProgressBarFillStyleProps>`
   block-size: 100%;
   border-radius: inherit;
   transition: inline-size 120ms ease-out;

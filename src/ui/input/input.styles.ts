@@ -3,10 +3,9 @@
  * Определяет внешний вид компонента Input.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `InputControlStyleProps` и `InputStyleProps`
- * 2. Предоставить функцию `getInputControlStyles`
- * 3. Предоставить styled-узлы `StyledInputRoot` и `StyledInputControl`
- * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 1. Типизировать пропсы через `InputStyleProps`
+ * 2. Предоставить styled-узлы `StyledInputRoot` и `StyledInputControl`
+ * 3. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/input/index.tsx` — собирает компонент Input
@@ -29,22 +28,50 @@ import { getTheme, type AppTheme } from '@ui/theme';
 export { splitLayoutProps } from '@ui/layout';
 
 /**
- * InputControlStyleProps — представляет пропсы стилизации нативного поля ввода.
+ * InputStyleProps — представляет пропсы стилизации Input и layout-пропсы.
  *
  * @property shape — форма строки-поля
  * @property sizePreset — размер контрола
  * @property textAlign — горизонтальное выравнивание значения
  */
-type InputControlStyleProps = {
+export type InputStyleProps = LayoutProps & {
   shape?: ShapePreset;
   sizePreset?: SizePreset;
   textAlign?: CSSProperties['textAlign'];
 };
 
 /**
- * InputStyleProps — представляет пропсы стилизации Input и layout-пропсы.
+ * INPUT_ROOT_PROP_NAMES — объединяет имена layout-пропсов корня Input.
  */
-export type InputStyleProps = LayoutProps & InputControlStyleProps;
+const INPUT_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
+
+/**
+ * StyledInputRoot — задаёт корневой узел компонента Input.
+ * Базируется на `<div>` и поддерживает все пропсы из `LayoutProps`.
+ *
+ * Встроенные стили:
+ *  - `display: grid` — вертикальный поток подписи, поля и строки ошибки
+ *
+ * Генерация стилей:
+ *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ */
+export const StyledInputRoot = styled.div.withConfig({
+  shouldForwardProp: (prop) => !INPUT_ROOT_PROP_NAMES.has(prop),
+})<LayoutProps>`
+  display: grid;
+  gap: ${getSpacingValue(8)};
+  inline-size: 100%;
+  min-inline-size: 0;
+  ${(props) => getLayoutStyles(props)}
+`;
+
+/**
+ * InputControlStyleProps — представляет пропсы стилизации нативного поля ввода.
+ */
+type InputControlStyleProps = Pick<
+  InputStyleProps,
+  'shape' | 'sizePreset' | 'textAlign'
+>;
 
 /**
  * INPUT_CONTROL_PROP_NAMES — хранит имена пропсов стилизации нативного поля ввода.
@@ -59,7 +86,7 @@ const INPUT_CONTROL_PROP_NAMES = new Set<string>(['shape', 'sizePreset', 'textAl
  * @param props пропсы стилизации нативного поля ввода и тема
  * @returns CSS-правила, каждое с новой строки
  */
-export function getInputControlStyles(
+function getInputControlStyles(
   props: InputControlStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
@@ -85,28 +112,8 @@ export function getInputControlStyles(
 }
 
 /**
- * StyledInputRoot — задаёт корневой узел компонента Input.
- * Базируется на `<div>` и поддерживает все пропсы из `LayoutProps`.
- *
- * Встроенные стили:
- *  - `display: grid` — вертикальный поток подписи, поля и строки ошибки
- *
- * Генерация стилей:
- *  - `getLayoutStyles` — отступы, позиционирование, размеры
- */
-export const StyledInputRoot = styled.div.withConfig({
-  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
-})<LayoutProps>`
-  display: grid;
-  gap: ${getSpacingValue(8)};
-  inline-size: 100%;
-  min-inline-size: 0;
-  ${(props) => getLayoutStyles(props)}
-`;
-
-/**
  * StyledInputControl — задаёт нативное поле ввода компонента Input.
- * Базируется на `<input>` и поддерживает все пропсы из `InputControlStyleProps`.
+ * Базируется на `<input>` и поддерживает пропсы из `InputControlStyleProps`.
  *
  * Генерация стилей:
  *  - `getInputControlStyles` — бокс, рамка, фон, тень, плейсхолдер, выравнивание

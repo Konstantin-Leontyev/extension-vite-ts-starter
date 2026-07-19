@@ -24,34 +24,6 @@ import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 const SIDEBAR_PANEL_WIDTH = '20rem';
 
 /**
- * DEFAULT_OFFSET — задаёт зазор между контентом и панелью по умолчанию.
- * Используется, когда вызывающий код не передал проп `offset`.
- */
-const DEFAULT_OFFSET: SpacingValue = 8;
-
-/**
- * DEFAULT_INLINE_END — задаёт отступ области контента и панели от правого края по умолчанию.
- * Используется, когда вызывающий код не передал проп `padding`.
- */
-const DEFAULT_INLINE_END: SpacingValue = 8;
-
-/**
- * SidebarStyleProps — представляет пропсы стилизации Sidebar.
- *
- * @property offset — зазор между областью контента и панелью
- * @property padding — единый отступ всех зон каркаса
- */
-export type SidebarStyleProps = {
-  offset?: SpacingValue;
-  padding?: SpacingValue;
-};
-
-/**
- * SIDEBAR_PROP_NAMES — хранит имена пропсов стилизации Sidebar.
- */
-const SIDEBAR_PROP_NAMES = new Set<string>(['offset', 'padding']);
-
-/**
  * StyledSidebarContent — задаёт область контента компонента Sidebar.
  * Базируется на `<div>`.
  *
@@ -66,7 +38,7 @@ const SIDEBAR_PROP_NAMES = new Set<string>(['offset', 'padding']);
  *    в `@ui/reset` и на страницах с корневым `<main>`, либо локально через
  *    `max-block-size` в dvb, как на странице витрины дизайн-системы
  */
-const StyledSidebarContent = styled.div`
+export const StyledSidebarContent = styled.div`
   display: flex;
   flex-direction: column;
   min-inline-size: 0;
@@ -87,7 +59,7 @@ const StyledSidebarContent = styled.div`
  * Генерация стилей:
  *  - `getShellTransitionStyles` — переход по `inline-size`
  */
-const StyledSidebarSlot = styled.aside`
+export const StyledSidebarSlot = styled.aside`
   align-self: stretch;
   inline-size: 0;
   min-inline-size: 0;
@@ -116,7 +88,7 @@ const StyledSidebarSlot = styled.aside`
  * Генерация стилей:
  *  - `getShellTransitionStyles` — переход по `transform`
  */
-const StyledSidebarTrack = styled.div`
+export const StyledSidebarTrack = styled.div`
   display: flex;
   justify-content: flex-end;
   inline-size: ${SIDEBAR_PANEL_WIDTH};
@@ -137,6 +109,40 @@ const StyledSidebarTrack = styled.div`
 `;
 
 /**
+ * SidebarStyleProps — представляет пропсы стилизации Sidebar.
+ *
+ * @property offset — зазор между областью контента и панелью
+ * @property padding — единый отступ всех зон каркаса
+ */
+export type SidebarStyleProps = {
+  offset?: SpacingValue;
+  padding?: SpacingValue;
+};
+
+/**
+ * SIDEBAR_PROP_NAMES — хранит имена пропсов стилизации Sidebar.
+ */
+const SIDEBAR_PROP_NAMES = new Set<string>(['offset', 'padding']);
+
+/**
+ * DEFAULT_OFFSET — задаёт зазор между контентом и панелью по умолчанию.
+ * Используется, когда вызывающий код не передал проп `offset`.
+ */
+const DEFAULT_OFFSET: SpacingValue = 8;
+
+/**
+ * SIDEBAR_CONTENT_INSET — зонный дефолт отступа области контента, когда проп `padding`
+ * не передан. Не дефолт пропа: у `padding` две зонные подстановки.
+ */
+const SIDEBAR_CONTENT_INSET: SpacingValue = 0;
+
+/**
+ * SIDEBAR_EDGE_INSET — зонный дефолт отступа края панели и правого отступа контента,
+ * когда проп `padding` не передан. Не дефолт пропа: у `padding` две зонные подстановки.
+ */
+const SIDEBAR_EDGE_INSET: SpacingValue = 8;
+
+/**
  * getSidebarStyles — возвращает CSS-правила для корня `StyledSidebar`: отступы зон
  * каркаса, зазор при открытой панели, ширину слота и поведение на узком экране.
  *
@@ -144,9 +150,9 @@ const StyledSidebarTrack = styled.div`
  * @returns CSS-правила, каждое с новой строки
  */
 function getSidebarStyles(props: SidebarStyleProps): string {
-  const { offset, padding } = props;
-  const paddingValue = getSpacingValue(padding ?? 0);
-  const paddingInlineEndValue = getSpacingValue(padding ?? DEFAULT_INLINE_END);
+  const { offset = DEFAULT_OFFSET, padding } = props;
+  const paddingValue = getSpacingValue(padding ?? SIDEBAR_CONTENT_INSET);
+  const paddingInlineEndValue = getSpacingValue(padding ?? SIDEBAR_EDGE_INSET);
 
   const styles = [
     `${StyledSidebarContent} {`,
@@ -158,7 +164,7 @@ function getSidebarStyles(props: SidebarStyleProps): string {
     `padding-inline-end: ${paddingInlineEndValue};`,
     `}`,
     `&:has(${StyledSidebarSlot}[data-open='true']) {`,
-    `gap: ${getSpacingValue(offset ?? DEFAULT_OFFSET)};`,
+    `gap: ${getSpacingValue(offset)};`,
     `}`,
     `${StyledSidebarSlot}[data-open='true'][data-expanded='true'] {`,
     `inline-size: calc(${SIDEBAR_PANEL_WIDTH} + ${paddingInlineEndValue});`,
@@ -225,5 +231,3 @@ export const StyledSidebar = styled.div.withConfig({
     grid-template-columns: 1fr auto;
   }
 `;
-
-export { StyledSidebarContent, StyledSidebarSlot, StyledSidebarTrack };

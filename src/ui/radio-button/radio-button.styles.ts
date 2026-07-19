@@ -4,8 +4,8 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `RadioButtonStyleProps`
- * 2. Хранить размер кружка в `radioBlockSize`
- * 3. Предоставить функции `getRadioButtonTextSize` и `getRadioButtonControlStyles`
+ * 2. Хранить размер кружка в `radioSize`
+ * 3. Предоставить функцию `getRadioButtonTextSize`
  * 4. Предоставить styled-узлы `StyledRadioButtonRoot` и `StyledRadioButtonControl`
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
@@ -24,45 +24,23 @@ import { getTheme, type AppTheme } from '@ui/theme';
 export { splitLayoutProps } from '@ui/layout';
 
 /**
- * radioBlockSize — хранит размер кружка для каждого размера ряда.
+ * radioSize — хранит размер кружка для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
  */
-const radioBlockSize = {
+const radioSize = {
   small: 16,
   medium: 20,
   large: 24,
 } as const satisfies Record<SizePreset, SpacingValue>;
 
 /**
- * RadioButtonStyleProps — представляет пропсы стилизации RadioButton и layout-пропсы.
- *
- * @property sizePreset — размер кружка
- */
-export type RadioButtonStyleProps = LayoutProps & {
-  sizePreset?: SizePreset;
-};
-
-/**
- * RADIO_BUTTON_ROOT_PROP_NAMES — объединяет имена layout-пропсов корня RadioButton.
- */
-const RADIO_BUTTON_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
-
-/**
- * RADIO_BUTTON_CONTROL_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации кружка.
- */
-const RADIO_BUTTON_CONTROL_PROP_NAMES = new Set<string>([
-  ...LAYOUT_PROP_NAMES,
-  'sizePreset',
-]);
-
-/**
- * getRadioBlockSize — возвращает ключ шкалы отступов для размера кружка.
+ * getRadioSize — возвращает CSS-размер стороны кружка.
  *
  * @param sizePreset размер из ряда контролов
- * @returns ключ шкалы отступов
+ * @returns длина стороны в rem
  */
-function getRadioBlockSize(sizePreset: SizePreset): SpacingValue {
-  return radioBlockSize[sizePreset];
+function getRadioSize(sizePreset: SizePreset): string {
+  return getSpacingValue(radioSize[sizePreset]);
 }
 
 /**
@@ -77,37 +55,18 @@ export function getRadioButtonTextSize(sizePreset?: SizePreset): TextSizePreset 
 }
 
 /**
- * getRadioButtonControlStyles — возвращает CSS-правила для кружка `StyledRadioButtonControl`:
- * габариты, рамку и состояние `checked`.
+ * RadioButtonStyleProps — представляет пропсы стилизации RadioButton и layout-пропсы.
  *
- * @param props пропсы стилизации RadioButton и тема
- * @returns CSS-правила, каждое с новой строки
+ * @property sizePreset — размер кружка
  */
-export function getRadioButtonControlStyles(
-  props: RadioButtonStyleProps & { theme: AppTheme }
-): string {
-  const theme = getTheme(props);
-  const sizePreset = props.sizePreset ?? DEFAULT_SIZE_PRESET;
-  const dimension = getSpacingValue(getRadioBlockSize(sizePreset));
+export type RadioButtonStyleProps = LayoutProps & {
+  sizePreset?: SizePreset;
+};
 
-  const styles = [
-    'flex-shrink: 0;',
-    `inline-size: ${dimension};`,
-    `block-size: ${dimension};`,
-    'appearance: none;',
-    `background-color: ${theme.colors.surface};`,
-    `border: 1px solid ${theme.colors.border};`,
-    'border-radius: 50%;',
-    `box-shadow: ${theme.shadow.surface};`,
-    `&:checked {
-      background-color: ${theme.colors.surface};
-      background-image: radial-gradient(circle at center, ${theme.colors.primary} 48%, transparent 49%);
-      border-color: ${theme.colors.primary};
-    }`,
-  ];
-
-  return styles.join('\n');
-}
+/**
+ * RADIO_BUTTON_ROOT_PROP_NAMES — объединяет имена layout-пропсов корня RadioButton.
+ */
+const RADIO_BUTTON_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
 
 /**
  * StyledRadioButtonRoot — задаёт корневой узел компонента RadioButton.
@@ -132,6 +91,47 @@ export const StyledRadioButtonRoot = styled.label.withConfig({
   cursor: pointer;
   ${(props) => getLayoutStyles(props)}
 `;
+
+/**
+ * RADIO_BUTTON_CONTROL_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации кружка.
+ */
+const RADIO_BUTTON_CONTROL_PROP_NAMES = new Set<string>([
+  ...LAYOUT_PROP_NAMES,
+  'sizePreset',
+]);
+
+/**
+ * getRadioButtonControlStyles — возвращает CSS-правила для кружка `StyledRadioButtonControl`:
+ * габариты, рамку и состояние `checked`.
+ *
+ * @param props пропсы стилизации RadioButton и тема
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getRadioButtonControlStyles(
+  props: RadioButtonStyleProps & { theme: AppTheme }
+): string {
+  const theme = getTheme(props);
+  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const size = getRadioSize(sizePreset);
+
+  const styles = [
+    'flex-shrink: 0;',
+    `inline-size: ${size};`,
+    `block-size: ${size};`,
+    'appearance: none;',
+    `background-color: ${theme.colors.surface};`,
+    `border: 1px solid ${theme.colors.border};`,
+    'border-radius: 50%;',
+    `box-shadow: ${theme.shadow.surface};`,
+    `&:checked {
+      background-color: ${theme.colors.surface};
+      background-image: radial-gradient(circle at center, ${theme.colors.primary} 48%, transparent 49%);
+      border-color: ${theme.colors.primary};
+    }`,
+  ];
+
+  return styles.join('\n');
+}
 
 /**
  * StyledRadioButtonControl — задаёт нативный кружок RadioButton.

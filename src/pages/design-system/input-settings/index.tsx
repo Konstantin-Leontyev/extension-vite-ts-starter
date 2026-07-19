@@ -116,15 +116,6 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
       />
 
       <Input
-        label="Value:"
-        reserveErrorSpace={false}
-        value={state.value}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('value', event.target.value)
-        }
-      />
-
-      <Input
         label="Error:"
         reserveErrorSpace={false}
         value={state.error}
@@ -142,22 +133,21 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         />
       )}
 
+      <Input
+        label="Value:"
+        reserveErrorSpace={false}
+        value={state.value}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('value', event.target.value)
+        }
+      />
+
       <AlignListbox
         aligns={TEXT_ALIGN_PRESET_KEYS}
         label="Text align:"
         value={state.textAlign}
         onChange={(align) => onChange('textAlign', align)}
       />
-
-      <Checkbox
-        checked={state.invalid}
-        sizePreset="medium"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('invalid', event.target.checked)
-        }
-      >
-        Invalid
-      </Checkbox>
 
       <Checkbox
         checked={state.reserveErrorSpace}
@@ -167,6 +157,16 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         }
       >
         Reserve error space
+      </Checkbox>
+
+      <Checkbox
+        checked={state.invalid}
+        sizePreset="medium"
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('invalid', event.target.checked)
+        }
+      >
+        Invalid
       </Checkbox>
 
       <Checkbox

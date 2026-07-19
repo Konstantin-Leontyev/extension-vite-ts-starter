@@ -17,16 +17,16 @@ import { Icon } from '@ui/icon';
 import { RoundButton } from '@ui/round-button';
 
 /**
- * THEME_TOGGLE_DARK_ARIA_LABEL — задаёт EN-текст `aria-label` для тёмной темы.
- * Используется как доступное имя кнопки, когда активна тёмная тема.
- */
-const THEME_TOGGLE_DARK_ARIA_LABEL = 'Switch to light theme';
-
-/**
- * THEME_TOGGLE_LIGHT_ARIA_LABEL — задаёт EN-текст `aria-label` для светлой темы.
+ * SWITCH_TO_DARK_ARIA_LABEL — задаёт EN-текст `aria-label` для перехода на тёмную тему.
  * Используется как доступное имя кнопки, когда активна светлая тема.
  */
-const THEME_TOGGLE_LIGHT_ARIA_LABEL = 'Switch to dark theme';
+const SWITCH_TO_DARK_ARIA_LABEL = 'Switch to dark theme';
+
+/**
+ * SWITCH_TO_LIGHT_ARIA_LABEL — задаёт EN-текст `aria-label` для перехода на светлую тему.
+ * Используется как доступное имя кнопки, когда активна тёмная тема.
+ */
+const SWITCH_TO_LIGHT_ARIA_LABEL = 'Switch to light theme';
 
 /**
  * ThemeToggle — отображает круглую кнопку переключения темы приложения.
@@ -36,11 +36,12 @@ const THEME_TOGGLE_LIGHT_ARIA_LABEL = 'Switch to dark theme';
  */
 export function ThemeToggle() {
   const { mode, onThemeChange } = useThemeMode();
-  const isDark = mode === 'dark';
 
   return (
     <RoundButton
-      aria-label={isDark ? THEME_TOGGLE_DARK_ARIA_LABEL : THEME_TOGGLE_LIGHT_ARIA_LABEL}
+      aria-label={
+        mode === 'dark' ? SWITCH_TO_LIGHT_ARIA_LABEL : SWITCH_TO_DARK_ARIA_LABEL
+      }
       onClick={onThemeChange}
     >
       <Icon blockSize="100%" inlineSize="100%" padding={4}>

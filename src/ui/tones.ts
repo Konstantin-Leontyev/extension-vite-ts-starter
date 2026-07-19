@@ -55,7 +55,7 @@ export const TONE_PRESET_KEYS = Object.freeze(Object.keys(TONE_PRESETS) as ToneP
 
 /**
  * DEFAULT_TONE — задаёт тон по умолчанию.
- * Используется в контролах, где тон опционален.
+ * Используется, когда вызывающий код не передал проп `tone`.
  */
 export const DEFAULT_TONE: TonePreset = 'default';
 

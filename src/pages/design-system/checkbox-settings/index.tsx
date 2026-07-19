@@ -1,7 +1,7 @@
 /**
  * Файл: `src/pages/design-system/checkbox-settings/index.tsx`
  * Определяет панель настроек компонента Checkbox в витрине дизайн-системы.
- * Содержит контролы для изменения размера, режима `inverted`, подписи и состояний
+ * Содержит контролы для изменения размера, режима `inverted`, марок, подписи и состояний
  * в реальном времени.
  *
  * Основные задачи:
@@ -14,7 +14,15 @@
 
 import { type ChangeEvent } from 'react';
 
-import { Checkbox, getCheckboxTextSize } from '@ui/checkbox';
+import {
+  CHECKBOX_CHECKED_MARK_KEYS,
+  CHECKBOX_UNCHECKED_MARK_KEYS,
+  Checkbox,
+  getCheckboxTextSize,
+  type CheckboxCheckedMark,
+  type CheckboxUncheckedMark,
+} from '@ui/checkbox';
+import { Listbox, type ListboxOption } from '@ui/listbox';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 import { type TextSizePreset, type TextTone } from '@ui/text';
 
@@ -29,6 +37,7 @@ import { TextGroup } from '../text-group';
  * Используется для синхронизации значений между панелью управления и демонстрационным чекбоксом.
  *
  * @property checked — включает отмеченное состояние бокса
+ * @property checkedMark — иконка в checked-состоянии
  * @property disabled — включает недоступное состояние
  * @property inverted — включает инвертированную палитру
  * @property showText — витринный ключ показа подписи. Выключенный — бокс без обёртки
@@ -37,9 +46,11 @@ import { TextGroup } from '../text-group';
  * @property textItalic — включает курсив подписи
  * @property textSize — размер подписи
  * @property textTone — тон подписи
+ * @property uncheckedMark — иконка в unchecked-состоянии
  */
 export type CheckboxWidgetState = {
   checked: boolean;
+  checkedMark: CheckboxCheckedMark;
   disabled: boolean;
   inverted: boolean;
   showText: boolean;
@@ -48,7 +59,26 @@ export type CheckboxWidgetState = {
   textItalic: boolean;
   textSize: TextSizePreset;
   textTone: TextTone;
+  uncheckedMark: CheckboxUncheckedMark;
 };
+
+/**
+ * CHECKED_MARK_OPTIONS — опции Listbox для выбора иконки checked-состояния.
+ */
+const CHECKED_MARK_OPTIONS: ListboxOption[] = CHECKBOX_CHECKED_MARK_KEYS.map((mark) => ({
+  label: mark,
+  value: mark,
+}));
+
+/**
+ * UNCHECKED_MARK_OPTIONS — опции Listbox для выбора иконки unchecked-состояния.
+ */
+const UNCHECKED_MARK_OPTIONS: ListboxOption[] = CHECKBOX_UNCHECKED_MARK_KEYS.map(
+  (mark) => ({
+    label: mark,
+    value: mark,
+  })
+);
 
 /**
  * CheckboxSettingsProps — представляет пропсы компонента CheckboxSettings.
@@ -122,6 +152,24 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
       >
         Checked
       </Checkbox>
+
+      {state.checked ? (
+        <Listbox
+          label="Checked mark:"
+          options={CHECKED_MARK_OPTIONS}
+          reserveErrorSpace={false}
+          value={state.checkedMark}
+          onChange={(value) => onChange('checkedMark', value as CheckboxCheckedMark)}
+        />
+      ) : (
+        <Listbox
+          label="Unchecked mark:"
+          options={UNCHECKED_MARK_OPTIONS}
+          reserveErrorSpace={false}
+          value={state.uncheckedMark}
+          onChange={(value) => onChange('uncheckedMark', value as CheckboxUncheckedMark)}
+        />
+      )}
 
       <Checkbox
         checked={state.disabled}

@@ -77,7 +77,7 @@ function Modal({
   open,
   title,
   titleId: titleIdProp,
-  ...cardProps
+  ...rest
 }: ModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const generatedTitleId = useId();
@@ -117,7 +117,7 @@ function Modal({
         ]}
         title={title}
         titleId={titleId}
-        {...cardProps}
+        {...rest}
       >
         {children}
       </Card>

@@ -43,6 +43,18 @@ import {
 const DEFAULT_INPUT_ERROR_ALIGN: CSSProperties['textAlign'] = 'center';
 
 /**
+ * DEFAULT_INPUT_INVALID — задаёт состояние кольца ошибки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `invalid`.
+ */
+const DEFAULT_INPUT_INVALID = false;
+
+/**
+ * DEFAULT_INPUT_RESERVE_ERROR_SPACE — задаёт резерв высоты под строку ошибки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
+ */
+const DEFAULT_INPUT_RESERVE_ERROR_SPACE = true;
+
+/**
  * INPUT_ERROR_TEXT_SIZE_PRESET — задаёт типографический пресет строки ошибки.
  * Используется для текста ошибки и расчёта резерва высоты.
  */
@@ -55,12 +67,6 @@ const INPUT_ERROR_TEXT_SIZE_PRESET: TextSizePreset = 'thin';
 const INPUT_ERROR_TONE: TextTone = 'danger';
 
 /**
- * DEFAULT_INPUT_INVALID — задаёт состояние кольца ошибки по умолчанию.
- * Используется, когда вызывающий код не передал проп `invalid`.
- */
-const DEFAULT_INPUT_INVALID = false;
-
-/**
  * INPUT_LABEL_SIZE_PRESET — задаёт размер подписи над полем.
  * Используется для текста в `label`.
  */
@@ -71,12 +77,6 @@ const INPUT_LABEL_SIZE_PRESET: TextSizePreset = 'medium';
  * Подпись контрола — вторичный текст, поэтому `muted`.
  */
 const INPUT_LABEL_TEXT_TONE: TextTone = 'muted';
-
-/**
- * DEFAULT_INPUT_RESERVE_ERROR_SPACE — задаёт резерв высоты под строку ошибки по умолчанию.
- * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
- */
-const DEFAULT_INPUT_RESERVE_ERROR_SPACE = true;
 
 /**
  * InputProps — представляет пропсы компонента Input.
@@ -114,15 +114,16 @@ export function Input({
   ...rest
 }: InputProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const { 'aria-describedby': ariaDescribedBy, ...inputControl } = restProps;
   const fallbackId = useId();
-  const id = inputControl.id ?? fallbackId;
+  const id = restProps.id ?? fallbackId;
   const errorId = `${id}-error`;
   const hasError = Boolean(error?.trim());
   const isInvalid = hasError || invalid;
   const showError = hasError || reserveErrorSpace;
   const describedBy =
-    [hasError ? errorId : null, ariaDescribedBy].filter(Boolean).join(' ') || undefined;
+    [hasError ? errorId : null, restProps['aria-describedby']]
+      .filter(Boolean)
+      .join(' ') || undefined;
 
   return (
     <StyledInputRoot {...layoutProps}>
@@ -138,7 +139,7 @@ export function Input({
       )}
       <StyledInputControl
         type="text"
-        {...inputControl}
+        {...restProps}
         aria-describedby={describedBy}
         aria-invalid={isInvalid || undefined}
         id={id}

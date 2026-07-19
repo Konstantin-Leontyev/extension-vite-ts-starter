@@ -4,7 +4,7 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `ToastStyleProps`
- * 2. Предоставить функции `getToastTextSize` и `getToastStyles`
+ * 2. Предоставить функцию `getToastTextSize`
  * 3. Предоставить styled-узел `StyledToast`
  *
  * Потребители:
@@ -29,6 +29,17 @@ import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
 
 /**
+ * getToastTextSize — возвращает размер текста сообщения по `sizePreset`.
+ * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
+ *
+ * @param sizePreset размер уведомления
+ * @returns метка размера текста из `TextSizePreset` для текста сообщения
+ */
+export function getToastTextSize(sizePreset?: SizePreset): TextSizePreset {
+  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
+}
+
+/**
  * ToastStyleProps — представляет пропсы стилизации Toast и layout-пропсы.
  *
  * @property sizePreset — размер компонента
@@ -46,24 +57,13 @@ export type ToastStyleProps = LayoutProps & {
 const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 'tone']);
 
 /**
- * getToastTextSize — возвращает размер текста сообщения по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер уведомления
- * @returns метка размера текста из `TextSizePreset` для текста сообщения
- */
-export function getToastTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
-}
-
-/**
  * getToastStyles — возвращает CSS-правила для корня `StyledToast`:
  * размер, отступы, фон, цвет, границу, акцентную полосу и тень.
  *
  * @param props пропсы стилизации Toast и тема
  * @returns CSS-правила, каждое с новой строки
  */
-export function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
+function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
   const { sizePreset = DEFAULT_SIZE_PRESET, tone = DEFAULT_TONE } = props;
   const minBlockSize = getMinBlockSize(sizePreset);

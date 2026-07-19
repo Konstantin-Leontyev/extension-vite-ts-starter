@@ -62,6 +62,28 @@ import {
 type CardHtmlTag = 'article' | 'div' | 'section';
 
 /**
+ * CardHeaderAction — представляет кнопку-действие в шапке карточки, например copy,
+ * settings и close, со своим обработчиком.
+ *
+ * @property ariaControls — id управляемой панели для `aria-controls`
+ * @property ariaExpanded — состояние раскрытия для `aria-expanded`
+ * @property ariaLabel — доступное имя кнопки
+ * @property disabled — включает недоступное состояние
+ * @property icon — svg иконки действия
+ * @property onClick — обработчик клика
+ * @property sizePreset — размер RoundButton
+ */
+type CardHeaderAction = {
+  ariaControls?: string;
+  ariaExpanded?: boolean;
+  ariaLabel?: string;
+  disabled?: boolean;
+  icon: ReactNode;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  sizePreset?: RoundButtonSizePreset;
+};
+
+/**
  * DEFAULT_CARD_TITLE_SIZE_PRESET — задаёт размер заголовка по умолчанию.
  * Используется, когда вызывающий код не передал проп `titleSizePreset`.
  */
@@ -84,28 +106,6 @@ const DEFAULT_CARD_SUBTITLE_TONE: TextTone = 'muted';
  * Используется, когда вызывающий код не передал проп `headerActions`.
  */
 const DEFAULT_CARD_HEADER_ACTIONS: CardHeaderAction[] = [];
-
-/**
- * CardHeaderAction — представляет кнопку-действие в шапке карточки, например copy,
- * settings и close, со своим обработчиком.
- *
- * @property ariaControls — id управляемой панели для `aria-controls`
- * @property ariaExpanded — состояние раскрытия для `aria-expanded`
- * @property ariaLabel — доступное имя кнопки
- * @property disabled — включает недоступное состояние
- * @property icon — svg иконки действия
- * @property onClick — обработчик клика
- * @property sizePreset — размер RoundButton
- */
-type CardHeaderAction = {
-  ariaControls?: string;
-  ariaExpanded?: boolean;
-  ariaLabel?: string;
-  disabled?: boolean;
-  icon: ReactNode;
-  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-  sizePreset?: RoundButtonSizePreset;
-};
 
 /**
  * handleHeaderActionClick — останавливает всплытие клика по действию шапки

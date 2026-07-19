@@ -39,6 +39,12 @@ import {
 } from './progress-bar.styles';
 
 /**
+ * DEFAULT_PROGRESS_BAR_SHOW_TEXT — задаёт видимость подписи с процентом по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showText`.
+ */
+const DEFAULT_PROGRESS_BAR_SHOW_TEXT = false;
+
+/**
  * DEFAULT_PROGRESS_BAR_TEXT_TONE — задаёт тон подписи по умолчанию.
  * Подпись контрола — вторичный текст, поэтому `muted`.
  */
@@ -72,25 +78,20 @@ type ProgressBarProps = ProgressBarStyleProps & {
 function ProgressBar({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
-  showText = false,
+  showText = DEFAULT_PROGRESS_BAR_SHOW_TEXT,
   sizePreset,
   textItalic,
   textSize,
   textTone = DEFAULT_PROGRESS_BAR_TEXT_TONE,
   tone,
   value,
-  ...layoutProps
+  ...rest
 }: ProgressBarProps) {
   const clampedValue = clampProgressValue(value);
   const percent = Math.round(clampedValue * 100);
 
   return (
-    <StyledProgressBarRoot
-      sizePreset={sizePreset}
-      tone={tone}
-      value={clampedValue}
-      {...layoutProps}
-    >
+    <StyledProgressBarRoot {...rest}>
       <StyledProgressBar
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
@@ -99,14 +100,8 @@ function ProgressBar({
         aria-valuenow={percent}
         role="progressbar"
         sizePreset={sizePreset}
-        tone={tone}
-        value={clampedValue}
       >
-        <StyledProgressBarFill
-          sizePreset={sizePreset}
-          tone={tone}
-          value={clampedValue}
-        />
+        <StyledProgressBarFill tone={tone} value={clampedValue} />
       </StyledProgressBar>
       {showText && (
         <Text

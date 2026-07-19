@@ -5,7 +5,7 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `TextStyleProps`, `TextTone` и `TextSizePreset`
  * 2. Хранить тоны текста в `TEXT_TONE_PRESETS` и пресеты типографики в `textSizePresets`
- * 3. Предоставить функции `getTextStyles`, `getTextProperties`, `getTextLineHeight`,
+ * 3. Предоставить функции `getTextProperties` и `getTextLineHeight`,
  *    а также перечни `TEXT_TONE_KEYS`, `TEXT_SIZE_PRESET_KEYS` и `TEXT_ALIGN_PRESET_KEYS`
  * 4. Предоставить styled-узел `StyledText`
  *
@@ -27,32 +27,6 @@ import { getTheme, type AppTheme, type ThemeColors } from '@ui/theme';
 import { TONE_PRESETS, type TonePreset } from '@ui/tones';
 
 /**
- * TEXT_TONE_PRESETS — связывает тоны текста с ключами цвета в теме.
- * Расширяет канон `TONE_PRESETS` спредом, добавляя тон `muted` для вторичного текста.
- *
- * Соответствие приватно для модуля. Экспортируется только перечень `TEXT_TONE_KEYS`,
- * цвет подставляют приватные `getTextToneColorKey` и `getTextToneColor`.
- */
-const TEXT_TONE_PRESETS = {
-  ...TONE_PRESETS,
-  muted: 'muted',
-} as const satisfies Record<'muted' | TonePreset, keyof ThemeColors | undefined>;
-
-/**
- * TextTone — представляет тоны текста.
- * Включает все канонические тона и дополнительный `muted` для вторичного текста.
- */
-export type TextTone = keyof typeof TEXT_TONE_PRESETS;
-
-/**
- * TEXT_TONE_KEYS — формирует перечень тонов текста из ключей `TEXT_TONE_PRESETS`.
- * Используется в панелях настроек витрины дизайн-системы: `ToneListbox` принимает его пропом `tones`.
- */
-export const TEXT_TONE_KEYS = Object.freeze(
-  Object.keys(TEXT_TONE_PRESETS) as TextTone[]
-);
-
-/**
  * textSizePresets — хранит типографические пресеты текста.
  * Каждый пресет содержит три свойства:
  *  - `fontSize` — размер шрифта в rem
@@ -64,7 +38,7 @@ export const TEXT_TONE_KEYS = Object.freeze(
  * `getTextSize` из `@ui/presets`, Tag — через `getTagTextSize` с локальным рядом.
  *
  * Экспортируется для замера ширины колонок в `@ui/table/column-sizing`,
- * чтение стилей — через `getTextProperties` и `getTextStyles`.
+ * чтение стилей — через `getTextProperties`.
  */
 export const textSizePresets = Object.freeze({
   extraBold: Object.freeze({
@@ -118,6 +92,44 @@ export const TEXT_SIZE_PRESET_KEYS = Object.freeze(
 );
 
 /**
+ * DEFAULT_TEXT_SIZE_PRESET — задаёт типографический пресет по умолчанию.
+ * Используется, когда вызывающий код не передал проп `sizePreset`.
+ */
+const DEFAULT_TEXT_SIZE_PRESET: TextSizePreset = 'normal';
+
+/**
+ * getTextProperties — возвращает CSS-правила типографики: размер, насыщенность
+ * и высоту строки.
+ * Используется для нативных `<input>` и `<textarea>`, которые нельзя обернуть
+ * в компонент Text.
+ *
+ * @param sizePreset типографический пресет
+ * @returns значения для CSS-свойств `font-size`, `font-weight`, `line-height`
+ */
+export function getTextProperties(sizePreset: TextSizePreset): string {
+  const preset = textSizePresets[sizePreset];
+
+  const styles = [
+    `font-size: ${preset.fontSize};`,
+    `font-weight: ${preset.fontWeight};`,
+    `line-height: ${preset.lineHeight};`,
+  ];
+
+  return styles.join('\n');
+}
+
+/**
+ * getTextLineHeight — возвращает высоту строки для типографического пресета.
+ * Используется для резерва места под однострочный Text без захардкоженных значений.
+ *
+ * @param sizePreset типографический пресет
+ * @returns значение для CSS-свойства `line-height`
+ */
+export function getTextLineHeight(sizePreset: TextSizePreset): string {
+  return textSizePresets[sizePreset].lineHeight;
+}
+
+/**
  * TextAlignPreset — представляет выравнивание текста в каноническом ряду проекта.
  */
 export type TextAlignPreset = 'center' | 'end' | 'start';
@@ -133,10 +145,55 @@ export const TEXT_ALIGN_PRESET_KEYS = Object.freeze([
 ] as const satisfies readonly TextAlignPreset[]);
 
 /**
- * DEFAULT_TEXT_SIZE_PRESET — задаёт типографический пресет по умолчанию.
- * Используется, когда вызывающий код не передал проп `sizePreset`.
+ * TEXT_TONE_PRESETS — связывает тоны текста с ключами цвета в теме.
+ * Расширяет канон `TONE_PRESETS` спредом, добавляя тон `muted` для вторичного текста.
+ *
+ * Соответствие приватно для модуля. Экспортируется только перечень `TEXT_TONE_KEYS`,
+ * цвет подставляют приватные `getTextToneColorKey` и `getTextToneColor`.
  */
-const DEFAULT_TEXT_SIZE_PRESET: TextSizePreset = 'normal';
+const TEXT_TONE_PRESETS = {
+  ...TONE_PRESETS,
+  muted: 'muted',
+} as const satisfies Record<'muted' | TonePreset, keyof ThemeColors | undefined>;
+
+/**
+ * TextTone — представляет тоны текста.
+ * Включает все канонические тона и дополнительный `muted` для вторичного текста.
+ */
+export type TextTone = keyof typeof TEXT_TONE_PRESETS;
+
+/**
+ * TEXT_TONE_KEYS — формирует перечень тонов текста из ключей `TEXT_TONE_PRESETS`.
+ * Используется в панелях настроек витрины дизайн-системы: `ToneListbox` принимает его пропом `tones`.
+ */
+export const TEXT_TONE_KEYS = Object.freeze(
+  Object.keys(TEXT_TONE_PRESETS) as TextTone[]
+);
+
+/**
+ * getTextToneColorKey — возвращает ключ цвета в теме для указанного тона текста.
+ * Для тона по умолчанию возвращает `undefined` — цвет наследуется от родителя.
+ *
+ * @param tone тон текста
+ * @returns ключ цвета темы или `undefined`
+ */
+function getTextToneColorKey(tone: TextTone): keyof ThemeColors | undefined {
+  return TEXT_TONE_PRESETS[tone];
+}
+
+/**
+ * getTextToneColor — возвращает цвет темы для указанного тона текста.
+ * Для тона по умолчанию возвращает `undefined` — цвет наследуется от родителя.
+ *
+ * @param theme текущая тема
+ * @param tone тон текста
+ * @returns CSS-цвет или `undefined`
+ */
+function getTextToneColor(theme: AppTheme, tone: TextTone): string | undefined {
+  const colorKey = getTextToneColorKey(tone);
+
+  return colorKey ? theme.colors[colorKey] : undefined;
+}
 
 /**
  * TextStyleProps — представляет пропсы стилизации Text и layout-пропсы.
@@ -184,63 +241,6 @@ const TEXT_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * getTextToneColorKey — возвращает ключ цвета в теме для указанного тона текста.
- * Для тона по умолчанию возвращает `undefined` — цвет наследуется от родителя.
- *
- * @param tone тон текста
- * @returns ключ цвета темы или `undefined`
- */
-function getTextToneColorKey(tone: TextTone): keyof ThemeColors | undefined {
-  return TEXT_TONE_PRESETS[tone];
-}
-
-/**
- * getTextToneColor — возвращает цвет темы для указанного тона текста.
- * Для тона по умолчанию возвращает `undefined` — цвет наследуется от родителя.
- *
- * @param theme текущая тема
- * @param tone тон текста
- * @returns CSS-цвет или `undefined`
- */
-function getTextToneColor(theme: AppTheme, tone: TextTone): string | undefined {
-  const colorKey = getTextToneColorKey(tone);
-
-  return colorKey ? theme.colors[colorKey] : undefined;
-}
-
-/**
- * getTextProperties — возвращает CSS-правила типографики: размер, насыщенность
- * и высоту строки.
- * Используется для нативных `<input>` и `<textarea>`, которые нельзя обернуть
- * в компонент Text.
- *
- * @param sizePreset типографический пресет
- * @returns значения для CSS-свойств `font-size`, `font-weight`, `line-height`
- */
-export function getTextProperties(sizePreset: TextSizePreset): string {
-  const preset = textSizePresets[sizePreset];
-
-  const styles = [
-    `font-size: ${preset.fontSize};`,
-    `font-weight: ${preset.fontWeight};`,
-    `line-height: ${preset.lineHeight};`,
-  ];
-
-  return styles.join('\n');
-}
-
-/**
- * getTextLineHeight — возвращает высоту строки для типографического пресета.
- * Используется для резерва места под однострочный Text без захардкоженных значений.
- *
- * @param sizePreset типографический пресет
- * @returns значение для CSS-свойства `line-height`
- */
-export function getTextLineHeight(sizePreset: TextSizePreset): string {
-  return textSizePresets[sizePreset].lineHeight;
-}
-
-/**
  * getTextStyles — преобразует текстовые пропсы в готовые CSS-правила.
  *
  * Как работает:
@@ -260,7 +260,7 @@ export function getTextLineHeight(sizePreset: TextSizePreset): string {
  * @param props объект с текстовыми пропсами и темой
  * @returns CSS-правила, каждое с новой строки
  */
-export function getTextStyles(props: TextStyleProps & { theme: AppTheme }): string {
+function getTextStyles(props: TextStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
   const {
     align,

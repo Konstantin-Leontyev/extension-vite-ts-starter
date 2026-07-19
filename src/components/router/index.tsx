@@ -4,7 +4,7 @@
  *
  * Основные задачи:
  * 1. Реэкспортировать конфигурацию `router`
- * 2. Реэкспортировать хук `useShellOutletContext` и тип `ShellOutletContext`
+ * 2. Реэкспортировать хук `useShellOutletContext`
  *
  * Потребители:
  *  - `src/main.tsx` — подключает `router` через `RouterProvider`
@@ -12,10 +12,6 @@
  */
 
 import { router } from './router';
-import {
-  useShellOutletContext,
-  type ShellOutletContext,
-} from './use-shell-outlet-context';
+import { useShellOutletContext } from './use-shell-outlet-context';
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт конфигурации маршрутов и хука контекста */
-export { router, useShellOutletContext, type ShellOutletContext };
+export { router, useShellOutletContext };

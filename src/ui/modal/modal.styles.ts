@@ -3,7 +3,7 @@
  * Определяет внешний вид компонента Modal.
  *
  * Основные задачи:
- * 1. Предоставить функцию `getModalDialogStyles` и styled-узел `StyledModalDialog`
+ * 1. Предоставить styled-узел `StyledModalDialog`
  *
  * Потребители:
  *  - `src/ui/modal/index.tsx` — собирает компонент Modal
@@ -19,16 +19,18 @@ import { getTheme, type AppTheme } from '@ui/theme';
  * затемнение страницы под модальным окном через псевдоэлемент `::backdrop`.
  *
  * @param props объект с полем `theme` из styled-components
- * @returns CSS-правило псевдоэлемента `::backdrop`
+ * @returns CSS-правила, каждое с новой строки
  */
-export function getModalDialogStyles(props: { theme: AppTheme }): string {
+function getModalDialogStyles(props: { theme: AppTheme }): string {
   const theme = getTheme(props);
 
-  return `
-    &::backdrop {
+  const styles = [
+    `&::backdrop {
       background-color: ${theme.colors.overlay};
-    }
-  `;
+    }`,
+  ];
+
+  return styles.join('\n');
 }
 
 /**

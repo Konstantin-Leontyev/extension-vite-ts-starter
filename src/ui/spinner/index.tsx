@@ -43,6 +43,12 @@ import {
 const DEFAULT_SPINNER_ARIA_LABEL = 'Loading';
 
 /**
+ * DEFAULT_SPINNER_RESERVE_TEXT_SPACE — задаёт резерв высоты под подпись по умолчанию.
+ * Используется, когда вызывающий код не передал проп `reserveTextSpace`.
+ */
+const DEFAULT_SPINNER_RESERVE_TEXT_SPACE = false;
+
+/**
  * DEFAULT_SPINNER_TEXT_TONE — задаёт тон подписи по умолчанию.
  * Подпись контрола — вторичный текст, поэтому `muted`.
  */
@@ -80,7 +86,7 @@ type SpinnerProps = SpinnerStyleProps & {
 function Spinner({
   ariaLabel = DEFAULT_SPINNER_ARIA_LABEL,
   children,
-  reserveTextSpace = false,
+  reserveTextSpace = DEFAULT_SPINNER_RESERVE_TEXT_SPACE,
   sizePreset,
   textItalic,
   textSize,
