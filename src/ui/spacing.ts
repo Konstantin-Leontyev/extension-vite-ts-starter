@@ -5,9 +5,11 @@
  * через пропсы компонентов и как эти пропсы преобразуются в CSS-стили.
  *
  * Основные задачи:
- * 1. Хранить шкалу px → rem в `SPACING_VALUES`
- * 2. Типизировать spacing-пропсы через `SpacingProps` и `SpacingValue`
- * 3. Генерировать CSS-правила через `getSpacingStyles` и значения шкалы через `getSpacingValue`
+ * 1. Типизировать spacing-пропсы через `SpacingProps` и `SpacingValue`
+ * 2. Хранить шкалу px → rem в `SPACING_VALUES`
+ * 3. Связать пропсы с CSS-свойствами через `SPACING_PROPERTIES`
+ * 4. Генерировать CSS-правила через `getSpacingStyles` и значения шкалы через `getSpacingValue`
+ * 5. Предоставить перечень имён пропсов через `SPACING_PROPERTY_NAMES`
  *
  * Потребители:
  *  - `@ui/layout` — реэкспортирует публичное API модуля
@@ -67,6 +69,16 @@ const SPACING_VALUES = {
 export type SpacingValue = keyof typeof SPACING_VALUES;
 
 /**
+ * getSpacingValue — принимает метку шкалы и возвращает её значение в rem.
+ *
+ * @param value метка шкалы отступов
+ * @returns CSS-длина в rem, например `1rem`
+ */
+export function getSpacingValue(value: SpacingValue): string {
+  return SPACING_VALUES[value];
+}
+
+/**
  * SPACING_PROPERTIES — связывает имена пропсов с CSS-свойствами.
  * Необходим для динамической генерации CSS-стилей для каждого переданного пропса.
  *
@@ -114,16 +126,6 @@ export type SpacingProps = { [K in keyof typeof SPACING_PROPERTIES]?: SpacingVal
  * например для обёртки Input и самого элемента `<input>`.
  */
 export const SPACING_PROPERTY_NAMES = new Set<string>(Object.keys(SPACING_PROPERTIES));
-
-/**
- * getSpacingValue — принимает метку шкалы и возвращает её значение в rem.
- *
- * @param value метка шкалы отступов
- * @returns CSS-длина в rem, например `1rem`
- */
-export function getSpacingValue(value: SpacingValue): string {
-  return SPACING_VALUES[value];
-}
 
 /**
  * getSpacingStyles — преобразует spacing-пропсы в готовые CSS-правила.

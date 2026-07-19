@@ -72,24 +72,6 @@ export const LAYOUT_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * getLayoutStyles — объединяет CSS-правила из модулей отступов, позиционирования и размеров.
- *
- * Как работает:
- * 1. Вызывает `getSpacingStyles`, `getPositioningStyles` и `getSizingStyles`
- * 2. Отбрасывает пустые результаты
- * 3. Склеивает оставшиеся правила через перенос строки
- * 4. Отдаёт результат для подстановки в CSS-шаблон styled-компонента
- *
- * @param props объект с layout-пропсами
- * @returns CSS-правила, каждое с новой строки
- */
-export function getLayoutStyles(props: LayoutProps): string {
-  return [getSpacingStyles(props), getPositioningStyles(props), getSizingStyles(props)]
-    .filter(Boolean)
-    .join('\n');
-}
-
-/**
  * splitLayoutProps — разделяет пропсы на layout и остальные.
  * Используется в компонентах-обёртках, когда layout-стили нужно применить к корневому
  * элементу, а остальные пропсы передать в DOM-узел или дочерний компонент.
@@ -122,4 +104,22 @@ export function splitLayoutProps<T extends Partial<LayoutProps>>(
     layoutProps: layoutProps as LayoutProps,
     restProps: restProps as Omit<T, keyof LayoutProps>,
   };
+}
+
+/**
+ * getLayoutStyles — объединяет CSS-правила из модулей отступов, позиционирования и размеров.
+ *
+ * Как работает:
+ * 1. Вызывает `getSpacingStyles`, `getPositioningStyles` и `getSizingStyles`
+ * 2. Отбрасывает пустые результаты
+ * 3. Склеивает оставшиеся правила через перенос строки
+ * 4. Отдаёт результат для подстановки в CSS-шаблон styled-компонента
+ *
+ * @param props объект с layout-пропсами
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getLayoutStyles(props: LayoutProps): string {
+  return [getSpacingStyles(props), getPositioningStyles(props), getSizingStyles(props)]
+    .filter(Boolean)
+    .join('\n');
 }

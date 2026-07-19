@@ -7,7 +7,7 @@
  * Основные задачи:
  * 1. Типизировать тему через `ThemeColors` и `AppTheme`
  * 2. Предоставить готовые объекты `styledLightTheme` и `styledDarkTheme`
- * 3. Обеспечить доступ к текущей теме через `getTheme`
+ * 3. Предоставить доступ к текущей теме через `getTheme`
  * 4. Задать глобальные стили через `GlobalThemeStyle`
  * 5. Расширить `DefaultTheme` для корректной работы с TypeScript
  *
@@ -79,12 +79,12 @@ export type AppTheme = {
 
 /**
  * DISABLED_OPACITY — задаёт прозрачность disabled-элементов.
- * Используется в стилях кнопок, полей ввода и других контролов.
+ * Используется в глобальном сбросе `GlobalResetStyle` из `@ui/reset`.
  */
 export const DISABLED_OPACITY = 0.55;
 
 /**
- * lightColors — представляет цветовую палитру для светлой темы.
+ * lightColors — хранит цветовую палитру светлой темы.
  * Все значения — hex-коды или CSS-функции, например `color-mix`.
  * Названия оттенков в inline-комментариях взяты из словаря https://get-color.ru/
  */
@@ -108,7 +108,7 @@ const lightColors: ThemeColors = {
 };
 
 /**
- * darkColors — представляет цветовую палитру для тёмной темы.
+ * darkColors — хранит цветовую палитру тёмной темы.
  * Все значения — hex-коды или CSS-функции, например `color-mix`.
  * Названия оттенков в inline-комментариях взяты из словаря https://get-color.ru/
  */
@@ -132,7 +132,7 @@ const darkColors: ThemeColors = {
 };
 
 /**
- * styledLightTheme — представляет готовую светлую тему приложения.
+ * styledLightTheme — задаёт готовую светлую тему приложения.
  * Содержит цветовую схему, все цвета и тени.
  */
 export const styledLightTheme: AppTheme = {
@@ -145,7 +145,7 @@ export const styledLightTheme: AppTheme = {
 };
 
 /**
- * styledDarkTheme — представляет готовую тёмную тему приложения.
+ * styledDarkTheme — задаёт готовую тёмную тему приложения.
  * Содержит цветовую схему и все цвета. Тени отключены.
  */
 export const styledDarkTheme: AppTheme = {

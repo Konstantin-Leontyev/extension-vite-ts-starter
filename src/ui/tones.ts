@@ -48,16 +48,16 @@ export const TONE_PRESETS = Object.freeze({
 } as const satisfies Record<TonePreset, keyof ThemeColors | undefined>);
 
 /**
- * DEFAULT_TONE — задаёт тон по умолчанию.
- * Используется в контролах, где тон опционален.
- */
-export const DEFAULT_TONE: TonePreset = 'default';
-
-/**
  * TONE_PRESET_KEYS — формирует перечень канонических тонов из ключей `TONE_PRESETS`.
  * Используется в панелях настроек витрины дизайн-системы: `ToneListbox` принимает его пропом `tones`.
  */
 export const TONE_PRESET_KEYS = Object.freeze(Object.keys(TONE_PRESETS) as TonePreset[]);
+
+/**
+ * DEFAULT_TONE — задаёт тон по умолчанию.
+ * Используется в контролах, где тон опционален.
+ */
+export const DEFAULT_TONE: TonePreset = 'default';
 
 /**
  * getToneColorKey — возвращает ключ цвета в теме для указанного тона.
