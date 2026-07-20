@@ -32,9 +32,11 @@ import { DISABLED_OPACITY, getTheme } from '@ui/theme';
  *  - блочное отображение мультимедиа: `<img>`, `<picture>`, `<video>`, `<canvas>`, `<svg>`
  *  - наследование шрифта и цвета для элементов форм
  *  - сброс дефолтных рамок и фона кнопок
- *  - состояния `disabled` — курсор и прозрачность из `DISABLED_OPACITY`. Обёртка
- *    `<label>` с disabled-input приглушается целиком, двойное приглушение самого input
- *    компенсируется `opacity: 1`
+ *  - состояния `disabled` — курсор и прозрачность из `DISABLED_OPACITY`.
+ *    Три контракта: `:disabled` — сам нативный элемент; `label:has(:disabled)` —
+ *    label-обёртка контрола с подписью; `[data-disabled]` — оболочка композитного
+ *    контрола, объявляющая состояние атрибутом. Двойное приглушение `input`
+ *    и `button` внутри обёрток компенсируется `opacity: 1`
  *  - стили для ссылок: цвет, подчёркивание, наведение, фокус
  *  - фокус-кольца для интерактивных элементов с цветами из темы
  *  - подсветку невалидных полей с `aria-invalid="true"`
@@ -122,12 +124,13 @@ export const GlobalResetStyle = createGlobalStyle`
     opacity: ${DISABLED_OPACITY};
   }
 
-  label:has(:disabled) {
+  label:has(:disabled),
+  [data-disabled] {
     cursor: not-allowed;
     opacity: ${DISABLED_OPACITY};
   }
 
-  label:has(:disabled) input:disabled {
+  :is(label:has(:disabled), [data-disabled]) :is(input, button):disabled {
     opacity: 1;
   }
 

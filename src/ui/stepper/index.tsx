@@ -64,7 +64,6 @@ const DEFAULT_STEPPER_STEP = 1;
 
 /**
  * DEFAULT_STEPPER_SUFFIX_TONE — задаёт тон суффикса по умолчанию.
- * Используется, когда вызывающий код не передал проп `textTone`.
  * Суффикс единицы — вторичный текст, поэтому `muted`.
  */
 const DEFAULT_STEPPER_SUFFIX_TONE: TextTone = 'muted';
@@ -319,7 +318,12 @@ export function Stepper({
   useEffect(() => stopHold, [stopHold]);
 
   return (
-    <StyledStepperRoot {...layoutProps} shape={shape} sizePreset={sizePreset}>
+    <StyledStepperRoot
+      {...layoutProps}
+      data-disabled={disabled ? '' : undefined}
+      shape={shape}
+      sizePreset={sizePreset}
+    >
       <StyledStepperValue sizePreset={sizePreset} textAlign={textAlign}>
         <StyledStepperInput
           inputMode="numeric"

@@ -125,6 +125,10 @@ function getStepperRootStyles(
  * Генерация стилей:
  *  - `getStepperRootStyles` — габариты, рамка, скругление, фон, тень и кольцо фокуса
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ *
+ * При блокировке `index.tsx` ставит на корень атрибут `data-disabled` — контракт
+ * `[data-disabled]` из `@ui/reset` приглушает рамку, фон, значение, суффикс и стрелки,
+ * без локального disabled-стиля.
  */
 export const StyledStepperRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !STEPPER_ROOT_PROP_NAMES.has(prop),
