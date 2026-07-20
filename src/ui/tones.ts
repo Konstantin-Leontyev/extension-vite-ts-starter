@@ -92,20 +92,28 @@ export function getToneColor(
 }
 
 /**
+ * SHADE_KEEP_PERCENT — задаёт долю исходного цвета в `resolveColorMix` по умолчанию.
+ * Используется, когда вызывающий код не передал `colorPercent`: сдвиг непрозрачной
+ * цветной заливки к `shade` темы в состояниях `hover` и `active`.
+ */
+const SHADE_KEEP_PERCENT = 80;
+
+/**
  * resolveColorMix — возвращает смесь двух цветов через `color-mix` в пространстве `srgb`.
- * Единственный способ смешения цветов в компонентах: затемнение заливки — база
- * `theme.colors.shade`, размывка по поверхности — база `theme.colors.surface`,
+ * Единственный способ смешения цветов в компонентах: сдвиг заливки в состояниях —
+ * база `theme.colors.shade`, размывка по поверхности — база `theme.colors.surface`,
  * тинт — база `transparent`.
  *
  * @param color исходный цвет
- * @param colorPercent доля исходного цвета в процентах, остаток — база
  * @param base цвет-база смеси
+ * @param colorPercent доля исходного цвета в процентах, остаток — база.
+ *   Умолчание `SHADE_KEEP_PERCENT` — сдвиг заливки состояния
  * @returns значение для CSS-свойств `background-color` и `color`
  */
 export function resolveColorMix(
   color: string,
-  colorPercent: number,
-  base: string
+  base: string,
+  colorPercent: number = SHADE_KEEP_PERCENT
 ): string {
   return `color-mix(in srgb, ${color} ${colorPercent}%, ${base})`;
 }

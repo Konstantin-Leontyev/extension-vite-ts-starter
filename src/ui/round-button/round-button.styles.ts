@@ -100,6 +100,10 @@ export const DEFAULT_ROUND_BUTTON_SHOW_BORDER = true;
  * габарит, оформление в режиме с границей или без неё
  * и подсветку `:not(:disabled):hover` и `:focus-visible` — отдельная проверка
  * disabled в focus-правиле не нужна, потому что disabled-кнопка не фокусируется.
+ * Рамка занимает 1px в обоих режимах: без границы она прозрачная, поэтому
+ * окно Icon внутри кнопки одинаково при любом `showBorder`.
+ * Собственной заливки у кнопки нет, поэтому подсветка — вуаль `theme.colors.veil`
+ * поверх подложки.
  *
  * @param props пропсы стилизации круглой кнопки и тема
  * @returns CSS-правила, каждое с новой строки
@@ -120,14 +124,15 @@ function getRoundButtonStyles(
     styles.push(`border: 1px solid ${theme.colors.border};`);
     styles.push(`box-shadow: ${theme.shadow.surface};`);
   } else {
-    styles.push(`color: ${theme.colors.muted};`);
+    // Прозрачная рамка резервирует толщину видимой: при border-box контент-бокс,
+    // а с ним и окно Icon, не зависят от showBorder — иначе svg 32px против 30px.
+    styles.push('border: 1px solid transparent;');
   }
 
   styles.push(`
     &:not(:disabled):hover,
     &:focus-visible {
-      color: ${theme.colors.muted};
-      background-color: ${theme.colors.hoverSurface};
+      background-color: ${theme.colors.veil};
     }
   `);
 

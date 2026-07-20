@@ -390,7 +390,7 @@ function getStepperButtonStyles(
     '&:not(:disabled):hover,',
     '&:focus-visible {',
     `color: ${theme.colors.default};`,
-    `background-color: ${theme.colors.hoverSurface};`,
+    `background-color: ${theme.colors.veil};`,
     '}',
   ];
 

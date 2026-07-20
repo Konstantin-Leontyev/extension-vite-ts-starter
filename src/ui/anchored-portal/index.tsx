@@ -32,8 +32,8 @@ import { useAnchoredDismiss } from '@hooks/use-anchored-dismiss';
 import {
   useAnchoredPortalPosition,
   type AnchoredPortalPositionStrategy,
-} from '@hooks/use-anchored-panel-position';
-import { useFocusTrap } from '@hooks/use-focus-trap';
+} from '@hooks/use-anchored-portal-position';
+import { useFocus } from '@hooks/use-focus';
 
 /**
  * DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS — задаёт зависимости перефокуса по умолчанию.
@@ -108,7 +108,7 @@ export function AnchoredPortal({
     zoneRefs: dismissZoneRefs,
   });
 
-  useFocusTrap({
+  useFocus({
     active: open,
     containerRef: panelRef,
     returnFocusRef,

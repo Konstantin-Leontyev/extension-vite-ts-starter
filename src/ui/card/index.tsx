@@ -42,6 +42,7 @@ import {
   RoundButton,
   type RoundButtonSizePreset,
 } from '@ui/round-button';
+import { type SpacingValue } from '@ui/spacing';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 
 import {
@@ -70,6 +71,8 @@ type CardHtmlTag = 'article' | 'div' | 'section';
  * @property ariaLabel — доступное имя кнопки
  * @property disabled — включает недоступное состояние
  * @property icon — svg иконки действия
+ * @property iconPadding — отступ окна Icon. Область клика кнопки не меняет,
+ *   увеличенный отступ зрительно уменьшает глиф, например close в Modal и ProfileMenu
  * @property onClick — обработчик клика
  * @property sizePreset — размер RoundButton
  */
@@ -79,6 +82,7 @@ type CardHeaderAction = {
   ariaLabel?: string;
   disabled?: boolean;
   icon: ReactNode;
+  iconPadding?: SpacingValue;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   sizePreset?: RoundButtonSizePreset;
 };
@@ -106,6 +110,12 @@ const DEFAULT_CARD_SUBTITLE_TONE: TextTone = 'muted';
  * Используется, когда вызывающий код не передал проп `headerActions`.
  */
 const DEFAULT_CARD_HEADER_ACTIONS: CardHeaderAction[] = [];
+
+/**
+ * DEFAULT_CARD_ACTION_ICON_PADDING — задаёт отступ окна Icon в кнопке действия.
+ * Используется, когда вызывающий код не передал проп `iconPadding`.
+ */
+const DEFAULT_CARD_ACTION_ICON_PADDING: SpacingValue = 4;
 
 /**
  * handleHeaderActionClick — останавливает всплытие клика по действию шапки
@@ -201,7 +211,11 @@ function Card<T extends CardHtmlTag = 'div'>({
           tabIndex={action.ariaLabel ? undefined : -1}
           onClick={(event) => handleHeaderActionClick(action, event)}
         >
-          <Icon blockSize="100%" inlineSize="100%" padding={4}>
+          <Icon
+            blockSize="100%"
+            inlineSize="100%"
+            padding={action.iconPadding ?? DEFAULT_CARD_ACTION_ICON_PADDING}
+          >
             {action.icon}
           </Icon>
         </RoundButton>

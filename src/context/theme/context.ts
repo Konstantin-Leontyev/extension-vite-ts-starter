@@ -9,7 +9,7 @@
  *
  * Потребители:
  *  - `src/context/theme/index.tsx` — наполняет контекст в `ThemeProvider`
- *  - `src/hooks/use-theme-mode.ts` — читает контекст в хуке `useThemeMode`
+ *  - `src/hooks/use-theme.ts` — читает контекст в хуке `useTheme`
  */
 
 import { createContext } from 'react';
@@ -30,6 +30,6 @@ export type ThemeContextValue = {
 
 /**
  * ThemeContext — предоставляет доступ к API чтения и переключения темы.
- * Читается через хук `useThemeMode`, который проверяет наличие провайдера.
+ * Читается через хук `useTheme`, который проверяет наличие провайдера.
  */
 export const ThemeContext = createContext<null | ThemeContextValue>(null);

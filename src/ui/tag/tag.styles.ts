@@ -138,7 +138,7 @@ function resolveTagSurface(
     return {
       textColor: theme.colors.default,
       backgroundColor: tinted
-        ? resolveColorMix(theme.colors.muted, 14, 'transparent')
+        ? resolveColorMix(theme.colors.muted, 'transparent', 14)
         : 'transparent',
     };
   }
@@ -146,7 +146,7 @@ function resolveTagSurface(
   const color = theme.colors[colorKey];
 
   return tinted
-    ? { textColor: color, backgroundColor: resolveColorMix(color, 16, 'transparent') }
+    ? { textColor: color, backgroundColor: resolveColorMix(color, 'transparent', 16) }
     : { textColor: theme.colors.inverse, backgroundColor: color };
 }
 

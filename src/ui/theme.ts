@@ -31,16 +31,18 @@ import './fonts/inter.css';
  * @property danger — цвет ошибок и опасных действий
  * @property default — основной цвет текста
  * @property focusRing — цвет кольца фокуса
- * @property hoverSurface — фон нейтрального интерактива при наведении и фокусе
  * @property invalidRing — цвет кольца для невалидных полей
  * @property inverse — контрастный текст на цветной заливке, например на кнопке или плашке
  * @property muted — второстепенный цвет текста
  * @property overlay — затемнение страницы под модальным слоем, например в `::backdrop`
  * @property primary — акцентный цвет бренда
  * @property scrollbarThumb — цвет бегунка скроллбара
- * @property shade — база затемнения заливок в `color-mix` при наведении и нажатии
+ * @property shade — база сдвига непрозрачных цветных заливок в состояниях `hover`
+ *   и `active`. Светлая тема затемняет к чёрному, тёмная осветляет к белому
  * @property success — цвет успешных действий
  * @property surface — фон карточек и поверхностей
+ * @property veil — полупрозрачная вуаль состояний `hover`, `focus` и `active`
+ *   для узлов без собственной заливки. Сила подобрана в каждой палитре отдельно
  * @property warning — цвет предупреждений
  */
 export type ThemeColors = {
@@ -49,7 +51,6 @@ export type ThemeColors = {
   danger: string;
   default: string;
   focusRing: string;
-  hoverSurface: string;
   invalidRing: string;
   inverse: string;
   muted: string;
@@ -59,6 +60,7 @@ export type ThemeColors = {
   shade: string;
   success: string;
   surface: string;
+  veil: string;
   warning: string;
 };
 
@@ -96,7 +98,6 @@ const lightColors: ThemeColors = {
   danger:         '#d53032',                                        // Клубнично-красный
   default:        '#1a162a',                                        // Темный пурпурно-синий
   focusRing:      'color-mix(in srgb, #1a73e8 35%, transparent)',
-  hoverSurface:   'color-mix(in srgb, #e5e4e2 30%, #ffffff)',
   invalidRing:    'color-mix(in srgb, #d93025 35%, transparent)',
   inverse:        '#f9fafb',                                        // Белоснежный
   muted:          '#606e8c',                                        // Голубино-синий
@@ -106,6 +107,7 @@ const lightColors: ThemeColors = {
   shade:          '#000000',                                        // Чёрный
   success:        '#177245',                                        // Темный весенне-зеленый
   surface:        '#ffffff',                                        // Белый
+  veil:           'rgb(0 0 0 / 3%)',
   warning:        '#ea7500',                                        // Темный мандарин
 };
 
@@ -121,16 +123,16 @@ const darkColors: ThemeColors = {
   danger:         '#e34234',                                        // Китайский красный
   default:        '#f9fafb',                                        // Белоснежный
   focusRing:      'color-mix(in srgb, #1a73e8 42%, transparent)',
-  hoverSurface:   'color-mix(in srgb, #2f353b 80%, #161a1e)',
   invalidRing:    'color-mix(in srgb, #ea4335 42%, transparent)',
   inverse:        '#f9fafb',                                        // Белоснежный
   muted:          '#b0b7c6',                                        // Кадетский синий Крайола
   overlay:        'rgb(0 0 0 / 50%)',
   primary:        '#1974d2',                                        // Темно-синий Крайола
   scrollbarThumb: '#414a4c',                                        // Космос
-  shade:          '#000000',                                        // Чёрный
+  shade:          '#ffffff',                                        // Белый
   success:        '#2e8b57',                                        // Зеленое море
   surface:        '#161a1e',                                        // Черновато-синий
+  veil:           'rgb(255 255 255 / 20%)',
   warning:        '#f9ab00',                                        // Дынно-желтый
 };
 
