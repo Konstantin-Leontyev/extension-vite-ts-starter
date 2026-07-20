@@ -31,10 +31,27 @@ import { getSpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 /**
- * CardBackground — представляет заливку карточки: surface, фон страницы
+ * resolveLargestHeaderActionSizePreset — вычисляет наибольший пресет в ряду действий
+ * шапки. Под него резервируется высота первой строки, когда действия присутствуют.
+ *
+ * @param sizePresets пресеты действий с уже подставленным дефолтом RoundButton
+ * @returns наибольший пресет ряда
+ */
+export function resolveLargestHeaderActionSizePreset(
+  sizePresets: readonly RoundButtonSizePreset[]
+): RoundButtonSizePreset {
+  return sizePresets.reduce<RoundButtonSizePreset>((largest, preset) => {
+    return getRoundButtonMinBlockSize(preset) > getRoundButtonMinBlockSize(largest)
+      ? preset
+      : largest;
+  }, DEFAULT_ROUND_BUTTON_SIZE_PRESET);
+}
+
+/**
+ * CardBackground — представляет заливку карточки: поверхность, фон страницы
  * или прозрачную без тени.
  */
-export type CardBackground = 'background' | 'default' | 'transparent';
+export type CardBackground = 'background' | 'surface' | 'transparent';
 
 /**
  * CARD_BACKGROUND_KEYS — хранит перечень фонов карточки.
@@ -42,7 +59,7 @@ export type CardBackground = 'background' | 'default' | 'transparent';
  * в `Listbox` пропом `options`.
  */
 export const CARD_BACKGROUND_KEYS = Object.freeze([
-  'default',
+  'surface',
   'background',
   'transparent',
 ] as const satisfies readonly CardBackground[]);
@@ -71,7 +88,7 @@ const CARD_PROP_NAMES = new Set<string>([
  * DEFAULT_CARD_BACKGROUND — задаёт фон карточки по умолчанию.
  * Используется, когда вызывающий код не передал проп `background`.
  */
-const DEFAULT_CARD_BACKGROUND: CardBackground = 'default';
+const DEFAULT_CARD_BACKGROUND: CardBackground = 'surface';
 
 /**
  * getCardStyles — возвращает CSS-правила для корня `StyledCard`: grid-ряды,
@@ -175,23 +192,6 @@ export const StyledCardHeaderActions = styled.div`
   column-gap: ${getSpacingValue(8)};
   align-items: center;
 `;
-
-/**
- * resolveLargestHeaderActionSizePreset — вычисляет наибольший пресет в ряду действий
- * шапки. Под него резервируется высота первой строки, когда действия присутствуют.
- *
- * @param sizePresets пресеты действий с уже подставленным дефолтом RoundButton
- * @returns наибольший пресет ряда
- */
-export function resolveLargestHeaderActionSizePreset(
-  sizePresets: readonly RoundButtonSizePreset[]
-): RoundButtonSizePreset {
-  return sizePresets.reduce<RoundButtonSizePreset>((largest, preset) => {
-    return getRoundButtonMinBlockSize(preset) > getRoundButtonMinBlockSize(largest)
-      ? preset
-      : largest;
-  }, DEFAULT_ROUND_BUTTON_SIZE_PRESET);
-}
 
 /**
  * CardHeaderFirstLineStyleProps — представляет пропсы стилизации первой строки шапки.

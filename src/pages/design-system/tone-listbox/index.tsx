@@ -18,6 +18,7 @@
  *     - `src/pages/design-system/fieldset-settings/index.tsx`
  *     - `src/pages/design-system/toast-settings/index.tsx`
  *     - `src/pages/design-system/text-settings/index.tsx`
+ *     - `src/pages/design-system/text-group/index.tsx`
  *     - `src/pages/design-system/progress-bar-settings/index.tsx`
  *     - `src/pages/design-system/spinner-settings/index.tsx`
  *     - `src/pages/design-system/switch-settings/index.tsx`
@@ -91,14 +92,15 @@ function getToneListboxValue<Tone extends string>(
  * @property onChange — обработчик изменения выбранного тона
  * @property tones — перечень допустимых тонов из настраиваемого компонента,
  *   например `TONE_PRESET_KEYS` или `TEXT_TONE_KEYS`
- * @property value — текущий выбранный тон
+ * @property value — текущий выбранный тон, по умолчанию `default`.
+ *   Панели передают состояние как есть, не дублируя это умолчание запасными значениями
  */
 type ToneListboxProps<Tone extends string> = {
   excludeTone?: Tone;
   label: string;
   onChange: (tone: Tone) => void;
   tones: readonly Tone[];
-  value: Tone;
+  value?: Tone;
 };
 
 /**
@@ -124,7 +126,7 @@ export function ToneListbox<Tone extends string = TonePreset>({
   label,
   onChange,
   tones,
-  value,
+  value = DEFAULT_TONE as Tone,
 }: ToneListboxProps<Tone>) {
   return (
     <Listbox

@@ -5,7 +5,7 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `TextStyleProps`, `TextTone` и `TextSizePreset`
  * 2. Хранить тоны текста в `TEXT_TONE_PRESETS` и пресеты типографики в `textSizePresets`
- * 3. Предоставить функции `getTextProperties` и `getTextLineHeight`,
+ * 3. Предоставить функции `getTextProperties`, `getTextLineHeight` и `getTextToneColor`,
  *    а также перечни `TEXT_TONE_KEYS`, `TEXT_SIZE_PRESET_KEYS` и `TEXT_ALIGN_PRESET_KEYS`
  * 4. Предоставить styled-узел `StyledText`
  *
@@ -13,8 +13,9 @@
  *  - `src/ui/text/index.tsx` — собирает компонент Text и реэкспортирует публичное API
  *  - `@ui/presets` — собирает типографику контрола через `getTextProperties`
  *  - `@ui/table/column-sizing` — замеряет ширину колонки по `textSizePresets`
- *  - `@ui/table/table-inline-field`, `@ui/stepper` — стилизуют нативные
- *    поля ввода через `getTextProperties`
+ *  - `@ui/table/table-inline-field` — стилизует нативное поле ввода через `getTextProperties`
+ *  - `@ui/stepper` — стилизует нативное поле ввода через `getTextProperties`
+ *    и `getTextToneColor`
  *  - `@ui/input`, `@ui/combobox`, `@ui/listbox`, `@ui/range-input`, `@ui/spinner`,
  *    `@ui/table` — резервируют место под однострочный текст через `getTextLineHeight`
  */
@@ -148,8 +149,8 @@ export const TEXT_ALIGN_PRESET_KEYS = Object.freeze([
  * TEXT_TONE_PRESETS — связывает тоны текста с ключами цвета в теме.
  * Расширяет канон `TONE_PRESETS` спредом, добавляя тон `muted` для вторичного текста.
  *
- * Соответствие приватно для модуля. Экспортируется только перечень `TEXT_TONE_KEYS`,
- * цвет подставляют приватные `getTextToneColorKey` и `getTextToneColor`.
+ * Соответствие приватно для модуля, доступ к перечню тонов — через `TEXT_TONE_KEYS`,
+ * чтение цвета — через `getTextToneColor`.
  */
 const TEXT_TONE_PRESETS = {
   ...TONE_PRESETS,
@@ -184,12 +185,14 @@ function getTextToneColorKey(tone: TextTone): keyof ThemeColors | undefined {
 /**
  * getTextToneColor — возвращает цвет темы для указанного тона текста.
  * Для тона по умолчанию возвращает `undefined` — цвет наследуется от родителя.
+ * Используется в `getTextStyles` и в нативных полях ввода, которые нельзя
+ * обернуть в компонент Text, например в `@ui/stepper`.
  *
  * @param theme текущая тема
  * @param tone тон текста
  * @returns CSS-цвет или `undefined`
  */
-function getTextToneColor(theme: AppTheme, tone: TextTone): string | undefined {
+export function getTextToneColor(theme: AppTheme, tone: TextTone): string | undefined {
   const colorKey = getTextToneColorKey(tone);
 
   return colorKey ? theme.colors[colorKey] : undefined;

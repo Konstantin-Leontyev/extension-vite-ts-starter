@@ -20,7 +20,8 @@
  * 1. Экспортировать полиморфный компонент Text
  * 2. Типизировать пропсы через `TextProps`
  * 3. Реэкспортировать публичное API стилей: `TEXT_ALIGN_PRESET_KEYS`, `TEXT_SIZE_PRESET_KEYS`,
- *    `TEXT_TONE_KEYS`, `textSizePresets`, `getTextLineHeight`, `getTextProperties` и типы
+ *    `TEXT_TONE_KEYS`, `textSizePresets`, `getTextLineHeight`, `getTextProperties`,
+ *    `getTextToneColor` и типы
  *
  * Потребители:
  *  - контролы, например Button, Tag и Listbox — рендерят текст внутри себя
@@ -38,6 +39,7 @@ import {
   TEXT_TONE_KEYS,
   getTextLineHeight,
   getTextProperties,
+  getTextToneColor,
   textSizePresets,
   type TextAlignPreset,
   type TextSizePreset,
@@ -79,6 +81,7 @@ export {
   TEXT_TONE_KEYS,
   getTextLineHeight,
   getTextProperties,
+  getTextToneColor,
   textSizePresets,
   type TextAlignPreset,
   type TextSizePreset,

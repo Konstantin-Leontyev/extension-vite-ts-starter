@@ -6,7 +6,6 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - форму поля через проп `shape`
- *  - горизонтальное выравнивание значения через проп `valueAlign`
  *  - числовое значение через проп `value`
  *  - обработчик изменения значения через проп `onChange`
  *  - обработчик фиксации значения через проп `onCommit`
@@ -14,6 +13,10 @@
  *  - верхнюю границу через проп `max`
  *  - шаг изменения через проп `step`
  *  - подпись единицы внутри поля через проп `suffix`
+ *  - тон значения и суффикса через проп `textTone`
+ *  - размер значения и суффикса через проп `textSize`
+ *  - курсив значения и суффикса через проп `textItalic`
+ *  - горизонтальное выравнивание пары «значение + суффикс» через проп `textAlign`
  *  - текстовую метку через проп `aria-label`
  *  - id метки через проп `aria-labelledby`
  *
@@ -21,6 +24,7 @@
  * 1. Экспортировать компонент Stepper
  * 2. Типизировать пропсы через `StepperProps`
  * 3. Выставлять `role="spinbutton"` и атрибуты `aria-valuenow`, `aria-valuemin`, `aria-valuemax`
+ * 4. Реэкспортировать мост размера текста `getStepperTextSize`
  *
  * Потребители:
  *  - `src/pages/design-system/stepper-settings/index.tsx` — выбирает шаг в панели настроек
@@ -39,14 +43,15 @@ import {
 import { ChevronDownIcon } from '@icons/chevron-down';
 import { ChevronUpIcon } from '@icons/chevron-up';
 import { Icon } from '@ui/icon';
+import { Text, type TextTone } from '@ui/text';
 
 import {
   StyledStepperButton,
   StyledStepperInput,
   StyledStepperRoot,
   StyledStepperSpin,
-  StyledStepperSuffix,
   StyledStepperValue,
+  getStepperTextSize,
   splitLayoutProps,
   type StepperStyleProps,
 } from './stepper.styles';
@@ -56,6 +61,13 @@ import {
  * Используется, когда вызывающий код не передал проп `step`.
  */
 const DEFAULT_STEPPER_STEP = 1;
+
+/**
+ * DEFAULT_STEPPER_SUFFIX_TONE — задаёт тон суффикса по умолчанию.
+ * Используется, когда вызывающий код не передал проп `textTone`.
+ * Суффикс единицы — вторичный текст, поэтому `muted`.
+ */
+const DEFAULT_STEPPER_SUFFIX_TONE: TextTone = 'muted';
 
 /**
  * DECREASE_LABEL — задаёт текст `aria-label` кнопки уменьшения.
@@ -136,7 +148,7 @@ type StepperProps = StepperStyleProps &
  * @example
  * <Stepper aria-label="Quantity" value={1} onChange={setValue} />
  * <Stepper aria-labelledby="qty-label" min={0} max={10} step={1} value={5} onChange={setValue} />
- * <Stepper sizePreset="medium" suffix="K" value={100} valueAlign="center" onChange={setValue} />
+ * <Stepper sizePreset="medium" suffix="K" textAlign="center" value={100} onChange={setValue} />
  */
 export function Stepper({
   'aria-label': ariaLabel,
@@ -150,11 +162,17 @@ export function Stepper({
   sizePreset,
   step = DEFAULT_STEPPER_STEP,
   suffix,
+  textAlign,
+  textItalic,
+  textSize,
+  textTone,
   value,
-  valueAlign,
   ...rest
 }: StepperProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
+
+  // Размер пары «значение + суффикс» вычисляется один раз: поле и Text получают готовое значение
+  const resolvedTextSize = textSize ?? getStepperTextSize(sizePreset);
 
   // Если draft не null, пользователь печатает, иначе показывается актуальное value
   const [draft, setDraft] = useState<null | string>(null);
@@ -302,11 +320,12 @@ export function Stepper({
 
   return (
     <StyledStepperRoot {...layoutProps} shape={shape} sizePreset={sizePreset}>
-      <StyledStepperValue sizePreset={sizePreset}>
+      <StyledStepperValue sizePreset={sizePreset} textAlign={textAlign}>
         <StyledStepperInput
           inputMode="numeric"
-          sizePreset={sizePreset}
-          valueAlign={valueAlign}
+          textItalic={textItalic}
+          textSize={resolvedTextSize}
+          textTone={textTone}
           {...restProps}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
@@ -322,7 +341,13 @@ export function Stepper({
           onKeyDown={handleKeyDown}
         />
         {Boolean(suffix) && (
-          <StyledStepperSuffix sizePreset={sizePreset}>{suffix}</StyledStepperSuffix>
+          <Text
+            italic={textItalic}
+            sizePreset={resolvedTextSize}
+            tone={textTone ?? DEFAULT_STEPPER_SUFFIX_TONE}
+          >
+            {suffix}
+          </Text>
         )}
       </StyledStepperValue>
 
@@ -359,3 +384,6 @@ export function Stepper({
     </StyledStepperRoot>
   );
 }
+
+/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
+export { getStepperTextSize };

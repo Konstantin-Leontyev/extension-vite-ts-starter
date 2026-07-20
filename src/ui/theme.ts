@@ -3,6 +3,7 @@
  * Определяет систему тем для приложения.
  * Содержит цветовые палитры для светлой и тёмной тем, тени, глобальные стили
  * и вспомогательные утилиты для работы с темой в styled-components.
+ * Сброс стилей `GlobalResetStyle` живёт отдельно в `@ui/reset`.
  *
  * Основные задачи:
  * 1. Типизировать тему через `ThemeColors` и `AppTheme`
@@ -15,8 +16,6 @@
  *  - все `*.styles.ts` — читают тему через `getTheme(props)`
  *  - `ThemeProvider` из `src/context/theme/index.tsx` — подключает `GlobalThemeStyle`
  *    и передаёт тему приложению
- *
- * Сброс стилей `GlobalResetStyle` живёт отдельно в `@ui/reset`.
  */
 
 import { createGlobalStyle } from 'styled-components';
@@ -39,6 +38,7 @@ import './fonts/inter.css';
  * @property overlay — затемнение страницы под модальным слоем, например в `::backdrop`
  * @property primary — акцентный цвет бренда
  * @property scrollbarThumb — цвет бегунка скроллбара
+ * @property shade — база затемнения заливок в `color-mix` при наведении и нажатии
  * @property success — цвет успешных действий
  * @property surface — фон карточек и поверхностей
  * @property warning — цвет предупреждений
@@ -56,6 +56,7 @@ export type ThemeColors = {
   overlay: string;
   primary: string;
   scrollbarThumb: string;
+  shade: string;
   success: string;
   surface: string;
   warning: string;
@@ -84,7 +85,7 @@ export type AppTheme = {
 export const DISABLED_OPACITY = 0.55;
 
 /**
- * lightColors — хранит цветовую палитру светлой темы.
+ * lightColors — представляет цветовую палитру для светлой темы.
  * Все значения — hex-коды или CSS-функции, например `color-mix`.
  * Названия оттенков в inline-комментариях взяты из словаря https://get-color.ru/
  */
@@ -102,13 +103,14 @@ const lightColors: ThemeColors = {
   overlay:        'rgb(0 0 0 / 50%)',
   primary:        '#1974d2',                                        // Темно-синий Крайола
   scrollbarThumb: '#c1caca',                                        // Очень бледный синий
+  shade:          '#000000',                                        // Чёрный
   success:        '#177245',                                        // Темный весенне-зеленый
   surface:        '#ffffff',                                        // Белый
   warning:        '#ea7500',                                        // Темный мандарин
 };
 
 /**
- * darkColors — хранит цветовую палитру тёмной темы.
+ * darkColors — представляет цветовую палитру для тёмной темы.
  * Все значения — hex-коды или CSS-функции, например `color-mix`.
  * Названия оттенков в inline-комментариях взяты из словаря https://get-color.ru/
  */
@@ -126,13 +128,14 @@ const darkColors: ThemeColors = {
   overlay:        'rgb(0 0 0 / 50%)',
   primary:        '#1974d2',                                        // Темно-синий Крайола
   scrollbarThumb: '#414a4c',                                        // Космос
+  shade:          '#000000',                                        // Чёрный
   success:        '#2e8b57',                                        // Зеленое море
   surface:        '#161a1e',                                        // Черновато-синий
   warning:        '#f9ab00',                                        // Дынно-желтый
 };
 
 /**
- * styledLightTheme — задаёт готовую светлую тему приложения.
+ * styledLightTheme — представляет готовую светлую тему приложения.
  * Содержит цветовую схему, все цвета и тени.
  */
 export const styledLightTheme: AppTheme = {
@@ -145,7 +148,7 @@ export const styledLightTheme: AppTheme = {
 };
 
 /**
- * styledDarkTheme — задаёт готовую тёмную тему приложения.
+ * styledDarkTheme — представляет готовую тёмную тему приложения.
  * Содержит цветовую схему и все цвета. Тени отключены.
  */
 export const styledDarkTheme: AppTheme = {

@@ -7,7 +7,7 @@
  * 1. Экспортировать компонент `TextGroup`
  * 2. Типизировать пропсы через `TextGroupProps`
  * 3. Рендерить единый блок текстовых настроек: флаг показа, поля содержимого,
- *    размер, тон и курсив
+ *    размер, выравнивание, тон и курсив
  * 4. Скрывать настройки текста при выключенном флаге показа
  *
  * Потребители:
@@ -20,6 +20,7 @@
  *     - `src/pages/design-system/radio-button-settings/index.tsx`
  *     - `src/pages/design-system/switch-settings/index.tsx`
  *     - `src/pages/design-system/fieldset-settings/index.tsx`
+ *     - `src/pages/design-system/stepper-settings/index.tsx`
  */
 
 import { type ChangeEvent } from 'react';
@@ -27,12 +28,15 @@ import { type ChangeEvent } from 'react';
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import {
+  TEXT_ALIGN_PRESET_KEYS,
   TEXT_SIZE_PRESET_KEYS,
   TEXT_TONE_KEYS,
+  type TextAlignPreset,
   type TextSizePreset,
   type TextTone,
 } from '@ui/text';
 
+import { AlignListbox } from '../align-listbox';
 import { SizeListbox } from '../size-listbox';
 import { ToneListbox } from '../tone-listbox';
 
@@ -52,26 +56,31 @@ type TextGroupContent = {
 /**
  * TextGroupProps — представляет пропсы компонента TextGroup.
  *
+ * @property align — текущее выравнивание текста
  * @property contents — поля ввода содержимого. Отсутствуют, когда содержимое
  *   генерируется компонентом из значения, как процент ProgressBar
  * @property italic — текущее значение курсива
+ * @property onAlignChange — обработчик изменения выравнивания текста.
+ *   Без него контрол `Text align:` не рендерится — у компонента нет текстовой оси выравнивания
  * @property onItalicChange — обработчик изменения курсива
  * @property onSizeChange — обработчик изменения размера текста
  * @property onToneChange — обработчик изменения тона текста
  * @property show — флаг показа текста. Без него текст компонента неотключаем
  *   и группа рендерится всегда
  * @property size — текущий размер текста
- * @property tone — текущий тон текста
+ * @property tone — текущий тон текста. Без значения листбокс показывает `default`
  */
 type TextGroupProps = {
+  align?: TextAlignPreset;
   contents?: readonly TextGroupContent[];
   italic: boolean;
+  onAlignChange?: (align: TextAlignPreset) => void;
   onItalicChange: (value: boolean) => void;
   onSizeChange: (size: TextSizePreset) => void;
   onToneChange: (tone: TextTone) => void;
   show?: { checked: boolean; onChange: (checked: boolean) => void };
   size: TextSizePreset;
-  tone: TextTone;
+  tone?: TextTone;
 };
 
 /**
@@ -92,8 +101,10 @@ type TextGroupProps = {
  * />
  */
 export function TextGroup({
+  align,
   contents,
   italic,
+  onAlignChange,
   onItalicChange,
   onSizeChange,
   onToneChange,
@@ -137,6 +148,15 @@ export function TextGroup({
             value={size}
             onChange={onSizeChange}
           />
+
+          {onAlignChange && (
+            <AlignListbox
+              aligns={TEXT_ALIGN_PRESET_KEYS}
+              label="Text align:"
+              value={align}
+              onChange={onAlignChange}
+            />
+          )}
 
           <ToneListbox
             label="Text tone:"

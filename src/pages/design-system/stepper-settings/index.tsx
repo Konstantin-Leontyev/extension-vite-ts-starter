@@ -2,10 +2,10 @@
  * Файл: `src/pages/design-system/stepper-settings/index.tsx`
  * Определяет панель настроек компонента Stepper в витрине дизайн-системы.
  * Содержит контролы для изменения размера, формы, границ, шага, суффикса,
- * значения, его выравнивания и недоступного состояния в реальном времени.
- * Границы, шаг и суффикс — параметры счётчика; значение — контент нативного
- * поля, поэтому его инпут и выравнивание идут после параметров, на месте
- * текстовой группы.
+ * значения, его текстовых настроек и недоступного состояния в реальном времени.
+ * Границы, шаг и суффикс — параметры счётчика. Значение — контент нативного
+ * поля, аналог текста, поэтому его инпут и текстовые контролы идут после
+ * параметров текстовой группой.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `StepperWidgetState`
@@ -25,13 +25,18 @@ import {
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
-import { Stepper } from '@ui/stepper';
-import { TEXT_ALIGN_PRESET_KEYS, Text, type TextAlignPreset } from '@ui/text';
+import { Stepper, getStepperTextSize } from '@ui/stepper';
+import {
+  Text,
+  type TextAlignPreset,
+  type TextSizePreset,
+  type TextTone,
+} from '@ui/text';
 
-import { AlignListbox } from '../align-listbox';
 import { StyledSettingsField, StyledSettingsForm } from '../design-system.styles';
 import { ShapeListbox } from '../shape-listbox';
 import { SizeListbox } from '../size-listbox';
+import { TextGroup } from '../text-group';
 
 /**
  * STEP_FIELD_ID — задаёт id поля шага в панели настроек.
@@ -57,8 +62,11 @@ const STEP_LABEL_ID = 'design-system-stepper-step-label';
  * @property sizePreset — размер компонента
  * @property step — шаг изменения значения
  * @property suffix — подпись единицы внутри поля
+ * @property textAlign — горизонтальное выравнивание пары «значение + суффикс»
+ * @property textItalic — включает курсив значения и суффикса
+ * @property textSize — размер значения и суффикса
+ * @property textTone — тон значения и суффикса
  * @property value — числовое значение счётчика
- * @property valueAlign — горизонтальное выравнивание значения
  */
 export type StepperWidgetState = {
   disabled: boolean;
@@ -68,8 +76,11 @@ export type StepperWidgetState = {
   sizePreset: SizePreset;
   step: number;
   suffix: string;
+  textAlign?: TextAlignPreset;
+  textItalic: boolean;
+  textSize: TextSizePreset;
+  textTone?: TextTone;
   value: number;
-  valueAlign?: TextAlignPreset;
 };
 
 /**
@@ -99,7 +110,10 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
         value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
+        onChange={(size) => {
+          onChange('sizePreset', size);
+          onChange('textSize', getStepperTextSize(size));
+        }}
       />
 
       <ShapeListbox
@@ -156,8 +170,8 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
           id={STEP_FIELD_ID}
           min={1}
           sizePreset="medium"
+          textAlign="center"
           value={state.step}
-          valueAlign="center"
           onChange={(value) => onChange('step', value)}
         />
       </StyledSettingsField>
@@ -171,25 +185,28 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
         }
       />
 
-      <Input
-        inputMode="numeric"
-        label="Value:"
-        reserveErrorSpace={false}
-        value={String(state.value)}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          const parsed = Number(event.target.value);
+      <TextGroup
+        align={state.textAlign}
+        contents={[
+          {
+            label: 'Value:',
+            value: String(state.value),
+            onChange: (nextValue) => {
+              const parsed = Number(nextValue);
 
-          if (event.target.value.trim() !== '' && Number.isFinite(parsed)) {
-            onChange('value', parsed);
-          }
-        }}
-      />
-
-      <AlignListbox
-        aligns={TEXT_ALIGN_PRESET_KEYS}
-        label="Value align:"
-        value={state.valueAlign}
-        onChange={(align) => onChange('valueAlign', align)}
+              if (nextValue.trim() !== '' && Number.isFinite(parsed)) {
+                onChange('value', parsed);
+              }
+            },
+          },
+        ]}
+        italic={state.textItalic}
+        size={state.textSize}
+        tone={state.textTone}
+        onAlignChange={(align) => onChange('textAlign', align)}
+        onItalicChange={(value) => onChange('textItalic', value)}
+        onSizeChange={(size) => onChange('textSize', size)}
+        onToneChange={(tone) => onChange('textTone', tone)}
       />
 
       <Checkbox
