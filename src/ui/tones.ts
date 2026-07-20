@@ -8,11 +8,12 @@
  * 2. Связать тоны с ключами цвета через `TONE_PRESETS`
  * 3. Задать значение по умолчанию через `DEFAULT_TONE`
  * 4. Предоставить перечень тонов через `TONE_PRESET_KEYS`
- * 5. Предоставить утилиты `getToneColorKey` и `getToneColor`
+ * 5. Предоставить утилиты `getToneColorKey`, `getToneColor` и `resolveColorMix`
  *
  * Потребители:
  *  - `@ui/button`, `@ui/tag`, `@ui/toast`, `@ui/text`, `@ui/progress-bar`, `@ui/spinner` —
  *    задают цвет контролов через тон
+ *  - `@ui/button`, `@ui/tag`, `@ui/table` — смешивают цвета темы через `resolveColorMix`
  *  - `@ui/fieldset` — расширяет канонический набор тонов
  *  - панели настроек витрины дизайн-системы — передают `TONE_PRESET_KEYS` в `ToneListbox`
  *  - `src/pages/design-system/tone-listbox` — фильтрует тоны и подставляет запасной
@@ -88,4 +89,23 @@ export function getToneColor(
   const colorKey = getToneColorKey(tone);
 
   return colorKey ? theme.colors[colorKey] : fallbackColor;
+}
+
+/**
+ * resolveColorMix — возвращает смесь двух цветов через `color-mix` в пространстве `srgb`.
+ * Единственный способ смешения цветов в компонентах: затемнение заливки — база
+ * `theme.colors.shade`, размывка по поверхности — база `theme.colors.surface`,
+ * тинт — база `transparent`.
+ *
+ * @param color исходный цвет
+ * @param colorPercent доля исходного цвета в процентах, остаток — база
+ * @param base цвет-база смеси
+ * @returns значение для CSS-свойств `background-color` и `color`
+ */
+export function resolveColorMix(
+  color: string,
+  colorPercent: number,
+  base: string
+): string {
+  return `color-mix(in srgb, ${color} ${colorPercent}%, ${base})`;
 }

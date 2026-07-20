@@ -26,7 +26,13 @@ import {
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { DEFAULT_TONE, getToneColor, getToneColorKey, type TonePreset } from '@ui/tones';
+import {
+  DEFAULT_TONE,
+  getToneColor,
+  getToneColorKey,
+  resolveColorMix,
+  type TonePreset,
+} from '@ui/tones';
 
 /**
  * TagSizePreset — представляет размерный ряд метки.
@@ -102,17 +108,6 @@ export function getTagTextSize(sizePreset?: TagSizePreset): TextSizePreset {
 }
 
 /**
- * resolveTagTint — преобразует исходный CSS-цвет в цвет с прозрачностью через `color-mix`.
- *
- * @param color исходный CSS-цвет
- * @param opacityPercent доля цвета в процентах, остальное прозрачно
- * @returns CSS-цвет с заданной долей исходного цвета в смеси
- */
-function resolveTagTint(color: string, opacityPercent: number): string {
-  return `color-mix(in srgb, ${color} ${opacityPercent}%, transparent)`;
-}
-
-/**
  * TagSurface — представляет пару цветов метки, которую возвращает `resolveTagSurface`.
  *
  * @property textColor — цвет текста
@@ -142,14 +137,16 @@ function resolveTagSurface(
   if (!colorKey) {
     return {
       textColor: theme.colors.default,
-      backgroundColor: tinted ? resolveTagTint(theme.colors.muted, 14) : 'transparent',
+      backgroundColor: tinted
+        ? resolveColorMix(theme.colors.muted, 14, 'transparent')
+        : 'transparent',
     };
   }
 
   const color = theme.colors[colorKey];
 
   return tinted
-    ? { textColor: color, backgroundColor: resolveTagTint(color, 16) }
+    ? { textColor: color, backgroundColor: resolveColorMix(color, 16, 'transparent') }
     : { textColor: theme.colors.inverse, backgroundColor: color };
 }
 

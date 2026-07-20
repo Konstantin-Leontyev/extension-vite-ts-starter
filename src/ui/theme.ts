@@ -121,7 +121,7 @@ const darkColors: ThemeColors = {
   danger:         '#e34234',                                        // Китайский красный
   default:        '#f9fafb',                                        // Белоснежный
   focusRing:      'color-mix(in srgb, #1a73e8 42%, transparent)',
-  hoverSurface:   'color-mix(in srgb, #2f353b 30%, #161a1e)',
+  hoverSurface:   'color-mix(in srgb, #2f353b 80%, #161a1e)',
   invalidRing:    'color-mix(in srgb, #ea4335 42%, transparent)',
   inverse:        '#f9fafb',                                        // Белоснежный
   muted:          '#b0b7c6',                                        // Кадетский синий Крайола
