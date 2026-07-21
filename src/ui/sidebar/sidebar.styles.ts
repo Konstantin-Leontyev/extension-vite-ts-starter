@@ -51,7 +51,6 @@ export const StyledSidebarContent = styled.div`
  * Базируется на `<aside>`.
  *
  * Встроенные стили:
- *  - `align-self: stretch` — слот растягивается на высоту каркаса
  *  - `inline-size: 0` — колонка свёрнута, пока панель не раскрыта
  *  - `overflow: hidden` — обрезает трек при анимации ширины
  *  - `display: none` при `data-open='false'` — скрывает слот, пока панель не в DOM
@@ -60,7 +59,6 @@ export const StyledSidebarContent = styled.div`
  *  - `getShellTransitionStyles` — переход по `inline-size`
  */
 export const StyledSidebarSlot = styled.aside`
-  align-self: stretch;
   inline-size: 0;
   min-inline-size: 0;
   min-block-size: 0;

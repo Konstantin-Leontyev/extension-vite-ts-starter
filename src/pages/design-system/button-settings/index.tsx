@@ -9,15 +9,14 @@
  * 2. Экспортировать компонент `ButtonSettings`
  *
  * Потребители:
- *  - `src/pages/design-system/index.tsx` — подключает панель и синхронизирует состояние с превью виджета кнопки
+ *  - `src/pages/design-system/index.tsx` — подключает панель и синхронизирует состояние с превью виджета Button
  */
 
 import { type ChangeEvent } from 'react';
 
-import { getButtonTextSize, type ButtonIconPosition } from '@ui/button';
+import { getButtonTextSize } from '@ui/button';
 import { Checkbox } from '@ui/checkbox';
-import { Combobox } from '@ui/combobox';
-import { Listbox, type ListboxOption } from '@ui/listbox';
+import { type IconPosition } from '@ui/icon';
 import {
   SHAPE_PRESET_KEYS,
   SIZE_PRESET_KEYS,
@@ -28,6 +27,7 @@ import { type TextSizePreset, type TextTone } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../design-system.styles';
+import { IconGroup } from '../icon-group';
 import { ShapeListbox } from '../shape-listbox';
 import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
 import { SizeListbox } from '../size-listbox';
@@ -39,7 +39,7 @@ import { ToneListbox } from '../tone-listbox';
  * Ключи совпадают с именами пропов компонента Button, кроме витринных ключей: `withIcon`
  * управляет передачей иконки в превью, `text` хранит содержимое `children`, `iconKey`
  * выбирает глиф для превью.
- * Используется для синхронизации значений между панелью управления и демонстрационной кнопкой.
+ * Используется для синхронизации значений между панелью управления и демонстрационным Button.
  *
  * @property active — включает зафиксированное нажатое состояние
  * @property disabled — включает недоступное состояние
@@ -61,7 +61,7 @@ export type ButtonWidgetState = {
   disabled: boolean;
   iconFill: TonePreset;
   iconKey: IconKey;
-  iconPosition: ButtonIconPosition;
+  iconPosition: IconPosition;
   iconTone: TonePreset;
   shape: ShapePreset;
   sizePreset: SizePreset;
@@ -74,19 +74,10 @@ export type ButtonWidgetState = {
 };
 
 /**
- * ICON_POSITION_OPTIONS — задаёт опции листбокса позиции иконки.
- * Используется в контроле `Icon position:` панели настроек Button.
- */
-const ICON_POSITION_OPTIONS: ListboxOption[] = [
-  { label: 'end', value: 'end' },
-  { label: 'start', value: 'start' },
-];
-
-/**
  * ButtonSettingsProps — представляет пропсы компонента ButtonSettings.
  *
  * @property onChange — обработчик изменения поля состояния витрины
- * @property state — текущее состояние настроек кнопки
+ * @property state — текущее состояние настроек Button
  */
 type ButtonSettingsProps = {
   onChange: <K extends keyof ButtonWidgetState>(
@@ -100,7 +91,7 @@ type ButtonSettingsProps = {
  * ButtonSettings — отображает панель настроек Button в витрине дизайн-системы.
  *
  * @example
- * <ButtonSettings state={buttonState} onChange={updateButton} />
+ * <ButtonSettings state={button} onChange={updateButton} />
  */
 export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
   return (
@@ -129,50 +120,25 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
         onChange={(tone) => onChange('tone', tone)}
       />
 
-      <Checkbox
-        checked={state.withIcon}
-        sizePreset="medium"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('withIcon', event.target.checked)
-        }
-      >
-        Show icon
-      </Checkbox>
-
-      {state.withIcon && (
-        <>
-          <Combobox
-            label="Icon:"
-            options={COMBOBOX_OPTIONS}
-            reserveErrorSpace={false}
-            value={state.iconKey}
-            onChange={(value) => onChange('iconKey', value as IconKey)}
-          />
-
-          <ToneListbox
-            label="Icon tone:"
-            tones={TONE_PRESET_KEYS}
-            value={state.iconTone}
-            onChange={(tone) => onChange('iconTone', tone)}
-          />
-
-          <ToneListbox
-            excludeTone={state.iconTone}
-            label="Icon fill tone:"
-            tones={TONE_PRESET_KEYS}
-            value={state.iconFill}
-            onChange={(tone) => onChange('iconFill', tone)}
-          />
-
-          <Listbox
-            label="Icon position:"
-            options={ICON_POSITION_OPTIONS}
-            reserveErrorSpace={false}
-            value={state.iconPosition}
-            onChange={(value) => onChange('iconPosition', value as ButtonIconPosition)}
-          />
-        </>
-      )}
+      <IconGroup
+        fill={state.iconFill}
+        icon={{
+          options: COMBOBOX_OPTIONS,
+          value: state.iconKey,
+          onChange: (value) => onChange('iconKey', value as IconKey),
+        }}
+        position={{
+          value: state.iconPosition,
+          onChange: (position) => onChange('iconPosition', position),
+        }}
+        show={{
+          checked: state.withIcon,
+          onChange: (checked) => onChange('withIcon', checked),
+        }}
+        tone={state.iconTone}
+        onFillChange={(tone) => onChange('iconFill', tone)}
+        onToneChange={(tone) => onChange('iconTone', tone)}
+      />
 
       <TextGroup
         contents={[

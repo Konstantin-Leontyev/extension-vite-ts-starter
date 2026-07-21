@@ -5,7 +5,6 @@
  * Поддерживает:
  *  - открытие и закрытие панели через проп `open`
  *  - содержимое панели через проп `children`
- *  - рендер вне основного дерева DOM через портал в `document.body`
  *  - позиционирование относительно якоря через проп `positioning`
  *  - зоны, клик вне которых закрывает панель, через проп `dismissZoneRefs`
  *  - обработчик закрытия панели через проп `onDismiss`
@@ -25,7 +24,8 @@
  *  - Table — рендерит панели compose и другие overlay-панели
  *  - `src/components/profile-menu/index.tsx` — рендерит меню профиля
  */
-import { useLayoutEffect, type ReactNode, type RefObject } from 'react';
+
+import { useEffectEvent, useLayoutEffect, type ReactNode, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 
 import { useAnchoredDismiss } from '@hooks/use-anchored-dismiss';
@@ -51,7 +51,7 @@ const DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS: readonly unknown[] = [];
  * @property dismissZoneRefs — ссылки на зоны, клик вне которых вызывает `onDismiss`
  * @property onDismiss — обработчик закрытия панели
  * @property onOpenFocus — обработчик начального фокуса при открытии
- * @property open — открытое состояние панели
+ * @property open — включает видимость панели
  * @property openFocusDeps — зависимости для перефокуса при смене содержимого панели
  * @property panelRef — ссылка на DOM-узел панели
  * @property positioning — стратегия позиционирования относительно якоря
@@ -116,18 +116,22 @@ export function AnchoredPortal({
 
   useAnchoredPortalPosition(open, panelRef, positioning);
 
+  const onOpenFocusEvent = useEffectEvent((panel: HTMLElement) => {
+    onOpenFocus?.(panel);
+  });
+
   /**
    * Начальный фокус при открытии: вызывает `onOpenFocus` после кадра отрисовки,
    * когда DOM-узел панели уже доступен.
    *
    * Как работает:
-   * 1. Пропускает вызов, если панель закрыта или `onOpenFocus` не передан
+   * 1. Пропускает планирование, если панель закрыта
    * 2. Планирует вызов `onOpenFocus` на следующий кадр отрисовки
-   * 3. Передаёт в обработчик DOM-узел панели из `panelRef`
+   * 3. Передаёт в обработчик DOM-узел панели из `panelRef`, если узел есть
    * 4. `openFocusDeps` задаёт перезапуск при смене содержимого панели
    */
   useLayoutEffect(() => {
-    if (!open || !onOpenFocus) {
+    if (!open) {
       return;
     }
 
@@ -135,16 +139,17 @@ export function AnchoredPortal({
       const panel = panelRef.current;
 
       if (panel) {
-        onOpenFocus(panel);
+        onOpenFocusEvent(panel);
       }
     });
 
     return () => {
       window.cancelAnimationFrame(frameId);
     };
+    // onOpenFocus — через useEffectEvent: нестабильная identity колбэка не перезапускает эффект.
     // openFocusDeps — перефокус при смене содержимого панели.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- зависимости задаёт вызывающий код через openFocusDeps
-  }, [onOpenFocus, open, panelRef, ...openFocusDeps]);
+  }, [open, panelRef, ...openFocusDeps]);
 
   if (!open) {
     return null;

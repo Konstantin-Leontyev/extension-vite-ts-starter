@@ -135,7 +135,6 @@ export const StyledStepperRoot = styled.div.withConfig({
 })<StepperRootStyleProps & LayoutProps>`
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  align-items: stretch;
   inline-size: 100%;
   min-inline-size: 0;
   overflow: hidden;
@@ -239,7 +238,7 @@ const STEPPER_INPUT_PROP_NAMES = new Set<string>(['textItalic', 'textSize', 'tex
  * курсив и тон значения.
  * Типографику даёт `getTextProperties` по уже вычисленному `textSize`,
  * цвет тона — `getTextToneColor`. Для тона по умолчанию правило `color`
- * не добавляется — работает наследование через `color: inherit` у узла.
+ * не добавляется — наследование цвета обеспечивает reset для `input`.
  *
  * @param props пропсы стилизации нативного поля ввода и тема
  * @returns CSS-правила, каждое с новой строки
@@ -286,7 +285,6 @@ export const StyledStepperInput = styled.input.withConfig({
   field-sizing: content;
   min-inline-size: 0;
   padding: 0;
-  color: inherit;
   background-color: transparent;
   border: none;
 

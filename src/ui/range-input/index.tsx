@@ -1,7 +1,56 @@
+/**
+ * Файл: `src/ui/range-input/index.tsx`
+ * Предоставляет компонент RangeInput для выбора числового диапазона.
+ *
+ * Поддерживает:
+ *  - layout-пропсы: отступы, позиционирование, размеры
+ *  - размерный ряд через проп `sizePreset`
+ *  - форму через проп `shape`
+ *  - тон глифа шеврона и кнопки сброса через проп `iconFill`
+ *  - позицию шеврона и кнопки сброса через проп `iconPosition`
+ *  - тон секции шеврона и кнопки сброса через проп `iconTone`
+ *  - ширину кнопки применения через проп `buttonInlineSize`
+ *  - горизонтальные отступы кнопки применения через проп `buttonPaddingInline`
+ *  - форму кнопки применения через проп `buttonShape`
+ *  - размер кнопки применения через проп `buttonSizePreset`
+ *  - текст кнопки применения через проп `buttonText`
+ *  - тон лейбла кнопки применения через проп `buttonTextTone`
+ *  - семантический тон кнопки применения через проп `buttonTone`
+ *  - начальное значение через проп `defaultValue`
+ *  - недоступное состояние через проп `disabled`
+ *  - формат активного лейбла триггера через проп `formatActiveLabel`
+ *  - плейсхолдер поля from через проп `fromPlaceholder`
+ *  - форму полей from и to через проп `inputShape`
+ *  - размер полей from и to через проп `inputSizePreset`
+ *  - подпись над триггером через проп `label`
+ *  - обработчик изменения значения через проп `onChange`
+ *  - обработчик сброса значения через проп `onClear`
+ *  - плейсхолдер неактивного триггера через проп `placeholder`
+ *  - пресеты диапазона через проп `presets`
+ *  - резерв высоты под строку ошибки через проп `reserveErrorSpace`
+ *  - заголовок панели через проп `title`
+ *  - выравнивание заголовка панели через проп `titleAlign`
+ *  - размер заголовка панели через проп `titleSizePreset`
+ *  - плейсхолдер поля to через проп `toPlaceholder`
+ *  - пользовательскую валидацию через проп `validate`
+ *  - тексты встроенной валидации через проп `validationMessages`
+ *  - контролируемое значение через проп `value`
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент RangeInput
+ * 2. Типизировать пропсы через `RangeInputProps`
+ * 3. Экспортировать типы `RangeValue`, `RangePreset`, `RangeInputValidationMessages`
+ *    и `ResolvedRangeInputValidationMessages`
+ * 4. Экспортировать дефолты `DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES`
+ * 5. Реэкспортировать мост размера текста `getRangeInputTextSize`
+ * 6. Выставлять `role` и `aria`-атрибуты панели и триггера
+ *
+ * Потребители:
+ *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ */
+
 import {
-  useCallback,
   useId,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -9,33 +58,23 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from 'react';
-import { createPortal } from 'react-dom';
-import { useTheme } from 'styled-components';
 
-import { useAnchoredDismiss } from '@hooks/use-anchored-dismiss';
-import { useFocusTrap } from '@hooks/use-focus-trap';
 import { ChevronDownIcon } from '@icons/chevron-down';
 import { CloseIcon } from '@icons/close';
+import { AnchoredPortal } from '@ui/anchored-portal';
 import { Button } from '@ui/button';
+import { DEFAULT_ICON_POSITION, Icon } from '@ui/icon';
 import { Input } from '@ui/input';
-import {
-  textSizePreset as resolveTextSizePreset,
-  valuePaddingInline as resolveValuePaddingInline,
-  type ShapePreset,
-  type SizePreset,
-} from '@ui/presets';
-import { type SpacingPx } from '@ui/spacing';
-import { Text, type TextSizePreset } from '@ui/text';
-import { type TonePreset } from '@ui/tones';
+import { type ShapePreset, type SizePreset } from '@ui/presets';
+import { type SpacingValue } from '@ui/spacing';
+import { Text, getTextLineHeight, type TextSizePreset } from '@ui/text';
+import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
 
 import {
   DEFAULT_RANGE_INPUT_SHAPE,
   DEFAULT_RANGE_INPUT_SIZE_PRESET,
   StyledRangeInputButtonRow,
-  StyledRangeInputChevron,
-  StyledRangeInputChevronBox,
   StyledRangeInputClearButton,
-  StyledRangeInputClearIcon,
   StyledRangeInputCustomSection,
   StyledRangeInputFields,
   StyledRangeInputPanel,
@@ -44,63 +83,181 @@ import {
   StyledRangeInputRoot,
   StyledRangeInputTrigger,
   StyledRangeInputTriggerRow,
+  StyledRangeInputValue,
+  getRangeInputTextSize,
   splitLayoutProps,
   type RangeInputStyleProps,
 } from './range-input.styles';
 
-// eslint-disable-next-line react-refresh/only-export-components -- публичные дефолты validationMessages
+/* eslint-disable react-refresh/only-export-components -- публичные дефолты validationMessages и мост размера текста */
+
+/**
+ * DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES — задаёт тексты встроенной валидации по умолчанию.
+ * Используется, когда вызывающий код не передал проп `validationMessages`.
+ */
 export const DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES = {
   emptyBounds: 'Enter at least one bound.',
   invalidFrom: 'From must be a whole number.',
   invalidTo: 'To must be a whole number.',
 } as const;
 
+/**
+ * RangeInputValidationMessages — представляет частичные тексты встроенной валидации RangeInput.
+ *
+ * @property emptyBounds — текст ошибки, когда обе границы пустые при применении
+ * @property invalidFrom — текст ошибки нецелого значения from
+ * @property invalidTo — текст ошибки нецелого значения to
+ */
 export type RangeInputValidationMessages = {
   [K in keyof typeof DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES]?: string;
 };
 
+/**
+ * ResolvedRangeInputValidationMessages — представляет полные тексты встроенной валидации RangeInput.
+ *
+ * @property emptyBounds — текст ошибки, когда обе границы пустые при применении
+ * @property invalidFrom — текст ошибки нецелого значения from
+ * @property invalidTo — текст ошибки нецелого значения to
+ */
 export type ResolvedRangeInputValidationMessages = {
   [K in keyof typeof DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES]: string;
 };
 
+/**
+ * RangeValue — представляет границы числового диапазона.
+ *
+ * @property from — нижняя граница диапазона
+ * @property to — верхняя граница диапазона
+ */
 export type RangeValue = {
   from: string;
   to: string;
 };
 
+/**
+ * RangePreset — представляет пресет диапазона в панели RangeInput.
+ *
+ * @property id — стабильный ключ элемента списка. Без значения ключ собирается из `from` и `to`
+ * @property label — лейбл пресета в списке
+ * @property value — границы диапазона пресета
+ */
 export type RangePreset = {
-  /** Стабильный ключ списка; иначе — from+to. */
   id?: string;
   label: ReactNode;
   value: RangeValue;
 };
 
+/**
+ * EMPTY_RANGE_VALUE — задаёт пустое значение диапазона.
+ * Используется как начальное значение и результат сброса.
+ */
 const EMPTY_RANGE_VALUE: RangeValue = { from: '', to: '' };
 
-/** Проброс осей кнопки панели в Button; shape/sizePreset по умолчанию — как у триггера. */
-export type RangeInputButtonProps = {
+/**
+ * DEFAULT_RANGE_INPUT_BUTTON_TONE — задаёт тон кнопки применения по умолчанию.
+ * Используется, когда вызывающий код не передал проп `buttonTone`.
+ */
+const DEFAULT_RANGE_INPUT_BUTTON_TONE: TonePreset = 'primary';
+
+/**
+ * DEFAULT_RANGE_INPUT_DISABLED — задаёт недоступное состояние по умолчанию.
+ * Используется, когда вызывающий код не передал проп `disabled`.
+ */
+const DEFAULT_RANGE_INPUT_DISABLED = false;
+
+/**
+ * DEFAULT_RANGE_INPUT_RESERVE_ERROR_SPACE — задаёт резерв высоты под ошибку по умолчанию.
+ * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
+ */
+const DEFAULT_RANGE_INPUT_RESERVE_ERROR_SPACE = true;
+
+/**
+ * DEFAULT_RANGE_INPUT_TITLE_ALIGN — задаёт выравнивание заголовка панели по умолчанию.
+ * Используется, когда вызывающий код не передал проп `titleAlign`.
+ */
+const DEFAULT_RANGE_INPUT_TITLE_ALIGN: CSSProperties['textAlign'] = 'center';
+
+/**
+ * DEFAULT_CLEAR_ARIA_LABEL — задаёт `aria-label` кнопки сброса по умолчанию.
+ * Подставляется, когда над триггером нет подписи.
+ */
+const DEFAULT_CLEAR_ARIA_LABEL = 'Clear';
+
+/**
+ * DEFAULT_RANGE_INPUT_ICON_FILL — задаёт тон глифа шеврона и сброса по умолчанию.
+ * Используется, когда вызывающий код не передал проп `iconFill`.
+ */
+const DEFAULT_RANGE_INPUT_ICON_FILL: TonePreset = DEFAULT_TONE;
+
+/**
+ * DEFAULT_RANGE_INPUT_ICON_TONE — задаёт тон секции шеврона и сброса по умолчанию.
+ * Используется, когда вызывающий код не передал проп `iconTone`.
+ */
+const DEFAULT_RANGE_INPUT_ICON_TONE: TonePreset = DEFAULT_TONE;
+
+/**
+ * RangeInputButtonProps — представляет пропсы кнопки применения RangeInput.
+ *
+ * @property buttonInlineSize — ширина кнопки применения
+ * @property buttonPaddingInline — горизонтальные отступы кнопки применения
+ * @property buttonShape — форма кнопки применения
+ * @property buttonSizePreset — размер кнопки применения
+ * @property buttonText — текст кнопки применения
+ * @property buttonTextTone — тон лейбла кнопки применения
+ * @property buttonTone — семантический тон кнопки применения
+ */
+type RangeInputButtonProps = {
   buttonInlineSize?: string;
-  buttonPaddingInline?: SpacingPx;
+  buttonPaddingInline?: SpacingValue;
   buttonShape?: ShapePreset;
   buttonSizePreset?: SizePreset;
   buttonText: string;
-  buttonTextColor?: TonePreset;
+  buttonTextTone?: TonePreset;
   buttonTone?: TonePreset;
 };
 
-/** Проброс осей полей From/To в Input; по умолчанию — shape/sizePreset триггера. */
-export type RangeInputInputProps = {
+/**
+ * RangeInputInputProps — представляет пропсы полей from и to RangeInput.
+ *
+ * @property inputShape — форма полей from и to
+ * @property inputSizePreset — размер полей from и to
+ */
+type RangeInputInputProps = {
   inputShape?: ShapePreset;
   inputSizePreset?: SizePreset;
 };
 
-/** Проброс типографики заголовка панели в Text. */
-export type RangeInputTitleProps = {
+/**
+ * RangeInputTitleProps — представляет пропсы заголовка панели RangeInput.
+ *
+ * @property titleAlign — выравнивание заголовка панели
+ * @property titleSizePreset — размер заголовка панели
+ */
+type RangeInputTitleProps = {
   titleAlign?: CSSProperties['textAlign'];
   titleSizePreset?: TextSizePreset;
 };
 
-export type RangeInputProps = RangeInputStyleProps &
+/**
+ * RangeInputProps — представляет пропсы компонента RangeInput.
+ *
+ * @property defaultValue — начальное значение в неконтролируемом режиме
+ * @property disabled — включает недоступное состояние
+ * @property formatActiveLabel — форматёр активного лейбла триггера по выбранному диапазону
+ * @property fromPlaceholder — плейсхолдер поля from
+ * @property label — подпись над триггером
+ * @property onChange — обработчик изменения значения
+ * @property onClear — обработчик сброса значения. Без обработчика кнопка сброса не показывается
+ * @property placeholder — плейсхолдер неактивного триггера
+ * @property presets — пресеты диапазона в панели
+ * @property reserveErrorSpace — включает резерв высоты под строку ошибки
+ * @property title — заголовок панели
+ * @property toPlaceholder — плейсхолдер поля to
+ * @property validate — обработчик пользовательской валидации диапазона
+ * @property validationMessages — тексты встроенной валидации
+ * @property value — контролируемое значение диапазона
+ */
+type RangeInputProps = RangeInputStyleProps &
   RangeInputButtonProps &
   RangeInputInputProps &
   RangeInputTitleProps & {
@@ -108,26 +265,35 @@ export type RangeInputProps = RangeInputStyleProps &
     disabled?: boolean;
     formatActiveLabel: (value: RangeValue) => ReactNode;
     fromPlaceholder: string;
-    /** Встроенная подпись над триггером (как у Listbox). */
     label?: string;
     onChange: (value: RangeValue) => void;
     onClear?: () => void;
     placeholder: string;
     presets?: RangePreset[];
-    /** Резерв высоты под строку ошибки — как у Input/Listbox, для общей сетки с полями формы. */
     reserveErrorSpace?: boolean;
-    /** Заголовок панели (как title в ProfileMenuSheet). */
     title: string;
     toPlaceholder: string;
-    validate?: (value: RangeValue) => string | null;
+    validate?: (value: RangeValue) => null | string;
     validationMessages?: RangeInputValidationMessages;
     value?: RangeValue;
   };
 
+/**
+ * isEmptyRangeValue — возвращает признак пустого диапазона.
+ *
+ * @param value границы диапазона
+ * @returns `true`, когда обе границы пустые после trim
+ */
 function isEmptyRangeValue(value: RangeValue): boolean {
   return value.from.trim() === '' && value.to.trim() === '';
 }
 
+/**
+ * normalizeRangeValue — возвращает границы диапазона без краевых пробелов.
+ *
+ * @param value границы диапазона
+ * @returns нормализованные границы
+ */
 function normalizeRangeValue(value: RangeValue): RangeValue {
   return {
     from: value.from.trim(),
@@ -135,22 +301,36 @@ function normalizeRangeValue(value: RangeValue): RangeValue {
   };
 }
 
-/** aria-label кнопки сброса — из подписи над триггером, без двоеточия. */
+/**
+ * clearButtonAriaLabel — возвращает `aria-label` кнопки сброса по подписи над триггером.
+ * Убирает завершающее двоеточие и подставляет `DEFAULT_CLEAR_ARIA_LABEL` без подписи.
+ *
+ * @param label подпись над триггером
+ * @returns текст для `aria-label`
+ */
 function clearButtonAriaLabel(label: string | undefined): string {
   const trimmed = label?.trim();
 
   if (!trimmed) {
-    return 'Clear';
+    return DEFAULT_CLEAR_ARIA_LABEL;
   }
 
   return `Clear ${trimmed.replace(/:$/, '')}`;
 }
 
-/** Целые числа ≥ 0; inputMode numeric не блокирует буквы на десктопе. */
+/**
+ * validateNumericRangeValue — возвращает текст ошибки встроенной числовой валидации.
+ * Проверяет целые числа не меньше нуля. Значение `inputMode` `numeric` не блокирует
+ * буквы на десктопе.
+ *
+ * @param value границы диапазона
+ * @param messages тексты встроенной валидации
+ * @returns текст ошибки или `null`
+ */
 function validateNumericRangeValue(
   value: RangeValue,
   messages: ResolvedRangeInputValidationMessages
-): string | null {
+): null | string {
   const from = value.from.trim();
   const to = value.to.trim();
 
@@ -165,6 +345,12 @@ function validateNumericRangeValue(
   return null;
 }
 
+/**
+ * presetListKey — возвращает ключ элемента списка пресетов.
+ *
+ * @param preset пресет диапазона
+ * @returns стабильный `id` или составной ключ из границ
+ */
 function presetListKey(preset: RangePreset): string {
   if (preset.id) {
     return preset.id;
@@ -173,18 +359,37 @@ function presetListKey(preset: RangePreset): string {
   return `${preset.value.from}\0${preset.value.to}`;
 }
 
+/**
+ * RangeInput — отображает выбор числового диапазона с пресетами и ручным вводом границ.
+ *
+ * @example
+ * <RangeInput
+ *   buttonText="Apply"
+ *   formatActiveLabel={(value) => `${value.from} – ${value.to}`}
+ *   fromPlaceholder="From"
+ *   placeholder="Select range"
+ *   title="Custom range"
+ *   toPlaceholder="To"
+ *   value={range}
+ *   onChange={setRange}
+ *   onClear={() => setRange({ from: '', to: '' })}
+ * />
+ */
 export function RangeInput({
   buttonInlineSize,
   buttonPaddingInline,
   buttonShape: buttonShapeProp,
   buttonSizePreset: buttonSizePresetProp,
   buttonText,
-  buttonTextColor,
-  buttonTone = 'primary',
+  buttonTextTone,
+  buttonTone = DEFAULT_RANGE_INPUT_BUTTON_TONE,
   defaultValue = EMPTY_RANGE_VALUE,
-  disabled = false,
+  disabled = DEFAULT_RANGE_INPUT_DISABLED,
   formatActiveLabel,
   fromPlaceholder,
+  iconFill = DEFAULT_RANGE_INPUT_ICON_FILL,
+  iconPosition = DEFAULT_ICON_POSITION,
+  iconTone = DEFAULT_RANGE_INPUT_ICON_TONE,
   inputShape: inputShapeProp,
   inputSizePreset: inputSizePresetProp,
   label,
@@ -192,12 +397,12 @@ export function RangeInput({
   onClear,
   placeholder,
   presets,
-  reserveErrorSpace = true,
+  reserveErrorSpace = DEFAULT_RANGE_INPUT_RESERVE_ERROR_SPACE,
   shape,
   sizePreset,
   title,
-  titleAlign = 'center',
-  titleSizePreset = 'normal',
+  titleAlign = DEFAULT_RANGE_INPUT_TITLE_ALIGN,
+  titleSizePreset,
   toPlaceholder,
   validate,
   validationMessages: validationMessagesProp,
@@ -217,8 +422,7 @@ export function RangeInput({
   const buttonSizePreset = buttonSizePresetProp ?? resolvedSizePreset;
   const inputShape = inputShapeProp ?? resolvedShape;
   const inputSizePreset = inputSizePresetProp ?? resolvedSizePreset;
-  const theme = useTheme();
-  const { layout } = splitLayoutProps(rest);
+  const { layoutProps } = splitLayoutProps(rest);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const triggerRowRef = useRef<HTMLDivElement>(null);
@@ -228,10 +432,10 @@ export function RangeInput({
   const titleId = useId();
   const panelErrorId = useId();
   const fromInputId = useId();
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [draftFrom, setDraftFrom] = useState('');
   const [draftTo, setDraftTo] = useState('');
-  const [panelError, setPanelError] = useState<string | null>(null);
+  const [panelError, setPanelError] = useState<null | string>(null);
   const [internalValue, setInternalValue] = useState<RangeValue>(() =>
     normalizeRangeValue(defaultValue)
   );
@@ -242,91 +446,25 @@ export function RangeInput({
   const showClear = isActive && onClear !== undefined && !disabled;
   const showChevron = !showClear;
   const triggerLabel = isActive ? formatActiveLabel(committed) : placeholder;
-  const textSizePreset = resolveTextSizePreset(resolvedSizePreset);
-  const valuePaddingInline = resolveValuePaddingInline(resolvedSizePreset);
+  const textSizePreset = getRangeInputTextSize(sizePreset);
   const hasPanelError = Boolean(panelError?.trim());
+  const surfaceProps = { iconFill, iconPosition, iconTone, shape, sizePreset };
+  const isIconStart = iconPosition === 'start';
 
-  const closePanel = useCallback((): void => {
-    setOpen(false);
-  }, []);
+  function closePanel(): void {
+    setIsOpen(false);
+  }
 
-  const openPanel = useCallback((): void => {
+  function openPanel(): void {
     setDraftFrom(committed.from);
     setDraftTo(committed.to);
     setPanelError(null);
-    setOpen(true);
-  }, [committed.from, committed.to]);
+    setIsOpen(true);
+  }
 
-  const isInsideRangeInput = useCallback((target: Node): boolean => {
-    return (
-      (rootRef.current?.contains(target) ?? false) ||
-      (panelRef.current?.contains(target) ?? false)
-    );
-  }, []);
-
-  useAnchoredDismiss({
-    active: open,
-    isInside: isInsideRangeInput,
-    onDismiss: closePanel,
-  });
-
-  useFocusTrap({
-    active: open,
-    containerRef: panelRef,
-    returnFocusRef: triggerRef,
-  });
-
-  useLayoutEffect(() => {
-    if (!open) {
-      return;
-    }
-
-    const triggerRowElement = triggerRowRef.current;
-    const panelElement = panelRef.current;
-
-    if (!triggerRowElement || !panelElement) {
-      return;
-    }
-
-    function applyPanelPosition(): void {
-      const rowElement = triggerRowRef.current;
-      const panel = panelRef.current;
-
-      if (!rowElement || !panel) {
-        return;
-      }
-
-      const rect = rowElement.getBoundingClientRect();
-
-      panel.style.insetBlockStart = `${rect.top}px`;
-      panel.style.insetInlineStart = `${rect.left}px`;
-      panel.style.inlineSize = `${rect.width}px`;
-    }
-
-    applyPanelPosition();
-    const frameId = window.requestAnimationFrame(applyPanelPosition);
-
-    window.addEventListener('resize', applyPanelPosition);
-
-    return () => {
-      window.cancelAnimationFrame(frameId);
-      window.removeEventListener('resize', applyPanelPosition);
-    };
-  }, [open, presets?.length]);
-
-  useLayoutEffect(() => {
-    if (!open) {
-      return;
-    }
-
-    const frameId = window.requestAnimationFrame(() => {
-      document.getElementById(fromInputId)?.focus();
-    });
-
-    return () => {
-      window.cancelAnimationFrame(frameId);
-    };
-  }, [fromInputId, open]);
+  function focusRangeInputFromField(): void {
+    document.getElementById(fromInputId)?.focus();
+  }
 
   function commitValue(next: RangeValue): void {
     const normalized = normalizeRangeValue(next);
@@ -402,7 +540,7 @@ export function RangeInput({
       return;
     }
 
-    if (open) {
+    if (isOpen) {
       closePanel();
       return;
     }
@@ -424,179 +562,208 @@ export function RangeInput({
     }
   }
 
-  const axisProps = useMemo(() => ({ shape, sizePreset }), [shape, sizePreset]);
-
   return (
-    <StyledRangeInputRoot ref={rootRef} data-open={open} {...layout}>
+    <StyledRangeInputRoot
+      data-disabled={disabled ? '' : undefined}
+      data-open={isOpen}
+      ref={rootRef}
+      {...layoutProps}
+    >
       {Boolean(label) && (
-        <Text
-          as="label"
-          color={theme.colors.muted}
-          htmlFor={triggerId}
-          sizePreset="medium"
-        >
+        <Text as="label" htmlFor={triggerId} sizePreset="medium" tone="muted">
           {label}
         </Text>
       )}
       <StyledRangeInputTriggerRow
-        ref={triggerRowRef}
         data-active={isActive}
-        data-open={open}
-        {...axisProps}
+        data-has-clear={showClear ? '' : undefined}
+        data-open={isOpen}
+        ref={triggerRowRef}
+        {...surfaceProps}
       >
-        <StyledRangeInputTrigger
-          ref={triggerRef}
-          aria-controls={panelId}
-          aria-expanded={open}
-          aria-haspopup="dialog"
-          disabled={disabled}
-          id={triggerId}
-          type="button"
-          {...axisProps}
-          onClick={togglePanel}
-          onKeyDown={handleTriggerKeyDown}
-        >
-          <Text
-            color={isActive ? undefined : theme.colors.muted}
-            ellipsis
-            minInlineSize="0"
-            paddingInline={valuePaddingInline}
-            sizePreset={textSizePreset}
-          >
-            {triggerLabel}
-          </Text>
-          {showChevron && (
-            <StyledRangeInputChevronBox {...axisProps}>
-              <StyledRangeInputChevron {...axisProps}>
-                <ChevronDownIcon />
-              </StyledRangeInputChevron>
-            </StyledRangeInputChevronBox>
-          )}
-        </StyledRangeInputTrigger>
-
-        {showClear && (
+        {showClear && isIconStart && (
           <StyledRangeInputClearButton
             aria-label={clearButtonAriaLabel(label)}
             disabled={disabled}
             type="button"
-            {...axisProps}
+            {...surfaceProps}
             onClick={handleClear}
           >
-            <StyledRangeInputClearIcon {...axisProps}>
+            <Icon sizePreset={sizePreset}>
               <CloseIcon />
-            </StyledRangeInputClearIcon>
+            </Icon>
+          </StyledRangeInputClearButton>
+        )}
+
+        <StyledRangeInputTrigger
+          aria-controls={panelId}
+          aria-expanded={isOpen}
+          aria-haspopup="dialog"
+          disabled={disabled}
+          id={triggerId}
+          ref={triggerRef}
+          type="button"
+          {...surfaceProps}
+          onClick={togglePanel}
+          onKeyDown={handleTriggerKeyDown}
+        >
+          {showChevron && isIconStart && (
+            <Icon data-slot="icon" sizePreset={sizePreset}>
+              <ChevronDownIcon />
+            </Icon>
+          )}
+          <StyledRangeInputValue {...surfaceProps}>
+            <Text
+              showEllipsis
+              sizePreset={textSizePreset}
+              tone={isActive ? undefined : 'muted'}
+            >
+              {triggerLabel}
+            </Text>
+          </StyledRangeInputValue>
+          {showChevron && !isIconStart && (
+            <Icon data-slot="icon" sizePreset={sizePreset}>
+              <ChevronDownIcon />
+            </Icon>
+          )}
+        </StyledRangeInputTrigger>
+
+        {showClear && !isIconStart && (
+          <StyledRangeInputClearButton
+            aria-label={clearButtonAriaLabel(label)}
+            disabled={disabled}
+            type="button"
+            {...surfaceProps}
+            onClick={handleClear}
+          >
+            <Icon sizePreset={sizePreset}>
+              <CloseIcon />
+            </Icon>
           </StyledRangeInputClearButton>
         )}
       </StyledRangeInputTriggerRow>
 
       {reserveErrorSpace && (
-        <Text aria-hidden="true" as="p" minBlockSize="1.25rem" sizePreset="thin" />
+        <Text
+          aria-hidden="true"
+          as="p"
+          minBlockSize={getTextLineHeight('thin')}
+          sizePreset="thin"
+        />
       )}
 
-      {open &&
-        createPortal(
-          <StyledRangeInputPanel
-            ref={panelRef}
-            aria-labelledby={titleId}
-            aria-modal={true}
-            id={panelId}
-            role="dialog"
-            {...axisProps}
-          >
-            {Boolean(presets?.length) && (
-              <StyledRangeInputPresetList>
-                {presets?.map((preset) => (
-                  <li key={presetListKey(preset)}>
-                    <StyledRangeInputPresetButton
-                      disabled={disabled}
-                      type="button"
-                      {...axisProps}
-                      onClick={() => {
-                        applyPreset(preset);
-                      }}
-                    >
-                      <Text
-                        ellipsis
-                        minInlineSize="0"
-                        paddingInline={valuePaddingInline}
-                        sizePreset={textSizePreset}
-                        zIndex="1"
-                      >
+      <AnchoredPortal
+        dismissZoneRefs={[rootRef, panelRef]}
+        open={isOpen}
+        openFocusDeps={[fromInputId]}
+        panelRef={panelRef}
+        positioning={{
+          anchorRef: triggerRowRef,
+          layoutDeps: [presets?.length],
+          mode: 'trigger-row',
+        }}
+        returnFocusRef={triggerRef}
+        onDismiss={closePanel}
+        onOpenFocus={focusRangeInputFromField}
+      >
+        <StyledRangeInputPanel
+          aria-labelledby={titleId}
+          aria-modal={true}
+          id={panelId}
+          ref={panelRef}
+          role="dialog"
+          {...surfaceProps}
+        >
+          {Boolean(presets?.length) && (
+            <StyledRangeInputPresetList>
+              {presets?.map((preset) => (
+                <li key={presetListKey(preset)}>
+                  <StyledRangeInputPresetButton
+                    disabled={disabled}
+                    type="button"
+                    {...surfaceProps}
+                    onClick={() => {
+                      applyPreset(preset);
+                    }}
+                  >
+                    <StyledRangeInputValue {...surfaceProps}>
+                      <Text showEllipsis sizePreset={textSizePreset} zIndex="1">
                         {preset.label}
                       </Text>
-                    </StyledRangeInputPresetButton>
-                  </li>
-                ))}
-              </StyledRangeInputPresetList>
-            )}
+                    </StyledRangeInputValue>
+                  </StyledRangeInputPresetButton>
+                </li>
+              ))}
+            </StyledRangeInputPresetList>
+          )}
 
-            <StyledRangeInputCustomSection>
-              <Text align={titleAlign} as="h2" id={titleId} sizePreset={titleSizePreset}>
-                {title}
-              </Text>
-              <StyledRangeInputFields aria-labelledby={titleId} role="group">
-                <Input
-                  aria-describedby={hasPanelError ? panelErrorId : undefined}
-                  id={fromInputId}
-                  inputMode="numeric"
-                  invalid={hasPanelError}
-                  placeholder={fromPlaceholder}
-                  reserveErrorSpace={false}
-                  shape={inputShape}
-                  sizePreset={inputSizePreset}
-                  value={draftFrom}
-                  onChange={(event) => {
-                    setDraftFrom(event.currentTarget.value);
-                    setPanelError(null);
-                  }}
-                  onKeyDown={handleFieldKeyDown}
-                />
-                <Input
-                  aria-describedby={hasPanelError ? panelErrorId : undefined}
-                  inputMode="numeric"
-                  invalid={hasPanelError}
-                  placeholder={toPlaceholder}
-                  reserveErrorSpace={false}
-                  shape={inputShape}
-                  sizePreset={inputSizePreset}
-                  value={draftTo}
-                  onChange={(event) => {
-                    setDraftTo(event.currentTarget.value);
-                    setPanelError(null);
-                  }}
-                  onKeyDown={handleFieldKeyDown}
-                />
-              </StyledRangeInputFields>
-              <Text
-                align="center"
-                aria-live="polite"
-                as="p"
-                color={theme.colors.danger}
-                id={panelErrorId}
-                minBlockSize="1.25rem"
-                sizePreset="thin"
+          <StyledRangeInputCustomSection>
+            <Text align={titleAlign} as="h2" id={titleId} sizePreset={titleSizePreset}>
+              {title}
+            </Text>
+            <StyledRangeInputFields aria-labelledby={titleId} role="group">
+              <Input
+                aria-describedby={hasPanelError ? panelErrorId : undefined}
+                id={fromInputId}
+                inputMode="numeric"
+                invalid={hasPanelError}
+                placeholder={fromPlaceholder}
+                reserveErrorSpace={false}
+                shape={inputShape}
+                sizePreset={inputSizePreset}
+                value={draftFrom}
+                onChange={(event) => {
+                  setDraftFrom(event.currentTarget.value);
+                  setPanelError(null);
+                }}
+                onKeyDown={handleFieldKeyDown}
+              />
+              <Input
+                aria-describedby={hasPanelError ? panelErrorId : undefined}
+                inputMode="numeric"
+                invalid={hasPanelError}
+                placeholder={toPlaceholder}
+                reserveErrorSpace={false}
+                shape={inputShape}
+                sizePreset={inputSizePreset}
+                value={draftTo}
+                onChange={(event) => {
+                  setDraftTo(event.currentTarget.value);
+                  setPanelError(null);
+                }}
+                onKeyDown={handleFieldKeyDown}
+              />
+            </StyledRangeInputFields>
+            <Text
+              align="center"
+              aria-live="polite"
+              as="p"
+              id={panelErrorId}
+              minBlockSize={getTextLineHeight('thin')}
+              sizePreset="thin"
+              tone="danger"
+            >
+              {hasPanelError ? panelError : null}
+            </Text>
+            <StyledRangeInputButtonRow>
+              <Button
+                disabled={disabled}
+                inlineSize={buttonInlineSize}
+                paddingInline={buttonPaddingInline}
+                shape={buttonShape}
+                sizePreset={buttonSizePreset}
+                textTone={buttonTextTone}
+                tone={buttonTone}
+                onClick={applyDraft}
               >
-                {hasPanelError ? panelError : null}
-              </Text>
-              <StyledRangeInputButtonRow>
-                <Button
-                  disabled={disabled}
-                  inlineSize={buttonInlineSize}
-                  paddingInline={buttonPaddingInline}
-                  shape={buttonShape}
-                  sizePreset={buttonSizePreset}
-                  textColor={buttonTextColor}
-                  tone={buttonTone}
-                  type="button"
-                  onClick={applyDraft}
-                >
-                  {buttonText}
-                </Button>
-              </StyledRangeInputButtonRow>
-            </StyledRangeInputCustomSection>
-          </StyledRangeInputPanel>,
-          document.body
-        )}
+                {buttonText}
+              </Button>
+            </StyledRangeInputButtonRow>
+          </StyledRangeInputCustomSection>
+        </StyledRangeInputPanel>
+      </AnchoredPortal>
     </StyledRangeInputRoot>
   );
 }
+
+export { getRangeInputTextSize };

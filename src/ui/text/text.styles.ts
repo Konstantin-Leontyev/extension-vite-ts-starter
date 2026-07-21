@@ -29,14 +29,14 @@ import { TONE_PRESETS, type TonePreset } from '@ui/tones';
 
 /**
  * textSizePresets — хранит типографические пресеты текста.
+ * Проп `sizePreset` у Text принимает `TextSizePreset` — собственный ряд,
+ * отличный от `SizePreset` контролов. Контролы согласуют размер через
+ * `getTextSize` из `@ui/presets`, Tag — через `getTagTextSize` с локальным рядом.
+ *
  * Каждый пресет содержит три свойства:
  *  - `fontSize` — размер шрифта в rem
  *  - `fontWeight` — насыщенность шрифта от 200 до 700
  *  - `lineHeight` — высота строки в rem
- *
- * Проп `sizePreset` у Text принимает `TextSizePreset` — собственный ряд,
- * отличный от `SizePreset` контролов. Контролы согласуют размер через
- * `getTextSize` из `@ui/presets`, Tag — через `getTagTextSize` с локальным рядом.
  *
  * Экспортируется для замера ширины колонок в `@ui/table/column-sizing`,
  * чтение стилей — через `getTextProperties`.
@@ -244,7 +244,8 @@ const TEXT_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * getTextStyles — преобразует текстовые пропсы в готовые CSS-правила.
+ * getTextStyles — возвращает CSS-правила для корня `StyledText`: типографику,
+ * цвет и выравнивание.
  *
  * Как работает:
  * 1. Получает текущую тему через `getTheme`
@@ -254,8 +255,8 @@ const TEXT_PROP_NAMES = new Set<string>([
  *    и `lineHeight`, если они переданы
  * 4. Добавляет `font-style: italic`, если передан проп `italic`
  * 5. Выбирает цвет: `color`, иначе цвет тона из темы. Без обоих правило
- *    `color` не добавляется — работает наследование через `color: inherit`
- *    у `StyledText`, типичное внутри цветного контрола
+ *    `color` не добавляется — цвет наследуется по умолчанию, типичное
+ *    внутри цветного контрола
  * 6. Добавляет правила для `align` и `whiteSpace`
  * 7. Для `showEllipsis` добавляет `overflow: hidden`, `text-overflow: ellipsis`
  *    и `white-space: nowrap`
@@ -326,7 +327,7 @@ function getTextStyles(props: TextStyleProps & { theme: AppTheme }): string {
  *
  * Встроенные стили:
  *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
- *  - `color: inherit` — без `tone` и `color` цвет текста наследуется от родителя
+ *  - без `tone` и `color` цвет текста наследуется от родителя по умолчанию
  *  - `overflow-wrap: break-word` — перенос длинных слов
  *
  * Генерация стилей:
@@ -337,7 +338,6 @@ export const StyledText = styled.span.withConfig({
   shouldForwardProp: (prop) => !TEXT_PROP_NAMES.has(prop),
 })<TextStyleProps>`
   min-inline-size: 0;
-  color: inherit;
   overflow-wrap: break-word;
   ${(props) => getTextStyles(props)}
   ${(props) => getLayoutStyles(props)}

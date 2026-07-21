@@ -1,31 +1,88 @@
+/**
+ * Файл: `src/pages/design-system/range-input-settings/index.tsx`
+ * Определяет панель настроек компонента RangeInput в витрине дизайн-системы.
+ * Содержит контролы для изменения размера, формы, иконки, подписи, плейсхолдеров,
+ * заголовка, полей from и to, кнопки применения, текстов валидации и состояний
+ * `withClear` и `disabled` в реальном времени.
+ *
+ * Основные задачи:
+ * 1. Типизировать состояние витрины через `RangeInputWidgetState`
+ * 2. Экспортировать компонент `RangeInputSettings`
+ *
+ * Потребители:
+ *  - `src/pages/design-system/index.tsx` — подключает панель и синхронизирует состояние с превью виджета RangeInput
+ */
+
 import { type CSSProperties, type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
+import { type IconPosition } from '@ui/icon';
 import { Input } from '@ui/input';
-import { Listbox, type ListboxOption } from '@ui/listbox';
-import { type ShapePreset, type SizePreset } from '@ui/presets';
+import {
+  SHAPE_PRESET_KEYS,
+  SIZE_PRESET_KEYS,
+  type ShapePreset,
+  type SizePreset,
+} from '@ui/presets';
 import {
   type RangeValue,
   type ResolvedRangeInputValidationMessages,
 } from '@ui/range-input';
-import { textSizePresets, type TextSizePreset } from '@ui/text';
 import {
-  TONE_PRESET_OPTIONS,
-  toTonePresetOptions,
-  tonePresetsExcludingFill,
-  type TonePreset,
-} from '@ui/tones';
+  TEXT_ALIGN_PRESET_KEYS,
+  TEXT_SIZE_PRESET_KEYS,
+  type TextSizePreset,
+} from '@ui/text';
+import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
+import { AlignListbox } from '../align-listbox';
 import { StyledSettingsForm } from '../design-system.styles';
+import { IconGroup } from '../icon-group';
+import { ShapeListbox } from '../shape-listbox';
+import { SizeListbox } from '../size-listbox';
+import { ToneListbox } from '../tone-listbox';
 
+/**
+ * RangeInputWidgetState — представляет состояние настроек компонента RangeInput в витрине дизайн-системы.
+ * Ключи совпадают с именами пропов компонента RangeInput, кроме витринных ключей: `withClear`
+ * управляет передачей `onClear` в превью.
+ * Используется для синхронизации значений между панелью управления и демонстрационным RangeInput.
+ *
+ * @property buttonShape — форма кнопки применения
+ * @property buttonSizePreset — размер кнопки применения
+ * @property buttonText — текст кнопки применения
+ * @property buttonTextTone — тон лейбла кнопки применения
+ * @property buttonTone — семантический тон кнопки применения
+ * @property disabled — включает недоступное состояние
+ * @property fromPlaceholder — плейсхолдер поля from
+ * @property iconFill — тон глифа шеврона и кнопки сброса
+ * @property iconPosition — позиция шеврона и кнопки сброса относительно значения
+ * @property iconTone — тон секции шеврона и кнопки сброса
+ * @property inputShape — форма полей from и to
+ * @property inputSizePreset — размер полей from и to
+ * @property label — подпись над триггером
+ * @property placeholder — плейсхолдер неактивного триггера
+ * @property shape — форма поверхности
+ * @property sizePreset — размер компонента
+ * @property title — заголовок панели
+ * @property titleAlign — выравнивание заголовка панели
+ * @property titleSizePreset — размер заголовка панели
+ * @property toPlaceholder — плейсхолдер поля to
+ * @property validationMessages — тексты встроенной валидации
+ * @property value — значение диапазона в превью
+ * @property withClear — витринный ключ показа сброса. Выключенный — превью без `onClear`
+ */
 export type RangeInputWidgetState = {
   buttonShape: ShapePreset;
   buttonSizePreset: SizePreset;
   buttonText: string;
-  buttonTextColor: TonePreset;
+  buttonTextTone: TonePreset;
   buttonTone: TonePreset;
   disabled: boolean;
   fromPlaceholder: string;
+  iconFill: TonePreset;
+  iconPosition: IconPosition;
+  iconTone: TonePreset;
   inputShape: ShapePreset;
   inputSizePreset: SizePreset;
   label: string;
@@ -41,27 +98,12 @@ export type RangeInputWidgetState = {
   withClear: boolean;
 };
 
-const SIZE_OPTIONS: ListboxOption[] = [
-  { label: 'small', value: 'small' },
-  { label: 'medium', value: 'medium' },
-  { label: 'large', value: 'large' },
-];
-
-const SHAPE_OPTIONS: ListboxOption[] = [
-  { label: 'default', value: 'default' },
-  { label: 'round', value: 'round' },
-];
-
-const TITLE_ALIGN_OPTIONS: ListboxOption[] = [
-  { label: 'start', value: 'start' },
-  { label: 'center', value: 'center' },
-  { label: 'end', value: 'end' },
-];
-
-const TITLE_SIZE_PRESET_OPTIONS: ListboxOption[] = (
-  Object.keys(textSizePresets) as TextSizePreset[]
-).map((preset) => ({ label: preset, value: preset }));
-
+/**
+ * RangeInputSettingsProps — представляет пропсы компонента RangeInputSettings.
+ *
+ * @property onChange — обработчик изменения поля состояния витрины
+ * @property state — текущее состояние настроек RangeInput
+ */
 type RangeInputSettingsProps = {
   onChange: <K extends keyof RangeInputWidgetState>(
     key: K,
@@ -70,11 +112,50 @@ type RangeInputSettingsProps = {
   state: RangeInputWidgetState;
 };
 
+/**
+ * RangeInputSettings — отображает панель настроек RangeInput в витрине дизайн-системы.
+ *
+ * @example
+ * <RangeInputSettings state={rangeInput} onChange={updateRangeInput} />
+ */
 export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps) {
-  const buttonTextColorOptions = tonePresetsExcludingFill(state.buttonTone);
-
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
+      <SizeListbox
+        label="Size:"
+        sizes={SIZE_PRESET_KEYS}
+        value={state.sizePreset}
+        onChange={(size) => onChange('sizePreset', size)}
+      />
+
+      <ShapeListbox
+        label="Shape:"
+        shapes={SHAPE_PRESET_KEYS}
+        value={state.shape}
+        onChange={(shape) => onChange('shape', shape)}
+      />
+
+      <Checkbox
+        checked={state.withClear}
+        sizePreset="medium"
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('withClear', event.target.checked)
+        }
+      >
+        Show clear icon
+      </Checkbox>
+
+      <IconGroup
+        fill={state.iconFill}
+        position={{
+          value: state.iconPosition,
+          onChange: (position) => onChange('iconPosition', position),
+        }}
+        tone={state.iconTone}
+        onFillChange={(tone) => onChange('iconFill', tone)}
+        onToneChange={(tone) => onChange('iconTone', tone)}
+      />
+
       <Input
         label="Label:"
         reserveErrorSpace={false}
@@ -82,22 +163,6 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('label', event.target.value)
         }
-      />
-
-      <Listbox
-        label="Size:"
-        options={SIZE_OPTIONS}
-        reserveErrorSpace={false}
-        value={state.sizePreset}
-        onChange={(value) => onChange('sizePreset', value as SizePreset)}
-      />
-
-      <Listbox
-        label="Shape:"
-        options={SHAPE_OPTIONS}
-        reserveErrorSpace={false}
-        value={state.shape}
-        onChange={(value) => onChange('shape', value as ShapePreset)}
       />
 
       <Input
@@ -118,20 +183,18 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         }
       />
 
-      <Listbox
-        label="Title align:"
-        options={TITLE_ALIGN_OPTIONS}
-        reserveErrorSpace={false}
-        value={state.titleAlign ?? 'center'}
-        onChange={(value) => onChange('titleAlign', value as CSSProperties['textAlign'])}
+      <SizeListbox
+        label="Title size:"
+        sizes={TEXT_SIZE_PRESET_KEYS}
+        value={state.titleSizePreset}
+        onChange={(size) => onChange('titleSizePreset', size)}
       />
 
-      <Listbox
-        label="Title size preset:"
-        options={TITLE_SIZE_PRESET_OPTIONS}
-        reserveErrorSpace={false}
-        value={state.titleSizePreset}
-        onChange={(value) => onChange('titleSizePreset', value as TextSizePreset)}
+      <AlignListbox
+        aligns={TEXT_ALIGN_PRESET_KEYS}
+        label="Title align:"
+        value={state.titleAlign}
+        onChange={(align) => onChange('titleAlign', align)}
       />
 
       <Input
@@ -152,44 +215,39 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         }
       />
 
-      <Listbox
+      <SizeListbox
         label="Input size:"
-        options={SIZE_OPTIONS}
-        reserveErrorSpace={false}
+        sizes={SIZE_PRESET_KEYS}
         value={state.inputSizePreset}
-        onChange={(value) => onChange('inputSizePreset', value as SizePreset)}
+        onChange={(size) => onChange('inputSizePreset', size)}
       />
 
-      <Listbox
+      <ShapeListbox
         label="Input shape:"
-        options={SHAPE_OPTIONS}
-        reserveErrorSpace={false}
+        shapes={SHAPE_PRESET_KEYS}
         value={state.inputShape}
-        onChange={(value) => onChange('inputShape', value as ShapePreset)}
+        onChange={(shape) => onChange('inputShape', shape)}
       />
 
-      <Listbox
+      <SizeListbox
         label="Button size:"
-        options={SIZE_OPTIONS}
-        reserveErrorSpace={false}
+        sizes={SIZE_PRESET_KEYS}
         value={state.buttonSizePreset}
-        onChange={(value) => onChange('buttonSizePreset', value as SizePreset)}
+        onChange={(size) => onChange('buttonSizePreset', size)}
       />
 
-      <Listbox
+      <ShapeListbox
         label="Button shape:"
-        options={SHAPE_OPTIONS}
-        reserveErrorSpace={false}
+        shapes={SHAPE_PRESET_KEYS}
         value={state.buttonShape}
-        onChange={(value) => onChange('buttonShape', value as ShapePreset)}
+        onChange={(shape) => onChange('buttonShape', shape)}
       />
 
-      <Listbox
+      <ToneListbox
         label="Button tone:"
-        options={TONE_PRESET_OPTIONS}
-        reserveErrorSpace={false}
+        tones={TONE_PRESET_KEYS}
         value={state.buttonTone}
-        onChange={(value) => onChange('buttonTone', value as TonePreset)}
+        onChange={(tone) => onChange('buttonTone', tone)}
       />
 
       <Input
@@ -201,16 +259,12 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         }
       />
 
-      <Listbox
-        label="Button text color:"
-        options={toTonePresetOptions(buttonTextColorOptions)}
-        reserveErrorSpace={false}
-        value={
-          buttonTextColorOptions.includes(state.buttonTextColor)
-            ? state.buttonTextColor
-            : 'default'
-        }
-        onChange={(value) => onChange('buttonTextColor', value as TonePreset)}
+      <ToneListbox
+        excludeTone={state.buttonTone}
+        label="Button text tone:"
+        tones={TONE_PRESET_KEYS}
+        value={state.buttonTextTone}
+        onChange={(tone) => onChange('buttonTextTone', tone)}
       />
 
       <Input
@@ -250,20 +304,14 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       />
 
       <Checkbox
-        checked={state.withClear}
-        label="Clear button"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('withClear', event.target.checked)
-        }
-      />
-
-      <Checkbox
         checked={state.disabled}
-        label="Disabled"
+        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('disabled', event.target.checked)
         }
-      />
+      >
+        Disabled
+      </Checkbox>
     </StyledSettingsForm>
   );
 }

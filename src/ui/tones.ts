@@ -1,23 +1,29 @@
 /**
  * Файл: `src/ui/tones.ts`
  * Определяет канонический набор семантических тонов и утилиты для работы с цветами темы.
- * Тон задаёт цветовую роль без привязки к конкретным hex-значениям.
+ * Задаёт цветовую роль без привязки к конкретным hex-значениям.
  *
  * Основные задачи:
  * 1. Типизировать канонические тоны через `TonePreset`
  * 2. Связать тоны с ключами цвета через `TONE_PRESETS`
  * 3. Задать значение по умолчанию через `DEFAULT_TONE`
  * 4. Предоставить перечень тонов через `TONE_PRESET_KEYS`
- * 5. Предоставить утилиты `getToneColorKey`, `getToneColor` и `resolveColorMix`
+ * 5. Задать доли смешения `BORDER_SURFACE_MIX_PERCENT` и `VARIANT_SURFACE_MIX_PERCENT`
+ * 6. Предоставить утилиты `getToneColorKey`, `getToneColor`, `resolveColorMix`
+ *    и `resolveVeilBackground`
  *
  * Потребители:
- *  - `@ui/button`, `@ui/tag`, `@ui/toast`, `@ui/text`, `@ui/progress-bar`, `@ui/spinner` —
- *    задают цвет контролов через тон
- *  - `@ui/button`, `@ui/tag`, `@ui/table` — смешивают цвета темы через `resolveColorMix`
+ *  - контролы, например Button, Tag и Toast — задают цвет через тон
+ *  - контролы, например Button, Tag, Icon и Table — смешивают цвета темы через
+ *    `resolveColorMix`
+ *  - контролы, например Button и Icon — читают доли смешения
+ *    `BORDER_SURFACE_MIX_PERCENT` и `VARIANT_SURFACE_MIX_PERCENT`
+ *  - контролы, например Button и Icon — кладут вуаль поверх непрозрачной нейтральной
+ *    заливки через `resolveVeilBackground`
  *  - `@ui/fieldset` — расширяет канонический набор тонов
  *  - панели настроек витрины дизайн-системы — передают `TONE_PRESET_KEYS` в `ToneListbox`
- *  - `src/pages/design-system/tone-listbox` — фильтрует тоны и подставляет запасной
- *    через `DEFAULT_TONE`
+ *  - `src/pages/design-system/tone-listbox/index.tsx` — фильтрует тоны и подставляет
+ *    запасной через `DEFAULT_TONE`
  */
 
 import { type AppTheme, type ThemeColors } from '@ui/theme';
@@ -99,6 +105,18 @@ export function getToneColor(
 const SHADE_KEEP_PERCENT = 80;
 
 /**
+ * BORDER_SURFACE_MIX_PERCENT — задаёт долю `border` в смеси с `surface`.
+ * Используется для `active`-заливки нейтральной непрозрачной секции, например лейбла Button.
+ */
+export const BORDER_SURFACE_MIX_PERCENT = 40;
+
+/**
+ * VARIANT_SURFACE_MIX_PERCENT — задаёт долю акцентного цвета в смеси с `surface`.
+ * Используется для `active`-заливки нейтральной секции иконки.
+ */
+export const VARIANT_SURFACE_MIX_PERCENT = 12;
+
+/**
  * resolveColorMix — возвращает смесь двух цветов через `color-mix` в пространстве `srgb`.
  * Единственный способ смешения цветов в компонентах: сдвиг заливки в состояниях —
  * база `theme.colors.shade`, размывка по поверхности — база `theme.colors.surface`,
@@ -116,4 +134,18 @@ export function resolveColorMix(
   colorPercent: number = SHADE_KEEP_PERCENT
 ): string {
   return `color-mix(in srgb, ${color} ${colorPercent}%, ${base})`;
+}
+
+/**
+ * resolveVeilBackground — возвращает значение шортката `background`: вуаль
+ * `theme.colors.veil` слоем `linear-gradient` поверх собственной заливки узла.
+ * Полупрозрачная вуаль не выражается одним `background-color` поверх непрозрачной
+ * заливки, поэтому композиция собирается из слоя-градиента и цвета подложки.
+ *
+ * @param theme текущая тема
+ * @param backgroundColor собственная заливка узла под вуалью
+ * @returns значение для CSS-свойства `background`
+ */
+export function resolveVeilBackground(theme: AppTheme, backgroundColor: string): string {
+  return `linear-gradient(${theme.colors.veil}, ${theme.colors.veil}) ${backgroundColor}`;
 }

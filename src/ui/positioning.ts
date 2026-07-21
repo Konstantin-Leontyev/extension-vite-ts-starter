@@ -5,16 +5,17 @@
  * как они задаются через пропсы компонентов и как эти пропсы преобразуются
  * в CSS-стили.
  *
- * В отличие от `@ui/spacing` с фиксированной шкалой и `@ui/sizing` со свободными
- * значениями, positioning объединяет:
+ * Объединяет три группы пропсов в отличие от `@ui/spacing` с фиксированной шкалой
+ * и `@ui/sizing` со свободными значениями:
  *  - пропсы позиционирования, например `position`, `inset`, `top`, `left`
  *  - пропсы раскладки flex и grid, например `display`, `flexDirection`, `alignItems`, `gap`
  *  - пропсы наложения и переполнения, например `zIndex`, `overflow`
  *
  * Основные задачи:
- * 1. Типизировать positioning-пропсы: `PositioningProps`, `InsetValue`, `LayoutDisplay`, `LayoutPosition`
+ * 1. Типизировать positioning-пропсы через `PositioningProps`, `InsetValue`,
+ *    `LayoutDisplay` и `LayoutPosition`
  * 2. Связать пропсы с CSS-свойствами через `POSITIONING_PROPERTIES`
- * 3. Генерировать CSS-правила через `getPositioningStyles`
+ * 3. Предоставить функцию `getPositioningStyles`
  * 4. Предоставить перечень имён пропсов через `POSITIONING_PROPERTY_NAMES`
  *
  * Потребители:
@@ -49,18 +50,29 @@ export type LayoutPosition = 'absolute' | 'fixed' | 'relative' | 'static' | 'sti
  * Для gap-свойств — только ключи из `SPACING_VALUES`.
  * Для raw-свойств значения передаются как есть, без преобразования через `getSpacingValue`.
  *
+ * @property alignContent — выравнивание строк flex/grid по поперечной оси
  * @property alignItems — выравнивание по поперечной оси
  * @property alignSelf — выравнивание элемента по поперечной оси
  * @property bottom — отступ снизу
  * @property columnGap — отступ между колонками
  * @property display — тип отображения
+ * @property flex — сокращение для `flex-grow`, `flex-shrink` и `flex-basis`
+ * @property flexBasis — базовая длина flex-элемента
  * @property flexDirection — направление flex-потока
+ * @property flexGrow — коэффициент роста flex-элемента
+ * @property flexShrink — коэффициент сжатия flex-элемента
  * @property flexWrap — перенос flex-элементов
  * @property gap — отступ между элементами из шкалы spacing
  * @property gridAutoFlow — направление автоматического потока
  * @property gridTemplateColumns — шаблон колонок сетки
  * @property gridTemplateRows — шаблон строк сетки
  * @property inset — отступ со всех сторон
+ * @property insetBlock — отступ по блочной оси
+ * @property insetBlockEnd — отступ с конца блочной оси
+ * @property insetBlockStart — отступ с начала блочной оси
+ * @property insetInline — отступ по строчной оси
+ * @property insetInlineEnd — отступ с конца строчной оси
+ * @property insetInlineStart — отступ с начала строчной оси
  * @property justifyContent — выравнивание по основной оси
  * @property justifySelf — выравнивание элемента по основной оси
  * @property left — отступ слева
@@ -74,12 +86,17 @@ export type LayoutPosition = 'absolute' | 'fixed' | 'relative' | 'static' | 'sti
  * @property zIndex — порядок наложения
  */
 export type PositioningProps = {
+  alignContent?: CSSProperties['alignContent'];
   alignItems?: CSSProperties['alignItems'];
   alignSelf?: CSSProperties['alignSelf'];
   bottom?: InsetValue;
   columnGap?: SpacingValue;
   display?: LayoutDisplay;
+  flex?: CSSProperties['flex'];
+  flexBasis?: CSSProperties['flexBasis'];
   flexDirection?: CSSProperties['flexDirection'];
+  flexGrow?: CSSProperties['flexGrow'];
+  flexShrink?: CSSProperties['flexShrink'];
   flexWrap?: CSSProperties['flexWrap'];
   gap?: SpacingValue;
   gridAutoFlow?: CSSProperties['gridAutoFlow'];
@@ -152,6 +169,11 @@ const POSITIONING_PROPERTIES = {
   left: ['left', 'inset'],
   flexDirection: ['flex-direction', 'raw'],
   flexWrap: ['flex-wrap', 'raw'],
+  flex: ['flex', 'raw'],
+  flexGrow: ['flex-grow', 'raw'],
+  flexShrink: ['flex-shrink', 'raw'],
+  flexBasis: ['flex-basis', 'raw'],
+  alignContent: ['align-content', 'raw'],
   alignItems: ['align-items', 'raw'],
   justifyContent: ['justify-content', 'raw'],
   placeItems: ['place-items', 'raw'],

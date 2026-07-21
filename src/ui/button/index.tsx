@@ -20,7 +20,7 @@
  * Основные задачи:
  * 1. Экспортировать компонент Button
  * 2. Типизировать пропсы через `ButtonProps`
- * 3. Реэкспортировать мост размера текста `getButtonTextSize` и тип `ButtonIconPosition`
+ * 3. Реэкспортировать мост размера текста `getButtonTextSize`
  *
  * Потребители:
  *  - контролы, например RangeInput — рендерят кнопки действий внутри себя
@@ -33,14 +33,7 @@ import { type ComponentPropsWithRef, type ReactNode } from 'react';
 import { Icon } from '@ui/icon';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 
-import {
-  StyledButton,
-  StyledButtonIcon,
-  StyledButtonText,
-  getButtonTextSize,
-  type ButtonIconPosition,
-  type ButtonStyleProps,
-} from './button.styles';
+import { StyledButton, getButtonTextSize, type ButtonStyleProps } from './button.styles';
 
 /**
  * DEFAULT_BUTTON_TYPE — задаёт тип кнопки по умолчанию.
@@ -92,9 +85,9 @@ export function Button({
   const hasIcon = Boolean(icon);
 
   const iconNode = hasIcon && (
-    <StyledButtonIcon>
-      <Icon sizePreset={sizePreset}>{icon}</Icon>
-    </StyledButtonIcon>
+    <Icon data-slot="icon" sizePreset={sizePreset}>
+      {icon}
+    </Icon>
   );
 
   return (
@@ -107,20 +100,20 @@ export function Button({
       {...rest}
     >
       {iconPosition === 'start' && iconNode}
-      <StyledButtonText>
-        <Text
-          italic={textItalic}
-          showEllipsis
-          sizePreset={textSize ?? getButtonTextSize(sizePreset)}
-          tone={textTone}
-        >
-          {children}
-        </Text>
-      </StyledButtonText>
+      <Text
+        align="center"
+        data-slot="label"
+        italic={textItalic}
+        showEllipsis
+        sizePreset={textSize ?? getButtonTextSize(sizePreset)}
+        tone={textTone}
+      >
+        {children}
+      </Text>
       {iconPosition !== 'start' && iconNode}
     </StyledButton>
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста и публичного типа */
-export { getButtonTextSize, type ButtonIconPosition };
+/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
+export { getButtonTextSize };
