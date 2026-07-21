@@ -159,7 +159,8 @@ const DEFAULT_BUTTON_ACTIVE = false;
  * Как работает:
  * 1. Берёт тему, подставляет дефолты пропсов и считает поверхность лейбла и иконки
  * 2. Собирает правила секций `label` и `icon`: отступы, заливка и радиусы
- * 3. Добавляет шов, только когда тон кнопки и тон секции нейтральны
+ * 3. Добавляет шов, только когда тон кнопки и тон секции нейтральны — иначе
+ *    контраста цвета секций достаточно
  * 4. Добавляет наведение и при `active` — зафиксированную заливку секций
  *
  * @param props пропсы стилизации корня и текущая тема
@@ -182,7 +183,6 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
   const iconSurface = resolveIconSurface(theme, iconTone, iconFill);
   const isIconStart = iconPosition === 'start';
 
-  // Шов виден только когда и кнопка, и иконка нейтральны — иначе контраст цвета достаточен.
   const showSeam = tone === DEFAULT_TONE && iconTone === DEFAULT_TONE;
 
   const styles = [
@@ -241,8 +241,10 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
  *
  * Как работает:
  * 1. Собирает общие правила корня: размер, рамка, радиус, тень и цвет
- * 2. Задаёт раскладку слота лейбла на корне
- * 3. При `hasIcon` делегирует поверхность секций в `getButtonSplitStyles`
+ * 2. Задаёт раскладку слота лейбла на корне: Text остаётся контентом без
+ *    layout-пропсов
+ * 3. При `hasIcon` делегирует поверхность секций в `getButtonSplitStyles` —
+ *    заливка на секциях
  * 4. Без иконки красит solid-заливку и наведение на корне
  *
  * @param props пропсы стилизации корня и текущая тема
@@ -266,7 +268,6 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
     `border-radius: ${resolveBlockRadius(shape, minBlockSize)};`,
     `box-shadow: ${theme.shadow.surface};`,
     `color: ${surface.color};`,
-    // Раскладку слота лейбла задаёт корень: Text остаётся контентом без layout-пропсов.
     `[data-slot='label'] {`,
     `flex: 1 1 auto;`,
     `align-content: center;`,
@@ -274,7 +275,6 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
     `}`,
   ];
 
-  // Split с иконкой и лейблом — заливка на секциях. Solid — заливка и `hover` на корне.
   if (hasIcon) {
     styles.push(getButtonSplitStyles(props));
 

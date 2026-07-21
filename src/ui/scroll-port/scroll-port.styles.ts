@@ -59,18 +59,24 @@ const DEFAULT_SCROLL_PORT_SHOW_VEIL = true;
 /**
  * resolveScrollPortTrackMarginInlineEnd — вычисляет значение для CSS-свойства
  * `margin-inline-end`, смещающее трек скроллбара в область отступа inline-end.
+ * Полширины трека остаётся видимой, остальное уходит в отступ.
  *
  * @param paddingInlineEnd отступ inline-end
  * @returns значение для CSS-свойства `margin-inline-end`
  */
 function resolveScrollPortTrackMarginInlineEnd(paddingInlineEnd: SpacingValue): string {
-  // Полширины трека (8) остаётся видимой, остальное уходит в отступ
   return `calc(-1 * (${getSpacingValue(paddingInlineEnd)} - ${getSpacingValue(8)} / 2))`;
 }
 
 /**
  * getScrollPortRootStyles — возвращает CSS-правила для корня `StyledScrollPortRoot`:
  * раскладку, смещение трека скроллбара и градиентные вуали.
+ *
+ * Как работает:
+ * 1. Собирает раскладку корня и смещает трек через
+ *    `resolveScrollPortTrackMarginInlineEnd`
+ * 2. При `showVeil` задаёт `inset-inline` вуалей: выступ на `4` слева и зазор до
+ *    трека скроллбара справа
  *
  * @param props пропсы стилизации корня ScrollPort
  * @returns CSS-правила, каждое с новой строки
@@ -93,7 +99,6 @@ function getScrollPortRootStyles(props: ScrollPortRootStyleProps): string {
   ];
 
   if (showVeil) {
-    // Вуаль выступает за контент на 4 слева и не наезжает на трек скроллбара справа
     const veilInsetInline = `calc(${getSpacingValue(4)} * -1) calc(${getSpacingValue(paddingInlineEnd)} - ${getSpacingValue(4)})`;
 
     styles.push(`

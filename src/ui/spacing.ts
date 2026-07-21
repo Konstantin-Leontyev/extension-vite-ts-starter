@@ -145,18 +145,13 @@ export const SPACING_PROPERTY_NAMES = new Set<string>(Object.keys(SPACING_PROPER
 export function getSpacingStyles(props: SpacingProps): string {
   const styles: string[] = [];
 
-  // Проходит по всем именам пропсов и их CSS-эквивалентам
   for (const [prop, property] of Object.entries(SPACING_PROPERTIES)) {
-    // Берёт значение из переданных пропсов по имени prop
     const value = props[prop as keyof SpacingProps];
 
-    // Если значение передано, то формирует CSS-правило
     if (value !== undefined) {
-      // getSpacingValue(value) — например, для 16 даст 1rem
       styles.push(`${property}: ${getSpacingValue(value)};`);
     }
   }
 
-  // Склеивает все правила в одну строку с переносами
   return styles.join('\n');
 }

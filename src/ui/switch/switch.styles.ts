@@ -155,6 +155,14 @@ const TRACK_BORDER = '1px';
  * габариты, бегунок и checked/focus-вид по пропам `sizePreset` и `tone`.
  * Состояния читаются со скрытого соседнего input через селектор `input:checked + &`.
  *
+ * Как работает:
+ * 1. Считает габариты дорожки и бегунка по `sizePreset`
+ * 2. Центрирует бегунок смещением от края: из расчёта вычитает `TRACK_BORDER`,
+ *    потому что `inset` отсчитывается от padding-края
+ * 3. Задаёт ход бегунка как ширину дорожки минус её высоту — обе позиции смещены
+ *    рамкой одинаково
+ * 4. Собирает заливку, рамку, бегунок и checked/focus-вид по `tone`
+ *
  * @param props пропсы стилизации дорожки и тема
  * @returns CSS-правила, каждое с новой строки
  */
@@ -166,9 +174,6 @@ function getSwitchTrackStyles(
   const trackInlineSize = getSwitchTrackInlineSize(sizePreset);
   const trackBlockSize = getSwitchTrackBlockSize(sizePreset);
   const knobSize = getSwitchKnobSize(sizePreset);
-  // Бегунок центрируется смещением от края: из расчёта вычитается рамка,
-  // потому что inset отсчитывается от padding-края
-  // Ход бегунка равен ширине дорожки минус её высота — обе позиции смещены рамкой одинаково
   const knobInset = `calc((${trackBlockSize} - ${knobSize}) / 2 - ${TRACK_BORDER})`;
   const knobTravel = `calc(${trackInlineSize} - ${trackBlockSize})`;
   const checkedBackground = getToneColor(theme, tone, theme.colors.primary);

@@ -124,8 +124,6 @@ function getRoundButtonStyles(
     styles.push(`border: 1px solid ${theme.colors.border};`);
     styles.push(`box-shadow: ${theme.shadow.surface};`);
   } else {
-    // Прозрачная рамка резервирует толщину видимой: при border-box контент-бокс,
-    // а с ним и окно Icon, не зависят от showBorder — иначе svg 32px против 30px.
     styles.push('border: 1px solid transparent;');
   }
 

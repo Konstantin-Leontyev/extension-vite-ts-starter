@@ -122,7 +122,6 @@ export function resolveIconSurface(
     activeBackground = resolveColorMix(iconToneColor, theme.colors.shade);
   }
 
-  // iconFill красит только глиф и применяется, если задан, не default и отличен от iconTone.
   const fillColorKey =
     iconFill && iconFill !== DEFAULT_TONE && iconFill !== iconTone
       ? getToneColorKey(iconFill)

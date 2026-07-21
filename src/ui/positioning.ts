@@ -231,7 +231,6 @@ function resolvePropertyValue(
     return 'auto';
   }
 
-  // Для inset и spacing значение должно быть SpacingValue
   return getSpacingValue(value as SpacingValue);
 }
 

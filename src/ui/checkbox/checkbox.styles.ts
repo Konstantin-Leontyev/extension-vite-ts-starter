@@ -234,6 +234,12 @@ function markBackground(mark: string, iconSize: string): string {
  * getCheckboxControlStyles — возвращает CSS-правила для бокса `StyledCheckboxControl`:
  * габариты, рамку, марки unchecked и checked.
  *
+ * Как работает:
+ * 1. Берёт тему, размер и марки, подставляет дефолт `inverted`
+ * 2. При `inverted` красит checked-поле в `inverse` и марки в `primary` для
+ *    подсветки строки, иначе — поле в `primary` и checked-марку в `inverse`
+ * 3. Собирает габариты, рамку и фоновые марки unchecked и checked
+ *
  * @param props пропсы стилизации бокса и тема
  * @returns CSS-правила, каждое с новой строки
  */
@@ -250,7 +256,6 @@ function getCheckboxControlStyles(
   const size = getCheckboxSize(sizePreset);
   const iconSize = getCheckboxIconSize(sizePreset);
 
-  // При inverted — белое поле и primary-иконка для подсветки строки, иначе primary-поле и inverse-иконка
   const checkedBackground = inverted ? theme.colors.inverse : theme.colors.primary;
   const uncheckedStroke = inverted ? theme.colors.primary : theme.colors.default;
   const checkedStroke = inverted ? theme.colors.primary : theme.colors.inverse;

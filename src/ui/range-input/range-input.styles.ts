@@ -160,8 +160,9 @@ export const StyledRangeInputRoot = styled.div.withConfig({
  * 2. Собирает CSS-правила ряда: сетка, габариты, заливка, рамка и тень
  * 3. Без clear оставляет одну колонку. При `data-has-clear` переключает сетку
  *    на две колонки с учётом позиции иконки
- * 4. Не красит рамку в `primary`: акцент даёт `outline` фокуса на ряде
- *    при `:focus-within`
+ * 4. Не красит рамку в `primary` — как Listbox и Combobox: акцент даёт `outline`
+ *    фокуса на ряде при `:focus-within`, потому что `overflow` обрезает outline
+ *    детей, как у Stepper
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -177,7 +178,6 @@ function getRangeInputTriggerRowStyles(
 
   const styles = [
     'display: grid;',
-    // Без clear — одна колонка на всю ширину. Две колонки только с кнопкой сброса.
     'grid-template-columns: minmax(0, 1fr);',
     `&[data-has-clear] { grid-template-columns: ${clearColumns}; }`,
     'inline-size: 100%;',
@@ -187,9 +187,7 @@ function getRangeInputTriggerRowStyles(
     `border: 1px solid ${theme.colors.border};`,
     `border-radius: ${resolveRangeInputBlockRadius(props)};`,
     `box-shadow: ${theme.shadow.surface};`,
-    // Рамку не красим в primary — как Listbox и Combobox. Акцент — outline фокуса.
     `&[data-open='true'] { visibility: hidden; }`,
-    // Кольцо фокуса на ряде, как у Stepper: outline детей обрезает overflow.
     '&:focus-within {',
     `outline: 2px solid ${theme.colors.focusRing};`,
     'outline-offset: 2px;',
@@ -225,7 +223,8 @@ export const StyledRangeInputTriggerRow = styled.div.withConfig({
  * Как работает:
  * 1. Берёт тему, размер и позицию иконки, считает поверхность шеврона
  * 2. Собирает сетку триггера и центрирует значение через `align-items: center`:
- *    высоту ряда держит `min-block-size` родителя, секция иконки тянется на всю высоту
+ *    высоту ряда держит `min-block-size` родителя; `stretch` прижимал Text к верху
+ *    ячейки, секция иконки тянется через `block-size: 100%`
  * 3. Красит секцию шеврона по `[data-slot='icon']` и подсвечивает её при наведении
  *    триггера
  *
@@ -249,8 +248,6 @@ function getRangeInputTriggerStyles(
   const styles = [
     'display: grid;',
     `grid-template-columns: ${isIconStart ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr) auto'};`,
-    // Центровка значения: высоту ряда держит min-block-size родителя.
-    // stretch прижимал Text к верху ячейки. Секция иконки тянется через block-size 100%.
     'align-items: center;',
     'min-inline-size: 0;',
     'text-align: center;',
