@@ -224,11 +224,11 @@ export function getControlBoxStyles(sizePreset: SizePreset, shape: ShapePreset):
 
 /**
  * DEFAULT_SHOW_BORDER — задаёт показ кольца поверхности по умолчанию.
- * Используется, когда вызывающий код не передал проп `showBorder`.
- * Проп `showBorder` подключается контролу осознанно: эталоны RoundButton и Input;
- * составные триггеры, например Listbox, Combobox, Stepper и RangeInput, проп не
+ * Проп `showBorder` подключается контролу осознанно: эталоны RoundButton и Input.
+ * Составные триггеры, например Listbox, Combobox, Stepper и RangeInput, проп не
  * получают без отдельного кейса. Оболочка композита без пропа зовёт
  * `getControlBorder` без второго аргумента.
+ * Используется, когда вызывающий код не передал проп `showBorder`.
  */
 export const DEFAULT_SHOW_BORDER = true;
 

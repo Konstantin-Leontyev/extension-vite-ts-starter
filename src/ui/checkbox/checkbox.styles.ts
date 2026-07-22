@@ -73,7 +73,9 @@ export function getCheckboxTextSize(sizePreset?: SizePreset): TextSizePreset {
 export type CheckboxCheckedMark = 'check' | 'minus';
 
 /**
- * CHECKBOX_CHECKED_MARK_KEYS — перечень иконок checked-состояния для витрины.
+ * CHECKBOX_CHECKED_MARK_KEYS — задаёт перечень иконок checked-состояния.
+ * Используется в панелях настроек витрины дизайн-системы: `CheckboxSettings`
+ * собирает из него опции для `Listbox`.
  */
 export const CHECKBOX_CHECKED_MARK_KEYS = Object.freeze([
   'check',
@@ -86,7 +88,9 @@ export const CHECKBOX_CHECKED_MARK_KEYS = Object.freeze([
 export type CheckboxUncheckedMark = 'none' | 'plus';
 
 /**
- * CHECKBOX_UNCHECKED_MARK_KEYS — перечень иконок unchecked-состояния для витрины.
+ * CHECKBOX_UNCHECKED_MARK_KEYS — задаёт перечень иконок unchecked-состояния.
+ * Используется в панелях настроек витрины дизайн-системы: `CheckboxSettings`
+ * собирает из него опции для `Listbox`.
  */
 export const CHECKBOX_UNCHECKED_MARK_KEYS = Object.freeze([
   'none',
@@ -97,7 +101,7 @@ export const CHECKBOX_UNCHECKED_MARK_KEYS = Object.freeze([
  * CheckboxStyleProps — представляет пропсы стилизации Checkbox и layout-пропсы.
  *
  * @property checkedMark — иконка в checked-состоянии
- * @property inverted — инвертирует палитру бокса и марки
+ * @property inverted — включает инверсию палитры бокса и марки
  * @property sizePreset — размер бокса
  * @property uncheckedMark — иконка в unchecked-состоянии
  */

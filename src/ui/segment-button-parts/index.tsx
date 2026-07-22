@@ -107,7 +107,7 @@ export type SegmentButtonPartsProps = {
 } & SegmentButtonPartsSegments;
 
 /**
- * SegmentButtonPartsPart — отображает одну кнопку сегмента.
+ * SegmentButtonPartsPart — возвращает кнопку одного сегмента.
  *
  * Как работает:
  * 1. Берёт действие сегмента и подставляет дефолт `iconPosition`

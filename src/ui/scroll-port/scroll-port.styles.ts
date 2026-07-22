@@ -45,8 +45,8 @@ const SCROLL_PORT_ROOT_PROP_NAMES = new Set<string>([
 
 /**
  * DEFAULT_PADDING_INLINE_END — задаёт отступ inline-end по умолчанию.
- * Используется, когда вызывающий код не передал проп `paddingInlineEnd`.
  * Единое значение для корня и вьюпорта: отступ под трек скроллбара и отступ содержимого совпадают.
+ * Используется, когда вызывающий код не передал проп `paddingInlineEnd`.
  */
 const DEFAULT_PADDING_INLINE_END: SpacingValue = 16;
 

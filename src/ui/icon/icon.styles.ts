@@ -208,7 +208,7 @@ function getIconStyles(props: IconStyleProps): string {
  *  - `display: grid` — раскладка по дефолту проекта
  *  - `place-items: center` — центрирует svg в окне
  *  - `flex-shrink: 0` — окно не сжимается во flex-рядах
- *  - `max-block-size: 100%` на `& svg` — вертикальный зажим svg; reset зажимает
+ *  - `max-block-size: 100%` на `& svg` — вертикальный зажим svg. Сброс зажимает
  *    только `max-inline-size`
  *
  * Генерация стилей:

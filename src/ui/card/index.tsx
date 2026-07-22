@@ -112,7 +112,7 @@ const DEFAULT_CARD_SUBTITLE_TONE: TextTone = 'muted';
 const DEFAULT_CARD_HEADER_ACTIONS: CardHeaderAction[] = [];
 
 /**
- * DEFAULT_CARD_ACTION_ICON_PADDING — задаёт отступ окна Icon в кнопке действия.
+ * DEFAULT_CARD_ACTION_ICON_PADDING — задаёт отступ окна Icon в кнопке действия по умолчанию.
  * Используется, когда вызывающий код не передал проп `iconPadding`.
  */
 const DEFAULT_CARD_ACTION_ICON_PADDING: SpacingValue = 4;
