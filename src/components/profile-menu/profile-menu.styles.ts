@@ -1,63 +1,111 @@
+/**
+ * Файл: `src/components/profile-menu/profile-menu.styles.ts`
+ * Определяет внешний вид компонента ProfileMenu.
+ *
+ * Основные задачи:
+ * 1. Типизировать пропсы через `ProfileMenuStyleProps`
+ * 2. Предоставить styled-узлы `StyledProfileMenu`, `StyledProfileMenuContent`,
+ *    `StyledProfileMenuHeader`, `StyledProfileMenuActions`, `StyledProfileMenuLegal`
+ *    и `StyledProfileMenuLegalLink`
+ *
+ * Потребители:
+ *  - `src/components/profile-menu/index.tsx` — собирает компонент ProfileMenu
+ */
+
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { spacingRem } from '@ui/spacing';
+import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
+import { getSpacingValue } from '@ui/spacing';
 
-export const StyledProfileMenu = styled.div`
-  position: relative;
+/**
+ * ProfileMenuStyleProps — представляет пропсы стилизации ProfileMenu и layout-пропсы.
+ */
+export type ProfileMenuStyleProps = LayoutProps;
+
+/**
+ * StyledProfileMenu — задаёт корневой узел компонента ProfileMenu.
+ * Базируется на `<div>` и поддерживает все пропсы из `ProfileMenuStyleProps`.
+ *
+ * Генерация стилей:
+ *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ */
+export const StyledProfileMenu = styled.div.withConfig({
+  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
+})<ProfileMenuStyleProps>`
+  ${(props) => getLayoutStyles(props)}
 `;
 
-export const StyledProfileMenuHeader = styled.div`
-  display: grid;
-  gap: ${spacingRem(12)};
-  place-items: center;
-`;
-
-/** Колонка регионов: шапка (auto) → скролл (1fr) → действия (auto) → правовые (auto). */
+/**
+ * StyledProfileMenuContent — задаёт колонку регионов панели компонента ProfileMenu.
+ * Базируется на `<div>`.
+ *
+ * Встроенные стили:
+ *  - `display: grid` и `grid-template-rows: auto auto auto` — шапка, действия и правовые
+ *    ссылки друг под другом
+ *  - `block-size: 100%` — колонка заполняет высоту панели
+ *  - `min-block-size: 0` — позволяет колонке сжиматься внутри ограниченной панели
+ */
 export const StyledProfileMenuContent = styled.div`
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  grid-template-rows: auto auto auto;
   block-size: 100%;
   min-block-size: 0;
 `;
 
-export const StyledProfileMenuProjects = styled.div`
+/**
+ * StyledProfileMenuHeader — задаёт шапку панели компонента ProfileMenu.
+ * Базируется на `<div>`.
+ *
+ * Встроенные стили:
+ *  - `display: grid` и `place-items: center` — аватар и приветствие по центру
+ *  - `gap` — отступ между аватаром и приветствием
+ */
+export const StyledProfileMenuHeader = styled.div`
   display: grid;
-  gap: ${spacingRem(12)};
-`;
-
-export const StyledProfileMenuActions = styled.div`
-  margin-block-start: ${spacingRem(12)};
-  padding-inline: ${spacingRem(4)};
-`;
-
-export const StyledProfileMenuIconBadge = styled.span`
-  display: grid;
-  flex-shrink: 0;
+  gap: ${getSpacingValue(12)};
   place-items: center;
-  inline-size: ${spacingRem(24)};
-  block-size: ${spacingRem(24)};
-  color: ${({ theme }) => theme.colors.primary};
-  background: ${({ theme }) =>
-    `color-mix(in srgb, ${theme.colors.primary} 14%, ${theme.colors.surface})`};
-  border-radius: 50%;
-
-  & svg {
-    inline-size: ${spacingRem(24)};
-    block-size: ${spacingRem(24)};
-  }
 `;
 
+/**
+ * StyledProfileMenuActions — задаёт ряд действий панели компонента ProfileMenu.
+ * Базируется на `<div>`.
+ *
+ * Встроенные стили:
+ *  - `padding-inline` — боковые отступы вокруг SegmentButton
+ *  - `margin-block-start` — отступ ряда действий от шапки
+ */
+export const StyledProfileMenuActions = styled.div`
+  padding-inline: ${getSpacingValue(4)};
+  margin-block-start: ${getSpacingValue(12)};
+`;
+
+/**
+ * StyledProfileMenuLegal — задаёт навигацию правовых ссылок компонента ProfileMenu.
+ * Базируется на `<nav>`.
+ *
+ * Встроенные стили:
+ *  - `display: grid` и `grid-auto-flow: column` — ссылки в один ряд
+ *  - `gap` — отступ между ссылками и разделителями
+ *  - `justify-content: center` — ряд по центру панели
+ *  - `padding-block-start` — отступ от ряда действий
+ */
 export const StyledProfileMenuLegal = styled.nav`
   display: grid;
   grid-auto-flow: column;
-  gap: ${spacingRem(8)};
+  gap: ${getSpacingValue(8)};
   align-items: center;
   justify-content: center;
-  padding-block-start: ${spacingRem(16)};
+  padding-block-start: ${getSpacingValue(16)};
 `;
 
+/**
+ * StyledProfileMenuLegalLink — задаёт ссылку правовой навигации компонента ProfileMenu.
+ * Базируется на `Link` из react-router-dom.
+ *
+ * Встроенные стили:
+ *  - `padding-inline` — расширяет кликабельную зону ссылки
+ */
 export const StyledProfileMenuLegalLink = styled(Link)`
-  color: ${({ theme }) => theme.colors.muted};
-  padding-inline: ${spacingRem(8)};
+  padding-inline: ${getSpacingValue(8)};
 `;

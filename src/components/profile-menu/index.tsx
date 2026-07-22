@@ -1,10 +1,28 @@
-import { Fragment, useCallback, useEffect, useId, useRef, useState } from 'react';
-import { useTheme } from 'styled-components';
+/**
+ * Файл: `src/components/profile-menu/index.tsx`
+ * Предоставляет компонент ProfileMenu для меню профиля в шапке.
+ *
+ * Поддерживает:
+ *  - layout-пропсы: отступы, позиционирование, размеры
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент ProfileMenu
+ * 2. Типизировать пропсы через `ProfileMenuProps`
+ * 3. Выставлять `role` и `aria`-атрибуты панели и триггера
+ *
+ * Потребители:
+ *  - `src/components/header/index.tsx` — рендерит меню профиля в шапке
+ */
 
+import { Fragment, useId, useRef, useState, type ComponentPropsWithRef } from 'react';
+
+import { AddCircleIcon } from '@icons/add-circle';
 import { AvatarIcon } from '@icons/avatar';
 import { CloseIcon } from '@icons/close';
 import { SignOutIcon } from '@icons/sign-out';
+import { AnchoredPortal } from '@ui/anchored-portal';
 import { Card } from '@ui/card';
+import { Icon } from '@ui/icon';
 import { RoundButton } from '@ui/round-button';
 import { SegmentButton } from '@ui/segment-button';
 import { Text } from '@ui/text';
@@ -16,87 +34,122 @@ import {
   StyledProfileMenuHeader,
   StyledProfileMenuLegal,
   StyledProfileMenuLegalLink,
+  type ProfileMenuStyleProps,
 } from './profile-menu.styles';
 import { PROFILE_STUB } from './profile-stub';
 
+/**
+ * PROFILE_MENU_LEGAL_LINKS — задаёт перечень правовых ссылок меню профиля.
+ * Используется в нижней навигации панели ProfileMenu.
+ */
 const PROFILE_MENU_LEGAL_LINKS = [
   { label: 'Privacy Policy', to: '/privacy' },
   { label: 'Terms of Service', to: '/terms' },
 ] as const;
 
-export function ProfileMenu() {
-  const theme = useTheme();
+/**
+ * PROFILE_MENU_TRIGGER_GAP_PX — задаёт зазор между триггером и панелью в px.
+ * Совпадает с ключом шкалы отступов `12` из `@ui/spacing`.
+ * Используется в `applyProfileMenuPanelPosition`.
+ */
+const PROFILE_MENU_TRIGGER_GAP_PX = 12;
+
+/**
+ * applyProfileMenuPanelPosition — позиционирует панель меню относительно триггера.
+ *
+ * Как работает:
+ * 1. Берёт прямоугольник триггера через `getBoundingClientRect`
+ * 2. Ставит верх панели ниже триггера на `PROFILE_MENU_TRIGGER_GAP_PX`
+ * 3. Выравнивает правый край панели с правым краем триггера
+ *
+ * @param anchor элемент-триггер меню
+ * @param panel элемент панели меню
+ */
+function applyProfileMenuPanelPosition(anchor: HTMLElement, panel: HTMLElement): void {
+  const triggerRect = anchor.getBoundingClientRect();
+
+  panel.style.insetBlockStart = `${triggerRect.bottom + PROFILE_MENU_TRIGGER_GAP_PX}px`;
+  panel.style.insetInlineEnd = `${window.innerWidth - triggerRect.right}px`;
+  panel.style.insetInlineStart = 'auto';
+}
+
+/**
+ * ProfileMenuProps — представляет пропсы компонента ProfileMenu.
+ */
+type ProfileMenuProps = ProfileMenuStyleProps &
+  Omit<
+    ComponentPropsWithRef<'div'>,
+    'className' | 'style' | keyof ProfileMenuStyleProps
+  >;
+
+/**
+ * ProfileMenu — отображает меню профиля с аватаром, действиями и правовыми ссылками.
+ *
+ * @example
+ * <ProfileMenu />
+ */
+export function ProfileMenu(props: ProfileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuId = useId();
-  const rootRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const { displayEmail, displayName } = PROFILE_STUB;
 
-  const closeMenu = useCallback((): void => {
+  function handleClose(): void {
     setIsOpen(false);
-  }, []);
+  }
 
   function handleToggle(): void {
     setIsOpen((current) => !current);
   }
 
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    function handlePointerDown(event: PointerEvent): void {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        closeMenu();
-      }
-    }
-
-    function handleEscape(event: KeyboardEvent): void {
-      if (event.key === 'Escape') {
-        closeMenu();
-      }
-    }
-
-    document.addEventListener('pointerdown', handlePointerDown);
-    document.addEventListener('keydown', handleEscape);
-
-    return () => {
-      document.removeEventListener('pointerdown', handlePointerDown);
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, [closeMenu, isOpen]);
-
   return (
-    <StyledProfileMenu ref={rootRef}>
+    <StyledProfileMenu {...props}>
       <RoundButton
         aria-controls={menuId}
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         aria-label={`Profile menu for ${displayName}`}
+        ref={triggerRef}
         title={displayEmail}
         onClick={handleToggle}
       >
-        <AvatarIcon />
+        <Icon blockSize="100%" inlineSize="100%" padding={4}>
+          <AvatarIcon />
+        </Icon>
       </RoundButton>
 
-      {isOpen && (
+      <AnchoredPortal
+        dismissZoneRefs={[triggerRef, panelRef]}
+        open={isOpen}
+        panelRef={panelRef}
+        positioning={{
+          anchorRef: triggerRef,
+          mode: 'custom',
+          apply: applyProfileMenuPanelPosition,
+        }}
+        returnFocusRef={triggerRef}
+        onDismiss={handleClose}
+      >
         <Card
-          aria-modal="true"
+          aria-labelledby={titleId}
+          aria-modal={true}
           headerActions={[
             {
               ariaLabel: 'Close profile menu',
               icon: <CloseIcon />,
-              onClick: closeMenu,
+              iconPadding: 8,
+              onClick: handleClose,
             },
           ]}
           id={menuId}
-          insetBlockStart={40}
-          insetInlineEnd={0}
-          marginBlockStart={12}
           maxBlockSize="calc(100dvb - 6.25rem)"
           maxInlineSize="calc(100vw - 4rem)"
           minBlockSize="0"
           minInlineSize="min(360px, calc(100vw - 4rem))"
-          position="absolute"
+          position="fixed"
+          ref={panelRef}
           role="dialog"
           subtitle={displayEmail}
           subtitleAlign="center"
@@ -105,22 +158,24 @@ export function ProfileMenu() {
           <StyledProfileMenuContent>
             <StyledProfileMenuHeader>
               <RoundButton aria-hidden="true" sizePreset="huge" tabIndex={-1}>
-                <AvatarIcon />
+                <Icon blockSize="100%" inlineSize="100%" padding={8}>
+                  <AvatarIcon />
+                </Icon>
               </RoundButton>
-              <Text align="center" as="p" sizePreset="extraBold">
+              <Text align="center" as="p" id={titleId} sizePreset="extraBold">
                 Hello, {displayName}!
               </Text>
             </StyledProfileMenuHeader>
 
             <StyledProfileMenuActions>
               <SegmentButton
-                shape="round"
-                left={{ text: 'Profile', onClick: closeMenu }}
+                left={{ icon: <AddCircleIcon />, text: 'Profile', onClick: handleClose }}
                 right={{
                   icon: <SignOutIcon />,
                   text: 'Sign out',
-                  onClick: closeMenu,
+                  onClick: handleClose,
                 }}
+                shape="pill"
               />
             </StyledProfileMenuActions>
 
@@ -128,12 +183,12 @@ export function ProfileMenu() {
               {PROFILE_MENU_LEGAL_LINKS.map((link, index) => (
                 <Fragment key={link.to}>
                   {index > 0 && (
-                    <Text aria-hidden="true" color={theme.colors.muted}>
+                    <Text aria-hidden="true" tone="muted">
                       ·
                     </Text>
                   )}
-                  <StyledProfileMenuLegalLink to={link.to} onClick={closeMenu}>
-                    <Text align="center" sizePreset="thin">
+                  <StyledProfileMenuLegalLink to={link.to} onClick={handleClose}>
+                    <Text align="center" sizePreset="thin" tone="muted">
                       {link.label}
                     </Text>
                   </StyledProfileMenuLegalLink>
@@ -142,7 +197,7 @@ export function ProfileMenu() {
             </StyledProfileMenuLegal>
           </StyledProfileMenuContent>
         </Card>
-      )}
+      </AnchoredPortal>
     </StyledProfileMenu>
   );
 }
