@@ -17,6 +17,7 @@ import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { getSpacingValue } from '@ui/spacing';
+import { getTheme, type AppTheme } from '@ui/theme';
 
 /**
  * ProfileMenuStyleProps — представляет пропсы стилизации ProfileMenu и layout-пропсы.
@@ -100,12 +101,31 @@ export const StyledProfileMenuLegal = styled.nav`
 `;
 
 /**
+ * getProfileMenuLegalLinkStyles — возвращает CSS-правила для узла `StyledProfileMenuLegalLink`: цвет ссылки.
+ * Цвет задаётся на Link, а не на внутреннем Text: глобальный сброс красит `a:hover` и
+ * `a:focus-visible`, а Text наследует через `color: inherit`.
+ *
+ * @param props объект с полем `theme` из styled-components
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getProfileMenuLegalLinkStyles(props: { theme: AppTheme }): string {
+  const theme = getTheme(props);
+  const styles = [`color: ${theme.colors.muted};`];
+
+  return styles.join('\n');
+}
+
+/**
  * StyledProfileMenuLegalLink — задаёт ссылку правовой навигации компонента ProfileMenu.
  * Базируется на `Link` из react-router-dom.
  *
  * Встроенные стили:
  *  - `padding-inline` — расширяет кликабельную зону ссылки
+ *
+ * Генерация стилей:
+ *  - `getProfileMenuLegalLinkStyles` — цвет `muted` в покое
  */
 export const StyledProfileMenuLegalLink = styled(Link)`
   padding-inline: ${getSpacingValue(8)};
+  ${(props) => getProfileMenuLegalLinkStyles(props)}
 `;

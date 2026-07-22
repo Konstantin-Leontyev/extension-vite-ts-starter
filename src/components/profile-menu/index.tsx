@@ -55,22 +55,39 @@ const PROFILE_MENU_LEGAL_LINKS = [
 const PROFILE_MENU_TRIGGER_GAP_PX = 12;
 
 /**
+ * PROFILE_MENU_BOTTOM_INSET_PX — задаёт минимальный отступ панели от нижнего края
+ * вьюпорта в px. Совпадает с ключом шкалы отступов `8` из `@ui/spacing`.
+ * Используется в `applyProfileMenuPanelPosition`.
+ */
+const PROFILE_MENU_BOTTOM_INSET_PX = 8;
+
+/**
  * applyProfileMenuPanelPosition — позиционирует панель меню относительно триггера.
  *
  * Как работает:
  * 1. Берёт прямоугольник триггера через `getBoundingClientRect`
  * 2. Ставит верх панели ниже триггера на `PROFILE_MENU_TRIGGER_GAP_PX`
  * 3. Выравнивает правый край панели с правым краем триггера
+ * 4. Считает доступную высоту до нижнего края вьюпорта с учётом
+ *    `PROFILE_MENU_BOTTOM_INSET_PX`
+ * 5. Задаёт панели `max-block-size` и включает вертикальный скролл
  *
  * @param anchor элемент-триггер меню
  * @param panel элемент панели меню
  */
 function applyProfileMenuPanelPosition(anchor: HTMLElement, panel: HTMLElement): void {
   const triggerRect = anchor.getBoundingClientRect();
+  const top = triggerRect.bottom + PROFILE_MENU_TRIGGER_GAP_PX;
+  const maxBlockSize = Math.max(
+    0,
+    window.innerHeight - top - PROFILE_MENU_BOTTOM_INSET_PX
+  );
 
-  panel.style.insetBlockStart = `${triggerRect.bottom + PROFILE_MENU_TRIGGER_GAP_PX}px`;
+  panel.style.insetBlockStart = `${top}px`;
   panel.style.insetInlineEnd = `${window.innerWidth - triggerRect.right}px`;
   panel.style.insetInlineStart = 'auto';
+  panel.style.maxBlockSize = `${maxBlockSize}px`;
+  panel.style.overflowY = 'auto';
 }
 
 /**
@@ -144,7 +161,6 @@ export function ProfileMenu(props: ProfileMenuProps) {
             },
           ]}
           id={menuId}
-          maxBlockSize="calc(100dvb - 6.25rem)"
           maxInlineSize="calc(100vw - 4rem)"
           minBlockSize="0"
           minInlineSize="min(360px, calc(100vw - 4rem))"
@@ -169,7 +185,12 @@ export function ProfileMenu(props: ProfileMenuProps) {
 
             <StyledProfileMenuActions>
               <SegmentButton
-                left={{ icon: <AddCircleIcon />, text: 'Profile', onClick: handleClose }}
+                left={{
+                  icon: <AddCircleIcon />,
+                  iconPosition: 'start',
+                  text: 'Profile',
+                  onClick: handleClose,
+                }}
                 right={{
                   icon: <SignOutIcon />,
                   text: 'Sign out',
@@ -188,7 +209,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
                     </Text>
                   )}
                   <StyledProfileMenuLegalLink to={link.to} onClick={handleClose}>
-                    <Text align="center" sizePreset="thin" tone="muted">
+                    <Text align="center" sizePreset="thin">
                       {link.label}
                     </Text>
                   </StyledProfileMenuLegalLink>

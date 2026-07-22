@@ -1,13 +1,40 @@
+/**
+ * Файл: `src/components/header/index.tsx`
+ * Предоставляет компонент Header для отображения шапки страницы.
+ *
+ * Поддерживает:
+ *  - режим скрытия шапки через проп `autoHide`
+ *  - содержимое бренда слева через проп `brand`
+ *  - содержимое центральной колонки через проп `center`
+ *  - узлы перед кнопкой настроек через проп `leadingActions`
+ *  - обработчик кнопки настроек через проп `onSettingsClick`
+ *  - доступное имя кнопки настроек через проп `settingsLabel`
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент Header
+ * 2. Типизировать пропсы через `HeaderProps`
+ * 3. Реэкспортировать `HEADER_BLOCK_SIZE`
+ * 4. Выставлять `aria-label` кнопки настроек
+ *
+ * Потребители:
+ *  - `src/components/router/router-layout.tsx` — рендерит Header в каркасе страницы
+ *  - `src/pages/design-system/design-system.styles.ts` — читает `HEADER_BLOCK_SIZE` для высоты витрины
+ *  - `src/context/toast/toast.styles.ts` — читает `HEADER_BLOCK_SIZE` для высоты стека уведомлений
+ */
+
 import { type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ProfileMenu } from '@components/profile-menu';
 import { ThemeToggle } from '@components/theme-toggle';
 import { SettingsIcon } from '@icons/settings';
+import { Icon } from '@ui/icon';
 import { RoundButton } from '@ui/round-button';
 import { Text } from '@ui/text';
 
 import {
+  DEFAULT_HEADER_AUTO_HIDE,
+  HEADER_BLOCK_SIZE,
   HeaderShellStyle,
   StyledHeader,
   StyledHeaderActions,
@@ -17,31 +44,50 @@ import {
 } from './header.styles';
 import { useHeaderAutoHide } from './use-header-auto-hide';
 
+/**
+ * DEFAULT_HEADER_SETTINGS_LABEL — задаёт доступное имя кнопки настроек по умолчанию.
+ * Используется, когда вызывающий код не передал проп `settingsLabel`.
+ */
+const DEFAULT_HEADER_SETTINGS_LABEL = 'Design system';
+
+/**
+ * HeaderProps — представляет пропсы компонента Header.
+ *
+ * @property autoHide — включает режим скрытия шапки
+ * @property brand — содержимое бренда слева
+ * @property center — содержимое центральной колонки
+ * @property leadingActions — узлы перед кнопкой настроек в ряду действий
+ * @property onSettingsClick — обработчик нажатия кнопки настроек
+ * @property settingsLabel — доступное имя кнопки настроек
+ */
 type HeaderProps = {
-  /** true — хедер скрывается и всплывает по наведению на верхнюю кромку; false — стики. */
   autoHide?: boolean;
-  /** Бренд слева; по умолчанию «Project Name». */
   brand?: ReactNode;
-  /** Слот центральной колонки (rename/nav в продукте). */
   center?: ReactNode;
-  /** Узлы в actions перед шестерёнкой (продукт: LocaleSwitcher). */
   leadingActions?: ReactNode;
-  /** Действие кнопки-шестерёнки. По умолчанию — переход на страницу дизайн-системы. */
   onSettingsClick?: () => void;
-  /** Доступное имя шестерёнки — отражает её действие в текущем контексте. */
   settingsLabel?: string;
 };
 
+/**
+ * Header — отображает шапку страницы с брендом, центральным слотом и рядом действий.
+ *
+ * @example
+ * <Header />
+ * <Header autoHide brand={<Text sizePreset="bold">AlgoTrade</Text>} />
+ */
 export function Header({
-  autoHide = false,
+  autoHide,
   brand,
   center,
   leadingActions,
   onSettingsClick,
-  settingsLabel = 'Design system',
+  settingsLabel = DEFAULT_HEADER_SETTINGS_LABEL,
 }: HeaderProps) {
   const navigate = useNavigate();
-  const { dataRevealed, onMouseEnter, onMouseLeave } = useHeaderAutoHide(autoHide);
+  const { dataRevealed, handleMouseEnter, handleMouseLeave } = useHeaderAutoHide(
+    autoHide ?? DEFAULT_HEADER_AUTO_HIDE
+  );
   const handleSettingsClick = onSettingsClick ?? (() => navigate('/design-system'));
   const brandNode = brand ?? <Text sizePreset="bold">Project Name</Text>;
 
@@ -49,10 +95,10 @@ export function Header({
     <>
       <HeaderShellStyle />
       <StyledHeader
-        $autoHide={autoHide}
+        autoHide={autoHide}
         data-revealed={dataRevealed}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <StyledHeaderBar>
           <StyledHeaderBrand end to="/">
@@ -64,7 +110,9 @@ export function Header({
           <StyledHeaderActions>
             {leadingActions}
             <RoundButton aria-label={settingsLabel} onClick={handleSettingsClick}>
-              <SettingsIcon />
+              <Icon blockSize="100%" inlineSize="100%" padding={4}>
+                <SettingsIcon />
+              </Icon>
             </RoundButton>
             <ThemeToggle />
             <ProfileMenu />
@@ -74,3 +122,5 @@ export function Header({
     </>
   );
 }
+
+export { HEADER_BLOCK_SIZE };
