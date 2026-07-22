@@ -6,11 +6,12 @@
  * 1. Связать ключи иконок с функциями рендеринга в `ICONS`
  * 2. Типизировать ключи иконок через `IconKey`
  * 3. Предоставить функции `formatIconLabel` и `getIcon`
- * 4. Сформировать опции `LIST_OPTIONS` и `COMBOBOX_OPTIONS` для Listbox и Combobox
+ * 4. Предоставить опции `LIST_OPTIONS` и `COMBOBOX_OPTIONS` для Listbox и Combobox
  *
  * Потребители:
  *  - `src/pages/design-system/button-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
  *  - `src/pages/design-system/round-button-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
+ *  - `src/pages/design-system/segment-button-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
  *  - `src/pages/design-system/card-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
  *  - `src/pages/design-system/combobox-settings/index.tsx` — использует `LIST_OPTIONS` для поля Value
  *  - `src/pages/design-system/index.tsx` — подставляет иконки в превью Combobox
@@ -19,6 +20,7 @@
 import { type ReactNode } from 'react';
 
 import {
+  AddCircleIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   CloseIcon,
@@ -37,6 +39,7 @@ import { type ListboxOption } from '@ui/listbox';
  * Соответствие приватно для модуля, доступ к иконкам — только через `getIcon`.
  */
 const ICONS = {
+  'add-circle': () => <AddCircleIcon />,
   close: () => <CloseIcon />,
   'chevron-down': () => <ChevronDownIcon />,
   'chevron-up': () => <ChevronUpIcon />,
@@ -84,7 +87,7 @@ export const LIST_OPTIONS: ListboxOption[] = Object.keys(ICONS).map((key) => ({
 
 /**
  * COMBOBOX_OPTIONS — формирует опции Combobox с иконкой и подписью из ключей `ICONS`.
- * Используется в выборе иконки в настройках Button, RoundButton и Card
+ * Используется в выборе иконки в настройках Button, RoundButton, SegmentButton и Card
  * и в превью Combobox с иконками.
  */
 export const COMBOBOX_OPTIONS: ComboboxOption[] = Object.keys(ICONS).map((key) => ({

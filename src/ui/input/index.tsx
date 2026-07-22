@@ -6,6 +6,7 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - форму строки-поля через проп `shape`
+ *  - рамку контрола через проп `showBorder`
  *  - горизонтальное выравнивание значения через проп `textAlign`
  *  - подпись над полем через проп `label`
  *  - встроенную строку ошибки через проп `error`
@@ -109,6 +110,7 @@ export function Input({
   label,
   reserveErrorSpace = DEFAULT_INPUT_RESERVE_ERROR_SPACE,
   shape,
+  showBorder,
   sizePreset,
   textAlign,
   ...rest
@@ -144,6 +146,7 @@ export function Input({
         aria-invalid={isInvalid || undefined}
         id={id}
         shape={shape}
+        showBorder={showBorder}
         sizePreset={sizePreset}
         textAlign={textAlign}
       />

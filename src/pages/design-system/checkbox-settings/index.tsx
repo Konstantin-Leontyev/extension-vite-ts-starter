@@ -63,7 +63,9 @@ export type CheckboxWidgetState = {
 };
 
 /**
- * CHECKED_MARK_OPTIONS — опции Listbox для выбора иконки checked-состояния.
+ * CHECKED_MARK_OPTIONS — формирует опции листбокса checked-марки из
+ * `CHECKBOX_CHECKED_MARK_KEYS`.
+ * Используется в `Listbox` checked-марки внутри CheckboxSettings.
  */
 const CHECKED_MARK_OPTIONS: ListboxOption[] = CHECKBOX_CHECKED_MARK_KEYS.map((mark) => ({
   label: mark,
@@ -71,7 +73,9 @@ const CHECKED_MARK_OPTIONS: ListboxOption[] = CHECKBOX_CHECKED_MARK_KEYS.map((ma
 }));
 
 /**
- * UNCHECKED_MARK_OPTIONS — опции Listbox для выбора иконки unchecked-состояния.
+ * UNCHECKED_MARK_OPTIONS — формирует опции листбокса unchecked-марки из
+ * `CHECKBOX_UNCHECKED_MARK_KEYS`.
+ * Используется в `Listbox` unchecked-марки внутри CheckboxSettings.
  */
 const UNCHECKED_MARK_OPTIONS: ListboxOption[] = CHECKBOX_UNCHECKED_MARK_KEYS.map(
   (mark) => ({
@@ -137,10 +141,15 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
           onChange: (checked) => onChange('showText', checked),
         }}
         size={state.textSize}
-        tone={state.textTone}
+        tones={[
+          {
+            label: 'Text tone:',
+            value: state.textTone,
+            onChange: (tone) => onChange('textTone', tone),
+          },
+        ]}
         onItalicChange={(value) => onChange('textItalic', value)}
         onSizeChange={(size) => onChange('textSize', size)}
-        onToneChange={(tone) => onChange('textTone', tone)}
       />
 
       <Checkbox

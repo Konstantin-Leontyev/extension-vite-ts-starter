@@ -8,19 +8,20 @@
  * 2. Экспортировать компонент `RoundButtonSettings`
  *
  * Потребители:
- *  - `src/pages/design-system/index.tsx` — подключает панель и синхронизирует состояние с превью круглой кнопки
+ *  - `src/pages/design-system/index.tsx` — подключает панель и синхронизирует состояние с превью виджета RoundButton
  */
 
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { Combobox } from '@ui/combobox';
 import {
   ROUND_BUTTON_SIZE_PRESET_KEYS,
   type RoundButtonSizePreset,
 } from '@ui/round-button';
+import { type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../design-system.styles';
+import { IconGroup } from '../icon-group';
 import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
 import { SizeListbox } from '../size-listbox';
 
@@ -28,16 +29,20 @@ import { SizeListbox } from '../size-listbox';
  * RoundButtonWidgetState — представляет состояние настроек компонента RoundButton в витрине дизайн-системы.
  * Ключи совпадают с именами пропов компонента RoundButton, кроме витринных ключей:
  * `iconKey` выбирает иконку для `children` в превью.
- * Используется для синхронизации значений между панелью управления и демонстрационной круглой кнопкой.
+ * Используется для синхронизации значений между панелью управления и демонстрационным RoundButton.
  *
  * @property disabled — включает недоступное состояние
+ * @property iconFill — тон глифа иконки
  * @property iconKey — витринный ключ выбора иконки для превью
+ * @property iconTone — тон поверхности круга
  * @property showBorder — включает границу
  * @property sizePreset — размер кнопки
  */
 export type RoundButtonWidgetState = {
   disabled: boolean;
+  iconFill: TonePreset;
   iconKey: IconKey;
+  iconTone: TonePreset;
   showBorder: boolean;
   sizePreset: RoundButtonSizePreset;
 };
@@ -46,7 +51,7 @@ export type RoundButtonWidgetState = {
  * RoundButtonSettingsProps — представляет пропсы компонента RoundButtonSettings.
  *
  * @property onChange — обработчик изменения поля состояния витрины
- * @property state — текущее состояние настроек круглой кнопки
+ * @property state — текущее состояние настроек RoundButton
  */
 type RoundButtonSettingsProps = {
   onChange: <K extends keyof RoundButtonWidgetState>(
@@ -72,12 +77,16 @@ export function RoundButtonSettings({ onChange, state }: RoundButtonSettingsProp
         onChange={(size) => onChange('sizePreset', size)}
       />
 
-      <Combobox
-        label="Icon:"
-        options={COMBOBOX_OPTIONS}
-        reserveErrorSpace={false}
-        value={state.iconKey}
-        onChange={(value) => onChange('iconKey', value as IconKey)}
+      <IconGroup
+        fill={state.iconFill}
+        icon={{
+          options: COMBOBOX_OPTIONS,
+          value: state.iconKey,
+          onChange: (value) => onChange('iconKey', value as IconKey),
+        }}
+        tone={state.iconTone}
+        onFillChange={(tone) => onChange('iconFill', tone)}
+        onToneChange={(tone) => onChange('iconTone', tone)}
       />
 
       <Checkbox

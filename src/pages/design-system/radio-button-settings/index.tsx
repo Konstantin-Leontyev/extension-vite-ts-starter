@@ -31,8 +31,8 @@ import { TextGroup } from '../text-group';
  * хранят содержимое `children` вариантов.
  * Используется для синхронизации значений между панелью управления и демонстрационной парой переключателей.
  *
- * @property disabledA — включает disabled для варианта A
- * @property disabledB — включает disabled для варианта B
+ * @property disabledA — включает недоступное состояние варианта A
+ * @property disabledB — включает недоступное состояние варианта B
  * @property selected — активный вариант в группе
  * @property showText — витринный ключ показа подписей. Выключенный — кружки без обёртки
  * @property sizePreset — размер переключателя
@@ -56,8 +56,8 @@ export type RadioButtonWidgetState = {
 };
 
 /**
- * SELECTED_OPTIONS — хранит опции Listbox для выбора активного переключателя.
- * Используется в панели настроек для поля Selected.
+ * SELECTED_OPTIONS — задаёт опции листбокса активного переключателя.
+ * Используется в `Listbox` поля Selected внутри RadioButtonSettings.
  */
 const SELECTED_OPTIONS: ListboxOption[] = [
   { label: 'Option A', value: 'a' },
@@ -126,10 +126,15 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
           onChange: (checked) => onChange('showText', checked),
         }}
         size={state.textSize}
-        tone={state.textTone}
+        tones={[
+          {
+            label: 'Text tone:',
+            value: state.textTone,
+            onChange: (tone) => onChange('textTone', tone),
+          },
+        ]}
         onItalicChange={(value) => onChange('textItalic', value)}
         onSizeChange={(size) => onChange('textSize', size)}
-        onToneChange={(tone) => onChange('textTone', tone)}
       />
 
       <Checkbox

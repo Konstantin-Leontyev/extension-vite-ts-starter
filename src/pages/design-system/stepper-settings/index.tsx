@@ -101,7 +101,7 @@ type StepperSettingsProps = {
  * StepperSettings — отображает панель настроек Stepper в витрине дизайн-системы.
  *
  * @example
- * <StepperSettings state={stepperState} onChange={updateStepper} />
+ * <StepperSettings state={stepper} onChange={updateStepper} />
  */
 export function StepperSettings({ onChange, state }: StepperSettingsProps) {
   return (
@@ -202,11 +202,16 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
         ]}
         italic={state.textItalic}
         size={state.textSize}
-        tone={state.textTone}
+        tones={[
+          {
+            label: 'Text tone:',
+            value: state.textTone,
+            onChange: (tone) => onChange('textTone', tone),
+          },
+        ]}
         onAlignChange={(align) => onChange('textAlign', align)}
         onItalicChange={(value) => onChange('textItalic', value)}
         onSizeChange={(size) => onChange('textSize', size)}
-        onToneChange={(tone) => onChange('textTone', tone)}
       />
 
       <Checkbox

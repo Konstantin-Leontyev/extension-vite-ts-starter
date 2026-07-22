@@ -6,10 +6,11 @@
  * Поддерживает:
  *  - тон глифа иконки через проп `fill`
  *  - выбор глифа через проп `icon`. Без `icon` контрол `Icon:` не рендерится
+ *  - суффикс лейблов через проп `name`. Например для SegmentButton — A, B или C
  *  - обработчик изменения тона глифа через проп `onFillChange`
  *  - обработчик изменения тона секции через проп `onToneChange`
- *  - позицию иконки через проп `position`
- *  - флаг показа иконки через проп `show`. Без `show` иконка неотключаема и группа
+ *  - позицию иконки через проп `position`. Без `position` контрол позиции не рендерится
+ *  - показ иконки через проп `show`. Без `show` иконка неотключаема и группа
  *    рендерится всегда
  *  - тон секции иконки через проп `tone`
  *
@@ -21,6 +22,8 @@
  *  - панели настроек витрины — настраивают иконку компонента:
  *     - `src/pages/design-system/button-settings/index.tsx`
  *     - `src/pages/design-system/range-input-settings/index.tsx`
+ *     - `src/pages/design-system/round-button-settings/index.tsx`
+ *     - `src/pages/design-system/segment-button-settings/index.tsx`
  */
 
 import { type ChangeEvent } from 'react';
@@ -71,21 +74,50 @@ type IconGroupPosition = {
  *
  * @property fill — текущий тон глифа иконки
  * @property icon — выбор глифа. Без него контрол `Icon:` не рендерится
+ * @property name — суффикс лейблов группы. Например A даёт `Show icon A` и `Icon A tone:`
  * @property onFillChange — обработчик изменения тона глифа
  * @property onToneChange — обработчик изменения тона секции
- * @property position — позиция иконки
- * @property show — флаг показа иконки. Без него иконка неотключаема и группа рендерится всегда
+ * @property position — позиция иконки. Без него контрол позиции не рендерится
+ * @property show — включает показ иконки. Без него иконка неотключаема и группа рендерится всегда
  * @property tone — текущий тон секции иконки
  */
 type IconGroupProps = {
   fill: TonePreset;
   icon?: IconGroupIconSelect;
+  name?: string;
   onFillChange: (tone: TonePreset) => void;
   onToneChange: (tone: TonePreset) => void;
-  position: IconGroupPosition;
+  position?: IconGroupPosition;
   show?: { checked: boolean; onChange: (checked: boolean) => void };
   tone: TonePreset;
 };
+
+/**
+ * formatIconGroupLabel — собирает лейбл контрола с опциональным суффиксом `name`.
+ *
+ * @param base базовый лейбл контрола
+ * @param name суффикс сегмента, например A
+ * @returns лейбл с суффиксом или исходный `base`
+ */
+function formatIconGroupLabel(base: string, name?: string): string {
+  if (!name) {
+    return base;
+  }
+
+  if (base === 'Show icon') {
+    return `Show icon ${name}`;
+  }
+
+  if (base.startsWith('Icon ') && base.endsWith(':')) {
+    return `Icon ${name} ${base.slice('Icon '.length)}`;
+  }
+
+  if (base === 'Icon:') {
+    return `Icon ${name}:`;
+  }
+
+  return base;
+}
 
 /**
  * IconGroup — отображает группу настроек иконки в витрине дизайн-системы.
@@ -108,12 +140,13 @@ type IconGroupProps = {
  *   onFillChange={(tone) => onChange('iconFill', tone)}
  *   onToneChange={(tone) => onChange('iconTone', tone)}
  * />
- * // RangeInput: без выбора глифа
+ * // RoundButton: без позиции
  * <IconGroup
  *   fill={state.iconFill}
- *   position={{
- *     value: state.iconPosition,
- *     onChange: (position) => onChange('iconPosition', position),
+ *   icon={{
+ *     options: COMBOBOX_OPTIONS,
+ *     value: state.iconKey,
+ *     onChange: (value) => onChange('iconKey', value as IconKey),
  *   }}
  *   tone={state.iconTone}
  *   onFillChange={(tone) => onChange('iconFill', tone)}
@@ -123,6 +156,7 @@ type IconGroupProps = {
 export function IconGroup({
   fill,
   icon,
+  name,
   onFillChange,
   onToneChange,
   position,
@@ -141,7 +175,7 @@ export function IconGroup({
             show.onChange(event.target.checked)
           }
         >
-          Show icon
+          {formatIconGroupLabel('Show icon', name)}
         </Checkbox>
       )}
 
@@ -149,7 +183,7 @@ export function IconGroup({
         <>
           {icon && (
             <Combobox
-              label="Icon:"
+              label={formatIconGroupLabel('Icon:', name)}
               options={icon.options}
               reserveErrorSpace={false}
               value={icon.value}
@@ -158,7 +192,7 @@ export function IconGroup({
           )}
 
           <ToneListbox
-            label="Icon tone:"
+            label={formatIconGroupLabel('Icon tone:', name)}
             tones={TONE_PRESET_KEYS}
             value={tone}
             onChange={onToneChange}
@@ -166,19 +200,21 @@ export function IconGroup({
 
           <ToneListbox
             excludeTone={tone}
-            label="Icon fill tone:"
+            label={formatIconGroupLabel('Icon fill tone:', name)}
             tones={TONE_PRESET_KEYS}
             value={fill}
             onChange={onFillChange}
           />
 
-          <Listbox
-            label="Icon position:"
-            options={ICON_POSITION_OPTIONS}
-            reserveErrorSpace={false}
-            value={position.value}
-            onChange={(value) => position.onChange(value as IconPosition)}
-          />
+          {position && (
+            <Listbox
+              label={formatIconGroupLabel('Icon position:', name)}
+              options={ICON_POSITION_OPTIONS}
+              reserveErrorSpace={false}
+              value={position.value}
+              onChange={(value) => position.onChange(value as IconPosition)}
+            />
+          )}
         </>
       )}
     </>

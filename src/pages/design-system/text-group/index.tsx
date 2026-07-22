@@ -3,15 +3,25 @@
  * Предоставляет компонент TextGroup для настройки текста компонента в витрине дизайн-системы.
  * Используется только в витрине: в продуктовый код и `@ui/` не входит.
  *
+ * Поддерживает:
+ *  - выравнивание текста через проп `align`
+ *  - поля содержимого через проп `contents`. Без `contents` поля ввода не рендерятся
+ *  - курсив через проп `italic`
+ *  - обработчик изменения выравнивания через проп `onAlignChange`. Без него контрол
+ *    `Text align:` не рендерится
+ *  - обработчик изменения курсива через проп `onItalicChange`
+ *  - обработчик изменения размера через проп `onSizeChange`
+ *  - показ текста через проп `show`. Без `show` текст неотключаем и группа рендерится всегда
+ *  - размер текста через проп `size`
+ *  - листбоксы тона через проп `tones`
+ *
  * Основные задачи:
- * 1. Экспортировать компонент `TextGroup`
+ * 1. Экспортировать компонент TextGroup
  * 2. Типизировать пропсы через `TextGroupProps`
- * 3. Рендерить единый блок текстовых настроек: флаг показа, поля содержимого,
- *    размер, выравнивание, тон и курсив
- * 4. Скрывать настройки текста при выключенном флаге показа
  *
  * Потребители:
  *  - панели настроек витрины — настраивают текст компонента:
+ *     - `src/pages/design-system/button-settings/index.tsx`
  *     - `src/pages/design-system/tag-settings/index.tsx`
  *     - `src/pages/design-system/toast-settings/index.tsx`
  *     - `src/pages/design-system/spinner-settings/index.tsx`
@@ -21,6 +31,7 @@
  *     - `src/pages/design-system/switch-settings/index.tsx`
  *     - `src/pages/design-system/fieldset-settings/index.tsx`
  *     - `src/pages/design-system/stepper-settings/index.tsx`
+ *     - `src/pages/design-system/segment-button-settings/index.tsx`
  */
 
 import { type ChangeEvent } from 'react';
@@ -54,6 +65,21 @@ type TextGroupContent = {
 };
 
 /**
+ * TextGroupTone — представляет один листбокс тона текстовой группы.
+ * Один элемент — обычный виджет; несколько — по тону на содержимое,
+ * например сегменты SegmentButton.
+ *
+ * @property label — подпись листбокса, например `Text tone:` или `Text A tone:`
+ * @property onChange — обработчик изменения тона
+ * @property value — текущий тон. Без значения листбокс показывает `default`
+ */
+type TextGroupTone = {
+  label: string;
+  onChange: (tone: TextTone) => void;
+  value?: TextTone;
+};
+
+/**
  * TextGroupProps — представляет пропсы компонента TextGroup.
  *
  * @property align — текущее выравнивание текста
@@ -64,11 +90,10 @@ type TextGroupContent = {
  *   Без него контрол `Text align:` не рендерится — у компонента нет текстовой оси выравнивания
  * @property onItalicChange — обработчик изменения курсива
  * @property onSizeChange — обработчик изменения размера текста
- * @property onToneChange — обработчик изменения тона текста
- * @property show — флаг показа текста. Без него текст компонента неотключаем
+ * @property show — включает показ текста. Без него текст компонента неотключаем
  *   и группа рендерится всегда
  * @property size — текущий размер текста
- * @property tone — текущий тон текста. Без значения листбокс показывает `default`
+ * @property tones — листбоксы тона: один или несколько по содержимым
  */
 type TextGroupProps = {
   align?: TextAlignPreset;
@@ -77,10 +102,9 @@ type TextGroupProps = {
   onAlignChange?: (align: TextAlignPreset) => void;
   onItalicChange: (value: boolean) => void;
   onSizeChange: (size: TextSizePreset) => void;
-  onToneChange: (tone: TextTone) => void;
   show?: { checked: boolean; onChange: (checked: boolean) => void };
   size: TextSizePreset;
-  tone?: TextTone;
+  tones: readonly TextGroupTone[];
 };
 
 /**
@@ -94,10 +118,15 @@ type TextGroupProps = {
  *   italic={state.textItalic}
  *   show={{ checked: state.showText, onChange: (checked) => onChange('showText', checked) }}
  *   size={state.textSize}
- *   tone={state.textTone}
+ *   tones={[
+ *     {
+ *       label: 'Text tone:',
+ *       value: state.textTone,
+ *       onChange: (tone) => onChange('textTone', tone),
+ *     },
+ *   ]}
  *   onItalicChange={(value) => onChange('textItalic', value)}
  *   onSizeChange={(size) => onChange('textSize', size)}
- *   onToneChange={(tone) => onChange('textTone', tone)}
  * />
  */
 export function TextGroup({
@@ -107,10 +136,9 @@ export function TextGroup({
   onAlignChange,
   onItalicChange,
   onSizeChange,
-  onToneChange,
   show,
   size,
-  tone,
+  tones,
 }: TextGroupProps) {
   const expanded = !show || show.checked;
 
@@ -158,12 +186,15 @@ export function TextGroup({
             />
           )}
 
-          <ToneListbox
-            label="Text tone:"
-            tones={TEXT_TONE_KEYS}
-            value={tone}
-            onChange={onToneChange}
-          />
+          {tones.map((toneControl) => (
+            <ToneListbox
+              key={toneControl.label}
+              label={toneControl.label}
+              tones={TEXT_TONE_KEYS}
+              value={toneControl.value}
+              onChange={toneControl.onChange}
+            />
+          ))}
 
           <Checkbox
             checked={italic}

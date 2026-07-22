@@ -128,10 +128,15 @@ export function ProgressBarSettings({ onChange, state }: ProgressBarSettingsProp
           onChange: (checked) => onChange('showText', checked),
         }}
         size={state.textSize}
-        tone={state.textTone}
+        tones={[
+          {
+            label: 'Text tone:',
+            value: state.textTone,
+            onChange: (tone) => onChange('textTone', tone),
+          },
+        ]}
         onItalicChange={(value) => onChange('textItalic', value)}
         onSizeChange={(size) => onChange('textSize', size)}
-        onToneChange={(tone) => onChange('textTone', tone)}
       />
     </StyledSettingsForm>
   );

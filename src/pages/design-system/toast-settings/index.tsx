@@ -8,7 +8,7 @@
  * 2. Экспортировать компонент `ToastSettings`
  *
  * Потребители:
- *  - `src/pages/design-system/index.tsx` — подключает панель и синхронизирует состояние с превью виджета уведомлений
+ *  - `src/pages/design-system/index.tsx` — подключает панель и синхронизирует состояние с превью виджета уведомления
  */
 
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
@@ -94,10 +94,15 @@ export function ToastSettings({ onChange, state }: ToastSettingsProps) {
         ]}
         italic={state.textItalic}
         size={state.textSize}
-        tone={state.textTone}
+        tones={[
+          {
+            label: 'Text tone:',
+            value: state.textTone,
+            onChange: (tone) => onChange('textTone', tone),
+          },
+        ]}
         onItalicChange={(value) => onChange('textItalic', value)}
         onSizeChange={(size) => onChange('textSize', size)}
-        onToneChange={(tone) => onChange('textTone', tone)}
       />
     </StyledSettingsForm>
   );

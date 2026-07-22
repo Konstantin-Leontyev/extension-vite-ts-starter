@@ -57,8 +57,8 @@ export type FieldsetWidgetState = {
 };
 
 /**
- * SELECTED_OPTIONS — хранит опции Listbox для выбора активного переключателя в демо.
- * Используется в панели настроек для поля Selected.
+ * SELECTED_OPTIONS — задаёт опции листбокса активного переключателя в демо.
+ * Используется в `Listbox` поля Selected внутри FieldsetSettings.
  */
 const SELECTED_OPTIONS: ListboxOption[] = [
   { label: 'Option A', value: 'a' },
@@ -115,10 +115,15 @@ export function FieldsetSettings({ onChange, state }: FieldsetSettingsProps) {
         ]}
         italic={state.legendItalic}
         size={state.legendSizePreset}
-        tone={state.legendTone}
+        tones={[
+          {
+            label: 'Text tone:',
+            value: state.legendTone,
+            onChange: (tone) => onChange('legendTone', tone),
+          },
+        ]}
         onItalicChange={(value) => onChange('legendItalic', value)}
         onSizeChange={(size) => onChange('legendSizePreset', size)}
-        onToneChange={(tone) => onChange('legendTone', tone)}
       />
 
       <Input

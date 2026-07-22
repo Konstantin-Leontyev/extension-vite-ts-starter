@@ -9,13 +9,15 @@
  * 1. Типизировать пресеты через `SizePreset`, `ShapePreset` и `ControlPadding`
  * 2. Хранить канонические значения в `minBlockSize`, `padding` и `textSize`
  * 3. Задать значения по умолчанию через `DEFAULT_SIZE_PRESET` и `DEFAULT_SHAPE_PRESET`
- * 4. Предоставить геттеры `getMinBlockSize`, `getPadding`, `getPaddingInline`, `getPaddingBlock` и `getTextSize`
- * 5. Предоставить `resolveBlockRadius` для вычисления радиуса по форме
- * 6. Предоставить `getControlBoxStyles` для сборки полного бокса однострочного контрола
+ * 4. Предоставить перечни `SIZE_PRESET_KEYS` и `SHAPE_PRESET_KEYS`
+ * 5. Предоставить геттеры `getMinBlockSize`, `getPadding`, `getPaddingInline`, `getPaddingBlock` и `getTextSize`
+ * 6. Предоставить `resolveBlockRadius` для вычисления радиуса по форме
+ * 7. Предоставить `getControlBoxStyles` для сборки полного бокса однострочного контрола
+ * 8. Предоставить `DEFAULT_SHOW_BORDER` и `getControlBorder` для рамки контрола
+ *    вне layout-box
  *
  * Потребители:
- *  - `@ui/button`, `@ui/input`, `@ui/tag`, `@ui/listbox`, `@ui/combobox`, `@ui/toast`, `@ui/fieldset` —
- *    задают размер через `sizePreset`
+ *  - контролы, например Button, Input и Tag — задают размер через `sizePreset`
  *  - все `*.styles.ts` компонентов с пропом `sizePreset` — читают значения через геттеры
  *  - панели настроек витрины дизайн-системы — передают `SIZE_PRESET_KEYS` в `SizeListbox`
  *    и `SHAPE_PRESET_KEYS` в `ShapeListbox`
@@ -23,6 +25,7 @@
 
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { getTextProperties, type TextSizePreset } from '@ui/text';
+import { type AppTheme } from '@ui/theme';
 
 /**
  * SizePreset — представляет единый размерный ряд проекта.
@@ -217,4 +220,40 @@ export function getControlBoxStyles(sizePreset: SizePreset, shape: ShapePreset):
   ];
 
   return styles.join('\n');
+}
+
+/**
+ * DEFAULT_SHOW_BORDER — задаёт показ кольца поверхности по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showBorder`.
+ * Проп `showBorder` подключается контролу осознанно: эталоны RoundButton и Input;
+ * составные триггеры, например Listbox, Combobox, Stepper и RangeInput, проп не
+ * получают без отдельного кейса. Оболочка композита без пропа зовёт
+ * `getControlBorder` без второго аргумента.
+ */
+export const DEFAULT_SHOW_BORDER = true;
+
+/**
+ * getControlBorder — возвращает CSS-правило рамки контрола вне layout-box:
+ * кольцо и тень поверхности одним `box-shadow`. Рамочный и безрамочный режимы
+ * дают один content-box и один размер `Icon` на `100%`, без резерва
+ * `border: 1px solid transparent`.
+ *
+ * При `showBorder` — кольцо `0 0 0 1px` цвета `border` и тень `shadow.surface`.
+ * Без рамки — `box-shadow: none`. `border: none` вызывающий код пишет только там,
+ * где layout-рамку даёт UA-стиль тега, например `input` и `dialog`: у `button` её
+ * снял reset, у `div` рамки нет — повтор запрещён.
+ *
+ * @param theme текущая тема
+ * @param showBorder включает рамку контрола
+ * @returns CSS-правило `box-shadow`, с завершающей `;`
+ */
+export function getControlBorder(
+  theme: AppTheme,
+  showBorder: boolean = DEFAULT_SHOW_BORDER
+): string {
+  if (!showBorder) {
+    return 'box-shadow: none;';
+  }
+
+  return `box-shadow: 0 0 0 1px ${theme.colors.border}, ${theme.shadow.surface};`;
 }

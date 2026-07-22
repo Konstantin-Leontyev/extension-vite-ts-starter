@@ -1,15 +1,15 @@
 /**
  * Файл: `src/pages/design-system/input-settings/index.tsx`
  * Определяет панель настроек компонента Input в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, выравнивания, значения,
- * ошибки и состояний в реальном времени.
+ * Содержит контролы для изменения размера, формы, рамки, подписи, плейсхолдера,
+ * значения, выравнивания, ошибки и состояний в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `InputWidgetState`
  * 2. Экспортировать компонент `InputSettings`
  *
  * Потребители:
- *  - `src/pages/design-system/index.tsx` — подключает панель и синхронизирует состояние с превью виджета поля ввода
+ *  - `src/pages/design-system/index.tsx` — подключает панель и синхронизирует состояние с превью виджета Input
  */
 
 import { type ChangeEvent } from 'react';
@@ -32,7 +32,7 @@ import { SizeListbox } from '../size-listbox';
 /**
  * InputWidgetState — представляет состояние настроек компонента Input в витрине дизайн-системы.
  * Ключи совпадают с именами пропов компонента Input.
- * Используется для синхронизации значений между панелью управления и демонстрационным полем ввода.
+ * Используется для синхронизации значений между панелью управления и демонстрационным Input.
  *
  * @property disabled — включает недоступное состояние поля
  * @property error — текст ошибки под полем
@@ -42,6 +42,7 @@ import { SizeListbox } from '../size-listbox';
  * @property placeholder — плейсхолдер значения
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки
  * @property shape — форма строки-поля
+ * @property showBorder — включает рамку контрола
  * @property sizePreset — размер контрола
  * @property textAlign — горизонтальное выравнивание значения
  * @property value — значение поля
@@ -55,6 +56,7 @@ export type InputWidgetState = {
   placeholder: string;
   reserveErrorSpace: boolean;
   shape: ShapePreset;
+  showBorder: boolean;
   sizePreset: SizePreset;
   textAlign?: TextAlignPreset;
   value: string;
@@ -64,7 +66,7 @@ export type InputWidgetState = {
  * InputSettingsProps — представляет пропсы компонента InputSettings.
  *
  * @property onChange — обработчик изменения поля состояния витрины
- * @property state — текущее состояние настроек поля ввода
+ * @property state — текущее состояние настроек Input
  */
 type InputSettingsProps = {
   onChange: <K extends keyof InputWidgetState>(
@@ -96,6 +98,16 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         value={state.shape}
         onChange={(shape) => onChange('shape', shape)}
       />
+
+      <Checkbox
+        checked={state.showBorder}
+        sizePreset="medium"
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('showBorder', event.target.checked)
+        }
+      >
+        Show border
+      </Checkbox>
 
       <Input
         label="Label:"
