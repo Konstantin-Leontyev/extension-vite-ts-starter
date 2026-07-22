@@ -154,7 +154,7 @@ function getSidebarStyles(props: SidebarStyleProps): string {
 
   const styles = [
     `${StyledSidebarContent} {`,
-    `padding-block: ${paddingValue};`,
+    `padding-block-end: ${paddingValue};`,
     `padding-inline-start: ${paddingValue};`,
     `}`,
     `@media (width > 640px) {`,
