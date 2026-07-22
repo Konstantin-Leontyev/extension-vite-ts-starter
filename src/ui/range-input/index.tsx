@@ -42,8 +42,7 @@
  * 3. Экспортировать типы `RangeValue`, `RangePreset`, `RangeInputValidationMessages`
  *    и `ResolvedRangeInputValidationMessages`
  * 4. Экспортировать дефолты `DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES`
- * 5. Реэкспортировать мост размера текста `getRangeInputTextSize`
- * 6. Выставлять `role` и `aria`-атрибуты панели и триггера
+ * 5. Выставлять `role` и `aria`-атрибуты панели и триггера
  *
  * Потребители:
  *  - `src/pages/design-system` — демонстрирует состояния в витрине
@@ -63,12 +62,12 @@ import { ChevronDownIcon } from '@icons/chevron-down';
 import { CloseIcon } from '@icons/close';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Button } from '@ui/button';
-import { DEFAULT_ICON_POSITION, Icon } from '@ui/icon';
+import { Icon } from '@ui/icon';
 import { Input } from '@ui/input';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { type SpacingValue } from '@ui/spacing';
 import { Text, getTextLineHeight, type TextSizePreset } from '@ui/text';
-import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
+import { type TonePreset } from '@ui/tones';
 
 import {
   DEFAULT_RANGE_INPUT_SHAPE,
@@ -89,7 +88,7 @@ import {
   type RangeInputStyleProps,
 } from './range-input.styles';
 
-/* eslint-disable react-refresh/only-export-components -- публичные дефолты validationMessages и мост размера текста */
+/* eslint-disable react-refresh/only-export-components -- публичные дефолты validationMessages */
 
 /**
  * DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES — задаёт тексты встроенной валидации по умолчанию.
@@ -182,18 +181,6 @@ const DEFAULT_RANGE_INPUT_TITLE_ALIGN: CSSProperties['textAlign'] = 'center';
  * Подставляется, когда над триггером нет подписи.
  */
 const DEFAULT_CLEAR_ARIA_LABEL = 'Clear';
-
-/**
- * DEFAULT_RANGE_INPUT_ICON_FILL — задаёт тон глифа шеврона и сброса по умолчанию.
- * Используется, когда вызывающий код не передал проп `iconFill`.
- */
-const DEFAULT_RANGE_INPUT_ICON_FILL: TonePreset = DEFAULT_TONE;
-
-/**
- * DEFAULT_RANGE_INPUT_ICON_TONE — задаёт тон секции шеврона и сброса по умолчанию.
- * Используется, когда вызывающий код не передал проп `iconTone`.
- */
-const DEFAULT_RANGE_INPUT_ICON_TONE: TonePreset = DEFAULT_TONE;
 
 /**
  * RangeInputButtonProps — представляет пропсы кнопки применения RangeInput.
@@ -387,9 +374,9 @@ export function RangeInput({
   disabled = DEFAULT_RANGE_INPUT_DISABLED,
   formatActiveLabel,
   fromPlaceholder,
-  iconFill = DEFAULT_RANGE_INPUT_ICON_FILL,
-  iconPosition = DEFAULT_ICON_POSITION,
-  iconTone = DEFAULT_RANGE_INPUT_ICON_TONE,
+  iconFill,
+  iconPosition,
+  iconTone,
   inputShape: inputShapeProp,
   inputSizePreset: inputSizePresetProp,
   label,
@@ -765,5 +752,3 @@ export function RangeInput({
     </StyledRangeInputRoot>
   );
 }
-
-export { getRangeInputTextSize };
