@@ -6,7 +6,7 @@
  * 1. Предоставить хук `useToast`
  *
  * Потребители:
- *  - `src/pages/design-system` — показывает уведомления из витрины
+ *  - `src/pages/showcase` — показывает уведомления из витрины
  */
 
 import { useContext } from 'react';

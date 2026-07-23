@@ -204,11 +204,11 @@ export function getTextToneColor(theme: AppTheme, tone: TextTone): string | unde
  *
  * @property align — выравнивание текста
  * @property color — прямое переопределение цвета, приоритетнее `tone`
+ * @property ellipsis — включает однострочное обрезание с многоточием
  * @property fontSize — размер шрифта, переопределяет `sizePreset`
  * @property fontWeight — насыщенность шрифта, переопределяет `sizePreset`
  * @property italic — включает курсивное начертание
  * @property lineHeight — высота строки, переопределяет `sizePreset`
- * @property showEllipsis — включает однострочное обрезание с многоточием
  * @property sizePreset — типографический пресет
  * @property tone — цвет текста из темы
  * @property whiteSpace — управление переносами
@@ -216,11 +216,11 @@ export function getTextToneColor(theme: AppTheme, tone: TextTone): string | unde
 export type TextStyleProps = LayoutProps & {
   align?: CSSProperties['textAlign'];
   color?: string;
+  ellipsis?: boolean;
   fontSize?: string;
   fontWeight?: CSSProperties['fontWeight'];
   italic?: boolean;
   lineHeight?: CSSProperties['lineHeight'];
-  showEllipsis?: boolean;
   sizePreset?: TextSizePreset;
   tone?: TextTone;
   whiteSpace?: CSSProperties['whiteSpace'];
@@ -233,11 +233,11 @@ const TEXT_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
   'align',
   'color',
+  'ellipsis',
   'fontSize',
   'fontWeight',
   'italic',
   'lineHeight',
-  'showEllipsis',
   'sizePreset',
   'tone',
   'whiteSpace',
@@ -258,7 +258,7 @@ const TEXT_PROP_NAMES = new Set<string>([
  *    `color` не добавляется — цвет наследуется по умолчанию, типичное
  *    внутри цветного контрола
  * 6. Добавляет правила для `align` и `whiteSpace`
- * 7. Для `showEllipsis` добавляет `overflow: hidden`, `text-overflow: ellipsis`
+ * 7. Для `ellipsis` добавляет `overflow: hidden`, `text-overflow: ellipsis`
  *    и `white-space: nowrap`
  *
  * @param props объект с текстовыми пропсами и темой
@@ -269,11 +269,11 @@ function getTextStyles(props: TextStyleProps & { theme: AppTheme }): string {
   const {
     align,
     color,
+    ellipsis,
     fontSize,
     fontWeight,
     italic,
     lineHeight,
-    showEllipsis,
     sizePreset = DEFAULT_TEXT_SIZE_PRESET,
     tone,
     whiteSpace,
@@ -312,7 +312,7 @@ function getTextStyles(props: TextStyleProps & { theme: AppTheme }): string {
     styles.push(`white-space: ${whiteSpace};`);
   }
 
-  if (showEllipsis === true) {
+  if (ellipsis === true) {
     styles.push('overflow: hidden;');
     styles.push('text-overflow: ellipsis;');
     styles.push('white-space: nowrap;');

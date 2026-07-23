@@ -19,7 +19,7 @@
  *
  * Потребители:
  *  - страницы и виджеты приложения — рендерят поля выбора одного значения
- *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import { type ComponentPropsWithRef, type ReactNode } from 'react';

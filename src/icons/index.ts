@@ -7,7 +7,7 @@
  *
  * Потребители:
  *  - страницы, виджеты и контролы приложения — импортируют иконки через `@icons`
- *  - `src/pages/design-system/showcase-icon-options.tsx` — собирает опции витрины
+ *  - `src/pages/showcase/showcase-icon-options.tsx` — собирает опции витрины
  */
 
 export { AddCircleIcon } from './add-circle';

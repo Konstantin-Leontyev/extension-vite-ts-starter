@@ -26,7 +26,7 @@
  * 3. Связывать заголовок и диалог через `aria-labelledby`
  *
  * Потребители:
- *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import { useEffect, useId, useRef, type ComponentProps, type ReactNode } from 'react';

@@ -97,7 +97,7 @@ function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
  *
  * Высота задана через `min-block-size` без фиксированного `block-size`:
  * контент растягивает Toast, если текст длиннее минимальной высоты.
- * `showEllipsis` не используется, так как Toast показывает сообщения неизвестной длины,
+ * `ellipsis` не используется, так как Toast показывает сообщения неизвестной длины,
  * и обрезание текста недопустимо.
  */
 export const StyledToast = styled.div.withConfig({

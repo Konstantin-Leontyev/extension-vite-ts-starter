@@ -23,7 +23,7 @@
  *  - контролы и панели настроек витрины дизайн-системы, например TextGroup и InputSettings —
  *    рендерят поля ввода настроек
  *  - страницы и виджеты приложения — собирают формы и фильтры
- *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import { useId, type CSSProperties, type ComponentPropsWithRef } from 'react';

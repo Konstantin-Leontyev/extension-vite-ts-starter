@@ -25,13 +25,14 @@
  * Потребители:
  *  - контролы, например RangeInput — рендерят кнопки действий внутри себя
  *  - страницы и виджеты приложения, например ModelDownloadGate — рендерят действия
- *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { Icon } from '@ui/icon';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
+import { type TonePreset } from '@ui/tones';
 
 import { StyledButton, getButtonTextSize, type ButtonStyleProps } from './button.styles';
 
@@ -46,6 +47,7 @@ const DEFAULT_BUTTON_TYPE = 'button';
  *
  * @property children — содержимое лейбла
  * @property icon — svg иконки действия. Окно под svg создаёт `Icon` по `sizePreset`
+ * @property iconFill — тон глифа иконки при нейтральном `iconTone`
  * @property textItalic — включает курсив лейбла
  * @property textSize — размер лейбла
  * @property textTone — тон лейбла
@@ -53,6 +55,7 @@ const DEFAULT_BUTTON_TYPE = 'button';
 type ButtonProps = {
   children: ReactNode;
   icon?: ReactNode;
+  iconFill?: TonePreset;
   textItalic?: boolean;
   textSize?: TextSizePreset;
   textTone?: TextTone;
@@ -73,7 +76,9 @@ type ButtonProps = {
 export function Button({
   children,
   icon,
+  iconFill,
   iconPosition,
+  iconTone,
   sizePreset,
   textItalic,
   textSize,
@@ -85,7 +90,13 @@ export function Button({
   const hasIcon = Boolean(icon);
 
   const iconNode = hasIcon && (
-    <Icon data-slot="icon" sizePreset={sizePreset}>
+    <Icon
+      data-slot="icon"
+      iconFill={iconFill}
+      iconTone={iconTone}
+      interactive
+      sizePreset={sizePreset}
+    >
       {icon}
     </Icon>
   );
@@ -94,6 +105,7 @@ export function Button({
     <StyledButton
       hasIcon={hasIcon}
       iconPosition={iconPosition}
+      iconTone={iconTone}
       sizePreset={sizePreset}
       tone={tone}
       type={type}
@@ -103,8 +115,8 @@ export function Button({
       <Text
         align="center"
         data-slot="label"
+        ellipsis
         italic={textItalic}
-        showEllipsis
         sizePreset={textSize ?? getButtonTextSize(sizePreset)}
         tone={textTone}
       >

@@ -19,7 +19,7 @@
  *
  * Потребители:
  *  - `src/context/toast/index.tsx` — рендерит Toast в стеке уведомлений
- *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import { type ComponentPropsWithRef, type ReactNode } from 'react';

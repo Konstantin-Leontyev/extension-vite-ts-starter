@@ -18,7 +18,7 @@
  *
  * Потребители:
  *  - `src/components/router/router-layout.tsx` — рендерит Header в каркасе страницы
- *  - `src/pages/design-system/design-system.styles.ts` — читает `HEADER_BLOCK_SIZE` для высоты витрины
+ *  - `src/pages/showcase/showcase.styles.ts` — читает `HEADER_BLOCK_SIZE` для высоты витрины
  *  - `src/context/toast/toast.styles.ts` — читает `HEADER_BLOCK_SIZE` для высоты стека уведомлений
  */
 
@@ -28,7 +28,6 @@ import { useNavigate } from 'react-router-dom';
 import { ProfileMenu } from '@components/profile-menu';
 import { ThemeToggle } from '@components/theme-toggle';
 import { SettingsIcon } from '@icons/settings';
-import { Icon } from '@ui/icon';
 import { RoundButton } from '@ui/round-button';
 import { Text } from '@ui/text';
 
@@ -48,7 +47,7 @@ import { useHeaderAutoHide } from './use-header-auto-hide';
  * DEFAULT_HEADER_SETTINGS_LABEL — задаёт доступное имя кнопки настроек по умолчанию.
  * Используется, когда вызывающий код не передал проп `settingsLabel`.
  */
-const DEFAULT_HEADER_SETTINGS_LABEL = 'Design system';
+const DEFAULT_HEADER_SETTINGS_LABEL = 'Showcase';
 
 /**
  * HeaderProps — представляет пропсы компонента Header.
@@ -88,7 +87,7 @@ export function Header({
   const { dataRevealed, handleMouseEnter, handleMouseLeave } = useHeaderAutoHide(
     autoHide ?? DEFAULT_HEADER_AUTO_HIDE
   );
-  const handleSettingsClick = onSettingsClick ?? (() => navigate('/design-system'));
+  const handleSettingsClick = onSettingsClick ?? (() => navigate('/showcase'));
   const brandNode = brand ?? <Text sizePreset="bold">Project Name</Text>;
 
   return (
@@ -110,9 +109,7 @@ export function Header({
           <StyledHeaderActions>
             {leadingActions}
             <RoundButton aria-label={settingsLabel} onClick={handleSettingsClick}>
-              <Icon blockSize="100%" inlineSize="100%" padding={4}>
-                <SettingsIcon />
-              </Icon>
+              <SettingsIcon />
             </RoundButton>
             <ThemeToggle />
             <ProfileMenu />

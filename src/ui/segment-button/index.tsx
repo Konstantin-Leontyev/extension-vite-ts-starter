@@ -20,7 +20,7 @@
  *
  * Потребители:
  *  - компоненты приложения, например ProfileMenu — переключают режимы и действия
- *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import { type ComponentPropsWithRef } from 'react';

@@ -3,33 +3,26 @@
  * Определяет внешний вид компонента Icon.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `IconStyleProps` и `IconPosition`
- * 2. Хранить локальный ряд отступов в `iconPadding`
- * 3. Предоставить функцию `resolveIconSurface`, дефолт `DEFAULT_ICON_POSITION`,
- *    а также перечни `ICON_POSITION_KEYS` и `ICON_SETTING_PROP_NAMES`
+ * 1. Типизировать пропсы через `IconStyleProps`, `IconSizePreset` и `IconPosition`
+ * 2. Хранить локальные ряды габарита в `iconSize` и отступов в `iconPadding`
+ * 3. Предоставить дефолт `DEFAULT_ICON_POSITION`, а также перечни
+ *    `ICON_POSITION_KEYS` и `ICON_SETTING_PROP_NAMES`
  * 4. Предоставить styled-узел `StyledIcon`
  *
  * Потребители:
  *  - `src/ui/icon/index.tsx` — собирает компонент Icon и реэкспортирует
  *    публичное API
- *  - контролы с секцией иконки, например Button и RangeInput — читают позицию,
- *    дефолт и резолвер поверхности через `@ui/icon`
+ *  - контролы с секцией иконки, например Button и RangeInput — читают позицию
+ *    и дефолт через `@ui/icon`
  */
 
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { DEFAULT_SIZE_PRESET, getMinBlockSize, type SizePreset } from '@ui/presets';
+import { DEFAULT_SIZE_PRESET, minBlockSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
-import { type AppTheme } from '@ui/theme';
-import {
-  DEFAULT_TONE,
-  VARIANT_SURFACE_MIX_PERCENT,
-  getToneColorKey,
-  resolveColorMix,
-  resolveVeilBackground,
-  type TonePreset,
-} from '@ui/tones';
+import { getTheme, type AppTheme } from '@ui/theme';
+import { DEFAULT_TONE, getToneColorKey, type TonePreset } from '@ui/tones';
 
 /**
  * IconPosition — представляет позицию иконки относительно соседнего контента.
@@ -60,142 +53,164 @@ export const DEFAULT_ICON_POSITION: IconPosition = 'end';
 export const ICON_SETTING_PROP_NAMES = new Set(['iconFill', 'iconPosition', 'iconTone']);
 
 /**
- * IconSurface — представляет заливки и цвет глифа секции иконки.
- *
- * @property activeBackground — заливка секции в состоянии `active`
- * @property backgroundColor — заливка секции в покое
- * @property color — цвет глифа во всех состояниях
- * @property hoverBackground — заливка секции при наведении
+ * IconSizePreset — представляет размерный ряд окна иконки.
+ * Расширяет канонический `SizePreset` ключом `huge`, не добавляя его
+ * в общий ряд контролов: `huge` доступен только там, где родитель дриллит
+ * свой расширенный ряд, например RoundButton.
  */
-type IconSurface = {
-  activeBackground: string;
-  backgroundColor: string;
-  color: string;
-  hoverBackground: string;
-};
+export type IconSizePreset = 'huge' | SizePreset;
 
 /**
- * resolveIconSurface — возвращает заливки и цвет глифа секции иконки
- * по `iconTone` и `iconFill`. Подсветка `hover` меняет только заливку,
- * тон глифа от состояния не зависит. Для нейтральной секции в состоянии
- * `active` смешивает `primary` с `surface` через `VARIANT_SURFACE_MIX_PERCENT`.
- *
- * Как работает:
- * 1. Берёт цвет секции по `iconTone`
- * 2. Для нейтральной секции задаёт `surface` и вуаль, в `active` смешивает
- *    `primary` с `surface` через `VARIANT_SURFACE_MIX_PERCENT`
- * 3. Для цветной секции берёт цвет из темы и сдвигает наведение и `active` к `shade`
- * 4. Если `iconFill` задан, не `default` и отличен от `iconTone` — красит только глиф
- *
- * @param theme текущая тема
- * @param iconTone тон секции иконки
- * @param iconFill тон глифа иконки
- * @returns заливки и цвет глифа секции иконки
+ * iconSize — хранит габарит окна иконки для каждого размера ряда.
+ * Расширяет `minBlockSize` из `@ui/presets` спредом, добавляя локальный ключ `huge`:
+ * окно повторяет квадрат контрола своего размера.
  */
-export function resolveIconSurface(
-  theme: AppTheme,
-  iconTone: TonePreset = DEFAULT_TONE,
-  iconFill?: TonePreset
-): IconSurface {
-  const colorKey = getToneColorKey(iconTone);
-
-  let backgroundColor: string;
-  let color: string;
-  let hoverBackground: string;
-  let activeBackground: string;
-
-  if (!colorKey) {
-    backgroundColor = theme.colors.surface;
-    color = theme.colors.default;
-    hoverBackground = resolveVeilBackground(theme, theme.colors.surface);
-    activeBackground = resolveColorMix(
-      theme.colors.primary,
-      theme.colors.surface,
-      VARIANT_SURFACE_MIX_PERCENT
-    );
-  } else {
-    const iconToneColor = theme.colors[colorKey];
-
-    backgroundColor = iconToneColor;
-    color = theme.colors.inverse;
-    hoverBackground = resolveColorMix(iconToneColor, theme.colors.shade);
-    activeBackground = resolveColorMix(iconToneColor, theme.colors.shade);
-  }
-
-  const fillColorKey =
-    iconFill && iconFill !== DEFAULT_TONE && iconFill !== iconTone
-      ? getToneColorKey(iconFill)
-      : undefined;
-
-  if (fillColorKey) {
-    return {
-      activeBackground,
-      backgroundColor,
-      color: theme.colors[fillColorKey],
-      hoverBackground,
-    };
-  }
-
-  return {
-    activeBackground,
-    backgroundColor,
-    color,
-    hoverBackground,
-  };
-}
+const iconSize = {
+  ...minBlockSize,
+  huge: 80,
+} as const satisfies Record<IconSizePreset, SpacingValue>;
 
 /**
  * iconPadding — хранит внутренний отступ окна иконки для каждого размера ряда.
- * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
- * Вместе с квадратом из `getMinBlockSize` задаёт окно под svg: 24/32/32
- * для small/medium/large — значения подобраны зрительно.
+ * Ключ — размер из `IconSizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
+ * Вместе с квадратом из `iconSize` задаёт окно под svg: 24/28/32/64
+ * для small/medium/large/huge — значения подобраны зрительно.
  */
 const iconPadding = {
   small: 4,
-  medium: 4,
+  medium: 6,
   large: 8,
-} as const satisfies Record<SizePreset, SpacingValue>;
+  huge: 8,
+} as const satisfies Record<IconSizePreset, SpacingValue>;
 
 /**
- * getIconPadding — возвращает CSS-значение внутреннего отступа окна иконки.
+ * IconSurface — представляет статичную поверхность окна иконки: заливку и цвет глифа.
+ * Состояния наведения и нажатия поверхность не включает — их родитель передаёт
+ * каналом `--icon-state-background`.
  *
- * @param sizePreset размер из ряда контролов
- * @returns значение для CSS-свойства `padding`, например `0.25rem`
+ * @property backgroundColor — заливка окна в покое; нейтральный тон заливку не красит
+ * @property color — цвет глифа; нейтральный тон без `iconFill` наследует цвет контекста
  */
-function getIconPadding(sizePreset: SizePreset): string {
-  return getSpacingValue(iconPadding[sizePreset]);
+type IconSurface = {
+  backgroundColor?: string;
+  color?: string;
+};
+
+/**
+ * resolveIconSurface — возвращает статичную поверхность окна иконки
+ * по `iconTone` и `iconFill`. Приватный генератор Icon: родители статику
+ * не резолвят, а состояния передают каналом `--icon-state-background`.
+ *
+ * Как работает:
+ * 1. Цветной `iconTone` красит заливку тоном, глиф — `inverse`; `iconFill`
+ *    игнорируется — двухцветность на контрастной заливке не работает
+ * 2. Нейтральный `iconTone` с цветным `iconFill` красит только глиф
+ * 3. Нейтральный без `iconFill` не пишет ничего: заливка прозрачна,
+ *    глиф наследует цвет контекста
+ *
+ * @param theme текущая тема
+ * @param iconTone тон заливки окна иконки
+ * @param iconFill тон глифа иконки
+ * @returns статичная заливка и цвет глифа окна иконки
+ */
+function resolveIconSurface(
+  theme: AppTheme,
+  iconTone: TonePreset,
+  iconFill?: TonePreset
+): IconSurface {
+  const toneColorKey = getToneColorKey(iconTone);
+
+  if (toneColorKey) {
+    return {
+      backgroundColor: theme.colors[toneColorKey],
+      color: theme.colors.inverse,
+    };
+  }
+
+  const fillColorKey = iconFill ? getToneColorKey(iconFill) : undefined;
+
+  if (fillColorKey) {
+    return { color: theme.colors[fillColorKey] };
+  }
+
+  return {};
 }
 
 /**
  * IconStyleProps — представляет пропсы стилизации Icon и layout-пропсы.
  *
+ * @property iconFill — тон глифа иконки при нейтральном `iconTone`
+ * @property iconTone — тон заливки окна иконки
+ * @property interactive — подключает окно к каналу состояний
+ *   `--icon-state-background` родителя
  * @property sizePreset — размер окна иконки
  */
 export type IconStyleProps = LayoutProps & {
-  sizePreset?: SizePreset;
+  iconFill?: TonePreset;
+  iconTone?: TonePreset;
+  interactive?: boolean;
+  sizePreset?: IconSizePreset;
 };
 
 /**
  * ICON_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Icon.
  */
-const ICON_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset']);
+const ICON_PROP_NAMES = new Set<string>([
+  ...LAYOUT_PROP_NAMES,
+  'iconFill',
+  'iconTone',
+  'interactive',
+  'sizePreset',
+]);
 
 /**
- * getIconStyles — возвращает CSS-правила для корня `StyledIcon`: габарит
- * и внутренний отступ.
+ * DEFAULT_ICON_INTERACTIVE — задаёт отключённый канал состояний по умолчанию.
+ * Используется, когда вызывающий код не передал проп `interactive`.
+ */
+const DEFAULT_ICON_INTERACTIVE = false;
+
+/**
+ * getIconStyles — возвращает CSS-правила для корня `StyledIcon`: габарит,
+ * внутренний отступ и статичную поверхность по `iconTone` и `iconFill`.
  *
- * @param props пропсы стилизации Icon
+ * Как работает:
+ * 1. Собирает квадрат окна и внутренний отступ по `sizePreset`
+ * 2. Считает статичную поверхность через `resolveIconSurface`
+ * 3. При `interactive` кладёт заливку через канал `--icon-state-background`
+ *    с фолбэком на статику: переменную выставляет родитель в своих состояниях
+ * 4. Без `interactive` красит только статичную заливку, когда она есть
+ *
+ * @param props пропсы стилизации Icon и тема
  * @returns CSS-правила, каждое с новой строки
  */
-function getIconStyles(props: IconStyleProps): string {
-  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
-  const size = getMinBlockSize(sizePreset);
+function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
+  const theme = getTheme(props);
+  const {
+    iconFill,
+    iconTone = DEFAULT_TONE,
+    interactive = DEFAULT_ICON_INTERACTIVE,
+    sizePreset = DEFAULT_SIZE_PRESET,
+  } = props;
+  const size = getSpacingValue(iconSize[sizePreset]);
+  const surface = resolveIconSurface(theme, iconTone, iconFill);
 
   const styles = [
     `inline-size: ${size};`,
     `block-size: ${size};`,
-    `padding: ${getIconPadding(sizePreset)};`,
+    `padding: ${getSpacingValue(iconPadding[sizePreset])};`,
   ];
+
+  if (interactive) {
+    styles.push(
+      `background-color: var(--icon-state-background, ${surface.backgroundColor ?? 'transparent'});`
+    );
+  } else if (surface.backgroundColor) {
+    styles.push(`background-color: ${surface.backgroundColor};`);
+  }
+
+  if (surface.color) {
+    styles.push(`color: ${surface.color};`);
+  }
 
   return styles.join('\n');
 }
@@ -208,15 +223,13 @@ function getIconStyles(props: IconStyleProps): string {
  *  - `display: grid` — раскладка по дефолту проекта
  *  - `place-items: center` — центрирует svg в окне
  *  - `flex-shrink: 0` — окно не сжимается во flex-рядах
- *  - `max-block-size: 100%` на `& svg` — вертикальный зажим svg. Сброс зажимает
- *    только `max-inline-size`
  *
  * Генерация стилей:
- *  - `getIconStyles` — габарит и внутренний отступ
+ *  - `getIconStyles` — габарит, внутренний отступ и поверхность
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *
- * Единственный узел проекта, создающий условия рендера svg: центрирующий бокс
- * и зажим svg по обеим осям.
+ * Единственный узел проекта, создающий условия рендера svg: центрирующий бокс;
+ * зажим svg по обеим осям даёт глобальный сброс из `@ui/reset`.
  */
 export const StyledIcon = styled.span.withConfig({
   shouldForwardProp: (prop) => !ICON_PROP_NAMES.has(prop),
@@ -226,8 +239,4 @@ export const StyledIcon = styled.span.withConfig({
   place-items: center;
   ${(props) => getIconStyles(props)}
   ${(props) => getLayoutStyles(props)}
-
-  & svg {
-    max-block-size: 100%;
-  }
 `;

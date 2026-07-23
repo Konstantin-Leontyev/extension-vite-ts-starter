@@ -25,7 +25,7 @@
  *  - контролы и панели настроек витрины дизайн-системы, например FieldsetSettings и SwitchSettings —
  *    рендерят чекбоксы настроек
  *  - страницы и виджеты приложения — рендерят поля множественного выбора
- *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import { type ComponentPropsWithRef, type ReactNode } from 'react';

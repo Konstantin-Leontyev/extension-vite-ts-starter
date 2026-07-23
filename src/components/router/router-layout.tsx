@@ -20,10 +20,10 @@ import { ModelDownloadGate } from '@components/model-download-gate';
 import { type ShellOutletContext } from './use-shell-outlet-context';
 
 /**
- * DESIGN_SYSTEM_PATH — задаёт путь маршрута витрины дизайн-системы.
+ * SHOWCASE_PATH — задаёт путь маршрута витрины дизайн-системы.
  * Используется в `RouterLayout` для сравнения с текущим путём и перехода на витрину.
  */
-const DESIGN_SYSTEM_PATH = '/design-system';
+const SHOWCASE_PATH = '/showcase';
 
 /**
  * RouterLayout — отображает каркас приложения с шапкой и outlet страниц.
@@ -37,19 +37,19 @@ export function RouterLayout() {
   const [autoHide, setAutoHide] = useState(true);
   const [isHeaderSettingsOpen, setIsHeaderSettingsOpen] = useState(false);
 
-  const isDesignSystem = location.pathname === DESIGN_SYSTEM_PATH;
+  const isShowcase = location.pathname === SHOWCASE_PATH;
 
   // Обвязка витрины: на странице дизайн-системы шестерёнка открывает панель настроек шапки,
   // где в реальном времени виден autoHide. На остальных страницах ведёт на витрину.
   // В продуктовом коде такой развилки не нужно — поведение шапки задаётся пропом autoHide у Header.
   // Не переносить развилку в продуктовый код.
   const handleSettingsClick = (): void => {
-    if (isDesignSystem) {
+    if (isShowcase) {
       setIsHeaderSettingsOpen(true);
       return;
     }
 
-    navigate(DESIGN_SYSTEM_PATH);
+    navigate(SHOWCASE_PATH);
   };
 
   const outletContext: ShellOutletContext = {
@@ -63,7 +63,7 @@ export function RouterLayout() {
     <ModelDownloadGate>
       <Header
         autoHide={autoHide}
-        settingsLabel={isDesignSystem ? 'Header settings' : 'Design system'}
+        settingsLabel={isShowcase ? 'Header settings' : 'Showcase'}
         onSettingsClick={handleSettingsClick}
       />
       <Outlet context={outletContext} />

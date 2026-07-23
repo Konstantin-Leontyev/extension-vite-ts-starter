@@ -27,8 +27,8 @@
  * 4. Реэкспортировать мост размера текста `getStepperTextSize`
  *
  * Потребители:
- *  - `src/pages/design-system/stepper-settings/index.tsx` — выбирает шаг в панели настроек
- *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ *  - `src/pages/showcase/stepper-settings/index.tsx` — выбирает шаг в панели настроек
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 import {
   useCallback,

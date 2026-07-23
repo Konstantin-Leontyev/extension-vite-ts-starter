@@ -7,7 +7,7 @@
  *
  * Потребители:
  *  - `src/components/profile-menu/index.tsx` — показывает действие выхода
- *  - `src/pages/design-system/showcase-icon-options.tsx` — включает в опции витрины
+ *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины
  *  - `src/icons/index.ts` — реэкспортирует `SignOutIcon`
  */
 

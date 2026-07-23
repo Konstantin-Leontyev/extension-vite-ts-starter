@@ -13,7 +13,6 @@
 
 import { useTheme } from '@hooks/use-theme';
 import { ContrastIcon } from '@icons/contrast';
-import { Icon } from '@ui/icon';
 import { RoundButton } from '@ui/round-button';
 
 /**
@@ -44,9 +43,7 @@ export function ThemeToggle() {
       }
       onClick={onThemeChange}
     >
-      <Icon blockSize="100%" inlineSize="100%" padding={4}>
-        <ContrastIcon />
-      </Icon>
+      <ContrastIcon />
     </RoundButton>
   );
 }

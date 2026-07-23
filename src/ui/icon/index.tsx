@@ -5,22 +5,23 @@
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
+ *  - тон заливки окна через проп `iconTone`
+ *  - тон глифа через проп `iconFill`
+ *  - канал состояний родителя через проп `interactive`
  *  - svg через `children`
  *
  * Основные задачи:
  * 1. Экспортировать компонент Icon
  * 2. Типизировать пропсы через `IconProps`
- * 3. Реэкспортировать публичное API оси иконки: `IconPosition`,
- *    `DEFAULT_ICON_POSITION`, `ICON_POSITION_KEYS`, `ICON_SETTING_PROP_NAMES`
- *    и `resolveIconSurface`
+ * 3. Реэкспортировать публичное API оси иконки: `IconPosition`, `IconSizePreset`,
+ *    `DEFAULT_ICON_POSITION`, `ICON_POSITION_KEYS` и `ICON_SETTING_PROP_NAMES`
  *
  * Потребители:
- *  - контролы с иконочными узлами, например Listbox, Stepper и DateInput —
- *    кладут Icon внутрь своего узла-места: колонка триггера, кнопка-половинка
- *  - вызывающий код RoundButton, например Header, ThemeToggle и Card —
- *    передаёт в кнопку svg, обёрнутый в Icon
- *  - контролы с секцией иконки, например Button и RangeInput — читают позицию,
- *    дефолт и резолвер поверхности через `@ui/icon`
+ *  - контролы с иконочными узлами, например Button, Listbox и Stepper —
+ *    кладут Icon внутрь своего узла-места: секция триггера, кнопка-половинка
+ *  - RoundButton — рендерит Icon сам и дриллит свой размерный ряд с `huge`
+ *  - контролы с секцией иконки, например Button и RangeInput — читают позицию
+ *    и дефолт через `@ui/icon`
  */
 
 import { createElement, type ComponentPropsWithRef } from 'react';
@@ -30,8 +31,8 @@ import {
   ICON_POSITION_KEYS,
   ICON_SETTING_PROP_NAMES,
   StyledIcon,
-  resolveIconSurface,
   type IconPosition,
+  type IconSizePreset,
   type IconStyleProps,
 } from './icon.styles';
 
@@ -48,19 +49,18 @@ type IconProps = IconStyleProps &
  * <Icon sizePreset="medium">
  *   <CalendarIcon />
  * </Icon>
- * <Icon blockSize="100%" inlineSize="100%" padding={4}>
- *   <ContrastIcon />
+ * <Icon iconTone="primary" interactive sizePreset={sizePreset}>
+ *   <ChevronDownIcon />
  * </Icon>
  */
 export function Icon(props: IconProps) {
   return createElement(StyledIcon, props);
 }
 
-/* eslint-disable react-refresh/only-export-components -- публичные типы, константы и резолвер оси иконки */
 export {
   DEFAULT_ICON_POSITION,
   ICON_POSITION_KEYS,
   ICON_SETTING_PROP_NAMES,
-  resolveIconSurface,
   type IconPosition,
+  type IconSizePreset,
 };

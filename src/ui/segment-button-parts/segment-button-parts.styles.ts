@@ -15,7 +15,7 @@
 
 import styled from 'styled-components';
 
-import { ICON_SETTING_PROP_NAMES, resolveIconSurface } from '@ui/icon';
+import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
@@ -26,7 +26,12 @@ import {
 } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
+import {
+  DEFAULT_TONE,
+  getToneColorKey,
+  resolveColorMix,
+  type TonePreset,
+} from '@ui/tones';
 
 /**
  * segmentButtonPartsLayoutPresets — хранит зазор между иконкой и текстом сегмента
@@ -116,13 +121,12 @@ export const StyledSegmentButtonPartsRoot = styled.div.withConfig({
  * Позиция иконки в CSS сегмента не участвует — `iconPosition` живёт только
  * в JSX-порядке узлов и в styled-пропсы не передаётся.
  *
- * @property iconFill — тон глифа иконки
- * @property iconTone — тон секции иконки
+ * @property iconTone — тон секции иконки; статику красит внутренний Icon,
+ *   сегмент считает по тому же тону значение канала состояний
  * @property shape — форма ряда для скругления крайних сегментов
  * @property sizePreset — размер сегмента
  */
 export type SegmentButtonPartsPartStyleProps = {
-  iconFill?: TonePreset;
   iconTone?: TonePreset;
   shape?: ShapePreset;
   sizePreset?: SizePreset;
@@ -139,14 +143,16 @@ const SEGMENT_BUTTON_PARTS_PART_PROP_NAMES = new Set<string>([
 
 /**
  * getSegmentButtonPartsPartStyles — возвращает CSS-правила для узла
- * `StyledSegmentButtonPartsPart`: зазор, высоту, отступы, поверхность иконки,
- * наведение, фокус и скругление крайних сегментов при `rounded`.
+ * `StyledSegmentButtonPartsPart`: зазор, высоту, отступы, канал состояний
+ * секции иконки, наведение, фокус и скругление крайних сегментов при `rounded`.
+ * Статику секции красит внутренний Icon своими пропсами.
  *
  * Как работает:
- * 1. Берёт тему, дефолты и поверхность иконки через `resolveIconSurface`
- * 2. Собирает зазор, высоту, `padding-inline` и цвет глифа
- * 3. При цветном `iconTone` красит секцию иконки и её hover
- * 4. Добавляет вуаль наведения на сегмент и кольцо `:focus-visible`
+ * 1. Берёт тему и дефолты пропсов
+ * 2. Собирает зазор, высоту и `padding-inline`
+ * 3. Добавляет вуаль наведения на сегмент и кольцо `:focus-visible`
+ * 4. При цветном `iconTone` на наведении выставляет `--icon-state-background`
+ *    сдвигом тона к `shade` — нейтральную секцию накрывает вуаль сегмента
  * 5. При `shape === 'rounded'` скругляет первый и последний сегмент
  *
  * @param props пропсы стилизации сегмента и тема
@@ -157,45 +163,25 @@ function getSegmentButtonPartsPartStyles(
 ): string {
   const theme = getTheme(props);
   const {
-    iconFill,
     iconTone = DEFAULT_TONE,
     shape = DEFAULT_SHAPE_PRESET,
     sizePreset = DEFAULT_SIZE_PRESET,
   } = props;
-  const iconSurface = resolveIconSurface(theme, iconTone, iconFill);
-  const hasIconTone = iconTone !== DEFAULT_TONE;
-  const hasIconFill =
-    iconFill != null && iconFill !== DEFAULT_TONE && iconFill !== iconTone;
+  const iconColorKey = getToneColorKey(iconTone);
 
   const styles = [
     `gap: ${getSpacingValue(segmentButtonPartsLayoutPresets[sizePreset].gap)};`,
     `block-size: ${getMinBlockSize(sizePreset)};`,
     `padding-inline: ${getPaddingInline(sizePreset)};`,
-    `[data-slot='label'] {`,
-    'min-inline-size: 0;',
+    `&:not(:disabled):hover {`,
+    `background-color: ${theme.colors.veil};`,
     '}',
   ];
 
-  if (hasIconTone || hasIconFill) {
-    styles.push(`[data-slot='icon'] {`, `color: ${iconSurface.color};`);
-
-    if (hasIconTone) {
-      styles.push(`background-color: ${iconSurface.backgroundColor};`);
-    }
-
-    styles.push('}');
-  }
-
-  styles.push(
-    `&:not(:disabled):hover {`,
-    `background-color: ${theme.colors.veil};`,
-    '}'
-  );
-
-  if (hasIconTone) {
+  if (iconColorKey) {
     styles.push(
-      `&:not(:disabled):hover [data-slot='icon'] {`,
-      `background: ${iconSurface.hoverBackground};`,
+      `&:not(:disabled):hover {`,
+      `--icon-state-background: ${resolveColorMix(theme.colors[iconColorKey], theme.colors.shade)};`,
       '}'
     );
   }

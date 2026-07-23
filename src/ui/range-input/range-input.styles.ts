@@ -21,7 +21,6 @@ import styled from 'styled-components';
 import {
   DEFAULT_ICON_POSITION,
   ICON_SETTING_PROP_NAMES,
-  resolveIconSurface,
   type IconPosition,
 } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
@@ -38,7 +37,12 @@ import {
 import { getSpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
+import {
+  DEFAULT_TONE,
+  getToneColorKey,
+  resolveColorMix,
+  type TonePreset,
+} from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -56,14 +60,13 @@ export function getRangeInputTextSize(sizePreset?: SizePreset): TextSizePreset {
 /**
  * RangeInputSurfaceStyleProps — представляет пропсы стилизации поверхности RangeInput.
  *
- * @property iconFill — тон глифа шеврона и кнопки сброса
  * @property iconPosition — позиция шеврона и кнопки сброса относительно значения
- * @property iconTone — тон секции шеврона и кнопки сброса
+ * @property iconTone — тон секции шеврона и кнопки сброса; статику красит
+ *   внутренний Icon, узлы считают по тому же тону значение канала состояний
  * @property shape — форма поверхности
  * @property sizePreset — размер компонента
  */
 export type RangeInputSurfaceStyleProps = {
-  iconFill?: TonePreset;
   iconPosition?: IconPosition;
   iconTone?: TonePreset;
   shape?: ShapePreset;
@@ -214,19 +217,40 @@ export const StyledRangeInputTriggerRow = styled.div.withConfig({
 `;
 
 /**
+ * resolveRangeInputIconStateBackground — возвращает значение канала состояний
+ * `--icon-state-background` для секции шеврона и кнопки сброса: вуаль
+ * `theme.colors.veil` для нейтрального `iconTone`, сдвиг тона к `shade`
+ * через `resolveColorMix` для цветного.
+ *
+ * @param theme текущая тема
+ * @param iconTone тон секции шеврона и кнопки сброса
+ * @returns CSS-значение заливки для канала состояний
+ */
+function resolveRangeInputIconStateBackground(
+  theme: AppTheme,
+  iconTone: TonePreset
+): string {
+  const toneColorKey = getToneColorKey(iconTone);
+
+  return toneColorKey
+    ? resolveColorMix(theme.colors[toneColorKey], theme.colors.shade)
+    : theme.colors.veil;
+}
+
+/**
  * getRangeInputTriggerStyles — возвращает CSS-правила для узла
- * `StyledRangeInputTrigger`: раскладку кнопки-триггера и поверхность секции шеврона
- * по `[data-slot='icon']`.
- * Ховер секции — от ховера всего триггера: шеврон не самостоятельное действие,
+ * `StyledRangeInputTrigger`: раскладку кнопки-триггера, разделитель и канал
+ * состояний секции шеврона. Статику секции красит внутренний Icon своими пропсами.
+ * Подсветка секции — от ховера всего триггера: шеврон не самостоятельное действие,
  * а индикатор выпадашки.
  *
  * Как работает:
- * 1. Берёт тему, размер и позицию иконки, считает поверхность шеврона
+ * 1. Берёт тему, позицию иконки и считает значение канала по `iconTone`
  * 2. Собирает сетку триггера и центрирует значение через `align-items: center`:
  *    высоту ряда держит `min-block-size` родителя. `stretch` прижимал Text к верху
  *    ячейки, секция иконки тянется через `block-size: 100%`
- * 3. Красит секцию шеврона по `[data-slot='icon']` и подсвечивает её при наведении
- *    триггера
+ * 3. Кладёт разделитель на секцию шеврона по `[data-slot='icon']`
+ * 4. На наведении триггера выставляет `--icon-state-background`
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -235,14 +259,7 @@ function getRangeInputTriggerStyles(
   props: RangeInputSurfaceStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const sizePreset = props.sizePreset ?? DEFAULT_RANGE_INPUT_SIZE_PRESET;
-  const size = getMinBlockSize(sizePreset);
   const isIconStart = (props.iconPosition ?? DEFAULT_ICON_POSITION) === 'start';
-  const iconSurface = resolveIconSurface(
-    theme,
-    props.iconTone ?? DEFAULT_TONE,
-    props.iconFill ?? DEFAULT_TONE
-  );
   const seam = isIconStart ? 'border-inline-end' : 'border-inline-start';
 
   const styles = [
@@ -254,14 +271,10 @@ function getRangeInputTriggerStyles(
     '&:focus-visible { outline: none; }',
     `[data-slot='icon'] {`,
     `block-size: 100%;`,
-    `inline-size: ${size};`,
-    `min-inline-size: ${size};`,
-    `color: ${iconSurface.color};`,
-    `background-color: ${iconSurface.backgroundColor};`,
     `${seam}: 1px solid ${theme.colors.border};`,
     `}`,
-    `&:not(:disabled):hover [data-slot='icon'] {`,
-    `background: ${iconSurface.hoverBackground};`,
+    `&:not(:disabled):hover {`,
+    `--icon-state-background: ${resolveRangeInputIconStateBackground(theme, props.iconTone ?? DEFAULT_TONE)};`,
     `}`,
   ];
 
@@ -317,7 +330,9 @@ export const StyledRangeInputValue = styled.span.withConfig({
 
 /**
  * getRangeInputClearButtonStyles — возвращает CSS-правила для узла
- * `StyledRangeInputClearButton`: квадрат сброса, разделитель и подсветку наведения.
+ * `StyledRangeInputClearButton`: квадрат сброса, разделитель и канал состояний.
+ * Статику красит внутренний Icon своими пропсами; кнопка сброса — самостоятельное
+ * действие, поэтому выставляет канал на собственных `hover` и `focus-visible`.
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -329,23 +344,20 @@ function getRangeInputClearButtonStyles(
   const sizePreset = props.sizePreset ?? DEFAULT_RANGE_INPUT_SIZE_PRESET;
   const size = getMinBlockSize(sizePreset);
   const isIconStart = (props.iconPosition ?? DEFAULT_ICON_POSITION) === 'start';
-  const iconSurface = resolveIconSurface(
-    theme,
-    props.iconTone ?? DEFAULT_TONE,
-    props.iconFill ?? DEFAULT_TONE
-  );
   const seam = isIconStart ? 'border-inline-end' : 'border-inline-start';
+  const stateBackground = resolveRangeInputIconStateBackground(
+    theme,
+    props.iconTone ?? DEFAULT_TONE
+  );
 
   const styles = [
     `inline-size: ${size};`,
     `min-inline-size: ${size};`,
-    `color: ${iconSurface.color};`,
-    `background-color: ${iconSurface.backgroundColor};`,
     `${seam}: 1px solid ${theme.colors.border};`,
-    `&:not(:disabled):hover { background: ${iconSurface.hoverBackground}; }`,
+    `&:not(:disabled):hover { --icon-state-background: ${stateBackground}; }`,
     '&:focus-visible {',
     'outline: none;',
-    `background: ${iconSurface.hoverBackground};`,
+    `--icon-state-background: ${stateBackground};`,
     '}',
   ];
 

@@ -45,7 +45,7 @@
  * 5. Выставлять `role` и `aria`-атрибуты панели и триггера
  *
  * Потребители:
- *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import {
@@ -232,6 +232,7 @@ type RangeInputTitleProps = {
  * @property disabled — включает недоступное состояние
  * @property formatActiveLabel — форматёр активного лейбла триггера по выбранному диапазону
  * @property fromPlaceholder — плейсхолдер поля from
+ * @property iconFill — тон глифа шеврона и кнопки сброса при нейтральном `iconTone`
  * @property label — подпись над триггером
  * @property onChange — обработчик изменения значения
  * @property onClear — обработчик сброса значения. Без обработчика кнопка сброса не показывается
@@ -252,6 +253,7 @@ type RangeInputProps = RangeInputStyleProps &
     disabled?: boolean;
     formatActiveLabel: (value: RangeValue) => ReactNode;
     fromPlaceholder: string;
+    iconFill?: TonePreset;
     label?: string;
     onChange: (value: RangeValue) => void;
     onClear?: () => void;
@@ -435,10 +437,16 @@ export function RangeInput({
   const triggerLabel = isActive ? formatActiveLabel(committed) : placeholder;
   const textSizePreset = getRangeInputTextSize(sizePreset);
   const hasPanelError = Boolean(panelError?.trim());
-  const surfaceProps = { iconFill, iconPosition, iconTone, shape, sizePreset };
+  const surfaceProps = { iconPosition, iconTone, shape, sizePreset };
   const isIconStart = iconPosition === 'start';
   const iconNode = showChevron && (
-    <Icon data-slot="icon" sizePreset={sizePreset}>
+    <Icon
+      data-slot="icon"
+      iconFill={iconFill}
+      iconTone={iconTone}
+      interactive
+      sizePreset={sizePreset}
+    >
       <ChevronDownIcon />
     </Icon>
   );
@@ -581,7 +589,12 @@ export function RangeInput({
             {...surfaceProps}
             onClick={handleClear}
           >
-            <Icon sizePreset={sizePreset}>
+            <Icon
+              iconFill={iconFill}
+              iconTone={iconTone}
+              interactive
+              sizePreset={sizePreset}
+            >
               <CloseIcon />
             </Icon>
           </StyledRangeInputClearButton>
@@ -602,7 +615,7 @@ export function RangeInput({
           {iconPosition === 'start' && iconNode}
           <StyledRangeInputValue {...surfaceProps}>
             <Text
-              showEllipsis
+              ellipsis
               sizePreset={textSizePreset}
               tone={isActive ? undefined : 'muted'}
             >
@@ -620,7 +633,12 @@ export function RangeInput({
             {...surfaceProps}
             onClick={handleClear}
           >
-            <Icon sizePreset={sizePreset}>
+            <Icon
+              iconFill={iconFill}
+              iconTone={iconTone}
+              interactive
+              sizePreset={sizePreset}
+            >
               <CloseIcon />
             </Icon>
           </StyledRangeInputClearButton>
@@ -671,7 +689,7 @@ export function RangeInput({
                     }}
                   >
                     <StyledRangeInputValue {...surfaceProps}>
-                      <Text showEllipsis sizePreset={textSizePreset} zIndex="1">
+                      <Text ellipsis sizePreset={textSizePreset} zIndex="1">
                         {preset.label}
                       </Text>
                     </StyledRangeInputValue>

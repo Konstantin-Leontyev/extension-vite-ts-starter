@@ -11,9 +11,9 @@
 
 import { createHashRouter } from 'react-router-dom';
 
-import { DesignSystemPage } from '@pages/design-system';
 import { HomePage } from '@pages/home';
 import { PrivacyPage } from '@pages/privacy';
+import { ShowcasePage } from '@pages/showcase';
 import { TermsPage } from '@pages/terms';
 
 import { RouterLayout } from './router-layout';
@@ -31,8 +31,8 @@ export const router = createHashRouter([
         index: true,
       },
       {
-        element: <DesignSystemPage />,
-        path: 'design-system',
+        element: <ShowcasePage />,
+        path: 'showcase',
       },
       {
         element: <PrivacyPage />,

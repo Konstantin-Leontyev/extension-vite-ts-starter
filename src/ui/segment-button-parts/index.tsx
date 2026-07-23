@@ -169,7 +169,13 @@ function SegmentButtonPartsPart({
 
   const hasIcon = Boolean(icon);
   const iconNode = hasIcon && (
-    <Icon data-slot="icon" sizePreset={sizePreset}>
+    <Icon
+      data-slot="icon"
+      iconFill={iconFill}
+      iconTone={iconTone}
+      interactive
+      sizePreset={sizePreset}
+    >
       {icon}
     </Icon>
   );
@@ -181,7 +187,6 @@ function SegmentButtonPartsPart({
       aria-expanded={ariaExpanded}
       aria-haspopup={ariaHaspopup}
       disabled={disabled}
-      iconFill={iconFill}
       iconTone={iconTone}
       ref={ref}
       shape={shape}
@@ -193,13 +198,7 @@ function SegmentButtonPartsPart({
       {...(pointerProps ?? {})}
     >
       {iconPosition === 'start' && iconNode}
-      <Text
-        data-slot="label"
-        italic={textItalic}
-        showEllipsis
-        sizePreset={textSize}
-        tone={resolvedTextTone}
-      >
+      <Text ellipsis italic={textItalic} sizePreset={textSize} tone={resolvedTextTone}>
         {text}
       </Text>
       {iconPosition !== 'start' && iconNode}

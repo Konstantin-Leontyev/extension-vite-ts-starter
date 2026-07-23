@@ -29,7 +29,8 @@ import { DISABLED_OPACITY, getTheme } from '@ui/theme';
  *    бегунок из темы, прозрачный трек
  *  - базовую сетку для `<body>` — grid-оболочка приложения: шапка и контент
  *  - сброс отступов у заголовков, параграфов, списков и удаление маркеров списков
- *  - блочное отображение мультимедиа: `<img>`, `<picture>`, `<video>`, `<canvas>`, `<svg>`
+ *  - блочное отображение и зажим мультимедиа по обеим осям (`max-inline-size` и
+ *    `max-block-size: 100%`): `<img>`, `<picture>`, `<video>`, `<canvas>`, `<svg>`
  *  - наследование шрифта и цвета для элементов форм
  *  - сброс дефолтных рамок и фона кнопок
  *  - состояния `disabled` — курсор и прозрачность из `DISABLED_OPACITY`.
@@ -101,6 +102,7 @@ export const GlobalResetStyle = createGlobalStyle`
   canvas {
     display: block;
     max-inline-size: 100%;
+    max-block-size: 100%;
   }
 
   button,

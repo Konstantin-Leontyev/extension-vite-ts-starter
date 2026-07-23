@@ -267,7 +267,7 @@ function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string {
  *  - `display: inline-flex` — инлайн-ряд из точки и текста, grid с auto-треком
  *    тянул бы трек к max-content
  *  - `white-space: nowrap` — метка не переносит текст, длинное содержимое
- *    обрезает внутренний Text с `showEllipsis`
+ *    обрезает внутренний Text с `ellipsis`
  *
  * Генерация стилей:
  *  - `getTagStyles` — размер, отступы, граница, форма и цвета

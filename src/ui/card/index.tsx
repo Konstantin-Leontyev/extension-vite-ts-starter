@@ -25,7 +25,7 @@
  *
  * Потребители:
  *  - страницы и виджеты приложения — показывают карточки с шапкой и действиями
- *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import {
@@ -36,7 +36,6 @@ import {
   type ReactNode,
 } from 'react';
 
-import { Icon } from '@ui/icon';
 import {
   DEFAULT_ROUND_BUTTON_SIZE_PRESET,
   RoundButton,
@@ -71,8 +70,9 @@ type CardHtmlTag = 'article' | 'div' | 'section';
  * @property ariaLabel — доступное имя кнопки
  * @property disabled — включает недоступное состояние
  * @property icon — svg иконки действия
- * @property iconPadding — отступ окна Icon. Область клика кнопки не меняет,
- *   увеличенный отступ зрительно уменьшает глиф, например close в Modal и ProfileMenu
+ * @property iconPadding — отступ окна Icon вместо отступа из размерного ряда.
+ *   Область клика кнопки не меняет, увеличенный отступ зрительно уменьшает глиф,
+ *   например close в Modal и ProfileMenu
  * @property onClick — обработчик клика
  * @property sizePreset — размер RoundButton
  */
@@ -110,12 +110,6 @@ const DEFAULT_CARD_SUBTITLE_TONE: TextTone = 'muted';
  * Используется, когда вызывающий код не передал проп `headerActions`.
  */
 const DEFAULT_CARD_HEADER_ACTIONS: CardHeaderAction[] = [];
-
-/**
- * DEFAULT_CARD_ACTION_ICON_PADDING — задаёт отступ окна Icon в кнопке действия по умолчанию.
- * Используется, когда вызывающий код не передал проп `iconPadding`.
- */
-const DEFAULT_CARD_ACTION_ICON_PADDING: SpacingValue = 4;
 
 /**
  * handleHeaderActionClick — останавливает всплытие клика по действию шапки
@@ -205,19 +199,14 @@ function Card<T extends CardHtmlTag = 'div'>({
           aria-hidden={action.ariaLabel ? undefined : true}
           aria-label={action.ariaLabel}
           disabled={action.disabled}
+          iconPadding={action.iconPadding}
           key={index}
           showBorder={false}
           sizePreset={actionSizePresets[index]}
           tabIndex={action.ariaLabel ? undefined : -1}
           onClick={(event) => handleHeaderActionClick(action, event)}
         >
-          <Icon
-            blockSize="100%"
-            inlineSize="100%"
-            padding={action.iconPadding ?? DEFAULT_CARD_ACTION_ICON_PADDING}
-          >
-            {action.icon}
-          </Icon>
+          {action.icon}
         </RoundButton>
       ))}
     </StyledCardHeaderActions>

@@ -19,7 +19,7 @@
  * Потребители:
  *  - `@ui/table` — оборачивает таблицу в прокручиваемый контейнер
  *  - `@ui/combobox` — прокручивает список опций
- *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 

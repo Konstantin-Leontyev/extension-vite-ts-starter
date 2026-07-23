@@ -22,7 +22,7 @@
  * Потребители:
  *  - страницы и виджеты приложения, например ModelDownloadGate — показывают ход
  *    выполнения операций
- *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import { type ComponentPropsWithRef } from 'react';

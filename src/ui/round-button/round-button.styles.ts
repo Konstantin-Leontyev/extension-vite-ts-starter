@@ -17,7 +17,6 @@
 
 import styled from 'styled-components';
 
-import { resolveIconSurface } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHOW_BORDER,
@@ -27,7 +26,12 @@ import {
 } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
+import {
+  DEFAULT_TONE,
+  getToneColorKey,
+  resolveColorMix,
+  type TonePreset,
+} from '@ui/tones';
 
 /**
  * RoundButtonSizePreset — представляет размерный ряд круглой кнопки.
@@ -39,8 +43,7 @@ export type RoundButtonSizePreset = 'huge' | SizePreset;
 /**
  * roundButtonMinBlockSize — хранит габарит кнопки для каждого размера ряда.
  * Расширяет `minBlockSize` из `@ui/presets` спредом, добавляя локальный ключ `huge`.
- * Отступ под иконку кнопка не задаёт: вызывающий код передаёт в `children` svg,
- * уже обёрнутый в `Icon`, — окно иконки держит обёртка.
+ * Ряд повторяет `iconSize` компонента Icon: окно иконки заполняет круг целиком.
  */
 const roundButtonMinBlockSize = {
   ...minBlockSize,
@@ -79,13 +82,12 @@ export function getRoundButtonMinBlockSize(
 /**
  * RoundButtonStyleProps — представляет пропсы стилизации RoundButton и layout-пропсы.
  *
- * @property iconFill — тон глифа иконки
- * @property iconTone — тон поверхности круга
+ * @property iconTone — тон поверхности круга; статику красит внутренний Icon,
+ *   корень считает по тому же тону значение канала состояний
  * @property showBorder — включает рамку контрола вне layout-box
  * @property sizePreset — размер кнопки
  */
 export type RoundButtonStyleProps = LayoutProps & {
-  iconFill?: TonePreset;
   iconTone?: TonePreset;
   showBorder?: boolean;
   sizePreset?: RoundButtonSizePreset;
@@ -96,7 +98,6 @@ export type RoundButtonStyleProps = LayoutProps & {
  */
 const ROUND_BUTTON_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
-  'iconFill',
   'iconTone',
   'showBorder',
   'sizePreset',
@@ -110,18 +111,17 @@ export const DEFAULT_ROUND_BUTTON_SHOW_BORDER = DEFAULT_SHOW_BORDER;
 
 /**
  * getRoundButtonStyles — возвращает CSS-правила для корня `StyledRoundButton`:
- * габарит, рамку через `getControlBorder`, тон круга/`iconFill` через
- * `resolveIconSurface` и подсветку `:not(:disabled):hover` и `:focus-visible`.
+ * габарит, рамку через `getControlBorder` и канал состояний для внутреннего Icon.
  * Рамка вне layout-box: рамочный и безрамочный режимы дают один content-box
- * и один размер `Icon` на `100%`.
+ * и один размер `Icon` — окно заполняет круг целиком.
  *
  * Как работает:
- * 1. Считает габарит и поверхность через `resolveIconSurface`
- * 2. Кладёт рамку через `getControlBorder` — layout-рамку у `button` снял reset
- * 3. При цветном `iconTone` красит круг заливкой секции и подсвечивает hover/focus
- *    её же `hoverBackground`
- * 4. При нейтральном `iconTone` при отличном `iconFill` красит только глиф,
- *    а hover/focus — вуалью `theme.colors.veil`
+ * 1. Считает габарит по `sizePreset` и кладёт рамку через `getControlBorder` —
+ *    layout-рамку у `button` снял reset
+ * 2. Считает значение канала: для цветного `iconTone` — сдвиг тона к `shade`
+ *    через `resolveColorMix`, для нейтрального — вуаль `theme.colors.veil`
+ * 3. На `:not(:disabled):hover` и `:focus-visible` выставляет
+ *    `--icon-state-background` — заливку рисует внутренний Icon
  *
  * @param props пропсы стилизации круглой кнопки и тема
  * @returns CSS-правила, каждое с новой строки
@@ -131,44 +131,25 @@ function getRoundButtonStyles(
 ): string {
   const theme = getTheme(props);
   const {
-    iconFill,
     iconTone = DEFAULT_TONE,
     showBorder = DEFAULT_ROUND_BUTTON_SHOW_BORDER,
     sizePreset = DEFAULT_ROUND_BUTTON_SIZE_PRESET,
   } = props;
   const dimension = getSpacingValue(getRoundButtonMinBlockSize(sizePreset));
-  const iconSurface = resolveIconSurface(theme, iconTone, iconFill);
-  const hasIconTone = iconTone !== DEFAULT_TONE;
-  const hasIconFill =
-    iconFill != null && iconFill !== DEFAULT_TONE && iconFill !== iconTone;
+  const toneColorKey = getToneColorKey(iconTone);
+  const stateBackground = toneColorKey
+    ? resolveColorMix(theme.colors[toneColorKey], theme.colors.shade)
+    : theme.colors.veil;
 
   const styles = [
     `inline-size: ${dimension};`,
     `block-size: ${dimension};`,
     getControlBorder(theme, showBorder),
+    `&:not(:disabled):hover,`,
+    `&:focus-visible {`,
+    `--icon-state-background: ${stateBackground};`,
+    '}',
   ];
-
-  if (hasIconTone) {
-    styles.push(
-      `background-color: ${iconSurface.backgroundColor};`,
-      `color: ${iconSurface.color};`,
-      `&:not(:disabled):hover,`,
-      `&:focus-visible {`,
-      `background: ${iconSurface.hoverBackground};`,
-      '}'
-    );
-  } else {
-    if (hasIconFill) {
-      styles.push(`color: ${iconSurface.color};`);
-    }
-
-    styles.push(
-      `&:not(:disabled):hover,`,
-      `&:focus-visible {`,
-      `background-color: ${theme.colors.veil};`,
-      '}'
-    );
-  }
 
   return styles.join('\n');
 }
@@ -180,12 +161,11 @@ function getRoundButtonStyles(
  * Встроенные стили:
  *  - `display: grid` — раскладка по дефолту проекта
  *  - `place-items: center` — центрирует иконку в круге
- *  - `overflow: hidden` — обрезает содержимое по границе кнопки
+ *  - `overflow: hidden` — обрезает квадратное окно Icon по границе круга
  *  - `border-radius: 50%` — окружность для квадратного габарита
  *
  * Генерация стилей:
- *  - `getRoundButtonStyles` — габарит, режим с границей и подсветка
- *    наведения и фокуса
+ *  - `getRoundButtonStyles` — габарит, режим с границей и канал состояний
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledRoundButton = styled.button.withConfig({

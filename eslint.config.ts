@@ -86,7 +86,7 @@ const config: Config[] = defineConfig([
               pattern:
                 '@{components,context,hooks,icons,lib,models,pages,services,styles,ui,utils}{,/**}',
             },
-            // Side-effect stylesheet imports (e.g. import './button.css'). ESLint group name is fixed: object.
+            // Side-effect stylesheet imports, for example import './button.css'. ESLint group name is fixed: object.
             {
               group: 'object',
               pattern: '*.{css,scss}',
@@ -99,8 +99,8 @@ const config: Config[] = defineConfig([
       ],
       'no-restricted-imports': ['error', { patterns: deepImportPatterns }],
       // Сортируются только перечислимые списки без собственной семантики порядка.
-      // Литералы объектов (таблицы пресетов, карты «проп → CSS-свойство») не сортируются:
-      // их порядок семантический (ряд размеров, шорткат раньше лонгхендов).
+      // Литералы объектов вроде таблиц пресетов и соответствий проп → CSS-свойство не сортируются:
+      // их порядок семантический, например ряд размеров или шорткат раньше лонгхендов.
       // Порядок объявлений верхнего уровня линтером не сортируется — он смысловой
       // и держится вручную по канону: зависимость раньше использования, композит последним.
       'perfectionist/sort-object-types': 'error',

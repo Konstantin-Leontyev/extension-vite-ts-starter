@@ -30,7 +30,7 @@
  * Потребители:
  *  - панели настроек витрины дизайн-системы, например SizeListbox и ToneListbox —
  *    выбирают значения настроек
- *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import {
@@ -50,6 +50,7 @@ import { AnchoredPortal } from '@ui/anchored-portal';
 import { Checkbox } from '@ui/checkbox';
 import { Icon } from '@ui/icon';
 import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
+import { type TonePreset } from '@ui/tones';
 
 import {
   StyledListboxCheck,
@@ -135,6 +136,7 @@ export type ListboxOption = {
  *
  * @property defaultValue — начальное значение в неконтролируемом режиме
  * @property disabled — включает недоступное состояние
+ * @property iconFill — тон глифа шеврона при нейтральном `iconTone`
  * @property inlineCheckbox — включает чекбоксы в строках опций. Без `multiple`
  *   чекбоксы не показываются
  * @property label — подпись над триггером
@@ -149,6 +151,7 @@ export type ListboxOption = {
 type ListboxProps = ListboxStyleProps & {
   defaultValue?: string | string[];
   disabled?: boolean;
+  iconFill?: TonePreset;
   inlineCheckbox?: boolean;
   label?: string;
   multiple?: boolean;
@@ -432,9 +435,15 @@ export function Listbox({
   ...rest
 }: ListboxProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const surfaceProps = { iconFill, iconPosition, iconTone, shape, sizePreset };
+  const surfaceProps = { iconPosition, iconTone, shape, sizePreset };
   const iconNode = (
-    <Icon data-slot="icon" sizePreset={sizePreset}>
+    <Icon
+      data-slot="icon"
+      iconFill={iconFill}
+      iconTone={iconTone}
+      interactive
+      sizePreset={sizePreset}
+    >
       <ChevronDownIcon />
     </Icon>
   );
@@ -580,11 +589,7 @@ export function Listbox({
                 (document.activeElement as HTMLElement | null)?.blur();
               }}
             />
-            <Text
-              data-slot="label"
-              showEllipsis
-              sizePreset={getListboxTextSize(sizePreset)}
-            >
+            <Text data-slot="label" ellipsis sizePreset={getListboxTextSize(sizePreset)}>
               {option.label}
             </Text>
           </StyledListboxOptionRow>
@@ -601,11 +606,7 @@ export function Listbox({
           type="button"
           onClick={() => toggleOption(option)}
         >
-          <Text
-            data-slot="label"
-            showEllipsis
-            sizePreset={getListboxTextSize(sizePreset)}
-          >
+          <Text data-slot="label" ellipsis sizePreset={getListboxTextSize(sizePreset)}>
             {option.label}
           </Text>
           {isSelected && (
@@ -661,7 +662,7 @@ export function Listbox({
         {iconPosition === 'start' && iconNode}
         <Text
           data-slot="label"
-          showEllipsis
+          ellipsis
           sizePreset={getListboxTextSize(sizePreset)}
           tone={triggerLabel ? undefined : 'muted'}
         >

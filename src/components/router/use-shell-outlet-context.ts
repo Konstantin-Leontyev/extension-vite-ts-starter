@@ -8,7 +8,7 @@
  *
  * Потребители:
  *  - `src/components/router/router-layout.tsx` — формирует контекст outlet по типу `ShellOutletContext`
- *  - `src/pages/design-system/index.tsx` — переключает режим шапки в витрине
+ *  - `src/pages/showcase/index.tsx` — переключает режим шапки в витрине
  */
 
 import { useOutletContext } from 'react-router-dom';

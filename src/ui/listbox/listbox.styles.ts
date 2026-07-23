@@ -19,7 +19,6 @@ import styled from 'styled-components';
 import {
   DEFAULT_ICON_POSITION,
   ICON_SETTING_PROP_NAMES,
-  resolveIconSurface,
   type IconPosition,
 } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
@@ -36,7 +35,12 @@ import {
 import { getSpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
+import {
+  DEFAULT_TONE,
+  getToneColorKey,
+  resolveColorMix,
+  type TonePreset,
+} from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -65,14 +69,13 @@ function resolveListboxBlockRadius(shape: ShapePreset, sizePreset: SizePreset): 
 /**
  * ListboxSurfaceStyleProps — представляет пропсы стилизации поверхности Listbox.
  *
- * @property iconFill — тон глифа шеврона
  * @property iconPosition — позиция шеврона относительно значения
- * @property iconTone — тон секции шеврона
+ * @property iconTone — тон секции шеврона; статику красит внутренний Icon,
+ *   корень считает по тому же тону шов и значение канала состояний
  * @property shape — форма поверхности
  * @property sizePreset — размер компонента
  */
 type ListboxSurfaceStyleProps = {
-  iconFill?: TonePreset;
   iconPosition?: IconPosition;
   iconTone?: TonePreset;
   shape?: ShapePreset;
@@ -131,14 +134,17 @@ export const StyledListboxRoot = styled.div.withConfig({
 
 /**
  * getListboxTriggerStyles — возвращает CSS-правила для узла `StyledListboxTrigger`:
- * габариты, рамку, заливку, тень, раскладку лейбла и поверхность секции шеврона.
+ * габариты, рамку, заливку, тень, раскладку лейбла, шов и канал состояний
+ * секции шеврона. Статику секции красит внутренний Icon своими пропсами.
  *
  * Как работает:
- * 1. Берёт тему, подставляет дефолты пропсов и считает поверхность шеврона
+ * 1. Берёт тему и подставляет дефолты пропсов
  * 2. Собирает габариты триггера, заливку, рамку и тень
- * 3. Красит лейбл и секцию шеврона: отступы, радиусы и цвет по `iconPosition`
- * 4. Добавляет шов, только когда тон секции нейтрален
- * 5. Подсвечивает секцию шеврона при наведении триггера
+ * 3. Задаёт раскладку и отступы слота лейбла
+ * 4. Добавляет шов по `iconPosition`, только когда тон секции нейтрален
+ * 5. На наведении триггера выставляет `--icon-state-background`: вуаль для
+ *    нейтральной секции, сдвиг тона к `shade` для цветной — подсвечивается
+ *    только индикатор, шеврон не самостоятельное действие
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -148,21 +154,21 @@ function getListboxTriggerStyles(
 ): string {
   const theme = getTheme(props);
   const {
-    iconFill,
     iconPosition = DEFAULT_ICON_POSITION,
     iconTone = DEFAULT_TONE,
     shape = DEFAULT_SHAPE_PRESET,
     sizePreset = DEFAULT_SIZE_PRESET,
   } = props;
   const size = getMinBlockSize(sizePreset);
-  const borderRadius = resolveBlockRadius(shape, size);
-  const iconSurface = resolveIconSurface(theme, iconTone, iconFill);
+  const iconColorKey = getToneColorKey(iconTone);
   const isIconStart = iconPosition === 'start';
-  const showSeam = iconTone === DEFAULT_TONE;
+  const stateBackground = iconColorKey
+    ? resolveColorMix(theme.colors[iconColorKey], theme.colors.shade)
+    : theme.colors.veil;
 
   const styles = [
     `min-block-size: ${size};`,
-    `border-radius: ${borderRadius};`,
+    `border-radius: ${resolveBlockRadius(shape, size)};`,
     'inline-size: 100%;',
     'min-inline-size: 0;',
     'text-align: start;',
@@ -174,32 +180,22 @@ function getListboxTriggerStyles(
     'align-content: center;',
     'min-inline-size: 0;',
     `padding-inline: ${getPaddingInline(sizePreset)};`,
-    isIconStart
-      ? `border-start-end-radius: ${borderRadius};\nborder-end-end-radius: ${borderRadius};`
-      : `border-start-start-radius: ${borderRadius};\nborder-end-start-radius: ${borderRadius};`,
     `}`,
-    `[data-slot='icon'] {`,
-    `inline-size: ${size};`,
-    `min-inline-size: ${size};`,
-    `color: ${iconSurface.color};`,
-    `background-color: ${iconSurface.backgroundColor};`,
-    isIconStart
-      ? `border-start-start-radius: ${borderRadius};\nborder-end-start-radius: ${borderRadius};`
-      : `border-start-end-radius: ${borderRadius};\nborder-end-end-radius: ${borderRadius};`,
   ];
 
-  if (showSeam) {
+  if (iconTone === DEFAULT_TONE) {
     styles.push(
+      `[data-slot='icon'] {`,
       isIconStart
         ? `box-shadow: inset -1px 0 0 ${theme.colors.border};`
-        : `box-shadow: inset 1px 0 0 ${theme.colors.border};`
+        : `box-shadow: inset 1px 0 0 ${theme.colors.border};`,
+      `}`
     );
   }
 
   styles.push(
-    `}`,
-    `&:not(:disabled):hover [data-slot='icon'] {`,
-    `background: ${iconSurface.hoverBackground};`,
+    `&:not(:disabled):hover {`,
+    `--icon-state-background: ${stateBackground};`,
     `}`
   );
 
@@ -212,6 +208,8 @@ function getListboxTriggerStyles(
  *
  * Встроенные стили:
  *  - `display: flex` — лейбл и шеврон в ряд
+ *  - `overflow: hidden` — обрезает квадратное окно Icon по радиусу корня:
+ *    скругление секций — обрезка корнем, не радиусы на детях
  *  - `visibility: hidden` при `data-open` — скрывает триггер при открытой панели,
  *    чтобы панель наследовала ширину якоря без двойного отображения
  *
@@ -222,6 +220,7 @@ export const StyledListboxTrigger = styled.button.withConfig({
   shouldForwardProp: (prop) => !LISTBOX_SURFACE_PROP_NAMES.has(prop),
 })<ListboxSurfaceStyleProps>`
   display: flex;
+  overflow: hidden;
   ${(props) => getListboxTriggerStyles(props)}
 
   &[data-open='true'] {

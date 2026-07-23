@@ -25,7 +25,7 @@
  *
  * Потребители:
  *  - страницы и виджеты приложения — показывают статусы и метки
- *  - `src/pages/design-system` — демонстрирует состояния в витрине
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
@@ -86,8 +86,8 @@ export function Tag({
       {showDot && <StyledTagDot dotTone={dotTone} />}
       {Boolean(children) && (
         <Text
+          ellipsis
           italic={textItalic}
-          showEllipsis
           sizePreset={textSize ?? getTagTextSize(sizePreset)}
           tone={textTone}
         >

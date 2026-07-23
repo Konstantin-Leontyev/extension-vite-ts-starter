@@ -22,7 +22,7 @@
  *    заливки через `resolveVeilBackground`
  *  - `@ui/fieldset` — расширяет канонический набор тонов
  *  - панели настроек витрины дизайн-системы — передают `TONE_PRESET_KEYS` в `ToneListbox`
- *  - `src/pages/design-system/tone-listbox/index.tsx` — фильтрует тоны и подставляет
+ *  - `src/pages/showcase/tone-listbox/index.tsx` — фильтрует тоны и подставляет
  *    запасной через `DEFAULT_TONE`
  */
 

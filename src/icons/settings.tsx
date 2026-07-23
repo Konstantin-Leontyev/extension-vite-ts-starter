@@ -6,7 +6,7 @@
  * 1. Экспортировать компонент `SettingsIcon`
  *
  * Потребители:
- *  - `src/components/header/index.tsx` и `src/pages/design-system/index.tsx` — показывают вход в настройки
+ *  - `src/components/header/index.tsx` и `src/pages/showcase/index.tsx` — показывают вход в настройки
  *  - `src/icons/index.ts` — реэкспортирует `SettingsIcon`
  */
 

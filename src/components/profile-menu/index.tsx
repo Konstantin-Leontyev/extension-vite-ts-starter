@@ -22,7 +22,6 @@ import { CloseIcon } from '@icons/close';
 import { SignOutIcon } from '@icons/sign-out';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Card } from '@ui/card';
-import { Icon } from '@ui/icon';
 import { RoundButton } from '@ui/round-button';
 import { SegmentButton } from '@ui/segment-button';
 import { Text } from '@ui/text';
@@ -132,9 +131,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
         title={displayEmail}
         onClick={handleToggle}
       >
-        <Icon blockSize="100%" inlineSize="100%" padding={4}>
-          <AvatarIcon />
-        </Icon>
+        <AvatarIcon />
       </RoundButton>
 
       <AnchoredPortal
@@ -156,7 +153,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
             {
               ariaLabel: 'Close profile menu',
               icon: <CloseIcon />,
-              iconPadding: 8,
+              iconPadding: 12,
               onClick: handleClose,
             },
           ]}
@@ -173,10 +170,8 @@ export function ProfileMenu(props: ProfileMenuProps) {
         >
           <StyledProfileMenuContent>
             <StyledProfileMenuHeader>
-              <RoundButton aria-hidden="true" sizePreset="huge" tabIndex={-1}>
-                <Icon blockSize="100%" inlineSize="100%" padding={8}>
-                  <AvatarIcon />
-                </Icon>
+              <RoundButton aria-hidden="true" showBorder sizePreset="huge" tabIndex={-1}>
+                <AvatarIcon />
               </RoundButton>
               <Text align="center" as="p" id={titleId} sizePreset="extraBold">
                 Hello, {displayName}!
@@ -188,6 +183,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
                 left={{
                   icon: <AddCircleIcon />,
                   iconPosition: 'start',
+                  iconFill: 'primary',
                   text: 'Profile',
                   onClick: handleClose,
                 }}
