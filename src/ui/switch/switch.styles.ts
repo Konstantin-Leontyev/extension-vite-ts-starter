@@ -113,9 +113,11 @@ export type SwitchStyleProps = LayoutProps & {
  * Базируется на `<label>` и поддерживает layout-пропсы.
  *
  * Встроенные стили:
- *  - `display: inline-grid` и `grid-auto-flow: column` — дорожка и подпись в одной строке
+ *  - `display: inline-grid` — дорожка и подпись в одной строке
+ *  - `grid-auto-flow: column` — элементы в ряд
  *  - `gap` — отступ между дорожкой и подписью
- *  - `align-items: center` и `justify-content: start` — при растяжении корня родителем
+ *  - `align-items: center` — выравнивание по поперечной оси
+ *  - `justify-content: start` — при растяжении корня родителем
  *    подпись остаётся прижатой к дорожке
  *  - `cursor: pointer` — кликабельная область корня
  *
@@ -181,7 +183,6 @@ function getSwitchTrackStyles(
   const styles = [
     'position: relative;',
     'display: inline-block;',
-    'flex-shrink: 0;',
     `inline-size: ${trackInlineSize};`,
     `block-size: ${trackBlockSize};`,
     `background-color: ${theme.colors.border};`,

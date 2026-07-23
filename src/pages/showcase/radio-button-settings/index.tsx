@@ -101,6 +101,7 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
         label="Selected:"
         options={SELECTED_OPTIONS}
         reserveErrorSpace={false}
+        sizePreset="medium"
         value={state.selected}
         onChange={(value) =>
           onChange('selected', value as RadioButtonWidgetState['selected'])

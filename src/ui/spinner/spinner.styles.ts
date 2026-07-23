@@ -10,7 +10,7 @@
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
- *  - `src/ui/spinner/index.tsx` — собирает компонент Spinner
+ *  - `src/ui/spinner/index.tsx` — собирает компонент Spinner и реэкспортирует публичное API
  */
 
 import { css, keyframes, styled } from 'styled-components';
@@ -89,16 +89,12 @@ export type SpinnerStyleProps = LayoutProps & {
 };
 
 /**
- * SPINNER_ROOT_PROP_NAMES — объединяет имена layout-пропсов корня Spinner.
- */
-const SPINNER_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
-
-/**
  * StyledSpinnerRoot — задаёт корневой узел компонента Spinner.
  * Базируется на `<div>` и поддерживает пропсы из `LayoutProps`.
  *
  * Встроенные стили:
  *  - `display: grid` — раскладка по дефолту проекта
+ *  - `gap` — отступ между индикатором и подписью
  *  - `justify-items: center` — центрирует индикатор и подпись
  *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
  *
@@ -106,7 +102,7 @@ const SPINNER_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledSpinnerRoot = styled.div.withConfig({
-  shouldForwardProp: (prop) => !SPINNER_ROOT_PROP_NAMES.has(prop),
+  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
   display: grid;
   gap: ${getSpacingValue(8)};
@@ -121,9 +117,9 @@ export const StyledSpinnerRoot = styled.div.withConfig({
 type SpinnerIndicatorStyleProps = Pick<SpinnerStyleProps, 'sizePreset' | 'tone'>;
 
 /**
- * SPINNER_PROP_NAMES — хранит имена пропсов стилизации индикатора Spinner.
+ * SPINNER_INDICATOR_PROP_NAMES — хранит имена пропсов стилизации индикатора Spinner.
  */
-const SPINNER_PROP_NAMES = new Set<string>(['sizePreset', 'tone']);
+const SPINNER_INDICATOR_PROP_NAMES = new Set<string>(['sizePreset', 'tone']);
 
 /**
  * spinnerRotate — задаёт ключевые кадры анимации вращения спиннера.
@@ -164,15 +160,11 @@ function getSpinnerStyles(props: SpinnerIndicatorStyleProps & { theme: AppTheme 
  * StyledSpinner — задаёт индикатор компонента Spinner.
  * Базируется на `<div>` и поддерживает пропсы из `SpinnerIndicatorStyleProps`.
  *
- * Встроенные стили:
- *  - `flex-shrink: 0` — индикатор не сжимается при нехватке места
- *
  * Генерация стилей:
  *  - `getSpinnerStyles` — размер, рамка, цвет, анимация
  */
 export const StyledSpinner = styled.div.withConfig({
-  shouldForwardProp: (prop) => !SPINNER_PROP_NAMES.has(prop),
+  shouldForwardProp: (prop) => !SPINNER_INDICATOR_PROP_NAMES.has(prop),
 })<SpinnerIndicatorStyleProps>`
-  flex-shrink: 0;
   ${(props) => getSpinnerStyles(props)}
 `;

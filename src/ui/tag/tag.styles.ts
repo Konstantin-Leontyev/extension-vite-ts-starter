@@ -110,8 +110,8 @@ export function getTagTextSize(sizePreset?: TagSizePreset): TextSizePreset {
 /**
  * TagSurface — представляет пару цветов метки, которую возвращает `resolveTagSurface`.
  *
- * @property textColor — цвет текста
  * @property backgroundColor — цвет фона
+ * @property textColor — цвет текста
  */
 type TagSurface = { backgroundColor: string; textColor: string };
 

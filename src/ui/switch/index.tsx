@@ -18,7 +18,7 @@
  * 4. Реэкспортировать мост размера текста `getSwitchTextSize`
  *
  * Потребители:
- *  - `src/pages/showcase/header-settings` — переключает режим autoHide шапки
+ *  - `src/pages/showcase/header-settings/index.tsx` — переключает режим `autoHide` шапки
  *  - страницы и виджеты приложения — рендерят тумблеры настроек
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */

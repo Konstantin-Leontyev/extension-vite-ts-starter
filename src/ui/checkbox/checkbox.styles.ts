@@ -3,14 +3,15 @@
  * Определяет внешний вид компонента Checkbox.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `CheckboxStyleProps`
+ * 1. Типизировать пропсы через `CheckboxStyleProps`, `CheckboxCheckedMark` и `CheckboxUncheckedMark`
  * 2. Хранить габариты бокса и размер иконки в `checkboxSizePresets`
- * 3. Предоставить функцию `getCheckboxTextSize` и перечни марок
+ * 3. Предоставить функцию `getCheckboxTextSize` и перечни `CHECKBOX_CHECKED_MARK_KEYS`
+ *    и `CHECKBOX_UNCHECKED_MARK_KEYS`
  * 4. Предоставить styled-узлы `StyledCheckboxRoot` и `StyledCheckboxControl`
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
- *  - `src/ui/checkbox/index.tsx` — собирает компонент Checkbox
+ *  - `src/ui/checkbox/index.tsx` — собирает компонент Checkbox и реэкспортирует публичное API
  */
 
 import styled from 'styled-components';
@@ -113,24 +114,20 @@ export type CheckboxStyleProps = LayoutProps & {
 };
 
 /**
- * CHECKBOX_ROOT_PROP_NAMES — объединяет имена layout-пропсов корня Checkbox.
- */
-const CHECKBOX_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
-
-/**
  * StyledCheckboxRoot — задаёт корневой узел компонента Checkbox.
  * Базируется на `<label>` и поддерживает пропсы из `LayoutProps`.
  *
  * Встроенные стили:
  *  - `display: inline-grid` — раскладка по дефолту проекта
  *  - `grid-auto-flow: column` — бокс и подпись в одной строке
+ *  - `gap` — отступ между боксом и подписью
  *  - `justify-content: start` — при растяжении родителем подпись остаётся у бокса
  *
  * Генерация стилей:
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledCheckboxRoot = styled.label.withConfig({
-  shouldForwardProp: (prop) => !CHECKBOX_ROOT_PROP_NAMES.has(prop),
+  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
   display: inline-grid;
   grid-auto-flow: column;
@@ -153,16 +150,16 @@ const CHECKBOX_CONTROL_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * DEFAULT_CHECKED_MARK — задаёт иконку checked-состояния по умолчанию.
+ * DEFAULT_CHECKBOX_CHECKED_MARK — задаёт иконку checked-состояния по умолчанию.
  * Используется, когда вызывающий код не передал проп `checkedMark`.
  */
-const DEFAULT_CHECKED_MARK: CheckboxCheckedMark = 'check';
+const DEFAULT_CHECKBOX_CHECKED_MARK: CheckboxCheckedMark = 'check';
 
 /**
- * DEFAULT_UNCHECKED_MARK — задаёт иконку unchecked-состояния по умолчанию.
+ * DEFAULT_CHECKBOX_UNCHECKED_MARK — задаёт иконку unchecked-состояния по умолчанию.
  * Используется, когда вызывающий код не передал проп `uncheckedMark`.
  */
-const DEFAULT_UNCHECKED_MARK: CheckboxUncheckedMark = 'none';
+const DEFAULT_CHECKBOX_UNCHECKED_MARK: CheckboxUncheckedMark = 'none';
 
 /**
  * DEFAULT_CHECKBOX_INVERTED — задаёт инверсию палитры по умолчанию.
@@ -252,10 +249,10 @@ function getCheckboxControlStyles(
 ): string {
   const theme = getTheme(props);
   const {
-    checkedMark = DEFAULT_CHECKED_MARK,
+    checkedMark = DEFAULT_CHECKBOX_CHECKED_MARK,
     inverted = DEFAULT_CHECKBOX_INVERTED,
     sizePreset = DEFAULT_SIZE_PRESET,
-    uncheckedMark = DEFAULT_UNCHECKED_MARK,
+    uncheckedMark = DEFAULT_CHECKBOX_UNCHECKED_MARK,
   } = props;
   const size = getCheckboxSize(sizePreset);
   const iconSize = getCheckboxIconSize(sizePreset);

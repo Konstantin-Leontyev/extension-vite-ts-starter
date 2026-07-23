@@ -10,7 +10,7 @@
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
- *  - `src/ui/radio-button/index.tsx` — собирает компонент RadioButton
+ *  - `src/ui/radio-button/index.tsx` — собирает компонент RadioButton и реэкспортирует публичное API
  */
 
 import styled from 'styled-components';
@@ -64,24 +64,20 @@ export type RadioButtonStyleProps = LayoutProps & {
 };
 
 /**
- * RADIO_BUTTON_ROOT_PROP_NAMES — объединяет имена layout-пропсов корня RadioButton.
- */
-const RADIO_BUTTON_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
-
-/**
  * StyledRadioButtonRoot — задаёт корневой узел компонента RadioButton.
  * Базируется на `<label>` и поддерживает пропсы из `LayoutProps`.
  *
  * Встроенные стили:
  *  - `display: inline-grid` — раскладка по дефолту проекта
  *  - `grid-auto-flow: column` — кружок и подпись в одной строке
+ *  - `gap` — отступ между кружком и подписью
  *  - `justify-content: start` — при растяжении родителем подпись остаётся у кружка
  *
  * Генерация стилей:
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledRadioButtonRoot = styled.label.withConfig({
-  shouldForwardProp: (prop) => !RADIO_BUTTON_ROOT_PROP_NAMES.has(prop),
+  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
   display: inline-grid;
   grid-auto-flow: column;

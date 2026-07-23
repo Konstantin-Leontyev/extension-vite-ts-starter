@@ -10,7 +10,7 @@
  *    и `StyledProgressBarFill`
  *
  * Потребители:
- *  - `src/ui/progress-bar/index.tsx` — собирает компонент ProgressBar
+ *  - `src/ui/progress-bar/index.tsx` — собирает компонент ProgressBar и реэкспортирует публичное API
  */
 
 import styled from 'styled-components';
@@ -86,17 +86,13 @@ export type ProgressBarStyleProps = LayoutProps & {
 };
 
 /**
- * PROGRESS_BAR_ROOT_PROP_NAMES — объединяет имена layout-пропсов корня ProgressBar.
- */
-const PROGRESS_BAR_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
-
-/**
  * StyledProgressBarRoot — задаёт корневой узел компонента ProgressBar.
  * Базируется на `<div>` и поддерживает пропсы из `LayoutProps`.
  *
  * Встроенные стили:
  *  - `display: flex` — оправданное исключение из grid по умолчанию: подпись идёт
  *    в потоке и не резервирует место, когда она не отображается
+ *  - `gap` — отступ между полосой и подписью
  *  - `align-items: center` — подпись по центру относительно полосы
  *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
  *
@@ -104,7 +100,7 @@ const PROGRESS_BAR_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledProgressBarRoot = styled.div.withConfig({
-  shouldForwardProp: (prop) => !PROGRESS_BAR_ROOT_PROP_NAMES.has(prop),
+  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
   display: flex;
   gap: ${getSpacingValue(12)};
@@ -213,5 +209,10 @@ export const StyledProgressBarFill = styled.div.withConfig({
   block-size: 100%;
   border-radius: inherit;
   transition: inline-size 120ms ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 240ms;
+  }
+
   ${(props) => getProgressBarFillStyles(props)}
 `;

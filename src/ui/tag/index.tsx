@@ -98,5 +98,5 @@ export function Tag({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
+/* eslint-disable react-refresh/only-export-components -- публичные типы, пресеты и мост размера текста */
 export { TAG_SIZE_PRESET_KEYS, getTagTextSize, type TagSizePreset };

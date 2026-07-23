@@ -115,6 +115,7 @@ export function ProgressBarSettings({ onChange, state }: ProgressBarSettingsProp
         inputMode="numeric"
         label="Value:"
         reserveErrorSpace={false}
+        sizePreset="medium"
         value={String(Math.round(state.value * 100))}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('value', parseValueFromPercent(event.target.value))
