@@ -38,13 +38,17 @@ const SCROLLBAR_TRACK_WIDTH: SpacingValue = 8;
 
 /**
  * ScrollPortRootStyleProps — представляет пропсы стилизации корня ScrollPort.
- * `paddingInlineEnd` обязателен: сборка подставляет дефолт один раз в `index.tsx`.
+ * `gutterInlineEnd` обязателен: сборка подставляет дефолт один раз в `index.tsx`.
+ * Публичный проп называется `paddingInlineEnd`; на корне значение переименовано,
+ * потому что питает не CSS-свойство `padding-inline-end`, а смещение трека и края
+ * вуали: имя layout-пропа заставило бы `getLayoutStyles` корня написать лишний
+ * `padding-inline-end`.
  *
- * @property paddingInlineEnd — отступ inline-end для трека скроллбара и вуали
+ * @property gutterInlineEnd — ширина правого отступа под трек скроллбара и зазор вуали
  * @property showVeil — включает градиентные вуали на краях при прокрутке
  */
 type ScrollPortRootStyleProps = {
-  paddingInlineEnd: SpacingValue;
+  gutterInlineEnd: SpacingValue;
   showVeil?: boolean;
 };
 
@@ -53,7 +57,7 @@ type ScrollPortRootStyleProps = {
  */
 const SCROLL_PORT_ROOT_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
-  'paddingInlineEnd',
+  'gutterInlineEnd',
   'showVeil',
 ]);
 
@@ -71,15 +75,15 @@ const DEFAULT_SCROLL_PORT_SHOW_VEIL = true;
 
 /**
  * resolveScrollPortTrackMarginInlineEnd — вычисляет значение для CSS-свойства
- * `margin-inline-end`, смещающее трек скроллбара в область отступа inline-end.
+ * `margin-inline-end`, смещающее трек скроллбара в область правого отступа.
  * Берёт половину `SCROLLBAR_TRACK_WIDTH`: полширины трека остаётся видимой,
  * остальное уходит в отступ.
  *
- * @param paddingInlineEnd отступ inline-end
+ * @param gutterInlineEnd ширина правого отступа под трек скроллбара
  * @returns значение для CSS-свойства `margin-inline-end`
  */
-function resolveScrollPortTrackMarginInlineEnd(paddingInlineEnd: SpacingValue): string {
-  return `calc(-1 * (${getSpacingValue(paddingInlineEnd)} - ${getSpacingValue(SCROLLBAR_TRACK_WIDTH)} / 2))`;
+function resolveScrollPortTrackMarginInlineEnd(gutterInlineEnd: SpacingValue): string {
+  return `calc(-1 * (${getSpacingValue(gutterInlineEnd)} - ${getSpacingValue(SCROLLBAR_TRACK_WIDTH)} / 2))`;
 }
 
 /**
@@ -96,7 +100,7 @@ function resolveScrollPortTrackMarginInlineEnd(paddingInlineEnd: SpacingValue): 
  * @returns CSS-правила, каждое с новой строки
  */
 function getScrollPortRootStyles(props: ScrollPortRootStyleProps): string {
-  const { paddingInlineEnd, showVeil = DEFAULT_SCROLL_PORT_SHOW_VEIL } = props;
+  const { gutterInlineEnd, showVeil = DEFAULT_SCROLL_PORT_SHOW_VEIL } = props;
 
   const styles = [
     'position: relative;',
@@ -106,12 +110,12 @@ function getScrollPortRootStyles(props: ScrollPortRootStyleProps): string {
     'min-block-size: 0;',
     'min-inline-size: 0;',
     'background-color: inherit;',
-    `margin-inline-end: ${resolveScrollPortTrackMarginInlineEnd(paddingInlineEnd)};`,
+    `margin-inline-end: ${resolveScrollPortTrackMarginInlineEnd(gutterInlineEnd)};`,
   ];
 
   if (showVeil) {
     const veilInsetOffset = getSpacingValue(VEIL_INSET_OFFSET);
-    const veilInsetInline = `calc(${veilInsetOffset} * -1) calc(${getSpacingValue(paddingInlineEnd)} - ${veilInsetOffset})`;
+    const veilInsetInline = `calc(${veilInsetOffset} * -1) calc(${getSpacingValue(gutterInlineEnd)} - ${veilInsetOffset})`;
 
     styles.push(`
       &::before,

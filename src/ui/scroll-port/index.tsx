@@ -72,7 +72,7 @@ export function ScrollPort({
 
   return (
     <StyledScrollPortRoot
-      paddingInlineEnd={resolvedPaddingInlineEnd}
+      gutterInlineEnd={resolvedPaddingInlineEnd}
       showVeil={showVeil}
       {...rest}
     >
