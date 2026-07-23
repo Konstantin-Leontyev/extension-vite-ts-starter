@@ -90,7 +90,7 @@ type TextGroupTone = {
  *   Без него контрол `Text align:` не рендерится — у компонента нет текстовой оси выравнивания
  * @property onItalicChange — обработчик изменения курсива
  * @property onSizeChange — обработчик изменения размера текста
- * @property show — включает показ текста. Без него текст компонента неотключаем
+ * @property show — контрол показа текста. Без него текст компонента неотключаем
  *   и группа рендерится всегда
  * @property size — текущий размер текста
  * @property tones — листбоксы тона: один или несколько по содержимым
@@ -140,7 +140,7 @@ export function TextGroup({
   size,
   tones,
 }: TextGroupProps) {
-  const expanded = !show || show.checked;
+  const isExpanded = !show || show.checked;
 
   return (
     <>
@@ -156,13 +156,14 @@ export function TextGroup({
         </Checkbox>
       )}
 
-      {expanded && (
+      {isExpanded && (
         <>
           {contents?.map((content) => (
             <Input
               key={content.label}
               label={content.label}
               reserveErrorSpace={false}
+              sizePreset="medium"
               value={content.value}
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
                 content.onChange(event.target.value)

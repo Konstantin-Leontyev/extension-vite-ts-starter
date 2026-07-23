@@ -31,7 +31,7 @@ import { StyledToast, getToastTextSize, type ToastStyleProps } from './toast.sty
 /**
  * ToastProps — представляет пропсы компонента Toast.
  *
- * @property children — текст уведомления
+ * @property children — текст сообщения
  * @property textItalic — включает курсив текста сообщения
  * @property textSize — размер текста сообщения
  * @property textTone — тон текста сообщения

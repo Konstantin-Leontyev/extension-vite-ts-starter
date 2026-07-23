@@ -89,7 +89,8 @@ function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
  * Базируется на `<div>` и поддерживает все пропсы из `ToastStyleProps`.
  *
  * Встроенные стили:
- *  - `display: grid` и `align-content: center` — центрируют текст по вертикали
+ *  - `display: grid` — задаёт сетку для выравнивания содержимого
+ *  - `align-content: center` — центрирует текст по вертикали
  *
  * Генерация стилей:
  *  - `getToastStyles` — размер, отступы, фон, цвет, граница, акцентная полоса, тень
