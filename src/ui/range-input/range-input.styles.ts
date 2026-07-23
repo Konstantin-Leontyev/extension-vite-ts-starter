@@ -13,7 +13,7 @@
  * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
- *  - `src/ui/range-input/index.tsx` — собирает компонент RangeInput и реэкспортирует публичное API
+ *  - `src/ui/range-input/index.tsx` — собирает компонент RangeInput
  */
 
 import styled from 'styled-components';
@@ -153,7 +153,7 @@ export const StyledRangeInputRoot = styled.div.withConfig({
 
 /**
  * getRangeInputTriggerRowStyles — возвращает CSS-правила для узла
- * `StyledRangeInputTriggerRow`: габариты, рамку, заливку и кольцо фокуса.
+ * `StyledRangeInputTriggerRow`: габариты, рамку, заливку, тень и кольцо фокуса.
  *
  * Как работает:
  * 1. Берёт тему и размер, подставляет дефолт `iconPosition`
@@ -202,7 +202,7 @@ function getRangeInputTriggerRowStyles(
  * Базируется на `<div>` и принимает пропсы из `RangeInputSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getRangeInputTriggerRowStyles` — габариты, рамка, заливка и кольцо фокуса
+ *  - `getRangeInputTriggerRowStyles` — габариты, рамка, заливка, тень и кольцо фокуса
  *
  * При открытой панели ряд скрывается через `visibility: hidden`, чтобы панель
  * наследовала ширину якоря без двойного отображения триггера.
@@ -317,7 +317,7 @@ export const StyledRangeInputValue = styled.span.withConfig({
 
 /**
  * getRangeInputClearButtonStyles — возвращает CSS-правила для узла
- * `StyledRangeInputClearButton`: квадрат сброса, разделитель и подсветку вуалью.
+ * `StyledRangeInputClearButton`: квадрат сброса, разделитель и подсветку наведения.
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки

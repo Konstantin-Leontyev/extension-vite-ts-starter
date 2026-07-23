@@ -437,6 +437,11 @@ export function RangeInput({
   const hasPanelError = Boolean(panelError?.trim());
   const surfaceProps = { iconFill, iconPosition, iconTone, shape, sizePreset };
   const isIconStart = iconPosition === 'start';
+  const iconNode = showChevron && (
+    <Icon data-slot="icon" sizePreset={sizePreset}>
+      <ChevronDownIcon />
+    </Icon>
+  );
 
   function closePanel(): void {
     setIsOpen(false);
@@ -594,11 +599,7 @@ export function RangeInput({
           onClick={togglePanel}
           onKeyDown={handleTriggerKeyDown}
         >
-          {showChevron && isIconStart && (
-            <Icon data-slot="icon" sizePreset={sizePreset}>
-              <ChevronDownIcon />
-            </Icon>
-          )}
+          {iconPosition === 'start' && iconNode}
           <StyledRangeInputValue {...surfaceProps}>
             <Text
               showEllipsis
@@ -608,11 +609,7 @@ export function RangeInput({
               {triggerLabel}
             </Text>
           </StyledRangeInputValue>
-          {showChevron && !isIconStart && (
-            <Icon data-slot="icon" sizePreset={sizePreset}>
-              <ChevronDownIcon />
-            </Icon>
-          )}
+          {iconPosition !== 'start' && iconNode}
         </StyledRangeInputTrigger>
 
         {showClear && !isIconStart && (
