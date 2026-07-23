@@ -22,7 +22,7 @@ import { type TonePreset } from '@ui/tones';
 /**
  * ToastInput — представляет параметры уведомления.
  *
- * @property message — текст уведомления
+ * @property message — текст сообщения
  * @property sizePreset — размер уведомления
  * @property textItalic — включает курсив текста сообщения
  * @property textSize — размер текста сообщения
@@ -48,7 +48,7 @@ export type ToastContextValue = {
 };
 
 /**
- * ToastContext — предоставляет доступ к API показа уведомлений.
+ * ToastContext — представляет контекст показа уведомлений.
  * Читается через хук `useToast`, который проверяет наличие провайдера.
  */
 export const ToastContext = createContext<null | ToastContextValue>(null);

@@ -36,7 +36,10 @@ type ThemeProviderProps = {
   children: ReactNode;
 };
 
-/** THEME_STORAGE_KEY — задаёт ключ для сохранения выбранной темы в `localStorage`. */
+/**
+ * THEME_STORAGE_KEY — задаёт ключ для сохранения выбранной темы в `localStorage`.
+ * Используется в `readStoredMode` и эффекте сохранения режима в `ThemeProvider`.
+ */
 const THEME_STORAGE_KEY = 'app-theme';
 
 /**

@@ -31,7 +31,10 @@ import { Toast } from '@ui/toast';
 import { ToastContext, type ToastContextValue, type ToastInput } from './context';
 import { StyledToastViewport } from './toast.styles';
 
-/** TOAST_DURATION_MS — задаёт время автоскрытия уведомления. */
+/**
+ * TOAST_DURATION_MS — задаёт время автоскрытия уведомления.
+ * Используется в `showToast` при запуске таймера.
+ */
 const TOAST_DURATION_MS = 5000;
 
 /**

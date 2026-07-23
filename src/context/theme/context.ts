@@ -29,7 +29,7 @@ export type ThemeContextValue = {
 };
 
 /**
- * ThemeContext — предоставляет доступ к API чтения и переключения темы.
+ * ThemeContext — представляет контекст чтения и переключения темы.
  * Читается через хук `useTheme`, который проверяет наличие провайдера.
  */
 export const ThemeContext = createContext<null | ThemeContextValue>(null);
