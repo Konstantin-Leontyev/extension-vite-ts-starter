@@ -31,7 +31,7 @@ import { ToneListbox } from '../tone-listbox';
  * Используется для синхронизации значений между панелью управления и демонстрационным индикатором.
  *
  * @property reserveTextSpace — включает резерв высоты под подпись
- * @property showText — витринный ключ показа подписи. Выключенный — индикатор без текста
+ * @property showText — витринный ключ показа подписи. Выключенный — индикатор без подписи
  * @property sizePreset — размер спиннера
  * @property text — подпись под индикатором
  * @property textItalic — включает курсив подписи
@@ -117,7 +117,6 @@ export function SpinnerSettings({ onChange, state }: SpinnerSettingsProps) {
 
       <Checkbox
         checked={state.reserveTextSpace}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('reserveTextSpace', event.target.checked)
         }

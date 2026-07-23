@@ -120,7 +120,6 @@ export function SwitchSettings({ onChange, state }: SwitchSettingsProps) {
 
       <Checkbox
         checked={state.checked}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('checked', event.target.checked)
         }
@@ -130,7 +129,6 @@ export function SwitchSettings({ onChange, state }: SwitchSettingsProps) {
 
       <Checkbox
         checked={state.disabled}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('disabled', event.target.checked)
         }

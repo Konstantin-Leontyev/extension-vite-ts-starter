@@ -107,7 +107,6 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
 
       <Checkbox
         checked={state.showBorder}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('showBorder', event.target.checked)
         }
@@ -126,7 +125,6 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
 
       <Checkbox
         checked={state.showDot}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('showDot', event.target.checked)
         }
@@ -145,7 +143,6 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
 
       <Checkbox
         checked={state.tinted}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('tinted', event.target.checked)
         }

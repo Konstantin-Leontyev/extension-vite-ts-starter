@@ -30,8 +30,8 @@ import { DEFAULT_TONE, TONE_PRESETS, type TonePreset } from '@ui/tones';
  * FIELDSET_BORDER_TONE_PRESETS — связывает тоны рамки с ключами цвета в теме.
  * Канонический набор расширен ключом `inverted` для белой рамки на цветной подложке.
  *
- * Соответствие приватно для модуля, доступ к перечню тонов — только через
- * `FIELDSET_BORDER_TONE_KEYS`.
+ * Соответствие приватно для модуля, доступ к перечню тонов — через
+ * `FIELDSET_BORDER_TONE_KEYS`, чтение цвета — через `getFieldsetBorderColor`.
  */
 const FIELDSET_BORDER_TONE_PRESETS = {
   ...TONE_PRESETS,
@@ -121,8 +121,8 @@ function getFieldsetStyles(props: FieldsetStyleProps & { theme: AppTheme }): str
  * Базируется на `<fieldset>` и поддерживает пропсы из `FieldsetStyleProps`.
  *
  * Встроенные стили:
- *  - `display: grid` и `grid-auto-rows: min-content` — содержимое группы раскладывается
- *    по строкам
+ *  - `display: grid` — раскладка по дефолту проекта
+ *  - `grid-auto-rows: min-content` — строки по высоте содержимого
  *  - `gap` — отступ между заголовком и полями
  *  - `align-content: start` — содержимое прижато к началу
  *  - `padding-inline` на `legend` — отступ подписи заголовка

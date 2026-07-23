@@ -9,6 +9,7 @@
  *  - тон заголовка через проп `legendTone`
  *  - размер заголовка через проп `legendSizePreset`
  *  - курсив заголовка через проп `legendItalic`
+ *  - содержимое группы через `children`
  *
  * Основные задачи:
  * 1. Экспортировать компонент Fieldset
@@ -74,7 +75,6 @@ type FieldsetProps = {
  * </Fieldset>
  */
 function Fieldset({
-  borderTone,
   children,
   label,
   legendItalic,
@@ -83,7 +83,7 @@ function Fieldset({
   ...rest
 }: FieldsetProps) {
   return (
-    <StyledFieldset borderTone={borderTone} {...rest}>
+    <StyledFieldset {...rest}>
       <legend>
         <Text italic={legendItalic} sizePreset={legendSizePreset} tone={legendTone}>
           {label}

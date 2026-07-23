@@ -11,22 +11,10 @@
  *  - `src/pages/showcase/index.tsx` — подключает панель и синхронизирует состояние с превью виджета текста
  */
 
-import { type CSSProperties, type ChangeEvent } from 'react';
+import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
 
-import { Checkbox } from '@ui/checkbox';
-import { Input } from '@ui/input';
-import {
-  TEXT_ALIGN_PRESET_KEYS,
-  TEXT_SIZE_PRESET_KEYS,
-  TEXT_TONE_KEYS,
-  type TextSizePreset,
-  type TextTone,
-} from '@ui/text';
-
-import { AlignListbox } from '../align-listbox';
 import { StyledSettingsForm } from '../showcase.styles';
-import { SizeListbox } from '../size-listbox';
-import { ToneListbox } from '../tone-listbox';
+import { TextGroup } from '../text-group';
 
 /**
  * TextWidgetState — представляет состояние настроек компонента Text в витрине дизайн-системы.
@@ -41,7 +29,7 @@ import { ToneListbox } from '../tone-listbox';
  * @property tone — тон текста
  */
 export type TextWidgetState = {
-  align: CSSProperties['textAlign'];
+  align: TextAlignPreset;
   children: string;
   ellipsis: boolean;
   italic: boolean;
@@ -69,56 +57,32 @@ type TextSettingsProps = {
 export function TextSettings({ onChange, state }: TextSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
-      <Input
-        label="Sample:"
-        reserveErrorSpace={false}
-        sizePreset="medium"
-        value={state.children}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('children', event.target.value)
-        }
+      <TextGroup
+        align={state.align}
+        contents={[
+          {
+            label: 'Sample:',
+            value: state.children,
+            onChange: (value) => onChange('children', value),
+          },
+        ]}
+        ellipsis={{
+          checked: state.ellipsis,
+          onChange: (checked) => onChange('ellipsis', checked),
+        }}
+        italic={state.italic}
+        labelPrefix=""
+        size={state.sizePreset}
+        tones={[
+          {
+            value: state.tone,
+            onChange: (tone) => onChange('tone', tone),
+          },
+        ]}
+        onAlignChange={(align) => onChange('align', align)}
+        onItalicChange={(value) => onChange('italic', value)}
+        onSizeChange={(size) => onChange('sizePreset', size)}
       />
-
-      <SizeListbox
-        label="Size:"
-        sizes={TEXT_SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
-      />
-
-      <AlignListbox
-        aligns={TEXT_ALIGN_PRESET_KEYS}
-        label="Align:"
-        value={state.align}
-        onChange={(align) => onChange('align', align)}
-      />
-
-      <ToneListbox
-        label="Tone:"
-        tones={TEXT_TONE_KEYS}
-        value={state.tone}
-        onChange={(tone) => onChange('tone', tone)}
-      />
-
-      <Checkbox
-        checked={state.ellipsis}
-        sizePreset="medium"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('ellipsis', event.target.checked)
-        }
-      >
-        Show ellipsis
-      </Checkbox>
-
-      <Checkbox
-        checked={state.italic}
-        sizePreset="medium"
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('italic', event.target.checked)
-        }
-      >
-        Show italic
-      </Checkbox>
     </StyledSettingsForm>
   );
 }

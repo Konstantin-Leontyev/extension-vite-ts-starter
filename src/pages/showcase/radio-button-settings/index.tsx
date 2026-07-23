@@ -101,7 +101,6 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
         label="Selected:"
         options={SELECTED_OPTIONS}
         reserveErrorSpace={false}
-        sizePreset="medium"
         value={state.selected}
         onChange={(value) =>
           onChange('selected', value as RadioButtonWidgetState['selected'])
@@ -140,7 +139,6 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
 
       <Checkbox
         checked={state.disabledA}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('disabledA', event.target.checked)
         }
@@ -150,7 +148,6 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
 
       <Checkbox
         checked={state.disabledB}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('disabledB', event.target.checked)
         }

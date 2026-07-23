@@ -6,9 +6,12 @@
  * Поддерживает:
  *  - выравнивание текста через проп `align`
  *  - поля содержимого через проп `contents`. Без `contents` поля ввода не рендерятся
+ *  - обрезание с многоточием через проп `ellipsis`. Без `ellipsis` флаг не рендерится
  *  - курсив через проп `italic`
+ *  - префикс подписей контролов через проп `labelPrefix`. Пустой префикс даёт подписи
+ *    без него, например `Size:` у панели Text
  *  - обработчик изменения выравнивания через проп `onAlignChange`. Без него контрол
- *    `Text align:` не рендерится
+ *    выравнивания не рендерится
  *  - обработчик изменения курсива через проп `onItalicChange`
  *  - обработчик изменения размера через проп `onSizeChange`
  *  - показ текста через проп `show`. Без `show` текст неотключаем и группа рендерится всегда
@@ -21,6 +24,7 @@
  *
  * Потребители:
  *  - панели настроек витрины — настраивают текст компонента:
+ *     - `src/pages/showcase/text-settings/index.tsx`
  *     - `src/pages/showcase/button-settings/index.tsx`
  *     - `src/pages/showcase/tag-settings/index.tsx`
  *     - `src/pages/showcase/toast-settings/index.tsx`
@@ -54,12 +58,13 @@ import { ToneListbox } from '../tone-listbox';
 /**
  * TextGroupContent — представляет одно поле ввода содержимого текстовой группы.
  *
- * @property label — подпись поля, например `Text:` или `Text A:`
+ * @property label — подпись поля, например `Text A:` или `Sample:`. Без значения
+ *   собирается из `labelPrefix` — `Text:`, `Legend:`; при пустом префиксе `Text:`
  * @property onChange — обработчик изменения содержимого
  * @property value — текущее содержимое
  */
 type TextGroupContent = {
-  label: string;
+  label?: string;
   onChange: (value: string) => void;
   value: string;
 };
@@ -69,15 +74,55 @@ type TextGroupContent = {
  * Один элемент — обычный виджет. Несколько — по тону на содержимое,
  * например сегменты SegmentButton.
  *
- * @property label — подпись листбокса, например `Text tone:` или `Text A tone:`
+ * @property label — подпись листбокса, например `Text A tone:`. Без значения
+ *   собирается из `labelPrefix` — `Text tone:`, `Legend tone:`, при пустом префиксе `Tone:`
  * @property onChange — обработчик изменения тона
  * @property value — текущий тон. Без значения листбокс показывает `default`
  */
 type TextGroupTone = {
-  label: string;
+  label?: string;
   onChange: (tone: TextTone) => void;
   value?: TextTone;
 };
+
+/**
+ * DEFAULT_TEXT_GROUP_LABEL_PREFIX — задаёт префикс подписей контролов по умолчанию.
+ * Используется, когда панель не передала проп `labelPrefix`.
+ */
+const DEFAULT_TEXT_GROUP_LABEL_PREFIX = 'Text';
+
+/**
+ * resolveTextGroupLabel — возвращает подпись контрола группы из префикса и имени поля.
+ * С префиксом — `Text size:`, `Legend size:`; с пустым префиксом слово поля
+ * начинает подпись с заглавной буквы — `Size:`.
+ *
+ * @param labelPrefix префикс подписей контролов
+ * @param name имя поля в нижнем регистре, например `size`
+ * @returns подпись контрола с двоеточием
+ */
+function resolveTextGroupLabel(labelPrefix: string, name: string): string {
+  if (labelPrefix === '') {
+    return `${name.charAt(0).toUpperCase()}${name.slice(1)}:`;
+  }
+
+  return `${labelPrefix} ${name}:`;
+}
+
+/**
+ * resolveTextGroupContentLabel — возвращает подпись инпута содержимого из префикса.
+ * С префиксом — `Text:`, `Legend:`; с пустым префиксом — `Text:`.
+ * Панель Text передаёт `Sample:` явно через `contents[].label`.
+ *
+ * @param labelPrefix префикс подписей контролов
+ * @returns подпись инпута содержимого с двоеточием
+ */
+function resolveTextGroupContentLabel(labelPrefix: string): string {
+  if (labelPrefix === '') {
+    return 'Text:';
+  }
+
+  return `${labelPrefix}:`;
+}
 
 /**
  * TextGroupProps — представляет пропсы компонента TextGroup.
@@ -85,9 +130,13 @@ type TextGroupTone = {
  * @property align — текущее выравнивание текста
  * @property contents — поля ввода содержимого. Отсутствуют, когда содержимое
  *   генерируется компонентом из значения, как процент ProgressBar
+ * @property ellipsis — контрол обрезания с многоточием. Без него флаг `Show ellipsis`
+ *   не рендерится — проп `ellipsis` есть только у Text
  * @property italic — текущее значение курсива
+ * @property labelPrefix — префикс подписей контролов, например `Legend`.
+ *   Пустая строка даёт подписи без префикса
  * @property onAlignChange — обработчик изменения выравнивания текста.
- *   Без него контрол `Text align:` не рендерится — у компонента нет текстовой оси выравнивания
+ *   Без него контрол выравнивания не рендерится — у компонента нет текстовой оси выравнивания
  * @property onItalicChange — обработчик изменения курсива
  * @property onSizeChange — обработчик изменения размера текста
  * @property show — контрол показа текста. Без него текст компонента неотключаем
@@ -98,7 +147,9 @@ type TextGroupTone = {
 type TextGroupProps = {
   align?: TextAlignPreset;
   contents?: readonly TextGroupContent[];
+  ellipsis?: { checked: boolean; onChange: (checked: boolean) => void };
   italic: boolean;
+  labelPrefix?: string;
   onAlignChange?: (align: TextAlignPreset) => void;
   onItalicChange: (value: boolean) => void;
   onSizeChange: (size: TextSizePreset) => void;
@@ -132,7 +183,9 @@ type TextGroupProps = {
 export function TextGroup({
   align,
   contents,
+  ellipsis,
   italic,
+  labelPrefix = DEFAULT_TEXT_GROUP_LABEL_PREFIX,
   onAlignChange,
   onItalicChange,
   onSizeChange,
@@ -147,7 +200,6 @@ export function TextGroup({
       {show && (
         <Checkbox
           checked={show.checked}
-          sizePreset="medium"
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             show.onChange(event.target.checked)
           }
@@ -158,21 +210,25 @@ export function TextGroup({
 
       {isExpanded && (
         <>
-          {contents?.map((content) => (
-            <Input
-              key={content.label}
-              label={content.label}
-              reserveErrorSpace={false}
-              sizePreset="medium"
-              value={content.value}
-              onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                content.onChange(event.target.value)
-              }
-            />
-          ))}
+          {contents?.map((content, index) => {
+            const contentLabel =
+              content.label ?? resolveTextGroupContentLabel(labelPrefix);
+
+            return (
+              <Input
+                key={`${contentLabel}-${index}`}
+                label={contentLabel}
+                reserveErrorSpace={false}
+                value={content.value}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  content.onChange(event.target.value)
+                }
+              />
+            );
+          })}
 
           <SizeListbox
-            label="Text size:"
+            label={resolveTextGroupLabel(labelPrefix, 'size')}
             sizes={TEXT_SIZE_PRESET_KEYS}
             value={size}
             onChange={onSizeChange}
@@ -181,25 +237,40 @@ export function TextGroup({
           {onAlignChange && (
             <AlignListbox
               aligns={TEXT_ALIGN_PRESET_KEYS}
-              label="Text align:"
+              label={resolveTextGroupLabel(labelPrefix, 'align')}
               value={align}
               onChange={onAlignChange}
             />
           )}
 
-          {tones.map((toneControl) => (
-            <ToneListbox
-              key={toneControl.label}
-              label={toneControl.label}
-              tones={TEXT_TONE_KEYS}
-              value={toneControl.value}
-              onChange={toneControl.onChange}
-            />
-          ))}
+          {tones.map((toneControl, index) => {
+            const toneLabel =
+              toneControl.label ?? resolveTextGroupLabel(labelPrefix, 'tone');
+
+            return (
+              <ToneListbox
+                key={`${toneLabel}-${index}`}
+                label={toneLabel}
+                tones={TEXT_TONE_KEYS}
+                value={toneControl.value}
+                onChange={toneControl.onChange}
+              />
+            );
+          })}
+
+          {ellipsis && (
+            <Checkbox
+              checked={ellipsis.checked}
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                ellipsis.onChange(event.target.checked)
+              }
+            >
+              Show ellipsis
+            </Checkbox>
+          )}
 
           <Checkbox
             checked={italic}
-            sizePreset="medium"
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               onItalicChange(event.target.checked)
             }
