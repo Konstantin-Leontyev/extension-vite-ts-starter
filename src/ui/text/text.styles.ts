@@ -3,7 +3,7 @@
  * Определяет внешний вид компонента Text.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `TextStyleProps`, `TextTone` и `TextSizePreset`
+ * 1. Типизировать пропсы через `TextStyleProps`, `TextTone`, `TextSizePreset` и `TextAlignPreset`
  * 2. Хранить тоны текста в `TEXT_TONE_PRESETS` и пресеты типографики в `textSizePresets`
  * 3. Предоставить функции `getTextProperties`, `getTextLineHeight` и `getTextToneColor`,
  *    а также перечни `TEXT_TONE_KEYS`, `TEXT_SIZE_PRESET_KEYS` и `TEXT_ALIGN_PRESET_KEYS`
@@ -105,7 +105,7 @@ const DEFAULT_TEXT_SIZE_PRESET: TextSizePreset = 'normal';
  * в компонент Text.
  *
  * @param sizePreset типографический пресет
- * @returns значения для CSS-свойств `font-size`, `font-weight`, `line-height`
+ * @returns CSS-правила, каждое с новой строки
  */
 export function getTextProperties(sizePreset: TextSizePreset): string {
   const preset = textSizePresets[sizePreset];
@@ -249,8 +249,8 @@ const TEXT_PROP_NAMES = new Set<string>([
  *
  * Как работает:
  * 1. Получает текущую тему через `getTheme`
- * 2. Выбирает пресет по `sizePreset`, по умолчанию `normal`, и применяет
- *    его типографику через `getTextProperties`
+ * 2. Выбирает пресет по `sizePreset`, подставляя `DEFAULT_TEXT_SIZE_PRESET`,
+ *    когда размер не задан, и применяет его типографику через `getTextProperties`
  * 3. Переопределяет типографику прямыми пропсами `fontSize`, `fontWeight`
  *    и `lineHeight`, если они переданы
  * 4. Добавляет `font-style: italic`, если передан проп `italic`
@@ -327,7 +327,6 @@ function getTextStyles(props: TextStyleProps & { theme: AppTheme }): string {
  *
  * Встроенные стили:
  *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
- *  - без `tone` и `color` цвет текста наследуется от родителя по умолчанию
  *  - `overflow-wrap: break-word` — перенос длинных слов
  *
  * Генерация стилей:

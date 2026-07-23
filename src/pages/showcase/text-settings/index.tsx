@@ -1,7 +1,7 @@
 /**
  * Файл: `src/pages/showcase/text-settings/index.tsx`
  * Определяет панель настроек компонента Text в витрине дизайн-системы.
- * Содержит контролы для изменения размера, тона, выравнивания, текста и обрезания в реальном времени.
+ * Содержит контролы для изменения содержимого, размера, выравнивания, тона, обрезания и курсива текста в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `TextWidgetState`
@@ -69,6 +69,16 @@ type TextSettingsProps = {
 export function TextSettings({ onChange, state }: TextSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
+      <Input
+        label="Sample:"
+        reserveErrorSpace={false}
+        sizePreset="medium"
+        value={state.children}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('children', event.target.value)
+        }
+      />
+
       <SizeListbox
         label="Size:"
         sizes={TEXT_SIZE_PRESET_KEYS}
@@ -88,15 +98,6 @@ export function TextSettings({ onChange, state }: TextSettingsProps) {
         tones={TEXT_TONE_KEYS}
         value={state.tone}
         onChange={(tone) => onChange('tone', tone)}
-      />
-
-      <Input
-        label="Sample:"
-        reserveErrorSpace={false}
-        value={state.children}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('children', event.target.value)
-        }
       />
 
       <Checkbox
