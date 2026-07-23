@@ -6,7 +6,7 @@
  * и размера текста. Задаёт формы строки-поля для пропа `shape`.
  *
  * Основные задачи:
- * 1. Типизировать пресеты через `SizePreset`, `ShapePreset` и `ControlPadding`
+ * 1. Типизировать пресеты через `SizePreset` и `ShapePreset`
  * 2. Хранить канонические значения в `minBlockSize`, `padding` и `textSize`
  * 3. Задать значения по умолчанию через `DEFAULT_SIZE_PRESET` и `DEFAULT_SHAPE_PRESET`
  * 4. Предоставить перечни `SIZE_PRESET_KEYS` и `SHAPE_PRESET_KEYS`
@@ -68,13 +68,13 @@ export function getMinBlockSize(sizePreset: SizePreset): string {
 
 /**
  * padding — хранит внутренние отступы для каждого размера ряда.
+ * Ключ — размер из `SizePreset`, значение — пара ключей шкалы из `@ui/spacing`:
+ *  - `inline` → значение для CSS-свойства `padding-inline`
+ *  - `block` → значение для CSS-свойства `padding-block`
  * Вместе с `minBlockSize` задаёт модель высоты бокса: при одной строке текст
  * помещается в `minBlockSize`, а отступы остаются в пределах заданной высоты.
  * При переносе строки контент растёт выше `minBlockSize`, и `padding.block`
  * удерживает текст от прилипания к краям.
- * Ключ — размер из `SizePreset`, значение — пара ключей шкалы из `@ui/spacing`:
- *  - `inline` → значение для CSS-свойства `padding-inline`
- *  - `block` → значение для CSS-свойства `padding-block`
  */
 export const padding = Object.freeze({
   small: Object.freeze({ inline: 12, block: 8 } as const),
@@ -89,7 +89,7 @@ export const padding = Object.freeze({
  * @property block — значение для CSS-свойства `padding-block`
  * @property inline — значение для CSS-свойства `padding-inline`
  */
-export type ControlPadding = {
+type ControlPadding = {
   block: string;
   inline: string;
 };
@@ -131,12 +131,11 @@ export function getPaddingBlock(sizePreset: SizePreset): string {
 
 /**
  * ShapePreset — представляет форму строки-поля компонента.
+ * Радиус для каждой формы вычисляет `resolveBlockRadius`.
  *
  * Доступные значения:
  *  - `rounded` — прямоугольник со скруглёнными углами
  *  - `pill` — таблетка с полностью скруглёнными торцами
- *
- * Радиус для каждой формы вычисляет `resolveBlockRadius`.
  */
 export type ShapePreset = 'pill' | 'rounded';
 
@@ -198,14 +197,13 @@ export function getTextSize(sizePreset: SizePreset): TextSizePreset {
  * getControlBoxStyles — возвращает CSS-правила стандартного бокса однострочного контрола:
  * `min-block-size`, `padding-inline`, типографику через `getTextProperties(getTextSize(…))`
  * и `border-radius` через `resolveBlockRadius`.
+ * `padding-block` не входит в набор: высоту однострочного контрола держит `min-block-size`,
+ * центровку — сетка узла.
  *
  * Границы применения:
  *  - полный стандартный бокс, например поле ввода и триггер, — `getControlBoxStyles`
  *  - часть набора, например квадрат из `getMinBlockSize` и `padding-inline` строки-опции, — отдельные геттеры
  *  - многострочный бокс с ростом контента — `getPadding` с парой `inline`/`block`
- *
- * `padding-block` не входит в набор: высоту однострочного контрола держит `min-block-size`,
- * центровку — сетка узла.
  *
  * @param sizePreset размер компонента
  * @param shape форма строки-поля
@@ -224,10 +222,6 @@ export function getControlBoxStyles(sizePreset: SizePreset, shape: ShapePreset):
 
 /**
  * DEFAULT_SHOW_BORDER — задаёт показ кольца поверхности по умолчанию.
- * Проп `showBorder` подключается контролу осознанно: эталоны RoundButton и Input.
- * Составные триггеры, например Listbox, Combobox, Stepper и RangeInput, проп не
- * получают без отдельного кейса. Оболочка композита без пропа зовёт
- * `getControlBorder` без второго аргумента.
  * Используется, когда вызывающий код не передал проп `showBorder`.
  */
 export const DEFAULT_SHOW_BORDER = true;
@@ -237,7 +231,10 @@ export const DEFAULT_SHOW_BORDER = true;
  * кольцо и тень поверхности одним `box-shadow`. Рамочный и безрамочный режимы
  * дают один content-box и один размер `Icon` на `100%`, без резерва
  * `border: 1px solid transparent`.
- *
+ * Проп `showBorder` подключается контролу осознанно: эталоны RoundButton и Input.
+ * Составные триггеры, например Listbox, Combobox, Stepper и RangeInput, проп не
+ * получают без отдельного кейса. Оболочка композита без пропа вызывает функцию
+ * без второго аргумента.
  * При `showBorder` — кольцо `0 0 0 1px` цвета `border` и тень `shadow.surface`.
  * Без рамки — `box-shadow: none`. `border: none` вызывающий код пишет только там,
  * где layout-рамку даёт UA-стиль тега, например `input` и `dialog`: у `button` её

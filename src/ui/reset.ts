@@ -7,7 +7,8 @@
  * 1. Предоставить глобальные стили сброса через `GlobalResetStyle`
  *
  * Потребители:
- *  - `ThemeProvider` из `src/context/theme/index.tsx` — подключает один раз на всё приложение
+ *  - `ThemeProvider` из `src/context/theme/index.tsx` — подключает `GlobalResetStyle`
+ *    один раз на всё приложение
  */
 
 import { createGlobalStyle } from 'styled-components';

@@ -13,7 +13,7 @@
  * 5. Предоставить `splitLayoutProps` для разделения пропсов
  *
  * Потребители:
- *  - корневые `Styled*` компонентов — `shouldForwardProp` и `getLayoutStyles`
+ *  - корневые `Styled*` компонентов — применяют `shouldForwardProp` и `getLayoutStyles`
  *  - составные компоненты, например Input, Listbox и Stepper —
  *    разделяют пропсы через `splitLayoutProps`
  */
@@ -41,9 +41,6 @@ export {
 export {
   POSITIONING_PROPERTY_NAMES,
   getPositioningStyles,
-  type InsetValue,
-  type LayoutDisplay,
-  type LayoutPosition,
   type PositioningProps,
 } from '@ui/positioning';
 
@@ -72,7 +69,7 @@ export const LAYOUT_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * splitLayoutProps — разделяет пропсы на layout и остальные.
+ * splitLayoutProps — принимает объект пропсов и возвращает его разделённым на layout-пропсы и остальные пропсы.
  * Используется в компонентах-обёртках, когда layout-стили нужно применить к корневому
  * элементу, а остальные пропсы передать в DOM-узел или дочерний компонент.
  *
@@ -107,7 +104,7 @@ export function splitLayoutProps<T extends Partial<LayoutProps>>(
 }
 
 /**
- * getLayoutStyles — объединяет CSS-правила из модулей отступов, позиционирования и размеров.
+ * getLayoutStyles — возвращает объединённые CSS-правила из модулей отступов, позиционирования и размеров.
  *
  * Как работает:
  * 1. Вызывает `getSpacingStyles`, `getPositioningStyles` и `getSizingStyles`
@@ -119,7 +116,11 @@ export function splitLayoutProps<T extends Partial<LayoutProps>>(
  * @returns CSS-правила, каждое с новой строки
  */
 export function getLayoutStyles(props: LayoutProps): string {
-  return [getSpacingStyles(props), getPositioningStyles(props), getSizingStyles(props)]
-    .filter(Boolean)
-    .join('\n');
+  const styles = [
+    getSpacingStyles(props),
+    getPositioningStyles(props),
+    getSizingStyles(props),
+  ].filter(Boolean);
+
+  return styles.join('\n');
 }

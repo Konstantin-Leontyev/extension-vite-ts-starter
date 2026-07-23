@@ -85,6 +85,8 @@ export function getSpacingValue(value: SpacingValue): string {
  * Например:
  *  - Пропс `margin` → CSS-свойство `margin`
  *  - Пропс `marginBlock` → CSS-свойство `margin-block`
+ *
+ * Соответствие приватно для модуля, доступ к именам пропсов — только через `SPACING_PROPERTY_NAMES`.
  */
 const SPACING_PROPERTIES = {
   margin: 'margin',

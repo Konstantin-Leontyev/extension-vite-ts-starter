@@ -12,8 +12,7 @@
  *  - пропсы наложения и переполнения, например `zIndex`, `overflow`
  *
  * Основные задачи:
- * 1. Типизировать positioning-пропсы через `PositioningProps`, `InsetValue`,
- *    `LayoutDisplay` и `LayoutPosition`
+ * 1. Типизировать positioning-пропсы через `PositioningProps`
  * 2. Связать пропсы с CSS-свойствами через `POSITIONING_PROPERTIES`
  * 3. Предоставить функцию `getPositioningStyles`
  * 4. Предоставить перечень имён пропсов через `POSITIONING_PROPERTY_NAMES`
@@ -31,18 +30,18 @@ import { getSpacingValue, type SpacingValue } from '@ui/spacing';
  * InsetValue — представляет значение отступа позиционирования.
  * Допускает `auto` или ключ из шкалы `SPACING_VALUES`, например `16`, `24`, `32`.
  */
-export type InsetValue = 'auto' | SpacingValue;
+type InsetValue = 'auto' | SpacingValue;
 
 /**
  * LayoutDisplay — представляет допустимые значения CSS-свойства `display`.
  * Ограничен набором, который используется в проекте для построения сеток.
  */
-export type LayoutDisplay = 'block' | 'flex' | 'grid' | 'inline-flex';
+type LayoutDisplay = 'block' | 'flex' | 'grid' | 'inline-flex';
 
 /**
  * LayoutPosition — представляет допустимые значения CSS-свойства `position`.
  */
-export type LayoutPosition = 'absolute' | 'fixed' | 'relative' | 'static' | 'sticky';
+type LayoutPosition = 'absolute' | 'fixed' | 'relative' | 'static' | 'sticky';
 
 /**
  * PositioningProps — представляет пропсы позиционирования и раскладки.
@@ -134,6 +133,11 @@ type PositioningValueKind = 'inset' | 'raw' | 'spacing';
 /**
  * POSITIONING_PROPERTIES — связывает имена пропсов с CSS-свойствами и категорией значения.
  * Необходим для динамической генерации CSS-стилей для каждого переданного пропса.
+ * Порядок записей соответствует порядку генерации CSS-правил.
+ * Внутри каждой логической группы шорткаты идут раньше своих лонгхендов —
+ * это важно, когда свойства могут переопределять друг друга:
+ *  - `inset` → `top`, `right`, `bottom`, `left`
+ *  - `gap` → `rowGap`, `columnGap`
  *
  * Структура записи:
  *  - ключ — имя пропса
@@ -143,12 +147,6 @@ type PositioningValueKind = 'inset' | 'raw' | 'spacing';
  *  - Пропс `display` → CSS-свойство `display`, категория `raw`
  *  - Пропс `inset` → CSS-свойство `inset`, категория `inset`
  *  - Пропс `gap` → CSS-свойство `gap`, категория `spacing`
- *
- * Порядок записей соответствует порядку генерации CSS-правил.
- * Внутри каждой логической группы шорткаты идут раньше своих лонгхендов —
- * это важно, когда свойства могут переопределять друг друга:
- *  - `inset` → `top`, `right`, `bottom`, `left`
- *  - `gap` → `rowGap`, `columnGap`
  *
  * Соответствие приватно для модуля, доступ к именам пропсов — только через `POSITIONING_PROPERTY_NAMES`.
  */
