@@ -3,8 +3,7 @@
  * Предоставляет закрытие раскрытого слоя по `Escape`, клику вне зон и прокрутке страницы.
  *
  * Основные задачи:
- * 1. Типизировать опции хука через `UseAnchoredDismissOptions`
- * 2. Предоставить хук `useAnchoredDismiss`
+ * 1. Предоставить хук `useAnchoredDismiss`
  *
  * Потребители:
  *  - `@ui/anchored-portal` — закрывает панель без перепозиционирования
@@ -19,7 +18,7 @@ import { useEffect, useEffectEvent, useRef, type RefObject } from 'react';
  * @property onDismiss — обработчик закрытия слоя
  * @property zoneRefs — ссылки на DOM-узлы, клик и прокрутка внутри которых не закрывают слой
  */
-export type UseAnchoredDismissOptions = {
+type UseAnchoredDismissOptions = {
   active: boolean;
   onDismiss: () => void;
   zoneRefs: readonly RefObject<HTMLElement | null>[];

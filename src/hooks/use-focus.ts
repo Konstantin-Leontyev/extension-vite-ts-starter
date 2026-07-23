@@ -3,9 +3,8 @@
  * Предоставляет удержание фокуса клавишей `Tab` внутри контейнера и выбор фокусируемых узлов.
  *
  * Основные задачи:
- * 1. Типизировать опции хука через `UseFocusOptions`
- * 2. Предоставить функцию `getFocusables`
- * 3. Предоставить хук `useFocus`
+ * 1. Предоставить функцию `getFocusables`
+ * 2. Предоставить хук `useFocus`
  *
  * Потребители:
  *  - `@ui/anchored-portal` — удерживает фокус внутри открытой панели
@@ -39,7 +38,7 @@ export function getFocusables(container: HTMLElement): HTMLElement[] {
  * @property returnFocusRef — ссылка на узел, куда вернуть фокус после отключения.
  *   Без значения фокус возвращается на элемент, активный до включения
  */
-export type UseFocusOptions = {
+type UseFocusOptions = {
   active: boolean;
   containerRef: RefObject<HTMLElement | null>;
   returnFocusRef?: RefObject<HTMLElement | null>;

@@ -40,10 +40,10 @@ export type AnchoredPortalPositionStrategy =
     };
 
 /**
- * ANCHORED_PANEL_OUTER_INSET — задаёт внешний зазор панели от края вьюпорта.
+ * ANCHORED_PANEL_OUTER_INSET_PX — задаёт внешний зазор панели от края вьюпорта.
  * Соответствует сумме `outline` 2px и `outline-offset` 2px.
  */
-const ANCHORED_PANEL_OUTER_INSET = 4;
+const ANCHORED_PANEL_OUTER_INSET_PX = 4;
 
 /**
  * EMPTY_LAYOUT_DEPS — задаёт пустой перечень зависимостей пересчёта позиции.
@@ -62,10 +62,13 @@ function applyCalendarPanelPosition(trigger: HTMLElement, panel: HTMLElement): v
   const triggerRect = trigger.getBoundingClientRect();
   const panelWidth = triggerRect.width;
   const maxLeft = Math.max(
-    ANCHORED_PANEL_OUTER_INSET,
-    window.innerWidth - panelWidth - ANCHORED_PANEL_OUTER_INSET
+    ANCHORED_PANEL_OUTER_INSET_PX,
+    window.innerWidth - panelWidth - ANCHORED_PANEL_OUTER_INSET_PX
   );
-  const left = Math.min(Math.max(ANCHORED_PANEL_OUTER_INSET, triggerRect.left), maxLeft);
+  const left = Math.min(
+    Math.max(ANCHORED_PANEL_OUTER_INSET_PX, triggerRect.left),
+    maxLeft
+  );
 
   panel.style.insetInlineStart = `${left}px`;
   panel.style.inlineSize = `${panelWidth}px`;
@@ -73,8 +76,8 @@ function applyCalendarPanelPosition(trigger: HTMLElement, panel: HTMLElement): v
 
   const panelHeight = panel.offsetHeight;
   const viewportHeight = window.innerHeight;
-  const spaceBelow = viewportHeight - triggerRect.top - ANCHORED_PANEL_OUTER_INSET;
-  const spaceAbove = triggerRect.top - ANCHORED_PANEL_OUTER_INSET;
+  const spaceBelow = viewportHeight - triggerRect.top - ANCHORED_PANEL_OUTER_INSET_PX;
+  const spaceAbove = triggerRect.top - ANCHORED_PANEL_OUTER_INSET_PX;
 
   let top: number;
   let maxBlockSize: number | undefined;
@@ -84,16 +87,16 @@ function applyCalendarPanelPosition(trigger: HTMLElement, panel: HTMLElement): v
   } else if (panelHeight <= spaceAbove) {
     top = triggerRect.top - panelHeight;
   } else {
-    top = ANCHORED_PANEL_OUTER_INSET;
-    maxBlockSize = viewportHeight - ANCHORED_PANEL_OUTER_INSET * 2;
+    top = ANCHORED_PANEL_OUTER_INSET_PX;
+    maxBlockSize = viewportHeight - ANCHORED_PANEL_OUTER_INSET_PX * 2;
   }
 
-  if (top < ANCHORED_PANEL_OUTER_INSET) {
-    top = ANCHORED_PANEL_OUTER_INSET;
+  if (top < ANCHORED_PANEL_OUTER_INSET_PX) {
+    top = ANCHORED_PANEL_OUTER_INSET_PX;
   }
 
   if (maxBlockSize === undefined) {
-    const available = viewportHeight - top - ANCHORED_PANEL_OUTER_INSET;
+    const available = viewportHeight - top - ANCHORED_PANEL_OUTER_INSET_PX;
 
     if (panelHeight > available) {
       maxBlockSize = available;

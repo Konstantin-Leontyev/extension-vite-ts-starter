@@ -3,8 +3,7 @@
  * Предоставляет распознавание долгого нажатия указателем для контролов.
  *
  * Основные задачи:
- * 1. Типизировать опции и пропсы указателя через `UseLongPressOptions` и `LongPressPointerProps`
- * 2. Предоставить хук `useLongPress`
+ * 1. Предоставить хук `useLongPress`
  *
  * Потребители:
  *  - контролы, например SegmentButton и Table — запускают действие по удержанию
@@ -73,18 +72,24 @@ export function useLongPress({
   const disabledRef = useRef(disabled);
   const onLongPressRef = useRef(onLongPress);
 
-  useEffect(() => {
-    delayMsRef.current = delayMs;
-    disabledRef.current = disabled;
-    onLongPressRef.current = onLongPress;
-  });
-
   function clearTimer(): void {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
   }
+
+  useEffect(() => {
+    delayMsRef.current = delayMs;
+    disabledRef.current = disabled;
+    onLongPressRef.current = onLongPress;
+
+    if (disabled || !onLongPress) {
+      clearTimer();
+    }
+  });
+
+  useEffect(() => () => clearTimer(), []);
 
   function handlePointerDown(): void {
     if (disabledRef.current || !onLongPressRef.current) {
