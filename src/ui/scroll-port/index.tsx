@@ -24,6 +24,7 @@
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import {
+  DEFAULT_SCROLL_PORT_PADDING_INLINE_END,
   StyledScrollPortContainer,
   StyledScrollPortRoot,
   StyledScrollPortViewport,
@@ -66,15 +67,18 @@ export function ScrollPort({
   showVeil,
   ...rest
 }: ScrollPortProps) {
+  const resolvedPaddingInlineEnd =
+    paddingInlineEnd ?? DEFAULT_SCROLL_PORT_PADDING_INLINE_END;
+
   return (
     <StyledScrollPortRoot
-      paddingInlineEnd={paddingInlineEnd}
+      paddingInlineEnd={resolvedPaddingInlineEnd}
       showVeil={showVeil}
       {...rest}
     >
       <StyledScrollPortContainer>
         <StyledScrollPortViewport
-          paddingInlineEnd={paddingInlineEnd}
+          paddingInlineEnd={resolvedPaddingInlineEnd}
           ref={ref}
           scrollbarInsetBlockEnd={scrollbarInsetBlockEnd}
           scrollbarInsetBlockStart={scrollbarInsetBlockStart}

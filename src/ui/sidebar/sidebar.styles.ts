@@ -28,10 +28,11 @@ const SIDEBAR_PANEL_WIDTH = '20rem';
  * Базируется на `<div>`.
  *
  * Встроенные стили:
- *  - `display: flex` и `flex-direction: column` — вертикальный скролл-контейнер
- *    произвольного содержимого. Flex вместо grid: поток произвольного контента,
- *    а не фиксированная раскладка
- *  - `min-inline-size: 0` и `min-block-size: 0` — позволяют сжиматься в grid-каркасе
+ *  - `display: flex` — вертикальный скролл-контейнер произвольного содержимого.
+ *    Flex вместо grid: поток произвольного контента, а не фиксированная раскладка
+ *  - `flex-direction: column` — колонка содержимого
+ *  - `min-inline-size: 0` — позволяет сжиматься по строчной оси в grid-каркасе
+ *  - `min-block-size: 0` — позволяет сжиматься по блочной оси в grid-каркасе
  *  - `overflow-y: auto` — внутренний скролл области контента без утягивания панели.
  *    Работает только при заданной высоте у предков: без неё трек `minmax(0, 1fr)`
  *    раздувается под контент, и скроллится вся страница. Каркасный фикс задаётся
@@ -75,13 +76,16 @@ export const StyledSidebarSlot = styled.aside`
  * Базируется на `<div>`.
  *
  * Встроенные стили:
- *  - `display: flex` и `justify-content: flex-end` — прижимает панель к краю выезда.
- *    Flex вместо grid: иначе ломается выезд нижнего листа на узком экране
+ *  - `display: flex` — прижимает панель к краю выезда. Flex вместо grid: иначе
+ *    ломается выезд нижнего листа на узком экране
+ *  - `justify-content: flex-end` — панель у края выезда
  *  - `inline-size` из `SIDEBAR_PANEL_WIDTH` — фиксированная ширина трека
  *  - `transform: translateX(100%)` — стартовое положение за правым краем
  *  - `transform: translateX(0)` при `data-open='true'` — панель на месте
- *  - `inline-size: 100%`, `min-inline-size: 0` и `min-block-size: 0` на первом
- *    ребёнке — Card заполняет трек и сжимается ниже min-content, не распирая трек
+ *  - `inline-size: 100%` на первом ребёнке — Card заполняет трек
+ *  - `min-inline-size: 0` на первом ребёнке — Card сжимается по строчной оси
+ *    ниже min-content и не распирает трек
+ *  - `min-block-size: 0` на первом ребёнке — Card сжимается по блочной оси
  *
  * Генерация стилей:
  *  - `getShellTransitionStyles` — переход по `transform`
@@ -123,19 +127,19 @@ export type SidebarStyleProps = {
 const SIDEBAR_PROP_NAMES = new Set<string>(['offset', 'padding']);
 
 /**
- * DEFAULT_OFFSET — задаёт зазор между контентом и панелью по умолчанию.
+ * DEFAULT_SIDEBAR_OFFSET — задаёт зазор между контентом и панелью по умолчанию.
  * Используется, когда вызывающий код не передал проп `offset`.
  */
-const DEFAULT_OFFSET: SpacingValue = 8;
+const DEFAULT_SIDEBAR_OFFSET: SpacingValue = 8;
 
 /**
- * SIDEBAR_CONTENT_INSET — зонный дефолт отступа области контента, когда проп `padding`
+ * SIDEBAR_CONTENT_INSET — задаёт зонный отступ области контента, когда проп `padding`
  * не передан. Не дефолт пропа: у `padding` две зонные подстановки.
  */
 const SIDEBAR_CONTENT_INSET: SpacingValue = 0;
 
 /**
- * SIDEBAR_EDGE_INSET — зонный дефолт отступа края панели и правого отступа контента,
+ * SIDEBAR_EDGE_INSET — задаёт зонный отступ края панели и правого отступа контента,
  * когда проп `padding` не передан. Не дефолт пропа: у `padding` две зонные подстановки.
  */
 const SIDEBAR_EDGE_INSET: SpacingValue = 8;
@@ -148,7 +152,7 @@ const SIDEBAR_EDGE_INSET: SpacingValue = 8;
  * @returns CSS-правила, каждое с новой строки
  */
 function getSidebarStyles(props: SidebarStyleProps): string {
-  const { offset = DEFAULT_OFFSET, padding } = props;
+  const { offset = DEFAULT_SIDEBAR_OFFSET, padding } = props;
   const paddingValue = getSpacingValue(padding ?? SIDEBAR_CONTENT_INSET);
   const paddingInlineEndValue = getSpacingValue(padding ?? SIDEBAR_EDGE_INSET);
 
