@@ -2,7 +2,7 @@
  * Файл: `src/pages/showcase/input-settings/index.tsx`
  * Определяет панель настроек компонента Input в витрине дизайн-системы.
  * Содержит контролы для изменения размера, формы, рамки, подписи, плейсхолдера,
- * значения, выравнивания, ошибки и состояний в реальном времени.
+ * значения, выравнивания, курсива, ошибки и состояний в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `InputWidgetState`
@@ -16,18 +16,11 @@ import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
-import {
-  SHAPE_PRESET_KEYS,
-  SIZE_PRESET_KEYS,
-  type ShapePreset,
-  type SizePreset,
-} from '@ui/presets';
-import { TEXT_ALIGN_PRESET_KEYS, type TextAlignPreset } from '@ui/text';
+import { type ShapePreset, type SizePreset } from '@ui/presets';
+import { type TextAlignPreset } from '@ui/text';
 
-import { AlignListbox } from '../align-listbox';
-import { ShapeListbox } from '../shape-listbox';
+import { ControlGroup } from '../control-group';
 import { StyledSettingsForm } from '../showcase.styles';
-import { SizeListbox } from '../size-listbox';
 import { TextGroup } from '../text-group';
 
 /**
@@ -38,6 +31,7 @@ import { TextGroup } from '../text-group';
  * @property disabled — включает недоступное состояние поля
  * @property error — текст ошибки под полем
  * @property errorAlign — горизонтальное выравнивание строки ошибки
+ * @property errorItalic — включает курсив строки ошибки
  * @property invalid — включает кольцо ошибки без текста
  * @property label — подпись над полем
  * @property placeholder — плейсхолдер значения
@@ -46,12 +40,14 @@ import { TextGroup } from '../text-group';
  * @property showBorder — включает рамку контрола
  * @property sizePreset — размер контрола
  * @property textAlign — горизонтальное выравнивание значения
+ * @property textItalic — включает курсив значения
  * @property value — значение поля
  */
 export type InputWidgetState = {
   disabled: boolean;
   error: string;
   errorAlign: TextAlignPreset;
+  errorItalic: boolean;
   invalid: boolean;
   label: string;
   placeholder: string;
@@ -60,6 +56,7 @@ export type InputWidgetState = {
   showBorder: boolean;
   sizePreset: SizePreset;
   textAlign?: TextAlignPreset;
+  textItalic: boolean;
   value: string;
 };
 
@@ -86,18 +83,13 @@ type InputSettingsProps = {
 export function InputSettings({ onChange, state }: InputSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
-      <SizeListbox
-        label="Size:"
-        sizes={SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
-      />
-
-      <ShapeListbox
-        label="Shape:"
-        shapes={SHAPE_PRESET_KEYS}
-        value={state.shape}
-        onChange={(shape) => onChange('shape', shape)}
+      <ControlGroup
+        label={state.label}
+        shape={state.shape}
+        sizePreset={state.sizePreset}
+        onLabelChange={(label) => onChange('label', label)}
+        onShapeChange={(shape) => onChange('shape', shape)}
+        onSizeChange={(size) => onChange('sizePreset', size)}
       />
 
       <Checkbox
@@ -110,15 +102,6 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
       </Checkbox>
 
       <Input
-        label="Label:"
-        reserveErrorSpace={false}
-        value={state.label}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('label', event.target.value)
-        }
-      />
-
-      <Input
         label="Placeholder:"
         reserveErrorSpace={false}
         value={state.placeholder}
@@ -126,24 +109,6 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
           onChange('placeholder', event.target.value)
         }
       />
-
-      <Input
-        label="Error:"
-        reserveErrorSpace={false}
-        value={state.error}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('error', event.target.value)
-        }
-      />
-
-      {state.error.trim() !== '' && (
-        <AlignListbox
-          aligns={TEXT_ALIGN_PRESET_KEYS}
-          label="Error align:"
-          value={state.errorAlign}
-          onChange={(align) => onChange('errorAlign', align)}
-        />
-      )}
 
       <TextGroup
         align={state.textAlign}
@@ -153,8 +118,11 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
             onChange: (value) => onChange('value', value),
           },
         ]}
-        labelPrefix="Value"
+        italic={state.textItalic}
+        labelPrefix="Text"
+        showOptionsWithEmptyContent
         onAlignChange={(align) => onChange('textAlign', align)}
+        onItalicChange={(value) => onChange('textItalic', value)}
       />
 
       <Checkbox
@@ -166,14 +134,24 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         Reserve error space
       </Checkbox>
 
-      <Checkbox
-        checked={state.invalid}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('invalid', event.target.checked)
-        }
-      >
-        Invalid
-      </Checkbox>
+      <TextGroup
+        align={state.errorAlign}
+        contents={[
+          {
+            value: state.error,
+            onChange: (value) => onChange('error', value),
+          },
+        ]}
+        italic={state.errorItalic}
+        labelPrefix="Error"
+        show={{
+          checked: state.invalid,
+          label: 'Invalid',
+          onChange: (checked) => onChange('invalid', checked),
+        }}
+        onAlignChange={(align) => onChange('errorAlign', align)}
+        onItalicChange={(value) => onChange('errorItalic', value)}
+      />
 
       <Checkbox
         checked={state.disabled}

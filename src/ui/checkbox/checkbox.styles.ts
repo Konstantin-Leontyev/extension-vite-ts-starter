@@ -232,7 +232,7 @@ function markBackground(mark: string, iconSize: string): string {
 }
 
 /**
- * getCheckboxControlStyles — возвращает CSS-правила для бокса `StyledCheckboxControl`:
+ * getCheckboxControlStyles — возвращает CSS-правила для узла `StyledCheckboxControl`:
  * габариты, рамку, марки unchecked и checked.
  *
  * Как работает:

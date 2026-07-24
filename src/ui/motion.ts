@@ -44,7 +44,7 @@ const MOTION_EASING = 'ease';
  * Под `prefers-reduced-motion: reduce` длительность удваивается через `calc`.
  *
  * @param properties анимируемые CSS-свойства: одно или список через запятую
- * @param duration длительность перехода; по умолчанию `MOTION_DURATION`
+ * @param duration длительность перехода. По умолчанию `MOTION_DURATION`
  * @returns CSS-правила, каждое с новой строки
  */
 export function getTransitionStyles(

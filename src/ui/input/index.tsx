@@ -8,9 +8,11 @@
  *  - форму строки-поля через проп `shape`
  *  - рамку контрола через проп `showBorder`
  *  - горизонтальное выравнивание значения через проп `textAlign`
+ *  - курсив значения через проп `textItalic`
  *  - подпись над полем через проп `label`
  *  - встроенную строку ошибки через проп `error`
  *  - выравнивание строки ошибки через проп `errorAlign`
+ *  - курсив строки ошибки через проп `errorItalic`
  *  - кольцо ошибки без текста через проп `invalid`
  *  - резерв высоты под строку ошибки через проп `reserveErrorSpace`
  *
@@ -42,6 +44,12 @@ import {
  * Используется, когда вызывающий код не передал проп `errorAlign`.
  */
 const DEFAULT_INPUT_ERROR_ALIGN: CSSProperties['textAlign'] = 'center';
+
+/**
+ * DEFAULT_INPUT_ERROR_ITALIC — задаёт курсив строки ошибки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `errorItalic`.
+ */
+const DEFAULT_INPUT_ERROR_ITALIC = false;
 
 /**
  * DEFAULT_INPUT_INVALID — задаёт состояние кольца ошибки по умолчанию.
@@ -84,6 +92,7 @@ const INPUT_LABEL_TEXT_TONE: TextTone = 'muted';
  *
  * @property error — текст ошибки под полем
  * @property errorAlign — горизонтальное выравнивание строки ошибки
+ * @property errorItalic — включает курсив строки ошибки
  * @property invalid — включает кольцо ошибки без текста, если проп `error` не передан
  * @property label — подпись над полем
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки, чтобы появление текста не сдвигало соседей
@@ -91,6 +100,7 @@ const INPUT_LABEL_TEXT_TONE: TextTone = 'muted';
 type InputProps = InputStyleProps & {
   error?: string;
   errorAlign?: CSSProperties['textAlign'];
+  errorItalic?: boolean;
   invalid?: boolean;
   label?: string;
   reserveErrorSpace?: boolean;
@@ -106,6 +116,7 @@ type InputProps = InputStyleProps & {
 export function Input({
   error,
   errorAlign = DEFAULT_INPUT_ERROR_ALIGN,
+  errorItalic = DEFAULT_INPUT_ERROR_ITALIC,
   invalid = DEFAULT_INPUT_INVALID,
   label,
   reserveErrorSpace = DEFAULT_INPUT_RESERVE_ERROR_SPACE,
@@ -113,6 +124,7 @@ export function Input({
   showBorder,
   sizePreset,
   textAlign,
+  textItalic,
   ...rest
 }: InputProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
@@ -149,6 +161,7 @@ export function Input({
         showBorder={showBorder}
         sizePreset={sizePreset}
         textAlign={textAlign}
+        textItalic={textItalic}
       />
       {showError && (
         <Text
@@ -156,6 +169,7 @@ export function Input({
           aria-live="polite"
           as="p"
           id={errorId}
+          italic={errorItalic}
           minBlockSize={
             reserveErrorSpace
               ? getTextLineHeight(INPUT_ERROR_TEXT_SIZE_PRESET)

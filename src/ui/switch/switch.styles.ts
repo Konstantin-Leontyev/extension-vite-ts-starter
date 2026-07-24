@@ -115,7 +115,7 @@ export type SwitchStyleProps = LayoutProps & {
 };
 
 /**
- * StyledSwitchRoot — задаёт корневой узел компонента Switch с нативной связью label ↔ input.
+ * StyledSwitchRoot — задаёт корневой узел компонента Switch.
  * Базируется на `<label>` и поддерживает layout-пропсы.
  *
  * Встроенные стили:

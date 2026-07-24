@@ -36,12 +36,14 @@ export { splitLayoutProps } from '@ui/layout';
  * @property showBorder — включает рамку контрола вне layout-box
  * @property sizePreset — размер контрола
  * @property textAlign — горизонтальное выравнивание значения
+ * @property textItalic — включает курсив значения
  */
 export type InputStyleProps = LayoutProps & {
   shape?: ShapePreset;
   showBorder?: boolean;
   sizePreset?: SizePreset;
   textAlign?: CSSProperties['textAlign'];
+  textItalic?: boolean;
 };
 
 /**
@@ -72,7 +74,7 @@ export const StyledInputRoot = styled.div.withConfig({
  */
 type InputControlStyleProps = Pick<
   InputStyleProps,
-  'shape' | 'showBorder' | 'sizePreset' | 'textAlign'
+  'shape' | 'showBorder' | 'sizePreset' | 'textAlign' | 'textItalic'
 >;
 
 /**
@@ -83,12 +85,13 @@ const INPUT_CONTROL_PROP_NAMES = new Set<string>([
   'showBorder',
   'sizePreset',
   'textAlign',
+  'textItalic',
 ]);
 
 /**
  * getInputControlStyles — возвращает CSS-правила для узла `StyledInputControl`:
  * стандартный бокс однострочного контрола, рамку, фон, плейсхолдер
- * и условное выравнивание значения.
+ * и условное выравнивание и курсив значения.
  *
  * Как работает:
  * 1. Подставляет дефолты `shape`, `showBorder` и `sizePreset`
@@ -96,6 +99,7 @@ const INPUT_CONTROL_PROP_NAMES = new Set<string>([
  *    красит фон: при рамке — `surface`, без рамки — прозрачный
  * 3. Кладёт рамку через `getControlBorder` и цвет плейсхолдера
  * 4. При переданном `textAlign` добавляет выравнивание значения
+ * 5. При `textItalic` добавляет курсив значения
  *
  * @param props пропсы стилизации нативного поля ввода и тема
  * @returns CSS-правила, каждое с новой строки
@@ -109,6 +113,7 @@ function getInputControlStyles(
     showBorder = DEFAULT_SHOW_BORDER,
     sizePreset = DEFAULT_SIZE_PRESET,
     textAlign,
+    textItalic,
   } = props;
 
   const styles = [
@@ -123,6 +128,10 @@ function getInputControlStyles(
     styles.push(`text-align: ${textAlign};`);
   }
 
+  if (textItalic === true) {
+    styles.push('font-style: italic;');
+  }
+
   return styles.join('\n');
 }
 
@@ -135,7 +144,7 @@ function getInputControlStyles(
  *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
  *
  * Генерация стилей:
- *  - `getInputControlStyles` — бокс, рамка, фон, плейсхолдер, выравнивание
+ *  - `getInputControlStyles` — бокс, рамка, фон, плейсхолдер, выравнивание, курсив
  */
 export const StyledInputControl = styled.input.withConfig({
   shouldForwardProp: (prop) => !INPUT_CONTROL_PROP_NAMES.has(prop),

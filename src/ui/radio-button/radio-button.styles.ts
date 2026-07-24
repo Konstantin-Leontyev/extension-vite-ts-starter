@@ -97,7 +97,7 @@ const RADIO_BUTTON_CONTROL_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * getRadioButtonControlStyles — возвращает CSS-правила для кружка `StyledRadioButtonControl`:
+ * getRadioButtonControlStyles — возвращает CSS-правила для узла `StyledRadioButtonControl`:
  * габариты, рамку и состояние `checked`.
  *
  * @param props пропсы стилизации RadioButton и тема

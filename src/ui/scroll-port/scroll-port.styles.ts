@@ -39,7 +39,7 @@ const SCROLLBAR_TRACK_WIDTH: SpacingValue = 8;
 /**
  * ScrollPortRootStyleProps — представляет пропсы стилизации корня ScrollPort.
  * `gutterInlineEnd` обязателен: сборка подставляет дефолт один раз в `index.tsx`.
- * Публичный проп называется `paddingInlineEnd`; на корне значение переименовано,
+ * Публичный проп называется `paddingInlineEnd`. На корне значение переименовано,
  * потому что питает не CSS-свойство `padding-inline-end`, а смещение трека и края
  * вуали: имя layout-пропа заставило бы `getLayoutStyles` корня написать лишний
  * `padding-inline-end`.

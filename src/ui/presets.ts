@@ -241,7 +241,7 @@ export const FOCUS_OUTLINE_OFFSET = '2px';
 
 /**
  * getFocusRingStyles — возвращает CSS-правила фокус-кольца: `outline` и
- * `outline-offset`. Толщина — `FOCUS_OUTLINE_WIDTH`; отступ — `options.offset`
+ * `outline-offset`. Толщина — `FOCUS_OUTLINE_WIDTH`. Отступ — `options.offset`
  * или `FOCUS_OUTLINE_OFFSET`.
  *
  * @param color цвет кольца, обычно `theme.colors.focusRing` / `invalidRing`
