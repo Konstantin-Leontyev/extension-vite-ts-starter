@@ -9,11 +9,10 @@
  *  - тон поверхности круга через проп `iconTone`
  *  - тон глифа через проп `iconFill`
  *  - отступ окна Icon через проп `iconPadding`
- *  - svg глифа через `children`
+ *  - svg глифа через `children`. В `children` передают сырой svg без обёртки Icon
  *
  * Основные задачи:
- * 1. Экспортировать компонент RoundButton: сырой глиф оборачивает внутренний `Icon`,
- *    в который кнопка дриллит свой `sizePreset`, тона и отступ
+ * 1. Экспортировать компонент RoundButton
  * 2. Типизировать пропсы через `RoundButtonProps`
  * 3. Реэкспортировать публичное API стилей: `DEFAULT_ROUND_BUTTON_SHOW_BORDER`,
  *    `DEFAULT_ROUND_BUTTON_SIZE_PRESET`, `ROUND_BUTTON_SIZE_PRESET_KEYS`,
@@ -44,7 +43,7 @@ import {
 /**
  * RoundButtonProps — представляет пропсы компонента RoundButton.
  *
- * @property children — svg глифа; окно создаёт внутренний `Icon`
+ * @property children — svg глифа
  * @property iconFill — тон глифа при нейтральном `iconTone`
  * @property iconPadding — отступ окна Icon вместо отступа из размерного ряда.
  *   Область клика кнопки не меняет, увеличенный отступ зрительно уменьшает глиф,
@@ -67,8 +66,11 @@ type RoundButtonProps = {
  * <RoundButton aria-label="Settings">
  *   <SettingsIcon />
  * </RoundButton>
- * <RoundButton aria-label="Close" iconPadding={8} showBorder={false}>
+ * <RoundButton aria-label="Close" iconPadding={8}>
  *   <CloseIcon />
+ * </RoundButton>
+ * <RoundButton aria-label="Avatar" showBorder sizePreset="huge">
+ *   <AvatarIcon />
  * </RoundButton>
  */
 export function RoundButton({
@@ -76,13 +78,15 @@ export function RoundButton({
   iconFill,
   iconPadding,
   iconTone,
-  sizePreset = DEFAULT_ROUND_BUTTON_SIZE_PRESET,
+  sizePreset,
   ...rest
 }: RoundButtonProps) {
+  const resolvedSizePreset = sizePreset ?? DEFAULT_ROUND_BUTTON_SIZE_PRESET;
+
   return (
     <StyledRoundButton
       iconTone={iconTone}
-      sizePreset={sizePreset}
+      sizePreset={resolvedSizePreset}
       type="button"
       {...rest}
     >
@@ -91,7 +95,7 @@ export function RoundButton({
         iconTone={iconTone}
         interactive
         padding={iconPadding}
-        sizePreset={sizePreset}
+        sizePreset={resolvedSizePreset}
       >
         {children}
       </Icon>

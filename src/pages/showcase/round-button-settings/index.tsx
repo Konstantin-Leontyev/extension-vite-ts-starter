@@ -1,7 +1,8 @@
 /**
  * Файл: `src/pages/showcase/round-button-settings/index.tsx`
  * Определяет панель настроек компонента RoundButton в витрине дизайн-системы.
- * Содержит контролы для изменения размера, иконки, режима с границей и состояния `disabled` в реальном времени.
+ * Содержит контролы для изменения размера, иконки и её тонов, отступа окна Icon,
+ * режима с границей и состояния `disabled` в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `RoundButtonWidgetState`
@@ -14,16 +15,41 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
+import { getIconPadding } from '@ui/icon';
 import {
   ROUND_BUTTON_SIZE_PRESET_KEYS,
   type RoundButtonSizePreset,
 } from '@ui/round-button';
+import { type SpacingValue } from '@ui/spacing';
 import { type TonePreset } from '@ui/tones';
 
 import { IconGroup } from '../icon-group';
 import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
+
+/**
+ * resolveIconPaddingSizePreset — возвращает ключ размерного ряда под текущий `iconPadding`.
+ * Если отступ совпадает с мостом от `sizePreset` кнопки — возвращает его.
+ * Иначе берёт первый ключ ряда, у которого `getIconPadding` даёт то же значение.
+ *
+ * @param iconPadding текущий отступ окна Icon
+ * @param sizePreset размер кнопки
+ * @returns ключ ряда для контрола отступа окна Icon
+ */
+function resolveIconPaddingSizePreset(
+  iconPadding: SpacingValue,
+  sizePreset: RoundButtonSizePreset
+): RoundButtonSizePreset {
+  if (getIconPadding(sizePreset) === iconPadding) {
+    return sizePreset;
+  }
+
+  return (
+    ROUND_BUTTON_SIZE_PRESET_KEYS.find((key) => getIconPadding(key) === iconPadding) ??
+    sizePreset
+  );
+}
 
 /**
  * RoundButtonWidgetState — представляет состояние настроек компонента RoundButton в витрине дизайн-системы.
@@ -34,6 +60,8 @@ import { SizeListbox } from '../size-listbox';
  * @property disabled — включает недоступное состояние
  * @property iconFill — тон глифа иконки
  * @property iconKey — витринный ключ выбора иконки для превью
+ * @property iconPadding — отступ окна Icon. При смене `sizePreset` синхронизируется
+ *   мостом `getIconPadding`
  * @property iconTone — тон поверхности круга
  * @property showBorder — включает границу
  * @property sizePreset — размер кнопки
@@ -42,6 +70,7 @@ export type RoundButtonWidgetState = {
   disabled: boolean;
   iconFill: TonePreset;
   iconKey: IconKey;
+  iconPadding: SpacingValue;
   iconTone: TonePreset;
   showBorder: boolean;
   sizePreset: RoundButtonSizePreset;
@@ -74,7 +103,10 @@ export function RoundButtonSettings({ onChange, state }: RoundButtonSettingsProp
         label="Size:"
         sizes={ROUND_BUTTON_SIZE_PRESET_KEYS}
         value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
+        onChange={(size) => {
+          onChange('sizePreset', size);
+          onChange('iconPadding', getIconPadding(size));
+        }}
       />
 
       <IconGroup
@@ -89,9 +121,15 @@ export function RoundButtonSettings({ onChange, state }: RoundButtonSettingsProp
         onToneChange={(tone) => onChange('iconTone', tone)}
       />
 
+      <SizeListbox
+        label="Icon padding:"
+        sizes={ROUND_BUTTON_SIZE_PRESET_KEYS}
+        value={resolveIconPaddingSizePreset(state.iconPadding, state.sizePreset)}
+        onChange={(size) => onChange('iconPadding', getIconPadding(size))}
+      />
+
       <Checkbox
         checked={state.showBorder}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('showBorder', event.target.checked)
         }
@@ -101,7 +139,6 @@ export function RoundButtonSettings({ onChange, state }: RoundButtonSettingsProp
 
       <Checkbox
         checked={state.disabled}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('disabled', event.target.checked)
         }

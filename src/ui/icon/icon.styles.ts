@@ -5,8 +5,8 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `IconStyleProps`, `IconSizePreset` и `IconPosition`
  * 2. Хранить локальные ряды габарита в `iconSize` и отступов в `iconPadding`
- * 3. Предоставить дефолт `DEFAULT_ICON_POSITION`, а также перечни
- *    `ICON_POSITION_KEYS` и `ICON_SETTING_PROP_NAMES`
+ * 3. Предоставить функцию `getIconPadding`, дефолт `DEFAULT_ICON_POSITION`,
+ *    а также перечни `ICON_POSITION_KEYS` и `ICON_SETTING_PROP_NAMES`
  * 4. Предоставить styled-узел `StyledIcon`
  *
  * Потребители:
@@ -55,7 +55,7 @@ export const ICON_SETTING_PROP_NAMES = new Set(['iconFill', 'iconPosition', 'ico
 /**
  * IconSizePreset — представляет размерный ряд окна иконки.
  * Расширяет канонический `SizePreset` ключом `huge`, не добавляя его
- * в общий ряд контролов: `huge` доступен только там, где родитель дриллит
+ * в общий ряд контролов: `huge` доступен только там, где родитель передаёт
  * свой расширенный ряд, например RoundButton.
  */
 export type IconSizePreset = 'huge' | SizePreset;
@@ -71,10 +71,20 @@ const iconSize = {
 } as const satisfies Record<IconSizePreset, SpacingValue>;
 
 /**
+ * getIconSize — возвращает ключ шкалы габарита окна иконки по `sizePreset`.
+ *
+ * @param sizePreset размер окна иконки
+ * @returns ключ шкалы отступов из `@ui/spacing`
+ */
+function getIconSize(sizePreset: IconSizePreset): SpacingValue {
+  return iconSize[sizePreset];
+}
+
+/**
  * iconPadding — хранит внутренний отступ окна иконки для каждого размера ряда.
  * Ключ — размер из `IconSizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
  * Вместе с квадратом из `iconSize` задаёт окно под svg: 24/28/32/64
- * для small/medium/large/huge — значения подобраны зрительно.
+ * для `small`/`medium`/`large`/`huge` — значения подобраны зрительно.
  */
 const iconPadding = {
   small: 4,
@@ -82,6 +92,18 @@ const iconPadding = {
   large: 8,
   huge: 8,
 } as const satisfies Record<IconSizePreset, SpacingValue>;
+
+/**
+ * getIconPadding — возвращает ключ шкалы внутреннего отступа окна иконки по `sizePreset`.
+ * Мост размера → отступ для витрины и вызывающего кода: без явного `padding` окно
+ * берёт значение из ряда. Панель синхронизирует состояние при смене `sizePreset`.
+ *
+ * @param sizePreset размер окна иконки
+ * @returns ключ шкалы отступов из `@ui/spacing`
+ */
+export function getIconPadding(sizePreset: IconSizePreset): SpacingValue {
+  return iconPadding[sizePreset];
+}
 
 /**
  * IconSurface — представляет статичную поверхность окна иконки: заливку и цвет глифа.
@@ -99,7 +121,7 @@ type IconSurface = {
 /**
  * resolveIconSurface — возвращает статичную поверхность окна иконки
  * по `iconTone` и `iconFill`. Приватный генератор Icon: родители статику
- * не резолвят, а состояния передают каналом `--icon-state-background`.
+ * не вычисляют, а состояния передают каналом `--icon-state-background`.
  *
  * Как работает:
  * 1. Цветной `iconTone` красит заливку тоном, глиф — `inverse`; `iconFill`
@@ -141,8 +163,8 @@ function resolveIconSurface(
  *
  * @property iconFill — тон глифа иконки при нейтральном `iconTone`
  * @property iconTone — тон заливки окна иконки
- * @property interactive — подключает окно к каналу состояний
- *   `--icon-state-background` родителя
+ * @property interactive — включает канал состояний `--icon-state-background`
+ *   родителя
  * @property sizePreset — размер окна иконки
  */
 export type IconStyleProps = LayoutProps & {
@@ -177,7 +199,8 @@ const DEFAULT_ICON_INTERACTIVE = false;
  * 1. Собирает квадрат окна и внутренний отступ по `sizePreset`
  * 2. Считает статичную поверхность через `resolveIconSurface`
  * 3. При `interactive` кладёт заливку через канал `--icon-state-background`
- *    с фолбэком на статику: переменную выставляет родитель в своих состояниях
+ *    с запасным значением на статику: переменную выставляет родитель в своих
+ *    состояниях
  * 4. Без `interactive` красит только статичную заливку, когда она есть
  *
  * @param props пропсы стилизации Icon и тема
@@ -191,13 +214,13 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
     interactive = DEFAULT_ICON_INTERACTIVE,
     sizePreset = DEFAULT_SIZE_PRESET,
   } = props;
-  const size = getSpacingValue(iconSize[sizePreset]);
+  const size = getSpacingValue(getIconSize(sizePreset));
   const surface = resolveIconSurface(theme, iconTone, iconFill);
 
   const styles = [
     `inline-size: ${size};`,
     `block-size: ${size};`,
-    `padding: ${getSpacingValue(iconPadding[sizePreset])};`,
+    `padding: ${getSpacingValue(getIconPadding(sizePreset))};`,
   ];
 
   if (interactive) {

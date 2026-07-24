@@ -18,12 +18,7 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import {
-  DEFAULT_SHOW_BORDER,
-  getControlBorder,
-  minBlockSize,
-  type SizePreset,
-} from '@ui/presets';
+import { getControlBorder, minBlockSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 import {
@@ -82,8 +77,7 @@ export function getRoundButtonMinBlockSize(
 /**
  * RoundButtonStyleProps — представляет пропсы стилизации RoundButton и layout-пропсы.
  *
- * @property iconTone — тон поверхности круга; статику красит внутренний Icon,
- *   корень считает по тому же тону значение канала состояний
+ * @property iconTone — тон поверхности круга
  * @property showBorder — включает рамку контрола вне layout-box
  * @property sizePreset — размер кнопки
  */
@@ -105,9 +99,10 @@ const ROUND_BUTTON_PROP_NAMES = new Set<string>([
 
 /**
  * DEFAULT_ROUND_BUTTON_SHOW_BORDER — задаёт показ границы по умолчанию.
- * Используется, когда вызывающий код не передал проп `showBorder`.
+ * Рамка выключена: в продукте граница нужна точечно, например аватар в ProfileMenu,
+ * а безрамные действия шапки и Card — норма без явного `showBorder={false}`.
  */
-export const DEFAULT_ROUND_BUTTON_SHOW_BORDER = DEFAULT_SHOW_BORDER;
+export const DEFAULT_ROUND_BUTTON_SHOW_BORDER = false;
 
 /**
  * getRoundButtonStyles — возвращает CSS-правила для корня `StyledRoundButton`:
@@ -135,15 +130,15 @@ function getRoundButtonStyles(
     showBorder = DEFAULT_ROUND_BUTTON_SHOW_BORDER,
     sizePreset = DEFAULT_ROUND_BUTTON_SIZE_PRESET,
   } = props;
-  const dimension = getSpacingValue(getRoundButtonMinBlockSize(sizePreset));
+  const size = getSpacingValue(getRoundButtonMinBlockSize(sizePreset));
   const toneColorKey = getToneColorKey(iconTone);
   const stateBackground = toneColorKey
     ? resolveColorMix(theme.colors[toneColorKey], theme.colors.shade)
     : theme.colors.veil;
 
   const styles = [
-    `inline-size: ${dimension};`,
-    `block-size: ${dimension};`,
+    `inline-size: ${size};`,
+    `block-size: ${size};`,
     getControlBorder(theme, showBorder),
     `&:not(:disabled):hover,`,
     `&:focus-visible {`,
