@@ -13,13 +13,21 @@ import styled from 'styled-components';
 
 import { HEADER_BLOCK_SIZE } from '@components/header';
 import { getSpacingValue } from '@ui/spacing';
+import { STACKING_TOAST } from '@ui/stacking';
+
+/**
+ * TOAST_MAX_INLINE_SIZE — задаёт максимальную ширину карточки уведомления.
+ * Используется в `StyledToastViewport`.
+ */
+const TOAST_MAX_INLINE_SIZE = '24rem';
 
 /**
  * StyledToastViewport — задаёт контейнер уведомлений.
+ * Базируется на `<div>`.
  *
  * Встроенные стили:
  *  - `position: fixed` в правом верхнем углу — уведомления поверх страницы
- *  - `z-index: 2100` — поверх всех слоёв приложения
+ *  - `z-index` из `STACKING_TOAST` — поверх порталов и оболочки
  *  - `block-size` из `HEADER_BLOCK_SIZE` — уведомление перекрывает кнопки шапки
  *  - `pointer-events: none` — контейнер не перехватывает клики по странице
  *  - `inline-size` дочерних уведомлений ограничена — для комфортного чтения
@@ -30,7 +38,7 @@ export const StyledToastViewport = styled.div`
   position: fixed;
   inset-block-start: 0;
   inset-inline-end: ${getSpacingValue(16)};
-  z-index: 2100;
+  z-index: ${STACKING_TOAST};
   display: grid;
   gap: ${getSpacingValue(8)};
   align-content: center;
@@ -39,7 +47,7 @@ export const StyledToastViewport = styled.div`
   pointer-events: none;
 
   > * {
-    inline-size: min(24rem, calc(100vw - ${getSpacingValue(32)}));
+    inline-size: min(${TOAST_MAX_INLINE_SIZE}, calc(100vw - ${getSpacingValue(32)}));
     pointer-events: auto;
     cursor: pointer;
   }

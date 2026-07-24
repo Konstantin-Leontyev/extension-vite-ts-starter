@@ -35,6 +35,7 @@
  *     - `src/pages/showcase/switch-settings/index.tsx`
  *     - `src/pages/showcase/fieldset-settings/index.tsx`
  *     - `src/pages/showcase/stepper-settings/index.tsx`
+ *     - `src/pages/showcase/input-settings/index.tsx`
  *     - `src/pages/showcase/segment-button-settings/index.tsx`
  */
 
@@ -87,7 +88,7 @@ type TextGroupTone = {
 
 /**
  * DEFAULT_TEXT_GROUP_LABEL_PREFIX — задаёт префикс подписей контролов по умолчанию.
- * Используется, когда панель не передала проп `labelPrefix`.
+ * Используется, когда вызывающий код не передал проп `labelPrefix`.
  */
 const DEFAULT_TEXT_GROUP_LABEL_PREFIX = 'Text';
 
@@ -132,30 +133,33 @@ function resolveTextGroupContentLabel(labelPrefix: string): string {
  *   генерируется компонентом из значения, как процент ProgressBar
  * @property ellipsis — контрол обрезания с многоточием. Без него флаг `Show ellipsis`
  *   не рендерится — проп `ellipsis` есть только у Text
- * @property italic — текущее значение курсива
+ * @property italic — текущее значение курсива. Без пары `italic` / `onItalicChange`
+ *   флаг не рендерится — у компонента нет оси курсива, например Input
  * @property labelPrefix — префикс подписей контролов, например `Legend`.
  *   Пустая строка даёт подписи без префикса
  * @property onAlignChange — обработчик изменения выравнивания текста.
  *   Без него контрол выравнивания не рендерится — у компонента нет текстовой оси выравнивания
  * @property onItalicChange — обработчик изменения курсива
- * @property onSizeChange — обработчик изменения размера текста
+ * @property onSizeChange — обработчик изменения размера текста.
+ *   Без пары `size` / `onSizeChange` листбокс размера не рендерится
  * @property show — контрол показа текста. Без него текст компонента неотключаем
  *   и группа рендерится всегда
  * @property size — текущий размер текста
- * @property tones — листбоксы тона: один или несколько по содержимым
+ * @property tones — листбоксы тона: один или несколько по содержимым.
+ *   Без значения или с пустым перечнем листбоксы тона не рендерятся
  */
 type TextGroupProps = {
   align?: TextAlignPreset;
   contents?: readonly TextGroupContent[];
   ellipsis?: { checked: boolean; onChange: (checked: boolean) => void };
-  italic: boolean;
+  italic?: boolean;
   labelPrefix?: string;
   onAlignChange?: (align: TextAlignPreset) => void;
-  onItalicChange: (value: boolean) => void;
-  onSizeChange: (size: TextSizePreset) => void;
+  onItalicChange?: (value: boolean) => void;
+  onSizeChange?: (size: TextSizePreset) => void;
   show?: { checked: boolean; onChange: (checked: boolean) => void };
-  size: TextSizePreset;
-  tones: readonly TextGroupTone[];
+  size?: TextSizePreset;
+  tones?: readonly TextGroupTone[];
 };
 
 /**
@@ -227,12 +231,14 @@ export function TextGroup({
             );
           })}
 
-          <SizeListbox
-            label={resolveTextGroupLabel(labelPrefix, 'size')}
-            sizes={TEXT_SIZE_PRESET_KEYS}
-            value={size}
-            onChange={onSizeChange}
-          />
+          {onSizeChange && size !== undefined && (
+            <SizeListbox
+              label={resolveTextGroupLabel(labelPrefix, 'size')}
+              sizes={TEXT_SIZE_PRESET_KEYS}
+              value={size}
+              onChange={onSizeChange}
+            />
+          )}
 
           {onAlignChange && (
             <AlignListbox
@@ -243,7 +249,7 @@ export function TextGroup({
             />
           )}
 
-          {tones.map((toneControl, index) => {
+          {tones?.map((toneControl, index) => {
             const toneLabel =
               toneControl.label ?? resolveTextGroupLabel(labelPrefix, 'tone');
 
@@ -269,14 +275,16 @@ export function TextGroup({
             </Checkbox>
           )}
 
-          <Checkbox
-            checked={italic}
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              onItalicChange(event.target.checked)
-            }
-          >
-            Show italic
-          </Checkbox>
+          {onItalicChange && italic !== undefined && (
+            <Checkbox
+              checked={italic}
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                onItalicChange(event.target.checked)
+              }
+            >
+              Show italic
+            </Checkbox>
+          )}
         </>
       )}
     </>

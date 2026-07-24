@@ -64,6 +64,12 @@ import {
 const DEFAULT_SIDEBAR_HEADER_ACTIONS: CardHeaderAction[] = [];
 
 /**
+ * DEFAULT_SIDEBAR_ICON — задаёт иконку кнопки сворачивания по умолчанию.
+ * Используется, когда вызывающий код не передал проп `icon`.
+ */
+const DEFAULT_SIDEBAR_ICON = <SidebarIcon />;
+
+/**
  * DEFAULT_SIDEBAR_ICON_ARIA_LABEL — задаёт доступное имя кнопки сворачивания по умолчанию.
  * Используется, когда вызывающий код не передал проп `iconAriaLabel`.
  */
@@ -125,7 +131,7 @@ export function Sidebar({
   children,
   contentRef,
   headerActions = DEFAULT_SIDEBAR_HEADER_ACTIONS,
-  icon,
+  icon = DEFAULT_SIDEBAR_ICON,
   iconAriaLabel = DEFAULT_SIDEBAR_ICON_ARIA_LABEL,
   id,
   offset,
@@ -145,7 +151,7 @@ export function Sidebar({
       ariaControls: id,
       ariaExpanded: open,
       ariaLabel: iconAriaLabel,
-      icon: icon ?? <SidebarIcon />,
+      icon,
       onClick: onClose,
     },
   ];

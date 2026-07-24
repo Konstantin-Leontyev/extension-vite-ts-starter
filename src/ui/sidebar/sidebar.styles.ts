@@ -14,14 +14,33 @@
 
 import styled from 'styled-components';
 
-import { getShellTransitionStyles } from '@ui/motion';
+import { getTransitionStyles } from '@ui/motion';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
+import { STACKING_SIDEBAR } from '@ui/stacking';
 
 /**
  * SIDEBAR_PANEL_WIDTH — задаёт ширину выезжающей панели.
  * Используется в `StyledSidebarTrack` и при расчёте ширины `StyledSidebarSlot`.
  */
 const SIDEBAR_PANEL_WIDTH = '20rem';
+
+/**
+ * SIDEBAR_PANEL_BREAKPOINT — задаёт порог широкого экрана для раскладки Sidebar.
+ * Используется в `getSidebarStyles` и `StyledSidebar`.
+ */
+const SIDEBAR_PANEL_BREAKPOINT = '640px';
+
+/**
+ * SIDEBAR_PANEL_BLOCK_SIZE — задаёт высоту выезжающей панели на узком экране.
+ * Используется в `getSidebarStyles`.
+ */
+const SIDEBAR_PANEL_BLOCK_SIZE = '50dvb';
+
+/**
+ * SIDEBAR_PANEL_MAX_BLOCK_SIZE — задаёт потолок высоты содержимого панели на узком экране.
+ * Используется в `getSidebarStyles`.
+ */
+const SIDEBAR_PANEL_MAX_BLOCK_SIZE = 'min(480px, 60dvb)';
 
 /**
  * StyledSidebarContent — задаёт область контента компонента Sidebar.
@@ -57,14 +76,14 @@ export const StyledSidebarContent = styled.div`
  *  - `display: none` при `data-open='false'` — скрывает слот, пока панель не в DOM
  *
  * Генерация стилей:
- *  - `getShellTransitionStyles` — переход по `inline-size`
+ *  - `getTransitionStyles` — переход по `inline-size`
  */
 export const StyledSidebarSlot = styled.aside`
   inline-size: 0;
   min-inline-size: 0;
   min-block-size: 0;
   overflow: hidden;
-  ${getShellTransitionStyles('inline-size')}
+  ${getTransitionStyles('inline-size')}
 
   &[data-open='false'] {
     display: none;
@@ -88,7 +107,7 @@ export const StyledSidebarSlot = styled.aside`
  *  - `min-block-size: 0` на первом ребёнке — Card сжимается по блочной оси
  *
  * Генерация стилей:
- *  - `getShellTransitionStyles` — переход по `transform`
+ *  - `getTransitionStyles` — переход по `transform`
  */
 export const StyledSidebarTrack = styled.div`
   display: flex;
@@ -97,7 +116,7 @@ export const StyledSidebarTrack = styled.div`
   block-size: 100%;
   min-block-size: 0;
   transform: translateX(100%);
-  ${getShellTransitionStyles('transform')}
+  ${getTransitionStyles('transform')}
 
   &[data-open='true'] {
     transform: translateX(0);
@@ -146,7 +165,8 @@ const SIDEBAR_EDGE_INSET: SpacingValue = 8;
 
 /**
  * getSidebarStyles — возвращает CSS-правила для корня `StyledSidebar`: отступы зон
- * каркаса, зазор при открытой панели, ширину слота и поведение на узком экране.
+ * каркаса, зазор при открытой панели, ширину слота, слой `STACKING_SIDEBAR`
+ * на узком экране и поведение выезда.
  *
  * @param props пропсы стилизации Sidebar
  * @returns CSS-правила, каждое с новой строки
@@ -161,7 +181,7 @@ function getSidebarStyles(props: SidebarStyleProps): string {
     `padding-block-end: ${paddingValue};`,
     `padding-inline-start: ${paddingValue};`,
     `}`,
-    `@media (width > 640px) {`,
+    `@media (width > ${SIDEBAR_PANEL_BREAKPOINT}) {`,
     `&:not(:has(${StyledSidebarSlot}[data-open='true'])) ${StyledSidebarContent} {`,
     `padding-inline-end: ${paddingInlineEndValue};`,
     `}`,
@@ -174,25 +194,25 @@ function getSidebarStyles(props: SidebarStyleProps): string {
     `padding-inline-end: ${paddingInlineEndValue};`,
     `}`,
     `}`,
-    `@media (width <= 640px) {`,
+    `@media (width <= ${SIDEBAR_PANEL_BREAKPOINT}) {`,
     `${StyledSidebarSlot} {`,
     `position: absolute;`,
     `inset-block-end: 0;`,
     `inset-inline: 0;`,
-    `z-index: 50;`,
+    `z-index: ${STACKING_SIDEBAR};`,
     `inline-size: auto;`,
     `padding-inline: ${paddingValue} ${paddingInlineEndValue};`,
     `}`,
     `${StyledSidebarTrack} {`,
     `inline-size: 100%;`,
-    `block-size: 50dvb;`,
+    `block-size: ${SIDEBAR_PANEL_BLOCK_SIZE};`,
     `transform: translateY(100%);`,
     `}`,
     `${StyledSidebarTrack}[data-open='true'] {`,
     `transform: translateY(0);`,
     `}`,
     `${StyledSidebarTrack} > :first-child {`,
-    `max-block-size: min(480px, 60dvb);`,
+    `max-block-size: ${SIDEBAR_PANEL_MAX_BLOCK_SIZE};`,
     `}`,
     `}`,
   ];
@@ -209,11 +229,11 @@ function getSidebarStyles(props: SidebarStyleProps): string {
  *  - `block-size: 100%` — заполняет родителя. Заданную высоту обеспечивает обёртка
  *    вызывающего кода
  *  - `overflow: hidden` — обрезает выезд панели по границе каркаса
- *  - `grid-template-columns: 1fr auto` при ширине больше `640px` — панель
- *    в потоке справа, контент ужимается
+ *  - `grid-template-columns: 1fr auto` при ширине больше `SIDEBAR_PANEL_BREAKPOINT` —
+ *    панель в потоке справа, контент ужимается
  *
  * Генерация стилей:
- *  - `getSidebarStyles` — отступы зон, зазор, ширина слота, узкий экран
+ *  - `getSidebarStyles` — отступы зон, зазор, ширина слота, слой на узком экране
  */
 export const StyledSidebar = styled.div.withConfig({
   shouldForwardProp: (prop) => !SIDEBAR_PROP_NAMES.has(prop),
@@ -229,7 +249,7 @@ export const StyledSidebar = styled.div.withConfig({
 
   ${(props) => getSidebarStyles(props)}
 
-  @media (width > 640px) {
+  ${`@media (width > ${SIDEBAR_PANEL_BREAKPOINT}) {
     grid-template-columns: 1fr auto;
-  }
+  }`}
 `;

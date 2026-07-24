@@ -1,50 +1,60 @@
 /**
  * Файл: `src/ui/motion.ts`
- * Содержит генератор каркасных переходов оболочки.
- * Определяет единые длительность и кривую структурных анимаций: шапка и панель
- * сайдбара анимируются одним прогоном и обязаны совпадать.
- * Не покрывает микровзаимодействия, например `hover`, прогресс и ход тумблера Switch, —
- * они намеренно быстрее и задаются локально в стилях компонентов.
+ * Содержит генератор CSS-переходов и две длительности проекта.
+ * Каркас оболочки, например шапка и сайдбар, зовёт без длительности — дефолт `MOTION_DURATION`.
+ * Микровзаимодействия передают `MOTION_MICRO_DURATION`.
+ * Под `prefers-reduced-motion` длительность удваивается через `calc`.
+ * Не покрывает `animation`, например у Spinner — другой механизм.
  *
  * Основные задачи:
- * 1. Предоставить функцию `getShellTransitionStyles`
+ * 1. Предоставить константы `MOTION_DURATION` и `MOTION_MICRO_DURATION`
+ * 2. Предоставить функцию `getTransitionStyles`
  *
  * Потребители:
  *  - `src/ui/sidebar/sidebar.styles.ts` — анимирует выезд и сворачивание панели
  *  - `src/components/header/header.styles.ts` — анимирует сворачивание шапки в режиме `autoHide`
+ *  - `src/ui/switch/switch.styles.ts` — ход заливки, рамки и бегунка
+ *  - `src/ui/progress-bar/progress-bar.styles.ts` — ширина заливки
+ *  - `src/ui/listbox/listbox.styles.ts` — hover фона опции
+ *  - `src/ui/combobox/combobox.styles.ts` — hover фона опции
+ *  - `src/ui/range-input/range-input.styles.ts` — hover фона пресета
  */
 
 /**
- * SHELL_MOTION_DURATION — задаёт длительность каркасных анимаций оболочки.
- * Используется в `getShellTransitionStyles`.
+ * MOTION_DURATION — задаёт длительность переходов каркаса оболочки.
+ * Дефолт `getTransitionStyles`, когда вызывающий код не передал длительность.
  */
-const SHELL_MOTION_DURATION = '0.3s';
+export const MOTION_DURATION = '0.3s';
 
 /**
- * SHELL_MOTION_EASING — задаёт кривую каркасных анимаций оболочки.
- * Используется в `getShellTransitionStyles`.
+ * MOTION_MICRO_DURATION — задаёт длительность микровзаимодействий.
+ * Используется вторым аргументом `getTransitionStyles` в Switch, ProgressBar
+ * и hover строк-опций.
  */
-const SHELL_MOTION_EASING = 'ease';
+export const MOTION_MICRO_DURATION = '0.15s';
 
 /**
- * SHELL_MOTION_REDUCED_DURATION — задаёт длительность каркасных анимаций при
- * `prefers-reduced-motion`. Длительность удваивается, движение не отключается.
- * Используется в `getShellTransitionStyles`.
+ * MOTION_EASING — задаёт кривую переходов.
+ * Используется в `getTransitionStyles`.
  */
-const SHELL_MOTION_REDUCED_DURATION = '0.6s';
+const MOTION_EASING = 'ease';
 
 /**
- * getShellTransitionStyles — возвращает CSS-правила перехода для каркасного свойства.
- * Под `prefers-reduced-motion: reduce` длительность удваивается.
+ * getTransitionStyles — возвращает CSS-правила перехода для указанных свойств.
+ * Под `prefers-reduced-motion: reduce` длительность удваивается через `calc`.
  *
- * @param property анимируемое CSS-свойство, например `transform`
+ * @param properties анимируемые CSS-свойства: одно или список через запятую
+ * @param duration длительность перехода; по умолчанию `MOTION_DURATION`
  * @returns CSS-правила, каждое с новой строки
  */
-export function getShellTransitionStyles(property: string): string {
+export function getTransitionStyles(
+  properties: string,
+  duration: string = MOTION_DURATION
+): string {
   const styles = [
-    `transition: ${property} ${SHELL_MOTION_DURATION} ${SHELL_MOTION_EASING};`,
+    `transition: ${properties} ${duration} ${MOTION_EASING};`,
     `@media (prefers-reduced-motion: reduce) {`,
-    `transition-duration: ${SHELL_MOTION_REDUCED_DURATION};`,
+    `transition-duration: calc(${duration} * 2);`,
     `}`,
   ];
 

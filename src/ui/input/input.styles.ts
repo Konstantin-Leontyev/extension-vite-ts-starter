@@ -45,11 +45,6 @@ export type InputStyleProps = LayoutProps & {
 };
 
 /**
- * INPUT_ROOT_PROP_NAMES — хранит имена layout-пропсов корня Input.
- */
-const INPUT_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
-
-/**
  * StyledInputRoot — задаёт корневой узел компонента Input.
  * Базируется на `<div>` и поддерживает все пропсы из `LayoutProps`.
  *
@@ -63,7 +58,7 @@ const INPUT_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledInputRoot = styled.div.withConfig({
-  shouldForwardProp: (prop) => !INPUT_ROOT_PROP_NAMES.has(prop),
+  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
   display: grid;
   gap: ${getSpacingValue(8)};
@@ -97,8 +92,8 @@ const INPUT_CONTROL_PROP_NAMES = new Set<string>([
  *
  * Как работает:
  * 1. Подставляет дефолты `shape`, `showBorder` и `sizePreset`
- * 2. Собирает бокс через `getControlBoxStyles`, сбрасывает layout-рамку и красит
- *    фон: при рамке — `surface`, без рамки — прозрачный
+ * 2. Собирает бокс через `getControlBoxStyles`, сбрасывает layout-рамку и
+ *    красит фон: при рамке — `surface`, без рамки — прозрачный
  * 3. Кладёт рамку через `getControlBorder` и цвет плейсхолдера
  * 4. При переданном `textAlign` добавляет выравнивание значения
  *

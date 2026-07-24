@@ -16,6 +16,7 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
+import { MOTION_MICRO_DURATION, getTransitionStyles } from '@ui/motion';
 import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
@@ -198,9 +199,9 @@ function getProgressBarFillStyles(
  * Встроенные стили:
  *  - `block-size: 100%` — заливка на всю высоту полосы
  *  - `border-radius: inherit` — наследует скругление от полосы
- *  - `transition: inline-size 120ms ease-out` — плавное изменение ширины
  *
  * Генерация стилей:
+ *  - `getTransitionStyles` — переход по `inline-size`
  *  - `getProgressBarFillStyles` — ширина и цвет заливки
  */
 export const StyledProgressBarFill = styled.div.withConfig({
@@ -208,11 +209,7 @@ export const StyledProgressBarFill = styled.div.withConfig({
 })<ProgressBarFillStyleProps>`
   block-size: 100%;
   border-radius: inherit;
-  transition: inline-size 120ms ease-out;
-
-  @media (prefers-reduced-motion: reduce) {
-    transition-duration: 240ms;
-  }
+  ${getTransitionStyles('inline-size', MOTION_MICRO_DURATION)}
 
   ${(props) => getProgressBarFillStyles(props)}
 `;

@@ -17,7 +17,13 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
+import { MOTION_MICRO_DURATION, getTransitionStyles } from '@ui/motion';
+import {
+  DEFAULT_SIZE_PRESET,
+  getFocusRingStyles,
+  getTextSize,
+  type SizePreset,
+} from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
@@ -182,15 +188,12 @@ function getSwitchTrackStyles(
 
   const styles = [
     'position: relative;',
-    'display: inline-block;',
     `inline-size: ${trackInlineSize};`,
     `block-size: ${trackBlockSize};`,
     `background-color: ${theme.colors.border};`,
     `border: ${TRACK_BORDER} solid ${theme.colors.border};`,
     `border-radius: calc(${trackBlockSize} / 2);`,
-    `transition:
-      background-color 0.15s ease,
-      border-color 0.15s ease;`,
+    getTransitionStyles('background-color, border-color', MOTION_MICRO_DURATION),
     `&::after {
       position: absolute;
       inset-block-start: ${knobInset};
@@ -201,7 +204,7 @@ function getSwitchTrackStyles(
       background-color: ${theme.colors.surface};
       border-radius: 50%;
       box-shadow: ${theme.shadow.surface};
-      transition: transform 0.15s ease;
+      ${getTransitionStyles('transform', MOTION_MICRO_DURATION)}
     }`,
     `input:checked + & {
       background-color: ${checkedBackground};
@@ -211,15 +214,7 @@ function getSwitchTrackStyles(
       transform: translateX(${knobTravel});
     }`,
     `input:focus-visible + & {
-      outline: 2px solid ${theme.colors.focusRing};
-      outline-offset: 2px;
-    }`,
-    `@media (prefers-reduced-motion: reduce) {
-      transition-duration: 0.3s;
-
-      &::after {
-        transition-duration: 0.3s;
-      }
+      ${getFocusRingStyles(theme.colors.focusRing)}
     }`,
   ];
 

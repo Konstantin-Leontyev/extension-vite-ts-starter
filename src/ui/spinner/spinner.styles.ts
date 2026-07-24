@@ -131,7 +131,20 @@ const spinnerRotate = keyframes`
 `;
 
 /**
- * getSpinnerStyles — возвращает CSS-правила для индикатора `StyledSpinner`:
+ * SPINNER_ROTATE_DURATION — задаёт длительность оборота индикатора.
+ * Используется в `getSpinnerStyles`.
+ */
+const SPINNER_ROTATE_DURATION = '0.8s';
+
+/**
+ * SPINNER_REDUCED_ROTATE_DURATION — задаёт длительность оборота при
+ * `prefers-reduced-motion: reduce`.
+ * Используется в `getSpinnerStyles`.
+ */
+const SPINNER_REDUCED_ROTATE_DURATION = '1.6s';
+
+/**
+ * getSpinnerStyles — возвращает CSS-правила для узла `StyledSpinner`:
  * размер, рамку и анимацию.
  *
  * @param props пропсы стилизации индикатора и тема
@@ -148,10 +161,10 @@ function getSpinnerStyles(props: SpinnerIndicatorStyleProps & { theme: AppTheme 
     border: ${getSpinnerBorderWidth(sizePreset)}px solid ${theme.colors.border};
     border-block-start-color: ${getToneColor(theme, tone, theme.colors.primary)};
     border-radius: 50%;
-    animation: ${spinnerRotate} 0.8s linear infinite;
+    animation: ${spinnerRotate} ${SPINNER_ROTATE_DURATION} linear infinite;
 
     @media (prefers-reduced-motion: reduce) {
-      animation-duration: 1.6s;
+      animation-duration: ${SPINNER_REDUCED_ROTATE_DURATION};
     }
   `;
 }

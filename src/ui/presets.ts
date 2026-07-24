@@ -8,13 +8,14 @@
  * Основные задачи:
  * 1. Типизировать пресеты через `SizePreset` и `ShapePreset`
  * 2. Хранить канонические значения в `minBlockSize`, `padding` и `textSize`
- * 3. Задать значения по умолчанию через `DEFAULT_SIZE_PRESET` и `DEFAULT_SHAPE_PRESET`
+ * 3. Задать значения по умолчанию через `DEFAULT_SIZE_PRESET`, `DEFAULT_SHAPE_PRESET`
+ *    и `DEFAULT_SHOW_BORDER`
  * 4. Предоставить перечни `SIZE_PRESET_KEYS` и `SHAPE_PRESET_KEYS`
  * 5. Предоставить геттеры `getMinBlockSize`, `getPadding`, `getPaddingInline`, `getPaddingBlock` и `getTextSize`
  * 6. Предоставить `resolveBlockRadius` для вычисления радиуса по форме
  * 7. Предоставить `getControlBoxStyles` для сборки полного бокса однострочного контрола
- * 8. Предоставить `DEFAULT_SHOW_BORDER` и `getControlBorder` для рамки контрола
- *    вне layout-box
+ * 8. Предоставить `getControlBorder` для рамки контрола вне layout-box
+ * 9. Предоставить `getFocusRingStyles` для пары `outline` / `outline-offset`
  *
  * Потребители:
  *  - контролы, например Button, Input и Tag — задают размер через `sizePreset`
@@ -77,9 +78,9 @@ export function getMinBlockSize(sizePreset: SizePreset): string {
  * удерживает текст от прилипания к краям.
  */
 export const padding = Object.freeze({
-  small: Object.freeze({ inline: 12, block: 8 } as const),
-  medium: Object.freeze({ inline: 16, block: 10 } as const),
-  large: Object.freeze({ inline: 16, block: 14 } as const),
+  small: Object.freeze({ inline: 12, block: 6 } as const),
+  medium: Object.freeze({ inline: 16, block: 8 } as const),
+  large: Object.freeze({ inline: 16, block: 12 } as const),
 } as const satisfies Record<SizePreset, { block: SpacingValue; inline: SpacingValue }>);
 
 /**
@@ -197,8 +198,8 @@ export function getTextSize(sizePreset: SizePreset): TextSizePreset {
  * getControlBoxStyles — возвращает CSS-правила стандартного бокса однострочного контрола:
  * `min-block-size`, `padding-inline`, типографику через `getTextProperties(getTextSize(…))`
  * и `border-radius` через `resolveBlockRadius`.
- * `padding-block` не входит в набор: высоту однострочного контрола держит `min-block-size`,
- * центровку — сетка узла.
+ * `padding-block` не входит в набор: UA-отступ сбрасывает `GlobalResetStyle`, высоту
+ * однострочного контрола держит `min-block-size`, центровку — сетка узла.
  *
  * Границы применения:
  *  - полный стандартный бокс, например поле ввода и триггер, — `getControlBoxStyles`
@@ -225,6 +226,39 @@ export function getControlBoxStyles(sizePreset: SizePreset, shape: ShapePreset):
  * Используется, когда вызывающий код не передал проп `showBorder`.
  */
 export const DEFAULT_SHOW_BORDER = true;
+
+/**
+ * FOCUS_OUTLINE_WIDTH — задаёт толщину фокус-кольца контролов и панелей.
+ * Используется в `getFocusRingStyles`.
+ */
+const FOCUS_OUTLINE_WIDTH = '2px';
+
+/**
+ * FOCUS_OUTLINE_OFFSET — задаёт отступ фокус-кольца от края узла.
+ * Используется в `getFocusRingStyles` как значение по умолчанию.
+ */
+export const FOCUS_OUTLINE_OFFSET = '2px';
+
+/**
+ * getFocusRingStyles — возвращает CSS-правила фокус-кольца: `outline` и
+ * `outline-offset`. Толщина — `FOCUS_OUTLINE_WIDTH`; отступ — `options.offset`
+ * или `FOCUS_OUTLINE_OFFSET`.
+ *
+ * @param color цвет кольца, обычно `theme.colors.focusRing` / `invalidRing`
+ * @param options опциональный `offset`, например инвертированный у Parts
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getFocusRingStyles(
+  color: string,
+  options?: { offset?: string }
+): string {
+  const styles = [
+    `outline: ${FOCUS_OUTLINE_WIDTH} solid ${color};`,
+    `outline-offset: ${options?.offset ?? FOCUS_OUTLINE_OFFSET};`,
+  ];
+
+  return styles.join('\n');
+}
 
 /**
  * getControlBorder — возвращает CSS-правило рамки контрола вне layout-box:

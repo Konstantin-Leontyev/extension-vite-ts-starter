@@ -28,6 +28,7 @@ import { AlignListbox } from '../align-listbox';
 import { ShapeListbox } from '../shape-listbox';
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
+import { TextGroup } from '../text-group';
 
 /**
  * InputWidgetState — представляет состояние настроек компонента Input в витрине дизайн-системы.
@@ -101,7 +102,6 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
 
       <Checkbox
         checked={state.showBorder}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('showBorder', event.target.checked)
         }
@@ -145,25 +145,20 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         />
       )}
 
-      <Input
-        label="Value:"
-        reserveErrorSpace={false}
-        value={state.value}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('value', event.target.value)
-        }
-      />
-
-      <AlignListbox
-        aligns={TEXT_ALIGN_PRESET_KEYS}
-        label="Text align:"
-        value={state.textAlign}
-        onChange={(align) => onChange('textAlign', align)}
+      <TextGroup
+        align={state.textAlign}
+        contents={[
+          {
+            value: state.value,
+            onChange: (value) => onChange('value', value),
+          },
+        ]}
+        labelPrefix="Value"
+        onAlignChange={(align) => onChange('textAlign', align)}
       />
 
       <Checkbox
         checked={state.reserveErrorSpace}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('reserveErrorSpace', event.target.checked)
         }
@@ -173,7 +168,6 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
 
       <Checkbox
         checked={state.invalid}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('invalid', event.target.checked)
         }
@@ -183,7 +177,6 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
 
       <Checkbox
         checked={state.disabled}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('disabled', event.target.checked)
         }
