@@ -18,15 +18,14 @@
 
 import styled from 'styled-components';
 
-import {
-  DEFAULT_ICON_POSITION,
-  ICON_SETTING_PROP_NAMES,
-  type IconPosition,
-} from '@ui/icon';
+import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
+import { MOTION_MICRO_DURATION, getTransitionStyles } from '@ui/motion';
+import { getPortalPanelStyles } from '@ui/portal-panel';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
+  getFocusRingStyles,
   getMinBlockSize,
   getPaddingInline,
   getTextSize,
@@ -35,6 +34,7 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
+import { STACKING_OPEN_CONTROL } from '@ui/stacking';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import {
@@ -50,7 +50,7 @@ export { splitLayoutProps } from '@ui/layout';
  * getRangeInputTextSize — возвращает размер текста триггера и пресетов по `sizePreset`.
  * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
  *
- * @param sizePreset размер компонента
+ * @param sizePreset размер RangeInput
  * @returns метка размера текста из `TextSizePreset` для текста триггера и пресетов
  */
 export function getRangeInputTextSize(sizePreset?: SizePreset): TextSizePreset {
@@ -60,14 +60,11 @@ export function getRangeInputTextSize(sizePreset?: SizePreset): TextSizePreset {
 /**
  * RangeInputSurfaceStyleProps — представляет пропсы стилизации поверхности RangeInput.
  *
- * @property iconPosition — позиция шеврона и кнопки сброса относительно значения
- * @property iconTone — тон секции шеврона и кнопки сброса; статику красит
- *   внутренний Icon, узлы считают по тому же тону значение канала состояний
+ * @property iconTone — тон секции шеврона и кнопки сброса
  * @property shape — форма поверхности
  * @property sizePreset — размер компонента
  */
 export type RangeInputSurfaceStyleProps = {
-  iconPosition?: IconPosition;
   iconTone?: TonePreset;
   shape?: ShapePreset;
   sizePreset?: SizePreset;
@@ -133,7 +130,7 @@ function getRangeInputRootStyles(): string {
     `gap: ${getSpacingValue(8)};`,
     'inline-size: 100%;',
     'min-inline-size: 0;',
-    `&[data-open='true'] { z-index: 50; }`,
+    `&[data-open='true'] { z-index: ${STACKING_OPEN_CONTROL}; }`,
   ];
 
   return styles.join('\n');
@@ -159,12 +156,12 @@ export const StyledRangeInputRoot = styled.div.withConfig({
  * `StyledRangeInputTriggerRow`: габариты, рамку, заливку, тень и кольцо фокуса.
  *
  * Как работает:
- * 1. Берёт тему и размер, подставляет дефолт `iconPosition`
+ * 1. Берёт тему и размер
  * 2. Собирает CSS-правила ряда: сетка, габариты, заливка, рамка и тень
- * 3. Без clear оставляет одну колонку. При `data-has-clear` переключает сетку
- *    на две колонки с учётом позиции иконки
+ * 3. Без clear оставляет одну колонку. При `data-has-clear` — две колонки;
+ *    позиция сброса читается из DOM (`[data-slot='clear']:first-child`), не из пропа
  * 4. Не красит рамку в `primary` — как Listbox и Combobox: акцент даёт `outline`
- *    фокуса на ряде при `:focus-within`, потому что `overflow` обрезает outline
+ *    фокуса на ряде при `:focus-within`, потому что `overflow` обрезает `outline`
  *    детей, как у Stepper
  *
  * @param props пропсы поверхности и тема
@@ -175,14 +172,12 @@ function getRangeInputTriggerRowStyles(
 ): string {
   const theme = getTheme(props);
   const sizePreset = props.sizePreset ?? DEFAULT_RANGE_INPUT_SIZE_PRESET;
-  const isIconStart = (props.iconPosition ?? DEFAULT_ICON_POSITION) === 'start';
-
-  const clearColumns = isIconStart ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr) auto';
 
   const styles = [
     'display: grid;',
     'grid-template-columns: minmax(0, 1fr);',
-    `&[data-has-clear] { grid-template-columns: ${clearColumns}; }`,
+    `&[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }`,
+    `&[data-has-clear]:has(> [data-slot='clear']:first-child) { grid-template-columns: auto minmax(0, 1fr); }`,
     'inline-size: 100%;',
     `min-block-size: ${getMinBlockSize(sizePreset)};`,
     'overflow: hidden;',
@@ -192,8 +187,7 @@ function getRangeInputTriggerRowStyles(
     `box-shadow: ${theme.shadow.surface};`,
     `&[data-open='true'] { visibility: hidden; }`,
     '&:focus-within {',
-    `outline: 2px solid ${theme.colors.focusRing};`,
-    'outline-offset: 2px;',
+    getFocusRingStyles(theme.colors.focusRing),
     '}',
   ];
 
@@ -230,10 +224,10 @@ function resolveRangeInputIconStateBackground(
   theme: AppTheme,
   iconTone: TonePreset
 ): string {
-  const toneColorKey = getToneColorKey(iconTone);
+  const colorKey = getToneColorKey(iconTone);
 
-  return toneColorKey
-    ? resolveColorMix(theme.colors[toneColorKey], theme.colors.shade)
+  return colorKey
+    ? resolveColorMix(theme.colors[colorKey], theme.colors.shade)
     : theme.colors.veil;
 }
 
@@ -245,11 +239,12 @@ function resolveRangeInputIconStateBackground(
  * а индикатор выпадашки.
  *
  * Как работает:
- * 1. Берёт тему, позицию иконки и считает значение канала по `iconTone`
+ * 1. Берёт тему и считает значение канала по `iconTone`
  * 2. Собирает сетку триггера и центрирует значение через `align-items: center`:
  *    высоту ряда держит `min-block-size` родителя. `stretch` прижимал Text к верху
  *    ячейки, секция иконки тянется через `block-size: 100%`
- * 3. Кладёт разделитель на секцию шеврона по `[data-slot='icon']`
+ * 3. Кладёт разделитель на секцию шеврона по `[data-slot='icon']`: сторона шва
+ *    читается из порядка узлов (`:first-child` / `:last-child`)
  * 4. На наведении триггера выставляет `--icon-state-background`
  *
  * @param props пропсы поверхности и тема
@@ -259,19 +254,23 @@ function getRangeInputTriggerStyles(
   props: RangeInputSurfaceStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const isIconStart = (props.iconPosition ?? DEFAULT_ICON_POSITION) === 'start';
-  const seam = isIconStart ? 'border-inline-end' : 'border-inline-start';
 
   const styles = [
     'display: grid;',
-    `grid-template-columns: ${isIconStart ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr) auto'};`,
+    'grid-template-columns: minmax(0, 1fr) auto;',
+    `&:has(> [data-slot='icon']:first-child) { grid-template-columns: auto minmax(0, 1fr); }`,
     'align-items: center;',
     'min-inline-size: 0;',
     'text-align: center;',
     '&:focus-visible { outline: none; }',
     `[data-slot='icon'] {`,
     `block-size: 100%;`,
-    `${seam}: 1px solid ${theme.colors.border};`,
+    `}`,
+    `[data-slot='icon']:first-child {`,
+    `border-inline-end: 1px solid ${theme.colors.border};`,
+    `}`,
+    `[data-slot='icon']:last-child {`,
+    `border-inline-start: 1px solid ${theme.colors.border};`,
     `}`,
     `&:not(:disabled):hover {`,
     `--icon-state-background: ${resolveRangeInputIconStateBackground(theme, props.iconTone ?? DEFAULT_TONE)};`,
@@ -343,8 +342,6 @@ function getRangeInputClearButtonStyles(
   const theme = getTheme(props);
   const sizePreset = props.sizePreset ?? DEFAULT_RANGE_INPUT_SIZE_PRESET;
   const size = getMinBlockSize(sizePreset);
-  const isIconStart = (props.iconPosition ?? DEFAULT_ICON_POSITION) === 'start';
-  const seam = isIconStart ? 'border-inline-end' : 'border-inline-start';
   const stateBackground = resolveRangeInputIconStateBackground(
     theme,
     props.iconTone ?? DEFAULT_TONE
@@ -353,7 +350,8 @@ function getRangeInputClearButtonStyles(
   const styles = [
     `inline-size: ${size};`,
     `min-inline-size: ${size};`,
-    `${seam}: 1px solid ${theme.colors.border};`,
+    `&:first-child { border-inline-end: 1px solid ${theme.colors.border}; }`,
+    `&:last-child { border-inline-start: 1px solid ${theme.colors.border}; }`,
     `&:not(:disabled):hover { --icon-state-background: ${stateBackground}; }`,
     '&:focus-visible {',
     'outline: none;',
@@ -390,17 +388,11 @@ function getRangeInputPanelStyles(
   const theme = getTheme(props);
 
   const styles = [
-    'position: fixed;',
-    'inset-block-start: 0;',
-    'inset-inline-start: 0;',
-    'z-index: 2000;',
+    getPortalPanelStyles({
+      theme,
+      borderRadius: resolveRangeInputBlockRadius(props),
+    }),
     'overflow: hidden auto;',
-    `background-color: ${theme.colors.surface};`,
-    `border: 1px solid ${theme.colors.border};`,
-    `border-radius: ${resolveRangeInputBlockRadius(props)};`,
-    `box-shadow: ${theme.shadow.surface};`,
-    `outline: 2px solid ${theme.colors.focusRing};`,
-    'outline-offset: 2px;',
   ];
 
   return styles.join('\n');
@@ -467,7 +459,7 @@ function getRangeInputPresetButtonStyles(
     'pointer-events: none;',
     "content: '';",
     `border-radius: calc(${borderRadius} - ${getSpacingValue(4)});`,
-    'transition: background-color 0.12s ease;',
+    getTransitionStyles('background-color', MOTION_MICRO_DURATION),
     '}',
     `&:focus { outline: none; }`,
     `&:not(:disabled):hover::before, &:focus-visible::before { background-color: ${theme.colors.veil}; }`,
@@ -502,13 +494,13 @@ export const StyledRangeInputCustomSection = styled.div`
 `;
 
 /**
- * StyledRangeInputFields — задаёт ряд полей from и to компонента RangeInput.
+ * StyledRangeInputFields — задаёт ряд полей `from` и `to` компонента RangeInput.
  * Базируется на `<div>`.
  *
  * Встроенные стили:
  *  - `grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)` — две равные колонки полей
  *  - `gap` — зазор между полями
- *  - гашение `outline` у валидного Input на фокусе — кольцо несёт панель, как у Combobox
+ *  - `outline: none` на валидном `input:focus-visible` — кольцо фокуса несёт панель, как у Combobox
  */
 export const StyledRangeInputFields = styled.div`
   display: grid;
