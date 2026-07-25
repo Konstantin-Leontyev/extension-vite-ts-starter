@@ -13,11 +13,7 @@
 
 import styled from 'styled-components';
 
-import {
-  DEFAULT_ICON_POSITION,
-  ICON_SETTING_PROP_NAMES,
-  type IconPosition,
-} from '@ui/icon';
+import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -107,16 +103,13 @@ function resolveButtonSurface(theme: AppTheme, tone: TonePreset): ButtonSurface 
  * ButtonStyleProps — представляет пропсы стилизации Button и layout-пропсы.
  *
  * @property active — включает зафиксированное нажатое состояние
- * @property iconPosition — позиция иконки относительно лейбла
- * @property iconTone — тон секции иконки; статику красит внутренний Icon,
- *   корень считает по тому же тону шов и значение канала состояний
+ * @property iconTone — тон секции иконки
  * @property shape — форма кнопки
  * @property sizePreset — размер компонента
  * @property tone — семантический тон
  */
 export type ButtonStyleProps = LayoutProps & {
   active?: boolean;
-  iconPosition?: IconPosition;
   iconTone?: TonePreset;
   shape?: ShapePreset;
   sizePreset?: SizePreset;
@@ -151,7 +144,7 @@ const BUTTON_PROP_NAMES = new Set<string>([
 const DEFAULT_BUTTON_ACTIVE = false;
 
 /**
- * getButtonSplitStyles — возвращает CSS-правила split-раскладки корня `StyledButton`:
+ * getButtonSplitStyles — возвращает CSS-правила для корня `StyledButton`:
  * отступ лейбла, шов и канал состояний секции иконки. Статику секции красит
  * внутренний Icon своими пропсами, фон лейбла — собственная заливка корня.
  *
@@ -171,13 +164,11 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
   const theme = getTheme(props);
   const {
     active = DEFAULT_BUTTON_ACTIVE,
-    iconPosition = DEFAULT_ICON_POSITION,
     iconTone = DEFAULT_TONE,
     sizePreset = DEFAULT_SIZE_PRESET,
     tone = DEFAULT_TONE,
   } = props;
   const iconColorKey = getToneColorKey(iconTone);
-  const isIconStart = iconPosition === 'start';
   const showSeam = tone === DEFAULT_TONE && iconTone === DEFAULT_TONE;
 
   const styles = [
@@ -188,10 +179,11 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
 
   if (showSeam) {
     styles.push(
-      `[data-slot='icon'] {`,
-      isIconStart
-        ? `box-shadow: inset -1px 0 0 ${theme.colors.border};`
-        : `box-shadow: inset 1px 0 0 ${theme.colors.border};`,
+      `[data-slot='icon']:first-child {`,
+      `box-shadow: inset -1px 0 0 ${theme.colors.border};`,
+      `}`,
+      `[data-slot='icon']:last-child {`,
+      `box-shadow: inset 1px 0 0 ${theme.colors.border};`,
       `}`
     );
   }

@@ -77,7 +77,7 @@ export type ButtonWidgetState = {
  * ButtonSettingsProps — представляет пропсы компонента ButtonSettings.
  *
  * @property onChange — обработчик изменения поля состояния витрины
- * @property state — текущее состояние настроек Button
+ * @property state — текущее состояние настроек кнопки
  */
 type ButtonSettingsProps = {
   onChange: <K extends keyof ButtonWidgetState>(
@@ -163,7 +163,6 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
 
       <Checkbox
         checked={state.active}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('active', event.target.checked)
         }
@@ -173,7 +172,6 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
 
       <Checkbox
         checked={state.disabled}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('disabled', event.target.checked)
         }

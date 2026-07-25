@@ -30,7 +30,7 @@
 
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
-import { Icon } from '@ui/icon';
+import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
@@ -46,8 +46,9 @@ const DEFAULT_BUTTON_TYPE = 'button';
  * ButtonProps — представляет пропсы компонента Button.
  *
  * @property children — содержимое лейбла
- * @property icon — svg иконки действия. Окно под svg создаёт `Icon` по `sizePreset`
+ * @property icon — svg иконки действия
  * @property iconFill — тон глифа иконки при нейтральном `iconTone`
+ * @property iconPosition — позиция иконки относительно лейбла
  * @property textItalic — включает курсив лейбла
  * @property textSize — размер лейбла
  * @property textTone — тон лейбла
@@ -56,6 +57,7 @@ type ButtonProps = {
   children: ReactNode;
   icon?: ReactNode;
   iconFill?: TonePreset;
+  iconPosition?: IconPosition;
   textItalic?: boolean;
   textSize?: TextSizePreset;
   textTone?: TextTone;
@@ -69,7 +71,13 @@ type ButtonProps = {
  * <Button tone="primary" onClick={() => setIsModalOpen(true)}>
  *   Open modal
  * </Button>
- * <Button sizePreset="small" tone="danger" onClick={handleBulkDelete}>
+ * <Button
+ *   icon={<SettingsIcon />}
+ *   iconPosition="start"
+ *   sizePreset="small"
+ *   tone="danger"
+ *   onClick={handleBulkDelete}
+ * >
  *   Delete
  * </Button>
  */
@@ -77,7 +85,7 @@ export function Button({
   children,
   icon,
   iconFill,
-  iconPosition,
+  iconPosition = DEFAULT_ICON_POSITION,
   iconTone,
   sizePreset,
   textItalic,
@@ -104,7 +112,6 @@ export function Button({
   return (
     <StyledButton
       hasIcon={hasIcon}
-      iconPosition={iconPosition}
       iconTone={iconTone}
       sizePreset={sizePreset}
       tone={tone}
@@ -122,7 +129,7 @@ export function Button({
       >
         {children}
       </Text>
-      {iconPosition !== 'start' && iconNode}
+      {iconPosition === 'end' && iconNode}
     </StyledButton>
   );
 }
