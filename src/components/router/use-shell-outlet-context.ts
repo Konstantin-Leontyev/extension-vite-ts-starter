@@ -7,6 +7,7 @@
  * 2. Предоставить хук `useShellOutletContext`
  *
  * Потребители:
+ *  - `src/components/router/index.tsx` — реэкспортирует `useShellOutletContext`
  *  - `src/components/router/router-layout.tsx` — формирует контекст outlet по типу `ShellOutletContext`
  *  - `src/pages/showcase/index.tsx` — переключает режим шапки в витрине
  */

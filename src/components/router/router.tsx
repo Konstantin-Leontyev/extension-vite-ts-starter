@@ -6,7 +6,7 @@
  * 1. Предоставить объект `router` для `RouterProvider`
  *
  * Потребители:
- *  - `src/main.tsx` — передаёт `router` в `RouterProvider`
+ *  - `src/components/router/index.tsx` — реэкспортирует `router`
  */
 
 import { createHashRouter } from 'react-router-dom';

@@ -4,9 +4,9 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `CardStyleProps` и `CardBackground`
- * 2. Хранить перечень фонов в `CARD_BACKGROUND_KEYS`
- * 3. Предоставить функцию `resolveLargestHeaderActionSizePreset`
- * 4. Предоставить styled-узлы `StyledCard`, `StyledCardHeader`,
+ * 2. Предоставить константу `CARD_HEADER_ACTION_SIZE_PRESET` и перечень
+ *    `CARD_BACKGROUND_KEYS`
+ * 3. Предоставить styled-узлы `StyledCard`, `StyledCardHeader`,
  *    `StyledCardHeaderActions`, `StyledCardHeaderFirstLine` и `StyledCardBody`
  *
  * Потребители:
@@ -21,31 +21,21 @@ import {
   DEFAULT_SIZE_PRESET,
   getMinBlockSize,
   resolveBlockRadius,
+  type SizePreset,
 } from '@ui/presets';
-import {
-  DEFAULT_ROUND_BUTTON_SIZE_PRESET,
-  getRoundButtonMinBlockSize,
-  type RoundButtonSizePreset,
-} from '@ui/round-button';
+import { getRoundButtonMinBlockSize } from '@ui/round-button';
 import { getSpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 /**
- * resolveLargestHeaderActionSizePreset — вычисляет наибольший пресет в ряду действий
- * шапки. Под него резервируется высота первой строки, когда действия присутствуют.
- *
- * @param sizePresets пресеты действий с уже подставленным дефолтом RoundButton
- * @returns наибольший пресет ряда
+ * CARD_HEADER_ACTION_SIZE_PRESET — задаёт размер кнопок ряда действий шапки.
+ * Размер ряда — контракт Card, собственной оси размера у действия нет:
+ * под этот пресет всегда резервируется высота первой строки шапки,
+ * заголовок не смещается при добавлении и удалении действий.
+ * Тип `SizePreset` без ключа `huge` ряда RoundButton: huge в хроме
+ * карточки ломает композицию.
  */
-export function resolveLargestHeaderActionSizePreset(
-  sizePresets: readonly RoundButtonSizePreset[]
-): RoundButtonSizePreset {
-  return sizePresets.reduce<RoundButtonSizePreset>((largest, preset) => {
-    return getRoundButtonMinBlockSize(preset) > getRoundButtonMinBlockSize(largest)
-      ? preset
-      : largest;
-  }, DEFAULT_ROUND_BUTTON_SIZE_PRESET);
-}
+export const CARD_HEADER_ACTION_SIZE_PRESET: SizePreset = 'medium';
 
 /**
  * CardBackground — представляет заливку карточки: поверхность, фон страницы
@@ -54,9 +44,9 @@ export function resolveLargestHeaderActionSizePreset(
 export type CardBackground = 'background' | 'surface' | 'transparent';
 
 /**
- * CARD_BACKGROUND_KEYS — хранит перечень фонов карточки.
- * Используется в панелях настроек витрины дизайн-системы: значения передаются
- * в `Listbox` пропом `options`.
+ * CARD_BACKGROUND_KEYS — задаёт перечень фонов карточки.
+ * Используется в панелях настроек витрины дизайн-системы: `BackgroundListbox`
+ * собирает из него опции для `Listbox`.
  */
 export const CARD_BACKGROUND_KEYS = Object.freeze([
   'surface',
@@ -194,45 +184,6 @@ export const StyledCardHeaderActions = styled.div`
 `;
 
 /**
- * CardHeaderFirstLineStyleProps — представляет пропсы стилизации первой строки шапки.
- *
- * @property actionsSizePreset — наибольший пресет ряда действий
- * @property hasActions — включает резерв высоты под ряд действий
- */
-type CardHeaderFirstLineStyleProps = {
-  actionsSizePreset: RoundButtonSizePreset;
-  hasActions: boolean;
-};
-
-/**
- * CARD_HEADER_FIRST_LINE_PROP_NAMES — хранит имена пропсов стилизации первой строки шапки.
- */
-const CARD_HEADER_FIRST_LINE_PROP_NAMES = new Set<string>([
-  'actionsSizePreset',
-  'hasActions',
-]);
-
-/**
- * getCardHeaderFirstLineStyles — возвращает CSS-правила для узла `StyledCardHeaderFirstLine`:
- * центрирование по высоте ряда действий и минимальную высоту строки.
- *
- * @param props пропсы стилизации первой строки шапки
- * @returns CSS-правила, каждое с новой строки
- */
-function getCardHeaderFirstLineStyles(props: CardHeaderFirstLineStyleProps): string {
-  if (!props.hasActions) {
-    return '';
-  }
-
-  const styles = [
-    'align-content: center;',
-    `min-block-size: ${getSpacingValue(getRoundButtonMinBlockSize(props.actionsSizePreset))};`,
-  ];
-
-  return styles.join('\n');
-}
-
-/**
  * StyledCardHeaderFirstLine — задаёт первую строку шапки: заголовок
  * или единственный подзаголовок без заголовка.
  * Базируется на `<div>`.
@@ -240,16 +191,18 @@ function getCardHeaderFirstLineStyles(props: CardHeaderFirstLineStyleProps): str
  * Встроенные стили:
  *  - `display: grid` — раскладка по дефолту проекта
  *  - `min-inline-size: 0` — сжимается при длинном тексте рядом с actions
- *
- * Генерация стилей:
- *  - `getCardHeaderFirstLineStyles` — выравнивание и минимальная высота под actions
+ *  - `align-content: center` — центрирует текст по высоте ряда действий
+ *  - `min-block-size` — постоянный резерв высоты под ряд действий
+ *    `CARD_HEADER_ACTION_SIZE_PRESET`: заголовок не смещается при их
+ *    добавлении и удалении
  */
-export const StyledCardHeaderFirstLine = styled.div.withConfig({
-  shouldForwardProp: (prop) => !CARD_HEADER_FIRST_LINE_PROP_NAMES.has(prop),
-})<CardHeaderFirstLineStyleProps>`
+export const StyledCardHeaderFirstLine = styled.div`
   display: grid;
+  align-content: center;
   min-inline-size: 0;
-  ${(props) => getCardHeaderFirstLineStyles(props)}
+  min-block-size: ${getSpacingValue(
+    getRoundButtonMinBlockSize(CARD_HEADER_ACTION_SIZE_PRESET)
+  )};
 `;
 
 /**

@@ -33,6 +33,7 @@ import { useEffect, useId, useRef, type ComponentProps, type ReactNode } from 'r
 
 import { CloseIcon } from '@icons/close';
 import { Card } from '@ui/card';
+import { type SpacingValue } from '@ui/spacing';
 
 import { StyledModalDialog } from './modal.styles';
 
@@ -41,6 +42,12 @@ import { StyledModalDialog } from './modal.styles';
  * Используется, когда вызывающий код не передал проп `closeAriaLabel`.
  */
 const DEFAULT_MODAL_CLOSE_ARIA_LABEL = 'Close';
+
+/**
+ * MODAL_CLOSE_ICON_PADDING — задаёт отступ окна Icon у кнопки закрытия.
+ * Уменьшает глиф close при неизменной области клика RoundButton.
+ */
+const MODAL_CLOSE_ICON_PADDING: SpacingValue = 8;
 
 /**
  * CardForwardProps — представляет пропсы Card без `children` и `headerActions`.
@@ -109,6 +116,13 @@ function Modal({
     }
   }, [open]);
 
+  /**
+   * handleCloseClick — закрывает диалог через `close` на узле `<dialog>`.
+   */
+  function handleCloseClick(): void {
+    dialogRef.current?.close();
+  }
+
   return (
     <StyledModalDialog aria-labelledby={titleId} ref={dialogRef} onClose={onClose}>
       <Card
@@ -116,8 +130,8 @@ function Modal({
           {
             ariaLabel: closeAriaLabel,
             icon: <CloseIcon />,
-            iconPadding: 8,
-            onClick: onClose,
+            iconPadding: MODAL_CLOSE_ICON_PADDING,
+            onClick: handleCloseClick,
           },
         ]}
         title={title}

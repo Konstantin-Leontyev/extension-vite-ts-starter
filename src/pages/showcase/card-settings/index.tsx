@@ -12,34 +12,66 @@
  *  - `src/pages/showcase/index.tsx` — подключает панель и синхронизирует состояние с превью виджета Card
  */
 
-import { Fragment, type CSSProperties, type ChangeEvent } from 'react';
+import { Fragment, type ChangeEvent } from 'react';
 
 import { Button } from '@ui/button';
-import { type CardBackground } from '@ui/card';
+import { CARD_HEADER_ACTION_SIZE_PRESET, type CardBackground } from '@ui/card';
 import { Checkbox } from '@ui/checkbox';
 import { Combobox } from '@ui/combobox';
-import { type TextSizePreset, type TextTone } from '@ui/text';
+import { getIconPadding } from '@ui/icon';
+import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
+import { type SpacingValue } from '@ui/spacing';
+import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
 
 import { BackgroundListbox } from '../background-listbox';
-import { HeadingGroup } from '../heading-group';
 import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
 import { StyledSettingsForm } from '../showcase.styles';
+import { SizeListbox } from '../size-listbox';
+import { TitleGroup } from '../title-group';
+
+/**
+ * DEFAULT_CARD_HEADER_ACTION_ICON_PADDING — задаёт отступ окна Icon действия шапки по умолчанию.
+ * Берётся из `getIconPadding` для `CARD_HEADER_ACTION_SIZE_PRESET`.
+ */
+const DEFAULT_CARD_HEADER_ACTION_ICON_PADDING = getIconPadding(
+  CARD_HEADER_ACTION_SIZE_PRESET
+);
+
+/**
+ * resolveIconPaddingSizePreset — возвращает ключ канонического размерного ряда
+ * под текущий `iconPadding`. Берёт первый ключ ряда, у которого `getIconPadding`
+ * даёт то же значение; иначе `CARD_HEADER_ACTION_SIZE_PRESET`.
+ *
+ * @param iconPadding текущий отступ окна Icon
+ * @returns ключ ряда для контрола отступа окна Icon
+ */
+function resolveIconPaddingSizePreset(iconPadding: SpacingValue): SizePreset {
+  return (
+    SIZE_PRESET_KEYS.find((key) => getIconPadding(key) === iconPadding) ??
+    CARD_HEADER_ACTION_SIZE_PRESET
+  );
+}
 
 /**
  * CardHeaderActionState — представляет одно действие шапки в состоянии витрины
  * дизайн-системы.
  *
+ * @property disabled — включает недоступное состояние
  * @property iconKey — ключ иконки из витринного набора
+ * @property iconPadding — отступ окна Icon
  */
 export type CardHeaderActionState = {
+  disabled: boolean;
   iconKey: IconKey;
+  iconPadding: SpacingValue;
 };
 
 /**
  * CardWidgetState — представляет состояние настроек компонента Card в витрине дизайн-системы.
  * Ключи совпадают с именами пропов компонента Card, кроме витринных ключей:
  * `showSubtitle` управляет передачей подзаголовка в превью, `headerActions`
- * хранит демо-ряд действий с ключом иконки вместо `ReactNode`.
+ * хранит демо-ряд действий с ключом иконки, отступом окна Icon и флагом `disabled`
+ * вместо `ReactNode` и обработчика.
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Card.
  *
  * @property background — заливка карточки
@@ -59,11 +91,11 @@ export type CardWidgetState = {
   headerActions: CardHeaderActionState[];
   showSubtitle: boolean;
   subtitle: string;
-  subtitleAlign: CSSProperties['textAlign'];
+  subtitleAlign: TextAlignPreset;
   subtitleSizePreset: TextSizePreset;
   subtitleTone: TextTone;
   title: string;
-  titleAlign: CSSProperties['textAlign'];
+  titleAlign: TextAlignPreset;
   titleSizePreset: TextSizePreset;
   titleTone: TextTone;
 };
@@ -86,6 +118,12 @@ type CardSettingsProps = {
  * <CardSettings state={card} onChange={updateCard} />
  */
 export function CardSettings({ onChange, state }: CardSettingsProps) {
+  /**
+   * updateHeaderAction — обновляет поля одного действия шапки в состоянии витрины.
+   *
+   * @param index индекс действия в `headerActions`
+   * @param patch частичное обновление полей действия
+   */
   function updateHeaderAction(
     index: number,
     patch: Partial<CardHeaderActionState>
@@ -98,11 +136,26 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
     );
   }
 
+  /**
+   * handleAddHeaderAction — добавляет действие шапки с полями по умолчанию.
+   */
   function handleAddHeaderAction(): void {
-    onChange('headerActions', [...state.headerActions, { iconKey: 'settings' }]);
+    onChange('headerActions', [
+      ...state.headerActions,
+      {
+        disabled: false,
+        iconKey: 'settings',
+        iconPadding: DEFAULT_CARD_HEADER_ACTION_ICON_PADDING,
+      },
+    ]);
   }
 
-  function removeHeaderAction(index: number): void {
+  /**
+   * handleRemoveHeaderAction — удаляет действие шапки по индексу.
+   *
+   * @param index индекс удаляемого действия
+   */
+  function handleRemoveHeaderAction(index: number): void {
     onChange(
       'headerActions',
       state.headerActions.filter((_action, actionIndex) => actionIndex !== index)
@@ -128,10 +181,28 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
             }
           />
 
+          <SizeListbox
+            label={`Header action ${index + 1} icon padding:`}
+            sizes={SIZE_PRESET_KEYS}
+            value={resolveIconPaddingSizePreset(action.iconPadding)}
+            onChange={(size) =>
+              updateHeaderAction(index, { iconPadding: getIconPadding(size) })
+            }
+          />
+
+          <Checkbox
+            checked={action.disabled}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              updateHeaderAction(index, { disabled: event.target.checked })
+            }
+          >
+            {`Disable action ${index + 1}`}
+          </Checkbox>
+
           <Button
             tone="danger"
             onClick={() => {
-              removeHeaderAction(index);
+              handleRemoveHeaderAction(index);
             }}
           >
             Remove action
@@ -143,21 +214,20 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
         Add header action
       </Button>
 
-      <HeadingGroup
+      <TitleGroup
         align={state.titleAlign}
         labelPrefix="Title"
         size={state.titleSizePreset}
-        text={state.title}
+        title={state.title}
         tone={state.titleTone}
         onAlignChange={(align) => onChange('titleAlign', align)}
         onSizeChange={(size) => onChange('titleSizePreset', size)}
-        onTextChange={(text) => onChange('title', text)}
+        onTitleChange={(title) => onChange('title', title)}
         onToneChange={(tone) => onChange('titleTone', tone)}
       />
 
       <Checkbox
         checked={state.showSubtitle}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('showSubtitle', event.target.checked)
         }
@@ -166,15 +236,15 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
       </Checkbox>
 
       {state.showSubtitle && (
-        <HeadingGroup
+        <TitleGroup
           align={state.subtitleAlign}
           labelPrefix="Subtitle"
           size={state.subtitleSizePreset}
-          text={state.subtitle}
+          title={state.subtitle}
           tone={state.subtitleTone}
           onAlignChange={(align) => onChange('subtitleAlign', align)}
           onSizeChange={(size) => onChange('subtitleSizePreset', size)}
-          onTextChange={(text) => onChange('subtitle', text)}
+          onTitleChange={(title) => onChange('subtitle', title)}
           onToneChange={(tone) => onChange('subtitleTone', tone)}
         />
       )}

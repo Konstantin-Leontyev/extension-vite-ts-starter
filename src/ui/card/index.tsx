@@ -19,9 +19,11 @@
  *  - переопределение корневого элемента через проп `as`
  *
  * Основные задачи:
- * 1. Экспортировать полиморфный компонент Card и тип `CardHeaderAction`
+ * 1. Экспортировать полиморфный компонент Card
  * 2. Типизировать пропсы через `CardProps`
- * 3. Реэкспортировать публичное API стилей: `CARD_BACKGROUND_KEYS`, `CardBackground`
+ * 3. Экспортировать тип `CardHeaderAction`
+ * 4. Реэкспортировать публичное API стилей: `CARD_BACKGROUND_KEYS`,
+ *    `CARD_HEADER_ACTION_SIZE_PRESET`, `CardBackground`
  *
  * Потребители:
  *  - страницы и виджеты приложения — показывают карточки с шапкой и действиями
@@ -36,22 +38,18 @@ import {
   type ReactNode,
 } from 'react';
 
-import {
-  DEFAULT_ROUND_BUTTON_SIZE_PRESET,
-  RoundButton,
-  type RoundButtonSizePreset,
-} from '@ui/round-button';
+import { RoundButton } from '@ui/round-button';
 import { type SpacingValue } from '@ui/spacing';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 
 import {
   CARD_BACKGROUND_KEYS,
+  CARD_HEADER_ACTION_SIZE_PRESET,
   StyledCard,
   StyledCardBody,
   StyledCardHeader,
   StyledCardHeaderActions,
   StyledCardHeaderFirstLine,
-  resolveLargestHeaderActionSizePreset,
   type CardBackground,
   type CardStyleProps,
 } from './card.styles';
@@ -74,7 +72,6 @@ type CardHtmlTag = 'article' | 'div' | 'section';
  *   Область клика кнопки не меняет, увеличенный отступ зрительно уменьшает глиф,
  *   например close в Modal и ProfileMenu
  * @property onClick — обработчик клика
- * @property sizePreset — размер RoundButton
  */
 type CardHeaderAction = {
   ariaControls?: string;
@@ -84,7 +81,6 @@ type CardHeaderAction = {
   icon: ReactNode;
   iconPadding?: SpacingValue;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-  sizePreset?: RoundButtonSizePreset;
 };
 
 /**
@@ -185,10 +181,6 @@ function Card<T extends CardHtmlTag = 'div'>({
 }: CardProps<T>) {
   const hasHeader = Boolean(title || subtitle);
   const hasActions = headerActions.length > 0;
-  const actionSizePresets = headerActions.map(
-    (action) => action.sizePreset ?? DEFAULT_ROUND_BUTTON_SIZE_PRESET
-  );
-  const actionsSizePreset = resolveLargestHeaderActionSizePreset(actionSizePresets);
 
   const actionsRow = hasActions && (
     <StyledCardHeaderActions>
@@ -201,8 +193,7 @@ function Card<T extends CardHtmlTag = 'div'>({
           disabled={action.disabled}
           iconPadding={action.iconPadding}
           key={index}
-          showBorder={false}
-          sizePreset={actionSizePresets[index]}
+          sizePreset={CARD_HEADER_ACTION_SIZE_PRESET}
           tabIndex={action.ariaLabel ? undefined : -1}
           onClick={(event) => handleHeaderActionClick(action, event)}
         >
@@ -225,10 +216,7 @@ function Card<T extends CardHtmlTag = 'div'>({
 
   const header = hasHeader && (
     <StyledCardHeader>
-      <StyledCardHeaderFirstLine
-        actionsSizePreset={actionsSizePreset}
-        hasActions={hasActions}
-      >
+      <StyledCardHeaderFirstLine>
         {Boolean(title) && (
           <Text
             align={titleAlign}
@@ -255,4 +243,10 @@ function Card<T extends CardHtmlTag = 'div'>({
   );
 }
 
-export { CARD_BACKGROUND_KEYS, Card, type CardBackground, type CardHeaderAction };
+export {
+  CARD_BACKGROUND_KEYS,
+  CARD_HEADER_ACTION_SIZE_PRESET,
+  Card,
+  type CardBackground,
+  type CardHeaderAction,
+};
