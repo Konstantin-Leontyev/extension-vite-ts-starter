@@ -3,9 +3,6 @@
  * Определяет панель настроек компонента Stepper в витрине дизайн-системы.
  * Содержит контролы для изменения размера, формы, границ, шага, суффикса,
  * значения, его текстовых настроек и недоступного состояния в реальном времени.
- * Границы, шаг и суффикс — параметры счётчика. Значение — контент нативного
- * поля, аналог текста, поэтому его инпут и текстовые контролы идут после
- * параметров текстовой группой.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `StepperWidgetState`
@@ -169,7 +166,6 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
           aria-labelledby={STEP_LABEL_ID}
           id={STEP_FIELD_ID}
           min={1}
-          sizePreset="medium"
           textAlign="center"
           value={state.step}
           onChange={(value) => onChange('step', value)}
@@ -189,7 +185,6 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
         align={state.textAlign}
         contents={[
           {
-            label: 'Value:',
             value: String(state.value),
             onChange: (nextValue) => {
               const parsed = Number(nextValue);
@@ -201,10 +196,10 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
           },
         ]}
         italic={state.textItalic}
+        labelPrefix="Value"
         size={state.textSize}
         tones={[
           {
-            label: 'Text tone:',
             value: state.textTone,
             onChange: (tone) => onChange('textTone', tone),
           },
@@ -216,7 +211,6 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
 
       <Checkbox
         checked={state.disabled}
-        sizePreset="medium"
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('disabled', event.target.checked)
         }

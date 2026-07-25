@@ -43,6 +43,7 @@ import {
 import { ChevronDownIcon } from '@icons/chevron-down';
 import { ChevronUpIcon } from '@icons/chevron-up';
 import { Icon } from '@ui/icon';
+import { type SpacingValue } from '@ui/spacing';
 import { Text, type TextTone } from '@ui/text';
 
 import {
@@ -81,6 +82,12 @@ const DECREASE_LABEL = 'Decrease';
 const INCREASE_LABEL = 'Increase';
 
 /**
+ * STEPPER_CHEVRON_ICON_PADDING — задаёт отступ окна Icon шеврона внутри половинки
+ * стрелки. Вместе с высотой половинки даёт окна `12`/`16`/`20` px при `small`/`medium`/`large`.
+ */
+const STEPPER_CHEVRON_ICON_PADDING: SpacingValue = 2;
+
+/**
  * STEP_REPEAT_DELAY_MS — задаёт паузу до старта автоповтора при удержании стрелки.
  * Используется в таймере начала автоповтора.
  */
@@ -109,9 +116,9 @@ type StepperAccessibleName =
  * @property max — верхняя граница значения
  * @property min — нижняя граница значения
  * @property onChange — обработчик изменения значения
- * @property onCommit — обработчик фиксации значения после blur поля и отпускания стрелки, в том числе после автоповтора
+ * @property onCommit — обработчик фиксации значения после `blur` поля и отпускания стрелки, в том числе после автоповтора
  * @property step — шаг изменения значения
- * @property suffix — подпись единицы внутри поля, например K или M
+ * @property suffix — подпись единицы внутри поля, например `K` или `M`
  * @property value — числовое значение счётчика
  */
 type StepperProps = StepperStyleProps &
@@ -366,7 +373,11 @@ export function Stepper({
           onPointerLeave={stopHold}
           onPointerUp={stopHold}
         >
-          <Icon blockSize="100%" inlineSize="100%" padding={2}>
+          <Icon
+            blockSize="100%"
+            inlineSize="100%"
+            padding={STEPPER_CHEVRON_ICON_PADDING}
+          >
             <ChevronUpIcon />
           </Icon>
         </StyledStepperButton>
@@ -380,7 +391,11 @@ export function Stepper({
           onPointerLeave={stopHold}
           onPointerUp={stopHold}
         >
-          <Icon blockSize="100%" inlineSize="100%" padding={2}>
+          <Icon
+            blockSize="100%"
+            inlineSize="100%"
+            padding={STEPPER_CHEVRON_ICON_PADDING}
+          >
             <ChevronDownIcon />
           </Icon>
         </StyledStepperButton>

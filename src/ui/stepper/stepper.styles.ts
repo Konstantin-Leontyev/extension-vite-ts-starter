@@ -18,6 +18,7 @@ import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
+  getFocusRingStyles,
   getMinBlockSize,
   getPaddingInline,
   getTextSize,
@@ -41,12 +42,23 @@ export { splitLayoutProps } from '@ui/layout';
  * getStepperTextSize — возвращает размер значения и суффикса по `sizePreset`.
  * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
  *
- * @param sizePreset размер компонента
- * @returns метка размера текста из `TextSizePreset` для значения и суффикса единицы
+ * @param sizePreset размер счётчика
+ * @returns метка размера текста из `TextSizePreset` для значения и суффикса счётчика
  */
 export function getStepperTextSize(sizePreset?: SizePreset): TextSizePreset {
   return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
 }
+
+/**
+ * StepperRootStyleProps — представляет пропсы стилизации корневого поля Stepper.
+ *
+ * @property shape — форма поля
+ * @property sizePreset — размер компонента
+ */
+type StepperRootStyleProps = {
+  shape?: ShapePreset;
+  sizePreset?: SizePreset;
+};
 
 /**
  * StepperStyleProps — представляет пропсы стилизации Stepper и layout-пропсы.
@@ -65,18 +77,7 @@ export type StepperStyleProps = LayoutProps &
   };
 
 /**
- * StepperRootStyleProps — представляет пропсы стилизации корневого поля Stepper.
- *
- * @property shape — форма поля
- * @property sizePreset — размер компонента
- */
-type StepperRootStyleProps = {
-  shape?: ShapePreset;
-  sizePreset?: SizePreset;
-};
-
-/**
- * STEPPER_ROOT_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Stepper.
+ * STEPPER_ROOT_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации корня Stepper.
  */
 const STEPPER_ROOT_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
@@ -105,8 +106,7 @@ function getStepperRootStyles(
     `background-color: ${theme.colors.surface};`,
     `box-shadow: ${theme.shadow.surface};`,
     '&:focus-within {',
-    `outline: 2px solid ${theme.colors.focusRing};`,
-    'outline-offset: 2px;',
+    getFocusRingStyles(theme.colors.focusRing),
     '}',
   ];
 
@@ -126,9 +126,8 @@ function getStepperRootStyles(
  *  - `getStepperRootStyles` — габариты, рамка, скругление, фон, тень и кольцо фокуса
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *
- * При блокировке `src/ui/stepper/index.tsx` ставит на корень атрибут `data-disabled` —
- * контракт `[data-disabled]` из `@ui/reset` приглушает рамку, фон, значение, суффикс
- * и стрелки, без локального disabled-стиля.
+ * Атрибут `data-disabled` на корне включает приглушение рамки, фона, значения, суффикса
+ * и стрелок через контракт `@ui/reset`, без локального disabled-стиля.
  */
 export const StyledStepperRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !STEPPER_ROOT_PROP_NAMES.has(prop),
@@ -367,7 +366,7 @@ const STEPPER_BUTTON_PROP_NAMES = new Set<string>(['sizePreset']);
  * половинки, цвет, разделитель между половинками и подсветку наведения.
  * Высота задаётся как половина `minBlockSize`, чтобы заданная высота строки не позволяла
  * `<svg>` раздуть авто-строку грида. Окно шеврона создаёт `Icon` в JSX: заполнение
- * половинки с отступом 2 даёт окна 12, 16 или 20 px при половинках 16, 20 или 24 px.
+ * половинки с отступом `2` даёт окна `12`, `16` или `20` px при половинках `16`, `20` или `24` px.
  *
  * @param props пропсы стилизации половины области стрелок и тема
  * @returns CSS-правила, каждое с новой строки
@@ -387,7 +386,6 @@ function getStepperButtonStyles(
     '}',
     '&:not(:disabled):hover,',
     '&:focus-visible {',
-    `color: ${theme.colors.default};`,
     `background-color: ${theme.colors.veil};`,
     '}',
   ];
