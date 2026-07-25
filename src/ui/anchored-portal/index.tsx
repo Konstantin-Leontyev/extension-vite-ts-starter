@@ -1,6 +1,8 @@
 /**
  * Файл: `src/ui/anchored-portal/index.tsx`
  * Предоставляет компонент AnchoredPortal для отображения привязанной панели через портал.
+ * Открытая панель удерживает обход `Tab` внутри себя — ловушка фокуса встроена
+ * и пропом не управляется.
  *
  * Поддерживает:
  *  - открытие и закрытие панели через проп `open`
@@ -9,7 +11,7 @@
  *  - зоны, клик вне которых закрывает панель, через проп `dismissZoneRefs`
  *  - обработчик закрытия панели через проп `onDismiss`
  *  - независимое управление закрытием через проп `dismissActive`
- *  - ловушку фокуса и возврат фокуса через проп `returnFocusRef`
+ *  - возврат фокуса при закрытии через проп `returnFocusRef`
  *  - начальный фокус при открытии через проп `onOpenFocus`
  *  - перефокус при смене содержимого через проп `openFocusDeps`
  *  - ссылку на DOM-узел панели через проп `panelRef`
@@ -21,7 +23,7 @@
  * Потребители:
  *  - контролы, например Combobox, Listbox, DateInput, DateRangeInput и RangeInput —
  *    рендерят выпадающие панели
- *  - Table — рендерит панели compose и другие overlay-панели
+ *  - `@ui/table` — рендерит панели compose и другие overlay-панели
  *  - `src/components/profile-menu/index.tsx` — рендерит меню профиля
  */
 
@@ -46,8 +48,7 @@ const DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS: readonly unknown[] = [];
  *
  * @property children — содержимое панели
  * @property dismissActive — включает закрытие по клику вне зон. Без значения
- *   совпадает с `open`. Table compose отключает закрытие, пока не передан
- *   обработчик отмены
+ *   совпадает с `open`
  * @property dismissZoneRefs — ссылки на зоны, клик вне которых вызывает `onDismiss`
  * @property onDismiss — обработчик закрытия панели
  * @property onOpenFocus — обработчик начального фокуса при открытии
@@ -146,7 +147,7 @@ export function AnchoredPortal({
     return () => {
       window.cancelAnimationFrame(frameId);
     };
-    // onOpenFocus — через useEffectEvent: нестабильная identity колбэка не перезапускает эффект.
+    // onOpenFocus — через useEffectEvent: смена ссылки на колбэк не перезапускает эффект.
     // openFocusDeps — перефокус при смене содержимого панели.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- зависимости задаёт вызывающий код через openFocusDeps
   }, [open, panelRef, ...openFocusDeps]);
