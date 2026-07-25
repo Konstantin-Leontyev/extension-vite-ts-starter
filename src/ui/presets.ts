@@ -263,7 +263,7 @@ export function getFocusRingStyles(
 /**
  * getControlBorder — возвращает CSS-правило рамки контрола вне layout-box:
  * кольцо и тень поверхности одним `box-shadow`. Рамочный и безрамочный режимы
- * дают один content-box и один размер `Icon` на `100%`, без резерва
+ * дают один content-box и одно окно `Icon`, без резерва
  * `border: 1px solid transparent`.
  * Проп `showBorder` подключается контролу осознанно: эталоны RoundButton и Input.
  * Составные триггеры, например Listbox, Combobox, Stepper и RangeInput, проп не

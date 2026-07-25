@@ -6,13 +6,13 @@
  *
  * Поддерживает:
  *  - выравнивание заголовка через проп `align`
+ *  - префикс подписей контролов через проп `labelPrefix`
  *  - обработчик изменения выравнивания через проп `onAlignChange`
  *  - обработчик изменения размера через проп `onSizeChange`
  *  - обработчик изменения содержимого через проп `onTitleChange`
  *  - обработчик изменения тона через проп `onToneChange`
  *  - размер заголовка через проп `size`
  *  - содержимое заголовка через проп `title`
- *  - префикс подписей контролов через проп `titlePrefix`
  *  - тон заголовка через проп `tone`
  *
  * Основные задачи:
@@ -20,7 +20,7 @@
  * 2. Типизировать пропсы через `TitleGroupProps`
  * 3. Рендерить единый блок настроек заголовка: содержимое, размер,
  *    выравнивание и тон
- * 4. Строить подписи контролов из префикса `titlePrefix`
+ * 4. Строить подписи контролов из префикса `labelPrefix`
  *
  * Потребители:
  *  - панели настроек витрины — настраивают заголовок и подзаголовок:
@@ -48,24 +48,24 @@ import { ToneListbox } from '../tone-listbox';
  * TitleGroupProps — представляет пропсы компонента TitleGroup.
  *
  * @property align — текущее выравнивание заголовка
+ * @property labelPrefix — префикс подписей контролов, например `Title` или `Subtitle`
  * @property onAlignChange — обработчик изменения выравнивания
  * @property onSizeChange — обработчик изменения размера
  * @property onTitleChange — обработчик изменения содержимого заголовка
  * @property onToneChange — обработчик изменения тона
  * @property size — текущий размер заголовка
  * @property title — текущее содержимое заголовка
- * @property titlePrefix — префикс подписей контролов, например `Title` или `Subtitle`
  * @property tone — текущий тон заголовка
  */
 type TitleGroupProps = {
   align: TextAlignPreset;
+  labelPrefix: string;
   onAlignChange: (align: TextAlignPreset) => void;
   onSizeChange: (size: TextSizePreset) => void;
   onTitleChange: (title: string) => void;
   onToneChange: (tone: TextTone) => void;
   size: TextSizePreset;
   title: string;
-  titlePrefix: string;
   tone: TextTone;
 };
 
@@ -75,9 +75,9 @@ type TitleGroupProps = {
  * @example
  * <TitleGroup
  *   align={state.titleAlign}
+ *   labelPrefix="Title"
  *   size={state.titleSizePreset}
  *   title={state.title}
- *   titlePrefix="Title"
  *   tone={state.titleTone}
  *   onAlignChange={(align) => onChange('titleAlign', align)}
  *   onSizeChange={(size) => onChange('titleSizePreset', size)}
@@ -87,19 +87,19 @@ type TitleGroupProps = {
  */
 export function TitleGroup({
   align,
+  labelPrefix,
   onAlignChange,
   onSizeChange,
   onTitleChange,
   onToneChange,
   size,
   title,
-  titlePrefix,
   tone,
 }: TitleGroupProps) {
   return (
     <>
       <Input
-        label={`${titlePrefix}:`}
+        label={`${labelPrefix}:`}
         reserveErrorSpace={false}
         value={title}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -108,7 +108,7 @@ export function TitleGroup({
       />
 
       <SizeListbox
-        label={`${titlePrefix} size:`}
+        label={`${labelPrefix} size:`}
         sizes={TEXT_SIZE_PRESET_KEYS}
         value={size}
         onChange={onSizeChange}
@@ -116,13 +116,13 @@ export function TitleGroup({
 
       <AlignListbox
         aligns={TEXT_ALIGN_PRESET_KEYS}
-        label={`${titlePrefix} align:`}
+        label={`${labelPrefix} align:`}
         value={align}
         onChange={onAlignChange}
       />
 
       <ToneListbox
-        label={`${titlePrefix} tone:`}
+        label={`${labelPrefix} tone:`}
         tones={TEXT_TONE_KEYS}
         value={tone}
         onChange={onToneChange}
