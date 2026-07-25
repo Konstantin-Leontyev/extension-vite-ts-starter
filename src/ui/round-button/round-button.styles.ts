@@ -131,9 +131,9 @@ function getRoundButtonStyles(
     sizePreset = DEFAULT_ROUND_BUTTON_SIZE_PRESET,
   } = props;
   const size = getSpacingValue(getRoundButtonMinBlockSize(sizePreset));
-  const toneColorKey = getToneColorKey(iconTone);
-  const stateBackground = toneColorKey
-    ? resolveColorMix(theme.colors[toneColorKey], theme.colors.shade)
+  const colorKey = getToneColorKey(iconTone);
+  const stateBackground = colorKey
+    ? resolveColorMix(theme.colors[colorKey], theme.colors.shade)
     : theme.colors.veil;
 
   const styles = [

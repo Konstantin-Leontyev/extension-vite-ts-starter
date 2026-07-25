@@ -37,12 +37,28 @@ const VEIL_INSET_OFFSET: SpacingValue = 4;
 const SCROLLBAR_TRACK_WIDTH: SpacingValue = 8;
 
 /**
+ * ScrollPortStyleProps — представляет пропсы стилизации ScrollPort и layout-пропсы.
+ * Одно значение `paddingInlineEnd` задаёт отступ под трек скроллбара на корне и отступ
+ * содержимого во вьюпорте.
+ *
+ * @property paddingInlineEnd — отступ inline-end для трека скроллбара и содержимого
+ * @property scrollbarInsetBlockEnd — отступ снизу перед прокручиваемым контентом
+ * @property scrollbarInsetBlockStart — отступ сверху перед прокручиваемым контентом
+ * @property showVeil — включает градиентные вуали на краях при прокрутке
+ */
+export type ScrollPortStyleProps = LayoutProps & {
+  paddingInlineEnd?: SpacingValue;
+  scrollbarInsetBlockEnd?: SpacingValue;
+  scrollbarInsetBlockStart?: SpacingValue;
+  showVeil?: boolean;
+};
+
+/**
  * ScrollPortRootStyleProps — представляет пропсы стилизации корня ScrollPort.
- * `gutterInlineEnd` обязателен: сборка подставляет дефолт один раз в `index.tsx`.
- * Публичный проп называется `paddingInlineEnd`. На корне значение переименовано,
- * потому что питает не CSS-свойство `padding-inline-end`, а смещение трека и края
- * вуали: имя layout-пропа заставило бы `getLayoutStyles` корня написать лишний
- * `padding-inline-end`.
+ * Публичный проп называется `paddingInlineEnd`. На корне значение переименовано
+ * в `gutterInlineEnd`, потому что питает не CSS-свойство `padding-inline-end`, а смещение
+ * трека и края вуали: имя layout-пропа заставило бы `getLayoutStyles` корня написать
+ * лишний `padding-inline-end`.
  *
  * @property gutterInlineEnd — ширина правого отступа под трек скроллбара и зазор вуали
  * @property showVeil — включает градиентные вуали на краях при прокрутке
@@ -176,7 +192,6 @@ export const StyledScrollPortContainer = styled.div`
 
 /**
  * ScrollPortViewportStyleProps — представляет пропсы стилизации вьюпорта ScrollPort.
- * `paddingInlineEnd` обязателен: сборка подставляет дефолт один раз в `index.tsx`.
  *
  * @property paddingInlineEnd — отступ inline-end содержимого вьюпорта
  * @property scrollbarInsetBlockEnd — отступ снизу перед прокручиваемым контентом
@@ -247,21 +262,3 @@ export const StyledScrollPortViewport = styled.div.withConfig({
 })<ScrollPortViewportStyleProps>`
   ${(props) => getScrollPortViewportStyles(props)}
 `;
-
-/**
- * ScrollPortStyleProps — представляет пропсы стилизации ScrollPort и layout-пропсы.
- * `paddingInlineEnd` опционален: сборка подставляет дефолт один раз в `index.tsx`,
- * во внутренние узлы уходит уже подставленное значение. Одно значение задаёт отступ
- * под трек скроллбара на корне и отступ содержимого во вьюпорте.
- *
- * @property paddingInlineEnd — отступ inline-end для трека скроллбара и содержимого
- * @property scrollbarInsetBlockEnd — отступ снизу перед прокручиваемым контентом
- * @property scrollbarInsetBlockStart — отступ сверху перед прокручиваемым контентом
- * @property showVeil — включает градиентные вуали на краях при прокрутке
- */
-export type ScrollPortStyleProps = LayoutProps & {
-  paddingInlineEnd?: SpacingValue;
-  scrollbarInsetBlockEnd?: SpacingValue;
-  scrollbarInsetBlockStart?: SpacingValue;
-  showVeil?: boolean;
-};

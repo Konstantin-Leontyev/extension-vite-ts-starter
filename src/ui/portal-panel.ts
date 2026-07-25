@@ -23,7 +23,7 @@ import { type AppTheme } from '@ui/theme';
  * fixed-позицию у угла, слой `STACKING_PORTAL`, поверхность, рамку, тень,
  * радиус и постоянное фокус-кольцо. Опционально — `padding`.
  *
- * @param options тема, радиус и опциональный padding
+ * @param options тема, радиус и опциональный отступ
  * @returns CSS-правила, каждое с новой строки
  */
 export function getPortalPanelStyles(options: {

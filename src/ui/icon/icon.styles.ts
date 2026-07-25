@@ -3,7 +3,7 @@
  * Определяет внешний вид компонента Icon.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `IconStyleProps`, `IconSizePreset` и `IconPosition`
+ * 1. Типизировать пропсы через `IconStyleProps` и `IconPosition`
  * 2. Хранить локальные ряды габарита в `iconSize` и отступов в `iconPadding`
  * 3. Предоставить функцию `getIconPadding`, дефолт `DEFAULT_ICON_POSITION`,
  *    а также перечни `ICON_POSITION_KEYS` и `ICON_SETTING_PROP_NAMES`
@@ -58,7 +58,7 @@ export const ICON_SETTING_PROP_NAMES = new Set(['iconFill', 'iconPosition', 'ico
  * в общий ряд контролов: `huge` доступен только там, где родитель передаёт
  * свой расширенный ряд, например RoundButton.
  */
-export type IconSizePreset = 'huge' | SizePreset;
+type IconSizePreset = 'huge' | SizePreset;
 
 /**
  * iconSize — хранит габарит окна иконки для каждого размера ряда.
@@ -140,11 +140,11 @@ function resolveIconSurface(
   iconTone: TonePreset,
   iconFill?: TonePreset
 ): IconSurface {
-  const toneColorKey = getToneColorKey(iconTone);
+  const colorKey = getToneColorKey(iconTone);
 
-  if (toneColorKey) {
+  if (colorKey) {
     return {
-      backgroundColor: theme.colors[toneColorKey],
+      backgroundColor: theme.colors[colorKey],
       color: theme.colors.inverse,
     };
   }
