@@ -142,12 +142,10 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
 
       <IconGroup
         fill={state.iconFill}
-        position={{
-          value: state.iconPosition,
-          onChange: (position) => onChange('iconPosition', position),
-        }}
+        position={state.iconPosition}
         tone={state.iconTone}
         onFillChange={(tone) => onChange('iconFill', tone)}
+        onPositionChange={(position) => onChange('iconPosition', position)}
         onToneChange={(tone) => onChange('iconTone', tone)}
       />
 

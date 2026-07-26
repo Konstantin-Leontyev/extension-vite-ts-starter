@@ -5,13 +5,18 @@
  *
  * Поддерживает:
  *  - тон глифа иконки через проп `fill`
- *  - выбор глифа через проп `icon`. Без `icon` контрол `Icon:` не рендерится
+ *  - опции глифов через проп `iconOptions`. Без `iconOptions` контрол `Icon:` не рендерится
+ *  - ключ глифа через проп `iconValue`
  *  - суффикс лейблов через проп `name`. Например для SegmentButton — A, B или C
  *  - обработчик изменения тона глифа через проп `onFillChange`
+ *  - обработчик изменения ключа глифа через проп `onIconChange`
+ *  - обработчик изменения позиции через проп `onPositionChange`. Без `onPositionChange`
+ *    контрол позиции не рендерится
+ *  - обработчик показа иконки через проп `onShowChange`. Без `onShowChange` иконка
+ *    неотключаема и группа рендерится всегда
  *  - обработчик изменения тона секции через проп `onToneChange`
- *  - позицию иконки через проп `position`. Без `position` контрол позиции не рендерится
- *  - показ иконки через проп `show`. Без `show` иконка неотключаема и группа
- *    рендерится всегда
+ *  - позицию иконки через проп `position`
+ *  - показ иконки через проп `show`
  *  - тон секции иконки через проп `tone`
  *
  * Основные задачи:
@@ -21,6 +26,8 @@
  * Потребители:
  *  - панели настроек витрины — настраивают иконку компонента:
  *     - `src/pages/showcase/button-settings/index.tsx`
+ *     - `src/pages/showcase/combobox-settings/index.tsx`
+ *     - `src/pages/showcase/listbox-settings/index.tsx`
  *     - `src/pages/showcase/range-input-settings/index.tsx`
  *     - `src/pages/showcase/round-button-settings/index.tsx`
  *     - `src/pages/showcase/segment-button-settings/index.tsx`
@@ -37,58 +44,46 @@ import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 import { ToneListbox } from '../tone-listbox';
 
 /**
- * ICON_POSITION_OPTIONS — формирует опции листбокса позиции иконки из `ICON_POSITION_KEYS`.
- * Используется в `Listbox` позиции внутри IconGroup.
- */
-const ICON_POSITION_OPTIONS: ListboxOption[] = ICON_POSITION_KEYS.map((position) => ({
-  label: position,
-  value: position,
-}));
-
-/**
- * IconGroupIconSelect — представляет опциональный выбор глифа иконки.
+ * getIconPositionListboxOptions — преобразует `ICON_POSITION_KEYS` в опции Listbox.
  *
- * @property onChange — обработчик изменения ключа глифа
- * @property options — опции Combobox с глифами
- * @property value — текущий ключ глифа
+ * @returns опции для Listbox позиции
  */
-type IconGroupIconSelect = {
-  onChange: (value: string) => void;
-  options: ComboboxOption[];
-  value: string;
-};
-
-/**
- * IconGroupPosition — представляет выбор позиции иконки.
- *
- * @property onChange — обработчик изменения позиции
- * @property value — текущая позиция
- */
-type IconGroupPosition = {
-  onChange: (position: IconPosition) => void;
-  value: IconPosition;
-};
+function getIconPositionListboxOptions(): ListboxOption[] {
+  return ICON_POSITION_KEYS.map((position) => ({
+    label: position,
+    value: position,
+  }));
+}
 
 /**
  * IconGroupProps — представляет пропсы компонента IconGroup.
  *
  * @property fill — текущий тон глифа иконки
- * @property icon — выбор глифа. Без него контрол `Icon:` не рендерится
+ * @property iconOptions — опции Combobox с глифами. Без него контрол `Icon:` не рендерится
+ * @property iconValue — текущий ключ глифа
  * @property name — суффикс лейблов группы. Например A даёт `Show icon A` и `Icon A tone:`
  * @property onFillChange — обработчик изменения тона глифа
+ * @property onIconChange — обработчик изменения ключа глифа
+ * @property onPositionChange — обработчик изменения позиции. Без него контрол позиции
+ *   не рендерится
+ * @property onShowChange — обработчик показа иконки. Без него иконка неотключаема
  * @property onToneChange — обработчик изменения тона секции
- * @property position — позиция иконки. Без него контрол позиции не рендерится
- * @property show — включает показ иконки. Без него иконка неотключаема и группа рендерится всегда
+ * @property position — текущая позиция иконки
+ * @property show — включает показ иконки при переданном `onShowChange`
  * @property tone — текущий тон секции иконки
  */
 type IconGroupProps = {
   fill: TonePreset;
-  icon?: IconGroupIconSelect;
+  iconOptions?: ComboboxOption[];
+  iconValue?: string;
   name?: string;
   onFillChange: (tone: TonePreset) => void;
+  onIconChange?: (value: string) => void;
+  onPositionChange?: (position: IconPosition) => void;
+  onShowChange?: (show: boolean) => void;
   onToneChange: (tone: TonePreset) => void;
-  position?: IconGroupPosition;
-  show?: { checked: boolean; onChange: (checked: boolean) => void };
+  position?: IconPosition;
+  show?: boolean;
   tone: TonePreset;
 };
 
@@ -126,68 +121,66 @@ function formatIconGroupLabel(base: string, name?: string): string {
  * // Button: флаг, выбор глифа, тона и позиция
  * <IconGroup
  *   fill={state.iconFill}
- *   icon={{
- *     options: COMBOBOX_OPTIONS,
- *     value: state.iconKey,
- *     onChange: (value) => onChange('iconKey', value as IconKey),
- *   }}
- *   position={{
- *     value: state.iconPosition,
- *     onChange: (position) => onChange('iconPosition', position),
- *   }}
- *   show={{ checked: state.withIcon, onChange: (checked) => onChange('withIcon', checked) }}
+ *   iconOptions={COMBOBOX_OPTIONS}
+ *   iconValue={state.iconKey}
+ *   position={state.iconPosition}
+ *   show={state.withIcon}
  *   tone={state.iconTone}
  *   onFillChange={(tone) => onChange('iconFill', tone)}
+ *   onIconChange={(value) => onChange('iconKey', value as IconKey)}
+ *   onPositionChange={(position) => onChange('iconPosition', position)}
+ *   onShowChange={(checked) => onChange('withIcon', checked)}
  *   onToneChange={(tone) => onChange('iconTone', tone)}
  * />
- * // RoundButton: без позиции
+ * // RoundButton: без позиции и флага показа
  * <IconGroup
  *   fill={state.iconFill}
- *   icon={{
- *     options: COMBOBOX_OPTIONS,
- *     value: state.iconKey,
- *     onChange: (value) => onChange('iconKey', value as IconKey),
- *   }}
+ *   iconOptions={COMBOBOX_OPTIONS}
+ *   iconValue={state.iconKey}
  *   tone={state.iconTone}
  *   onFillChange={(tone) => onChange('iconFill', tone)}
+ *   onIconChange={(value) => onChange('iconKey', value as IconKey)}
  *   onToneChange={(tone) => onChange('iconTone', tone)}
  * />
  */
 export function IconGroup({
   fill,
-  icon,
+  iconOptions,
+  iconValue,
   name,
   onFillChange,
+  onIconChange,
+  onPositionChange,
+  onShowChange,
   onToneChange,
   position,
   show,
   tone,
 }: IconGroupProps) {
-  const expanded = !show || show.checked;
+  const isExpanded = onShowChange === undefined || Boolean(show);
 
   return (
     <>
-      {show && (
+      {onShowChange !== undefined && (
         <Checkbox
-          checked={show.checked}
-          sizePreset="medium"
+          checked={Boolean(show)}
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            show.onChange(event.target.checked)
+            onShowChange(event.target.checked)
           }
         >
           {formatIconGroupLabel('Show icon', name)}
         </Checkbox>
       )}
 
-      {expanded && (
+      {isExpanded && (
         <>
-          {icon && (
+          {iconOptions !== undefined && onIconChange !== undefined && (
             <Combobox
               label={formatIconGroupLabel('Icon:', name)}
-              options={icon.options}
+              options={iconOptions}
               reserveErrorSpace={false}
-              value={icon.value}
-              onChange={icon.onChange}
+              value={iconValue}
+              onChange={onIconChange}
             />
           )}
 
@@ -206,13 +199,13 @@ export function IconGroup({
             onChange={onFillChange}
           />
 
-          {position && (
+          {onPositionChange !== undefined && position !== undefined && (
             <Listbox
               label={formatIconGroupLabel('Icon position:', name)}
-              options={ICON_POSITION_OPTIONS}
+              options={getIconPositionListboxOptions()}
               reserveErrorSpace={false}
-              value={position.value}
-              onChange={(value) => position.onChange(value as IconPosition)}
+              value={position}
+              onChange={(value) => onPositionChange(value as IconPosition)}
             />
           )}
         </>

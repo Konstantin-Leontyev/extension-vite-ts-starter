@@ -13,7 +13,11 @@
 
 import styled from 'styled-components';
 
-import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
+import {
+  ICON_SETTING_PROP_NAMES,
+  getIconSectionSeamStyles,
+  resolveIconStateBackground,
+} from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -170,6 +174,7 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
   } = props;
   const iconColorKey = getToneColorKey(iconTone);
   const showSeam = tone === DEFAULT_TONE && iconTone === DEFAULT_TONE;
+  const hoverStateBackground = resolveIconStateBackground(theme, iconTone, 'none');
 
   const styles = [
     `[data-slot='label'] {`,
@@ -179,19 +184,17 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
 
   if (showSeam) {
     styles.push(
-      `[data-slot='icon']:first-child {`,
-      `box-shadow: inset -1px 0 0 ${theme.colors.border};`,
-      `}`,
-      `[data-slot='icon']:last-child {`,
-      `box-shadow: inset 1px 0 0 ${theme.colors.border};`,
-      `}`
+      getIconSectionSeamStyles({
+        borderColor: theme.colors.border,
+        technique: 'inset',
+      })
     );
   }
 
-  if (iconColorKey) {
+  if (hoverStateBackground) {
     styles.push(
       `&:not(:disabled):hover {`,
-      `--icon-state-background: ${resolveColorMix(theme.colors[iconColorKey], theme.colors.shade)};`,
+      `--icon-state-background: ${hoverStateBackground};`,
       `}`
     );
   }

@@ -89,6 +89,7 @@ export function ModalSettings({ onChange, state }: ModalSettingsProps) {
       />
 
       <BackgroundListbox
+        label="Background:"
         value={state.background}
         onChange={(background) => onChange('background', background)}
       />

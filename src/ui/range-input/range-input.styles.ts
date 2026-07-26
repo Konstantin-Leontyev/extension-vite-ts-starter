@@ -18,7 +18,12 @@
 
 import styled from 'styled-components';
 
-import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
+import {
+  ICON_SETTING_PROP_NAMES,
+  getIconSectionSeamStyles,
+  getIconSectionTrackStyles,
+  resolveIconStateBackground,
+} from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { MOTION_MICRO_DURATION, getTransitionStyles } from '@ui/motion';
 import { getPortalPanelStyles } from '@ui/portal-panel';
@@ -37,12 +42,7 @@ import { getSpacingValue } from '@ui/spacing';
 import { STACKING_OPEN_CONTROL } from '@ui/stacking';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
-import {
-  DEFAULT_TONE,
-  getToneColorKey,
-  resolveColorMix,
-  type TonePreset,
-} from '@ui/tones';
+import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -159,7 +159,7 @@ export const StyledRangeInputRoot = styled.div.withConfig({
  * 1. Берёт тему и размер
  * 2. Собирает CSS-правила ряда: сетка, габариты, заливка, рамка и тень
  * 3. Без clear оставляет одну колонку. При `data-has-clear` — две колонки;
- *    позиция сброса читается из DOM (`[data-slot='clear']:first-child`), не из пропа
+ *    позиция сброса читается из DOM по `[data-slot='clear']:first-child`, не из пропа
  * 4. Не красит рамку в `primary` — как Listbox и Combobox: акцент даёт `outline`
  *    фокуса на ряде при `:focus-within`, потому что `overflow` обрезает `outline`
  *    детей, как у Stepper
@@ -211,27 +211,6 @@ export const StyledRangeInputTriggerRow = styled.div.withConfig({
 `;
 
 /**
- * resolveRangeInputIconStateBackground — возвращает значение канала состояний
- * `--icon-state-background` для секции шеврона и кнопки сброса: вуаль
- * `theme.colors.veil` для нейтрального `iconTone`, сдвиг тона к `shade`
- * через `resolveColorMix` для цветного.
- *
- * @param theme текущая тема
- * @param iconTone тон секции шеврона и кнопки сброса
- * @returns CSS-значение заливки для канала состояний
- */
-function resolveRangeInputIconStateBackground(
-  theme: AppTheme,
-  iconTone: TonePreset
-): string {
-  const colorKey = getToneColorKey(iconTone);
-
-  return colorKey
-    ? resolveColorMix(theme.colors[colorKey], theme.colors.shade)
-    : theme.colors.veil;
-}
-
-/**
  * getRangeInputTriggerStyles — возвращает CSS-правила для узла
  * `StyledRangeInputTrigger`: раскладку кнопки-триггера, разделитель и канал
  * состояний секции шеврона. Статику секции красит внутренний Icon своими пропсами.
@@ -241,11 +220,8 @@ function resolveRangeInputIconStateBackground(
  * Как работает:
  * 1. Берёт тему и считает значение канала по `iconTone`
  * 2. Собирает сетку триггера и центрирует значение через `align-items: center`:
- *    высоту ряда держит `min-block-size` родителя. `stretch` прижимал Text к верху
- *    ячейки, секция иконки тянется через `block-size: 100%`
- * 3. Кладёт разделитель на секцию шеврона по `[data-slot='icon']`: сторона шва
- *    читается из порядка узлов (`:first-child` / `:last-child`)
- * 4. На наведении триггера выставляет `--icon-state-background`
+ *    высоту ряда держит `min-block-size` родителя
+ * 3. Кладёт трек, шов и канал секции через хелперы `@ui/icon`
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -254,26 +230,21 @@ function getRangeInputTriggerStyles(
   props: RangeInputSurfaceStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
+  const stateBackground = resolveIconStateBackground(
+    theme,
+    props.iconTone ?? DEFAULT_TONE
+  );
 
   const styles = [
     'display: grid;',
-    'grid-template-columns: minmax(0, 1fr) auto;',
-    `&:has(> [data-slot='icon']:first-child) { grid-template-columns: auto minmax(0, 1fr); }`,
+    getIconSectionTrackStyles(),
     'align-items: center;',
     'min-inline-size: 0;',
     'text-align: center;',
     '&:focus-visible { outline: none; }',
-    `[data-slot='icon'] {`,
-    `block-size: 100%;`,
-    `}`,
-    `[data-slot='icon']:first-child {`,
-    `border-inline-end: 1px solid ${theme.colors.border};`,
-    `}`,
-    `[data-slot='icon']:last-child {`,
-    `border-inline-start: 1px solid ${theme.colors.border};`,
-    `}`,
+    getIconSectionSeamStyles({ borderColor: theme.colors.border }),
     `&:not(:disabled):hover {`,
-    `--icon-state-background: ${resolveRangeInputIconStateBackground(theme, props.iconTone ?? DEFAULT_TONE)};`,
+    `--icon-state-background: ${stateBackground};`,
     `}`,
   ];
 
@@ -342,7 +313,7 @@ function getRangeInputClearButtonStyles(
   const theme = getTheme(props);
   const sizePreset = props.sizePreset ?? DEFAULT_RANGE_INPUT_SIZE_PRESET;
   const size = getMinBlockSize(sizePreset);
-  const stateBackground = resolveRangeInputIconStateBackground(
+  const stateBackground = resolveIconStateBackground(
     theme,
     props.iconTone ?? DEFAULT_TONE
   );

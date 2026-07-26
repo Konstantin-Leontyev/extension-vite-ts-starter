@@ -6,14 +6,16 @@
  * 1. Типизировать пропсы через `IconStyleProps` и `IconPosition`
  * 2. Хранить локальные ряды габарита в `iconSize` и отступов в `iconPadding`
  * 3. Предоставить функцию `getIconPadding`, дефолт `DEFAULT_ICON_POSITION`,
- *    а также перечни `ICON_POSITION_KEYS` и `ICON_SETTING_PROP_NAMES`
+ *    перечни `ICON_POSITION_KEYS` и `ICON_SETTING_PROP_NAMES`, а также хелперы
+ *    секции на родителе: `getIconSectionTrackStyles`, `getIconSectionSeamStyles`
+ *    и `resolveIconStateBackground`
  * 4. Предоставить styled-узел `StyledIcon`
  *
  * Потребители:
  *  - `src/ui/icon/index.tsx` — собирает компонент Icon и реэкспортирует
  *    публичное API
- *  - контролы с секцией иконки, например Button и RangeInput — читают позицию
- *    и дефолт через `@ui/icon`
+ *  - контролы с секцией иконки, например Button, Listbox, Combobox и RangeInput —
+ *    подключают хелперы секции и читают позицию через `@ui/icon`
  */
 
 import styled from 'styled-components';
@@ -22,7 +24,12 @@ import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout
 import { DEFAULT_SIZE_PRESET, minBlockSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { DEFAULT_TONE, getToneColorKey, type TonePreset } from '@ui/tones';
+import {
+  DEFAULT_TONE,
+  getToneColorKey,
+  resolveColorMix,
+  type TonePreset,
+} from '@ui/tones';
 
 /**
  * IconPosition — представляет позицию иконки относительно соседнего контента.
@@ -51,6 +58,100 @@ export const DEFAULT_ICON_POSITION: IconPosition = 'end';
  * пропсами стилизации.
  */
 export const ICON_SETTING_PROP_NAMES = new Set(['iconFill', 'iconPosition', 'iconTone']);
+
+/**
+ * IconSectionSeamTechnique — представляет технику шва секции иконки на родителе.
+ * `border` — layout-рамка на слоте; `inset` — внутренний `box-shadow` без сдвига бокса.
+ */
+type IconSectionSeamTechnique = 'border' | 'inset';
+
+/**
+ * IconSectionNeutralChannelPolicy — представляет политику канала состояний
+ * для нейтрального `iconTone`: вуаль или отсутствие значения, когда канал не ставят.
+ */
+type IconSectionNeutralChannelPolicy = 'none' | 'veil';
+
+/**
+ * getIconSectionTrackStyles — возвращает CSS-правила переворота колонок родителя
+ * под позицию `[data-slot='icon']` и растяжение секции по высоте ряда.
+ * Родитель задаёт `display: grid` сам: хелпер не зашивает display — у ряда
+ * с кнопкой сброса свои треки.
+ *
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getIconSectionTrackStyles(): string {
+  const styles = [
+    'grid-template-columns: minmax(0, 1fr) auto;',
+    `&:has(> [data-slot='icon']:first-child) { grid-template-columns: auto minmax(0, 1fr); }`,
+    `[data-slot='icon'] {`,
+    'block-size: 100%;',
+    `}`,
+  ];
+
+  return styles.join('\n');
+}
+
+/**
+ * getIconSectionSeamStyles — возвращает CSS-правила шва секции иконки
+ * по селекторам `:first-child` и `:last-child`.
+ *
+ * @param options цвет шва и техника отрисовки
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getIconSectionSeamStyles(options: {
+  borderColor: string;
+  technique?: IconSectionSeamTechnique;
+}): string {
+  const { borderColor, technique = 'border' } = options;
+
+  if (technique === 'inset') {
+    const styles = [
+      `[data-slot='icon']:first-child {`,
+      `box-shadow: inset -1px 0 0 ${borderColor};`,
+      `}`,
+      `[data-slot='icon']:last-child {`,
+      `box-shadow: inset 1px 0 0 ${borderColor};`,
+      `}`,
+    ];
+
+    return styles.join('\n');
+  }
+
+  const styles = [
+    `[data-slot='icon']:first-child {`,
+    `border-inline-end: 1px solid ${borderColor};`,
+    `}`,
+    `[data-slot='icon']:last-child {`,
+    `border-inline-start: 1px solid ${borderColor};`,
+    `}`,
+  ];
+
+  return styles.join('\n');
+}
+
+/**
+ * resolveIconStateBackground — возвращает значение канала `--icon-state-background`
+ * для секции иконки на родителе. Цветной `iconTone` — сдвиг к `shade`; нейтральный —
+ * вуаль или `undefined` по `neutralPolicy`. Button не ставит канал на нейтрали.
+ *
+ * @param theme текущая тема
+ * @param iconTone тон секции иконки
+ * @param neutralPolicy политика канала для нейтрального тона
+ * @returns CSS-значение заливки канала или `undefined`
+ */
+export function resolveIconStateBackground(
+  theme: AppTheme,
+  iconTone: TonePreset,
+  neutralPolicy: IconSectionNeutralChannelPolicy = 'veil'
+): string | undefined {
+  const colorKey = getToneColorKey(iconTone);
+
+  if (colorKey) {
+    return resolveColorMix(theme.colors[colorKey], theme.colors.shade);
+  }
+
+  return neutralPolicy === 'veil' ? theme.colors.veil : undefined;
+}
 
 /**
  * IconSizePreset — представляет размерный ряд окна иконки.

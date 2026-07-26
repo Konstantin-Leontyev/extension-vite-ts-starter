@@ -43,12 +43,13 @@ import {
   type ReactNode,
 } from 'react';
 
+import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { getFocusables } from '@hooks/use-focus';
 import { CheckIcon } from '@icons/check';
 import { ChevronDownIcon } from '@icons/chevron-down';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Checkbox } from '@ui/checkbox';
-import { Icon } from '@ui/icon';
+import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
@@ -95,14 +96,14 @@ const DEFAULT_LISTBOX_MULTIPLE = false;
 const DEFAULT_LISTBOX_PLACEHOLDER = 'Select…';
 
 /**
- * DEFAULT_LISTBOX_RESERVE_ERROR_SPACE — задаёт резерв высоты под ошибку по умолчанию.
+ * DEFAULT_LISTBOX_RESERVE_ERROR_SPACE — задаёт резерв высоты под строку ошибки по умолчанию.
  * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
  */
 const DEFAULT_LISTBOX_RESERVE_ERROR_SPACE = true;
 
 /**
  * LISTBOX_ERROR_TEXT_SIZE_PRESET — задаёт типографический пресет строки ошибки.
- * Используется для расчёта резерва высоты под ошибку.
+ * Используется для расчёта резерва высоты под строку ошибки.
  */
 const LISTBOX_ERROR_TEXT_SIZE_PRESET: TextSizePreset = 'thin';
 
@@ -137,6 +138,7 @@ export type ListboxOption = {
  * @property defaultValue — начальное значение в неконтролируемом режиме
  * @property disabled — включает недоступное состояние
  * @property iconFill — тон глифа шеврона при нейтральном `iconTone`
+ * @property iconPosition — позиция шеврона относительно значения
  * @property inlineCheckbox — включает чекбоксы в строках опций. Без `multiple`
  *   чекбоксы не показываются
  * @property label — подпись над триггером
@@ -152,6 +154,7 @@ type ListboxProps = ListboxStyleProps & {
   defaultValue?: string | string[];
   disabled?: boolean;
   iconFill?: TonePreset;
+  iconPosition?: IconPosition;
   inlineCheckbox?: boolean;
   label?: string;
   multiple?: boolean;
@@ -420,7 +423,7 @@ export function Listbox({
   defaultValue,
   disabled = DEFAULT_LISTBOX_DISABLED,
   iconFill,
-  iconPosition,
+  iconPosition = DEFAULT_ICON_POSITION,
   iconTone,
   inlineCheckbox = DEFAULT_LISTBOX_INLINE_CHECKBOX,
   label,
@@ -435,7 +438,8 @@ export function Listbox({
   ...rest
 }: ListboxProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const surfaceProps = { iconPosition, iconTone, shape, sizePreset };
+  const surfaceProps = { iconTone, shape, sizePreset };
+  const textSizePreset = getListboxTextSize(sizePreset);
   const iconNode = (
     <Icon
       data-slot="icon"
@@ -449,11 +453,11 @@ export function Listbox({
   );
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const panelRef = useRef<HTMLUListElement>(null);
   const panelOrderRef = useRef<null | PanelOrder>(null);
   const listId = useId();
   const triggerId = useId();
-  const [isOpen, setIsOpen] = useState(false);
+  const { handleClose, handleToggle, isOpen, panelRef } =
+    useAnchoredOpen<HTMLUListElement>();
   const [panelOrder, setPanelOrder] = useState<null | PanelOrder>(null);
   const [internalSelected, setInternalSelected] = useState<string[]>(() =>
     toSelectedValues(defaultValue, multiple)
@@ -464,14 +468,6 @@ export function Listbox({
   const selectedValue = selected[0];
   const selectedIndex = options.findIndex((option) => option.value === selectedValue);
   const optionsKey = options.map((option) => option.value).join('\0');
-
-  function handleDismiss(): void {
-    setIsOpen(false);
-  }
-
-  function handleTriggerClick(): void {
-    setIsOpen((wasOpen) => !wasOpen);
-  }
 
   /**
    * Пересчитывает порядок строк панели при открытии и смене выбора или опций.
@@ -536,19 +532,19 @@ export function Listbox({
     }
 
     commitSelected([option.value]);
-    setIsOpen(false);
+    handleClose();
   }
 
   function handleTriggerKeyDown(event: KeyboardEvent<HTMLButtonElement>): void {
     if (event.key === 'Escape') {
-      setIsOpen(false);
+      handleClose();
     }
 
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
 
       if (!disabled) {
-        setIsOpen((wasOpen) => !wasOpen);
+        handleToggle();
       }
     }
   }
@@ -589,7 +585,7 @@ export function Listbox({
                 (document.activeElement as HTMLElement | null)?.blur();
               }}
             />
-            <Text data-slot="label" ellipsis sizePreset={getListboxTextSize(sizePreset)}>
+            <Text data-slot="label" ellipsis sizePreset={textSizePreset}>
               {option.label}
             </Text>
           </StyledListboxOptionRow>
@@ -606,7 +602,7 @@ export function Listbox({
           type="button"
           onClick={() => toggleOption(option)}
         >
-          <Text data-slot="label" ellipsis sizePreset={getListboxTextSize(sizePreset)}>
+          <Text data-slot="label" ellipsis sizePreset={textSizePreset}>
             {option.label}
           </Text>
           {isSelected && (
@@ -656,19 +652,19 @@ export function Listbox({
         ref={triggerRef}
         type="button"
         {...surfaceProps}
-        onClick={handleTriggerClick}
+        onClick={handleToggle}
         onKeyDown={handleTriggerKeyDown}
       >
         {iconPosition === 'start' && iconNode}
         <Text
           data-slot="label"
           ellipsis
-          sizePreset={getListboxTextSize(sizePreset)}
+          sizePreset={textSizePreset}
           tone={triggerLabel ? undefined : 'muted'}
         >
           {triggerLabel ?? placeholder}
         </Text>
-        {iconPosition !== 'start' && iconNode}
+        {iconPosition === 'end' && iconNode}
       </StyledListboxTrigger>
 
       {reserveErrorSpace && (
@@ -693,7 +689,7 @@ export function Listbox({
           mode: 'custom',
         }}
         returnFocusRef={triggerRef}
-        onDismiss={handleDismiss}
+        onDismiss={handleClose}
         onOpenFocus={focusListboxPanelInitial}
       >
         <StyledListboxPanel

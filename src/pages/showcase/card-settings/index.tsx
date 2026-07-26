@@ -165,6 +165,7 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
       <BackgroundListbox
+        label="Background:"
         value={state.background}
         onChange={(background) => onChange('background', background)}
       />

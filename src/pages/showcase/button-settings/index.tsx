@@ -122,21 +122,15 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
 
       <IconGroup
         fill={state.iconFill}
-        icon={{
-          options: COMBOBOX_OPTIONS,
-          value: state.iconKey,
-          onChange: (value) => onChange('iconKey', value as IconKey),
-        }}
-        position={{
-          value: state.iconPosition,
-          onChange: (position) => onChange('iconPosition', position),
-        }}
-        show={{
-          checked: state.withIcon,
-          onChange: (checked) => onChange('withIcon', checked),
-        }}
+        iconOptions={COMBOBOX_OPTIONS}
+        iconValue={state.iconKey}
+        position={state.iconPosition}
+        show={state.withIcon}
         tone={state.iconTone}
         onFillChange={(tone) => onChange('iconFill', tone)}
+        onIconChange={(value) => onChange('iconKey', value as IconKey)}
+        onPositionChange={(position) => onChange('iconPosition', position)}
+        onShowChange={(checked) => onChange('withIcon', checked)}
         onToneChange={(tone) => onChange('iconTone', tone)}
       />
 

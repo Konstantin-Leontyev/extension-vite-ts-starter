@@ -11,17 +11,16 @@
  * Потребители:
  *  - панели настроек витрины — выбирают семантический тон:
  *     - `src/pages/showcase/button-settings/index.tsx`
- *     - `src/pages/showcase/tag-settings/index.tsx`
- *     - `src/pages/showcase/range-input-settings/index.tsx`
- *     - `src/pages/showcase/segment-button-settings/index.tsx`
- *     - `src/pages/showcase/heading-group/index.tsx`
  *     - `src/pages/showcase/fieldset-settings/index.tsx`
- *     - `src/pages/showcase/toast-settings/index.tsx`
- *     - `src/pages/showcase/text-settings/index.tsx`
- *     - `src/pages/showcase/text-group/index.tsx`
+ *     - `src/pages/showcase/icon-group/index.tsx`
  *     - `src/pages/showcase/progress-bar-settings/index.tsx`
+ *     - `src/pages/showcase/range-input-settings/index.tsx`
  *     - `src/pages/showcase/spinner-settings/index.tsx`
  *     - `src/pages/showcase/switch-settings/index.tsx`
+ *     - `src/pages/showcase/tag-settings/index.tsx`
+ *     - `src/pages/showcase/text-group/index.tsx`
+ *     - `src/pages/showcase/title-group/index.tsx`
+ *     - `src/pages/showcase/toast-settings/index.tsx`
  */
 
 import { Listbox, type ListboxOption } from '@ui/listbox';

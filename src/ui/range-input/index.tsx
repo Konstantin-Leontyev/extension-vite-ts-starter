@@ -185,7 +185,7 @@ const DEFAULT_RANGE_INPUT_TITLE_ALIGN: TextAlignPreset = 'center';
 
 /**
  * DEFAULT_CLEAR_ARIA_LABEL — задаёт `aria-label` кнопки сброса по умолчанию.
- * Подставляется, когда над триггером нет подписи.
+ * Используется, когда над триггером нет подписи.
  */
 const DEFAULT_CLEAR_ARIA_LABEL = 'Clear';
 

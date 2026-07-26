@@ -10,25 +10,23 @@
  * Потребители:
  *  - панели настроек витрины — выбирают размер:
  *     - `src/pages/showcase/button-settings/index.tsx`
- *     - `src/pages/showcase/tag-settings/index.tsx`
- *     - `src/pages/showcase/toast-settings/index.tsx`
- *     - `src/pages/showcase/text-settings/index.tsx`
- *     - `src/pages/showcase/heading-group/index.tsx`
- *     - `src/pages/showcase/input-settings/index.tsx`
- *     - `src/pages/showcase/listbox-settings/index.tsx`
- *     - `src/pages/showcase/combobox-settings/index.tsx`
+ *     - `src/pages/showcase/card-settings/index.tsx`
  *     - `src/pages/showcase/checkbox-settings/index.tsx`
- *     - `src/pages/showcase/switch-settings/index.tsx`
- *     - `src/pages/showcase/spinner-settings/index.tsx`
- *     - `src/pages/showcase/progress-bar-settings/index.tsx`
- *     - `src/pages/showcase/stepper-settings/index.tsx`
- *     - `src/pages/showcase/segment-button-settings/index.tsx`
- *     - `src/pages/showcase/range-input-settings/index.tsx`
- *     - `src/pages/showcase/date-input-settings/index.tsx`
- *     - `src/pages/showcase/date-range-input-settings/index.tsx`
+ *     - `src/pages/showcase/control-group/index.tsx`
  *     - `src/pages/showcase/modal-settings/index.tsx`
- *     - `src/pages/showcase/table-settings/index.tsx`
+ *     - `src/pages/showcase/progress-bar-settings/index.tsx`
+ *     - `src/pages/showcase/radio-button-settings/index.tsx`
+ *     - `src/pages/showcase/range-input-settings/index.tsx`
  *     - `src/pages/showcase/round-button-settings/index.tsx`
+ *     - `src/pages/showcase/segment-button-settings/index.tsx`
+ *     - `src/pages/showcase/spinner-settings/index.tsx`
+ *     - `src/pages/showcase/stepper-settings/index.tsx`
+ *     - `src/pages/showcase/switch-settings/index.tsx`
+ *     - `src/pages/showcase/table-settings/index.tsx`
+ *     - `src/pages/showcase/tag-settings/index.tsx`
+ *     - `src/pages/showcase/text-group/index.tsx`
+ *     - `src/pages/showcase/title-group/index.tsx`
+ *     - `src/pages/showcase/toast-settings/index.tsx`
  */
 
 import { Listbox, type ListboxOption } from '@ui/listbox';

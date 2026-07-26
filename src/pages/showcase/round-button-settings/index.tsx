@@ -111,13 +111,11 @@ export function RoundButtonSettings({ onChange, state }: RoundButtonSettingsProp
 
       <IconGroup
         fill={state.iconFill}
-        icon={{
-          options: COMBOBOX_OPTIONS,
-          value: state.iconKey,
-          onChange: (value) => onChange('iconKey', value as IconKey),
-        }}
+        iconOptions={COMBOBOX_OPTIONS}
+        iconValue={state.iconKey}
         tone={state.iconTone}
         onFillChange={(tone) => onChange('iconFill', tone)}
+        onIconChange={(value) => onChange('iconKey', value as IconKey)}
         onToneChange={(tone) => onChange('iconTone', tone)}
       />
 
