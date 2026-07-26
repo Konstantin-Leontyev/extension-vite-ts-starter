@@ -11,7 +11,7 @@
 
 import { Text } from '@ui/text';
 
-import { StyledMain } from './home.styles';
+import { StyledHomePage } from './home.styles';
 
 /**
  * HomePage — отображает домашнюю страницу.
@@ -21,8 +21,8 @@ import { StyledMain } from './home.styles';
  */
 export function HomePage() {
   return (
-    <StyledMain>
+    <StyledHomePage>
       <Text>Home</Text>
-    </StyledMain>
+    </StyledHomePage>
   );
 }

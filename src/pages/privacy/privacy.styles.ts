@@ -3,7 +3,7 @@
  * Определяет внешний вид компонента PrivacyPage.
  *
  * Основные задачи:
- * 1. Предоставить styled-узел `StyledMain`
+ * 1. Предоставить styled-узел `StyledPrivacyPage`
  *
  * Потребители:
  *  - `src/pages/privacy/index.tsx` — собирает компонент PrivacyPage
@@ -14,12 +14,14 @@ import styled from 'styled-components';
 import { getSpacingValue } from '@ui/spacing';
 
 /**
- * StyledMain — задаёт корневой узел компонента PrivacyPage.
+ * StyledPrivacyPage — задаёт корневой узел компонента PrivacyPage.
  * Базируется на `<main>`.
  *
  * Встроенные стили:
+ *  - `display: grid` — раскладка по дефолту проекта
  *  - `padding` — отступ содержимого страницы
  */
-export const StyledMain = styled.main`
+export const StyledPrivacyPage = styled.main`
+  display: grid;
   padding: ${getSpacingValue(16)};
 `;

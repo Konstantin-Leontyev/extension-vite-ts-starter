@@ -11,7 +11,7 @@
 
 import { Text } from '@ui/text';
 
-import { StyledMain } from './terms.styles';
+import { StyledTermsPage } from './terms.styles';
 
 /**
  * TermsPage — отображает страницу условий использования.
@@ -21,10 +21,10 @@ import { StyledMain } from './terms.styles';
  */
 export function TermsPage() {
   return (
-    <StyledMain>
+    <StyledTermsPage>
       <Text as="h1" sizePreset="extraBold">
         Terms of Service
       </Text>
-    </StyledMain>
+    </StyledTermsPage>
   );
 }
