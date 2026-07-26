@@ -1,49 +1,37 @@
 /**
  * Файл: `src/hooks/use-anchored-portal-position.ts`
- * Предоставляет позиционирование панели AnchoredPortal относительно якоря.
+ * Предоставляет позиционирование панели AnchoredPortal относительно якоря
+ * и готовые обработчики размещения.
  *
  * Основные задачи:
  * 1. Типизировать стратегию позиционирования через `AnchoredPortalPositionStrategy`
- * 2. Предоставить хук `useAnchoredPortalPosition`
+ * 2. Предоставить хелперы `clampPanelToViewport`, `placeCalendarPanel` и `matchTriggerRect`
+ * 3. Предоставить хук `useAnchoredPortalPosition`
  *
  * Потребители:
  *  - `@ui/anchored-portal` — ставит панель у якоря при открытии и при `resize`
+ *  - контролы с календарной панелью, например DateInput и DateRangeInput —
+ *    передают `placeCalendarPanel`
+ *  - `@ui/range-input` — передаёт `matchTriggerRect`
  */
 
 import { useLayoutEffect, useRef, type RefObject } from 'react';
+
+import { VIEWPORT_EDGE_INSET } from '@ui/shell';
 
 /**
  * AnchoredPortalPositionStrategy — представляет стратегию позиционирования панели
  * относительно якоря.
  *
  * @property anchorRef — ссылка на DOM-узел якоря
- * @property apply — обработчик позиционирования для режима `custom`
+ * @property apply — обработчик позиционирования панели
  * @property layoutDeps — зависимости пересчёта позиции при смене содержимого панели
- * @property mode — режим позиционирования: `calendar`, `trigger-row` или `custom`
  */
-export type AnchoredPortalPositionStrategy =
-  | {
-      anchorRef: RefObject<HTMLElement | null>;
-      apply: (anchor: HTMLElement, panel: HTMLElement) => void;
-      layoutDeps?: readonly unknown[];
-      mode: 'custom';
-    }
-  | {
-      anchorRef: RefObject<HTMLElement | null>;
-      layoutDeps?: readonly unknown[];
-      mode: 'calendar';
-    }
-  | {
-      anchorRef: RefObject<HTMLElement | null>;
-      layoutDeps?: readonly unknown[];
-      mode: 'trigger-row';
-    };
-
-/**
- * ANCHORED_PANEL_OUTER_INSET_PX — задаёт внешний зазор панели от края вьюпорта.
- * Соответствует сумме `outline` 2px и `outline-offset` 2px.
- */
-const ANCHORED_PANEL_OUTER_INSET_PX = 4;
+export type AnchoredPortalPositionStrategy = {
+  anchorRef: RefObject<HTMLElement | null>;
+  apply: (anchor: HTMLElement, panel: HTMLElement) => void;
+  layoutDeps?: readonly unknown[];
+};
 
 /**
  * EMPTY_LAYOUT_DEPS — задаёт пустой перечень зависимостей пересчёта позиции.
@@ -52,75 +40,99 @@ const ANCHORED_PANEL_OUTER_INSET_PX = 4;
 const EMPTY_LAYOUT_DEPS: readonly unknown[] = [];
 
 /**
- * applyCalendarPanelPosition — ставит панель по ширине триггера и вписывает во вьюпорт.
+ * clampPanelToViewport — прижимает `left` и `top` панели к краям вьюпорта
+ * с `VIEWPORT_EDGE_INSET` и при переполнении по высоте задаёт `max-block-size`.
+ * Используется внутри `placeCalendarPanel`.
+ *
+ * @param panel DOM-узел панели
+ * @param left предпочтительный inset-inline-start в px
+ * @param top предпочтительный inset-block-start в px
+ */
+export function clampPanelToViewport(
+  panel: HTMLElement,
+  left: number,
+  top: number
+): void {
+  const panelWidth = panel.offsetWidth;
+  const panelHeight = panel.offsetHeight;
+  const maxLeft = Math.max(
+    VIEWPORT_EDGE_INSET,
+    window.innerWidth - panelWidth - VIEWPORT_EDGE_INSET
+  );
+  const clampedLeft = Math.min(Math.max(VIEWPORT_EDGE_INSET, left), maxLeft);
+  let clampedTop = Math.max(VIEWPORT_EDGE_INSET, top);
+  const availableBelow = window.innerHeight - clampedTop - VIEWPORT_EDGE_INSET;
+
+  panel.style.insetInlineStart = `${clampedLeft}px`;
+  panel.style.insetBlockStart = `${clampedTop}px`;
+
+  if (panelHeight <= availableBelow) {
+    panel.style.maxBlockSize = '';
+    panel.style.overflowY = '';
+
+    return;
+  }
+
+  const maxTop = Math.max(
+    VIEWPORT_EDGE_INSET,
+    window.innerHeight - panelHeight - VIEWPORT_EDGE_INSET
+  );
+
+  clampedTop = Math.min(clampedTop, maxTop);
+  clampedTop = Math.max(VIEWPORT_EDGE_INSET, clampedTop);
+  panel.style.insetBlockStart = `${clampedTop}px`;
+
+  const available = window.innerHeight - clampedTop - VIEWPORT_EDGE_INSET;
+
+  if (panelHeight > available) {
+    panel.style.maxBlockSize = `${Math.max(0, available)}px`;
+    panel.style.overflowY = 'auto';
+
+    return;
+  }
+
+  panel.style.maxBlockSize = '';
+  panel.style.overflowY = '';
+}
+
+/**
+ * placeCalendarPanel — ставит панель по ширине триггера и вписывает во вьюпорт.
  * При нехватке места снизу поднимает панель над триггером.
  *
  * @param trigger DOM-узел якоря-триггера
  * @param panel DOM-узел панели
  */
-function applyCalendarPanelPosition(trigger: HTMLElement, panel: HTMLElement): void {
+export function placeCalendarPanel(trigger: HTMLElement, panel: HTMLElement): void {
   const triggerRect = trigger.getBoundingClientRect();
   const panelWidth = triggerRect.width;
-  const maxLeft = Math.max(
-    ANCHORED_PANEL_OUTER_INSET_PX,
-    window.innerWidth - panelWidth - ANCHORED_PANEL_OUTER_INSET_PX
-  );
-  const left = Math.min(
-    Math.max(ANCHORED_PANEL_OUTER_INSET_PX, triggerRect.left),
-    maxLeft
-  );
 
-  panel.style.insetInlineStart = `${left}px`;
   panel.style.inlineSize = `${panelWidth}px`;
   panel.style.maxInlineSize = `${panelWidth}px`;
 
   const panelHeight = panel.offsetHeight;
-  const viewportHeight = window.innerHeight;
-  const spaceBelow = viewportHeight - triggerRect.top - ANCHORED_PANEL_OUTER_INSET_PX;
-  const spaceAbove = triggerRect.top - ANCHORED_PANEL_OUTER_INSET_PX;
+  const spaceBelow = window.innerHeight - triggerRect.top - VIEWPORT_EDGE_INSET;
+  const spaceAbove = triggerRect.top - VIEWPORT_EDGE_INSET;
 
   let top: number;
-  let maxBlockSize: number | undefined;
 
   if (panelHeight <= spaceBelow) {
     top = triggerRect.top;
   } else if (panelHeight <= spaceAbove) {
     top = triggerRect.top - panelHeight;
   } else {
-    top = ANCHORED_PANEL_OUTER_INSET_PX;
-    maxBlockSize = viewportHeight - ANCHORED_PANEL_OUTER_INSET_PX * 2;
+    top = VIEWPORT_EDGE_INSET;
   }
 
-  if (top < ANCHORED_PANEL_OUTER_INSET_PX) {
-    top = ANCHORED_PANEL_OUTER_INSET_PX;
-  }
-
-  if (maxBlockSize === undefined) {
-    const available = viewportHeight - top - ANCHORED_PANEL_OUTER_INSET_PX;
-
-    if (panelHeight > available) {
-      maxBlockSize = available;
-    }
-  }
-
-  panel.style.insetBlockStart = `${top}px`;
-
-  if (maxBlockSize != null && maxBlockSize >= 0) {
-    panel.style.maxBlockSize = `${maxBlockSize}px`;
-    panel.style.overflowY = 'auto';
-  } else {
-    panel.style.maxBlockSize = '';
-    panel.style.overflowY = '';
-  }
+  clampPanelToViewport(panel, triggerRect.left, top);
 }
 
 /**
- * applyTriggerRowPanelPosition — ставит панель в прямоугольник триггера.
+ * matchTriggerRect — ставит панель в прямоугольник триггера.
  *
  * @param trigger DOM-узел якоря-триггера
  * @param panel DOM-узел панели
  */
-function applyTriggerRowPanelPosition(trigger: HTMLElement, panel: HTMLElement): void {
+export function matchTriggerRect(trigger: HTMLElement, panel: HTMLElement): void {
   const rect = trigger.getBoundingClientRect();
 
   panel.style.insetBlockStart = `${rect.top}px`;
@@ -129,7 +141,7 @@ function applyTriggerRowPanelPosition(trigger: HTMLElement, panel: HTMLElement):
 }
 
 /**
- * applyPositionStrategy — выбирает алгоритм позиционирования по `mode` стратегии.
+ * applyPositionStrategy — вызывает `apply` стратегии для якоря и панели.
  *
  * @param strategy стратегия позиционирования панели
  * @param panel DOM-узел панели
@@ -141,16 +153,6 @@ function applyPositionStrategy(
   const anchor = strategy.anchorRef.current;
 
   if (!anchor) {
-    return;
-  }
-
-  if (strategy.mode === 'calendar') {
-    applyCalendarPanelPosition(anchor, panel);
-    return;
-  }
-
-  if (strategy.mode === 'trigger-row') {
-    applyTriggerRowPanelPosition(anchor, panel);
     return;
   }
 

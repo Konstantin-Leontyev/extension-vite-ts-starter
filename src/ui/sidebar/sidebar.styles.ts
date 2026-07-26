@@ -4,8 +4,12 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `SidebarStyleProps`
- * 2. Хранить ширину панели в `SIDEBAR_PANEL_WIDTH`
- * 3. Предоставить styled-узлы `StyledSidebar`, `StyledSidebarContent`, `StyledSidebarSlot`
+ * 2. Хранить ширину панели в `SIDEBAR_PANEL_WIDTH`, порог раскладки в
+ *    `SIDEBAR_PANEL_BREAKPOINT`, высоты узкого экрана в `SIDEBAR_PANEL_BLOCK_SIZE`
+ *    и `SIDEBAR_PANEL_MAX_BLOCK_SIZE`, а также зонные отступы в
+ *    `DEFAULT_SIDEBAR_OFFSET`, `SIDEBAR_CONTENT_INSET` и `SIDEBAR_EDGE_INSET`
+ * 3. Предоставить функцию `getSidebarStyles`
+ * 4. Предоставить styled-узлы `StyledSidebar`, `StyledSidebarContent`, `StyledSidebarSlot`
  *    и `StyledSidebarTrack`
  *
  * Потребители:
@@ -15,6 +19,7 @@
 import styled from 'styled-components';
 
 import { getTransitionStyles } from '@ui/motion';
+import { VIEWPORT_EDGE_INSET } from '@ui/shell';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { STACKING_SIDEBAR } from '@ui/stacking';
 
@@ -149,7 +154,7 @@ const SIDEBAR_PROP_NAMES = new Set<string>(['offset', 'padding']);
  * DEFAULT_SIDEBAR_OFFSET — задаёт зазор между контентом и панелью по умолчанию.
  * Используется, когда вызывающий код не передал проп `offset`.
  */
-const DEFAULT_SIDEBAR_OFFSET: SpacingValue = 8;
+const DEFAULT_SIDEBAR_OFFSET: SpacingValue = VIEWPORT_EDGE_INSET;
 
 /**
  * SIDEBAR_CONTENT_INSET — задаёт зонный отступ области контента, когда проп `padding`
@@ -161,7 +166,7 @@ const SIDEBAR_CONTENT_INSET: SpacingValue = 0;
  * SIDEBAR_EDGE_INSET — задаёт зонный отступ края панели и правого отступа контента,
  * когда проп `padding` не передан. Не дефолт пропа: у `padding` две зонные подстановки.
  */
-const SIDEBAR_EDGE_INSET: SpacingValue = 8;
+const SIDEBAR_EDGE_INSET: SpacingValue = VIEWPORT_EDGE_INSET;
 
 /**
  * getSidebarStyles — возвращает CSS-правила для корня `StyledSidebar`: отступы зон

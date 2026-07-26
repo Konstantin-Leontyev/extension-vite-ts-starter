@@ -186,6 +186,10 @@ function getRangeInputTriggerRowStyles(
     `border-radius: ${resolveRangeInputBlockRadius(props)};`,
     `box-shadow: ${theme.shadow.surface};`,
     `&[data-open='true'] { visibility: hidden; }`,
+    getIconSectionSeamStyles({
+      borderColor: theme.colors.border,
+      slot: 'clear',
+    }),
     '&:focus-within {',
     getFocusRingStyles(theme.colors.focusRing),
     '}',
@@ -321,8 +325,6 @@ function getRangeInputClearButtonStyles(
   const styles = [
     `inline-size: ${size};`,
     `min-inline-size: ${size};`,
-    `&:first-child { border-inline-end: 1px solid ${theme.colors.border}; }`,
-    `&:last-child { border-inline-start: 1px solid ${theme.colors.border}; }`,
     `&:not(:disabled):hover { --icon-state-background: ${stateBackground}; }`,
     '&:focus-visible {',
     'outline: none;',

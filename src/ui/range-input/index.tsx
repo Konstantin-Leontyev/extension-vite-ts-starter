@@ -59,6 +59,7 @@ import {
 } from 'react';
 
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
+import { matchTriggerRect } from '@hooks/use-anchored-portal-position';
 import { ChevronDownIcon } from '@icons/chevron-down';
 import { CloseIcon } from '@icons/close';
 import { AnchoredPortal } from '@ui/anchored-portal';
@@ -671,8 +672,8 @@ export function RangeInput({
         panelRef={panelRef}
         positioning={{
           anchorRef: triggerRowRef,
+          apply: matchTriggerRect,
           layoutDeps: [presets?.length],
-          mode: 'trigger-row',
         }}
         returnFocusRef={triggerRef}
         onDismiss={handleClose}

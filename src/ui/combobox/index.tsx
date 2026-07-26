@@ -52,6 +52,7 @@ import { AnchoredPortal } from '@ui/anchored-portal';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Input } from '@ui/input';
 import { ScrollPort } from '@ui/scroll-port';
+import { VIEWPORT_EDGE_INSET } from '@ui/shell';
 import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
@@ -69,11 +70,6 @@ import {
   splitLayoutProps,
   type ComboboxStyleProps,
 } from './combobox.styles';
-
-/**
- * PANEL_OUTER_INSET — задаёт внешний зазор открытой панели от края вьюпорта.
- */
-const PANEL_OUTER_INSET = 4;
 
 /**
  * MIN_VISIBLE_OPTION_ROWS — задаёт минимум видимых строк списка в панели.
@@ -238,22 +234,22 @@ function applyComboboxPanelPosition(
   const triggerRect = trigger.getBoundingClientRect();
   const rowHeight = triggerRect.height;
   const maxLeft = Math.max(
-    PANEL_OUTER_INSET,
-    window.innerWidth - triggerRect.width - PANEL_OUTER_INSET
+    VIEWPORT_EDGE_INSET,
+    window.innerWidth - triggerRect.width - VIEWPORT_EDGE_INSET
   );
-  const left = Math.min(Math.max(PANEL_OUTER_INSET, triggerRect.left), maxLeft);
+  const left = Math.min(Math.max(VIEWPORT_EDGE_INSET, triggerRect.left), maxLeft);
   const searchHeight = searchRowHeight ?? rowHeight;
   const reservedRows = Math.min(MIN_VISIBLE_OPTION_ROWS, Math.max(1, optionCount));
   const minPanelHeight = searchHeight + reservedRows * rowHeight;
 
   let top = triggerRect.top;
 
-  if (top + minPanelHeight > window.innerHeight - PANEL_OUTER_INSET) {
-    top = window.innerHeight - PANEL_OUTER_INSET - minPanelHeight;
+  if (top + minPanelHeight > window.innerHeight - VIEWPORT_EDGE_INSET) {
+    top = window.innerHeight - VIEWPORT_EDGE_INSET - minPanelHeight;
   }
 
-  top = Math.max(PANEL_OUTER_INSET, top);
-  const maxBlockSize = window.innerHeight - top - PANEL_OUTER_INSET;
+  top = Math.max(VIEWPORT_EDGE_INSET, top);
+  const maxBlockSize = window.innerHeight - top - VIEWPORT_EDGE_INSET;
 
   panel.style.left = `${left}px`;
   panel.style.width = `${triggerRect.width}px`;
@@ -531,7 +527,6 @@ export function Combobox({
               searchRowRef.current?.offsetHeight
             ),
           layoutDeps: [filtered.length, options.length],
-          mode: 'custom',
         }}
         returnFocusRef={triggerRef}
         onDismiss={handleClose}

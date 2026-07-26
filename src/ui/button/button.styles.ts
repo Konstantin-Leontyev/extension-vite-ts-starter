@@ -170,26 +170,16 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
     active = DEFAULT_BUTTON_ACTIVE,
     iconTone = DEFAULT_TONE,
     sizePreset = DEFAULT_SIZE_PRESET,
-    tone = DEFAULT_TONE,
   } = props;
   const iconColorKey = getToneColorKey(iconTone);
-  const showSeam = tone === DEFAULT_TONE && iconTone === DEFAULT_TONE;
   const hoverStateBackground = resolveIconStateBackground(theme, iconTone, 'none');
 
   const styles = [
     `[data-slot='label'] {`,
     `padding-inline: ${getPaddingInline(sizePreset)};`,
     `}`,
+    getIconSectionSeamStyles({ borderColor: theme.colors.border }),
   ];
-
-  if (showSeam) {
-    styles.push(
-      getIconSectionSeamStyles({
-        borderColor: theme.colors.border,
-        technique: 'inset',
-      })
-    );
-  }
 
   if (hoverStateBackground) {
     styles.push(

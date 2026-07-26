@@ -60,16 +60,16 @@ export const DEFAULT_ICON_POSITION: IconPosition = 'end';
 export const ICON_SETTING_PROP_NAMES = new Set(['iconFill', 'iconPosition', 'iconTone']);
 
 /**
- * IconSectionSeamTechnique — представляет технику шва секции иконки на родителе.
- * `border` — layout-рамка на слоте; `inset` — внутренний `box-shadow` без сдвига бокса.
- */
-type IconSectionSeamTechnique = 'border' | 'inset';
-
-/**
  * IconSectionNeutralChannelPolicy — представляет политику канала состояний
  * для нейтрального `iconTone`: вуаль или отсутствие значения, когда канал не ставят.
  */
 type IconSectionNeutralChannelPolicy = 'none' | 'veil';
+
+/**
+ * ICON_SECTION_SEAM_SLOT — задаёт `data-slot` секции шва, когда вызывающий код
+ * не передал `slot`.
+ */
+const ICON_SECTION_SEAM_SLOT = 'icon';
 
 /**
  * getIconSectionTrackStyles — возвращает CSS-правила переворота колонок родителя
@@ -92,37 +92,24 @@ export function getIconSectionTrackStyles(): string {
 }
 
 /**
- * getIconSectionSeamStyles — возвращает CSS-правила шва секции иконки
- * по селекторам `:first-child` и `:last-child`.
+ * getIconSectionSeamStyles — возвращает CSS-правила шва секции по
+ * `:first-child` / `:last-child` через inset `box-shadow` без сдвига бокса.
  *
- * @param options цвет шва и техника отрисовки
+ * @param options цвет шва и опциональный `data-slot` секции
  * @returns CSS-правила, каждое с новой строки
  */
 export function getIconSectionSeamStyles(options: {
   borderColor: string;
-  technique?: IconSectionSeamTechnique;
+  slot?: string;
 }): string {
-  const { borderColor, technique = 'border' } = options;
-
-  if (technique === 'inset') {
-    const styles = [
-      `[data-slot='icon']:first-child {`,
-      `box-shadow: inset -1px 0 0 ${borderColor};`,
-      `}`,
-      `[data-slot='icon']:last-child {`,
-      `box-shadow: inset 1px 0 0 ${borderColor};`,
-      `}`,
-    ];
-
-    return styles.join('\n');
-  }
+  const { borderColor, slot = ICON_SECTION_SEAM_SLOT } = options;
 
   const styles = [
-    `[data-slot='icon']:first-child {`,
-    `border-inline-end: 1px solid ${borderColor};`,
+    `[data-slot='${slot}']:first-child {`,
+    `box-shadow: inset -1px 0 0 ${borderColor};`,
     `}`,
-    `[data-slot='icon']:last-child {`,
-    `border-inline-start: 1px solid ${borderColor};`,
+    `[data-slot='${slot}']:last-child {`,
+    `box-shadow: inset 1px 0 0 ${borderColor};`,
     `}`,
   ];
 

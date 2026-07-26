@@ -50,6 +50,7 @@ import { ChevronDownIcon } from '@icons/chevron-down';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Checkbox } from '@ui/checkbox';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
+import { VIEWPORT_EDGE_INSET } from '@ui/shell';
 import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
@@ -64,12 +65,6 @@ import {
   splitLayoutProps,
   type ListboxStyleProps,
 } from './listbox.styles';
-
-/**
- * PANEL_OUTER_INSET — задаёт внешний зазор открытой панели от края вьюпорта.
- * Учитывает `outline` 2px и `outline-offset` 2px панели.
- */
-const PANEL_OUTER_INSET = 4;
 
 /**
  * DEFAULT_LISTBOX_DISABLED — задаёт недоступное состояние по умолчанию.
@@ -248,7 +243,7 @@ function resolveCircularAfterIndices(
  * 1. Строит круговую очередь индексов после выбранной через `resolveCircularAfterIndices`
  * 2. Берёт вниз столько строк, сколько влезает по `rowsFitBelow`
  * 3. При известных `triggerTop` и `rowHeight` уменьшает число строк вниз, пока
- *    панель с учётом `PANEL_OUTER_INSET` не поместится во вьюпорт
+ *    панель с учётом `VIEWPORT_EDGE_INSET` не поместится во вьюпорт
  * 4. Отдаёт индексы выше и ниже выбранной
  *
  * @param selectedIndex индекс выбранной опции
@@ -280,8 +275,8 @@ function splitPanelOptionIndices(
       const panelBottom = panelTop + panelHeight;
 
       if (
-        panelTop >= PANEL_OUTER_INSET &&
-        panelBottom + PANEL_OUTER_INSET <= window.innerHeight
+        panelTop >= VIEWPORT_EDGE_INSET &&
+        panelBottom + VIEWPORT_EDGE_INSET <= window.innerHeight
       ) {
         break;
       }
@@ -308,7 +303,7 @@ function splitPanelOptionIndices(
 function countRowsFitBelow(triggerTop: number, rowHeight: number): number {
   const spaceBelowSelected = Math.max(
     0,
-    window.innerHeight - triggerTop - rowHeight - PANEL_OUTER_INSET
+    window.innerHeight - triggerTop - rowHeight - VIEWPORT_EDGE_INSET
   );
 
   return Math.floor(spaceBelowSelected / Math.max(1, rowHeight));
@@ -686,7 +681,6 @@ export function Listbox({
           apply: (anchor, panel) =>
             applyListboxPanelPosition(anchor, panel, panelOrderRef.current),
           layoutDeps: [panelOrder],
-          mode: 'custom',
         }}
         returnFocusRef={triggerRef}
         onDismiss={handleClose}

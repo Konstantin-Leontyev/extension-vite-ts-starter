@@ -81,7 +81,7 @@ type AnchoredPortalProps = {
  *   panelRef={panelRef}
  *   positioning={{
  *     anchorRef: triggerRef,
- *     mode: 'trigger-row',
+ *     apply: matchTriggerRect,
  *   }}
  *   returnFocusRef={triggerRef}
  *   onDismiss={close}
