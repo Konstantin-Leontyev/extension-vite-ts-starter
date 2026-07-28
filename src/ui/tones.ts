@@ -16,12 +16,14 @@
  *  - контролы, например Button, Tag и Toast — задают цвет через тон
  *  - контролы, например Button, Tag, Icon и Table — смешивают цвета темы через
  *    `resolveColorMix`
- *  - контролы, например Button и Icon — читают доли смешения
- *    `BORDER_SURFACE_MIX_PERCENT` и `VARIANT_SURFACE_MIX_PERCENT`
- *  - контролы, например Button и Icon — кладут вуаль поверх непрозрачной нейтральной
- *    заливки через `resolveVeilBackground`
+ *  - `@ui/button` — читает доли смешения `BORDER_SURFACE_MIX_PERCENT` и
+ *    `VARIANT_SURFACE_MIX_PERCENT`
+ *  - `@ui/button` — кладёт вуаль поверх непрозрачной нейтральной заливки через
+ *    `resolveVeilBackground`
+ *  - `@ui/text` — расширяет канонический набор тонов
  *  - `@ui/fieldset` — расширяет канонический набор тонов
- *  - панели настроек витрины — передают `TONE_PRESET_KEYS` в `ToneListbox`
+ *  - панели настроек витрины дизайн-системы — передают `TONE_PRESET_KEYS` в
+ *    `ToneListbox`
  *  - `src/pages/showcase/tone-listbox/index.tsx` — фильтрует тоны и подставляет
  *    запасной через `DEFAULT_TONE`
  */
@@ -42,9 +44,8 @@ export type TonePreset = 'danger' | 'default' | 'primary' | 'success' | 'warning
  *  - `danger`, `success`, `warning` — статусные цвета
  *  - `primary` — акцентный цвет
  *
- * Ключи задают тип `TonePreset`. Соответствие экспортируется для расширения
- * спредом в `@ui/text` и `@ui/fieldset`, чтение цвета — через `getToneColorKey`
- * и `getToneColor`.
+ * Соответствие экспортируется для расширения спредом в `@ui/text` и `@ui/fieldset`,
+ * чтение цвета — через `getToneColorKey` и `getToneColor`.
  */
 export const TONE_PRESETS = Object.freeze({
   danger: 'danger',
@@ -56,7 +57,8 @@ export const TONE_PRESETS = Object.freeze({
 
 /**
  * TONE_PRESET_KEYS — формирует перечень канонических тонов из ключей `TONE_PRESETS`.
- * Используется в панелях настроек витрины: `ToneListbox` принимает его пропом `tones`.
+ * Используется в панелях настроек витрины дизайн-системы: `ToneListbox` принимает его
+ * пропом `tones`.
  */
 export const TONE_PRESET_KEYS = Object.freeze(Object.keys(TONE_PRESETS) as TonePreset[]);
 
