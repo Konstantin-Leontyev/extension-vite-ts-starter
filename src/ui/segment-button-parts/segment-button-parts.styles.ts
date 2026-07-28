@@ -16,11 +16,10 @@
 import styled from 'styled-components';
 
 import { resolveIconStateBackground } from '@ui/icon';
+import { OUTLINE_OFFSET, getOutlineStyles } from '@ui/outline';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
-  FOCUS_OUTLINE_OFFSET,
-  getFocusRingStyles,
   getMinBlockSize,
   getPaddingInline,
   resolveBlockRadius,
@@ -226,8 +225,8 @@ function getSegmentButtonPartsPartStyles(
     '&:focus-visible {',
     'position: relative;',
     'z-index: 1;',
-    getFocusRingStyles(theme.colors.focusRing, {
-      offset: `-${FOCUS_OUTLINE_OFFSET}`,
+    getOutlineStyles(theme.colors.focusOutline, {
+      offset: `-${OUTLINE_OFFSET}`,
     }),
     '}'
   );

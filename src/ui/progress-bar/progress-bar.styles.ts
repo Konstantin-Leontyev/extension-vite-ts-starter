@@ -16,7 +16,7 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { MOTION_MICRO_DURATION, getTransitionStyles } from '@ui/motion';
+import { MOTION_CONTROL_DURATION, getTransitionStyles } from '@ui/motion';
 import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
@@ -209,7 +209,7 @@ export const StyledProgressBarFill = styled.div.withConfig({
 })<ProgressBarFillStyleProps>`
   block-size: 100%;
   border-radius: inherit;
-  ${getTransitionStyles('inline-size', MOTION_MICRO_DURATION)}
+  ${getTransitionStyles('inline-size', MOTION_CONTROL_DURATION)}
 
   ${(props) => getProgressBarFillStyles(props)}
 `;

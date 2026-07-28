@@ -1,13 +1,13 @@
 /**
  * Файл: `src/ui/motion.ts`
- * Содержит генератор CSS-переходов и две длительности проекта.
- * Каркас оболочки, например шапка и сайдбар, зовёт без длительности — дефолт `MOTION_DURATION`.
- * Микровзаимодействия передают `MOTION_MICRO_DURATION`.
+ * Содержит генератор CSS-переходов и две сценарные длительности проекта.
+ * Каркас оболочки, например шапка и сайдбар, передаёт `MOTION_SHELL_DURATION`.
+ * Контролы передают `MOTION_CONTROL_DURATION`.
  * Под `prefers-reduced-motion` длительность удваивается через `calc`.
  * Не покрывает `animation`, например у Spinner — другой механизм.
  *
  * Основные задачи:
- * 1. Предоставить константы `MOTION_DURATION` и `MOTION_MICRO_DURATION`
+ * 1. Предоставить константы `MOTION_SHELL_DURATION` и `MOTION_CONTROL_DURATION`
  * 2. Предоставить функцию `getTransitionStyles`
  *
  * Потребители:
@@ -21,17 +21,16 @@
  */
 
 /**
- * MOTION_DURATION — задаёт длительность переходов каркаса оболочки.
- * Дефолт `getTransitionStyles`, когда вызывающий код не передал длительность.
+ * MOTION_SHELL_DURATION — задаёт длительность переходов каркаса оболочки:
+ * выезд панели Sidebar, сворачивание шапки.
  */
-export const MOTION_DURATION = '0.3s';
+export const MOTION_SHELL_DURATION = '0.3s';
 
 /**
- * MOTION_MICRO_DURATION — задаёт длительность микровзаимодействий.
- * Используется вторым аргументом `getTransitionStyles` в Switch, ProgressBar
- * и hover строк-опций.
+ * MOTION_CONTROL_DURATION — задаёт длительность отклика контролов:
+ * Switch, ProgressBar и hover строк-опций.
  */
-export const MOTION_MICRO_DURATION = '0.15s';
+export const MOTION_CONTROL_DURATION = '0.15s';
 
 /**
  * MOTION_EASING — задаёт кривую переходов.
@@ -44,13 +43,10 @@ const MOTION_EASING = 'ease';
  * Под `prefers-reduced-motion: reduce` длительность удваивается через `calc`.
  *
  * @param properties анимируемые CSS-свойства: одно или список через запятую
- * @param duration длительность перехода. По умолчанию `MOTION_DURATION`
+ * @param duration длительность перехода: `MOTION_SHELL_DURATION` или `MOTION_CONTROL_DURATION`
  * @returns CSS-правила, каждое с новой строки
  */
-export function getTransitionStyles(
-  properties: string,
-  duration: string = MOTION_DURATION
-): string {
+export function getTransitionStyles(properties: string, duration: string): string {
   const styles = [
     `transition: ${properties} ${duration} ${MOTION_EASING};`,
     `@media (prefers-reduced-motion: reduce) {`,

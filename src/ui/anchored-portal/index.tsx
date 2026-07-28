@@ -19,6 +19,7 @@
  * Основные задачи:
  * 1. Экспортировать компонент AnchoredPortal
  * 2. Типизировать пропсы через `AnchoredPortalProps`
+ * 3. Реэкспортировать `getPortalPanelStyles` — хром панели из `anchored-portal.styles.ts`
  *
  * Потребители:
  *  - контролы, например Combobox, Listbox, DateRangeInput и RangeInput —
@@ -158,3 +159,6 @@ export function AnchoredPortal({
 
   return createPortal(children, document.body);
 }
+
+/* eslint-disable react-refresh/only-export-components -- реэкспорт генератора хрома панели */
+export { getPortalPanelStyles } from './anchored-portal.styles';

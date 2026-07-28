@@ -13,6 +13,7 @@
 
 import styled from 'styled-components';
 
+import { getBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -75,10 +76,9 @@ function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
     `padding-inline: ${padding.inline};`,
     `background-color: ${theme.colors.surface};`,
     `color: ${theme.colors.default};`,
-    `border: 1px solid ${theme.colors.border};`,
+    getBorderStyles(theme),
     `border-inline-start: ${getSpacingValue(4)} solid ${getToneColor(theme, tone, theme.colors.border)};`,
     `border-radius: ${resolveBlockRadius(DEFAULT_SHAPE_PRESET, minBlockSize)};`,
-    `box-shadow: ${theme.shadow.surface};`,
   ];
 
   return styles.join('\n');

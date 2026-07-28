@@ -14,17 +14,20 @@
 import { type CSSProperties } from 'react';
 import styled from 'styled-components';
 
+import { DEFAULT_SHOW_BORDER, getControlBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
-  DEFAULT_SHOW_BORDER,
   DEFAULT_SIZE_PRESET,
-  getControlBorder,
-  getControlBoxStyles,
+  getMinBlockSize,
+  getPaddingInline,
+  getTextSize,
+  resolveBlockRadius,
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
+import { getTextProperties } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -95,9 +98,12 @@ const INPUT_CONTROL_PROP_NAMES = new Set<string>([
  *
  * Как работает:
  * 1. Подставляет дефолты `shape`, `showBorder` и `sizePreset`
- * 2. Собирает бокс через `getControlBoxStyles`, сбрасывает layout-рамку и
- *    красит фон: при рамке — `surface`, без рамки — прозрачный
- * 3. Кладёт рамку через `getControlBorder` и цвет плейсхолдера
+ * 2. Собирает бокс из геттеров пресетов: `min-block-size`, `padding-inline`,
+ *    типографика через `getTextProperties(getTextSize(…))` и `border-radius`
+ *    через `resolveBlockRadius`. `padding-block` не пишется: UA-отступ сбросил
+ *    `GlobalResetStyle`, высоту держит `min-block-size`
+ * 3. Сбрасывает layout-рамку и красит фон: при рамке — `surface`, без рамки —
+ *    прозрачный; кладёт рамку через `getControlBorderStyles` и цвет плейсхолдера
  * 4. При переданном `textAlign` добавляет выравнивание значения
  * 5. При `textItalic` добавляет курсив значения
  *
@@ -116,11 +122,16 @@ function getInputControlStyles(
     textItalic,
   } = props;
 
+  const minBlockSize = getMinBlockSize(sizePreset);
+
   const styles = [
-    getControlBoxStyles(sizePreset, shape),
+    `min-block-size: ${minBlockSize};`,
+    `padding-inline: ${getPaddingInline(sizePreset)};`,
+    getTextProperties(getTextSize(sizePreset)),
+    `border-radius: ${resolveBlockRadius(shape, minBlockSize)};`,
     'border: none;',
     `background-color: ${showBorder ? theme.colors.surface : 'transparent'};`,
-    getControlBorder(theme, showBorder),
+    getControlBorderStyles(theme, showBorder),
     `&::placeholder { color: ${theme.colors.muted}; }`,
   ];
 

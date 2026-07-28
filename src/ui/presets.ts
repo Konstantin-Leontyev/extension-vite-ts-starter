@@ -8,14 +8,10 @@
  * Основные задачи:
  * 1. Типизировать пресеты через `SizePreset` и `ShapePreset`
  * 2. Хранить канонические значения в `minBlockSize`, `padding` и `textSize`
- * 3. Задать значения по умолчанию через `DEFAULT_SIZE_PRESET`, `DEFAULT_SHAPE_PRESET`
- *    и `DEFAULT_SHOW_BORDER`
+ * 3. Задать значения по умолчанию через `DEFAULT_SIZE_PRESET` и `DEFAULT_SHAPE_PRESET`
  * 4. Предоставить перечни `SIZE_PRESET_KEYS` и `SHAPE_PRESET_KEYS`
  * 5. Предоставить геттеры `getMinBlockSize`, `getPadding`, `getPaddingInline`, `getPaddingBlock` и `getTextSize`
  * 6. Предоставить `resolveBlockRadius` для вычисления радиуса по форме
- * 7. Предоставить `getControlBoxStyles` для сборки полного бокса однострочного контрола
- * 8. Предоставить `getControlBorder` для рамки контрола вне layout-box
- * 9. Предоставить `getFocusRingStyles` для пары `outline` / `outline-offset`
  *
  * Потребители:
  *  - контролы, например Button, Input и Tag — задают размер через `sizePreset`
@@ -25,8 +21,7 @@
  */
 
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
-import { getTextProperties, type TextSizePreset } from '@ui/text';
-import { type AppTheme } from '@ui/theme';
+import { type TextSizePreset } from '@ui/text';
 
 /**
  * SizePreset — представляет единый размерный ряд проекта.
@@ -195,99 +190,4 @@ export const textSize = Object.freeze({
  */
 export function getTextSize(sizePreset: SizePreset): TextSizePreset {
   return textSize[sizePreset];
-}
-
-/**
- * getControlBoxStyles — возвращает CSS-правила стандартного бокса однострочного контрола:
- * `min-block-size`, `padding-inline`, типографику через `getTextProperties(getTextSize(…))`
- * и `border-radius` через `resolveBlockRadius`.
- * `padding-block` не входит в набор: UA-отступ сбрасывает `GlobalResetStyle`, высоту
- * однострочного контрола держит `min-block-size`, центровку — сетка узла.
- *
- * Границы применения:
- *  - полный стандартный бокс, например поле ввода и триггер, — `getControlBoxStyles`
- *  - часть набора, например квадрат из `getMinBlockSize` и `padding-inline` строки-опции, — отдельные геттеры
- *  - многострочный бокс с ростом контента — `getPadding` с парой `inline`/`block`
- *
- * @param sizePreset размер компонента
- * @param shape форма строки-поля
- * @returns CSS-правила, каждое с новой строки
- */
-export function getControlBoxStyles(sizePreset: SizePreset, shape: ShapePreset): string {
-  const styles = [
-    `min-block-size: ${getMinBlockSize(sizePreset)};`,
-    `padding-inline: ${getPaddingInline(sizePreset)};`,
-    getTextProperties(getTextSize(sizePreset)),
-    `border-radius: ${resolveBlockRadius(shape, getMinBlockSize(sizePreset))};`,
-  ];
-
-  return styles.join('\n');
-}
-
-/**
- * DEFAULT_SHOW_BORDER — задаёт показ кольца поверхности по умолчанию.
- * Используется, когда вызывающий код не передал проп `showBorder`.
- */
-export const DEFAULT_SHOW_BORDER = true;
-
-/**
- * FOCUS_OUTLINE_WIDTH — задаёт толщину фокус-кольца контролов и панелей.
- * Используется в `getFocusRingStyles`.
- */
-const FOCUS_OUTLINE_WIDTH = '2px';
-
-/**
- * FOCUS_OUTLINE_OFFSET — задаёт отступ фокус-кольца от края узла.
- * Используется в `getFocusRingStyles` как значение по умолчанию.
- */
-export const FOCUS_OUTLINE_OFFSET = '2px';
-
-/**
- * getFocusRingStyles — возвращает CSS-правила фокус-кольца: `outline` и
- * `outline-offset`. Толщина — `FOCUS_OUTLINE_WIDTH`. Отступ — `options.offset`
- * или `FOCUS_OUTLINE_OFFSET`.
- *
- * @param color цвет кольца, обычно `theme.colors.focusRing` / `invalidRing`
- * @param options опциональный `offset`, например инвертированный у Parts
- * @returns CSS-правила, каждое с новой строки
- */
-export function getFocusRingStyles(
-  color: string,
-  options?: { offset?: string }
-): string {
-  const styles = [
-    `outline: ${FOCUS_OUTLINE_WIDTH} solid ${color};`,
-    `outline-offset: ${options?.offset ?? FOCUS_OUTLINE_OFFSET};`,
-  ];
-
-  return styles.join('\n');
-}
-
-/**
- * getControlBorder — возвращает CSS-правило рамки контрола вне layout-box:
- * кольцо и тень поверхности одним `box-shadow`. Рамочный и безрамочный режимы
- * дают один content-box и одно окно `Icon`, без резерва
- * `border: 1px solid transparent`.
- * Проп `showBorder` подключается контролу осознанно: эталоны RoundButton и Input.
- * Составные триггеры, например Listbox, Combobox, Stepper и RangeInput, проп не
- * получают без отдельного кейса. Оболочка композита без пропа вызывает функцию
- * без второго аргумента.
- * При `showBorder` — кольцо `0 0 0 1px` цвета `border` и тень `shadow.surface`.
- * Без рамки — `box-shadow: none`. `border: none` вызывающий код пишет только там,
- * где layout-рамку даёт UA-стиль тега, например `input` и `dialog`: у `button` её
- * снял reset, у `div` рамки нет — повтор запрещён.
- *
- * @param theme текущая тема
- * @param showBorder включает рамку контрола
- * @returns CSS-правило `box-shadow`, с завершающей `;`
- */
-export function getControlBorder(
-  theme: AppTheme,
-  showBorder: boolean = DEFAULT_SHOW_BORDER
-): string {
-  if (!showBorder) {
-    return 'box-shadow: none;';
-  }
-
-  return `box-shadow: 0 0 0 1px ${theme.colors.border}, ${theme.shadow.surface};`;
 }

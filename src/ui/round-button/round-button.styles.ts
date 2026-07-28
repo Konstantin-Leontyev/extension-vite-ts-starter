@@ -17,8 +17,9 @@
 
 import styled from 'styled-components';
 
+import { getControlBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { getControlBorder, minBlockSize, type SizePreset } from '@ui/presets';
+import { minBlockSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 import {
@@ -106,12 +107,12 @@ export const DEFAULT_ROUND_BUTTON_SHOW_BORDER = false;
 
 /**
  * getRoundButtonStyles — возвращает CSS-правила для корня `StyledRoundButton`:
- * габарит, рамку через `getControlBorder` и канал состояний для внутреннего Icon.
+ * габарит, рамку через `getControlBorderStyles` и канал состояний для внутреннего Icon.
  * Рамка вне layout-box: рамочный и безрамочный режимы дают один content-box
  * и один размер `Icon` — окно заполняет круг целиком.
  *
  * Как работает:
- * 1. Считает габарит по `sizePreset` и кладёт рамку через `getControlBorder` —
+ * 1. Считает габарит по `sizePreset` и кладёт рамку через `getControlBorderStyles` —
  *    layout-рамку у `button` снял reset
  * 2. Считает значение канала: для цветного `iconTone` — сдвиг тона к `shade`
  *    через `resolveColorMix`, для нейтрального — вуаль `theme.colors.veil`
@@ -139,7 +140,7 @@ function getRoundButtonStyles(
   const styles = [
     `inline-size: ${size};`,
     `block-size: ${size};`,
-    getControlBorder(theme, showBorder),
+    getControlBorderStyles(theme, showBorder),
     `&:not(:disabled):hover,`,
     `&:focus-visible {`,
     `--icon-state-background: ${stateBackground};`,

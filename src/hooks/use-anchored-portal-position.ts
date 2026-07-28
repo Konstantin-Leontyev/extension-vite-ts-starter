@@ -16,7 +16,7 @@
 
 import { useLayoutEffect, useRef, type RefObject } from 'react';
 
-import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/shell';
+import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 /**
  * AnchoredPortalPositionStrategy — представляет стратегию позиционирования панели

@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 
+import { getPortalPanelStyles } from '@ui/anchored-portal';
 import {
   ICON_SETTING_PROP_NAMES,
   getIconSectionSeamStyles,
@@ -23,8 +24,7 @@ import {
   resolveIconStateBackground,
 } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { MOTION_MICRO_DURATION, getTransitionStyles } from '@ui/motion';
-import { getPortalPanelStyles } from '@ui/portal-panel';
+import { MOTION_CONTROL_DURATION, getTransitionStyles } from '@ui/motion';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
@@ -281,7 +281,7 @@ function getListboxOptionSurfaceBaseStyles(
     'pointer-events: none;',
     "content: '';",
     `border-radius: calc(${resolveListboxBlockRadius(shape, sizePreset)} - ${getSpacingValue(4)});`,
-    getTransitionStyles('background-color', MOTION_MICRO_DURATION),
+    getTransitionStyles('background-color', MOTION_CONTROL_DURATION),
     '}',
   ];
 

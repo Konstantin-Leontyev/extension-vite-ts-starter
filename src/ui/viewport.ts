@@ -1,5 +1,5 @@
 /**
- * Файл: `src/ui/shell.ts`
+ * Файл: `src/ui/viewport.ts`
  * Задаёт общие метрики края вьюпорта для оболочки и оверлеев.
  *
  * Основные задачи:
@@ -13,9 +13,9 @@
  *  - контролы с custom-позиционированием панели, например Listbox и Combobox —
  *    clamp панели от края вьюпорта
  *  - `src/components/profile-menu/index.tsx` — отступ панели от нижнего края вьюпорта
- *  - `src/pages/showcase/index.tsx` — отступ оболочки витрины
  */
 
+import { OUTLINE_OVERHANG_PX } from '@ui/outline';
 import { type SpacingValue } from '@ui/spacing';
 
 /**
@@ -26,16 +26,10 @@ import { type SpacingValue } from '@ui/spacing';
 export const VIEWPORT_EDGE_INSET: SpacingValue = 8;
 
 /**
- * PORTAL_OUTLINE_OVERHANG_PX — задаёт вылет фокус-кольца панели за border-box:
- * `outline` 2px + `outline-offset` 2px из `getFocusRingStyles`.
- * Используется в `PORTAL_VIEWPORT_EDGE_INSET`.
+ * PORTAL_VIEWPORT_EDGE_INSET — задаёт отступ clamp панелей портала от края
+ * вьюпорта: `VIEWPORT_EDGE_INSET` плюс вылет обводки, чтобы обводка панели
+ * оставалась внутри отступа оболочки, а не заходила в него. Число px для
+ * JS-математики позиционирования, в CSS-декларации не попадает.
  */
-const PORTAL_OUTLINE_OVERHANG_PX = 4;
-
-/**
- * PORTAL_VIEWPORT_EDGE_INSET — задаёт отступ clamp панелей портала от края вьюпорта.
- * Больше `VIEWPORT_EDGE_INSET` на вылет outline, чтобы кольцо оставалось внутри
- * отступа оболочки, а не заходило в него. Ключ шкалы совпадает с px при root 16px.
- */
-export const PORTAL_VIEWPORT_EDGE_INSET: SpacingValue = (VIEWPORT_EDGE_INSET +
-  PORTAL_OUTLINE_OVERHANG_PX) as SpacingValue;
+export const PORTAL_VIEWPORT_EDGE_INSET: number =
+  VIEWPORT_EDGE_INSET + OUTLINE_OVERHANG_PX;

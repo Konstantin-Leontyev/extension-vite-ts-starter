@@ -14,7 +14,7 @@
 import { createGlobalStyle } from 'styled-components';
 import { normalize } from 'styled-normalize';
 
-import { getFocusRingStyles } from '@ui/presets';
+import { getOutlineStyles } from '@ui/outline';
 import { DISABLED_OPACITY, getTheme } from '@ui/theme';
 
 /**
@@ -169,7 +169,7 @@ export const GlobalResetStyle = createGlobalStyle`
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    ${(props) => getFocusRingStyles(getTheme(props).colors.focusRing)}
+    ${(props) => getOutlineStyles(getTheme(props).colors.focusOutline)}
   }
 
   input[aria-invalid='true'],
@@ -181,7 +181,7 @@ export const GlobalResetStyle = createGlobalStyle`
   select[aria-invalid='true'],
   select[aria-invalid='true']:focus,
   select[aria-invalid='true']:focus-visible {
-    ${(props) => getFocusRingStyles(getTheme(props).colors.invalidRing)}
+    ${(props) => getOutlineStyles(getTheme(props).colors.invalidOutline)}
   }
 
   .visually-hidden {

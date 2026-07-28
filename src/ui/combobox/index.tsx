@@ -52,9 +52,9 @@ import { AnchoredPortal } from '@ui/anchored-portal';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Input } from '@ui/input';
 import { ScrollPort } from '@ui/scroll-port';
-import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/shell';
 import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
+import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 import {
   StyledComboboxCheck,

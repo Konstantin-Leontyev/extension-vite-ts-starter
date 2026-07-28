@@ -15,10 +15,10 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
+import { getOutlineStyles } from '@ui/outline';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
-  getFocusRingStyles,
   getMinBlockSize,
   getPaddingInline,
   getTextSize,
@@ -106,7 +106,7 @@ function getStepperRootStyles(
     `background-color: ${theme.colors.surface};`,
     `box-shadow: ${theme.shadow.surface};`,
     '&:focus-within {',
-    getFocusRingStyles(theme.colors.focusRing),
+    getOutlineStyles(theme.colors.focusOutline),
     '}',
   ];
 

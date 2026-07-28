@@ -17,14 +17,14 @@
 
 import styled from 'styled-components';
 
+import { getPortalPanelStyles } from '@ui/anchored-portal';
+import { getControlBorderStyles } from '@ui/border';
 import { getIconSectionSeamStyles, resolveIconStateBackground } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { getPortalPanelStyles } from '@ui/portal-panel';
+import { getOutlineStyles } from '@ui/outline';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
-  getControlBorder,
-  getFocusRingStyles,
   getMinBlockSize,
   resolveBlockRadius,
   type ShapePreset,
@@ -147,14 +147,14 @@ function getDateRangeInputTriggerRowStyles(
     'overflow: hidden;',
     `background-color: ${theme.colors.surface};`,
     `border-radius: ${resolveDateRangeInputBlockRadius(props)};`,
-    getControlBorder(theme),
+    getControlBorderStyles(theme),
     `&[data-open='true'] { visibility: hidden; }`,
     getIconSectionSeamStyles({
       borderColor: theme.colors.border,
       slot: 'clear',
     }),
     '&:focus-within {',
-    getFocusRingStyles(theme.colors.focusRing),
+    getOutlineStyles(theme.colors.focusOutline),
     '}',
   ];
 

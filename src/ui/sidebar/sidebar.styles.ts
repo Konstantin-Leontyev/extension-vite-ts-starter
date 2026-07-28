@@ -23,9 +23,9 @@ import {
   type SpacingProps,
   type SpacingValue,
 } from '@ui/layout';
-import { getTransitionStyles } from '@ui/motion';
-import { VIEWPORT_EDGE_INSET } from '@ui/shell';
+import { MOTION_SHELL_DURATION, getTransitionStyles } from '@ui/motion';
 import { STACKING_SIDEBAR } from '@ui/stacking';
+import { VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 /**
  * SIDEBAR_PANEL_WIDTH — задаёт ширину выезжающей панели.
@@ -92,7 +92,7 @@ export const StyledSidebarSlot = styled.aside`
   min-inline-size: 0;
   min-block-size: 0;
   overflow: hidden;
-  ${getTransitionStyles('inline-size')}
+  ${getTransitionStyles('inline-size', MOTION_SHELL_DURATION)}
 
   &[data-open='false'] {
     display: none;
@@ -125,7 +125,7 @@ export const StyledSidebarTrack = styled.div`
   block-size: 100%;
   min-block-size: 0;
   transform: translateX(100%);
-  ${getTransitionStyles('transform')}
+  ${getTransitionStyles('transform', MOTION_SHELL_DURATION)}
 
   &[data-open='true'] {
     transform: translateX(0);

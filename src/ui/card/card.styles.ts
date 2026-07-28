@@ -15,6 +15,7 @@
 
 import styled from 'styled-components';
 
+import { getBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -97,14 +98,14 @@ function getCardStyles(props: CardStyleProps & { theme: AppTheme }): string {
       : 'grid-template-rows: minmax(0, 1fr);',
   ];
 
-  if (background !== 'transparent') {
+  if (background === 'transparent') {
+    styles.push(`border: 1px solid ${theme.colors.border};`);
+  } else {
     styles.push(
       `background-color: ${background === 'background' ? theme.colors.background : theme.colors.surface};`
     );
-    styles.push(`box-shadow: ${theme.shadow.surface};`);
+    styles.push(getBorderStyles(theme));
   }
-
-  styles.push(`border: 1px solid ${theme.colors.border};`);
 
   return styles.join('\n');
 }
