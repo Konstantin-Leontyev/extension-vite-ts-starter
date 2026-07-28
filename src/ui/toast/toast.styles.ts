@@ -13,7 +13,7 @@
 
 import styled from 'styled-components';
 
-import { getBorderStyles } from '@ui/border';
+import { getControlBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -59,7 +59,10 @@ const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 't
 
 /**
  * getToastStyles — возвращает CSS-правила для корня `StyledToast`:
- * размер, отступы, фон, цвет, границу, акцентную полосу и тень.
+ * размер, отступы, фон, цвет, кольцо границы, акцентную полосу и тень.
+ * Кольцо — `box-shadow` вне layout-box: блочные стороны не входят в пол
+ * `min-block-size`, однострочный Toast держит инвариант §7.3. Реальный `border`
+ * остаётся только у акцентной полосы — инлайновая сторона высоту не растит.
  *
  * @param props пропсы стилизации Toast и тема
  * @returns CSS-правила, каждое с новой строки
@@ -76,7 +79,7 @@ function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
     `padding-inline: ${padding.inline};`,
     `background-color: ${theme.colors.surface};`,
     `color: ${theme.colors.default};`,
-    getBorderStyles(theme),
+    getControlBorderStyles(theme),
     `border-inline-start: ${getSpacingValue(4)} solid ${getToneColor(theme, tone, theme.colors.border)};`,
     `border-radius: ${resolveBlockRadius(DEFAULT_SHAPE_PRESET, minBlockSize)};`,
   ];
@@ -93,7 +96,7 @@ function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
  *  - `align-content: center` — центрирует текст по вертикали
  *
  * Генерация стилей:
- *  - `getToastStyles` — размер, отступы, фон, цвет, граница, акцентная полоса, тень
+ *  - `getToastStyles` — размер, отступы, фон, цвет, кольцо границы, акцентная полоса, тень
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *
  * Высота задана через `min-block-size` без фиксированного `block-size`:

@@ -9,11 +9,12 @@
  * 3. Задать дефолт пропа `showBorder` через `DEFAULT_SHOW_BORDER`
  *
  * Потребители:
- *  - `src/ui/card/card.styles.ts`, `src/ui/toast/toast.styles.ts`,
- *    `src/ui/anchored-portal/anchored-portal.styles.ts` — подставляют рамку и тень
- *    поверхности
+ *  - `src/ui/card/card.styles.ts`, `src/ui/anchored-portal/anchored-portal.styles.ts` —
+ *    подставляют рамку и тень поверхности
  *  - styles-файлы контролов с режимом рамки, например Input, RoundButton,
  *    SegmentButton и DateRangeInput — подставляют переключаемое кольцо контрола
+ *  - `src/ui/toast/toast.styles.ts` — подставляет постоянное кольцо вне layout-box,
+ *    удерживая инвариант однострочного бокса
  */
 
 import { type AppTheme } from '@ui/theme';
@@ -26,10 +27,10 @@ export const DEFAULT_SHOW_BORDER = true;
 
 /**
  * getBorderStyles — возвращает CSS-правила рамки поверхности: `border` 1px
- * цвета `border` и тень `shadow.surface`. Для статичных поверхностей —
- * карточки, Toast, панели портала. Акцентные стороны, например тональная
- * полоса Toast, переопределяются CSS-правилом после вызова.
- * Переключаемая рамка контрола — `getControlBorderStyles`.
+ * цвета `border` и тень `shadow.surface`. Для статичных поверхностей без
+ * однострочного ряда — карточки, панели портала: реальный `border` входит
+ * в layout-box и пол `min-block-size`.
+ * Рамка вне layout-box — `getControlBorderStyles`.
  *
  * @param theme текущая тема
  * @returns CSS-правила, каждое с новой строки
@@ -50,8 +51,8 @@ export function getBorderStyles(theme: AppTheme): string {
  * `border: 1px solid transparent`.
  * Проп `showBorder` подключается контролу осознанно: эталоны RoundButton и Input.
  * Составные триггеры, например Listbox, Combobox, Stepper и RangeInput, проп не
- * получают без отдельного кейса. Оболочка композита без пропа вызывает функцию
- * без второго аргумента.
+ * получают без отдельного кейса. Оболочка композита и поверхность с постоянным
+ * кольцом, например Toast, вызывают функцию без второго аргумента.
  * При `showBorder` — кольцо `0 0 0 1px` цвета `border` и тень `shadow.surface`.
  * Без рамки CSS-правило не пишется. `border: none` вызывающий код пишет только там,
  * где layout-рамку даёт UA-стиль тега, например `<input>` и `<dialog>`: у `<button>` её

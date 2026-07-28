@@ -33,6 +33,8 @@ export type SizePreset = 'large' | 'normal' | 'small';
  * minBlockSize — хранит минимальную высоту бокса для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
  * При смене размера высота строки текста и отступы масштабируются синхронно.
+ * Экспортируется для расширения спредом в `@ui/tag`, `@ui/round-button`
+ * и `@ui/icon`, чтение высоты — через `getMinBlockSize`.
  */
 export const minBlockSize = Object.freeze({
   small: 32,
@@ -71,6 +73,8 @@ export function getMinBlockSize(sizePreset: SizePreset): string {
  * помещается в `minBlockSize`, а отступы остаются в пределах заданной высоты.
  * При переносе строки контент растёт выше `minBlockSize`, и `padding.block`
  * удерживает текст от прилипания к краям.
+ * Экспортируется для замера значений в `@ui/table/column-sizing`,
+ * чтение отступов — через `getPaddingInline` и `getPaddingBlock`.
  */
 export const padding = Object.freeze({
   small: Object.freeze({ inline: 12, block: 8 } as const),
@@ -172,9 +176,9 @@ export function resolveBlockRadius(shape: ShapePreset, minBlockSize: string): st
 /**
  * textSize — хранит размер текста для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — метка из `TextSizePreset` компонента Text.
- * Лестница: small → thin, normal → normal, large → medium. Пары размер и высота
- * строки — 12/16, 16/20 и 20/24.
- * Высота контрола: line-height + 2 × padding.block = minBlockSize.
+ * Пары размер и высота строки — 12/16, 16/20 и 20/24.
+ * Высота контрола: `line-height` + 2 × `padding.block` = `minBlockSize`.
+ * Экспортируется для расширения спредом в `@ui/tag`, чтение — через `getTextSize`.
  */
 export const textSize = Object.freeze({
   small: 'thin',
