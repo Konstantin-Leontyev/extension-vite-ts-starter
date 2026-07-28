@@ -14,16 +14,11 @@
  *  - `src/main.tsx` — оборачивает приложение провайдером
  */
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 
 import { GlobalResetStyle } from '@ui/reset';
-import {
-  GlobalThemeStyle,
-  styledDarkTheme,
-  styledLightTheme,
-  type AppTheme,
-} from '@ui/theme';
+import { GlobalThemeStyle, styledDarkTheme, styledLightTheme } from '@ui/theme';
 
 import { ThemeContext, type ThemeContextValue, type ThemeMode } from './context';
 
@@ -69,26 +64,29 @@ function readStoredMode(): ThemeMode {
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [mode, setMode] = useState<ThemeMode>(readStoredMode);
 
-  // Сохраняет выбор темы — побочный эффект без влияния на разметку
+  /**
+   * Сохраняет выбор темы в `localStorage`.
+   * Побочный эффект без влияния на разметку.
+   */
   useEffect(() => {
     window.localStorage.setItem(THEME_STORAGE_KEY, mode);
   }, [mode]);
 
-  const theme: AppTheme = mode === 'light' ? styledLightTheme : styledDarkTheme;
+  /**
+   * handleThemeChange — переключает режим темы между светлым и тёмным.
+   */
+  function handleThemeChange(): void {
+    setMode((current) => (current === 'light' ? 'dark' : 'light'));
+  }
 
-  const contextValue = useMemo<ThemeContextValue>(
-    () => ({
-      mode,
-      onThemeChange: () => {
-        setMode((current) => (current === 'light' ? 'dark' : 'light'));
-      },
-    }),
-    [mode]
-  );
+  const contextValue: ThemeContextValue = {
+    mode,
+    onThemeChange: handleThemeChange,
+  };
 
   return (
     <ThemeContext.Provider value={contextValue}>
-      <StyledThemeProvider theme={theme}>
+      <StyledThemeProvider theme={mode === 'light' ? styledLightTheme : styledDarkTheme}>
         <GlobalResetStyle />
         <GlobalThemeStyle />
         {children}
