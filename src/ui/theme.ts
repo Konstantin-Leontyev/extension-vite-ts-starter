@@ -15,7 +15,7 @@
  *
  * Потребители:
  *  - все `*.styles.ts` — читают тему через `getTheme(props)`
- *  - `@ui/reset` — берёт `DISABLED_OPACITY` для состояний `disabled`
+ *  - `@ui/reset` — использует `DISABLED_OPACITY` для состояний `disabled`
  *  - `ThemeProvider` из `src/context/theme/index.tsx` — подключает `GlobalThemeStyle`
  *    и передаёт тему приложению
  */

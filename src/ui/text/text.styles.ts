@@ -5,19 +5,22 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `TextStyleProps`, `TextTone`, `TextSizePreset` и `TextAlignPreset`
  * 2. Хранить тоны текста в `TEXT_TONE_PRESETS` и пресеты типографики в `textSizePresets`
- * 3. Предоставить функции `getTextProperties`, `getTextLineHeight` и `getTextToneColor`,
- *    а также перечни `TEXT_TONE_KEYS`, `TEXT_SIZE_PRESET_KEYS` и `TEXT_ALIGN_PRESET_KEYS`
+ * 3. Предоставить функции `getTextProperties`, `getTextLineHeight`, `getTextToneColor`
+ *    и `getEllipsisStyles`, а также перечни `TEXT_TONE_KEYS`, `TEXT_SIZE_PRESET_KEYS`
+ *    и `TEXT_ALIGN_PRESET_KEYS`
  * 4. Предоставить styled-узел `StyledText`
  *
  * Потребители:
  *  - `src/ui/text/index.tsx` — собирает компонент Text и реэкспортирует публичное API
- *  - `@ui/presets` — собирает типографику контрола через `getTextProperties`
+ *  - `@ui/presets` — использует тип `TextSizePreset` для моста `getTextSize`
  *  - `@ui/table/column-sizing` — замеряет ширину колонки по `textSizePresets`
- *  - `@ui/table/table-inline-field` — стилизует нативное поле ввода через `getTextProperties`
+ *  - `@ui/input`, `@ui/table/table-inline-field` — стилизуют нативное поле ввода через
+ *    `getTextProperties`
  *  - `@ui/stepper` — стилизует нативное поле ввода через `getTextProperties`
  *    и `getTextToneColor`
  *  - `@ui/input`, `@ui/combobox`, `@ui/listbox`, `@ui/range-input`, `@ui/spinner`,
  *    `@ui/table` — резервируют место под однострочный текст через `getTextLineHeight`
+ *  - `@ui/table/table-cell` — обрезает содержимое ячейки через `getEllipsisStyles`
  */
 
 import { type CSSProperties } from 'react';
@@ -244,6 +247,18 @@ const TEXT_PROP_NAMES = new Set<string>([
 ]);
 
 /**
+ * getEllipsisStyles — возвращает CSS-правила обрезания однострочного текста:
+ * `overflow: hidden`, `text-overflow: ellipsis` и `white-space: nowrap`.
+ *
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getEllipsisStyles(): string {
+  return ['overflow: hidden;', 'text-overflow: ellipsis;', 'white-space: nowrap;'].join(
+    '\n'
+  );
+}
+
+/**
  * getTextStyles — возвращает CSS-правила для корня `StyledText`: типографику,
  * цвет и выравнивание.
  *
@@ -258,8 +273,7 @@ const TEXT_PROP_NAMES = new Set<string>([
  *    `color` не добавляется — цвет наследуется по умолчанию, типичное
  *    внутри цветного контрола
  * 6. Добавляет правила для `align` и `whiteSpace`
- * 7. Для `ellipsis` добавляет `overflow: hidden`, `text-overflow: ellipsis`
- *    и `white-space: nowrap`
+ * 7. Для `ellipsis` добавляет правила обрезания через `getEllipsisStyles`
  *
  * @param props объект с текстовыми пропсами и темой
  * @returns CSS-правила, каждое с новой строки
@@ -313,9 +327,7 @@ function getTextStyles(props: TextStyleProps & { theme: AppTheme }): string {
   }
 
   if (ellipsis === true) {
-    styles.push('overflow: hidden;');
-    styles.push('text-overflow: ellipsis;');
-    styles.push('white-space: nowrap;');
+    styles.push(getEllipsisStyles());
   }
 
   return styles.join('\n');
