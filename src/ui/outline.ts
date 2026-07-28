@@ -1,7 +1,7 @@
 /**
  * Файл: `src/ui/outline.ts`
  * Содержит обводку узла: генератор пары `outline` / `outline-offset` и метрики
- * обводки. Цвет задаёт вызывающий код токеном состояния: `focusOutline` для
+ * обводки. Делегирует цвет вызывающему коду токеном состояния: `focusOutline` для
  * `:focus-visible` и панелей, `invalidOutline` для невалидных полей.
  *
  * Основные задачи:
@@ -10,17 +10,17 @@
  * 3. Экспортировать `OUTLINE_OVERHANG_PX` — вылет обводки для JS-математики
  *
  * Потребители:
- *  - `src/ui/reset.ts` — глобальная обводка `:focus-visible`
+ *  - `src/ui/reset.ts` — задаёт глобальную обводку `:focus-visible`
  *  - styles-файлы контролов и панелей, например Switch, Stepper, Table
- *    и хром панели портала
- *  - `src/ui/segment-button-parts/segment-button-parts.styles.ts` — инверсия отступа
- *  - `src/ui/viewport.ts` — вылет обводки в отступе clamp панелей
+ *    и хром панели портала — задают обводку
+ *  - `src/ui/segment-button-parts/segment-button-parts.styles.ts` — инвертирует отступ
+ *  - `src/ui/viewport.ts` — учитывает вылет обводки в отступе clamp панелей
  */
 
 /**
  * OUTLINE_WIDTH_PX — задаёт толщину обводки в px. Источник для `OUTLINE_WIDTH`
  * и `OUTLINE_OVERHANG_PX`. Намеренно px, не шкала: обводка не растёт
- * с root font-size.
+ * с `font-size` корня.
  */
 const OUTLINE_WIDTH_PX = 2;
 
@@ -31,21 +31,21 @@ const OUTLINE_WIDTH_PX = 2;
 const OUTLINE_OFFSET_PX = 2;
 
 /**
- * OUTLINE_WIDTH — задаёт толщину обводки контролов и панелей.
+ * OUTLINE_WIDTH — формирует толщину обводки контролов и панелей из `OUTLINE_WIDTH_PX`.
  * Используется в `getOutlineStyles`.
  */
 const OUTLINE_WIDTH = `${OUTLINE_WIDTH_PX}px`;
 
 /**
- * OUTLINE_OFFSET — задаёт отступ обводки от края узла.
+ * OUTLINE_OFFSET — формирует отступ обводки от края узла из `OUTLINE_OFFSET_PX`.
  * Используется в `getOutlineStyles` как значение по умолчанию.
  */
 export const OUTLINE_OFFSET = `${OUTLINE_OFFSET_PX}px`;
 
 /**
- * OUTLINE_OVERHANG_PX — задаёт вылет обводки за border-box: толщина плюс
- * отступ. Число px для JS-математики позиционирования — геометрия DOM
- * считается в px, в CSS-декларации не попадает.
+ * OUTLINE_OVERHANG_PX — формирует вылет обводки за `border-box` из `OUTLINE_WIDTH_PX`
+ * и `OUTLINE_OFFSET_PX`. Число px для JS-математики позиционирования — геометрия DOM
+ * считается в px, в CSS-правиле не попадает.
  */
 export const OUTLINE_OVERHANG_PX = OUTLINE_WIDTH_PX + OUTLINE_OFFSET_PX;
 

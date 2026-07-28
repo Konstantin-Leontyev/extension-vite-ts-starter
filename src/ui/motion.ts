@@ -1,9 +1,6 @@
 /**
  * Файл: `src/ui/motion.ts`
  * Содержит генератор CSS-переходов и две сценарные длительности проекта.
- * Каркас оболочки, например шапка и сайдбар, передаёт `MOTION_SHELL_DURATION`.
- * Контролы передают `MOTION_CONTROL_DURATION`.
- * Под `prefers-reduced-motion` длительность удваивается через `calc`.
  * Не покрывает `animation`, например у Spinner — другой механизм.
  *
  * Основные задачи:
@@ -11,24 +8,20 @@
  * 2. Предоставить функцию `getTransitionStyles`
  *
  * Потребители:
- *  - `src/ui/sidebar/sidebar.styles.ts` — анимирует выезд и сворачивание панели
- *  - `src/components/header/header.styles.ts` — анимирует сворачивание шапки в режиме `autoHide`
- *  - `src/ui/switch/switch.styles.ts` — ход заливки, рамки и бегунка
- *  - `src/ui/progress-bar/progress-bar.styles.ts` — ширина заливки
- *  - `src/ui/listbox/listbox.styles.ts` — hover фона опции
- *  - `src/ui/combobox/combobox.styles.ts` — hover фона опции
- *  - `src/ui/range-input/range-input.styles.ts` — hover фона пресета
+ *  - стили компонентов, например Sidebar — задают CSS-переходы через `getTransitionStyles`
  */
 
 /**
  * MOTION_SHELL_DURATION — задаёт длительность переходов каркаса оболочки:
  * выезд панели Sidebar, сворачивание шапки.
+ * Используется в `getTransitionStyles`.
  */
 export const MOTION_SHELL_DURATION = '0.3s';
 
 /**
  * MOTION_CONTROL_DURATION — задаёт длительность отклика контролов:
- * Switch, ProgressBar и hover строк-опций.
+ * Switch, ProgressBar и строк-опций при наведении.
+ * Используется в `getTransitionStyles`.
  */
 export const MOTION_CONTROL_DURATION = '0.15s';
 

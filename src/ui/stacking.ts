@@ -15,7 +15,7 @@
  *  - `STACKING_TOAST` — стек уведомлений над порталами
  *
  * Основные задачи:
- * 1. Экспортировать константы шкалы `STACKING_HEADER`, `STACKING_PROFILE_MENU`,
+ * 1. Предоставить константы шкалы `STACKING_HEADER`, `STACKING_PROFILE_MENU`,
  *    `STACKING_SIDEBAR`, `STACKING_OPEN_CONTROL`, `STACKING_PORTAL` и `STACKING_TOAST`
  *
  * Потребители:
@@ -29,32 +29,40 @@
 
 /**
  * STACKING_HEADER — задаёт слой sticky-шапки над основным контентом.
+ * Используется в `src/components/header/header.styles.ts`.
  */
 export const STACKING_HEADER = 10;
 
 /**
  * STACKING_PROFILE_MENU — задаёт слой fixed-меню профиля над шапкой.
+ * Используется в `src/components/profile-menu/index.tsx`.
  */
 export const STACKING_PROFILE_MENU = 20;
 
 /**
  * STACKING_SIDEBAR — задаёт слой выезжающей панели сайдбара на узком экране.
+ * Используется в `src/ui/sidebar/sidebar.styles.ts`.
  */
 export const STACKING_SIDEBAR = 30;
 
 /**
  * STACKING_OPEN_CONTROL — задаёт слой корня открытого контрола над соседями в потоке.
  * Не путать со слоем панели в портале `STACKING_PORTAL`.
+ * Используется в контролах с `data-open`, например listbox, combobox,
+ * date-range-input и range-input.
  */
 export const STACKING_OPEN_CONTROL = 40;
 
 /**
  * STACKING_PORTAL — задаёт слой панели в `document.body`,
  * например listbox, combobox, date-range-input, range-input и table.
+ * Используется в `src/ui/anchored-portal/anchored-portal.styles.ts`
+ * и `src/ui/table/table.styles.ts`.
  */
 export const STACKING_PORTAL = 100;
 
 /**
  * STACKING_TOAST — задаёт слой стека уведомлений над порталами.
+ * Используется в `src/context/toast/toast.styles.ts`.
  */
 export const STACKING_TOAST = 150;
