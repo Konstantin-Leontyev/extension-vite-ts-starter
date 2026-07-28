@@ -116,7 +116,11 @@ export function AnchoredPortal({
     returnFocusRef,
   });
 
-  useAnchoredPortalPosition(open, panelRef, positioning);
+  useAnchoredPortalPosition({
+    active: open,
+    panelRef,
+    strategy: positioning,
+  });
 
   const onOpenFocusEvent = useEffectEvent((panel: HTMLElement) => {
     onOpenFocus?.(panel);

@@ -45,35 +45,6 @@ type UseFocusOptions = {
 };
 
 /**
- * useFocus — удерживает обход `Tab` внутри контейнера и возвращает фокус при отключении.
- *
- * @param options опции активации и ссылок на контейнер и возврат фокуса
- */
-export function useFocus({
-  active,
-  containerRef,
-  returnFocusRef,
-}: UseFocusOptions): void {
-  const previousFocusRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (!active) {
-      return;
-    }
-
-    previousFocusRef.current = document.activeElement as HTMLElement | null;
-
-    const focusContainer = containerRef.current;
-
-    if (!focusContainer) {
-      return;
-    }
-
-    return mountFocus(focusContainer, returnFocusRef, previousFocusRef);
-  }, [active, containerRef, returnFocusRef]);
-}
-
-/**
  * mountFocus — подписывает контейнер на `Tab` и возвращает функцию снятия подписки.
  * При снятии возвращает фокус на `returnFocusRef` или на элемент до включения ловушки.
  *
@@ -100,11 +71,6 @@ function mountFocus(
 
     const first = focusables[0];
     const last = focusables[focusables.length - 1];
-
-    if (!first || !last) {
-      return;
-    }
-
     const activeElement = document.activeElement;
 
     if (event.shiftKey) {
@@ -130,4 +96,33 @@ function mountFocus(
 
     returnTarget?.focus();
   };
+}
+
+/**
+ * useFocus — удерживает обход `Tab` внутри контейнера и возвращает фокус при отключении.
+ *
+ * @param options опции активации и ссылок на контейнер и возврат фокуса
+ */
+export function useFocus({
+  active,
+  containerRef,
+  returnFocusRef,
+}: UseFocusOptions): void {
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!active) {
+      return;
+    }
+
+    previousFocusRef.current = document.activeElement as HTMLElement | null;
+
+    const focusContainer = containerRef.current;
+
+    if (!focusContainer) {
+      return;
+    }
+
+    return mountFocus(focusContainer, returnFocusRef, previousFocusRef);
+  }, [active, containerRef, returnFocusRef]);
 }

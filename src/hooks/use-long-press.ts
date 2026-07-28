@@ -6,16 +6,16 @@
  * 1. Предоставить хук `useLongPress`
  *
  * Потребители:
- *  - контролы, например SegmentButton и Table — запускают действие по удержанию
+ *  - контролы, например SegmentButtonParts и Table — запускают действие по удержанию
  */
 
 import { useEffect, useRef, type PointerEventHandler } from 'react';
 
 /**
- * DEFAULT_LONG_PRESS_MS — задаёт задержку долгого нажатия по умолчанию.
+ * DEFAULT_LONG_PRESS_DELAY_MS — задаёт задержку долгого нажатия по умолчанию.
  * Используется, когда вызывающий код не передал опцию `delayMs`.
  */
-const DEFAULT_LONG_PRESS_MS = 500;
+const DEFAULT_LONG_PRESS_DELAY_MS = 500;
 
 /**
  * DEFAULT_LONG_PRESS_DISABLED — задаёт недоступность распознавания по умолчанию.
@@ -27,7 +27,7 @@ const DEFAULT_LONG_PRESS_DISABLED = false;
  * UseLongPressOptions — представляет опции хука `useLongPress`.
  *
  * @property delayMs — задержка до срабатывания долгого нажатия
- * @property disabled — включает недоступность распознавания
+ * @property disabled — включает недоступное состояние распознавания
  * @property onLongPress — обработчик срабатывания долгого нажатия
  */
 type UseLongPressOptions = {
@@ -59,7 +59,7 @@ type LongPressPointerProps = {
  * @returns пропсы указателя и функцию `suppressNextClick`
  */
 export function useLongPress({
-  delayMs = DEFAULT_LONG_PRESS_MS,
+  delayMs = DEFAULT_LONG_PRESS_DELAY_MS,
   disabled = DEFAULT_LONG_PRESS_DISABLED,
   onLongPress,
 }: UseLongPressOptions): {
@@ -67,7 +67,7 @@ export function useLongPress({
   suppressNextClick: () => boolean;
 } {
   const timerRef = useRef<null | ReturnType<typeof setTimeout>>(null);
-  const triggeredRef = useRef(false);
+  const isTriggeredRef = useRef(false);
   const delayMsRef = useRef(delayMs);
   const disabledRef = useRef(disabled);
   const onLongPressRef = useRef(onLongPress);
@@ -87,7 +87,7 @@ export function useLongPress({
     if (disabled || !onLongPress) {
       clearTimer();
     }
-  });
+  }, [delayMs, disabled, onLongPress]);
 
   useEffect(() => () => clearTimer(), []);
 
@@ -96,10 +96,10 @@ export function useLongPress({
       return;
     }
 
-    triggeredRef.current = false;
+    isTriggeredRef.current = false;
     clearTimer();
     timerRef.current = setTimeout(() => {
-      triggeredRef.current = true;
+      isTriggeredRef.current = true;
       onLongPressRef.current?.();
     }, delayMsRef.current);
   }
@@ -109,8 +109,8 @@ export function useLongPress({
   }
 
   function suppressNextClick(): boolean {
-    if (triggeredRef.current) {
-      triggeredRef.current = false;
+    if (isTriggeredRef.current) {
+      isTriggeredRef.current = false;
       return true;
     }
 

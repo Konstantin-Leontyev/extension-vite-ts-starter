@@ -25,13 +25,13 @@ type UseAnchoredDismissOptions = {
 };
 
 /**
- * nodeInZones — возвращает, лежит ли узел внутри одной из зон закрытия.
+ * isNodeInZones — возвращает, лежит ли узел внутри одной из зон.
  *
  * @param target проверяемый DOM-узел
  * @param zoneRefs ссылки на зоны, клик внутри которых не закрывает слой
  * @returns `true`, если узел принадлежит хотя бы одной зоне
  */
-function nodeInZones(
+function isNodeInZones(
   target: Node,
   zoneRefs: readonly RefObject<HTMLElement | null>[]
 ): boolean {
@@ -53,7 +53,7 @@ export function useAnchoredDismiss({
 
   useEffect(() => {
     zoneRefsRef.current = zoneRefs;
-  });
+  }, [zoneRefs]);
 
   const onDismissEvent = useEffectEvent(onDismiss);
 
@@ -63,7 +63,7 @@ export function useAnchoredDismiss({
     }
 
     function isInside(target: Node): boolean {
-      return nodeInZones(target, zoneRefsRef.current);
+      return isNodeInZones(target, zoneRefsRef.current);
     }
 
     function handlePointerDown(event: PointerEvent): void {

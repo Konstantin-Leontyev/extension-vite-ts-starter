@@ -33,6 +33,19 @@ export type AnchoredPortalPositionStrategy = {
 };
 
 /**
+ * UseAnchoredPortalPositionOptions — представляет опции хука `useAnchoredPortalPosition`.
+ *
+ * @property active — включает позиционирование открытой панели
+ * @property panelRef — ссылка на DOM-узел панели
+ * @property strategy — стратегия позиционирования относительно якоря
+ */
+type UseAnchoredPortalPositionOptions = {
+  active: boolean;
+  panelRef: RefObject<HTMLElement | null>;
+  strategy: AnchoredPortalPositionStrategy | undefined;
+};
+
+/**
  * EMPTY_LAYOUT_DEPS — задаёт пустой перечень зависимостей пересчёта позиции.
  * Используется, когда стратегия не передала `layoutDeps`.
  */
@@ -44,19 +57,14 @@ const EMPTY_LAYOUT_DEPS: readonly unknown[] = [];
  * Используется внутри `placeCalendarPanel`.
  *
  * @param panel DOM-узел панели
- * @param left предпочтительный inset-inline-start в px
- * @param top предпочтительный inset-block-start в px
+ * @param left предпочтительный `inset-inline-start` в px
+ * @param top предпочтительный `inset-block-start` в px
  */
-export function clampPanelToViewport(
-  panel: HTMLElement,
-  left: number,
-  top: number
-): void {
-  const panelWidth = panel.offsetWidth;
+function clampPanelToViewport(panel: HTMLElement, left: number, top: number): void {
   const panelHeight = panel.offsetHeight;
   const maxLeft = Math.max(
     PORTAL_VIEWPORT_EDGE_INSET,
-    window.innerWidth - panelWidth - PORTAL_VIEWPORT_EDGE_INSET
+    window.innerWidth - panel.offsetWidth - PORTAL_VIEWPORT_EDGE_INSET
   );
   const clampedLeft = Math.min(Math.max(PORTAL_VIEWPORT_EDGE_INSET, left), maxLeft);
   let clampedTop = Math.max(PORTAL_VIEWPORT_EDGE_INSET, top);
@@ -167,15 +175,13 @@ function applyPositionStrategy(
  *    и слушает `resize`
  * 3. Пересчитывает позицию при смене `layoutDeps` из вызывающего кода
  *
- * @param active включает позиционирование открытой панели
- * @param panelRef ссылка на DOM-узел панели
- * @param strategy стратегия позиционирования относительно якоря
+ * @param options опции активации, ссылки на панель и стратегии позиционирования
  */
-export function useAnchoredPortalPosition(
-  active: boolean,
-  panelRef: RefObject<HTMLElement | null>,
-  strategy: AnchoredPortalPositionStrategy | undefined
-): void {
+export function useAnchoredPortalPosition({
+  active,
+  panelRef,
+  strategy,
+}: UseAnchoredPortalPositionOptions): void {
   const layoutDeps = strategy?.layoutDeps ?? EMPTY_LAYOUT_DEPS;
   const hasStrategy = strategy !== undefined;
   const strategyRef = useRef(strategy);
