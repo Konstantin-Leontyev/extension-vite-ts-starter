@@ -3,12 +3,12 @@
  * Предоставляет svg-иконку настроек.
  *
  * Основные задачи:
- * 1. Экспортировать компонент `SettingsIcon`
+ * 1. Экспортировать компонент SettingsIcon
  *
  * Потребители:
- *  - показывают вход в настройки:
- *     - `src/components/header/index.tsx`
- *     - `src/pages/showcase/index.tsx`
+ *  - `src/components/header/index.tsx` — показывает вход в настройки
+ *  - `src/pages/showcase/index.tsx` — показывает вход в настройки
+ *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины
  *  - `src/icons/index.ts` — реэкспортирует `SettingsIcon`
  */
 

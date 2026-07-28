@@ -3,10 +3,10 @@
  * Предоставляет svg-иконку двойного шеврона вправо.
  *
  * Основные задачи:
- * 1. Экспортировать компонент `ChevronDoubleRightIcon`
+ * 1. Экспортировать компонент ChevronDoubleRightIcon
  *
  * Потребители:
- *  - `src/ui/date-range-input/calendar-panel/index.tsx` — навигация на следующий год
+ *  - `src/ui/date-range-input/calendar-panel/index.tsx` — показывает переход на следующий год
  *  - `src/icons/index.ts` — реэкспортирует `ChevronDoubleRightIcon`
  */
 

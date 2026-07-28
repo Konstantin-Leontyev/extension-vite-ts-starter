@@ -3,10 +3,10 @@
  * Предоставляет svg-иконку шеврона влево.
  *
  * Основные задачи:
- * 1. Экспортировать компонент `ChevronLeftIcon`
+ * 1. Экспортировать компонент ChevronLeftIcon
  *
  * Потребители:
- *  - `src/ui/date-range-input/calendar-panel/index.tsx` — навигация на предыдущий месяц
+ *  - `src/ui/date-range-input/calendar-panel/index.tsx` — показывает переход на предыдущий месяц
  *  - `src/icons/index.ts` — реэкспортирует `ChevronLeftIcon`
  */
 

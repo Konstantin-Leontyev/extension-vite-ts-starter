@@ -45,8 +45,7 @@ import {
 
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { getFocusables } from '@hooks/use-focus';
-import { CheckIcon } from '@icons/check';
-import { ChevronDownIcon } from '@icons/chevron-down';
+import { CheckIcon, ChevronDownIcon } from '@icons';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Checkbox } from '@ui/checkbox';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';

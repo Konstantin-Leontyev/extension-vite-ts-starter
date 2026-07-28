@@ -3,10 +3,12 @@
  * Предоставляет svg-иконку шеврона вниз.
  *
  * Основные задачи:
- * 1. Экспортировать компонент `ChevronDownIcon`
+ * 1. Экспортировать компонент ChevronDownIcon
  *
  * Потребители:
  *  - контролы с раскрытием, например Listbox, Combobox и Stepper — показывают направление
+ *  - `src/pages/showcase/table-demo/index.tsx` — показывает состояние раскрытия строки
+ *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины
  *  - `src/icons/index.ts` — реэкспортирует `ChevronDownIcon`
  */
 

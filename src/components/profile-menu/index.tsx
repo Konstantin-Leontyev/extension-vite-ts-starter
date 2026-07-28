@@ -16,15 +16,14 @@
 
 import { Fragment, useId, useRef, useState, type ComponentPropsWithRef } from 'react';
 
-import { AddCircleIcon } from '@icons/add-circle';
-import { AvatarIcon } from '@icons/avatar';
-import { CloseIcon } from '@icons/close';
-import { SignOutIcon } from '@icons/sign-out';
+import { AddCircleIcon, AvatarIcon, CloseIcon, SignOutIcon } from '@icons';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Card } from '@ui/card';
 import { RoundButton } from '@ui/round-button';
 import { SegmentButton } from '@ui/segment-button';
+import { STACKING_PROFILE_MENU } from '@ui/stacking';
 import { Text } from '@ui/text';
+import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 import {
   StyledProfileMenu,
@@ -47,18 +46,24 @@ const PROFILE_MENU_LEGAL_LINKS = [
 ] as const;
 
 /**
+ * PROFILE_MENU_MAX_INLINE_SIZE — задаёт максимальную ширину панели меню профиля:
+ * вьюпорт минус зазор по обеим сторонам.
+ * Используется в пределах ширины панели и внутри `PROFILE_MENU_INLINE_SIZE`.
+ */
+const PROFILE_MENU_MAX_INLINE_SIZE = 'calc(100vw - 4rem)';
+
+/**
+ * PROFILE_MENU_INLINE_SIZE — задаёт минимальную ширину панели меню профиля.
+ * Используется в `AnchoredPortal` панели ProfileMenu.
+ */
+const PROFILE_MENU_INLINE_SIZE = `min(360px, ${PROFILE_MENU_MAX_INLINE_SIZE})`;
+
+/**
  * PROFILE_MENU_TRIGGER_GAP_PX — задаёт зазор между триггером и панелью в px.
  * Совпадает с ключом шкалы отступов `12` из `@ui/spacing`.
  * Используется в `applyProfileMenuPanelPosition`.
  */
 const PROFILE_MENU_TRIGGER_GAP_PX = 12;
-
-/**
- * PROFILE_MENU_BOTTOM_INSET_PX — задаёт минимальный отступ панели от нижнего края
- * вьюпорта в px. Совпадает с ключом шкалы отступов `8` из `@ui/spacing`.
- * Используется в `applyProfileMenuPanelPosition`.
- */
-const PROFILE_MENU_BOTTOM_INSET_PX = 8;
 
 /**
  * applyProfileMenuPanelPosition — позиционирует панель меню относительно триггера.
@@ -68,7 +73,7 @@ const PROFILE_MENU_BOTTOM_INSET_PX = 8;
  * 2. Ставит верх панели ниже триггера на `PROFILE_MENU_TRIGGER_GAP_PX`
  * 3. Выравнивает правый край панели с правым краем триггера
  * 4. Считает доступную высоту до нижнего края вьюпорта с учётом
- *    `PROFILE_MENU_BOTTOM_INSET_PX`
+ *    `PORTAL_VIEWPORT_EDGE_INSET`
  * 5. Задаёт панели `max-block-size` и включает вертикальный скролл
  *
  * @param anchor элемент-триггер меню
@@ -79,7 +84,7 @@ function applyProfileMenuPanelPosition(anchor: HTMLElement, panel: HTMLElement):
   const top = triggerRect.bottom + PROFILE_MENU_TRIGGER_GAP_PX;
   const maxBlockSize = Math.max(
     0,
-    window.innerHeight - top - PROFILE_MENU_BOTTOM_INSET_PX
+    window.innerHeight - top - PORTAL_VIEWPORT_EDGE_INSET
   );
 
   panel.style.insetBlockStart = `${top}px`;
@@ -140,7 +145,6 @@ export function ProfileMenu(props: ProfileMenuProps) {
         panelRef={panelRef}
         positioning={{
           anchorRef: triggerRef,
-          mode: 'custom',
           apply: applyProfileMenuPanelPosition,
         }}
         returnFocusRef={triggerRef}
@@ -158,15 +162,15 @@ export function ProfileMenu(props: ProfileMenuProps) {
             },
           ]}
           id={menuId}
-          maxInlineSize="calc(100vw - 4rem)"
+          maxInlineSize={PROFILE_MENU_MAX_INLINE_SIZE}
           minBlockSize="0"
-          minInlineSize="min(360px, calc(100vw - 4rem))"
+          minInlineSize={PROFILE_MENU_INLINE_SIZE}
           position="fixed"
           ref={panelRef}
           role="dialog"
           subtitle={displayEmail}
           subtitleAlign="center"
-          zIndex="20"
+          zIndex={STACKING_PROFILE_MENU}
         >
           <StyledProfileMenuContent>
             <StyledProfileMenuHeader>

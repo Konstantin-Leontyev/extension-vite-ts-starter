@@ -28,10 +28,12 @@
  *  - `src/ui/date-range-input/index.tsx` — рендерит панель выбора диапазона дат
  */
 
-import { ChevronDoubleLeftIcon } from '@icons/chevron-double-left';
-import { ChevronDoubleRightIcon } from '@icons/chevron-double-right';
-import { ChevronLeftIcon } from '@icons/chevron-left';
-import { ChevronRightIcon } from '@icons/chevron-right';
+import {
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from '@icons';
 import { Icon } from '@ui/icon';
 import { Text } from '@ui/text';
 

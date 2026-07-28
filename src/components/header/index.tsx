@@ -27,7 +27,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ProfileMenu } from '@components/profile-menu';
 import { ThemeToggle } from '@components/theme-toggle';
-import { SettingsIcon } from '@icons/settings';
+import { SettingsIcon } from '@icons';
 import { RoundButton } from '@ui/round-button';
 import { Text } from '@ui/text';
 

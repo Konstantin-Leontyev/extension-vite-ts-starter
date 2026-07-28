@@ -45,7 +45,7 @@ import {
   type TransitionEvent,
 } from 'react';
 
-import { SidebarIcon } from '@icons/sidebar';
+import { SidebarIcon } from '@icons';
 import { Card, type CardHeaderAction } from '@ui/card';
 import { splitLayoutProps } from '@ui/layout';
 

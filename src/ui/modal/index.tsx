@@ -31,7 +31,7 @@
 
 import { useEffect, useId, useRef, type ComponentProps, type ReactNode } from 'react';
 
-import { CloseIcon } from '@icons/close';
+import { CloseIcon } from '@icons';
 import { Card } from '@ui/card';
 import { type SpacingValue } from '@ui/spacing';
 

@@ -46,8 +46,7 @@ import {
 } from 'react';
 
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
-import { CheckIcon } from '@icons/check';
-import { ChevronDownIcon } from '@icons/chevron-down';
+import { CheckIcon, ChevronDownIcon } from '@icons';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Input } from '@ui/input';

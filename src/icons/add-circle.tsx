@@ -3,10 +3,11 @@
  * Предоставляет svg-иконку добавления в круге.
  *
  * Основные задачи:
- * 1. Экспортировать компонент `AddCircleIcon`
+ * 1. Экспортировать компонент AddCircleIcon
  *
  * Потребители:
  *  - `src/components/profile-menu/index.tsx` — показывает действие профиля
+ *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины
  *  - `src/icons/index.ts` — реэкспортирует `AddCircleIcon`
  */
 

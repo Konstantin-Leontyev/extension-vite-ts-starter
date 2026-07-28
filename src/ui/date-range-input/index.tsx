@@ -36,8 +36,7 @@ import { useId, useRef, useState, type ComponentPropsWithRef } from 'react';
 
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { placeCalendarPanel } from '@hooks/use-anchored-portal-position';
-import { CalendarIcon } from '@icons/calendar';
-import { CloseIcon } from '@icons/close';
+import { CalendarIcon, CloseIcon } from '@icons';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Icon } from '@ui/icon';
 import { type ShapePreset } from '@ui/presets';

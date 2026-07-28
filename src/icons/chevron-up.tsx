@@ -3,10 +3,12 @@
  * Предоставляет svg-иконку шеврона вверх.
  *
  * Основные задачи:
- * 1. Экспортировать компонент `ChevronUpIcon`
+ * 1. Экспортировать компонент ChevronUpIcon
  *
  * Потребители:
  *  - `src/ui/stepper/index.tsx` — показывает стрелку увеличения
+ *  - `src/pages/showcase/table-demo/index.tsx` — показывает состояние раскрытия строки
+ *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины
  *  - `src/icons/index.ts` — реэкспортирует `ChevronUpIcon`
  */
 

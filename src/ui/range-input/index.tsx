@@ -60,8 +60,7 @@ import {
 
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { matchTriggerRect } from '@hooks/use-anchored-portal-position';
-import { ChevronDownIcon } from '@icons/chevron-down';
-import { CloseIcon } from '@icons/close';
+import { ChevronDownIcon, CloseIcon } from '@icons';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Button } from '@ui/button';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';

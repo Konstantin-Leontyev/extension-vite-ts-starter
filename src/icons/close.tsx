@@ -3,11 +3,12 @@
  * Предоставляет svg-иконку закрытия.
  *
  * Основные задачи:
- * 1. Экспортировать компонент `CloseIcon`
+ * 1. Экспортировать компонент CloseIcon
  *
  * Потребители:
  *  - контролы с очисткой и закрытием, например Modal, DateRangeInput и RangeInput —
  *    показывают действие закрытия
+ *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины
  *  - `src/icons/index.ts` — реэкспортирует `CloseIcon`
  */
 

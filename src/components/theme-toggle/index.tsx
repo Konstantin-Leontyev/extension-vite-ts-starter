@@ -12,7 +12,7 @@
  */
 
 import { useTheme } from '@hooks/use-theme';
-import { ContrastIcon } from '@icons/contrast';
+import { ContrastIcon } from '@icons';
 import { RoundButton } from '@ui/round-button';
 
 /**

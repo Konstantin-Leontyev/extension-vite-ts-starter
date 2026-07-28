@@ -40,8 +40,7 @@ import {
   type KeyboardEvent,
 } from 'react';
 
-import { ChevronDownIcon } from '@icons/chevron-down';
-import { ChevronUpIcon } from '@icons/chevron-up';
+import { ChevronDownIcon, ChevronUpIcon } from '@icons';
 import { Icon } from '@ui/icon';
 import { type SpacingValue } from '@ui/spacing';
 import { Text, type TextTone } from '@ui/text';

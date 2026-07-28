@@ -16,9 +16,10 @@
 import { NavLink } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
-import { getShellTransitionStyles } from '@ui/motion';
+import { MOTION_SHELL_DURATION, getTransitionStyles } from '@ui/motion';
 import { getMinBlockSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
+import { STACKING_HEADER } from '@ui/stacking';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 /**
@@ -31,7 +32,7 @@ const HEADER_PADDING_BLOCK = 12;
  * HEADER_CONTROL_SIZE_PRESET — задаёт размер контролов шапки.
  * Используется в `HEADER_BLOCK_SIZE` и `StyledHeaderProject`.
  */
-const HEADER_CONTROL_SIZE_PRESET: SizePreset = 'medium';
+const HEADER_CONTROL_SIZE_PRESET: SizePreset = 'normal';
 
 /**
  * HEADER_BLOCK_SIZE — формирует высоту шапки из размера контролов и вертикальных отступов.
@@ -124,9 +125,9 @@ function getHeaderStyles(props: HeaderStyleProps): string {
   const styles = [
     `block-size: ${HEADER_BLOCK_SIZE};`,
     'overflow: hidden;',
-    getShellTransitionStyles('block-size'),
+    getTransitionStyles('block-size', MOTION_SHELL_DURATION),
     `${StyledHeaderBar} {`,
-    getShellTransitionStyles('transform'),
+    getTransitionStyles('transform', MOTION_SHELL_DURATION),
     '}',
     `&:not([data-revealed='true']) {`,
     `block-size: ${COLLAPSED_INSET};`,
@@ -151,7 +152,7 @@ function getHeaderStyles(props: HeaderStyleProps): string {
  *
  * Встроенные стили:
  *  - `position: sticky` и `inset-block-start: 0` — шапка закреплена у верхнего края
- *  - `z-index: 10` — шапка выше основного контента
+ *  - `z-index` из `STACKING_HEADER` — шапка выше основного контента
  *
  * Генерация стилей:
  *  - `getHeaderStyles` — правила режима `autoHide`: высота слота, обрезка полосы,
@@ -164,7 +165,7 @@ export const StyledHeader = styled.header.withConfig({
 })<HeaderStyleProps>`
   position: sticky;
   inset-block-start: 0;
-  z-index: 10;
+  z-index: ${STACKING_HEADER};
 
   ${(props) => getHeaderStyles(props)}
 `;
@@ -190,7 +191,7 @@ export const HeaderShellStyle = createGlobalStyle`
 
   body {
     --shell-header-block-size: ${HEADER_BLOCK_SIZE};
-    ${getShellTransitionStyles('--shell-header-block-size')}
+    ${getTransitionStyles('--shell-header-block-size', MOTION_SHELL_DURATION)}
   }
 
   body:has(> header[data-revealed='false']):not(:has(> header:focus-within)) {

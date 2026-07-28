@@ -11,7 +11,6 @@
  */
 
 export { AddCircleIcon } from './add-circle';
-export { AddIcon } from './add';
 export { AvatarIcon } from './avatar';
 export { CalendarIcon } from './calendar';
 export { CheckIcon } from './check';
