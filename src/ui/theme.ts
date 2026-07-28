@@ -7,13 +7,15 @@
  *
  * Основные задачи:
  * 1. Типизировать тему через `ThemeColors` и `AppTheme`
- * 2. Предоставить готовые объекты `styledLightTheme` и `styledDarkTheme`
- * 3. Предоставить доступ к текущей теме через `getTheme`
- * 4. Задать глобальные стили через `GlobalThemeStyle`
- * 5. Расширить `DefaultTheme` для корректной работы с TypeScript
+ * 2. Задать прозрачность disabled-элементов через `DISABLED_OPACITY`
+ * 3. Предоставить готовые объекты `styledLightTheme` и `styledDarkTheme`
+ * 4. Обеспечить доступ к текущей теме через `getTheme`
+ * 5. Задать глобальные стили через `GlobalThemeStyle`
+ * 6. Расширить `DefaultTheme` для корректной работы с TypeScript
  *
  * Потребители:
  *  - все `*.styles.ts` — читают тему через `getTheme(props)`
+ *  - `@ui/reset` — берёт `DISABLED_OPACITY` для состояний `disabled`
  *  - `ThemeProvider` из `src/context/theme/index.tsx` — подключает `GlobalThemeStyle`
  *    и передаёт тему приложению
  */
@@ -97,8 +99,8 @@ const lightColors: ThemeColors = {
   border:         '#e5e4e2',                                        // Платиновый
   danger:         '#d53032',                                        // Клубнично-красный
   default:        '#1a162a',                                        // Темный пурпурно-синий
-  focusOutline:      'color-mix(in srgb, #1a73e8 35%, transparent)',
-  invalidOutline:    'color-mix(in srgb, #d93025 35%, transparent)',
+  focusOutline:   'color-mix(in srgb, #1a73e8 35%, transparent)',
+  invalidOutline: 'color-mix(in srgb, #d93025 35%, transparent)',
   inverse:        '#f9fafb',                                        // Белоснежный
   muted:          '#606e8c',                                        // Голубино-синий
   overlay:        'rgb(0 0 0 / 50%)',
@@ -122,8 +124,8 @@ const darkColors: ThemeColors = {
   border:         '#2f353b',                                        // Гранитовый серый
   danger:         '#e34234',                                        // Китайский красный
   default:        '#f9fafb',                                        // Белоснежный
-  focusOutline:      'color-mix(in srgb, #1a73e8 42%, transparent)',
-  invalidOutline:    'color-mix(in srgb, #ea4335 42%, transparent)',
+  focusOutline:   'color-mix(in srgb, #1a73e8 42%, transparent)',
+  invalidOutline: 'color-mix(in srgb, #ea4335 42%, transparent)',
   inverse:        '#f9fafb',                                        // Белоснежный
   muted:          '#b0b7c6',                                        // Кадетский синий Крайола
   overlay:        'rgb(0 0 0 / 50%)',
