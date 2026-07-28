@@ -6,9 +6,7 @@
  * 1. Экспортировать компонент `CalendarIcon`
  *
  * Потребители:
- *  - поля даты — показывают триггер календаря:
- *     - `src/ui/date-input/index.tsx`
- *     - `src/ui/date-range-input/index.tsx`
+ *  - `src/ui/date-range-input/index.tsx` — показывает триггер календаря в сегментах
  *  - `src/icons/index.ts` — реэкспортирует `CalendarIcon`
  */
 

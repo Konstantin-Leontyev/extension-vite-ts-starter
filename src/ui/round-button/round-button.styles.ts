@@ -47,8 +47,8 @@ const roundButtonMinBlockSize = {
 
 /**
  * ROUND_BUTTON_SIZE_PRESET_KEYS — формирует перечень размеров круглой кнопки
- * из ключей `roundButtonMinBlockSize`. Используется в панелях настроек витрины
- * дизайн-системы: `SizeListbox` принимает его пропом `sizes`.
+ * из ключей `roundButtonMinBlockSize`. Используется в панелях настроек витрины дизайн-системы:
+ * `SizeListbox` принимает его пропом `sizes`.
  */
 export const ROUND_BUTTON_SIZE_PRESET_KEYS = Object.freeze(
   Object.keys(roundButtonMinBlockSize) as RoundButtonSizePreset[]
@@ -58,7 +58,7 @@ export const ROUND_BUTTON_SIZE_PRESET_KEYS = Object.freeze(
  * DEFAULT_ROUND_BUTTON_SIZE_PRESET — задаёт размер по умолчанию.
  * Используется, когда вызывающий код не передал проп `sizePreset`.
  */
-export const DEFAULT_ROUND_BUTTON_SIZE_PRESET: RoundButtonSizePreset = 'medium';
+export const DEFAULT_ROUND_BUTTON_SIZE_PRESET: RoundButtonSizePreset = 'normal';
 
 /**
  * getRoundButtonMinBlockSize — возвращает ключ шкалы габарита RoundButton

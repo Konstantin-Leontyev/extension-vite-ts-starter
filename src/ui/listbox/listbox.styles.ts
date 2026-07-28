@@ -290,7 +290,7 @@ function getListboxOptionSurfaceBaseStyles(
 
 /**
  * getListboxOptionButtonStyles — возвращает CSS-правила для узла
- * `StyledListboxOptionButton`: базовую поверхность, отступы и вуаль наведения.
+ * `StyledListboxOptionButton`: базовую поверхность, отступы и синюю подсветку.
  *
  * @param props пропсы формы, размера и тема
  * @returns CSS-правила, каждое с новой строки
@@ -308,7 +308,15 @@ function getListboxOptionButtonStyles(
     '&:focus { outline: none; }',
     '&:hover:not(:disabled)::before,',
     '&:focus-visible::before {',
-    `background-color: ${theme.colors.veil};`,
+    `background-color: ${theme.colors.primary};`,
+    '}',
+    '&:hover:not(:disabled),',
+    '&:focus-visible {',
+    `color: ${theme.colors.inverse};`,
+    '}',
+    `&:hover:not(:disabled) [data-slot='check'],`,
+    `&:focus-visible [data-slot='check'] {`,
+    `color: ${theme.colors.inverse};`,
     '}',
   ];
 
@@ -362,12 +370,12 @@ export const StyledListboxCheck = styled.span`
 
 /**
  * getListboxOptionRowStyles — возвращает CSS-правила для узла `StyledListboxOptionRow`:
- * базовую поверхность опции, курсор и вуаль наведения.
+ * базовую поверхность опции, курсор и синюю подсветку наведения.
  *
  * Как работает:
  * 1. Берёт базовую поверхность через `getListboxOptionSurfaceBaseStyles`
  * 2. Задаёт `cursor: pointer` на строке-метке: сброс даёт `pointer` только button
- * 3. Добавляет отступы и вуаль при наведении и фокусе внутри
+ * 3. Добавляет отступы и синюю подсветку при наведении и фокусе внутри
  *
  * @param props пропсы формы, размера и тема
  * @returns CSS-правила, каждое с новой строки
@@ -385,7 +393,11 @@ function getListboxOptionRowStyles(
     `padding-inline: ${getPaddingInline(sizePreset)};`,
     '&:not(:has(input:disabled)):hover::before,',
     '&:focus-within::before {',
-    `background-color: ${theme.colors.veil};`,
+    `background-color: ${theme.colors.primary};`,
+    '}',
+    '&:not(:has(input:disabled)):hover,',
+    '&:focus-within {',
+    `color: ${theme.colors.inverse};`,
     '}',
   ];
 

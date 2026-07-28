@@ -6,10 +6,8 @@
  * 1. Типизировать пропсы через `SidebarStyleProps`
  * 2. Хранить ширину панели в `SIDEBAR_PANEL_WIDTH`, порог раскладки в
  *    `SIDEBAR_PANEL_BREAKPOINT`, высоты узкого экрана в `SIDEBAR_PANEL_BLOCK_SIZE`
- *    и `SIDEBAR_PANEL_MAX_BLOCK_SIZE`, а также зонные отступы в
- *    `DEFAULT_SIDEBAR_OFFSET`, `SIDEBAR_CONTENT_INSET` и `SIDEBAR_EDGE_INSET`
- * 3. Предоставить функцию `getSidebarStyles`
- * 4. Предоставить styled-узлы `StyledSidebar`, `StyledSidebarContent`, `StyledSidebarSlot`
+ *    и `SIDEBAR_PANEL_MAX_BLOCK_SIZE`
+ * 3. Предоставить styled-узлы `StyledSidebar`, `StyledSidebarContent`, `StyledSidebarSlot`
  *    и `StyledSidebarTrack`
  *
  * Потребители:
@@ -18,9 +16,15 @@
 
 import styled from 'styled-components';
 
+import {
+  LAYOUT_PROP_NAMES,
+  getSpacingValue,
+  type LayoutProps,
+  type SpacingProps,
+  type SpacingValue,
+} from '@ui/layout';
 import { getTransitionStyles } from '@ui/motion';
 import { VIEWPORT_EDGE_INSET } from '@ui/shell';
-import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { STACKING_SIDEBAR } from '@ui/stacking';
 
 /**
@@ -61,7 +65,7 @@ const SIDEBAR_PANEL_MAX_BLOCK_SIZE = 'min(480px, 60dvb)';
  *    Работает только при заданной высоте у предков: без неё трек `minmax(0, 1fr)`
  *    раздувается под контент, и скроллится вся страница. Каркасный фикс задаётся
  *    в `@ui/reset` и на страницах с корневым `<main>`, либо локально через
- *    `max-block-size` в dvb, как на странице витрины дизайн-системы
+ *    `max-block-size` в dvb, как на странице витрины
  */
 export const StyledSidebarContent = styled.div`
   display: flex;
@@ -136,77 +140,127 @@ export const StyledSidebarTrack = styled.div`
 
 /**
  * SidebarStyleProps — представляет пропсы стилизации Sidebar.
+ * `padding*` и `gap` раскладываются по зонам в `getSidebarStyles`. Остальные
+ * layout-пропсы на корень не пишутся — только маршрутизация оболочки.
+ */
+export type SidebarStyleProps = LayoutProps;
+
+/**
+ * SIDEBAR_PROP_NAMES — объединяет имена layout-пропсов каркаса Sidebar.
+ */
+const SIDEBAR_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
+
+/**
+ * resolveSidebarPaddingEdge — вычисляет отступ края оболочки с каскадом
+ * шорткатов layout: сторона → ось → `padding` → `VIEWPORT_EDGE_INSET`.
  *
- * @property offset — зазор между областью контента и панелью
- * @property padding — единый отступ всех зон каркаса
+ * @param props spacing-пропсы Sidebar
+ * @param edge край оболочки
+ * @returns значение шкалы отступов
  */
-export type SidebarStyleProps = {
-  offset?: SpacingValue;
-  padding?: SpacingValue;
-};
+function resolveSidebarPaddingEdge(
+  props: SpacingProps,
+  edge: 'blockEnd' | 'blockStart' | 'inlineEnd' | 'inlineStart'
+): SpacingValue {
+  if (edge === 'blockStart') {
+    return (
+      props.paddingBlockStart ??
+      props.paddingBlock ??
+      props.padding ??
+      VIEWPORT_EDGE_INSET
+    );
+  }
+
+  if (edge === 'blockEnd') {
+    return (
+      props.paddingBlockEnd ?? props.paddingBlock ?? props.padding ?? VIEWPORT_EDGE_INSET
+    );
+  }
+
+  if (edge === 'inlineStart') {
+    return (
+      props.paddingInlineStart ??
+      props.paddingInline ??
+      props.padding ??
+      VIEWPORT_EDGE_INSET
+    );
+  }
+
+  return (
+    props.paddingInlineEnd ?? props.paddingInline ?? props.padding ?? VIEWPORT_EDGE_INSET
+  );
+}
 
 /**
- * SIDEBAR_PROP_NAMES — хранит имена пропсов стилизации Sidebar.
+ * resolveSidebarGap — вычисляет зазор между контентом и панелью.
+ * Дефолт — `VIEWPORT_EDGE_INSET`, симметрично отступам оболочки.
+ *
+ * @param gap проп `gap` или `undefined`
+ * @returns значение шкалы отступов
  */
-const SIDEBAR_PROP_NAMES = new Set<string>(['offset', 'padding']);
-
-/**
- * DEFAULT_SIDEBAR_OFFSET — задаёт зазор между контентом и панелью по умолчанию.
- * Используется, когда вызывающий код не передал проп `offset`.
- */
-const DEFAULT_SIDEBAR_OFFSET: SpacingValue = VIEWPORT_EDGE_INSET;
-
-/**
- * SIDEBAR_CONTENT_INSET — задаёт зонный отступ области контента, когда проп `padding`
- * не передан. Не дефолт пропа: у `padding` две зонные подстановки.
- */
-const SIDEBAR_CONTENT_INSET: SpacingValue = 0;
-
-/**
- * SIDEBAR_EDGE_INSET — задаёт зонный отступ края панели и правого отступа контента,
- * когда проп `padding` не передан. Не дефолт пропа: у `padding` две зонные подстановки.
- */
-const SIDEBAR_EDGE_INSET: SpacingValue = VIEWPORT_EDGE_INSET;
+function resolveSidebarGap(gap: SpacingValue | undefined): SpacingValue {
+  return gap ?? VIEWPORT_EDGE_INSET;
+}
 
 /**
  * getSidebarStyles — возвращает CSS-правила для корня `StyledSidebar`: отступы зон
  * каркаса, зазор при открытой панели, ширину слота, слой `STACKING_SIDEBAR`
  * на узком экране и поведение выезда.
  *
+ * Как работает:
+ * 1. Определяет `padding*` и `gap` с дефолтом `VIEWPORT_EDGE_INSET`
+ * 2. Пишет отступы в `StyledSidebarContent` и `StyledSidebarSlot` по состоянию
+ *    панели и ширине вьюпорта: открыта или закрыта
+ *
  * @param props пропсы стилизации Sidebar
  * @returns CSS-правила, каждое с новой строки
  */
 function getSidebarStyles(props: SidebarStyleProps): string {
-  const { offset = DEFAULT_SIDEBAR_OFFSET, padding } = props;
-  const paddingValue = getSpacingValue(padding ?? SIDEBAR_CONTENT_INSET);
-  const paddingInlineEndValue = getSpacingValue(padding ?? SIDEBAR_EDGE_INSET);
+  const paddingBlockStart = getSpacingValue(
+    resolveSidebarPaddingEdge(props, 'blockStart')
+  );
+  const paddingBlockEnd = getSpacingValue(resolveSidebarPaddingEdge(props, 'blockEnd'));
+  const paddingInlineStart = getSpacingValue(
+    resolveSidebarPaddingEdge(props, 'inlineStart')
+  );
+  const paddingInlineEnd = getSpacingValue(
+    resolveSidebarPaddingEdge(props, 'inlineEnd')
+  );
+  const gap = getSpacingValue(resolveSidebarGap(props.gap));
 
   const styles = [
     `${StyledSidebarContent} {`,
-    `padding-block-end: ${paddingValue};`,
-    `padding-inline-start: ${paddingValue};`,
+    `padding-block-start: ${paddingBlockStart};`,
+    `padding-block-end: ${paddingBlockEnd};`,
+    `padding-inline-start: ${paddingInlineStart};`,
     `}`,
     `@media (width > ${SIDEBAR_PANEL_BREAKPOINT}) {`,
     `&:not(:has(${StyledSidebarSlot}[data-open='true'])) ${StyledSidebarContent} {`,
-    `padding-inline-end: ${paddingInlineEndValue};`,
+    `padding-inline-end: ${paddingInlineEnd};`,
     `}`,
     `&:has(${StyledSidebarSlot}[data-open='true']) {`,
-    `gap: ${getSpacingValue(offset)};`,
+    `gap: ${gap};`,
     `}`,
     `${StyledSidebarSlot}[data-open='true'][data-expanded='true'] {`,
-    `inline-size: calc(${SIDEBAR_PANEL_WIDTH} + ${paddingInlineEndValue});`,
-    `padding-block-end: ${paddingInlineEndValue};`,
-    `padding-inline-end: ${paddingInlineEndValue};`,
+    `inline-size: calc(${SIDEBAR_PANEL_WIDTH} + ${paddingInlineEnd});`,
+    `padding-block-start: ${paddingBlockStart};`,
+    `padding-block-end: ${paddingBlockEnd};`,
+    `padding-inline-end: ${paddingInlineEnd};`,
     `}`,
     `}`,
     `@media (width <= ${SIDEBAR_PANEL_BREAKPOINT}) {`,
+    `${StyledSidebarContent} {`,
+    `padding-inline-end: ${paddingInlineEnd};`,
+    `}`,
     `${StyledSidebarSlot} {`,
     `position: absolute;`,
     `inset-block-end: 0;`,
     `inset-inline: 0;`,
     `z-index: ${STACKING_SIDEBAR};`,
     `inline-size: auto;`,
-    `padding-inline: ${paddingValue} ${paddingInlineEndValue};`,
+    `padding-block-start: ${paddingBlockStart};`,
+    `padding-block-end: ${paddingBlockEnd};`,
+    `padding-inline: ${paddingInlineStart} ${paddingInlineEnd};`,
     `}`,
     `${StyledSidebarTrack} {`,
     `inline-size: 100%;`,
@@ -227,7 +281,7 @@ function getSidebarStyles(props: SidebarStyleProps): string {
 
 /**
  * StyledSidebar — задаёт корневой узел компонента Sidebar.
- * Базируется на `<div>` и поддерживает все пропсы из `SidebarStyleProps`.
+ * Базируется на `<div>` и поддерживает layout-пропсы из `SidebarStyleProps`.
  *
  * Встроенные стили:
  *  - `display: grid` — каркас из области контента и слота панели
@@ -238,7 +292,7 @@ function getSidebarStyles(props: SidebarStyleProps): string {
  *    панель в потоке справа, контент ужимается
  *
  * Генерация стилей:
- *  - `getSidebarStyles` — отступы зон, зазор, ширина слота, слой на узком экране
+ *  - `getSidebarStyles` — маршрутизация `padding*` и `gap` по зонам и состояниям
  */
 export const StyledSidebar = styled.div.withConfig({
   shouldForwardProp: (prop) => !SIDEBAR_PROP_NAMES.has(prop),

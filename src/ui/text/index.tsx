@@ -66,7 +66,7 @@ type TextProps<T extends ElementType = 'span'> = {
  * // Прямое использование: подписи, заголовки, muted-лейблы
  * <Text>Обычный текст</Text>
  * <Text as="h1" sizePreset="bold" tone="primary">Заголовок</Text>
- * <Text as="label" sizePreset="medium" tone="muted">Подпись поля</Text>
+ * <Text as="label" sizePreset="thin" tone="muted">Подпись поля</Text>
  * // Внутри контрола — через пропсы родителя, не tone на Text из вызывающего кода:
  * <Button textTone="primary" sizePreset="large">Сохранить</Button>
  */

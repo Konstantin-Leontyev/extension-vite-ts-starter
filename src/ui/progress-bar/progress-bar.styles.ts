@@ -30,7 +30,7 @@ import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
  */
 const progressBarBlockSize = {
   small: 4,
-  medium: 8,
+  normal: 8,
   large: 12,
 } as const satisfies Record<SizePreset, SpacingValue>;
 

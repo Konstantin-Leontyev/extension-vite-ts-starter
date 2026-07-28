@@ -33,7 +33,7 @@ export { splitLayoutProps } from '@ui/layout';
  */
 export const checkboxSizePresets = Object.freeze({
   small: Object.freeze({ iconSize: 8, size: 12 } as const),
-  medium: Object.freeze({ iconSize: 8, size: 16 } as const),
+  normal: Object.freeze({ iconSize: 8, size: 16 } as const),
   large: Object.freeze({ iconSize: 12, size: 20 } as const),
 } as const satisfies Record<SizePreset, { iconSize: SpacingValue; size: SpacingValue }>);
 

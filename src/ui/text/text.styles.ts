@@ -43,9 +43,9 @@ import { TONE_PRESETS, type TonePreset } from '@ui/tones';
  */
 export const textSizePresets = Object.freeze({
   extraBold: Object.freeze({
-    fontSize: '1.5rem',
+    fontSize: '1.25rem',
     fontWeight: '700',
-    lineHeight: '1.75rem',
+    lineHeight: '1.5rem',
   } as const),
   bold: Object.freeze({
     fontSize: '1.25rem',
@@ -53,9 +53,9 @@ export const textSizePresets = Object.freeze({
     lineHeight: '1.5rem',
   } as const),
   medium: Object.freeze({
-    fontSize: '0.75rem',
+    fontSize: '1.25rem',
     fontWeight: '500',
-    lineHeight: '1rem',
+    lineHeight: '1.5rem',
   } as const),
   normal: Object.freeze({
     fontSize: '1rem',

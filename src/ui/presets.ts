@@ -1,6 +1,6 @@
 /**
  * Файл: `src/ui/presets.ts`
- * Определяет размерные пресеты компонентов: единый ряд `small`, `medium`, `large`,
+ * Определяет размерные пресеты компонентов: единый ряд `small`, `normal`, `large`,
  * который компонент выбирает через проп `sizePreset`.
  * Преобразует выбранный размер в согласованные значения высоты, отступов
  * и размера текста. Задаёт формы строки-поля для пропа `shape`.
@@ -32,7 +32,7 @@ import { type AppTheme } from '@ui/theme';
  * SizePreset — представляет единый размерный ряд проекта.
  * Используется как основной тип пропа `sizePreset` в компонентах.
  */
-export type SizePreset = 'large' | 'medium' | 'small';
+export type SizePreset = 'large' | 'normal' | 'small';
 
 /**
  * minBlockSize — хранит минимальную высоту бокса для каждого размера ряда.
@@ -41,7 +41,7 @@ export type SizePreset = 'large' | 'medium' | 'small';
  */
 export const minBlockSize = Object.freeze({
   small: 32,
-  medium: 40,
+  normal: 40,
   large: 48,
 } as const satisfies Record<SizePreset, SpacingValue>);
 
@@ -55,7 +55,7 @@ export const SIZE_PRESET_KEYS = Object.freeze(Object.keys(minBlockSize) as SizeP
  * DEFAULT_SIZE_PRESET — задаёт размер по умолчанию.
  * Используется, когда вызывающий код не передал проп `sizePreset`.
  */
-export const DEFAULT_SIZE_PRESET: SizePreset = 'large';
+export const DEFAULT_SIZE_PRESET: SizePreset = 'normal';
 
 /**
  * getMinBlockSize — возвращает значение для CSS-свойства `min-block-size` по `sizePreset`.
@@ -78,9 +78,9 @@ export function getMinBlockSize(sizePreset: SizePreset): string {
  * удерживает текст от прилипания к краям.
  */
 export const padding = Object.freeze({
-  small: Object.freeze({ inline: 12, block: 6 } as const),
-  medium: Object.freeze({ inline: 16, block: 8 } as const),
-  large: Object.freeze({ inline: 16, block: 12 } as const),
+  small: Object.freeze({ inline: 12, block: 8 } as const),
+  normal: Object.freeze({ inline: 16, block: 10 } as const),
+  large: Object.freeze({ inline: 20, block: 12 } as const),
 } as const satisfies Record<SizePreset, { block: SpacingValue; inline: SpacingValue }>);
 
 /**
@@ -177,11 +177,14 @@ export function resolveBlockRadius(shape: ShapePreset, minBlockSize: string): st
 /**
  * textSize — хранит размер текста для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — метка из `TextSizePreset` компонента Text.
+ * Лестница: small → thin, normal → normal, large → medium. Пары размер и высота
+ * строки — 12/16, 16/20 и 20/24.
+ * Высота контрола: line-height + 2 × padding.block = minBlockSize.
  */
 export const textSize = Object.freeze({
-  small: 'medium',
-  medium: 'normal',
-  large: 'normal',
+  small: 'thin',
+  normal: 'normal',
+  large: 'medium',
 } as const satisfies Record<SizePreset, TextSizePreset>);
 
 /**

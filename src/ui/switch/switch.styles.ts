@@ -38,7 +38,7 @@ export { splitLayoutProps } from '@ui/layout';
  */
 const switchTrackInlineSize = {
   small: 28,
-  medium: 36,
+  normal: 36,
   large: 48,
 } as const satisfies Record<SizePreset, SpacingValue>;
 
@@ -58,7 +58,7 @@ function getSwitchTrackInlineSize(sizePreset: SizePreset): string {
  */
 const switchTrackBlockSize = {
   small: 16,
-  medium: 20,
+  normal: 20,
   large: 24,
 } as const satisfies Record<SizePreset, SpacingValue>;
 
@@ -78,7 +78,7 @@ function getSwitchTrackBlockSize(sizePreset: SizePreset): string {
  */
 const switchKnobSize = {
   small: 12,
-  medium: 16,
+  normal: 16,
   large: 20,
 } as const satisfies Record<SizePreset, SpacingValue>;
 

@@ -28,8 +28,6 @@ type HeaderSettingsProps = {
 
 /**
  * HeaderSettings — отображает панель настроек Header в витрине дизайн-системы.
- * Тумблер связан с состоянием каркаса страницы, чтобы показать скрытие шапки вживую.
- * Обвязку панели в продуктовый код не переносить: там `autoHide` задаётся пропом Header напрямую.
  *
  * @example
  * <HeaderSettings autoHide={autoHide} onChange={setAutoHide} />
@@ -37,11 +35,7 @@ type HeaderSettingsProps = {
 export function HeaderSettings({ autoHide, onChange }: HeaderSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
-      <Switch
-        checked={autoHide}
-        sizePreset="medium"
-        onChange={(event) => onChange(event.target.checked)}
-      >
+      <Switch checked={autoHide} onChange={(event) => onChange(event.target.checked)}>
         Auto-hide
       </Switch>
     </StyledSettingsForm>

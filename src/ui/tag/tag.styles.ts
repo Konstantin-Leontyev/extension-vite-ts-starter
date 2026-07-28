@@ -81,7 +81,7 @@ function getTagMinBlockSize(sizePreset: TagSizePreset): string {
  */
 const tagPaddingInline = {
   small: padding.small.inline,
-  medium: padding.medium.inline,
+  normal: padding.normal.inline,
   large: padding.large.inline,
   tiny: 8,
 } as const satisfies Record<TagSizePreset, SpacingValue>;
@@ -89,11 +89,11 @@ const tagPaddingInline = {
 /**
  * tagTextSize — хранит размер текста для каждого размера ряда метки.
  * Расширяет `textSize` из `@ui/presets` спредом, добавляя ключ `tiny`,
- * который использует `medium`, как и `small`.
+ * который использует `thin`, как и `small`.
  */
 const tagTextSize = {
   ...textSize,
-  tiny: 'medium',
+  tiny: 'thin',
 } as const satisfies Record<TagSizePreset, TextSizePreset>;
 
 /**

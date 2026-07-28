@@ -1,61 +1,137 @@
-import {
-  useCallback,
-  useId,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ComponentPropsWithRef,
-} from 'react';
-import { createPortal } from 'react-dom';
+/**
+ * Файл: `src/ui/date-range-input/index.tsx`
+ * Предоставляет компонент DateRangeInput для выбора диапазона дат.
+ *
+ * Поддерживает:
+ *  - layout-пропсы: отступы, позиционирование, размеры
+ *  - размерный ряд через проп `sizePreset`
+ *  - форму через проп `shape`
+ *  - форму подсветки дня через проп `dayShape`. Без `dayShape` совпадает с `shape`
+ *  - недоступное состояние через проп `disabled`
+ *  - конечный день диапазона через проп `endDay`
+ *  - текст `title` конечного сегмента через проп `endLabel`. Участвует в
+ *    `aria-label` кнопки сброса, видимым лейблом сегмента не является
+ *  - верхнюю границу допустимых дней через проп `maxDay`
+ *  - нижнюю границу допустимых дней через проп `minDay`
+ *  - обработчик сброса диапазона через проп `onClear`. Без обработчика кнопка
+ *    сброса не показывается
+ *  - обработчик изменения конечного дня через проп `onEndDayChange`
+ *  - обработчик изменения начального дня через проп `onStartDayChange`
+ *  - начальный день диапазона через проп `startDay`
+ *  - текст `title` начального сегмента через проп `startLabel`. Участвует в
+ *    `aria-label` кнопки сброса, видимым лейблом сегмента не является
+ *  - иконка календаря всегда в позиции `start`. Публичного пропа позиции нет
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент DateRangeInput
+ * 2. Типизировать пропсы через `DateRangeInputProps`
+ * 3. Выставлять `aria`-атрибуты сегментов и панели календаря
+ * 4. Реэкспортировать `todayUtc` из вложенного `calendar-panel`
+ *
+ * Потребители:
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
+ */
 
-import { useAnchoredDismiss } from '@hooks/use-anchored-dismiss';
-import { useAnchoredPanelPosition } from '@hooks/use-anchored-panel-position';
-import { useFocusTrap } from '@hooks/use-focus-trap';
+import { useId, useRef, useState, type ComponentPropsWithRef } from 'react';
+
+import { useAnchoredOpen } from '@hooks/use-anchored-open';
+import { placeCalendarPanel } from '@hooks/use-anchored-portal-position';
 import { CalendarIcon } from '@icons/calendar';
 import { CloseIcon } from '@icons/close';
+import { AnchoredPortal } from '@ui/anchored-portal';
+import { Icon } from '@ui/icon';
 import { type ShapePreset } from '@ui/presets';
-import { SegmentButton } from '@ui/segment-button';
+import { getSegmentButtonTextSize } from '@ui/segment-button';
+import { SegmentButtonParts } from '@ui/segment-button-parts';
 
+import {
+  CalendarPanel,
+  DATE_PLACEHOLDER,
+  clearButtonAriaLabel,
+  focusCalendarPanelInitial,
+  formatIsoDayCompact,
+  isIsoDayAfter,
+  monthViewFromIsoDayOrToday,
+  type MonthView,
+} from './calendar-panel';
 import {
   DEFAULT_DATE_RANGE_INPUT_SHAPE,
   DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET,
   StyledDateRangeInputClearButton,
-  StyledDateRangeInputClearIcon,
   StyledDateRangeInputPanel,
   StyledDateRangeInputRoot,
   StyledDateRangeInputTriggerRow,
   splitLayoutProps,
   type DateRangeInputStyleProps,
 } from './date-range-input.styles';
-import { CalendarPanel } from '../date-input/calendar';
-import {
-  DATE_PLACEHOLDER,
-  formatIsoDayCompact,
-  isIsoDayAfter,
-  monthViewFromIsoDayOrToday,
-  type MonthView,
-} from '../date-input/day';
-import {
-  clearButtonAriaLabel,
-  focusCalendarPanelInitial,
-} from '../date-input/popover-a11y';
 
-type ActiveRangeField = 'start' | 'end';
+/**
+ * ActiveRangeField — представляет активное поле диапазона в открытой панели.
+ */
+type ActiveRangeField = 'end' | 'start';
 
-export type DateRangeInputProps = DateRangeInputStyleProps &
+/**
+ * DEFAULT_DATE_RANGE_INPUT_DISABLED — задаёт недоступное состояние по умолчанию.
+ * Используется, когда вызывающий код не передал проп `disabled`.
+ */
+const DEFAULT_DATE_RANGE_INPUT_DISABLED = false;
+
+/**
+ * DEFAULT_DATE_RANGE_INPUT_END_DAY — задаёт конечный день диапазона по умолчанию.
+ * Используется, когда вызывающий код не передал проп `endDay`.
+ */
+const DEFAULT_DATE_RANGE_INPUT_END_DAY = '';
+
+/**
+ * DEFAULT_DATE_RANGE_INPUT_END_LABEL — задаёт текст `title` конечного сегмента
+ * по умолчанию.
+ * Используется, когда вызывающий код не передал проп `endLabel`.
+ */
+const DEFAULT_DATE_RANGE_INPUT_END_LABEL = 'End date';
+
+/**
+ * DEFAULT_DATE_RANGE_INPUT_START_DAY — задаёт начальный день диапазона по умолчанию.
+ * Используется, когда вызывающий код не передал проп `startDay`.
+ */
+const DEFAULT_DATE_RANGE_INPUT_START_DAY = '';
+
+/**
+ * DEFAULT_DATE_RANGE_INPUT_START_LABEL — задаёт текст `title` начального сегмента
+ * по умолчанию.
+ * Используется, когда вызывающий код не передал проп `startLabel`.
+ */
+const DEFAULT_DATE_RANGE_INPUT_START_LABEL = 'Start date';
+
+/**
+ * DateRangeInputProps — представляет пропсы компонента DateRangeInput.
+ *
+ * @property dayShape — форма подсветки дня в панели. Без пропа совпадает с `shape`
+ * @property disabled — включает недоступное состояние
+ * @property endDay — конечный день диапазона в формате ISO
+ * @property endLabel — текст `title` конечного сегмента и фрагмент `aria-label`
+ *   кнопки сброса. Видимым лейблом сегмента не является
+ * @property maxDay — верхняя граница допустимых дней в формате ISO
+ * @property minDay — нижняя граница допустимых дней в формате ISO
+ * @property onClear — обработчик сброса диапазона. Без обработчика кнопка сброса
+ *   не показывается
+ * @property onEndDayChange — обработчик изменения конечного дня
+ * @property onStartDayChange — обработчик изменения начального дня
+ * @property startDay — начальный день диапазона в формате ISO
+ * @property startLabel — текст `title` начального сегмента и фрагмент `aria-label`
+ *   кнопки сброса. Видимым лейблом сегмента не является
+ */
+type DateRangeInputProps = DateRangeInputStyleProps &
   Omit<
     ComponentPropsWithRef<'div'>,
-    | keyof DateRangeInputStyleProps
     | 'className'
-    | 'onChange'
-    | 'style'
     | 'endDay'
+    | 'onChange'
     | 'startDay'
+    | 'style'
+    | keyof DateRangeInputStyleProps
   > & {
-    disabled?: boolean;
-    /** Форма подсветки дня; по умолчанию — как у триггера (`shape`). */
     dayShape?: ShapePreset;
+    disabled?: boolean;
     endDay?: string;
     endLabel?: string;
     maxDay?: string;
@@ -67,10 +143,24 @@ export type DateRangeInputProps = DateRangeInputStyleProps &
     startLabel?: string;
   };
 
+/**
+ * formatSegmentText — возвращает компактный текст дня или плейсхолдер пустого значения.
+ *
+ * @param isoDay день в формате ISO или пустая строка
+ * @returns компактная дата или `DATE_PLACEHOLDER`
+ */
 function formatSegmentText(isoDay: string): string {
   return isoDay !== '' ? formatIsoDayCompact(isoDay) : DATE_PLACEHOLDER;
 }
 
+/**
+ * clearDateRangeButtonAriaLabel — возвращает `aria-label` кнопки сброса диапазона.
+ * Склеивает тексты `startLabel` и `endLabel` через `/` или берёт один непустой.
+ *
+ * @param startLabel текст `title` начального сегмента
+ * @param endLabel текст `title` конечного сегмента
+ * @returns текст для `aria-label`
+ */
 function clearDateRangeButtonAriaLabel(startLabel: string, endLabel: string): string {
   const start = startLabel.trim();
   const end = endLabel.trim();
@@ -82,24 +172,37 @@ function clearDateRangeButtonAriaLabel(startLabel: string, endLabel: string): st
   return clearButtonAriaLabel(start || end, 'Clear date range');
 }
 
+/**
+ * DateRangeInput — отображает поле выбора диапазона дат с панелью календаря.
+ *
+ * @example
+ * <DateRangeInput
+ *   startDay={from}
+ *   endDay={to}
+ *   onStartDayChange={setFrom}
+ *   onEndDayChange={setTo}
+ *   onClear={clearRange}
+ * />
+ */
 export function DateRangeInput({
   dayShape: dayShapeProp,
-  disabled = false,
-  endDay = '',
-  endLabel = 'End date',
+  disabled = DEFAULT_DATE_RANGE_INPUT_DISABLED,
+  endDay = DEFAULT_DATE_RANGE_INPUT_END_DAY,
+  endLabel = DEFAULT_DATE_RANGE_INPUT_END_LABEL,
   maxDay,
   minDay,
   onClear,
   onEndDayChange,
   onStartDayChange,
-  shape = DEFAULT_DATE_RANGE_INPUT_SHAPE,
-  sizePreset = DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET,
-  startDay = '',
-  startLabel = 'Start date',
+  shape,
+  sizePreset,
+  startDay = DEFAULT_DATE_RANGE_INPUT_START_DAY,
+  startLabel = DEFAULT_DATE_RANGE_INPUT_START_LABEL,
   ...rest
 }: DateRangeInputProps) {
-  const { layout, rest: rootProps } = splitLayoutProps(rest);
-  const [open, setOpen] = useState(false);
+  const { layoutProps, restProps } = splitLayoutProps(rest);
+  const { handleClose, handleOpen, isOpen, panelRef } =
+    useAnchoredOpen<HTMLDivElement>();
   const [activeField, setActiveField] = useState<ActiveRangeField>('start');
   const [viewMonth, setViewMonth] = useState<MonthView>(() =>
     monthViewFromIsoDayOrToday(startDay, maxDay)
@@ -109,239 +212,190 @@ export function DateRangeInput({
   const startTriggerRef = useRef<HTMLButtonElement>(null);
   const endTriggerRef = useRef<HTMLButtonElement>(null);
   const returnFocusRef = useRef<HTMLButtonElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
   const panelId = useId();
-  const dayShape = dayShapeProp ?? shape;
-  const axisProps = { shape, sizePreset };
-  const calendarIcon = useMemo(() => <CalendarIcon />, []);
+  const resolvedShape = shape ?? DEFAULT_DATE_RANGE_INPUT_SHAPE;
+  const resolvedSizePreset = sizePreset ?? DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET;
+  const dayShape = dayShapeProp ?? resolvedShape;
+  const surfaceProps = { shape, sizePreset };
+  const calendarIcon = <CalendarIcon />;
   const isActive = startDay !== '' || endDay !== '';
   const showClear = isActive && onClear !== undefined && !disabled;
   const activeDay = activeField === 'start' ? startDay : endDay;
+  const textSizePreset = getSegmentButtonTextSize(sizePreset);
 
-  const closePanel = useCallback((): void => {
-    setOpen(false);
-  }, []);
-
-  const isInsideDateRangeInput = useCallback((target: Node): boolean => {
-    return (
-      (rootRef.current?.contains(target) ?? false) ||
-      (panelRef.current?.contains(target) ?? false)
-    );
-  }, []);
-
-  useAnchoredDismiss({
-    active: open,
-    isInside: isInsideDateRangeInput,
-    onDismiss: closePanel,
-  });
-
-  useFocusTrap({
-    active: open,
-    containerRef: panelRef,
-    returnFocusRef,
-  });
-
-  useAnchoredPanelPosition(open, triggerRowRef, panelRef, [viewMonth]);
-
-  useLayoutEffect(() => {
-    if (!open) {
+  function handleOpenForField(field: ActiveRangeField): void {
+    if (disabled) {
       return;
     }
 
-    const frameId = window.requestAnimationFrame(() => {
-      const panel = panelRef.current;
+    const sourceDay = field === 'start' ? startDay : endDay;
 
-      if (panel) {
-        focusCalendarPanelInitial(panel);
-      }
-    });
+    returnFocusRef.current =
+      field === 'start' ? startTriggerRef.current : endTriggerRef.current;
+    setActiveField(field);
+    setViewMonth(monthViewFromIsoDayOrToday(sourceDay, maxDay));
+    handleOpen();
+  }
 
-    return () => {
-      window.cancelAnimationFrame(frameId);
-    };
-  }, [activeDay, open, viewMonth]);
-
-  const openForField = useCallback(
-    (field: ActiveRangeField): void => {
-      if (disabled) {
+  function handleSelectDay(isoDay: string): void {
+    if (activeField === 'start') {
+      if (isoDay === startDay && startDay !== '') {
+        onStartDayChange?.('');
         return;
       }
 
-      const sourceDay = field === 'start' ? startDay : endDay;
+      onStartDayChange?.(isoDay);
 
-      returnFocusRef.current =
-        field === 'start' ? startTriggerRef.current : endTriggerRef.current;
-      setActiveField(field);
-      setViewMonth(monthViewFromIsoDayOrToday(sourceDay, maxDay));
-      setOpen(true);
-    },
-    [disabled, endDay, maxDay, startDay]
-  );
-
-  const handleSelectDay = useCallback(
-    (isoDay: string): void => {
-      if (activeField === 'start') {
-        if (isoDay === startDay && startDay !== '') {
-          onStartDayChange?.('');
-          return;
-        }
-
-        onStartDayChange?.(isoDay);
-
-        if (endDay !== '' && isIsoDayAfter(isoDay, endDay)) {
-          onEndDayChange?.('');
-        }
-
-        setActiveField('end');
-        setViewMonth(
-          monthViewFromIsoDayOrToday(endDay !== '' ? endDay : isoDay, maxDay)
-        );
-
-        return;
-      }
-
-      if (isoDay === endDay && endDay !== '') {
+      if (endDay !== '' && isIsoDayAfter(isoDay, endDay)) {
         onEndDayChange?.('');
-        return;
       }
 
-      if (startDay !== '' && isIsoDayAfter(startDay, isoDay)) {
-        onStartDayChange?.(isoDay);
-        onEndDayChange?.(startDay);
-      } else {
-        onEndDayChange?.(isoDay);
-      }
-    },
-    [activeField, endDay, maxDay, onEndDayChange, onStartDayChange, startDay]
-  );
+      setActiveField('end');
+      setViewMonth(monthViewFromIsoDayOrToday(endDay !== '' ? endDay : isoDay, maxDay));
 
-  const handleClear = useCallback(
-    (event: { stopPropagation: () => void }): void => {
-      event.stopPropagation();
+      return;
+    }
 
-      if (disabled) {
-        return;
-      }
+    if (isoDay === endDay && endDay !== '') {
+      onEndDayChange?.('');
+      return;
+    }
 
-      onClear?.();
-      setActiveField('start');
-      closePanel();
-    },
-    [closePanel, disabled, onClear]
-  );
+    if (startDay !== '' && isIsoDayAfter(startDay, isoDay)) {
+      onStartDayChange?.(isoDay);
+      onEndDayChange?.(startDay);
+    } else {
+      onEndDayChange?.(isoDay);
+    }
+  }
 
-  const leftSegment = useMemo(
-    () => ({
-      active: open && activeField === 'start',
-      ariaControls: panelId,
-      ariaExpanded: open && activeField === 'start',
-      ariaHaspopup: 'dialog' as const,
-      disabled,
-      icon: calendarIcon,
-      ref: startTriggerRef,
-      text: formatSegmentText(startDay),
-      textColor: startDay === '' ? ('muted' as const) : undefined,
-      title: startLabel,
-      onClick: () => {
-        openForField('start');
-      },
-    }),
-    [
-      activeField,
-      calendarIcon,
-      disabled,
-      open,
-      openForField,
-      panelId,
-      startDay,
-      startLabel,
-    ]
-  );
+  function handleClear(event: { stopPropagation: () => void }): void {
+    event.stopPropagation();
 
-  const rightSegment = useMemo(
-    () => ({
-      active: open && activeField === 'end',
-      ariaControls: panelId,
-      ariaExpanded: open && activeField === 'end',
-      ariaHaspopup: 'dialog' as const,
-      disabled,
-      icon: calendarIcon,
-      ref: endTriggerRef,
-      text: formatSegmentText(endDay),
-      textColor: endDay === '' ? ('muted' as const) : undefined,
-      title: endLabel,
-      onClick: () => {
-        openForField('end');
-      },
-    }),
-    [activeField, calendarIcon, disabled, endDay, endLabel, open, openForField, panelId]
-  );
+    if (disabled) {
+      return;
+    }
+
+    onClear?.();
+    setActiveField('start');
+    handleClose();
+  }
+
+  function handleOpenStart(): void {
+    handleOpenForField('start');
+  }
+
+  function handleOpenEnd(): void {
+    handleOpenForField('end');
+  }
+
+  const leftSegment = {
+    active: isOpen && activeField === 'start',
+    ariaControls: panelId,
+    ariaExpanded: isOpen && activeField === 'start',
+    ariaHaspopup: 'dialog' as const,
+    disabled,
+    icon: calendarIcon,
+    iconPosition: 'start' as const,
+    ref: startTriggerRef,
+    text: formatSegmentText(startDay),
+    textTone: startDay === '' ? ('muted' as const) : undefined,
+    title: startLabel,
+    onClick: handleOpenStart,
+  };
+
+  const rightSegment = {
+    active: isOpen && activeField === 'end',
+    ariaControls: panelId,
+    ariaExpanded: isOpen && activeField === 'end',
+    ariaHaspopup: 'dialog' as const,
+    disabled,
+    icon: calendarIcon,
+    iconPosition: 'start' as const,
+    ref: endTriggerRef,
+    text: formatSegmentText(endDay),
+    textTone: endDay === '' ? ('muted' as const) : undefined,
+    title: endLabel,
+    onClick: handleOpenEnd,
+  };
 
   return (
     <StyledDateRangeInputRoot
+      data-open={isOpen ? 'true' : undefined}
       ref={rootRef}
-      data-open={open ? 'true' : undefined}
-      {...layout}
-      {...rootProps}
+      {...layoutProps}
+      {...restProps}
     >
       <StyledDateRangeInputTriggerRow
+        data-has-clear={showClear ? '' : undefined}
+        data-open={isOpen ? 'true' : undefined}
         ref={triggerRowRef}
-        data-active={isActive ? 'true' : undefined}
-        data-open={open ? 'true' : undefined}
-        {...axisProps}
+        {...surfaceProps}
       >
-        <SegmentButton
-          embedded
-          inlineSize="100%"
+        <SegmentButtonParts
           left={leftSegment}
           right={rightSegment}
           shape={shape}
           sizePreset={sizePreset}
+          textSize={textSizePreset}
         />
 
         {showClear && (
           <StyledDateRangeInputClearButton
             aria-label={clearDateRangeButtonAriaLabel(startLabel, endLabel)}
+            data-slot="clear"
             disabled={disabled}
             type="button"
-            {...axisProps}
+            {...surfaceProps}
             onClick={handleClear}
           >
-            <StyledDateRangeInputClearIcon {...axisProps}>
+            <Icon interactive sizePreset={sizePreset}>
               <CloseIcon />
-            </StyledDateRangeInputClearIcon>
+            </Icon>
           </StyledDateRangeInputClearButton>
         )}
       </StyledDateRangeInputTriggerRow>
 
-      {open &&
-        createPortal(
-          <StyledDateRangeInputPanel
-            ref={panelRef}
-            aria-label="Date range calendar"
-            aria-modal={true}
-            id={panelId}
-            role="dialog"
-            {...axisProps}
-          >
-            <CalendarPanel
-              activeDay={activeDay}
-              dayShape={dayShape}
-              maxDay={maxDay}
-              minDay={minDay}
-              rangeEnd={endDay}
-              rangeStart={startDay}
-              shape={shape}
-              sizePreset={sizePreset}
-              viewMonth={viewMonth}
-              onSelectDay={handleSelectDay}
-              onViewMonthChange={setViewMonth}
-            />
-          </StyledDateRangeInputPanel>,
-          document.body
-        )}
+      <AnchoredPortal
+        dismissZoneRefs={[rootRef, panelRef]}
+        open={isOpen}
+        openFocusDeps={[activeDay, viewMonth]}
+        panelRef={panelRef}
+        positioning={{
+          anchorRef: triggerRowRef,
+          apply: placeCalendarPanel,
+          layoutDeps: [viewMonth],
+        }}
+        returnFocusRef={returnFocusRef}
+        onDismiss={handleClose}
+        onOpenFocus={focusCalendarPanelInitial}
+      >
+        <StyledDateRangeInputPanel
+          aria-label="Date range calendar"
+          aria-modal={true}
+          id={panelId}
+          ref={panelRef}
+          role="dialog"
+          {...surfaceProps}
+        >
+          <CalendarPanel
+            activeDay={activeDay}
+            dayShape={dayShape}
+            maxDay={maxDay}
+            minDay={minDay}
+            rangeEnd={endDay}
+            rangeStart={startDay}
+            shape={resolvedShape}
+            sizePreset={resolvedSizePreset}
+            viewMonth={viewMonth}
+            onSelectDay={handleSelectDay}
+            onViewMonthChange={setViewMonth}
+          />
+        </StyledDateRangeInputPanel>
+      </AnchoredPortal>
     </StyledDateRangeInputRoot>
   );
 }
 
-export type { DateRangeInputStyleProps } from './date-range-input.styles';
+/* eslint-disable react-refresh/only-export-components -- реэкспорт todayUtc */
+export { todayUtc } from './calendar-panel';

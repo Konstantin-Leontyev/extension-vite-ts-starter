@@ -280,12 +280,18 @@ export const StyledComboboxPanel = styled.div.withConfig({
  *
  * Встроенные стили:
  *  - `display: grid` — поле поиска на всю ширину строки
- *  - `padding` — отступ вокруг поля поиска
+ *  - `border-block-end` — шов со списком вместо тени Input
+ *  - у `input` нулевые нижние радиусы и `box-shadow: none` — без щели тени на стыке
  *  - `outline: none` на `input:focus-visible` — кольцо фокуса даёт панель, не поле
  */
 export const StyledComboboxSearchRow = styled.div`
   display: grid;
-  padding: ${getSpacingValue(4)};
+
+  & input {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+    box-shadow: none;
+  }
 
   & input:focus-visible {
     outline: none;
@@ -298,11 +304,9 @@ export const StyledComboboxSearchRow = styled.div`
  *
  * Встроенные стили:
  *  - `display: grid` — опции столбиком
- *  - `gap` — зазор между опциями
  */
 export const StyledComboboxList = styled.ul`
   display: grid;
-  gap: ${getSpacingValue(4)};
 `;
 
 /**
@@ -354,9 +358,9 @@ export const StyledComboboxCheck = styled.span`
 
 /**
  * getComboboxOptionStyles — возвращает CSS-правила для узла `StyledComboboxOption`:
- * поверхность опции, отступы и вуаль наведения. `display: flex` — оправданное
- * исключение: иконка опции, текст и check в одном потоке с `gap`, отсутствующие
- * слоты не резервируют трек.
+ * поверхность опции, отступы и синюю подсветку наведения. `display: flex` —
+ * оправданное исключение: иконка опции, текст и check в одном потоке с `gap`,
+ * отсутствующие слоты не резервируют трек.
  *
  * @param props пропсы формы, размера и тема
  * @returns CSS-правила, каждое с новой строки
@@ -391,7 +395,17 @@ function getComboboxOptionStyles(
     `&[data-active='true']::before,`,
     '&:hover:not(:disabled)::before,',
     '&:focus-visible::before {',
-    `background-color: ${theme.colors.veil};`,
+    `background-color: ${theme.colors.primary};`,
+    '}',
+    `&[data-active='true'],`,
+    '&:hover:not(:disabled),',
+    '&:focus-visible {',
+    `color: ${theme.colors.inverse};`,
+    '}',
+    `&[data-active='true'] [data-slot='check'],`,
+    `&:hover:not(:disabled) [data-slot='check'],`,
+    `&:focus-visible [data-slot='check'] {`,
+    'color: inherit;',
     '}',
   ];
 

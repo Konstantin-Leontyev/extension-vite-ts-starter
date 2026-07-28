@@ -579,7 +579,7 @@ export function RangeInput({
       {...layoutProps}
     >
       {Boolean(label) && (
-        <Text as="label" htmlFor={triggerId} sizePreset="medium" tone="muted">
+        <Text as="label" htmlFor={triggerId} sizePreset="thin" tone="muted">
           {label}
         </Text>
       )}

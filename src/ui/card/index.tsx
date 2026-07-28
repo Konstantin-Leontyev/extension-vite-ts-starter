@@ -93,7 +93,7 @@ const DEFAULT_CARD_TITLE_SIZE_PRESET: TextSizePreset = 'bold';
  * DEFAULT_CARD_SUBTITLE_SIZE_PRESET — задаёт размер подзаголовка по умолчанию.
  * Используется, когда вызывающий код не передал проп `subtitleSizePreset`.
  */
-const DEFAULT_CARD_SUBTITLE_SIZE_PRESET: TextSizePreset = 'medium';
+const DEFAULT_CARD_SUBTITLE_SIZE_PRESET: TextSizePreset = 'normal';
 
 /**
  * DEFAULT_CARD_SUBTITLE_TONE — задаёт тон подзаголовка по умолчанию.

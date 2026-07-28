@@ -35,7 +35,7 @@ import { getTheme, type AppTheme } from '@ui/theme';
  * Тип `SizePreset` без ключа `huge` ряда RoundButton: huge в хроме
  * карточки ломает композицию.
  */
-export const CARD_HEADER_ACTION_SIZE_PRESET: SizePreset = 'medium';
+export const CARD_HEADER_ACTION_SIZE_PRESET: SizePreset = 'normal';
 
 /**
  * CardBackground — представляет заливку карточки: поверхность, фон страницы

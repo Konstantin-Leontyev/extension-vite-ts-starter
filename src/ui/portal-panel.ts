@@ -10,7 +10,6 @@
  *  - `src/ui/listbox/listbox.styles.ts` — панель опций
  *  - `src/ui/combobox/combobox.styles.ts` — панель поиска и опций
  *  - `src/ui/range-input/range-input.styles.ts` — панель пресетов и полей
- *  - `src/ui/date-input/date-input.styles.ts` — панель календаря
  *  - `src/ui/date-range-input/date-range-input.styles.ts` — панель календаря диапазона
  */
 

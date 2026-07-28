@@ -4,8 +4,6 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - зазор между контентом и панелью через проп `offset`
- *  - единый отступ зон каркаса через проп `padding`
  *  - область страницы через `children`
  *  - ref области контента через проп `contentRef`
  *  - дополнительные кнопки в шапке панели через проп `headerActions`. Рендерятся перед
@@ -49,6 +47,7 @@ import {
 
 import { SidebarIcon } from '@icons/sidebar';
 import { Card, type CardHeaderAction } from '@ui/card';
+import { splitLayoutProps } from '@ui/layout';
 
 import {
   StyledSidebar,
@@ -78,6 +77,7 @@ const DEFAULT_SIDEBAR_ICON_ARIA_LABEL = 'Close panel';
 
 /**
  * CardForwardProps — представляет пропсы Card, доступные панели Sidebar.
+ * Layout-пропсы зарезервированы за оболочкой Sidebar через `SidebarStyleProps`.
  */
 type CardForwardProps = Omit<
   ComponentProps<typeof Card>,
@@ -121,7 +121,7 @@ type SidebarProps = SidebarStyleProps &
  *   id="panel"
  *   open={open}
  *   onClose={closePanel}
- *   padding={8}
+ *   gap={16}
  *   title="Settings"
  *   sidebarContent={<Settings />}
  * >
@@ -135,14 +135,13 @@ export function Sidebar({
   icon = DEFAULT_SIDEBAR_ICON,
   iconAriaLabel = DEFAULT_SIDEBAR_ICON_ARIA_LABEL,
   id,
-  offset,
   onClose,
   open,
-  padding,
   sidebarContent,
   title,
   ...rest
 }: SidebarProps) {
+  const { layoutProps, restProps } = splitLayoutProps(rest);
   const titleId = title && id ? `${id}-title` : undefined;
 
   // Пользовательские действия первыми, кнопка сворачивания — последней, крайняя справа.
@@ -200,7 +199,7 @@ export function Sidebar({
   }
 
   return (
-    <StyledSidebar offset={offset} padding={padding}>
+    <StyledSidebar {...layoutProps}>
       <StyledSidebarContent ref={contentRef}>{children}</StyledSidebarContent>
 
       <StyledSidebarSlot
@@ -211,11 +210,16 @@ export function Sidebar({
         id={id}
       >
         <StyledSidebarTrack data-open={isExpanded} onTransitionEnd={handleTransitionEnd}>
+          {/*
+            Нижний padding Card = 0: тень контента панели уходит в
+            paddingBlockEnd ScrollPort у вызывающего кода.
+          */}
           <Card
             headerActions={cardHeaderActions}
+            paddingBlockEnd={0}
             title={title}
             titleId={titleId}
-            {...rest}
+            {...restProps}
           >
             {sidebarContent}
           </Card>

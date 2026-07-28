@@ -9,6 +9,8 @@
  *  - левый сегмент через проп `left`
  *  - средний сегмент через проп `center`. Без `center` ряд из двух сегментов
  *  - правый сегмент через проп `right`
+ *  - тон заливки сегмента через поле `tone` действия. Публичного `iconTone`
+ *    у сегмента нет
  *  - размер текста сегмента через проп `textSize`
  *  - курсив текста сегмента через проп `textItalic`
  *
@@ -18,7 +20,7 @@
  *
  * Потребители:
  *  - `@ui/segment-button` — собирает SegmentButton поверх ряда
- *  - `@ui/date-range-input` — рендерит переключатель режимов даты без оболочки SegmentButton
+ *  - `@ui/date-range-input` — рендерит сегменты выбора дат без оболочки SegmentButton
  */
 
 import { Fragment, type ReactNode, type RefObject } from 'react';
@@ -27,7 +29,7 @@ import { useLongPress } from '@hooks/use-long-press';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
-import { type TonePreset } from '@ui/tones';
+import { DEFAULT_TONE, getToneColorKey, type TonePreset } from '@ui/tones';
 
 import {
   StyledSegmentButtonPartsDivider,
@@ -37,7 +39,8 @@ import {
 
 /**
  * SEGMENT_BUTTON_PARTS_ACTIVE_TEXT_TONE — задаёт тон текста активного сегмента.
- * Активный сегмент без явного `textTone` подсвечивается `primary`.
+ * Активный сегмент без явного `textTone` и без цветного `tone` подсвечивается `primary`.
+ * На цветной заливке текст без `textTone` наследует `color: inverse` от сегмента.
  */
 const SEGMENT_BUTTON_PARTS_ACTIVE_TEXT_TONE: TextTone = 'primary';
 
@@ -52,7 +55,6 @@ const SEGMENT_BUTTON_PARTS_ACTIVE_TEXT_TONE: TextTone = 'primary';
  * @property icon — svg иконки сегмента
  * @property iconFill — тон глифа иконки
  * @property iconPosition — позиция иконки относительно текста
- * @property iconTone — тон секции иконки
  * @property onClick — обработчик клика по сегменту
  * @property onDoubleClick — обработчик двойного клика по сегменту
  * @property onLongPress — обработчик долгого нажатия по сегменту
@@ -60,6 +62,7 @@ const SEGMENT_BUTTON_PARTS_ACTIVE_TEXT_TONE: TextTone = 'primary';
  * @property text — текст сегмента
  * @property textTone — тон текста сегмента
  * @property title — подсказка нативного `title`
+ * @property tone — тон заливки сегмента
  */
 export type SegmentButtonPartsAction = {
   active?: boolean;
@@ -70,7 +73,6 @@ export type SegmentButtonPartsAction = {
   icon?: ReactNode;
   iconFill?: TonePreset;
   iconPosition?: IconPosition;
-  iconTone?: TonePreset;
   onClick?: () => void;
   onDoubleClick?: () => void;
   onLongPress?: () => void;
@@ -78,6 +80,7 @@ export type SegmentButtonPartsAction = {
   text: string;
   textTone?: TextTone;
   title?: string;
+  tone?: TonePreset;
 };
 
 /**
@@ -111,8 +114,10 @@ export type SegmentButtonPartsProps = {
  *
  * Как работает:
  * 1. Берёт действие сегмента и подставляет дефолт `iconPosition`
- * 2. Без явного `textTone` у активного сегмента подставляет `primary`
- * 3. Собирает иконку в `Icon` и текст в `Text`, учитывая позицию иконки
+ * 2. Определяет тон текста: явный `textTone`, иначе наследование на цветном `tone`,
+ *    иначе `primary` у активного сегмента
+ * 3. Собирает иконку в `Icon` и текст в `Text`. Без иконки центрирует строку
+ *    через `align`, чтобы лейбл оставался на всю ширину
  *
  * @param action действие сегмента
  * @param shape форма ряда
@@ -143,7 +148,6 @@ function SegmentButtonPartsPart({
     icon,
     iconFill,
     iconPosition = DEFAULT_ICON_POSITION,
-    iconTone,
     onClick,
     onDoubleClick,
     onLongPress,
@@ -151,6 +155,7 @@ function SegmentButtonPartsPart({
     text,
     textTone,
     title,
+    tone,
   } = action;
 
   const { pointerProps, suppressNextClick } = useLongPress({ disabled, onLongPress });
@@ -163,16 +168,21 @@ function SegmentButtonPartsPart({
     onClick?.();
   }
 
-  // Активный сегмент — состояние приложения: без явного textTone подсвечивается primary.
+  const isColoredTone = getToneColorKey(tone ?? DEFAULT_TONE) != null;
   const resolvedTextTone =
-    textTone ?? (active ? SEGMENT_BUTTON_PARTS_ACTIVE_TEXT_TONE : undefined);
+    textTone ??
+    (isColoredTone
+      ? undefined
+      : active
+        ? SEGMENT_BUTTON_PARTS_ACTIVE_TEXT_TONE
+        : undefined);
 
   const hasIcon = Boolean(icon);
   const iconNode = hasIcon && (
     <Icon
       data-slot="icon"
       iconFill={iconFill}
-      iconTone={iconTone}
+      iconTone={tone}
       interactive
       sizePreset={sizePreset}
     >
@@ -187,28 +197,36 @@ function SegmentButtonPartsPart({
       aria-expanded={ariaExpanded}
       aria-haspopup={ariaHaspopup}
       disabled={disabled}
-      iconTone={iconTone}
+      hasIcon={hasIcon}
       ref={ref}
       shape={shape}
       sizePreset={sizePreset}
       title={title}
+      tone={tone}
       type="button"
       onClick={onClick || onLongPress ? handleClick : undefined}
       onDoubleClick={onDoubleClick}
       {...(pointerProps ?? {})}
     >
       {iconPosition === 'start' && iconNode}
-      <Text ellipsis italic={textItalic} sizePreset={textSize} tone={resolvedTextTone}>
+      <Text
+        align={hasIcon ? undefined : 'center'}
+        data-slot="label"
+        ellipsis
+        italic={textItalic}
+        minInlineSize="0"
+        sizePreset={textSize}
+        tone={resolvedTextTone}
+      >
         {text}
       </Text>
-      {iconPosition !== 'start' && iconNode}
+      {iconPosition === 'end' && iconNode}
     </StyledSegmentButtonPartsPart>
   );
 }
 
 /**
  * SegmentButtonParts — отображает сегментный ряд без оболочки.
- * Оболочку даёт вызывающий код, например SegmentButton или DateRangeInput.
  *
  * @example
  * <SegmentButtonParts

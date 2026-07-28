@@ -79,7 +79,7 @@ const INPUT_ERROR_TONE: TextTone = 'danger';
  * INPUT_LABEL_SIZE_PRESET — задаёт размер подписи над полем.
  * Используется для текста в `label`.
  */
-const INPUT_LABEL_SIZE_PRESET: TextSizePreset = 'medium';
+const INPUT_LABEL_SIZE_PRESET: TextSizePreset = 'thin';
 
 /**
  * INPUT_LABEL_TEXT_TONE — задаёт тон подписи.

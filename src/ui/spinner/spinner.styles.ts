@@ -31,7 +31,7 @@ export { splitLayoutProps } from '@ui/layout';
  */
 const spinnerSize = {
   small: 16,
-  medium: 24,
+  normal: 24,
   large: 32,
 } as const satisfies Record<SizePreset, SpacingValue>;
 
@@ -52,7 +52,7 @@ function getSpinnerSize(sizePreset: SizePreset): string {
  */
 const spinnerBorderWidth = {
   small: 2,
-  medium: 2,
+  normal: 2,
   large: 4,
 } as const satisfies Record<SizePreset, number>;
 

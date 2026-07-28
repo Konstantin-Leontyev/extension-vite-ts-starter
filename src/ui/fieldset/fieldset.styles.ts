@@ -46,7 +46,7 @@ export type FieldsetBorderTone = keyof typeof FIELDSET_BORDER_TONE_PRESETS;
 /**
  * FIELDSET_BORDER_TONE_KEYS — формирует перечень тонов рамки из ключей
  * `FIELDSET_BORDER_TONE_PRESETS`.
- * Используется в панелях настроек витрины дизайн-системы: `ToneListbox` принимает его
+ * Используется в панелях настроек витрины: `ToneListbox` принимает его
  * пропом `tones`.
  */
 export const FIELDSET_BORDER_TONE_KEYS = Object.freeze(

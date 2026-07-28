@@ -14,17 +14,19 @@
  *    контрол позиции не рендерится
  *  - обработчик показа иконки через проп `onShowChange`. Без `onShowChange` иконка
  *    неотключаема и группа рендерится всегда
- *  - обработчик изменения тона секции через проп `onToneChange`
+ *  - обработчик изменения тона секции через проп `onToneChange`. Без пары
+ *    `tone` / `onToneChange` контрол тона секции не рендерится
  *  - позицию иконки через проп `position`
  *  - показ иконки через проп `show`
- *  - тон секции иконки через проп `tone`
+ *  - тон секции иконки через проп `tone`. Без пары `tone` / `onToneChange`
+ *    контрол тона секции не рендерится
  *
  * Основные задачи:
  * 1. Экспортировать компонент IconGroup
  * 2. Типизировать пропсы через `IconGroupProps`
  *
  * Потребители:
- *  - панели настроек витрины — настраивают иконку компонента:
+ *  - панели настроек витрины дизайн-системы — настраивают иконку компонента:
  *     - `src/pages/showcase/button-settings/index.tsx`
  *     - `src/pages/showcase/combobox-settings/index.tsx`
  *     - `src/pages/showcase/listbox-settings/index.tsx`
@@ -67,10 +69,12 @@ function getIconPositionListboxOptions(): ListboxOption[] {
  * @property onPositionChange — обработчик изменения позиции. Без него контрол позиции
  *   не рендерится
  * @property onShowChange — обработчик показа иконки. Без него иконка неотключаема
- * @property onToneChange — обработчик изменения тона секции
+ * @property onToneChange — обработчик изменения тона секции. Без него и без `tone`
+ *   контрол тона секции не рендерится
  * @property position — текущая позиция иконки
  * @property show — включает показ иконки при переданном `onShowChange`
- * @property tone — текущий тон секции иконки
+ * @property tone — текущий тон секции иконки. Без него и без `onToneChange`
+ *   контрол тона секции не рендерится
  */
 type IconGroupProps = {
   fill: TonePreset;
@@ -81,10 +85,10 @@ type IconGroupProps = {
   onIconChange?: (value: string) => void;
   onPositionChange?: (position: IconPosition) => void;
   onShowChange?: (show: boolean) => void;
-  onToneChange: (tone: TonePreset) => void;
+  onToneChange?: (tone: TonePreset) => void;
   position?: IconPosition;
   show?: boolean;
-  tone: TonePreset;
+  tone?: TonePreset;
 };
 
 /**
@@ -184,12 +188,14 @@ export function IconGroup({
             />
           )}
 
-          <ToneListbox
-            label={formatIconGroupLabel('Icon tone:', name)}
-            tones={TONE_PRESET_KEYS}
-            value={tone}
-            onChange={onToneChange}
-          />
+          {onToneChange !== undefined && tone !== undefined && (
+            <ToneListbox
+              label={formatIconGroupLabel('Icon tone:', name)}
+              tones={TONE_PRESET_KEYS}
+              value={tone}
+              onChange={onToneChange}
+            />
+          )}
 
           <ToneListbox
             excludeTone={tone}

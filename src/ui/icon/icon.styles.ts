@@ -118,7 +118,7 @@ export function getIconSectionSeamStyles(options: {
 
 /**
  * resolveIconStateBackground — возвращает значение канала `--icon-state-background`
- * для секции иконки на родителе. Цветной `iconTone` — сдвиг к `shade`; нейтральный —
+ * для секции иконки на родителе. Цветной `iconTone` — сдвиг к `shade`. Нейтральный —
  * вуаль или `undefined` по `neutralPolicy`. Button не ставит канал на нейтрали.
  *
  * @param theme текущая тема
@@ -172,11 +172,11 @@ function getIconSize(sizePreset: IconSizePreset): SpacingValue {
  * iconPadding — хранит внутренний отступ окна иконки для каждого размера ряда.
  * Ключ — размер из `IconSizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
  * Вместе с квадратом из `iconSize` задаёт окно под svg: 24/28/32/64
- * для `small`/`medium`/`large`/`huge` — значения подобраны зрительно.
+ * для `small`/`normal`/`large`/`huge` — значения подобраны зрительно.
  */
 const iconPadding = {
-  small: 4,
-  medium: 6,
+  small: 8,
+  normal: 8,
   large: 8,
   huge: 8,
 } as const satisfies Record<IconSizePreset, SpacingValue>;
@@ -198,8 +198,8 @@ export function getIconPadding(sizePreset: IconSizePreset): SpacingValue {
  * Состояния наведения и нажатия поверхность не включает — их родитель передаёт
  * каналом `--icon-state-background`.
  *
- * @property backgroundColor — заливка окна в покое; нейтральный тон заливку не красит
- * @property color — цвет глифа; нейтральный тон без `iconFill` наследует цвет контекста
+ * @property backgroundColor — заливка окна в покое. Нейтральный тон заливку не красит
+ * @property color — цвет глифа. Нейтральный тон без `iconFill` наследует цвет контекста
  */
 type IconSurface = {
   backgroundColor?: string;
@@ -212,8 +212,8 @@ type IconSurface = {
  * не вычисляют, а состояния передают каналом `--icon-state-background`.
  *
  * Как работает:
- * 1. Цветной `iconTone` красит заливку тоном, глиф — `inverse`; `iconFill`
- *    игнорируется — двухцветность на контрастной заливке не работает
+ * 1. Цветной `iconTone` красит заливку тоном, глиф — `inverse`. `iconFill`
+ *    игнорируется: двухцветность на контрастной заливке не работает
  * 2. Нейтральный `iconTone` с цветным `iconFill` красит только глиф
  * 3. Нейтральный без `iconFill` не пишет ничего: заливка прозрачна,
  *    глиф наследует цвет контекста
@@ -339,8 +339,8 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
  *  - `getIconStyles` — габарит, внутренний отступ и поверхность
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *
- * Единственный узел проекта, создающий условия рендера svg: центрирующий бокс;
- * зажим svg по обеим осям даёт глобальный сброс из `@ui/reset`.
+ * Единственный узел проекта, создающий условия рендера svg: центрирующий бокс.
+ * Зажим svg по обеим осям даёт глобальный сброс из `@ui/reset`.
  */
 export const StyledIcon = styled.span.withConfig({
   shouldForwardProp: (prop) => !ICON_PROP_NAMES.has(prop),

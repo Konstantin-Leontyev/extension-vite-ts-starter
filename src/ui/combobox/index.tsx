@@ -52,7 +52,7 @@ import { AnchoredPortal } from '@ui/anchored-portal';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Input } from '@ui/input';
 import { ScrollPort } from '@ui/scroll-port';
-import { VIEWPORT_EDGE_INSET } from '@ui/shell';
+import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/shell';
 import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
@@ -116,7 +116,7 @@ const COMBOBOX_ERROR_TEXT_SIZE_PRESET: TextSizePreset = 'thin';
  * COMBOBOX_LABEL_SIZE_PRESET — задаёт размер подписи над триггером.
  * Используется для текста в `label`.
  */
-const COMBOBOX_LABEL_SIZE_PRESET: TextSizePreset = 'medium';
+const COMBOBOX_LABEL_SIZE_PRESET: TextSizePreset = 'thin';
 
 /**
  * COMBOBOX_LABEL_TEXT_TONE — задаёт тон подписи над триггером.
@@ -234,22 +234,22 @@ function applyComboboxPanelPosition(
   const triggerRect = trigger.getBoundingClientRect();
   const rowHeight = triggerRect.height;
   const maxLeft = Math.max(
-    VIEWPORT_EDGE_INSET,
-    window.innerWidth - triggerRect.width - VIEWPORT_EDGE_INSET
+    PORTAL_VIEWPORT_EDGE_INSET,
+    window.innerWidth - triggerRect.width - PORTAL_VIEWPORT_EDGE_INSET
   );
-  const left = Math.min(Math.max(VIEWPORT_EDGE_INSET, triggerRect.left), maxLeft);
+  const left = Math.min(Math.max(PORTAL_VIEWPORT_EDGE_INSET, triggerRect.left), maxLeft);
   const searchHeight = searchRowHeight ?? rowHeight;
   const reservedRows = Math.min(MIN_VISIBLE_OPTION_ROWS, Math.max(1, optionCount));
   const minPanelHeight = searchHeight + reservedRows * rowHeight;
 
   let top = triggerRect.top;
 
-  if (top + minPanelHeight > window.innerHeight - VIEWPORT_EDGE_INSET) {
-    top = window.innerHeight - VIEWPORT_EDGE_INSET - minPanelHeight;
+  if (top + minPanelHeight > window.innerHeight - PORTAL_VIEWPORT_EDGE_INSET) {
+    top = window.innerHeight - PORTAL_VIEWPORT_EDGE_INSET - minPanelHeight;
   }
 
-  top = Math.max(VIEWPORT_EDGE_INSET, top);
-  const maxBlockSize = window.innerHeight - top - VIEWPORT_EDGE_INSET;
+  top = Math.max(PORTAL_VIEWPORT_EDGE_INSET, top);
+  const maxBlockSize = window.innerHeight - top - PORTAL_VIEWPORT_EDGE_INSET;
 
   panel.style.left = `${left}px`;
   panel.style.width = `${triggerRect.width}px`;
@@ -554,12 +554,7 @@ export function Combobox({
             />
           </StyledComboboxSearchRow>
 
-          <ScrollPort
-            paddingInlineEnd={8}
-            scrollbarInsetBlockEnd={4}
-            scrollbarInsetBlockStart={4}
-            showVeil={false}
-          >
+          <ScrollPort paddingBlock={4} paddingInlineEnd={8} veilInsetInline={0}>
             <StyledComboboxList
               aria-label={label ?? placeholder}
               id={listId}
@@ -609,7 +604,7 @@ export function Combobox({
                         {option.label}
                       </Text>
                       {isSelected && (
-                        <StyledComboboxCheck>
+                        <StyledComboboxCheck data-slot="check">
                           <CheckIcon />
                         </StyledComboboxCheck>
                       )}

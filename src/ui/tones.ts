@@ -21,7 +21,7 @@
  *  - контролы, например Button и Icon — кладут вуаль поверх непрозрачной нейтральной
  *    заливки через `resolveVeilBackground`
  *  - `@ui/fieldset` — расширяет канонический набор тонов
- *  - панели настроек витрины дизайн-системы — передают `TONE_PRESET_KEYS` в `ToneListbox`
+ *  - панели настроек витрины — передают `TONE_PRESET_KEYS` в `ToneListbox`
  *  - `src/pages/showcase/tone-listbox/index.tsx` — фильтрует тоны и подставляет
  *    запасной через `DEFAULT_TONE`
  */
@@ -56,7 +56,7 @@ export const TONE_PRESETS = Object.freeze({
 
 /**
  * TONE_PRESET_KEYS — формирует перечень канонических тонов из ключей `TONE_PRESETS`.
- * Используется в панелях настроек витрины дизайн-системы: `ToneListbox` принимает его пропом `tones`.
+ * Используется в панелях настроек витрины: `ToneListbox` принимает его пропом `tones`.
  */
 export const TONE_PRESET_KEYS = Object.freeze(Object.keys(TONE_PRESETS) as TonePreset[]);
 

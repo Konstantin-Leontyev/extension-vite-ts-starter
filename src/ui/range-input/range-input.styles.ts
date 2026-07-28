@@ -158,8 +158,8 @@ export const StyledRangeInputRoot = styled.div.withConfig({
  * Как работает:
  * 1. Берёт тему и размер
  * 2. Собирает CSS-правила ряда: сетка, габариты, заливка, рамка и тень
- * 3. Без clear оставляет одну колонку. При `data-has-clear` — две колонки;
- *    позиция сброса читается из DOM по `[data-slot='clear']:first-child`, не из пропа
+ * 3. Без clear оставляет одну колонку. При `data-has-clear` — две колонки.
+ *    Позиция сброса читается из DOM по `[data-slot='clear']:first-child`, не из пропа
  * 4. Не красит рамку в `primary` — как Listbox и Combobox: акцент даёт `outline`
  *    фокуса на ряде при `:focus-within`, потому что `overflow` обрезает `outline`
  *    детей, как у Stepper
@@ -305,7 +305,7 @@ export const StyledRangeInputValue = styled.span.withConfig({
 /**
  * getRangeInputClearButtonStyles — возвращает CSS-правила для узла
  * `StyledRangeInputClearButton`: квадрат сброса, разделитель и канал состояний.
- * Статику красит внутренний Icon своими пропсами; кнопка сброса — самостоятельное
+ * Статику красит внутренний Icon своими пропсами. Кнопка сброса — самостоятельное
  * действие, поэтому выставляет канал на собственных `hover` и `focus-visible`.
  *
  * @param props пропсы поверхности и тема
@@ -387,7 +387,7 @@ export const StyledRangeInputPanel = styled.div.withConfig({
 })<RangeInputSurfaceStyleProps>`
   display: grid;
   gap: ${getSpacingValue(12)};
-  padding: ${getSpacingValue(12)};
+  padding: ${getSpacingValue(16)};
   ${(props) => getRangeInputPanelStyles(props)}
 `;
 

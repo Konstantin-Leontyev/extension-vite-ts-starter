@@ -6,7 +6,7 @@
  * 1. Экспортировать компонент `ChevronDownIcon`
  *
  * Потребители:
- *  - контролы с раскрытием, например Listbox, Combobox, Stepper и DateInput — показывают направление
+ *  - контролы с раскрытием, например Listbox, Combobox и Stepper — показывают направление
  *  - `src/icons/index.ts` — реэкспортирует `ChevronDownIcon`
  */
 

@@ -83,7 +83,7 @@ const INCREASE_LABEL = 'Increase';
 
 /**
  * STEPPER_CHEVRON_ICON_PADDING — задаёт отступ окна Icon шеврона внутри половинки
- * стрелки. Вместе с высотой половинки даёт окна `12`/`16`/`20` px при `small`/`medium`/`large`.
+ * стрелки. Вместе с высотой половинки даёт окна `12`/`16`/`20` px при `small`/`normal`/`large`.
  */
 const STEPPER_CHEVRON_ICON_PADDING: SpacingValue = 2;
 
@@ -154,7 +154,7 @@ type StepperProps = StepperStyleProps &
  * @example
  * <Stepper aria-label="Quantity" value={1} onChange={setValue} />
  * <Stepper aria-labelledby="qty-label" min={0} max={10} step={1} value={5} onChange={setValue} />
- * <Stepper sizePreset="medium" suffix="K" textAlign="center" value={100} onChange={setValue} />
+ * <Stepper sizePreset="normal" suffix="K" textAlign="center" value={100} onChange={setValue} />
  */
 export function Stepper({
   'aria-label': ariaLabel,

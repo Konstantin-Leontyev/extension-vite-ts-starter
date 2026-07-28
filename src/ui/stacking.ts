@@ -10,7 +10,8 @@
  *  - `STACKING_PROFILE_MENU` — fixed-меню профиля из шапки
  *  - `STACKING_SIDEBAR` — выезжающая панель сайдбара на узком экране
  *  - `STACKING_OPEN_CONTROL` — корень открытого контрола над соседями в потоке
- *  - `STACKING_PORTAL` — панель в `document.body`, например listbox, combobox, date и table
+ *  - `STACKING_PORTAL` — панель в `document.body`, например listbox, combobox,
+ *    date-range-input и table
  *  - `STACKING_TOAST` — стек уведомлений над порталами
  *
  * Основные задачи:
@@ -21,7 +22,7 @@
  *  - `src/components/header/header.styles.ts` — поднимает sticky-шапку над контентом
  *  - `src/components/profile-menu/index.tsx` — поднимает fixed-меню профиля над шапкой
  *  - `src/ui/sidebar/sidebar.styles.ts` — поднимает панель сайдбара на узком экране
- *  - контролы с `data-open` и панелями в портале, например listbox, combobox, date-input,
+ *  - контролы с `data-open` и панелями в портале, например listbox, combobox,
  *    date-range-input, range-input и table — поднимают корень и панель портала
  *  - `src/context/toast/toast.styles.ts` — поднимает стек уведомлений над порталами
  */
@@ -49,7 +50,7 @@ export const STACKING_OPEN_CONTROL = 40;
 
 /**
  * STACKING_PORTAL — задаёт слой панели в `document.body`,
- * например listbox, combobox, date-input, date-range-input, range-input и table.
+ * например listbox, combobox, date-range-input, range-input и table.
  */
 export const STACKING_PORTAL = 100;
 

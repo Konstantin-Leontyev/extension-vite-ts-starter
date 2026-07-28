@@ -10,14 +10,13 @@
  *
  * Потребители:
  *  - `@ui/anchored-portal` — ставит панель у якоря при открытии и при `resize`
- *  - контролы с календарной панелью, например DateInput и DateRangeInput —
- *    передают `placeCalendarPanel`
+ *  - `@ui/date-range-input` — передаёт `placeCalendarPanel`
  *  - `@ui/range-input` — передаёт `matchTriggerRect`
  */
 
 import { useLayoutEffect, useRef, type RefObject } from 'react';
 
-import { VIEWPORT_EDGE_INSET } from '@ui/shell';
+import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/shell';
 
 /**
  * AnchoredPortalPositionStrategy — представляет стратегию позиционирования панели
@@ -41,7 +40,7 @@ const EMPTY_LAYOUT_DEPS: readonly unknown[] = [];
 
 /**
  * clampPanelToViewport — прижимает `left` и `top` панели к краям вьюпорта
- * с `VIEWPORT_EDGE_INSET` и при переполнении по высоте задаёт `max-block-size`.
+ * с `PORTAL_VIEWPORT_EDGE_INSET` и при переполнении по высоте задаёт `max-block-size`.
  * Используется внутри `placeCalendarPanel`.
  *
  * @param panel DOM-узел панели
@@ -56,12 +55,12 @@ export function clampPanelToViewport(
   const panelWidth = panel.offsetWidth;
   const panelHeight = panel.offsetHeight;
   const maxLeft = Math.max(
-    VIEWPORT_EDGE_INSET,
-    window.innerWidth - panelWidth - VIEWPORT_EDGE_INSET
+    PORTAL_VIEWPORT_EDGE_INSET,
+    window.innerWidth - panelWidth - PORTAL_VIEWPORT_EDGE_INSET
   );
-  const clampedLeft = Math.min(Math.max(VIEWPORT_EDGE_INSET, left), maxLeft);
-  let clampedTop = Math.max(VIEWPORT_EDGE_INSET, top);
-  const availableBelow = window.innerHeight - clampedTop - VIEWPORT_EDGE_INSET;
+  const clampedLeft = Math.min(Math.max(PORTAL_VIEWPORT_EDGE_INSET, left), maxLeft);
+  let clampedTop = Math.max(PORTAL_VIEWPORT_EDGE_INSET, top);
+  const availableBelow = window.innerHeight - clampedTop - PORTAL_VIEWPORT_EDGE_INSET;
 
   panel.style.insetInlineStart = `${clampedLeft}px`;
   panel.style.insetBlockStart = `${clampedTop}px`;
@@ -74,15 +73,15 @@ export function clampPanelToViewport(
   }
 
   const maxTop = Math.max(
-    VIEWPORT_EDGE_INSET,
-    window.innerHeight - panelHeight - VIEWPORT_EDGE_INSET
+    PORTAL_VIEWPORT_EDGE_INSET,
+    window.innerHeight - panelHeight - PORTAL_VIEWPORT_EDGE_INSET
   );
 
   clampedTop = Math.min(clampedTop, maxTop);
-  clampedTop = Math.max(VIEWPORT_EDGE_INSET, clampedTop);
+  clampedTop = Math.max(PORTAL_VIEWPORT_EDGE_INSET, clampedTop);
   panel.style.insetBlockStart = `${clampedTop}px`;
 
-  const available = window.innerHeight - clampedTop - VIEWPORT_EDGE_INSET;
+  const available = window.innerHeight - clampedTop - PORTAL_VIEWPORT_EDGE_INSET;
 
   if (panelHeight > available) {
     panel.style.maxBlockSize = `${Math.max(0, available)}px`;
@@ -110,8 +109,8 @@ export function placeCalendarPanel(trigger: HTMLElement, panel: HTMLElement): vo
   panel.style.maxInlineSize = `${panelWidth}px`;
 
   const panelHeight = panel.offsetHeight;
-  const spaceBelow = window.innerHeight - triggerRect.top - VIEWPORT_EDGE_INSET;
-  const spaceAbove = triggerRect.top - VIEWPORT_EDGE_INSET;
+  const spaceBelow = window.innerHeight - triggerRect.top - PORTAL_VIEWPORT_EDGE_INSET;
+  const spaceAbove = triggerRect.top - PORTAL_VIEWPORT_EDGE_INSET;
 
   let top: number;
 
@@ -120,7 +119,7 @@ export function placeCalendarPanel(trigger: HTMLElement, panel: HTMLElement): vo
   } else if (panelHeight <= spaceAbove) {
     top = triggerRect.top - panelHeight;
   } else {
-    top = VIEWPORT_EDGE_INSET;
+    top = PORTAL_VIEWPORT_EDGE_INSET;
   }
 
   clampPanelToViewport(panel, triggerRect.left, top);

@@ -29,7 +29,7 @@ export { splitLayoutProps } from '@ui/layout';
  */
 const radioSize = {
   small: 16,
-  medium: 20,
+  normal: 20,
   large: 24,
 } as const satisfies Record<SizePreset, SpacingValue>;
 

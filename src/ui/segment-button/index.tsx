@@ -16,7 +16,6 @@
  * 1. Экспортировать компонент SegmentButton
  * 2. Типизировать пропсы через `SegmentButtonProps`
  * 3. Реэкспортировать мост размера текста `getSegmentButtonTextSize`
- * 4. Реэкспортировать тип `SegmentButtonAction`
  *
  * Потребители:
  *  - компоненты приложения, например ProfileMenu — переключают режимы и действия
@@ -27,7 +26,6 @@ import { type ComponentPropsWithRef } from 'react';
 
 import {
   SegmentButtonParts,
-  type SegmentButtonPartsAction,
   type SegmentButtonPartsProps,
 } from '@ui/segment-button-parts';
 import { type TextSizePreset } from '@ui/text';
@@ -37,12 +35,6 @@ import {
   getSegmentButtonTextSize,
   type SegmentButtonStyleProps,
 } from './segment-button.styles';
-
-/**
- * SegmentButtonAction — представляет действие одного сегмента SegmentButton.
- * Совпадает с `SegmentButtonPartsAction` из `@ui/segment-button-parts`.
- */
-export type SegmentButtonAction = SegmentButtonPartsAction;
 
 /**
  * SegmentButtonProps — представляет пропсы компонента SegmentButton.
@@ -72,7 +64,7 @@ type SegmentButtonProps = {
  *   left={{ text: 'A', active: true }}
  *   center={{ text: 'B' }}
  *   right={{ text: 'C' }}
- *   sizePreset="medium"
+ *   sizePreset="normal"
  * />
  */
 export function SegmentButton({

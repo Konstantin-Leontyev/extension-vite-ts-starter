@@ -50,7 +50,7 @@ import { ChevronDownIcon } from '@icons/chevron-down';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Checkbox } from '@ui/checkbox';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
-import { VIEWPORT_EDGE_INSET } from '@ui/shell';
+import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/shell';
 import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
@@ -106,7 +106,7 @@ const LISTBOX_ERROR_TEXT_SIZE_PRESET: TextSizePreset = 'thin';
  * LISTBOX_LABEL_SIZE_PRESET — задаёт размер подписи над триггером.
  * Используется для текста в `label`.
  */
-const LISTBOX_LABEL_SIZE_PRESET: TextSizePreset = 'medium';
+const LISTBOX_LABEL_SIZE_PRESET: TextSizePreset = 'thin';
 
 /**
  * LISTBOX_LABEL_TEXT_TONE — задаёт тон подписи над триггером.
@@ -243,7 +243,7 @@ function resolveCircularAfterIndices(
  * 1. Строит круговую очередь индексов после выбранной через `resolveCircularAfterIndices`
  * 2. Берёт вниз столько строк, сколько влезает по `rowsFitBelow`
  * 3. При известных `triggerTop` и `rowHeight` уменьшает число строк вниз, пока
- *    панель с учётом `VIEWPORT_EDGE_INSET` не поместится во вьюпорт
+ *    панель с учётом `PORTAL_VIEWPORT_EDGE_INSET` не поместится во вьюпорт
  * 4. Отдаёт индексы выше и ниже выбранной
  *
  * @param selectedIndex индекс выбранной опции
@@ -275,8 +275,8 @@ function splitPanelOptionIndices(
       const panelBottom = panelTop + panelHeight;
 
       if (
-        panelTop >= VIEWPORT_EDGE_INSET &&
-        panelBottom + VIEWPORT_EDGE_INSET <= window.innerHeight
+        panelTop >= PORTAL_VIEWPORT_EDGE_INSET &&
+        panelBottom + PORTAL_VIEWPORT_EDGE_INSET <= window.innerHeight
       ) {
         break;
       }
@@ -303,7 +303,7 @@ function splitPanelOptionIndices(
 function countRowsFitBelow(triggerTop: number, rowHeight: number): number {
   const spaceBelowSelected = Math.max(
     0,
-    window.innerHeight - triggerTop - rowHeight - VIEWPORT_EDGE_INSET
+    window.innerHeight - triggerTop - rowHeight - PORTAL_VIEWPORT_EDGE_INSET
   );
 
   return Math.floor(spaceBelowSelected / Math.max(1, rowHeight));

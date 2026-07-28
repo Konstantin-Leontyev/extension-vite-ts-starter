@@ -56,7 +56,7 @@ type IconProps = IconStyleProps &
  * Icon — отображает окно иконки.
  *
  * @example
- * <Icon sizePreset="medium">
+ * <Icon sizePreset="normal">
  *   <CalendarIcon />
  * </Icon>
  * <Icon iconTone="primary" interactive sizePreset={sizePreset}>

@@ -11,7 +11,6 @@
  *     - `src/ui/listbox/index.tsx`
  *     - `src/ui/combobox/index.tsx`
  *     - `src/ui/range-input/index.tsx`
- *     - `src/ui/date-input/index.tsx`
  *     - `src/ui/date-range-input/index.tsx`
  */
 

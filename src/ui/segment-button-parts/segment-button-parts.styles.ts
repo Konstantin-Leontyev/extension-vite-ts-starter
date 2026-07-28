@@ -3,9 +3,9 @@
  * Определяет внешний вид компонента SegmentButtonParts.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `SegmentButtonPartsRootStyleProps` и
- *    `SegmentButtonPartsPartStyleProps`
- * 2. Хранить зазоры ряда в `segmentButtonPartsLayoutPresets`
+ * 1. Типизировать пропсы через `SegmentButtonPartsRootStyleProps`,
+ *    `SegmentButtonPartsPartStyleProps` и `SegmentButtonPartsDividerStyleProps`
+ * 2. Хранить вертикальный отступ разделителя в `segmentButtonPartsDividerMarginBlock`
  * 3. Предоставить styled-узлы `StyledSegmentButtonPartsRoot`,
  *    `StyledSegmentButtonPartsPart` и `StyledSegmentButtonPartsDivider`
  *
@@ -15,12 +15,15 @@
 
 import styled from 'styled-components';
 
-import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
+import { resolveIconStateBackground } from '@ui/icon';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
+  FOCUS_OUTLINE_OFFSET,
+  getFocusRingStyles,
   getMinBlockSize,
   getPaddingInline,
+  resolveBlockRadius,
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
@@ -34,27 +37,28 @@ import {
 } from '@ui/tones';
 
 /**
- * segmentButtonPartsLayoutPresets — хранит зазор между иконкой и текстом сегмента
- * и вертикальный отступ разделителя для каждого размера ряда.
- * Ключ — размер из `SizePreset`, значение — пара ключей шкалы из `@ui/spacing`:
- *  - `gap` → значение для CSS-свойства `gap` сегмента
- *  - `dividerMarginBlock` → значение для CSS-свойства `margin-block` разделителя
+ * segmentButtonPartsDividerMarginBlock — хранит вертикальный отступ разделителя
+ * для каждого размера ряда.
+ * Ключ — размер из `SizePreset`, значение — ключ шкалы из `@ui/spacing`.
  */
-const segmentButtonPartsLayoutPresets = {
-  small: { dividerMarginBlock: 8, gap: 4 },
-  medium: { dividerMarginBlock: 8, gap: 8 },
-  large: { dividerMarginBlock: 12, gap: 8 },
-} as const satisfies Record<
-  SizePreset,
-  { dividerMarginBlock: SpacingValue; gap: SpacingValue }
->;
+const segmentButtonPartsDividerMarginBlock = {
+  small: 8,
+  normal: 8,
+  large: 12,
+} as const satisfies Record<SizePreset, SpacingValue>;
+
+/**
+ * SEGMENT_BUTTON_PARTS_ICON_LABEL_GAP — задаёт зазор между иконкой и текстом в сегменте.
+ * Кластер контента, не краевая секция: `gap` вместо отступа лейбла у track-модели.
+ */
+const SEGMENT_BUTTON_PARTS_ICON_LABEL_GAP: SpacingValue = 8;
 
 /**
  * SegmentButtonPartsRootStyleProps — представляет пропсы стилизации корня SegmentButtonParts.
  *
  * @property sizePreset — размер ряда сегментов
  */
-export type SegmentButtonPartsRootStyleProps = {
+type SegmentButtonPartsRootStyleProps = {
   sizePreset?: SizePreset;
 };
 
@@ -89,7 +93,8 @@ function getSegmentButtonPartsRootStyles(
  *  - `flex-shrink: 0` — ряд не сжимается во flex-контейнере
  *  - `min-inline-size: 0` — предотвращает переполнение
  *  - `overflow: hidden` — обрезает содержимое по границе ряда
- *  - `[data-segments='2'|'3']` — равные колонки сегментов и auto-колонки разделителей
+ *  - `grid-template-columns` при `[data-segments='2'|'3']` — равные колонки
+ *    сегментов и auto-колонки разделителей
  *
  * Генерация стилей:
  *  - `getSegmentButtonPartsRootStyles` — минимальная высота ряда
@@ -121,39 +126,44 @@ export const StyledSegmentButtonPartsRoot = styled.div.withConfig({
  * Позиция иконки в CSS сегмента не участвует — `iconPosition` живёт только
  * в JSX-порядке узлов и в styled-пропсы не передаётся.
  *
- * @property iconTone — тон секции иконки; статику красит внутренний Icon,
- *   сегмент считает по тому же тону значение канала состояний
+ * @property hasIcon — включает кластер иконки с текстом по центру сегмента
  * @property shape — форма ряда для скругления крайних сегментов
  * @property sizePreset — размер сегмента
+ * @property tone — тон заливки сегмента
  */
-export type SegmentButtonPartsPartStyleProps = {
-  iconTone?: TonePreset;
+type SegmentButtonPartsPartStyleProps = {
+  hasIcon: boolean;
   shape?: ShapePreset;
   sizePreset?: SizePreset;
+  tone?: TonePreset;
 };
 
 /**
- * SEGMENT_BUTTON_PARTS_PART_PROP_NAMES — объединяет имена пропсов иконки и стилизации сегмента.
+ * SEGMENT_BUTTON_PARTS_PART_PROP_NAMES — хранит имена пропсов стилизации сегмента.
  */
 const SEGMENT_BUTTON_PARTS_PART_PROP_NAMES = new Set<string>([
-  ...ICON_SETTING_PROP_NAMES,
+  'hasIcon',
   'shape',
   'sizePreset',
+  'tone',
 ]);
 
 /**
  * getSegmentButtonPartsPartStyles — возвращает CSS-правила для узла
- * `StyledSegmentButtonPartsPart`: зазор, высоту, отступы, канал состояний
- * секции иконки, наведение, фокус и скругление крайних сегментов при `rounded`.
- * Статику секции красит внутренний Icon своими пропсами.
+ * `StyledSegmentButtonPartsPart`: высоту, заливку по `tone`, центрирование
+ * кластера иконки с текстом, наведение, фокус и скругление крайних сегментов
+ * по `shape`. Статику окна красит внутренний Icon своими пропсами. Шов секции
+ * не ставится: иконка и текст — кластер в сегменте, не краевая секция.
  *
  * Как работает:
  * 1. Берёт тему и дефолты пропсов
- * 2. Собирает зазор, высоту и `padding-inline`
- * 3. Добавляет вуаль наведения на сегмент и кольцо `:focus-visible`
- * 4. При цветном `iconTone` на наведении выставляет `--icon-state-background`
- *    сдвигом тона к `shade` — нейтральную секцию накрывает вуаль сегмента
- * 5. При `shape === 'rounded'` скругляет первый и последний сегмент
+ * 2. Красит заливку и цвет текста по `tone`. Нейтраль — без собственной заливки
+ * 3. Кладёт `padding-inline` на сегмент. С иконкой — колоночный грид с `gap` и
+ *    `justify-content: center`, без track и seam. Без иконки лейбл растягивается
+ *    на сегмент без `justify-items: center`, чтобы `ellipsis` имел потолок ширины
+ * 4. На наведении ставит вуаль сегмента. Цветной `tone` дополнительно ставит канал
+ *    `--icon-state-background` с политикой `'none'` для нейтрали
+ * 5. Скругляет первый и последний сегмент через `resolveBlockRadius`
  *
  * @param props пропсы стилизации сегмента и тема
  * @returns CSS-правила, каждое с новой строки
@@ -163,48 +173,71 @@ function getSegmentButtonPartsPartStyles(
 ): string {
   const theme = getTheme(props);
   const {
-    iconTone = DEFAULT_TONE,
+    hasIcon,
     shape = DEFAULT_SHAPE_PRESET,
     sizePreset = DEFAULT_SIZE_PRESET,
+    tone = DEFAULT_TONE,
   } = props;
-  const iconColorKey = getToneColorKey(iconTone);
+  const minBlockSize = getMinBlockSize(sizePreset);
+  const radius = resolveBlockRadius(shape, minBlockSize);
+  const colorKey = getToneColorKey(tone);
+  const hoverStateBackground = resolveIconStateBackground(theme, tone, 'none');
 
   const styles = [
-    `gap: ${getSpacingValue(segmentButtonPartsLayoutPresets[sizePreset].gap)};`,
-    `block-size: ${getMinBlockSize(sizePreset)};`,
+    'display: grid;',
+    'align-items: center;',
+    `min-block-size: ${minBlockSize};`,
+    'min-inline-size: 0;',
     `padding-inline: ${getPaddingInline(sizePreset)};`,
-    `&:not(:disabled):hover {`,
-    `background-color: ${theme.colors.veil};`,
-    '}',
   ];
 
-  if (iconColorKey) {
+  if (colorKey) {
+    const color = theme.colors[colorKey];
+
     styles.push(
-      `&:not(:disabled):hover {`,
-      `--icon-state-background: ${resolveColorMix(theme.colors[iconColorKey], theme.colors.shade)};`,
+      `background-color: ${color};`,
+      `color: ${theme.colors.inverse};`,
+      `&:not(:disabled):hover { background-color: ${resolveColorMix(color, theme.colors.shade)}; }`
+    );
+  } else {
+    styles.push(`&:not(:disabled):hover { background-color: ${theme.colors.veil}; }`);
+  }
+
+  if (hasIcon) {
+    styles.push(
+      'grid-auto-flow: column;',
+      'justify-content: center;',
+      `gap: ${getSpacingValue(SEGMENT_BUTTON_PARTS_ICON_LABEL_GAP)};`,
+      `[data-slot='label'] {`,
+      'min-inline-size: 0;',
       '}'
     );
+
+    if (hoverStateBackground) {
+      styles.push(
+        `&:not(:disabled):hover {`,
+        `--icon-state-background: ${hoverStateBackground};`,
+        '}'
+      );
+    }
   }
 
   styles.push(
     '&:focus-visible {',
     'position: relative;',
     'z-index: 1;',
-    `outline: 2px solid ${theme.colors.focusRing};`,
-    'outline-offset: -2px;',
+    getFocusRingStyles(theme.colors.focusRing, {
+      offset: `-${FOCUS_OUTLINE_OFFSET}`,
+    }),
     '}'
   );
 
-  if (shape === 'rounded') {
-    const radius = getSpacingValue(8);
-
-    styles.push(
-      `&:first-child {\nborder-start-start-radius: ${radius};\nborder-end-start-radius: ${radius};\n}`
-    );
-    styles.push(
-      `&:last-child {\nborder-start-end-radius: ${radius};\nborder-end-end-radius: ${radius};\n}`
-    );
-  }
+  styles.push(
+    `&:first-child {\nborder-start-start-radius: ${radius};\nborder-end-start-radius: ${radius};\n}`
+  );
+  styles.push(
+    `&:last-child {\nborder-start-end-radius: ${radius};\nborder-end-end-radius: ${radius};\n}`
+  );
 
   return styles.join('\n');
 }
@@ -214,24 +247,14 @@ function getSegmentButtonPartsPartStyles(
  * Базируется на `<button>` и принимает пропсы из `SegmentButtonPartsPartStyleProps`.
  *
  * Встроенные стили:
- *  - `display: flex` — оправданное исключение из grid по умолчанию: центрированный ряд
- *    иконки и текста, где текст сжимается с многоточием. Grid с auto-колонками тянет
- *    трек к max-content и ломает усечение
- *  - `align-items: center` и `justify-content: center` — центрирует содержимое сегмента
- *  - `min-inline-size: 0` — позволяет тексту сжиматься
  *  - `:focus { outline: none }` — кольцо фокуса рисует генератор на `:focus-visible`
  *
  * Генерация стилей:
- *  - `getSegmentButtonPartsPartStyles` — зазор, высота, иконка, hover, focus и радиусы
+ *  - `getSegmentButtonPartsPartStyles` — заливка, кластер иконки с текстом, hover, focus и радиусы
  */
 export const StyledSegmentButtonPartsPart = styled.button.withConfig({
   shouldForwardProp: (prop) => !SEGMENT_BUTTON_PARTS_PART_PROP_NAMES.has(prop),
 })<SegmentButtonPartsPartStyleProps>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-inline-size: 0;
-
   &:focus {
     outline: none;
   }
@@ -267,7 +290,7 @@ function getSegmentButtonPartsDividerStyles(
   const { sizePreset = DEFAULT_SIZE_PRESET } = props;
 
   const styles = [
-    `margin-block: ${getSpacingValue(segmentButtonPartsLayoutPresets[sizePreset].dividerMarginBlock)};`,
+    `margin-block: ${getSpacingValue(segmentButtonPartsDividerMarginBlock[sizePreset])};`,
     `background-color: ${theme.colors.border};`,
   ];
 

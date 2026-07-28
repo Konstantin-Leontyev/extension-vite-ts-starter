@@ -157,7 +157,7 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
           as="label"
           htmlFor={STEP_FIELD_ID}
           id={STEP_LABEL_ID}
-          sizePreset="medium"
+          sizePreset="normal"
           tone="muted"
         >
           Step:
