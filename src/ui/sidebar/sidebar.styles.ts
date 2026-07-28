@@ -16,14 +16,9 @@
 
 import styled from 'styled-components';
 
-import {
-  LAYOUT_PROP_NAMES,
-  getSpacingValue,
-  type LayoutProps,
-  type SpacingProps,
-  type SpacingValue,
-} from '@ui/layout';
+import { LAYOUT_PROP_NAMES, type LayoutProps } from '@ui/layout';
 import { MOTION_SHELL_DURATION, getTransitionStyles } from '@ui/motion';
+import { getSpacingValue, type SpacingProps, type SpacingValue } from '@ui/spacing';
 import { STACKING_SIDEBAR } from '@ui/stacking';
 import { VIEWPORT_EDGE_INSET } from '@ui/viewport';
 

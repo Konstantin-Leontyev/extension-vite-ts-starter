@@ -1,16 +1,15 @@
 /**
  * Файл: `src/ui/layout.ts`
- * Объединяет layout-утилиты проекта в единую точку входа из трёх модулей:
+ * Объединяет три layout-модуля в общий контракт:
  *  - `@ui/spacing` — отступы по фиксированной шкале в rem
  *  - `@ui/sizing` — размеры со свободными строковыми значениями
  *  - `@ui/positioning` — позиционирование и раскладка
  *
  * Основные задачи:
- * 1. Реэкспортировать API из `@ui/spacing`, `@ui/sizing` и `@ui/positioning`
- * 2. Типизировать layout-пропсы через `LayoutProps`
- * 3. Объединить имена всех layout-пропсов в `LAYOUT_PROP_NAMES`
- * 4. Предоставить `getLayoutStyles` для генерации всех layout-правил
- * 5. Предоставить `splitLayoutProps` для разделения пропсов
+ * 1. Типизировать layout-пропсы через `LayoutProps`
+ * 2. Объединить имена всех layout-пропсов в `LAYOUT_PROP_NAMES`
+ * 3. Предоставить `getLayoutStyles` для генерации всех layout-правил
+ * 4. Предоставить `splitLayoutProps` для разделения пропсов
  *
  * Потребители:
  *  - корневые `Styled*` компонентов — применяют `shouldForwardProp` и `getLayoutStyles`
@@ -29,22 +28,6 @@ import {
   getSpacingStyles,
   type SpacingProps,
 } from '@ui/spacing';
-
-export {
-  SPACING_PROPERTY_NAMES,
-  getSpacingStyles,
-  getSpacingValue,
-  type SpacingProps,
-  type SpacingValue,
-} from '@ui/spacing';
-
-export {
-  POSITIONING_PROPERTY_NAMES,
-  getPositioningStyles,
-  type PositioningProps,
-} from '@ui/positioning';
-
-export { SIZING_PROPERTY_NAMES, getSizingStyles, type SizingProps } from '@ui/sizing';
 
 /**
  * LayoutProps — представляет объединённый набор layout-пропсов элемента.

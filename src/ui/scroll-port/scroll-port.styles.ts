@@ -17,14 +17,8 @@
 
 import styled from 'styled-components';
 
-import {
-  LAYOUT_PROP_NAMES,
-  getLayoutStyles,
-  getSpacingValue,
-  type LayoutProps,
-  type SpacingProps,
-  type SpacingValue,
-} from '@ui/layout';
+import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
+import { getSpacingValue, type SpacingProps, type SpacingValue } from '@ui/spacing';
 
 /**
  * VEIL_BLOCK_SIZE — задаёт высоту градиентной вуали на краях прокрутки.

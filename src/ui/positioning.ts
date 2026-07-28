@@ -61,7 +61,7 @@ type LayoutPosition = 'absolute' | 'fixed' | 'relative' | 'static' | 'sticky';
  * @property flexGrow — коэффициент роста flex-элемента
  * @property flexShrink — коэффициент сжатия flex-элемента
  * @property flexWrap — перенос flex-элементов
- * @property gap — отступ между элементами из шкалы spacing
+ * @property gap — отступ между элементами
  * @property gridAutoFlow — направление автоматического потока
  * @property gridTemplateColumns — шаблон колонок сетки
  * @property gridTemplateRows — шаблон строк сетки
@@ -140,8 +140,8 @@ type PositioningValueKind = 'inset' | 'raw' | 'spacing';
  *  - `gap` → `rowGap`, `columnGap`
  *
  * Структура записи:
- *  - ключ — имя пропса
- *  - значение — CSS-свойство и категория `kind`
+ *  - Ключ — имя пропса
+ *  - Значение — CSS-свойство и категория `kind`
  *
  * Например:
  *  - Пропс `display` → CSS-свойство `display`, категория `raw`
