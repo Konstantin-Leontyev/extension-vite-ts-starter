@@ -24,7 +24,8 @@
  * Единый источник истины соответствия px → rem, где:
  *  - Ключ — значение в пикселях для пропсов любого компонента с `LayoutProps`,
  *    например `<Card padding={16} />`
- *  - Значение — CSS-длина в rem, например `0.25rem`, `1rem`
+ *  - Значение — для ключа `0` литерал `0` без единицы, для остальных — CSS-длина
+ *    в rem, например `0.25rem`, `1rem`
  *
  * rem — относительная единица, которая зависит от размера шрифта
  * корневого элемента `<html>` и позволяет сделать дизайн адаптивным.
@@ -69,10 +70,10 @@ const SPACING_VALUES = {
 export type SpacingValue = keyof typeof SPACING_VALUES;
 
 /**
- * getSpacingValue — принимает метку шкалы и возвращает её значение в rem.
+ * getSpacingValue — принимает метку шкалы и возвращает её значение для CSS-свойства.
  *
  * @param value метка шкалы отступов
- * @returns CSS-длина в rem, например `1rem`
+ * @returns для `0` — `0` без единицы, иначе CSS-длина в rem, например `1rem`
  */
 export function getSpacingValue(value: SpacingValue): string {
   return SPACING_VALUES[value];
@@ -91,18 +92,18 @@ export function getSpacingValue(value: SpacingValue): string {
 const SPACING_PROPERTIES = {
   margin: 'margin',
   marginBlock: 'margin-block',
-  marginBlockEnd: 'margin-block-end',
   marginBlockStart: 'margin-block-start',
+  marginBlockEnd: 'margin-block-end',
   marginInline: 'margin-inline',
-  marginInlineEnd: 'margin-inline-end',
   marginInlineStart: 'margin-inline-start',
+  marginInlineEnd: 'margin-inline-end',
   padding: 'padding',
   paddingBlock: 'padding-block',
-  paddingBlockEnd: 'padding-block-end',
   paddingBlockStart: 'padding-block-start',
+  paddingBlockEnd: 'padding-block-end',
   paddingInline: 'padding-inline',
-  paddingInlineEnd: 'padding-inline-end',
   paddingInlineStart: 'padding-inline-start',
+  paddingInlineEnd: 'padding-inline-end',
 } as const;
 
 /**
@@ -136,7 +137,7 @@ export const SPACING_PROPERTY_NAMES = new Set<string>(Object.keys(SPACING_PROPER
  * 1. Проходит по всем записям `SPACING_PROPERTIES`, где ключ — имя пропса,
  *    а значение — CSS-свойство
  * 2. Для каждого пропса проверяет, передан ли он в `props`. Переданное значение,
- *    например `16`, преобразует в rem через `getSpacingValue` и формирует
+ *    например `16`, преобразует через `getSpacingValue` и формирует
  *    CSS-правило вида `margin: 1rem;`
  * 3. Собирает такие правила в массив и склеивает через перенос строки
  * 4. Отдаёт результат для подстановки в CSS-шаблон styled-компонента
