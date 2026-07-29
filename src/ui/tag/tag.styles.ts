@@ -108,6 +108,13 @@ export function getTagTextSize(sizePreset?: TagSizePreset): TextSizePreset {
 }
 
 /**
+ * TAG_TINTED_KEEP_PERCENT — задаёт долю цвета в смеси с `transparent`:
+ * для цветного тона — цвет тона, для нейтрального — `muted`.
+ * Используется в `resolveTagSurface` для мягкой заливки.
+ */
+const TAG_TINTED_KEEP_PERCENT = 15;
+
+/**
  * TagSurface — представляет пару цветов метки, которую возвращает `resolveTagSurface`.
  *
  * @property backgroundColor — цвет фона
@@ -138,7 +145,7 @@ function resolveTagSurface(
     return {
       textColor: theme.colors.default,
       backgroundColor: tinted
-        ? resolveColorMix(theme.colors.muted, 'transparent', 14)
+        ? resolveColorMix(theme.colors.muted, 'transparent', TAG_TINTED_KEEP_PERCENT)
         : 'transparent',
     };
   }
@@ -146,7 +153,10 @@ function resolveTagSurface(
   const color = theme.colors[colorKey];
 
   return tinted
-    ? { textColor: color, backgroundColor: resolveColorMix(color, 'transparent', 16) }
+    ? {
+        textColor: color,
+        backgroundColor: resolveColorMix(color, 'transparent', TAG_TINTED_KEEP_PERCENT),
+      }
     : { textColor: theme.colors.inverse, backgroundColor: color };
 }
 
@@ -310,8 +320,8 @@ function getTagDotStyles(props: { dotTone?: TonePreset; theme: AppTheme }): stri
  *
  * Встроенные стили:
  *  - `flex-shrink: 0` — точка не сжимается при нехватке места
- *  - `inline-size` и `block-size: 0.5em` — единица `em` берёт размер
- *    от `font-size` родителя `StyledTag`, точка — половина высоты шрифта
+ *  - `inline-size` и `block-size` — фиксированный размер точки из шкалы отступов,
+ *    от `font-size` контекста не зависит
  *  - `border-radius: 50%` — круглая форма
  *
  * Генерация стилей:
@@ -321,8 +331,8 @@ export const StyledTagDot = styled.span.withConfig({
   shouldForwardProp: (prop) => !TAG_DOT_PROP_NAMES.has(prop),
 })<{ dotTone?: TonePreset }>`
   flex-shrink: 0;
-  inline-size: 0.5em;
-  block-size: 0.5em;
+  inline-size: ${getSpacingValue(8)};
+  block-size: ${getSpacingValue(8)};
   border-radius: 50%;
   ${(props) => getTagDotStyles(props)}
 `;

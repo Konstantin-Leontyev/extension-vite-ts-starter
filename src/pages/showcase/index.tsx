@@ -417,7 +417,7 @@ const DEFAULT_TAG_STATE: TagWidgetState = {
   sizePreset: 'small',
   text: 'Tag',
   textItalic: false,
-  textSize: getTagTextSize('tiny'),
+  textSize: getTagTextSize('small'),
   textTone: 'default',
   tinted: false,
   tone: 'primary',
