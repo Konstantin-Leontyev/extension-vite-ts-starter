@@ -21,8 +21,10 @@
  *    и `CheckboxUncheckedMark` и мост размера текста `getCheckboxTextSize`
  *
  * Потребители:
- *  - контролы и панели настроек витрины дизайн-системы, например FieldsetSettings и SwitchSettings —
+ *  - контролы, например Listbox и Table — рендерят чекбоксы
+ *  - панели настроек витрины дизайн-системы, например SwitchSettings и ButtonSettings —
  *    рендерят чекбоксы настроек
+ *  - `@ui/table` и `@ui/table/table-group-expander` — читают `checkboxSizePresets`
  *  - страницы и виджеты приложения — рендерят поля множественного выбора
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
@@ -87,31 +89,26 @@ function Checkbox({
   uncheckedMark,
   ...rest
 }: CheckboxProps) {
-  if (!children) {
-    return (
-      <StyledCheckboxControl
-        checkedMark={checkedMark}
-        inverted={inverted}
-        sizePreset={sizePreset}
-        type="checkbox"
-        uncheckedMark={uncheckedMark}
-        {...rest}
-      />
-    );
-  }
-
   const { layoutProps, restProps } = splitLayoutProps(rest);
+
+  const control = (
+    <StyledCheckboxControl
+      checkedMark={checkedMark}
+      inverted={inverted}
+      sizePreset={sizePreset}
+      type="checkbox"
+      uncheckedMark={uncheckedMark}
+      {...(children ? restProps : rest)}
+    />
+  );
+
+  if (!children) {
+    return control;
+  }
 
   return (
     <StyledCheckboxRoot {...layoutProps}>
-      <StyledCheckboxControl
-        checkedMark={checkedMark}
-        inverted={inverted}
-        sizePreset={sizePreset}
-        type="checkbox"
-        uncheckedMark={uncheckedMark}
-        {...restProps}
-      />
+      {control}
       <Text
         italic={textItalic}
         sizePreset={textSize ?? getCheckboxTextSize(sizePreset)}

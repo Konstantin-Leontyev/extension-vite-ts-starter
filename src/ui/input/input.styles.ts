@@ -33,23 +33,6 @@ import { getTheme, type AppTheme } from '@ui/theme';
 export { splitLayoutProps } from '@ui/layout';
 
 /**
- * InputStyleProps — представляет пропсы стилизации Input и layout-пропсы.
- *
- * @property shape — форма строки-поля
- * @property showBorder — включает рамку контрола вне layout-box
- * @property sizePreset — размер контрола
- * @property textAlign — горизонтальное выравнивание значения
- * @property textItalic — включает курсив значения
- */
-export type InputStyleProps = LayoutProps & {
-  shape?: ShapePreset;
-  showBorder?: boolean;
-  sizePreset?: SizePreset;
-  textAlign?: CSSProperties['textAlign'];
-  textItalic?: boolean;
-};
-
-/**
  * StyledInputRoot — задаёт корневой узел компонента Input.
  * Базируется на `<div>` и поддерживает все пропсы из `LayoutProps`.
  *
@@ -71,6 +54,23 @@ export const StyledInputRoot = styled.div.withConfig({
   min-inline-size: 0;
   ${(props) => getLayoutStyles(props)}
 `;
+
+/**
+ * InputStyleProps — представляет пропсы стилизации Input и layout-пропсы.
+ *
+ * @property shape — форма строки-поля
+ * @property showBorder — включает рамку контрола вне layout-box
+ * @property sizePreset — размер контрола
+ * @property textAlign — горизонтальное выравнивание значения
+ * @property textItalic — включает курсив значения
+ */
+export type InputStyleProps = LayoutProps & {
+  shape?: ShapePreset;
+  showBorder?: boolean;
+  sizePreset?: SizePreset;
+  textAlign?: CSSProperties['textAlign'];
+  textItalic?: boolean;
+};
 
 /**
  * InputControlStyleProps — представляет пропсы стилизации нативного поля ввода.

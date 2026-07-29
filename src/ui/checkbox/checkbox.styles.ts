@@ -100,21 +100,6 @@ export const CHECKBOX_UNCHECKED_MARK_KEYS = Object.freeze([
 ] as const satisfies readonly CheckboxUncheckedMark[]);
 
 /**
- * CheckboxStyleProps — представляет пропсы стилизации Checkbox и layout-пропсы.
- *
- * @property checkedMark — марка в checked-состоянии
- * @property inverted — включает инверсию палитры бокса и марки
- * @property sizePreset — размер бокса
- * @property uncheckedMark — марка в unchecked-состоянии
- */
-export type CheckboxStyleProps = LayoutProps & {
-  checkedMark?: CheckboxCheckedMark;
-  inverted?: boolean;
-  sizePreset?: SizePreset;
-  uncheckedMark?: CheckboxUncheckedMark;
-};
-
-/**
  * StyledCheckboxRoot — задаёт корневой узел компонента Checkbox.
  * Базируется на `<label>` и поддерживает пропсы из `LayoutProps`.
  *
@@ -138,6 +123,21 @@ export const StyledCheckboxRoot = styled.label.withConfig({
   cursor: pointer;
   ${(props) => getLayoutStyles(props)}
 `;
+
+/**
+ * CheckboxStyleProps — представляет пропсы стилизации Checkbox и layout-пропсы.
+ *
+ * @property checkedMark — марка в checked-состоянии
+ * @property inverted — включает инверсию палитры бокса и марки
+ * @property sizePreset — размер бокса
+ * @property uncheckedMark — марка в unchecked-состоянии
+ */
+export type CheckboxStyleProps = LayoutProps & {
+  checkedMark?: CheckboxCheckedMark;
+  inverted?: boolean;
+  sizePreset?: SizePreset;
+  uncheckedMark?: CheckboxUncheckedMark;
+};
 
 /**
  * CHECKBOX_CONTROL_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации бокса Checkbox.

@@ -37,7 +37,7 @@ import { TextGroup } from '../text-group';
  * Используется для синхронизации значений между панелью управления и демонстрационным чекбоксом.
  *
  * @property checked — включает отмеченное состояние бокса
- * @property checkedMark — иконка в checked-состоянии
+ * @property checkedMark — марка в checked-состоянии
  * @property disabled — включает недоступное состояние
  * @property inverted — включает инвертированную палитру
  * @property showText — витринный ключ показа подписи. Выключенный — бокс без обёртки
@@ -46,7 +46,7 @@ import { TextGroup } from '../text-group';
  * @property textItalic — включает курсив подписи
  * @property textSize — размер подписи
  * @property textTone — тон подписи
- * @property uncheckedMark — иконка в unchecked-состоянии
+ * @property uncheckedMark — марка в unchecked-состоянии
  */
 export type CheckboxWidgetState = {
   checked: boolean;
@@ -160,7 +160,7 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
         Checked
       </Checkbox>
 
-      {state.checked ? (
+      {(state.checked && (
         <Listbox
           label="Checked mark:"
           options={CHECKED_MARK_OPTIONS}
@@ -168,7 +168,7 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
           value={state.checkedMark}
           onChange={(value) => onChange('checkedMark', value as CheckboxCheckedMark)}
         />
-      ) : (
+      )) || (
         <Listbox
           label="Unchecked mark:"
           options={UNCHECKED_MARK_OPTIONS}
