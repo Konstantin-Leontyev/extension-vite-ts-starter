@@ -8,7 +8,6 @@
  * Потребители:
  *  - `src/components/profile-menu/index.tsx` — показывает действие профиля
  *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины
- *  - `src/icons/index.ts` — реэкспортирует `AddCircleIcon`
  */
 
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';

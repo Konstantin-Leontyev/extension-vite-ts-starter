@@ -76,7 +76,7 @@ function assignRef<T>(ref: Ref<T> | undefined, value: null | T): void {
 }
 
 /**
- * resolveScrollPortVeilEdges — решает, какие вуали показывать по позиции скролла.
+ * resolveScrollPortVeilEdges — вычисляет видимость вуалей по позиции скролла.
  * Верхняя вуаль — когда контент уехал вверх. Нижняя — когда есть ещё прокрутка вниз.
  *
  * @param viewport DOM-узел вьюпорта прокрутки

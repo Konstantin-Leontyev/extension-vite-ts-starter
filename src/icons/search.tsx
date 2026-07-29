@@ -7,7 +7,6 @@
  *
  * Потребители:
  *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины
- *  - `src/icons/index.ts` — реэкспортирует `SearchIcon`
  */
 
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';

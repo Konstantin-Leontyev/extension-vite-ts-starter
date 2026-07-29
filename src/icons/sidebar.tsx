@@ -7,7 +7,6 @@
  *
  * Потребители:
  *  - `src/ui/sidebar/index.tsx` — показывает кнопку открытия панели
- *  - `src/icons/index.ts` — реэкспортирует `SidebarIcon`
  */
 
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';

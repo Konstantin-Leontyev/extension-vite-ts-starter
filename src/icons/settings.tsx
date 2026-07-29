@@ -9,7 +9,6 @@
  *  - `src/components/header/index.tsx` — показывает вход в настройки
  *  - `src/pages/showcase/index.tsx` — показывает вход в настройки
  *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины
- *  - `src/icons/index.ts` — реэкспортирует `SettingsIcon`
  */
 
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';

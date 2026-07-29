@@ -7,7 +7,6 @@
  *
  * Потребители:
  *  - `src/components/profile-menu/index.tsx` — показывает аватар в меню
- *  - `src/icons/index.ts` — реэкспортирует `AvatarIcon`
  */
 
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';

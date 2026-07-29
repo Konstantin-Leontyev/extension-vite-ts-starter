@@ -7,7 +7,6 @@
  *
  * Потребители:
  *  - `src/ui/date-range-input/index.tsx` — показывает триггер календаря в сегментах
- *  - `src/icons/index.ts` — реэкспортирует `CalendarIcon`
  */
 
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';

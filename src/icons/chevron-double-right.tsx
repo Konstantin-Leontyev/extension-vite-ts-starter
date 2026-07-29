@@ -7,7 +7,6 @@
  *
  * Потребители:
  *  - `src/ui/date-range-input/calendar-panel/index.tsx` — показывает переход на следующий год
- *  - `src/icons/index.ts` — реэкспортирует `ChevronDoubleRightIcon`
  */
 
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';

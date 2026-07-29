@@ -11,14 +11,13 @@
  *  - размер подписи через проп `textSize`
  *  - курсив подписи через проп `textItalic`
  *  - инвертированную палитру через проп `inverted`
- *  - иконку checked-состояния через проп `checkedMark`
- *  - иконку unchecked-состояния через проп `uncheckedMark`
+ *  - марку checked-состояния через проп `checkedMark`
+ *  - марку unchecked-состояния через проп `uncheckedMark`
  *
  * Основные задачи:
  * 1. Экспортировать компонент Checkbox
  * 2. Типизировать пропсы через `CheckboxProps`
- * 3. Разделять layout-пропсы между корнем и боксом в обычном режиме
- * 4. Реэкспортировать пресеты `checkboxSizePresets`, перечни марок, типы `CheckboxCheckedMark`
+ * 3. Реэкспортировать пресеты `checkboxSizePresets`, перечни марок, типы `CheckboxCheckedMark`
  *    и `CheckboxUncheckedMark` и мост размера текста `getCheckboxTextSize`
  *
  * Потребители:

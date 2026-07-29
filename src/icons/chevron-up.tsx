@@ -9,7 +9,6 @@
  *  - `src/ui/stepper/index.tsx` — показывает стрелку увеличения
  *  - `src/pages/showcase/table-demo/index.tsx` — показывает состояние раскрытия строки
  *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины
- *  - `src/icons/index.ts` — реэкспортирует `ChevronUpIcon`
  */
 
 /**

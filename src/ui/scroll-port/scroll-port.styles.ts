@@ -35,7 +35,7 @@ export type ScrollPortStyleProps = LayoutProps & {
 
 /**
  * SCROLL_PORT_ROUTED_PADDING_PROP_NAMES — хранит имена пропсов отступов, которые уходят
- * во вьюпорт и желоб и не должны попадать в `getLayoutStyles` корня.
+ * во вьюпорт и в отступ под трек скроллбара и не должны попадать в `getLayoutStyles` корня.
  */
 const SCROLL_PORT_ROUTED_PADDING_PROP_NAMES = new Set<string>([
   'padding',
@@ -48,7 +48,8 @@ const SCROLL_PORT_ROUTED_PADDING_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * DEFAULT_SCROLL_PORT_PADDING_INLINE_END — задаёт отступ inline-end и желоб по умолчанию.
+ * DEFAULT_SCROLL_PORT_PADDING_INLINE_END — задаёт отступ inline-end содержимого и отступ
+ * под трек скроллбара по умолчанию.
  * Используется, когда вызывающий код не передал проп `paddingInlineEnd`, `paddingInline`
  * или `padding`.
  */

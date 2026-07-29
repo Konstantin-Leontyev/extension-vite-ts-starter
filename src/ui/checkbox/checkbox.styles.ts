@@ -4,7 +4,7 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `CheckboxStyleProps`, `CheckboxCheckedMark` и `CheckboxUncheckedMark`
- * 2. Хранить габариты бокса и размер иконки в `checkboxSizePresets`
+ * 2. Хранить габариты бокса и размер марки в `checkboxSizePresets`
  * 3. Предоставить функцию `getCheckboxTextSize` и перечни `CHECKBOX_CHECKED_MARK_KEYS`
  *    и `CHECKBOX_UNCHECKED_MARK_KEYS`
  * 4. Предоставить styled-узлы `StyledCheckboxRoot` и `StyledCheckboxControl`
@@ -26,9 +26,9 @@ import { getTheme, type AppTheme } from '@ui/theme';
 export { splitLayoutProps } from '@ui/layout';
 
 /**
- * checkboxSizePresets — хранит габарит бокса и размер иконки для каждого размера ряда.
+ * checkboxSizePresets — хранит габарит бокса и размер марки для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — пара ключей шкалы из `@ui/spacing`:
- *  - `iconSize` → размер иконки марки
+ *  - `iconSize` → размер марки
  *  - `size` → габарит бокса
  * Ряд компактнее контролов.
  */
@@ -49,7 +49,7 @@ function getCheckboxSize(sizePreset: SizePreset): string {
 }
 
 /**
- * getCheckboxIconSize — возвращает CSS-размер иконки марки.
+ * getCheckboxIconSize — возвращает CSS-размер марки.
  *
  * @param sizePreset размер из ряда контролов
  * @returns размер марки в rem
@@ -70,12 +70,12 @@ export function getCheckboxTextSize(sizePreset?: SizePreset): TextSizePreset {
 }
 
 /**
- * CheckboxCheckedMark — представляет иконку в checked-состоянии.
+ * CheckboxCheckedMark — представляет марку в checked-состоянии.
  */
 export type CheckboxCheckedMark = 'check' | 'minus';
 
 /**
- * CHECKBOX_CHECKED_MARK_KEYS — задаёт перечень иконок checked-состояния.
+ * CHECKBOX_CHECKED_MARK_KEYS — задаёт перечень марок checked-состояния.
  * Используется в панелях настроек витрины дизайн-системы: `CheckboxSettings`
  * собирает из него опции для `Listbox`.
  */
@@ -85,12 +85,12 @@ export const CHECKBOX_CHECKED_MARK_KEYS = Object.freeze([
 ] as const satisfies readonly CheckboxCheckedMark[]);
 
 /**
- * CheckboxUncheckedMark — представляет иконку в unchecked-состоянии.
+ * CheckboxUncheckedMark — представляет марку в unchecked-состоянии.
  */
 export type CheckboxUncheckedMark = 'none' | 'plus';
 
 /**
- * CHECKBOX_UNCHECKED_MARK_KEYS — задаёт перечень иконок unchecked-состояния.
+ * CHECKBOX_UNCHECKED_MARK_KEYS — задаёт перечень марок unchecked-состояния.
  * Используется в панелях настроек витрины дизайн-системы: `CheckboxSettings`
  * собирает из него опции для `Listbox`.
  */
@@ -102,10 +102,10 @@ export const CHECKBOX_UNCHECKED_MARK_KEYS = Object.freeze([
 /**
  * CheckboxStyleProps — представляет пропсы стилизации Checkbox и layout-пропсы.
  *
- * @property checkedMark — иконка в checked-состоянии
+ * @property checkedMark — марка в checked-состоянии
  * @property inverted — включает инверсию палитры бокса и марки
  * @property sizePreset — размер бокса
- * @property uncheckedMark — иконка в unchecked-состоянии
+ * @property uncheckedMark — марка в unchecked-состоянии
  */
 export type CheckboxStyleProps = LayoutProps & {
   checkedMark?: CheckboxCheckedMark;
@@ -151,13 +151,13 @@ const CHECKBOX_CONTROL_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * DEFAULT_CHECKBOX_CHECKED_MARK — задаёт иконку checked-состояния по умолчанию.
+ * DEFAULT_CHECKBOX_CHECKED_MARK — задаёт марку checked-состояния по умолчанию.
  * Используется, когда вызывающий код не передал проп `checkedMark`.
  */
 const DEFAULT_CHECKBOX_CHECKED_MARK: CheckboxCheckedMark = 'check';
 
 /**
- * DEFAULT_CHECKBOX_UNCHECKED_MARK — задаёт иконку unchecked-состояния по умолчанию.
+ * DEFAULT_CHECKBOX_UNCHECKED_MARK — задаёт марку unchecked-состояния по умолчанию.
  * Используется, когда вызывающий код не передал проп `uncheckedMark`.
  */
 const DEFAULT_CHECKBOX_UNCHECKED_MARK: CheckboxUncheckedMark = 'none';
@@ -215,9 +215,9 @@ function minusIcon(strokeColor: string): string {
 }
 
 /**
- * markBackground — возвращает CSS-правила фоновой иконки марки.
+ * markBackground — возвращает CSS-правила фоновой марки.
  *
- * @param mark data-URI иконки
+ * @param mark data-URI марки
  * @param iconSize размер марки в rem
  * @returns CSS-правила, каждое с новой строки
  */

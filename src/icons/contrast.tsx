@@ -7,7 +7,6 @@
  *
  * Потребители:
  *  - `src/components/theme-toggle/index.tsx` — показывает переключение темы
- *  - `src/icons/index.ts` — реэкспортирует `ContrastIcon`
  */
 
 import { ICON_MUTED_LAYER_OPACITY } from './muted-layer';
