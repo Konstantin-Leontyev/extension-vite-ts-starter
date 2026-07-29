@@ -1,7 +1,8 @@
 /**
  * Файл: `src/ui/border.ts`
  * Содержит рамку поверхности: статичную пару «рамка 1px + тень» для карточек,
- * панелей и бокса Checkbox и переключаемое кольцо контролов вне layout-box.
+ * панелей, бокса Checkbox и кружка RadioButton и переключаемое кольцо контролов
+ * вне layout-box.
  *
  * Основные задачи:
  * 1. Предоставить функцию `getBorderStyles` — рамка и тень поверхности
@@ -11,8 +12,8 @@
  * Потребители:
  *  - `src/ui/card/card.styles.ts`, `src/ui/anchored-portal/anchored-portal.styles.ts` —
  *    подставляют рамку и тень поверхности через `getBorderStyles`
- *  - `src/ui/checkbox/checkbox.styles.ts` — подставляет рамку с тенью бокса через
- *    `getBorderStyles`
+ *  - `src/ui/checkbox/checkbox.styles.ts`, `src/ui/radio-button/radio-button.styles.ts` —
+ *    подставляют рамку с тенью бокса и кружка через `getBorderStyles`
  *  - styles-файлы контролов с пропом `showBorder`, например Input и RoundButton —
  *    подставляют переключаемое кольцо через `getControlBorderStyles`
  *  - styles-файлы с постоянным кольцом вне layout-box, например Listbox,
@@ -32,8 +33,8 @@ export const DEFAULT_SHOW_BORDER = true;
 /**
  * getBorderStyles — возвращает CSS-правила рамки поверхности: `border` 1px
  * цвета `border` и тень `shadow.surface`. Реальный `border` входит в layout-box
- * и пол `min-block-size`: карточки, панели портала и бокс Checkbox.
- * Рамка вне layout-box — `getControlBorderStyles`.
+ * и пол `min-block-size`: карточки, панели портала, бокс Checkbox и кружок
+ * RadioButton. Рамка вне layout-box — `getControlBorderStyles`.
  *
  * @param theme текущая тема
  * @returns CSS-правила, каждое с новой строки

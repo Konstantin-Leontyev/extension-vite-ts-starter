@@ -15,6 +15,7 @@
 
 import styled from 'styled-components';
 
+import { getBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
@@ -55,20 +56,11 @@ export function getRadioButtonTextSize(sizePreset?: SizePreset): TextSizePreset 
 }
 
 /**
- * RadioButtonStyleProps — представляет пропсы стилизации RadioButton и layout-пропсы.
- *
- * @property sizePreset — размер кружка
- */
-export type RadioButtonStyleProps = LayoutProps & {
-  sizePreset?: SizePreset;
-};
-
-/**
  * StyledRadioButtonRoot — задаёт корневой узел компонента RadioButton.
  * Базируется на `<label>` и поддерживает пропсы из `LayoutProps`.
  *
  * Встроенные стили:
- *  - `display: inline-grid` — раскладка по дефолту проекта
+ *  - `display: inline-grid` — строчный контейнер под кружок и подпись
  *  - `grid-auto-flow: column` — кружок и подпись в одной строке
  *  - `gap` — отступ между кружком и подписью
  *  - `justify-content: start` — при растяжении родителем подпись остаётся у кружка
@@ -89,7 +81,16 @@ export const StyledRadioButtonRoot = styled.label.withConfig({
 `;
 
 /**
- * RADIO_BUTTON_CONTROL_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации кружка.
+ * RadioButtonStyleProps — представляет пропсы стилизации RadioButton и layout-пропсы.
+ *
+ * @property sizePreset — размер кружка
+ */
+export type RadioButtonStyleProps = LayoutProps & {
+  sizePreset?: SizePreset;
+};
+
+/**
+ * RADIO_BUTTON_CONTROL_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации кружка RadioButton.
  */
 const RADIO_BUTTON_CONTROL_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
@@ -98,7 +99,7 @@ const RADIO_BUTTON_CONTROL_PROP_NAMES = new Set<string>([
 
 /**
  * getRadioButtonControlStyles — возвращает CSS-правила для узла `StyledRadioButtonControl`:
- * габариты, рамку и состояние `checked`.
+ * габариты, рамку с тенью и состояние `checked`.
  *
  * @param props пропсы стилизации RadioButton и тема
  * @returns CSS-правила, каждое с новой строки
@@ -116,11 +117,9 @@ function getRadioButtonControlStyles(
     `block-size: ${size};`,
     'appearance: none;',
     `background-color: ${theme.colors.surface};`,
-    `border: 1px solid ${theme.colors.border};`,
+    getBorderStyles(theme),
     'border-radius: 50%;',
-    `box-shadow: ${theme.shadow.surface};`,
     `&:checked {
-      background-color: ${theme.colors.surface};
       background-image: radial-gradient(circle at center, ${theme.colors.primary} 48%, transparent 49%);
       border-color: ${theme.colors.primary};
     }`,
@@ -134,7 +133,7 @@ function getRadioButtonControlStyles(
  * Базируется на `<input type="radio">` и поддерживает пропсы из `RadioButtonStyleProps`.
  *
  * Генерация стилей:
- *  - `getRadioButtonControlStyles` — габариты, рамка, состояние `checked`
+ *  - `getRadioButtonControlStyles` — габариты, рамка с тенью, состояние `checked`
  *  - `getLayoutStyles` — отступы, позиционирование, размеры при рендере без обёртки
  */
 export const StyledRadioButtonControl = styled.input.withConfig({

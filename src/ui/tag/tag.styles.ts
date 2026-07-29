@@ -320,8 +320,9 @@ function getTagDotStyles(props: { dotTone?: TonePreset; theme: AppTheme }): stri
  *
  * Встроенные стили:
  *  - `flex-shrink: 0` — точка не сжимается при нехватке места
- *  - `inline-size` и `block-size` — фиксированный размер точки из шкалы отступов,
- *    от `font-size` контекста не зависит
+ *  - `inline-size` и `block-size: 0.5em` — половина высоты кегля из унаследованного
+ *    `font-size`: точка масштабируется с типографикой контекста; от `sizePreset`
+ *    метки не зависит — корень `StyledTag` не задаёт `font-size`
  *  - `border-radius: 50%` — круглая форма
  *
  * Генерация стилей:
@@ -331,8 +332,8 @@ export const StyledTagDot = styled.span.withConfig({
   shouldForwardProp: (prop) => !TAG_DOT_PROP_NAMES.has(prop),
 })<{ dotTone?: TonePreset }>`
   flex-shrink: 0;
-  inline-size: ${getSpacingValue(8)};
-  block-size: ${getSpacingValue(8)};
+  inline-size: 0.5em;
+  block-size: 0.5em;
   border-radius: 50%;
   ${(props) => getTagDotStyles(props)}
 `;

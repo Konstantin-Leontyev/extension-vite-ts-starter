@@ -1,6 +1,7 @@
 /**
  * Файл: `src/ui/radio-button/index.tsx`
- * Предоставляет компонент RadioButton для выбора одного значения из группы.
+ * Предоставляет компонент RadioButton для отображения переключателя одного значения
+ * из группы.
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
@@ -14,8 +15,7 @@
  * Основные задачи:
  * 1. Экспортировать компонент RadioButton
  * 2. Типизировать пропсы через `RadioButtonProps`
- * 3. Разделять layout-пропсы между корнем и кружком в обычном режиме
- * 4. Реэкспортировать мост размера текста `getRadioButtonTextSize`
+ * 3. Реэкспортировать мост размера текста `getRadioButtonTextSize`
  *
  * Потребители:
  *  - страницы и виджеты приложения — рендерят поля выбора одного значения
@@ -73,15 +73,23 @@ function RadioButton({
   textTone = DEFAULT_RADIO_BUTTON_TEXT_TONE,
   ...rest
 }: RadioButtonProps) {
-  if (!children) {
-    return <StyledRadioButtonControl sizePreset={sizePreset} type="radio" {...rest} />;
-  }
-
   const { layoutProps, restProps } = splitLayoutProps(rest);
+
+  const control = (
+    <StyledRadioButtonControl
+      sizePreset={sizePreset}
+      type="radio"
+      {...(children ? restProps : rest)}
+    />
+  );
+
+  if (!children) {
+    return control;
+  }
 
   return (
     <StyledRadioButtonRoot {...layoutProps}>
-      <StyledRadioButtonControl sizePreset={sizePreset} type="radio" {...restProps} />
+      {control}
       <Text
         italic={textItalic}
         sizePreset={textSize ?? getRadioButtonTextSize(sizePreset)}

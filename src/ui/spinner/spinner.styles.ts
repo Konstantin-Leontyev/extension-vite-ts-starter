@@ -145,7 +145,7 @@ const SPINNER_REDUCED_ROTATE_DURATION = '1.6s';
 
 /**
  * getSpinnerStyles — возвращает CSS-правила для узла `StyledSpinner`:
- * размер, рамку и анимацию.
+ * размер, рамку, цвет и анимацию.
  *
  * @param props пропсы стилизации индикатора и тема
  * @returns CSS-правила через хелпер `css` — иначе интерполяция `keyframes` роняет рендер
