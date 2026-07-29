@@ -125,7 +125,6 @@ function getFieldsetStyles(props: FieldsetStyleProps & { theme: AppTheme }): str
  *  - `grid-auto-rows: min-content` — строки по высоте содержимого
  *  - `gap` — отступ между заголовком и полями
  *  - `align-content: start` — содержимое прижато к началу
- *  - `padding-inline` на `legend` — отступ подписи заголовка
  *
  * Генерация стилей:
  *  - `getFieldsetStyles` — габариты, отступы и рамка
@@ -140,8 +139,4 @@ export const StyledFieldset = styled.fieldset.withConfig({
   align-content: start;
   ${(props) => getFieldsetStyles(props)}
   ${(props) => getLayoutStyles(props)}
-
-  & > legend {
-    padding-inline: ${getSpacingValue(4)};
-  }
 `;

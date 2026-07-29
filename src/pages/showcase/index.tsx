@@ -1,4 +1,16 @@
-// TODO: ручное ревью — pages/showcase/index.tsx
+/**
+ * Файл: `src/pages/showcase/index.tsx`
+ * Предоставляет компонент ShowcasePage для отображения витрины дизайн-системы.
+ * Содержит превью виджетов, начальные состояния настроек и синхронизацию с Sidebar.
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент ShowcasePage
+ * 2. Собрать превью виджетов и синхронизацию с панелями настроек в Sidebar
+ *
+ * Потребители:
+ *  - `src/components/router/router.tsx` — рендерит ShowcasePage как маршрут витрины
+ */
+
 import { useMemo, useState, type ReactNode } from 'react';
 
 import { useShellOutletContext } from '@components/router';
@@ -72,13 +84,10 @@ import {
 } from './segment-button-settings';
 import { COMBOBOX_OPTIONS, LIST_OPTIONS, getIcon } from './showcase-icon-options';
 import {
-  StyledFieldsetDemo,
   StyledMain,
   StyledRadioButtonDemo,
   StyledShowcaseWidgetFullRow,
   StyledShowcaseWidgets,
-  StyledSpinnerDemo,
-  StyledTextDemo,
 } from './showcase.styles';
 import { SpinnerSettings, type SpinnerWidgetState } from './spinner-settings';
 import { StepperSettings, type StepperWidgetState } from './stepper-settings';
@@ -89,31 +98,159 @@ import { TagSettings, type TagWidgetState } from './tag-settings';
 import { TextSettings, type TextWidgetState } from './text-settings';
 import { ToastSettings, type ToastWidgetState } from './toast-settings';
 
+/**
+ * SIDEBAR_ID — задаёт id боковой панели витрины.
+ * Связывает кнопки настроек карточек с Sidebar через `aria-controls`.
+ */
 const SIDEBAR_ID = 'showcase-sidebar';
+
+/**
+ * INPUT_WIDGET_TITLE_ID — задаёт id заголовка виджета Input в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const INPUT_WIDGET_TITLE_ID = 'showcase-input-heading';
+
+/**
+ * BUTTON_WIDGET_TITLE_ID — задаёт id заголовка виджета Button в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const BUTTON_WIDGET_TITLE_ID = 'showcase-button-heading';
+
+/**
+ * ROUND_BUTTON_WIDGET_TITLE_ID — задаёт id заголовка виджета RoundButton в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const ROUND_BUTTON_WIDGET_TITLE_ID = 'showcase-round-button-heading';
+
+/**
+ * LISTBOX_WIDGET_TITLE_ID — задаёт id заголовка виджета Listbox в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const LISTBOX_WIDGET_TITLE_ID = 'showcase-listbox-heading';
+
+/**
+ * COMBOBOX_WIDGET_TITLE_ID — задаёт id заголовка виджета Combobox в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const COMBOBOX_WIDGET_TITLE_ID = 'showcase-combobox-heading';
+
+/**
+ * RANGE_INPUT_WIDGET_TITLE_ID — задаёт id заголовка виджета RangeInput в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const RANGE_INPUT_WIDGET_TITLE_ID = 'showcase-range-input-heading';
+
+/**
+ * DATE_RANGE_INPUT_WIDGET_TITLE_ID — задаёт id заголовка виджета DateRangeInput в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const DATE_RANGE_INPUT_WIDGET_TITLE_ID = 'showcase-date-range-input-heading';
+
+/**
+ * CHECKBOX_WIDGET_TITLE_ID — задаёт id заголовка виджета Checkbox в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const CHECKBOX_WIDGET_TITLE_ID = 'showcase-checkbox-heading';
+
+/**
+ * RADIO_BUTTON_WIDGET_TITLE_ID — задаёт id заголовка виджета RadioButton в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const RADIO_BUTTON_WIDGET_TITLE_ID = 'showcase-radio-button-heading';
+
+/**
+ * FIELDSET_WIDGET_TITLE_ID — задаёт id заголовка виджета Fieldset в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const FIELDSET_WIDGET_TITLE_ID = 'showcase-fieldset-heading';
+
+/**
+ * PROGRESS_WIDGET_TITLE_ID — задаёт id заголовка виджета ProgressBar в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const PROGRESS_WIDGET_TITLE_ID = 'showcase-progress-heading';
+
+/**
+ * SPINNER_WIDGET_TITLE_ID — задаёт id заголовка виджета Spinner в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const SPINNER_WIDGET_TITLE_ID = 'showcase-spinner-heading';
+
+/**
+ * STEPPER_WIDGET_TITLE_ID — задаёт id заголовка виджета Stepper в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const STEPPER_WIDGET_TITLE_ID = 'showcase-stepper-heading';
+
+/**
+ * SEGMENT_BUTTON_WIDGET_TITLE_ID — задаёт id заголовка виджета SegmentButton в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const SEGMENT_BUTTON_WIDGET_TITLE_ID = 'showcase-segment-button-heading';
+
+/**
+ * TAG_WIDGET_TITLE_ID — задаёт id заголовка виджета Tag в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const TAG_WIDGET_TITLE_ID = 'showcase-tag-heading';
+
+/**
+ * TABLE_WIDGET_TITLE_ID — задаёт id заголовка виджета Table в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const TABLE_WIDGET_TITLE_ID = 'showcase-table-heading';
+
+/**
+ * SWITCH_WIDGET_TITLE_ID — задаёт id заголовка виджета Switch в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const SWITCH_WIDGET_TITLE_ID = 'showcase-switch-heading';
+
+/**
+ * TOAST_WIDGET_TITLE_ID — задаёт id заголовка виджета Toast в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const TOAST_WIDGET_TITLE_ID = 'showcase-toast-heading';
+
+/**
+ * MODAL_WIDGET_TITLE_ID — задаёт id заголовка виджета Modal в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const MODAL_WIDGET_TITLE_ID = 'showcase-modal-heading';
+
+/**
+ * CARD_WIDGET_TITLE_ID — задаёт id заголовка виджета Card в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const CARD_WIDGET_TITLE_ID = 'showcase-card-heading';
+
+/**
+ * TEXT_WIDGET_TITLE_ID — задаёт id заголовка виджета Text в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
 const TEXT_WIDGET_TITLE_ID = 'showcase-text-heading';
+
+/**
+ * RADIO_BUTTON_DEMO_NAME — задаёт name группы RadioButton в демо-превью.
+ * Связывает варианты A и B одной группой выбора.
+ */
 const RADIO_BUTTON_DEMO_NAME = 'showcase-radio-button-demo';
+
+/**
+ * FIELDSET_DEMO_NAME — задаёт name группы переключателей внутри демо Fieldset.
+ * Связывает варианты внутри Fieldset одной группой выбора.
+ */
 const FIELDSET_DEMO_NAME = 'showcase-fieldset-demo';
 
+/**
+ * TEXT_DEMO_INLINE_SIZE — задаёт узкую фиксированную ширину демо Text.
+ * Используется для демонстрации обрезки длинной строки в виджете Text.
+ */
+const TEXT_DEMO_INLINE_SIZE = '12rem';
+
+/**
+ * WidgetSettingsKey — представляет ключ активной панели настроек виджета в витрине.
+ */
 type WidgetSettingsKey =
   | 'button'
   | 'card'
@@ -137,6 +274,10 @@ type WidgetSettingsKey =
   | 'text'
   | 'toast';
 
+/**
+ * SETTINGS_TITLES — связывает ключ панели настроек с заголовком Sidebar и карточки.
+ * Используется в `ShowcasePage` для заголовка панели и `title` виджета.
+ */
 const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   input: 'Input',
   listbox: 'Listbox',
@@ -161,12 +302,20 @@ const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   text: 'Text',
 };
 
+/**
+ * MODAL_INLINE_SIZE — хранит ширину демо Modal для каждого размера ряда.
+ * Ключ — размер из `SizePreset`, значение — CSS-длина для пропа `inlineSize`.
+ */
 const MODAL_INLINE_SIZE: Record<SizePreset, string> = {
   small: '20rem',
   normal: '28rem',
   large: '36rem',
 };
 
+/**
+ * DEFAULT_INPUT_STATE — задаёт начальное состояние виджета Input в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_INPUT_STATE: InputWidgetState = {
   disabled: false,
   error: '',
@@ -184,6 +333,10 @@ const DEFAULT_INPUT_STATE: InputWidgetState = {
   value: '',
 };
 
+/**
+ * DEFAULT_BUTTON_STATE — задаёт начальное состояние виджета Button в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
   active: false,
   disabled: false,
@@ -201,6 +354,10 @@ const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
   withIcon: false,
 };
 
+/**
+ * DEFAULT_ROUND_BUTTON_STATE — задаёт начальное состояние виджета RoundButton в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_ROUND_BUTTON_STATE: RoundButtonWidgetState = {
   disabled: false,
   iconFill: 'default',
@@ -211,6 +368,10 @@ const DEFAULT_ROUND_BUTTON_STATE: RoundButtonWidgetState = {
   sizePreset: DEFAULT_ROUND_BUTTON_SIZE_PRESET,
 };
 
+/**
+ * DEFAULT_LISTBOX_STATE — задаёт начальное состояние виджета Listbox в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
   disabled: false,
   iconFill: 'default',
@@ -226,6 +387,10 @@ const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
   value: 'default',
 };
 
+/**
+ * DEFAULT_COMBOBOX_STATE — задаёт начальное состояние виджета Combobox в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
   disabled: false,
   emptyMessage: 'Nothing found',
@@ -242,6 +407,10 @@ const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
   withIcon: false,
 };
 
+/**
+ * DEFAULT_RANGE_INPUT_STATE — задаёт начальное состояние виджета RangeInput в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   buttonShape: 'rounded',
   buttonSizePreset: 'normal',
@@ -270,6 +439,10 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   withClear: true,
 };
 
+/**
+ * DEFAULT_DATE_RANGE_INPUT_STATE — задаёт начальное состояние виджета DateRangeInput в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_DATE_RANGE_INPUT_STATE: DateRangeInputWidgetState = {
   disabled: false,
   endDay: '',
@@ -282,6 +455,10 @@ const DEFAULT_DATE_RANGE_INPUT_STATE: DateRangeInputWidgetState = {
   startLabel: 'Start date',
 };
 
+/**
+ * DEFAULT_CHECKBOX_STATE — задаёт начальное состояние виджета Checkbox в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_CHECKBOX_STATE: CheckboxWidgetState = {
   checked: true,
   checkedMark: 'check',
@@ -296,6 +473,10 @@ const DEFAULT_CHECKBOX_STATE: CheckboxWidgetState = {
   uncheckedMark: 'none',
 };
 
+/**
+ * DEFAULT_RADIO_BUTTON_STATE — задаёт начальное состояние виджета RadioButton в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
   disabledA: false,
   disabledB: false,
@@ -309,6 +490,10 @@ const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
   textTone: 'muted',
 };
 
+/**
+ * DEFAULT_FIELDSET_STATE — задаёт начальное состояние виджета Fieldset в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_FIELDSET_STATE: FieldsetWidgetState = {
   borderTone: 'default',
   label: 'Label:',
@@ -318,6 +503,10 @@ const DEFAULT_FIELDSET_STATE: FieldsetWidgetState = {
   selected: 'a',
 };
 
+/**
+ * DEFAULT_PROGRESS_STATE — задаёт начальное состояние виджета ProgressBar в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_PROGRESS_STATE: ProgressBarWidgetState = {
   showText: true,
   sizePreset: 'normal',
@@ -328,6 +517,10 @@ const DEFAULT_PROGRESS_STATE: ProgressBarWidgetState = {
   value: 0.42,
 };
 
+/**
+ * DEFAULT_SPINNER_STATE — задаёт начальное состояние виджета Spinner в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_SPINNER_STATE: SpinnerWidgetState = {
   reserveTextSpace: false,
   showText: true,
@@ -339,6 +532,10 @@ const DEFAULT_SPINNER_STATE: SpinnerWidgetState = {
   tone: 'primary',
 };
 
+/**
+ * DEFAULT_STEPPER_STATE — задаёт начальное состояние виджета Stepper в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_STEPPER_STATE: StepperWidgetState = {
   disabled: false,
   max: undefined,
@@ -354,6 +551,10 @@ const DEFAULT_STEPPER_STATE: StepperWidgetState = {
   value: 10,
 };
 
+/**
+ * DEFAULT_SWITCH_STATE — задаёт начальное состояние виджета Switch в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
   checked: true,
   disabled: false,
@@ -366,6 +567,10 @@ const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
   tone: 'primary',
 };
 
+/**
+ * DEFAULT_TOAST_STATE — задаёт начальное состояние виджета Toast в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_TOAST_STATE: ToastWidgetState = {
   message: 'Very important message',
   sizePreset: 'normal',
@@ -375,6 +580,10 @@ const DEFAULT_TOAST_STATE: ToastWidgetState = {
   tone: 'success',
 };
 
+/**
+ * DEFAULT_SEGMENT_BUTTON_STATE — задаёт начальное состояние виджета SegmentButton в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   centerDisabled: false,
   centerIconFill: 'default',
@@ -407,6 +616,10 @@ const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   textSize: getSegmentButtonTextSize('normal'),
 };
 
+/**
+ * DEFAULT_TAG_STATE — задаёт начальное состояние виджета Tag в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_TAG_STATE: TagWidgetState = {
   borderTone: 'default',
   dotTone: 'default',
@@ -423,6 +636,10 @@ const DEFAULT_TAG_STATE: TagWidgetState = {
   tone: 'primary',
 };
 
+/**
+ * DEFAULT_TABLE_STATE — задаёт начальное состояние виджета Table в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_TABLE_STATE: TableWidgetState = {
   checkable: true,
   continuousNumbering: false,
@@ -435,6 +652,10 @@ const DEFAULT_TABLE_STATE: TableWidgetState = {
   striped: true,
 };
 
+/**
+ * DEFAULT_MODAL_STATE — задаёт начальное состояние виджета Modal в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_MODAL_STATE: ModalWidgetState = {
   background: 'surface',
   showSubtitle: false,
@@ -449,6 +670,10 @@ const DEFAULT_MODAL_STATE: ModalWidgetState = {
   titleTone: DEFAULT_TONE,
 };
 
+/**
+ * DEFAULT_CARD_STATE — задаёт начальное состояние виджета Card в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_CARD_STATE: CardWidgetState = {
   background: 'surface',
   headerActions: [
@@ -469,6 +694,10 @@ const DEFAULT_CARD_STATE: CardWidgetState = {
   titleTone: DEFAULT_TONE,
 };
 
+/**
+ * DEFAULT_TEXT_STATE — задаёт начальное состояние виджета Text в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
 const DEFAULT_TEXT_STATE: TextWidgetState = {
   align: undefined,
   children: 'Sample text line long enough to show ellipsis in the demo',
@@ -478,6 +707,12 @@ const DEFAULT_TEXT_STATE: TextWidgetState = {
   tone: DEFAULT_TONE,
 };
 
+/**
+ * formatDemoRangeLabel — возвращает подпись активного диапазона для демо RangeInput.
+ *
+ * @param value текущее значение диапазона
+ * @returns подпись вида `from–to`, `from+`, `≤to` или пустая строка
+ */
 function formatDemoRangeLabel(value: RangeValue): string {
   const from = value.from.trim();
   const to = value.to.trim();
@@ -497,6 +732,12 @@ function formatDemoRangeLabel(value: RangeValue): string {
   return '';
 }
 
+/**
+ * validateDemoRange — возвращает текст ошибки, когда `from` больше `to`.
+ *
+ * @param value текущее значение диапазона
+ * @returns текст ошибки или `null`, когда диапазон допустим
+ */
 function validateDemoRange(value: RangeValue): null | string {
   const from = value.from.trim();
   const to = value.to.trim();
@@ -508,8 +749,14 @@ function validateDemoRange(value: RangeValue): null | string {
   return null;
 }
 
+/**
+ * ShowcasePage — отображает витрину дизайн-системы с превью виджетов и панелью настроек.
+ *
+ * @example
+ * <ShowcasePage />
+ */
 export function ShowcasePage() {
-  /* autoHide хедера живёт в каркасе. ДС лишь даёт витрину-переключатель (см. header-settings). */
+  // autoHide шапки живёт в каркасе. Витрина даёт только переключатель, см. header-settings.
   const { showToast } = useToast();
   const { autoHide, isHeaderSettingsOpen, setAutoHide, setIsHeaderSettingsOpen } =
     useShellOutletContext();
@@ -549,8 +796,9 @@ export function ShowcasePage() {
   const [text, setText] = useState<TextWidgetState>(DEFAULT_TEXT_STATE);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  /* Витрина хедера приоритетна и при открытии сбрасывает выбранный виджет — один источник
-     истины о содержимом сайдбара (иначе карточка виджета осталась бы aria-expanded под ней). */
+  // Настройки шапки приоритетны: при открытии сбрасывают выбранный виджет, чтобы
+  // Sidebar имел один источник содержимого. Иначе карточка виджета осталась бы
+  // aria-expanded под панелью шапки.
   const [prevIsHeaderSettingsOpen, setPrevIsHeaderSettingsOpen] =
     useState(isHeaderSettingsOpen);
   if (isHeaderSettingsOpen !== prevIsHeaderSettingsOpen) {
@@ -562,7 +810,7 @@ export function ShowcasePage() {
   }
 
   const isSettingsOpen = activeSettings !== null;
-  /* Витрина хедера и настройки виджета делят один сайдбар, но не показываются вместе. */
+  // Настройки шапки и настройки виджета делят один Sidebar, но не показываются вместе.
   const isPanelOpen = isSettingsOpen || isHeaderSettingsOpen;
   const panelTitle = isHeaderSettingsOpen
     ? 'Header'
@@ -865,14 +1113,18 @@ export function ShowcasePage() {
   }
 
   /**
-   * Общий скелет карточки виджета в витрине.
+   * renderWidgetCard — возвращает карточку виджета витрины с общим скелетом Card.
+   * В продукт копируются `Card as="article"`, `aria-labelledby`, `titleId`, `headerActions`
+   * при действиях в шапке и содержимое `children`.
+   * Только для витрины: `onClick` на карточке активирует панель настроек в Sidebar,
+   * `ariaControls` и `ariaExpanded` на кнопке настроек, иконка SettingsIcon с
+   * `toggleSettings`. Эту обвязку в продуктовый код не переносить.
    *
-   * Копируется в продукт: `Card as="article"`, `aria-labelledby`, `titleId`, `headerActions`
-   * (если нужны действия в шапке) и содержимое `children`.
-   *
-   * Только дизайн-система: `onClick` на карточке (активация сайдбара настроек), `ariaControls` /
-   * `ariaExpanded` на кнопке настроек, иконка `SettingsIcon` с `toggleSettings`. Не переносить
-   * эту обвязку в продуктовый код.
+   * @param widgetKey ключ панели настроек виджета
+   * @param titleId id заголовка карточки
+   * @param children содержимое превью виджета
+   * @param fullRow включает растяжение карточки на всю ширину сетки
+   * @returns карточка виджета, при `fullRow` — в обёртке `StyledShowcaseWidgetFullRow`
    */
   function renderWidgetCard(
     widgetKey: WidgetSettingsKey,
@@ -929,10 +1181,10 @@ export function ShowcasePage() {
         title={panelTitle}
         onClose={closePanel}
       >
-        {/* 100% от зоны контента Sidebar (definite-высота от капа StyledMain):
-            скролл остаётся внутри ScrollPort карточки, а не на зоне.
-            Block-padding Card → ScrollPort: тень виджетов влезает в клип скролла,
-            сумма по вертикали по-прежнему 16. */}
+        {/* Высота 100% от зоны контента Sidebar: definite-высота от max-block-size
+            StyledMain. Скролл остаётся внутри ScrollPort карточки, а не на зоне.
+            Block-padding перенесён с Card на ScrollPort: тень виджетов входит в
+            область обрезки скролла, сумма отступов по вертикали по-прежнему 16. */}
         <Card as="section" maxBlockSize="100%" paddingBlock={0}>
           <ScrollPort paddingBlock={16}>
             <StyledShowcaseWidgets>
@@ -999,17 +1251,18 @@ export function ShowcasePage() {
               {renderWidgetCard(
                 'text',
                 TEXT_WIDGET_TITLE_ID,
-                <StyledTextDemo>
-                  <Text
-                    align={text.align}
-                    ellipsis={text.ellipsis}
-                    italic={text.italic}
-                    sizePreset={text.sizePreset}
-                    tone={text.tone}
-                  >
-                    {text.children}
-                  </Text>
-                </StyledTextDemo>
+                <Text
+                  align={text.align}
+                  ellipsis={text.ellipsis}
+                  inlineSize={TEXT_DEMO_INLINE_SIZE}
+                  italic={text.italic}
+                  minInlineSize="0"
+                  placeSelf="center"
+                  sizePreset={text.sizePreset}
+                  tone={text.tone}
+                >
+                  {text.children}
+                </Text>
               )}
 
               {renderWidgetCard(
@@ -1318,32 +1571,33 @@ export function ShowcasePage() {
               {renderWidgetCard(
                 'fieldset',
                 FIELDSET_WIDGET_TITLE_ID,
-                <StyledFieldsetDemo>
-                  <Fieldset
-                    borderTone={fieldset.borderTone}
-                    label={fieldset.label}
-                    legendItalic={fieldset.legendItalic}
-                    legendSizePreset={fieldset.legendSizePreset}
-                    legendTone={fieldset.legendTone}
+                <Fieldset
+                  alignSelf="center"
+                  borderTone={fieldset.borderTone}
+                  inlineSize="100%"
+                  label={fieldset.label}
+                  legendItalic={fieldset.legendItalic}
+                  legendSizePreset={fieldset.legendSizePreset}
+                  legendTone={fieldset.legendTone}
+                  minInlineSize="0"
+                >
+                  <RadioButton
+                    checked={fieldset.selected === 'a'}
+                    name={FIELDSET_DEMO_NAME}
+                    value="a"
+                    onChange={() => updateFieldset('selected', 'a')}
                   >
-                    <RadioButton
-                      checked={fieldset.selected === 'a'}
-                      name={FIELDSET_DEMO_NAME}
-                      value="a"
-                      onChange={() => updateFieldset('selected', 'a')}
-                    >
-                      Option A
-                    </RadioButton>
-                    <RadioButton
-                      checked={fieldset.selected === 'b'}
-                      name={FIELDSET_DEMO_NAME}
-                      value="b"
-                      onChange={() => updateFieldset('selected', 'b')}
-                    >
-                      Option B
-                    </RadioButton>
-                  </Fieldset>
-                </StyledFieldsetDemo>
+                    Option A
+                  </RadioButton>
+                  <RadioButton
+                    checked={fieldset.selected === 'b'}
+                    name={FIELDSET_DEMO_NAME}
+                    value="b"
+                    onChange={() => updateFieldset('selected', 'b')}
+                  >
+                    Option B
+                  </RadioButton>
+                </Fieldset>
               )}
 
               {renderWidgetCard(
@@ -1364,18 +1618,18 @@ export function ShowcasePage() {
               {renderWidgetCard(
                 'spinner',
                 SPINNER_WIDGET_TITLE_ID,
-                <StyledSpinnerDemo>
-                  <Spinner
-                    reserveTextSpace={spinner.reserveTextSpace}
-                    sizePreset={spinner.sizePreset}
-                    textItalic={spinner.textItalic}
-                    textSize={spinner.textSize}
-                    textTone={spinner.textTone}
-                    tone={spinner.tone}
-                  >
-                    {spinner.showText && spinner.text}
-                  </Spinner>
-                </StyledSpinnerDemo>
+                <Spinner
+                  minBlockSize="0"
+                  placeSelf="center"
+                  reserveTextSpace={spinner.reserveTextSpace}
+                  sizePreset={spinner.sizePreset}
+                  textItalic={spinner.textItalic}
+                  textSize={spinner.textSize}
+                  textTone={spinner.textTone}
+                  tone={spinner.tone}
+                >
+                  {spinner.showText && spinner.text}
+                </Spinner>
               )}
 
               {renderWidgetCard(
@@ -1451,7 +1705,7 @@ export function ShowcasePage() {
                 </>
               )}
 
-              {/* Extension-only: smoke probe для Browser AI; не синкается в lite. */}
+              {/* Только extension: smoke probe для Browser AI, в lite не синхронизируется. */}
               <BrowserAiSmokeProbe />
             </StyledShowcaseWidgets>
           </ScrollPort>

@@ -107,13 +107,19 @@ const SPACING_PROPERTIES = {
 /**
  * SpacingProps — представляет пропсы отступов.
  * Имена свойств берутся из `SPACING_PROPERTIES`, значения из `SpacingValue`.
+ * Margin-пропсы дополнительно принимают `auto` — распределение свободного
+ * пространства, например прижатие узла к краю flex-строки.
  * Используется в `LayoutProps` для всех компонентов, поддерживающих отступы.
  *
- * Пример: `{ margin: 16, paddingBlock: 8 }`.
+ * Пример: `{ margin: 16, paddingBlock: 8, marginInlineStart: 'auto' }`.
  * TypeScript проверит, что `16` и `8` есть в `SPACING_VALUES`, а имена пропсов
  * `margin` и `paddingBlock` существуют в `SPACING_PROPERTIES`.
  */
-export type SpacingProps = { [K in keyof typeof SPACING_PROPERTIES]?: SpacingValue };
+export type SpacingProps = {
+  [K in keyof typeof SPACING_PROPERTIES]?: K extends `margin${string}`
+    ? 'auto' | SpacingValue
+    : SpacingValue;
+};
 
 /**
  * SPACING_PROPERTY_NAMES — хранит имена всех пропсов из `SPACING_PROPERTIES`.
@@ -136,7 +142,7 @@ export const SPACING_PROPERTY_NAMES = new Set<string>(Object.keys(SPACING_PROPER
  *    а значение — CSS-свойство
  * 2. Для каждого пропса проверяет, передан ли он в `props`. Переданное значение,
  *    например `16`, преобразует через `getSpacingValue` и формирует
- *    CSS-правило вида `margin: 1rem;`
+ *    CSS-правило вида `margin: 1rem;`. Значение `auto` подставляет как есть
  * 3. Собирает такие правила в массив и склеивает через перенос строки
  * 4. Отдаёт результат для подстановки в CSS-шаблон styled-компонента
  *
@@ -150,7 +156,7 @@ export function getSpacingStyles(props: SpacingProps): string {
     const value = props[prop as keyof SpacingProps];
 
     if (value !== undefined) {
-      styles.push(`${property}: ${getSpacingValue(value)};`);
+      styles.push(`${property}: ${value === 'auto' ? value : getSpacingValue(value)};`);
     }
   }
 

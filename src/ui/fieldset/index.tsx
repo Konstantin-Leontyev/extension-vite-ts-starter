@@ -84,11 +84,15 @@ function Fieldset({
 }: FieldsetProps) {
   return (
     <StyledFieldset {...rest}>
-      <legend>
-        <Text italic={legendItalic} sizePreset={legendSizePreset} tone={legendTone}>
-          {label}
-        </Text>
-      </legend>
+      <Text
+        as="legend"
+        italic={legendItalic}
+        paddingInline={4}
+        sizePreset={legendSizePreset}
+        tone={legendTone}
+      >
+        {label}
+      </Text>
       {children}
     </StyledFieldset>
   );

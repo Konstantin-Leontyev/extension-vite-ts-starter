@@ -1,6 +1,6 @@
 /**
  * Файл: `src/ui/listbox/index.tsx`
- * Предоставляет компонент Listbox для выбора значения из списка опций.
+ * Предоставляет компонент Listbox для отображения выбора значения из списка опций.
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
@@ -54,7 +54,6 @@ import { type TonePreset } from '@ui/tones';
 import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 import {
-  StyledListboxCheck,
   StyledListboxOptionButton,
   StyledListboxOptionRow,
   StyledListboxPanel,
@@ -638,11 +637,15 @@ export function Listbox({
             {option.label}
           </Text>
           {isSelected && (
-            <StyledListboxCheck data-slot="check">
-              <Icon sizePreset={sizePreset}>
-                <CheckIcon />
-              </Icon>
-            </StyledListboxCheck>
+            <Icon
+              data-slot="check"
+              iconFill="primary"
+              position="relative"
+              sizePreset={sizePreset}
+              zIndex={1}
+            >
+              <CheckIcon />
+            </Icon>
           )}
         </StyledListboxOptionButton>
       </li>

@@ -1,4 +1,3 @@
-// TODO: ручное ревью — pages/showcase/showcase.styles.ts
 /**
  * Файл: `src/pages/showcase/showcase.styles.ts`
  * Определяет layout страницы и styled-обёртки витрины дизайн-системы.
@@ -8,16 +7,15 @@
  * 2. Предоставить styled-узел `StyledMain` для корневого landmark страницы
  * 3. Предоставить styled-узлы `StyledShowcaseWidgets` и `StyledShowcaseWidgetFullRow`
  *    для сетки виджетов
- * 4. Предоставить styled-узлы `StyledSettingsForm` и `StyledSettingsField` для панели
- *    настроек в сайдбаре
- * 5. Предоставить styled-узлы демо-превью `StyledRadioButtonDemo`, `StyledFieldsetDemo`,
- *    `StyledTextDemo` и `StyledSpinnerDemo`
+ * 4. Предоставить styled-узлы `StyledSettingsForm` и `StyledSettingsField` для формы
+ *    настроек в Sidebar
+ * 5. Предоставить styled-узел демо-превью `StyledRadioButtonDemo`
  *
  * Потребители:
  *  - `src/pages/showcase/index.tsx` — собирает layout витрины и оборачивает карточки
  *    виджетов
  *  - панели настроек витрины дизайн-системы — рендерят `StyledSettingsForm` и
- *    `StyledSettingsField` в сайдбаре
+ *    `StyledSettingsField` в Sidebar
  */
 import styled from 'styled-components';
 
@@ -99,7 +97,7 @@ export const StyledShowcaseWidgets = styled.div`
 `;
 
 /**
- * StyledSettingsForm — задаёт форму настроек виджета в сайдбаре витрины дизайн-системы.
+ * StyledSettingsForm — задаёт форму настроек виджета в Sidebar витрины дизайн-системы.
  * Базируется на `<form>`.
  *
  * Встроенные стили:
@@ -138,52 +136,4 @@ export const StyledRadioButtonDemo = styled.div`
   display: grid;
   gap: ${getSpacingValue(8)};
   place-content: center;
-`;
-
-/**
- * StyledFieldsetDemo — задаёт обёртку демо Fieldset в карточке виджета.
- * Базируется на `<div>`.
- *
- * Встроенные стили:
- *  - `align-content: center` — центрирует содержимое по вертикали
- *  - `inline-size: 100%` — занимает всю ширину ячейки
- *  - `min-inline-size: 0` — предотвращает переполнение
- */
-export const StyledFieldsetDemo = styled.div`
-  display: grid;
-  align-content: center;
-  inline-size: 100%;
-  min-inline-size: 0;
-`;
-
-/**
- * StyledTextDemo — задаёт обёртку демо Text в карточке виджета.
- * Базируется на `<div>`.
- *
- * Встроенные стили:
- *  - `place-self: center` — центрирует колонку в ячейке
- *  - `inline-size: 12rem` — узкая фиксированная ширина для демонстрации обрезки длинной
- *    строки
- *  - `min-inline-size: 0` — позволяет дочернему Text обрезать строку без сдвига блока
- */
-export const StyledTextDemo = styled.div`
-  display: grid;
-  place-self: center;
-  inline-size: 12rem;
-  min-inline-size: 0;
-`;
-
-/**
- * StyledSpinnerDemo — задаёт обёртку демо Spinner в карточке виджета.
- * Базируется на `<div>`.
- *
- * Встроенные стили:
- *  - `display: grid` — раскладка по дефолту проекта
- *  - `place-content: center` — центрирует спиннер в свободной области карточки
- *  - `min-block-size: 0` — предотвращает переполнение
- */
-export const StyledSpinnerDemo = styled.div`
-  display: grid;
-  place-content: center;
-  min-block-size: 0;
 `;

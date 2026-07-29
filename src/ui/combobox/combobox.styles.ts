@@ -6,8 +6,8 @@
  * 1. Типизировать пропсы через `ComboboxStyleProps` и `ComboboxSurfaceStyleProps`
  * 2. Предоставить функцию `getComboboxTextSize`
  * 3. Предоставить styled-узлы `StyledComboboxRoot`, `StyledComboboxTrigger`,
- *    `StyledComboboxValue`, `StyledComboboxPanel`, `StyledComboboxList`,
- *    `StyledComboboxOption`, `StyledComboboxOptionIcon` и `StyledComboboxCheck`
+ *    `StyledComboboxValue`, `StyledComboboxPanel`, `StyledComboboxList`
+ *    и `StyledComboboxOption`
  * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
@@ -135,10 +135,18 @@ const COMBOBOX_SURFACE_PROP_NAMES = new Set<string>([
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты пропсов
- * 2. Собирает габариты триггера, заливку, кольцо и тень
- * 3. Кладёт трек, шов и канал секции через хелперы `@ui/icon`
- * 4. На наведении и `:focus-visible` триггера подсвечивается только индикатор —
- *    шеврон не самостоятельное действие
+ * 2. Собирает габариты триггера и заливку `surface`, затем кольцо `0 0 0 1px`
+ *    цвета `border` и тень `shadow.surface` одним `box-shadow` через
+ *    `getControlBorderStyles` без второго аргумента — постоянное кольцо
+ * 3. Кладёт трек секции через `getIconSectionTrackStyles`: колонки под позицию
+ *    `[data-slot='icon']` и `block-size: 100%` на слоте. Шов — через
+ *    `getIconSectionSeamStyles`. Цвет канала состояний — через
+ *    `resolveIconStateBackground`
+ * 4. На `:not(:disabled):hover` и `:focus-visible` выставляет
+ *    `--icon-state-background` — подсвечивается только индикатор, шеврон не
+ *    самостоятельное действие
+ * 5. При `data-open='true'` скрывает триггер через `visibility: hidden`, чтобы
+ *    панель наследовала ширину якоря без двойного отображения
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -186,11 +194,7 @@ function getComboboxTriggerStyles(
  *
  * Генерация стилей:
  *  - `getComboboxTriggerStyles` — габариты, кольцо и тень через `getControlBorderStyles`,
- *    заливка и секция шеврона
- *
- * Поверхность шеврона — правило по `[data-slot='icon']`.
- * При открытой панели триггер скрывается через `visibility: hidden`, чтобы панель
- * наследовала ширину якоря без двойного отображения.
+ *    заливка, секция шеврона и скрытие при открытой панели
  */
 export const StyledComboboxTrigger = styled.button.withConfig({
   shouldForwardProp: (prop) => !COMBOBOX_SURFACE_PROP_NAMES.has(prop),
@@ -355,49 +359,4 @@ export const StyledComboboxOption = styled.button.withConfig({
   shouldForwardProp: (prop) => !COMBOBOX_BOX_PROP_NAMES.has(prop),
 })<Pick<ComboboxSurfaceStyleProps, 'shape' | 'sizePreset'>>`
   ${(props) => getComboboxOptionStyles(props)}
-`;
-
-/**
- * StyledComboboxOptionIcon — задаёт слот иконки опции перед подписью компонента Combobox.
- * Базируется на `<span>`.
- *
- * Встроенные стили:
- *  - `display: inline-grid` и `place-items: center` — центрирует глиф в слоте
- *  - `flex-shrink: 0` — слот не сжимается рядом с текстом опции
- */
-export const StyledComboboxOptionIcon = styled.span`
-  display: inline-grid;
-  flex-shrink: 0;
-  place-items: center;
-`;
-
-/**
- * getComboboxCheckStyles — возвращает CSS-правила для узла `StyledComboboxCheck`:
- * слой над подсветкой и акцентный цвет. Окно глифа создаёт внутренний Icon.
- *
- * @param props объект с текущей темой
- * @returns CSS-правила, каждое с новой строки
- */
-function getComboboxCheckStyles(props: { theme: AppTheme }): string {
-  const theme = getTheme(props);
-
-  const styles = [
-    'position: relative;',
-    'z-index: 1;',
-    'margin-inline-start: auto;',
-    `color: ${theme.colors.primary};`,
-  ];
-
-  return styles.join('\n');
-}
-
-/**
- * StyledComboboxCheck — задаёт слот галочки выбранной опции компонента Combobox.
- * Базируется на `<span>`.
- *
- * Генерация стилей:
- *  - `getComboboxCheckStyles` — слой и цвет галочки
- */
-export const StyledComboboxCheck = styled.span`
-  ${(props) => getComboboxCheckStyles(props)}
 `;

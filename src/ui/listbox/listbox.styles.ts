@@ -7,8 +7,7 @@
  * 2. Хранить максимум видимых строк панели в `LISTBOX_PANEL_MAX_OPTION_ROWS`
  * 3. Предоставить функцию `getListboxTextSize`
  * 4. Предоставить styled-узлы `StyledListboxRoot`, `StyledListboxTrigger`,
- *    `StyledListboxPanel`, `StyledListboxOptionButton`, `StyledListboxCheck`
- *    и `StyledListboxOptionRow`
+ *    `StyledListboxPanel`, `StyledListboxOptionButton` и `StyledListboxOptionRow`
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
@@ -368,36 +367,6 @@ export const StyledListboxOptionButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !LISTBOX_BOX_PROP_NAMES.has(prop),
 })<Pick<ListboxSurfaceStyleProps, 'shape' | 'sizePreset'>>`
   ${(props) => getListboxOptionButtonStyles(props)}
-`;
-
-/**
- * getListboxCheckStyles — возвращает CSS-правила для узла `StyledListboxCheck`:
- * слой над подсветкой и акцентный цвет. Окно глифа создаёт внутренний Icon.
- *
- * @param props объект с текущей темой
- * @returns CSS-правила, каждое с новой строки
- */
-function getListboxCheckStyles(props: { theme: AppTheme }): string {
-  const theme = getTheme(props);
-
-  const styles = [
-    'position: relative;',
-    'z-index: 1;',
-    `color: ${theme.colors.primary};`,
-  ];
-
-  return styles.join('\n');
-}
-
-/**
- * StyledListboxCheck — задаёт глиф галочки выбранной опции компонента Listbox.
- * Базируется на `<span>`.
- *
- * Генерация стилей:
- *  - `getListboxCheckStyles` — слой и цвет галочки
- */
-export const StyledListboxCheck = styled.span`
-  ${(props) => getListboxCheckStyles(props)}
 `;
 
 /**

@@ -1,6 +1,6 @@
 /**
  * Файл: `src/ui/combobox/index.tsx`
- * Предоставляет компонент Combobox для выбора значения из списка с поиском.
+ * Предоставляет компонент Combobox для отображения выбора значения из списка с поиском.
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
@@ -56,10 +56,8 @@ import { type TonePreset } from '@ui/tones';
 import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 import {
-  StyledComboboxCheck,
   StyledComboboxList,
   StyledComboboxOption,
-  StyledComboboxOptionIcon,
   StyledComboboxPanel,
   StyledComboboxRoot,
   StyledComboboxTrigger,
@@ -327,6 +325,10 @@ export function Combobox({
     searchInput?.focus();
   }
 
+  /**
+   * Прокручивает активную опцию в видимую область списка при открытой панели.
+   * Срабатывает при смене `activeIndex` и открытии панели.
+   */
   useEffect(() => {
     if (!isOpen) {
       return;
@@ -489,7 +491,7 @@ export function Combobox({
         {iconPosition === 'start' && iconNode}
         <StyledComboboxValue sizePreset={sizePreset}>
           {Boolean(selectedOption?.icon) && (
-            <StyledComboboxOptionIcon>{selectedOption?.icon}</StyledComboboxOptionIcon>
+            <Icon sizePreset={sizePreset}>{selectedOption?.icon}</Icon>
           )}
           <Text
             ellipsis
@@ -589,9 +591,7 @@ export function Combobox({
                       onMouseMove={() => setActiveIndex(index)}
                     >
                       {Boolean(option.icon) && (
-                        <StyledComboboxOptionIcon>
-                          {option.icon}
-                        </StyledComboboxOptionIcon>
+                        <Icon sizePreset={sizePreset}>{option.icon}</Icon>
                       )}
                       <Text
                         ellipsis
@@ -602,11 +602,16 @@ export function Combobox({
                         {option.label}
                       </Text>
                       {isSelected && (
-                        <StyledComboboxCheck data-slot="check">
-                          <Icon sizePreset={sizePreset}>
-                            <CheckIcon />
-                          </Icon>
-                        </StyledComboboxCheck>
+                        <Icon
+                          data-slot="check"
+                          iconFill="primary"
+                          marginInlineStart="auto"
+                          position="relative"
+                          sizePreset={sizePreset}
+                          zIndex={1}
+                        >
+                          <CheckIcon />
+                        </Icon>
                       )}
                     </StyledComboboxOption>
                   </li>
