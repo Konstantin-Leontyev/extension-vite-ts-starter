@@ -18,16 +18,12 @@
 import styled from 'styled-components';
 
 import { getControlBorderStyles } from '@ui/border';
+import { resolveIconStateBackground } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { minBlockSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
-import {
-  DEFAULT_TONE,
-  getToneColorKey,
-  resolveColorMix,
-  type TonePreset,
-} from '@ui/tones';
+import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
 
 /**
  * RoundButtonSizePreset — представляет размерный ряд круглой кнопки.
@@ -114,8 +110,8 @@ export const DEFAULT_ROUND_BUTTON_SHOW_BORDER = false;
  * Как работает:
  * 1. Считает габарит по `sizePreset` и кладёт рамку через `getControlBorderStyles` —
  *    layout-рамку у `button` снял reset
- * 2. Считает значение канала: для цветного `iconTone` — сдвиг тона к `shade`
- *    через `resolveColorMix`, для нейтрального — вуаль `theme.colors.veil`
+ * 2. Считает значение канала через `resolveIconStateBackground`: цветной
+ *    `iconTone` — сдвиг к `shade`, нейтральный — вуаль
  * 3. На `:not(:disabled):hover` и `:focus-visible` выставляет
  *    `--icon-state-background` — заливку рисует внутренний Icon
  *
@@ -132,10 +128,7 @@ function getRoundButtonStyles(
     sizePreset = DEFAULT_ROUND_BUTTON_SIZE_PRESET,
   } = props;
   const size = getSpacingValue(getRoundButtonMinBlockSize(sizePreset));
-  const colorKey = getToneColorKey(iconTone);
-  const stateBackground = colorKey
-    ? resolveColorMix(theme.colors[colorKey], theme.colors.shade)
-    : theme.colors.veil;
+  const stateBackground = resolveIconStateBackground(theme, iconTone);
 
   const styles = [
     `inline-size: ${size};`,

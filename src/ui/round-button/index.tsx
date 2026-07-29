@@ -81,12 +81,10 @@ export function RoundButton({
   sizePreset,
   ...rest
 }: RoundButtonProps) {
-  const resolvedSizePreset = sizePreset ?? DEFAULT_ROUND_BUTTON_SIZE_PRESET;
-
   return (
     <StyledRoundButton
       iconTone={iconTone}
-      sizePreset={resolvedSizePreset}
+      sizePreset={sizePreset}
       type="button"
       {...rest}
     >
@@ -95,7 +93,7 @@ export function RoundButton({
         iconTone={iconTone}
         interactive
         padding={iconPadding}
-        sizePreset={resolvedSizePreset}
+        sizePreset={sizePreset}
       >
         {children}
       </Icon>
@@ -103,7 +101,7 @@ export function RoundButton({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт геттера габарита */
+/* eslint-disable react-refresh/only-export-components -- публичные типы, пресеты и геттер габарита */
 export {
   DEFAULT_ROUND_BUTTON_SHOW_BORDER,
   DEFAULT_ROUND_BUTTON_SIZE_PRESET,

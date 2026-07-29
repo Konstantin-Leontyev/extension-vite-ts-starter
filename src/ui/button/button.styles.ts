@@ -13,6 +13,7 @@
 
 import styled from 'styled-components';
 
+import { getControlBorderStyles } from '@ui/border';
 import {
   ICON_SETTING_PROP_NAMES,
   getIconSectionSeamStyles,
@@ -154,10 +155,10 @@ const DEFAULT_BUTTON_ACTIVE = false;
  *
  * Как работает:
  * 1. Переносит `padding-inline` с корня на слот лейбла — секция иконки прижата к краю
- * 2. Добавляет шов, только когда тон кнопки и тон секции нейтральны — иначе
- *    контраста цвета секций достаточно
- * 3. При цветном `iconTone` на наведении выставляет `--icon-state-background`
- *    сдвигом тона к `shade`; нейтральная секция подсвечивается заливкой корня
+ * 2. Добавляет безусловный шов секции через `getIconSectionSeamStyles`
+ * 3. При цветном `iconTone` на наведении и `:focus-visible` выставляет
+ *    `--icon-state-background` сдвигом тона к `shade`; нейтральная секция
+ *    подсвечивается заливкой корня
  * 4. При `active` фиксирует значение канала: для нейтральной секции — смесь
  *    `primary` с `surface` через `VARIANT_SURFACE_MIX_PERCENT`
  *
@@ -185,6 +186,9 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
     styles.push(
       `&:not(:disabled):hover {`,
       `--icon-state-background: ${hoverStateBackground};`,
+      `}`,
+      `&:focus-visible {`,
+      `--icon-state-background: ${hoverStateBackground};`,
       `}`
     );
   }
@@ -209,12 +213,14 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
 }
 
 /**
- * getButtonStyles — возвращает CSS-правила для корня `StyledButton`: размер, рамка,
- * радиус, тень, цвет текста, заливку с состояниями и раскладку слота лейбла.
+ * getButtonStyles — возвращает CSS-правила для корня `StyledButton`: размер,
+ * кольцо и тень через `getControlBorderStyles`, радиус, цвет текста, заливку
+ * с состояниями и раскладку слота лейбла.
  *
  * Как работает:
- * 1. Собирает общие правила корня: размер, рамка, радиус, тень, цвет и заливка —
- *    фон лейбла всегда фон корня, наведение и `active` меняют его целиком
+ * 1. Собирает общие правила корня: размер, постоянное кольцо через
+ *    `getControlBorderStyles`, радиус, цвет и заливка — фон лейбла всегда фон
+ *    корня, наведение и `active` меняют его целиком
  * 2. Задаёт раскладку слота лейбла на корне: Text остаётся контентом без
  *    layout-пропсов
  * 3. При `hasIcon` делегирует шов и канал секции иконки в `getButtonSplitStyles`
@@ -237,11 +243,10 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
 
   const styles = [
     `min-block-size: ${minBlockSize};`,
-    `border: 1px solid ${theme.colors.border};`,
     `border-radius: ${resolveBlockRadius(shape, minBlockSize)};`,
-    `box-shadow: ${theme.shadow.surface};`,
     `color: ${surface.color};`,
     `background-color: ${surface.backgroundColor};`,
+    getControlBorderStyles(theme),
     `&:not(:disabled):hover { background: ${surface.hoverBackground}; }`,
     `[data-slot='label'] {`,
     `flex: 1 1 auto;`,
@@ -276,7 +281,8 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
  *    скругление секций — обрезка корнем, не радиусы на детях
  *
  * Генерация стилей:
- *  - `getButtonStyles` — размер, рамка, радиус, тень, цвет, заливка и слот лейбла
+ *  - `getButtonStyles` — размер, кольцо и тень через `getControlBorderStyles`,
+ *    радиус, цвет, заливка и слот лейбла
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *
  * Слоты: раскладку лейбла, шов и канал состояний секции иконки задаёт корень

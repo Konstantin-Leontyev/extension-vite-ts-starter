@@ -16,7 +16,7 @@
  *    подставляют рамку с тенью бокса и кружка через `getBorderStyles`
  *  - styles-файлы контролов с пропом `showBorder`, например Input и RoundButton —
  *    подставляют переключаемое кольцо через `getControlBorderStyles`
- *  - styles-файлы с постоянным кольцом вне layout-box, например Listbox,
+ *  - styles-файлы с постоянным кольцом вне layout-box, например Button, Listbox,
  *    SegmentButton и DateRangeInput — подставляют кольцо через `getControlBorderStyles`
  *  - `src/ui/toast/toast.styles.ts` — подставляет постоянное кольцо вне layout-box
  *    через `getControlBorderStyles`, удерживая инвариант однострочного бокса

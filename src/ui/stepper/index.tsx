@@ -43,7 +43,7 @@ import {
 import { ChevronDownIcon, ChevronUpIcon } from '@icons';
 import { Icon } from '@ui/icon';
 import { type SpacingValue } from '@ui/spacing';
-import { Text, type TextTone } from '@ui/text';
+import { Text, type TextAlignPreset, type TextTone } from '@ui/text';
 
 import {
   StyledStepperButton,
@@ -67,6 +67,12 @@ const DEFAULT_STEPPER_STEP = 1;
  * Суффикс единицы — вторичный текст, поэтому `muted`.
  */
 const DEFAULT_STEPPER_SUFFIX_TONE: TextTone = 'muted';
+
+/**
+ * DEFAULT_STEPPER_TEXT_ALIGN — задаёт выравнивание пары «значение + суффикс» по умолчанию.
+ * Используется, когда вызывающий код не передал проп `textAlign`.
+ */
+const DEFAULT_STEPPER_TEXT_ALIGN: TextAlignPreset = 'center';
 
 /**
  * DECREASE_LABEL — задаёт текст `aria-label` кнопки уменьшения.
@@ -153,7 +159,7 @@ type StepperProps = StepperStyleProps &
  * @example
  * <Stepper aria-label="Quantity" value={1} onChange={setValue} />
  * <Stepper aria-labelledby="qty-label" min={0} max={10} step={1} value={5} onChange={setValue} />
- * <Stepper sizePreset="normal" suffix="K" textAlign="center" value={100} onChange={setValue} />
+ * <Stepper sizePreset="normal" suffix="K" textAlign="start" value={100} onChange={setValue} />
  */
 export function Stepper({
   'aria-label': ariaLabel,
@@ -167,7 +173,7 @@ export function Stepper({
   sizePreset,
   step = DEFAULT_STEPPER_STEP,
   suffix,
-  textAlign,
+  textAlign = DEFAULT_STEPPER_TEXT_ALIGN,
   textItalic,
   textSize,
   textTone,

@@ -5,7 +5,7 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `FieldsetStyleProps` и тон рамки через `FieldsetBorderTone`
  * 2. Хранить расширенный ряд тонов рамки в `FIELDSET_BORDER_TONE_PRESETS`
- * 3. Предоставить перечень `FIELDSET_BORDER_TONE_KEYS` для витрины
+ * 3. Предоставить перечень `FIELDSET_BORDER_TONE_KEYS`
  * 4. Предоставить styled-узел `StyledFieldset`
  *
  * Потребители:
@@ -30,7 +30,7 @@ import { DEFAULT_TONE, TONE_PRESETS, type TonePreset } from '@ui/tones';
  * FIELDSET_BORDER_TONE_PRESETS — связывает тоны рамки с ключами цвета в теме.
  * Канонический набор расширен ключом `inverted` для белой рамки на цветной подложке.
  *
- * Соответствие приватно для модуля, доступ к перечню тонов — через
+ * Соответствие приватно для модуля, доступ к перечню тонов — только через
  * `FIELDSET_BORDER_TONE_KEYS`, чтение цвета — через `getFieldsetBorderColor`.
  */
 const FIELDSET_BORDER_TONE_PRESETS = {
@@ -46,7 +46,7 @@ export type FieldsetBorderTone = keyof typeof FIELDSET_BORDER_TONE_PRESETS;
 /**
  * FIELDSET_BORDER_TONE_KEYS — формирует перечень тонов рамки из ключей
  * `FIELDSET_BORDER_TONE_PRESETS`.
- * Используется в панелях настроек витрины: `ToneListbox` принимает его
+ * Используется в панелях настроек витрины дизайн-системы: `ToneListbox` принимает его
  * пропом `tones`.
  */
 export const FIELDSET_BORDER_TONE_KEYS = Object.freeze(
