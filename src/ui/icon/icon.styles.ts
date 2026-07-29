@@ -32,115 +32,6 @@ import {
 } from '@ui/tones';
 
 /**
- * IconPosition — представляет позицию иконки относительно соседнего контента.
- */
-export type IconPosition = 'end' | 'start';
-
-/**
- * ICON_POSITION_KEYS — задаёт перечень позиций иконки.
- * Используется в панелях настроек витрины дизайн-системы: `IconGroup` собирает
- * из него опции для `Listbox` позиции.
- */
-export const ICON_POSITION_KEYS = Object.freeze([
-  'start',
-  'end',
-] as const satisfies readonly IconPosition[]);
-
-/**
- * DEFAULT_ICON_POSITION — задаёт позицию иконки по умолчанию.
- * Используется, когда вызывающий код не передал проп `iconPosition`.
- */
-export const DEFAULT_ICON_POSITION: IconPosition = 'end';
-
-/**
- * ICON_SETTING_PROP_NAMES — хранит имена пропсов настройки секции иконки.
- * Компоненты подключают набор спредом в свой `*_PROP_NAMES` вместе с остальными
- * пропсами стилизации.
- */
-export const ICON_SETTING_PROP_NAMES = new Set(['iconFill', 'iconPosition', 'iconTone']);
-
-/**
- * IconSectionNeutralChannelPolicy — представляет политику канала состояний
- * для нейтрального `iconTone`: вуаль или отсутствие значения, когда канал не ставят.
- */
-type IconSectionNeutralChannelPolicy = 'none' | 'veil';
-
-/**
- * ICON_SECTION_SEAM_SLOT — задаёт `data-slot` секции шва, когда вызывающий код
- * не передал `slot`.
- */
-const ICON_SECTION_SEAM_SLOT = 'icon';
-
-/**
- * getIconSectionTrackStyles — возвращает CSS-правила переворота колонок родителя
- * под позицию `[data-slot='icon']` и растяжение секции по высоте ряда.
- * Родитель задаёт `display: grid` сам: хелпер не зашивает display — у ряда
- * с кнопкой сброса свои треки.
- *
- * @returns CSS-правила, каждое с новой строки
- */
-export function getIconSectionTrackStyles(): string {
-  const styles = [
-    'grid-template-columns: minmax(0, 1fr) auto;',
-    `&:has(> [data-slot='icon']:first-child) { grid-template-columns: auto minmax(0, 1fr); }`,
-    `[data-slot='icon'] {`,
-    'block-size: 100%;',
-    `}`,
-  ];
-
-  return styles.join('\n');
-}
-
-/**
- * getIconSectionSeamStyles — возвращает CSS-правила шва секции по
- * `:first-child` / `:last-child` через inset `box-shadow` без сдвига бокса.
- *
- * @param options цвет шва и опциональный `data-slot` секции
- * @returns CSS-правила, каждое с новой строки
- */
-export function getIconSectionSeamStyles(options: {
-  borderColor: string;
-  slot?: string;
-}): string {
-  const { borderColor, slot = ICON_SECTION_SEAM_SLOT } = options;
-
-  const styles = [
-    `[data-slot='${slot}']:first-child {`,
-    `box-shadow: inset -1px 0 0 ${borderColor};`,
-    `}`,
-    `[data-slot='${slot}']:last-child {`,
-    `box-shadow: inset 1px 0 0 ${borderColor};`,
-    `}`,
-  ];
-
-  return styles.join('\n');
-}
-
-/**
- * resolveIconStateBackground — возвращает значение канала `--icon-state-background`
- * для секции иконки на родителе. Цветной `iconTone` — сдвиг к `shade`. Нейтральный —
- * вуаль или `undefined` по `neutralPolicy`. Button не ставит канал на нейтрали.
- *
- * @param theme текущая тема
- * @param iconTone тон секции иконки
- * @param neutralPolicy политика канала для нейтрального тона
- * @returns CSS-значение заливки канала или `undefined`
- */
-export function resolveIconStateBackground(
-  theme: AppTheme,
-  iconTone: TonePreset,
-  neutralPolicy: IconSectionNeutralChannelPolicy = 'veil'
-): string | undefined {
-  const colorKey = getToneColorKey(iconTone);
-
-  if (colorKey) {
-    return resolveColorMix(theme.colors[colorKey], theme.colors.shade);
-  }
-
-  return neutralPolicy === 'veil' ? theme.colors.veil : undefined;
-}
-
-/**
  * IconSizePreset — представляет размерный ряд окна иконки.
  * Расширяет канонический `SizePreset` ключом `huge`, не добавляя его
  * в общий ряд контролов: `huge` доступен только там, где родитель передаёт
@@ -172,11 +63,11 @@ function getIconSize(sizePreset: IconSizePreset): SpacingValue {
  * iconPadding — хранит внутренний отступ окна иконки для каждого размера ряда.
  * Ключ — размер из `IconSizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
  * Вместе с квадратом из `iconSize` задаёт окно под svg: 24/28/32/64
- * для `small`/`normal`/`large`/`huge` — значения подобраны зрительно.
+ * для `small`/`normal`/`large`/`huge` по контракту оси иконки.
  */
 const iconPadding = {
-  small: 8,
-  normal: 8,
+  small: 4,
+  normal: 6,
   large: 8,
   huge: 8,
 } as const satisfies Record<IconSizePreset, SpacingValue>;
@@ -244,6 +135,115 @@ function resolveIconSurface(
   }
 
   return {};
+}
+
+/**
+ * IconSectionNeutralChannelPolicy — представляет политику канала состояний
+ * для нейтрального `iconTone`: вуаль или отсутствие значения, когда канал не ставят.
+ */
+type IconSectionNeutralChannelPolicy = 'none' | 'veil';
+
+/**
+ * resolveIconStateBackground — возвращает значение канала `--icon-state-background`
+ * для секции иконки на родителе. Цветной `iconTone` — сдвиг к `shade`. Нейтральный —
+ * вуаль или `undefined` по `neutralPolicy`. Button не ставит канал на нейтрали.
+ *
+ * @param theme текущая тема
+ * @param iconTone тон секции иконки
+ * @param neutralPolicy политика канала для нейтрального тона
+ * @returns CSS-значение заливки канала или `undefined`
+ */
+export function resolveIconStateBackground(
+  theme: AppTheme,
+  iconTone: TonePreset,
+  neutralPolicy: IconSectionNeutralChannelPolicy = 'veil'
+): string | undefined {
+  const colorKey = getToneColorKey(iconTone);
+
+  if (colorKey) {
+    return resolveColorMix(theme.colors[colorKey], theme.colors.shade);
+  }
+
+  return neutralPolicy === 'veil' ? theme.colors.veil : undefined;
+}
+
+/**
+ * IconPosition — представляет позицию иконки относительно соседнего контента.
+ */
+export type IconPosition = 'end' | 'start';
+
+/**
+ * ICON_POSITION_KEYS — задаёт перечень позиций иконки.
+ * Используется в панелях настроек витрины дизайн-системы: `IconGroup` собирает
+ * из него опции для `Listbox` позиции.
+ */
+export const ICON_POSITION_KEYS = Object.freeze([
+  'start',
+  'end',
+] as const satisfies readonly IconPosition[]);
+
+/**
+ * DEFAULT_ICON_POSITION — задаёт позицию иконки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `iconPosition`.
+ */
+export const DEFAULT_ICON_POSITION: IconPosition = 'end';
+
+/**
+ * ICON_SETTING_PROP_NAMES — хранит имена пропсов настройки секции иконки.
+ * Компоненты подключают набор спредом в свой `*_PROP_NAMES` вместе с остальными
+ * пропсами стилизации.
+ */
+export const ICON_SETTING_PROP_NAMES = new Set(['iconFill', 'iconPosition', 'iconTone']);
+
+/**
+ * ICON_SECTION_SEAM_SLOT — задаёт `data-slot` секции шва, когда вызывающий код
+ * не передал `slot`.
+ */
+const ICON_SECTION_SEAM_SLOT = 'icon';
+
+/**
+ * getIconSectionTrackStyles — возвращает CSS-правила переворота колонок родителя
+ * под позицию `[data-slot='icon']` и растяжение секции по высоте ряда.
+ * Родитель задаёт `display: grid` сам: хелпер не зашивает display — у ряда
+ * с кнопкой сброса свои треки.
+ *
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getIconSectionTrackStyles(): string {
+  const styles = [
+    'grid-template-columns: minmax(0, 1fr) auto;',
+    `&:has(> [data-slot='icon']:first-child) { grid-template-columns: auto minmax(0, 1fr); }`,
+    `[data-slot='icon'] {`,
+    'block-size: 100%;',
+    `}`,
+  ];
+
+  return styles.join('\n');
+}
+
+/**
+ * getIconSectionSeamStyles — возвращает CSS-правила шва секции по
+ * `:first-child` / `:last-child` через inset `box-shadow` без сдвига бокса.
+ *
+ * @param options цвет шва и опциональный `data-slot` секции
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getIconSectionSeamStyles(options: {
+  borderColor: string;
+  slot?: string;
+}): string {
+  const { borderColor, slot = ICON_SECTION_SEAM_SLOT } = options;
+
+  const styles = [
+    `[data-slot='${slot}']:first-child {`,
+    `box-shadow: inset -1px 0 0 ${borderColor};`,
+    `}`,
+    `[data-slot='${slot}']:last-child {`,
+    `box-shadow: inset 1px 0 0 ${borderColor};`,
+    `}`,
+  ];
+
+  return styles.join('\n');
 }
 
 /**
