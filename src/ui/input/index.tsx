@@ -46,12 +46,6 @@ import {
 const DEFAULT_INPUT_ERROR_ALIGN: CSSProperties['textAlign'] = 'center';
 
 /**
- * DEFAULT_INPUT_ERROR_ITALIC — задаёт курсив строки ошибки по умолчанию.
- * Используется, когда вызывающий код не передал проп `errorItalic`.
- */
-const DEFAULT_INPUT_ERROR_ITALIC = false;
-
-/**
  * DEFAULT_INPUT_INVALID — задаёт состояние кольца ошибки по умолчанию.
  * Используется, когда вызывающий код не передал проп `invalid`.
  */
@@ -116,7 +110,7 @@ type InputProps = InputStyleProps & {
 export function Input({
   error,
   errorAlign = DEFAULT_INPUT_ERROR_ALIGN,
-  errorItalic = DEFAULT_INPUT_ERROR_ITALIC,
+  errorItalic,
   invalid = DEFAULT_INPUT_INVALID,
   label,
   reserveErrorSpace = DEFAULT_INPUT_RESERVE_ERROR_SPACE,

@@ -15,6 +15,7 @@
  *     - `src/pages/showcase/icon-group/index.tsx`
  *     - `src/pages/showcase/progress-bar-settings/index.tsx`
  *     - `src/pages/showcase/range-input-settings/index.tsx`
+ *     - `src/pages/showcase/segment-button-settings/index.tsx`
  *     - `src/pages/showcase/spinner-settings/index.tsx`
  *     - `src/pages/showcase/switch-settings/index.tsx`
  *     - `src/pages/showcase/tag-settings/index.tsx`
@@ -27,15 +28,20 @@ import { Listbox, type ListboxOption } from '@ui/listbox';
 import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
 
 /**
- * getAvailableTones — возвращает перечень допустимых тонов из переданного списка.
+ * resolveAvailableTones — возвращает перечень допустимых тонов из переданного списка.
  * При переданном `excludeTone` исключает совпадающий тон.
  * Значение `default` остаётся всегда.
+ *
+ * Как работает:
+ * 1. Без `excludeTone` возвращает копию исходного перечня
+ * 2. Иначе оставляет тона, не совпадающие с `excludeTone`, либо равные
+ *    `DEFAULT_TONE` — `default` из списка не выпадает
  *
  * @param tones исходный перечень тонов
  * @param excludeTone тон, исключаемый из результата
  * @returns отфильтрованный перечень тонов
  */
-function getAvailableTones<Tone extends string>(
+function resolveAvailableTones<Tone extends string>(
   tones: readonly Tone[],
   excludeTone?: Tone
 ): Tone[] {
@@ -50,36 +56,34 @@ function getAvailableTones<Tone extends string>(
  * getToneListboxOptions — преобразует перечень тонов в опции Listbox.
  *
  * @param tones исходный перечень тонов
- * @param excludeTone тон, исключаемый из опций
  * @returns опции для Listbox
  */
 function getToneListboxOptions<Tone extends string>(
-  tones: readonly Tone[],
-  excludeTone?: Tone
+  tones: readonly Tone[]
 ): ListboxOption[] {
-  return getAvailableTones(tones, excludeTone).map((tone) => ({
+  return tones.map((tone) => ({
     label: tone,
     value: tone,
   }));
 }
 
 /**
- * getToneListboxValue — возвращает выбранный тон, если он есть в допустимом перечне.
+ * resolveToneListboxValue — возвращает выбранный тон, если он есть в допустимом перечне.
  * Иначе возвращает `default`, если тон выпал из списка после смены `excludeTone`.
  *
+ * Как работает:
+ * 1. Если `value` есть в `availableTones`, возвращает его
+ * 2. Иначе возвращает `DEFAULT_TONE` — тон выпал после смены `excludeTone`
+ *
  * @param value текущий выбранный тон
- * @param tones исходный перечень тонов
- * @param excludeTone тон, исключаемый из допустимого перечня
+ * @param availableTones допустимый перечень тонов
  * @returns тон для значения Listbox
  */
-function getToneListboxValue<Tone extends string>(
+function resolveToneListboxValue<Tone extends string>(
   value: Tone,
-  tones: readonly Tone[],
-  excludeTone?: Tone
+  availableTones: readonly Tone[]
 ): Tone {
-  return getAvailableTones(tones, excludeTone).includes(value)
-    ? value
-    : (DEFAULT_TONE as Tone);
+  return availableTones.includes(value) ? value : (DEFAULT_TONE as Tone);
 }
 
 /**
@@ -127,12 +131,14 @@ export function ToneListbox<Tone extends string = TonePreset>({
   tones,
   value = DEFAULT_TONE as Tone,
 }: ToneListboxProps<Tone>) {
+  const availableTones = resolveAvailableTones(tones, excludeTone);
+
   return (
     <Listbox
       label={label}
-      options={getToneListboxOptions(tones, excludeTone)}
+      options={getToneListboxOptions(availableTones)}
       reserveErrorSpace={false}
-      value={getToneListboxValue(value, tones, excludeTone)}
+      value={resolveToneListboxValue(value, availableTones)}
       onChange={(nextTone) => onChange(nextTone as Tone)}
     />
   );

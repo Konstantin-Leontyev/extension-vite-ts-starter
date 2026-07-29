@@ -3,12 +3,11 @@
  * Задаёт глобальную шкалу наложения слоёв оболочки и оверлеев.
  * Исключает локальные z-index внутри компонента, например `-1`, `0`, `1`, `2`:
  * они работают только внутри своего stacking context и в шкалу не входят.
- *
  * Перечисляет шкалу снизу вверх. Шаг 10 в ряду оболочки. Портал и стек уведомлений —
  * отдельный ряд:
  *  - `STACKING_HEADER` — sticky-шапка
  *  - `STACKING_PROFILE_MENU` — fixed-меню профиля из шапки
- *  - `STACKING_SIDEBAR` — выезжающая панель сайдбара на узком экране
+ *  - `STACKING_SIDEBAR` — выезжающая панель Sidebar на узком экране
  *  - `STACKING_OPEN_CONTROL` — корень открытого контрола над соседями в потоке
  *  - `STACKING_PORTAL` — панель в `document.body`, например listbox, combobox,
  *    date-range-input и table
@@ -21,9 +20,11 @@
  * Потребители:
  *  - `src/components/header/header.styles.ts` — поднимает sticky-шапку над контентом
  *  - `src/components/profile-menu/index.tsx` — поднимает fixed-меню профиля над шапкой
- *  - `src/ui/sidebar/sidebar.styles.ts` — поднимает панель сайдбара на узком экране
+ *  - `src/ui/sidebar/sidebar.styles.ts` — поднимает панель Sidebar на узком экране
  *  - контролы с `data-open` и панелями в портале, например listbox, combobox,
- *    date-range-input, range-input и table — поднимают корень и панель портала
+ *    date-range-input и range-input — поднимают корень и панель портала
+ *  - `src/ui/anchored-portal/anchored-portal.styles.ts`, `src/ui/table/table.styles.ts` —
+ *    поднимают панель слоем `STACKING_PORTAL`
  *  - `src/context/toast/toast.styles.ts` — поднимает стек уведомлений над порталами
  */
 
@@ -40,7 +41,7 @@ export const STACKING_HEADER = 10;
 export const STACKING_PROFILE_MENU = 20;
 
 /**
- * STACKING_SIDEBAR — задаёт слой выезжающей панели сайдбара на узком экране.
+ * STACKING_SIDEBAR — задаёт слой выезжающей панели Sidebar на узком экране.
  * Используется в `src/ui/sidebar/sidebar.styles.ts`.
  */
 export const STACKING_SIDEBAR = 30;

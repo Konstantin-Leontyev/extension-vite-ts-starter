@@ -119,7 +119,7 @@ export type CheckboxStyleProps = LayoutProps & {
  * Базируется на `<label>` и поддерживает пропсы из `LayoutProps`.
  *
  * Встроенные стили:
- *  - `display: inline-grid` — раскладка по дефолту проекта
+ *  - `display: inline-grid` — строчный контейнер под бокс и подпись
  *  - `grid-auto-flow: column` — бокс и подпись в одной строке
  *  - `gap` — отступ между боксом и подписью
  *  - `justify-content: start` — при растяжении родителем подпись остаётся у бокса

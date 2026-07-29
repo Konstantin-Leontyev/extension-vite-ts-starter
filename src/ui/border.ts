@@ -1,7 +1,7 @@
 /**
  * Файл: `src/ui/border.ts`
- * Содержит рамку поверхности: статичную пару «рамка 1px + тень» для карточек
- * и панелей и переключаемое кольцо контролов вне layout-box.
+ * Содержит рамку поверхности: статичную пару «рамка 1px + тень» для карточек,
+ * панелей и бокса Checkbox и переключаемое кольцо контролов вне layout-box.
  *
  * Основные задачи:
  * 1. Предоставить функцию `getBorderStyles` — рамка и тень поверхности
@@ -10,13 +10,15 @@
  *
  * Потребители:
  *  - `src/ui/card/card.styles.ts`, `src/ui/anchored-portal/anchored-portal.styles.ts` —
- *    подставляют рамку и тень поверхности
- *  - `src/ui/checkbox/checkbox.styles.ts` — подставляет рамку с тенью бокса
- *  - styles-файлы контролов с режимом рамки, например Input, RoundButton,
- *    SegmentButton и DateRangeInput — подставляют переключаемое кольцо контрола
- *  - `src/ui/listbox/listbox.styles.ts` — подставляет постоянное кольцо триггера
- *  - `src/ui/toast/toast.styles.ts` — подставляет постоянное кольцо вне layout-box,
- *    удерживая инвариант однострочного бокса
+ *    подставляют рамку и тень поверхности через `getBorderStyles`
+ *  - `src/ui/checkbox/checkbox.styles.ts` — подставляет рамку с тенью бокса через
+ *    `getBorderStyles`
+ *  - styles-файлы контролов с пропом `showBorder`, например Input и RoundButton —
+ *    подставляют переключаемое кольцо через `getControlBorderStyles`
+ *  - styles-файлы с постоянным кольцом вне layout-box, например Listbox,
+ *    SegmentButton и DateRangeInput — подставляют кольцо через `getControlBorderStyles`
+ *  - `src/ui/toast/toast.styles.ts` — подставляет постоянное кольцо вне layout-box
+ *    через `getControlBorderStyles`, удерживая инвариант однострочного бокса
  */
 
 import { type AppTheme } from '@ui/theme';
@@ -29,9 +31,8 @@ export const DEFAULT_SHOW_BORDER = true;
 
 /**
  * getBorderStyles — возвращает CSS-правила рамки поверхности: `border` 1px
- * цвета `border` и тень `shadow.surface`. Для статичных поверхностей без
- * однострочного ряда — карточки, панели портала: реальный `border` входит
- * в layout-box и пол `min-block-size`.
+ * цвета `border` и тень `shadow.surface`. Реальный `border` входит в layout-box
+ * и пол `min-block-size`: карточки, панели портала и бокс Checkbox.
  * Рамка вне layout-box — `getControlBorderStyles`.
  *
  * @param theme текущая тема

@@ -99,11 +99,15 @@ const INPUT_CONTROL_PROP_NAMES = new Set<string>([
  * Как работает:
  * 1. Подставляет дефолты `shape`, `showBorder` и `sizePreset`
  * 2. Собирает бокс из геттеров пресетов: `min-block-size`, `padding-inline`,
- *    типографика через `getTextProperties(getTextSize(…))` и `border-radius`
- *    через `resolveBlockRadius`. `padding-block` не пишется: UA-отступ сбросил
- *    `GlobalResetStyle`, высоту держит `min-block-size`
- * 3. Сбрасывает layout-рамку и красит фон: при рамке — `surface`, без рамки —
- *    прозрачный; кладёт рамку через `getControlBorderStyles` и цвет плейсхолдера
+ *    типографика через `getTextProperties(getTextSize(…))` — `font-size`,
+ *    `font-weight` и `line-height` — и `border-radius` через `resolveBlockRadius`.
+ *    `padding-block` не пишется: UA-отступ сбросил `GlobalResetStyle`, высоту
+ *    держит `min-block-size`
+ * 3. Сбрасывает layout-рамку через `border: none` и красит фон: при рамке —
+ *    `surface`, без рамки — `transparent`. При `showBorder` кладёт кольцо
+ *    `0 0 0 1px` цвета `border` и тень `shadow.surface` одним `box-shadow` через
+ *    `getControlBorderStyles`. Без рамки хелпер не пишет CSS-правило. Красит
+ *    плейсхолдер тоном `muted`
  * 4. При переданном `textAlign` добавляет выравнивание значения
  * 5. При `textItalic` добавляет курсив значения
  *

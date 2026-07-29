@@ -5,7 +5,7 @@
  *
  * Основные задачи:
  * 1. Типизировать стратегию позиционирования через `AnchoredPortalPositionStrategy`
- * 2. Предоставить хелперы `clampPanelToViewport`, `placeCalendarPanel` и `matchTriggerRect`
+ * 2. Предоставить хелперы `placeCalendarPanel` и `matchTriggerRect`
  * 3. Предоставить хук `useAnchoredPortalPosition`
  *
  * Потребители:
@@ -52,8 +52,9 @@ type UseAnchoredPortalPositionOptions = {
 const EMPTY_LAYOUT_DEPS: readonly unknown[] = [];
 
 /**
- * clampPanelToViewport — прижимает `left` и `top` панели к краям вьюпорта
- * с `PORTAL_VIEWPORT_EDGE_INSET` и при переполнении по высоте задаёт `max-block-size`.
+ * clampPanelToViewport — прижимает `inset-inline-start` и `inset-block-start` панели
+ * к краям вьюпорта с `PORTAL_VIEWPORT_EDGE_INSET` и при переполнении по высоте задаёт
+ * `max-block-size` с `overflow-y: auto`.
  * Используется внутри `placeCalendarPanel`.
  *
  * @param panel DOM-узел панели
@@ -103,8 +104,16 @@ function clampPanelToViewport(panel: HTMLElement, left: number, top: number): vo
 }
 
 /**
- * placeCalendarPanel — ставит панель по ширине триггера и вписывает во вьюпорт.
- * При нехватке места снизу поднимает панель над триггером.
+ * placeCalendarPanel — ставит панель по ширине триггера относительно якоря.
+ *
+ * Как работает:
+ * 1. Задаёт `inline-size` и `max-inline-size` панели равными ширине триггера
+ * 2. Выбирает `inset-block-start`: под триггером, если панель помещается снизу,
+ *    над триггером, если помещается сверху, иначе у верхнего края с
+ *    `PORTAL_VIEWPORT_EDGE_INSET`
+ * 3. Прижимает `inset-inline-start` и `inset-block-start` к краям вьюпорта
+ *    с `PORTAL_VIEWPORT_EDGE_INSET` и при переполнении по высоте задаёт
+ *    `max-block-size` с `overflow-y: auto`
  *
  * @param trigger DOM-узел якоря-триггера
  * @param panel DOM-узел панели
@@ -134,7 +143,7 @@ export function placeCalendarPanel(trigger: HTMLElement, panel: HTMLElement): vo
 }
 
 /**
- * matchTriggerRect — ставит панель в прямоугольник триггера.
+ * matchTriggerRect — ставит панель в позицию и ширину триггера.
  *
  * @param trigger DOM-узел якоря-триггера
  * @param panel DOM-узел панели

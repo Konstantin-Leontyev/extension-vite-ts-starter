@@ -211,11 +211,8 @@ export const GlobalThemeStyle = createGlobalStyle`
 `;
 
 /**
- * Расширение `DefaultTheme` для styled-components.
- *
- * Объявляет, что `DefaultTheme` имеет структуру `AppTheme`.
- * Это позволяет TypeScript правильно типизировать `props.theme` в styled-components.
- *
+ * Единственный `declare module` в проекте: расширяет `DefaultTheme` структурой `AppTheme`,
+ * чтобы TypeScript типизировал `props.theme` в styled-components.
  * Сделано по официальной документации styled-components v6:
  * https://styled-components.com/docs/api#create-a-declarations-file
  *

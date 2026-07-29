@@ -13,6 +13,7 @@
  *     - `src/pages/showcase/card-settings/index.tsx`
  *     - `src/pages/showcase/checkbox-settings/index.tsx`
  *     - `src/pages/showcase/control-group/index.tsx`
+ *     - `src/pages/showcase/date-range-input-settings/index.tsx`
  *     - `src/pages/showcase/modal-settings/index.tsx`
  *     - `src/pages/showcase/progress-bar-settings/index.tsx`
  *     - `src/pages/showcase/radio-button-settings/index.tsx`
@@ -74,7 +75,7 @@ type SizeListboxProps<Size extends string> = {
  *   onChange={setSizePreset}
  * />
  * <SizeListbox
- *   label="Size preset:"
+ *   label="Text size:"
  *   sizes={TEXT_SIZE_PRESET_KEYS}
  *   value={sizePreset}
  *   onChange={setSizePreset}

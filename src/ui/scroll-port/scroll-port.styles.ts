@@ -4,12 +4,11 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `ScrollPortStyleProps`
- * 2. Предоставить дефолт `DEFAULT_SCROLL_PORT_SHOW_VEIL`
- * 3. Предоставить функции `resolveScrollPortPaddingEdge` и
- *    `omitScrollPortRoutedPaddingProps`
- * 4. Предоставить styled-узлы `StyledScrollPortRoot`, `StyledScrollPortContainer`
+ * 2. Предоставить функции `resolveScrollPortPaddingEdge` и
+ *    `omitScrollPortRoutedPaddingProps`, а также дефолт `DEFAULT_SCROLL_PORT_SHOW_VEIL`
+ * 3. Предоставить styled-узлы `StyledScrollPortRoot`, `StyledScrollPortContainer`
  *    и `StyledScrollPortViewport`
- * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/scroll-port/index.tsx` — собирает компонент ScrollPort
@@ -35,7 +34,7 @@ export type ScrollPortStyleProps = LayoutProps & {
 };
 
 /**
- * SCROLL_PORT_ROUTED_PADDING_PROP_NAMES — хранит имена padding-пропсов, которые уходят
+ * SCROLL_PORT_ROUTED_PADDING_PROP_NAMES — хранит имена пропсов отступов, которые уходят
  * во вьюпорт и желоб и не должны попадать в `getLayoutStyles` корня.
  */
 const SCROLL_PORT_ROUTED_PADDING_PROP_NAMES = new Set<string>([
@@ -71,7 +70,8 @@ const DEFAULT_SCROLL_PORT_PADDING_BLOCK_START: SpacingValue = 0;
 
 /**
  * DEFAULT_SCROLL_PORT_PADDING_BLOCK_END — задаёт отступ block-end вьюпорта по умолчанию.
- * Запас под тень задаёт вызывающий код через `paddingBlockEnd` или `paddingBlock`.
+ * Используется, когда вызывающий код не передал проп `paddingBlockEnd`, `paddingBlock`
+ * или `padding`.
  */
 const DEFAULT_SCROLL_PORT_PADDING_BLOCK_END: SpacingValue = 0;
 
@@ -123,11 +123,11 @@ export function resolveScrollPortPaddingEdge(
 }
 
 /**
- * omitScrollPortRoutedPaddingProps — убирает padding-пропсы, маршрутизируемые во вьюпорт,
+ * omitScrollPortRoutedPaddingProps — убирает пропсы отступов, маршрутизируемые во вьюпорт,
  * чтобы `getLayoutStyles` корня не писал их на корневой узел.
  *
  * @param props layout-пропсы ScrollPort
- * @returns layout без маршрутизируемых padding-пропсов
+ * @returns layout без маршрутизируемых пропсов отступов
  */
 export function omitScrollPortRoutedPaddingProps(props: LayoutProps): LayoutProps {
   const rootLayoutProps: Record<string, unknown> = {};

@@ -1,7 +1,7 @@
 /**
  * Файл: `src/pages/showcase/title-group/index.tsx`
  * Предоставляет компонент TitleGroup для настройки заголовка или подзаголовка
- * Card-поверхности в витрине дизайн-системы.
+ * в витрине дизайн-системы.
  * Используется только в витрине: в продуктовый код и `@ui/` не входит.
  *
  * Поддерживает:
@@ -26,6 +26,7 @@
  *  - панели настроек витрины — настраивают заголовок и подзаголовок:
  *     - `src/pages/showcase/card-settings/index.tsx`
  *     - `src/pages/showcase/modal-settings/index.tsx`
+ *     - `src/pages/showcase/range-input-settings/index.tsx`
  */
 
 import { type ChangeEvent } from 'react';

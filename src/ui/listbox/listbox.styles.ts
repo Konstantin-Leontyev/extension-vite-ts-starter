@@ -131,17 +131,24 @@ const LISTBOX_SURFACE_PROP_NAMES = new Set<string>([
 
 /**
  * getListboxTriggerStyles — возвращает CSS-правила для узла `StyledListboxTrigger`:
- * габариты, рамку и тень через `getControlBorderStyles`, заливку, раскладку лейбла,
+ * габариты, кольцо и тень через `getControlBorderStyles`, заливку, раскладку лейбла,
  * шов и канал состояний секции шеврона. Статику секции красит внутренний Icon
  * своими пропсами.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты пропсов
- * 2. Собирает габариты триггера, заливку, рамку и тень через `getControlBorderStyles`
- * 3. Кладёт трек, шов и канал секции через хелперы `@ui/icon`
+ * 2. Собирает габариты триггера и заливку `surface`, затем кольцо `0 0 0 1px`
+ *    цвета `border` и тень `shadow.surface` одним `box-shadow` через
+ *    `getControlBorderStyles` без второго аргумента — постоянное кольцо
+ * 3. Кладёт трек секции через `getIconSectionTrackStyles`: колонки под позицию
+ *    `[data-slot='icon']` и `block-size: 100%` на слоте. Шов — через
+ *    `getIconSectionSeamStyles`. Цвет канала состояний — через
+ *    `resolveIconStateBackground`
  * 4. На `:not(:disabled):hover` и `:focus-visible` выставляет
  *    `--icon-state-background` — подсвечивается только индикатор, шеврон не
  *    самостоятельное действие
+ * 5. При `data-open='true'` скрывает триггер через `visibility: hidden`, чтобы
+ *    панель наследовала ширину якоря без двойного отображения
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -192,12 +199,8 @@ function getListboxTriggerStyles(
  * Базируется на `<button>` и принимает пропсы из `ListboxSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getListboxTriggerStyles` — габариты, рамка и тень через `getControlBorderStyles`,
- *    заливка, лейбл и секция шеврона
- *
- * Поверхность шеврона — правило по `[data-slot='icon']`.
- * При открытой панели триггер скрывается через `visibility: hidden`, чтобы панель
- * наследовала ширину якоря без двойного отображения.
+ *  - `getListboxTriggerStyles` — габариты, кольцо и тень через `getControlBorderStyles`,
+ *    заливка, лейбл, секция шеврона и скрытие при открытой панели
  */
 export const StyledListboxTrigger = styled.button.withConfig({
   shouldForwardProp: (prop) => !LISTBOX_SURFACE_PROP_NAMES.has(prop),
@@ -218,14 +221,17 @@ const LISTBOX_PANEL_MAX_OPTION_ROWS = 6;
 
 /**
  * getListboxPanelStyles — возвращает CSS-правила для узла `StyledListboxPanel`:
- * фиксированное положение, ограничение высоты через `LISTBOX_PANEL_MAX_OPTION_ROWS`,
- * прокрутку, заливку, рамку, тень, радиус и кольцо фокуса.
+ * хром портала через `getPortalPanelStyles`, ограничение высоты через
+ * `LISTBOX_PANEL_MAX_OPTION_ROWS` и прокрутку.
  *
  * Как работает:
  * 1. Берёт тему, подставляет дефолты `shape` и `sizePreset`
- * 2. Собирает позицию, z-index и `max-block-size` по `LISTBOX_PANEL_MAX_OPTION_ROWS`
- *    с прокруткой
- * 3. Красит заливку, рамку, тень, радиус и кольцо фокуса
+ * 2. Подставляет хром панели через `getPortalPanelStyles`: fixed-позицию, слой
+ *    `STACKING_PORTAL`, заливку `surface`, рамку `border` 1px и тень
+ *    `shadow.surface` через `getBorderStyles`, радиус через
+ *    `resolveListboxBlockRadius` и постоянное фокус-кольцо через `getOutlineStyles`
+ * 3. Ограничивает высоту через `LISTBOX_PANEL_MAX_OPTION_ROWS` и включает
+ *    прокрутку `overflow: hidden auto`
  *
  * @param props пропсы формы, размера и тема
  * @returns CSS-правила, каждое с новой строки
@@ -253,7 +259,8 @@ function getListboxPanelStyles(
  * Базируется на `<ul>` и принимает пропсы `shape` и `sizePreset`.
  *
  * Генерация стилей:
- *  - `getListboxPanelStyles` — позиция, высота, заливка, рамка, тень и кольцо фокуса
+ *  - `getListboxPanelStyles` — хром портала через `getPortalPanelStyles`, высота
+ *    и прокрутка
  */
 export const StyledListboxPanel = styled.ul.withConfig({
   shouldForwardProp: (prop) => !LISTBOX_BOX_PROP_NAMES.has(prop),
@@ -264,6 +271,12 @@ export const StyledListboxPanel = styled.ul.withConfig({
 /**
  * getListboxOptionSurfaceBaseStyles — возвращает CSS-правила общей поверхности
  * строки опции: раскладку, габариты и подложку наведения через `::before`.
+ *
+ * Как работает:
+ * 1. Собирает раскладку строки, габариты по `sizePreset` и заливку `surface`
+ * 2. Готовит слот лейбла: `min-inline-size: 0` и слой над подложкой
+ * 3. Кладёт абсолютный `::before` с отступом от края, скруглением и переходом
+ *    `background-color` — подложку наведения красят вызывающие генераторы
  *
  * @param props пропсы формы, размера и тема
  * @returns CSS-правила, каждое с новой строки
@@ -305,6 +318,13 @@ function getListboxOptionSurfaceBaseStyles(
 /**
  * getListboxOptionButtonStyles — возвращает CSS-правила для узла
  * `StyledListboxOptionButton`: базовую поверхность, отступы и синюю подсветку.
+ *
+ * Как работает:
+ * 1. Берёт базовую поверхность через `getListboxOptionSurfaceBaseStyles`: раскладку,
+ *    габариты, заливку и подложку наведения через `::before`
+ * 2. Задаёт колонки лейбла и галочки, отступы лейбла
+ * 3. На `:hover:not(:disabled)` и `:focus-visible` красит подложку и текст в
+ *    `primary` / `inverse`, включая слот галочки
  *
  * @param props пропсы формы, размера и тема
  * @returns CSS-правила, каждое с новой строки

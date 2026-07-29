@@ -470,7 +470,7 @@ const DEFAULT_CARD_STATE: CardWidgetState = {
 };
 
 const DEFAULT_TEXT_STATE: TextWidgetState = {
-  align: 'start',
+  align: undefined,
   children: 'Sample text line long enough to show ellipsis in the demo',
   ellipsis: false,
   italic: false,

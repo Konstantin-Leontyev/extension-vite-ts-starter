@@ -175,7 +175,7 @@ export type IconPosition = 'end' | 'start';
 /**
  * ICON_POSITION_KEYS — задаёт перечень позиций иконки.
  * Используется в панелях настроек витрины дизайн-системы: `IconGroup` собирает
- * из него опции для `Listbox` позиции.
+ * из него опции для `Listbox`.
  */
 export const ICON_POSITION_KEYS = Object.freeze([
   'start',
@@ -223,7 +223,7 @@ export function getIconSectionTrackStyles(): string {
 
 /**
  * getIconSectionSeamStyles — возвращает CSS-правила шва секции по
- * `:first-child` / `:last-child` через inset `box-shadow` без сдвига бокса.
+ * `:first-child` / `:last-child` через `box-shadow: inset …` без сдвига бокса.
  *
  * @param options цвет шва и опциональный `data-slot` секции
  * @returns CSS-правила, каждое с новой строки

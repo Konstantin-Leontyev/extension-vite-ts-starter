@@ -46,6 +46,7 @@ export const OUTLINE_OFFSET = `${OUTLINE_OFFSET_PX}px`;
  * OUTLINE_OVERHANG_PX — формирует вылет обводки за `border-box` из `OUTLINE_WIDTH_PX`
  * и `OUTLINE_OFFSET_PX`. Число px для JS-математики позиционирования — геометрия DOM
  * считается в px, в CSS-правиле не попадает.
+ * Используется в `PORTAL_VIEWPORT_EDGE_INSET` из `@ui/viewport`.
  */
 export const OUTLINE_OVERHANG_PX = OUTLINE_WIDTH_PX + OUTLINE_OFFSET_PX;
 

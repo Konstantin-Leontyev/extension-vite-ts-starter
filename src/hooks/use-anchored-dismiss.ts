@@ -6,7 +6,7 @@
  * 1. Предоставить хук `useAnchoredDismiss`
  *
  * Потребители:
- *  - `@ui/anchored-portal` — закрывает панель без перепозиционирования
+ *  - `@ui/anchored-portal` — закрывает открытую панель
  */
 
 import { useEffect, useEffectEvent, useRef, type RefObject } from 'react';

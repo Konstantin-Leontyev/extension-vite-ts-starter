@@ -152,8 +152,8 @@ export const TEXT_ALIGN_PRESET_KEYS = Object.freeze([
  * TEXT_TONE_PRESETS — связывает тоны текста с ключами цвета в теме.
  * Расширяет канон `TONE_PRESETS` спредом, добавляя тон `muted` для вторичного текста.
  *
- * Соответствие приватно для модуля, доступ к перечню тонов — через `TEXT_TONE_KEYS`,
- * чтение цвета — через `getTextToneColor`.
+ * Соответствие приватно для модуля, доступ к перечню тонов — только через
+ * `TEXT_TONE_KEYS`, чтение цвета — через `getTextToneColor`.
  */
 const TEXT_TONE_PRESETS = {
   ...TONE_PRESETS,
@@ -253,9 +253,13 @@ const TEXT_PROP_NAMES = new Set<string>([
  * @returns CSS-правила, каждое с новой строки
  */
 export function getEllipsisStyles(): string {
-  return ['overflow: hidden;', 'text-overflow: ellipsis;', 'white-space: nowrap;'].join(
-    '\n'
-  );
+  const styles = [
+    'overflow: hidden;',
+    'text-overflow: ellipsis;',
+    'white-space: nowrap;',
+  ];
+
+  return styles.join('\n');
 }
 
 /**
@@ -265,15 +269,17 @@ export function getEllipsisStyles(): string {
  * Как работает:
  * 1. Получает текущую тему через `getTheme`
  * 2. Выбирает пресет по `sizePreset`, подставляя `DEFAULT_TEXT_SIZE_PRESET`,
- *    когда размер не задан, и применяет его типографику через `getTextProperties`
+ *    когда размер не задан, и применяет `font-size`, `font-weight` и `line-height`
+ *    через `getTextProperties`
  * 3. Переопределяет типографику прямыми пропсами `fontSize`, `fontWeight`
  *    и `lineHeight`, если они переданы
  * 4. Добавляет `font-style: italic`, если передан проп `italic`
- * 5. Выбирает цвет: `color`, иначе цвет тона из темы. Без обоих правило
- *    `color` не добавляется — цвет наследуется по умолчанию, типичное
+ * 5. Выбирает цвет: `color`, иначе цвет тона через `getTextToneColor`. Без обоих
+ *    правило `color` не добавляется — цвет наследуется по умолчанию, типично
  *    внутри цветного контрола
  * 6. Добавляет правила для `align` и `whiteSpace`
- * 7. Для `ellipsis` добавляет правила обрезания через `getEllipsisStyles`
+ * 7. Для `ellipsis` добавляет `overflow: hidden`, `text-overflow: ellipsis` и
+ *    `white-space: nowrap` через `getEllipsisStyles`
  *
  * @param props объект с текстовыми пропсами и темой
  * @returns CSS-правила, каждое с новой строки

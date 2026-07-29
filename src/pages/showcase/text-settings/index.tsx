@@ -21,7 +21,8 @@ import { TextGroup } from '../text-group';
  * Ключи совпадают с именами пропов компонента Text.
  * Используется для синхронизации значений между панелью управления и демонстрационным текстом.
  *
- * @property align — выравнивание текста
+ * @property align — выравнивание текста. Без значения компонент рендерит
+ *   браузерное умолчание `start`. Фолбэк отображения — в `AlignListbox`
  * @property children — содержимое текста
  * @property ellipsis — включает однострочное обрезание с многоточием
  * @property italic — включает курсивное начертание
@@ -29,7 +30,7 @@ import { TextGroup } from '../text-group';
  * @property tone — тон текста
  */
 export type TextWidgetState = {
-  align: TextAlignPreset;
+  align?: TextAlignPreset;
   children: string;
   ellipsis: boolean;
   italic: boolean;
