@@ -1,5 +1,5 @@
+// TODO: ручное ревью — components/model-download-gate/index.tsx
 import { type ReactNode } from 'react';
-import { useTheme } from 'styled-components';
 
 import { Button } from '@ui/button';
 import { Card } from '@ui/card';
@@ -55,7 +55,6 @@ export function ModelDownloadGate({ children }: ModelDownloadGateProps) {
 }
 
 function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
-  const theme = useTheme();
   const { error, loadedRatio, phase, retryDownload, startDownload } =
     useBrowserAiBootstrap();
 
@@ -65,21 +64,27 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
 
   return (
     <StyledModelDownloadGate>
-      <Card gap={16} padding={24} title={gateTitle(phase)} titleId={GATE_TITLE_ID}>
+      <Card
+        as="section"
+        gap={16}
+        padding={24}
+        title={gateTitle(phase)}
+        titleId={GATE_TITLE_ID}
+      >
         <StyledModelDownloadGateCard>
           <StyledModelDownloadGateCopy>
             {phase === 'checking' && (
-              <Text as="p" color={theme.colors.muted} sizePreset="normal">
+              <Text as="p" tone="muted">
                 Searching for the local language model required by this app.
               </Text>
             )}
 
             {phase === 'download-required' && (
               <>
-                <Text as="p" sizePreset="normal">
+                <Text as="p">
                   This app requires a one-time download of the on-device language model.
                 </Text>
-                <Text as="p" color={theme.colors.muted} sizePreset="normal">
+                <Text as="p" tone="muted">
                   You can switch to other browser tabs while the download continues in
                   the background.
                 </Text>
@@ -88,10 +93,10 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
 
             {phase === 'downloading' && (
               <>
-                <Text as="p" sizePreset="normal">
+                <Text as="p">
                   Setting up the local language model. This may take several minutes.
                 </Text>
-                <Text as="p" color={theme.colors.muted} sizePreset="normal">
+                <Text as="p" tone="muted">
                   You can switch to other browser tabs while the download continues in
                   the background.
                 </Text>
@@ -100,10 +105,10 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
 
             {phase === 'unavailable' && (
               <>
-                <Text as="p" sizePreset="normal">
+                <Text as="p">
                   This app requires on-device AI, but it is not available on this device.
                 </Text>
-                <Text as="p" color={theme.colors.muted} sizePreset="normal">
+                <Text as="p" tone="muted">
                   Use Chrome 138+ on desktop with enough free disk space and check
                   chrome://on-device-internals.
                 </Text>
@@ -112,11 +117,11 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
 
             {phase === 'error' && (
               <>
-                <Text as="p" sizePreset="normal">
+                <Text as="p">
                   The local language model could not be downloaded or initialized.
                 </Text>
                 {error != null && (
-                  <Text as="p" color={theme.colors.muted} sizePreset="medium">
+                  <Text as="p" sizePreset="thin" tone="muted">
                     {error.message}
                   </Text>
                 )}
@@ -127,7 +132,7 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
           {phase === 'downloading' && (
             <ProgressBar
               aria-labelledby={GATE_TITLE_ID}
-              showLabel={true}
+              showText={true}
               value={loadedRatio}
             />
           )}

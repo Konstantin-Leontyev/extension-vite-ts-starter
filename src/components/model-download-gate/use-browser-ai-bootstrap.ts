@@ -1,3 +1,4 @@
+// TODO: ручное ревью — components/model-download-gate/use-browser-ai-bootstrap.ts
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
@@ -10,9 +11,9 @@ export type BrowserAiBootstrapPhase =
   | 'checking'
   | 'download-required'
   | 'downloading'
+  | 'error'
   | 'ready'
-  | 'unavailable'
-  | 'error';
+  | 'unavailable';
 
 type BrowserAiBootstrapState = {
   error: Error | null;

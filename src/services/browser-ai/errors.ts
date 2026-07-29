@@ -1,3 +1,5 @@
+// TODO: ручное ревью — services/browser-ai/errors.ts
+
 export const STRUCTURED_RESPONSE_SNIPPET_MAX_LENGTH = 500;
 
 export class BrowserAiUnavailableError extends Error {
@@ -49,11 +51,11 @@ export class BrowserAiOperationError extends Error {
 }
 
 export type BrowserAiError =
-  | BrowserAiUnavailableError
   | BrowserAiAbortedError
-  | BrowserAiQuotaExceededError
+  | BrowserAiOperationError
   | BrowserAiParseError
-  | BrowserAiOperationError;
+  | BrowserAiQuotaExceededError
+  | BrowserAiUnavailableError;
 
 function truncateStructuredResponseSnippet(rawResponse: string): string {
   if (rawResponse.length <= STRUCTURED_RESPONSE_SNIPPET_MAX_LENGTH) {
@@ -83,8 +85,8 @@ export function normalizeBrowserAiError(error: unknown, operation: string): neve
 
     if (error.name === 'QuotaExceededError') {
       const quotaError = error as DOMException & {
-        requested?: number;
         contextWindow?: number;
+        requested?: number;
       };
 
       throw new BrowserAiQuotaExceededError(

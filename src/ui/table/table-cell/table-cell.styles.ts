@@ -1,7 +1,9 @@
+// TODO: ручное ревью — ui/table/table-cell/table-cell.styles.ts
 import styled, { css } from 'styled-components';
 
-import { DEFAULT_SIZE_PRESET, controlPaddingInline, type SizePreset } from '@ui/presets';
-import { spacingRem } from '@ui/spacing';
+import { DEFAULT_SIZE_PRESET, getPaddingInline, type SizePreset } from '@ui/presets';
+import { getSpacingValue } from '@ui/spacing';
+import { getEllipsisStyles } from '@ui/text';
 
 export type TableCellAlign = 'center' | 'end' | 'start';
 
@@ -28,16 +30,12 @@ const TABLE_CELL_PROP_NAMES = new Set<string>([
  */
 const tableCellBase = css<TableCellStyleProps>`
   padding-inline: ${(props) =>
-    spacingRem(controlPaddingInline[props.sizePreset ?? DEFAULT_SIZE_PRESET])};
-  text-align: ${(props) => props.align ?? 'center'};
+    getPaddingInline(props.sizePreset ?? DEFAULT_SIZE_PRESET)};
   vertical-align: middle;
+  text-align: ${(props) => props.align ?? 'center'};
   ${(props) => {
     if (props.ellipsis === true) {
-      return css`
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      `;
+      return getEllipsisStyles();
     }
 
     if (props.nowrap === true) {
@@ -66,7 +64,7 @@ export const StyledTableCell = styled.td.withConfig({
  */
 export const StyledTableCellLead = styled.span`
   display: inline-flex;
-  gap: ${spacingRem(8)};
+  gap: ${getSpacingValue(8)};
   align-items: center;
   inline-size: 100%;
   min-inline-size: 0;

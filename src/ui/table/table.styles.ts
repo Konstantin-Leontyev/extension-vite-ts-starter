@@ -1,78 +1,87 @@
+// TODO: ручное ревью — ui/table/table.styles.ts
 import styled from 'styled-components';
 
-import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
+import { checkboxSizePresets } from '@ui/checkbox';
+import { type LayoutProps } from '@ui/layout';
+import { getOutlineStyles } from '@ui/outline';
 import {
+  DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
-  blockSizeRem,
-  controlPaddingInline,
+  getMinBlockSize,
+  getPaddingInline,
+  resolveBlockRadius,
   type SizePreset,
 } from '@ui/presets';
-import { spacingRem } from '@ui/spacing';
+import { getSpacingValue } from '@ui/spacing';
+import { STACKING_PORTAL } from '@ui/stacking';
 import { getTheme, type AppTheme } from '@ui/theme';
+import { resolveColorMix } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
 
 /** Размерный ряд таблицы — канон контролов проекта. */
 export type TableSizePreset = SizePreset;
 
-export const DEFAULT_TABLE_SIZE_PRESET: TableSizePreset = 'large';
-export const DEFAULT_TABLE_BORDERED = true;
+export const DEFAULT_TABLE_SIZE_PRESET: TableSizePreset = 'normal';
+export const DEFAULT_TABLE_SHOW_BORDER = true;
 export const DEFAULT_TABLE_HOVER_HIGHLIGHT = false;
 export const DEFAULT_TABLE_STRIPED = false;
 export const DEFAULT_TABLE_NUMBERED = true;
+
+/**
+ * TABLE_EDGE_BORDER_WIDTH — задаёт толщину рамки шапки и подвала таблицы.
+ * Используется в `StyledTableHead`, `StyledTableFoot` и compose-секциях.
+ */
+const TABLE_EDGE_BORDER_WIDTH = '2px';
 
 const TABLE_BODY_PROP_NAMES = new Set<string>(['$hoverHighlight', '$striped']);
 
 /** Приглушённый фон шапки — контраст с телом таблицы в Card. */
 function tableHeadFill(theme: AppTheme): string {
-  return `color-mix(in srgb, ${theme.colors.border} 22%, ${theme.colors.surface})`;
+  return resolveColorMix(theme.colors.border, theme.colors.surface, 22);
 }
 
 /** Чётная строка: лёгкая полоса, чтобы строки не сливались. */
 function tableStripeFill(theme: AppTheme): string {
-  return `color-mix(in srgb, ${theme.colors.default} 3%, ${theme.colors.surface})`;
+  return resolveColorMix(theme.colors.default, theme.colors.surface, 3);
 }
 
-/** Подсветка строки при наведении — лёгкий оттенок primary. */
+/** Подсветка при наведении — лёгкий оттенок primary: строки тела и кнопка «+» шапки. */
 function tableRowHoverFill(theme: AppTheme): string {
-  return `color-mix(in srgb, ${theme.colors.primary} 6%, ${theme.colors.surface})`;
+  return resolveColorMix(theme.colors.primary, theme.colors.surface, 6);
 }
 
 /** Публичные пропы примитива: layout — на корень, размер — на строки/ячейки. */
 export type TableStyleProps = LayoutProps & {
-  /** Рамка + surface-фон вокруг таблицы; на main page false (таблица лежит в Card). */
-  bordered?: boolean;
   /** Подсветка строки при наведении. */
   hoverHighlight?: boolean;
+  /** Рамка + surface-фон вокруг таблицы; на main page false (таблица лежит в Card). */
+  showBorder?: boolean;
   sizePreset?: TableSizePreset;
   /** Чередование фона чётных строк тела таблицы. */
   striped?: boolean;
 };
 
 /**
- * Опциональная рамка вокруг таблицы (bordered): своё у неё — border/radius/surface.
- * Скролл и сайзинг — у ScrollPort; здесь лишь структурный минимум, чтобы ScrollPort
- * с block-size:100% ограничился по высоте (flex-колонка + min-block-size:0 + overflow).
+ * Обрезка углов таблицы; при showBorder — рамка и surface без отдельной обёртки
+ * (ScrollPort остаётся корнем скролла, gutter в padding Card).
  */
-export const StyledTableFrame = styled.div.withConfig({
-  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
-})<LayoutProps>`
-  display: flex;
-  flex-direction: column;
-  min-block-size: 0;
+export const StyledTableClip = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== '$showBorder',
+})<{ $showBorder?: boolean }>`
   min-inline-size: 0;
   overflow: hidden;
-  background-color: ${(props) => getTheme(props).colors.surface};
-  border: 1px solid ${(props) => getTheme(props).colors.border};
-  border-radius: ${spacingRem(12)};
-  ${(props) => getLayoutStyles(props)}
-`;
-
-/** Скругление без рамки (таблица в Card): обрезка фона шапки по углам. */
-export const StyledTableClip = styled.div`
-  overflow: hidden;
-  border-radius: ${spacingRem(12)};
-  min-inline-size: 0;
+  border-radius: ${resolveBlockRadius(
+    DEFAULT_SHAPE_PRESET,
+    getMinBlockSize(DEFAULT_SIZE_PRESET)
+  )};
+  ${(props) =>
+    props.$showBorder === true
+      ? `
+          background-color: ${getTheme(props).colors.surface};
+          border: 1px solid ${getTheme(props).colors.border};
+        `
+      : ''}
 `;
 
 /** fixed: ширины колонок берутся из colgroup и не зависят от данных (нет скачка при смене view). */
@@ -103,7 +112,8 @@ export const StyledTableHead = styled.thead.withConfig({
 })<{ $composeHidden?: boolean }>`
   & th {
     background-color: ${(props) => tableHeadFill(getTheme(props))};
-    border-block-end: 2px solid ${(props) => getTheme(props).colors.border};
+    border-block-end: ${TABLE_EDGE_BORDER_WIDTH} solid
+      ${(props) => getTheme(props).colors.border};
   }
   ${(props) => (props.$composeHidden ? 'visibility: hidden;' : '')}
 `;
@@ -114,7 +124,8 @@ export const StyledTableFoot = styled.tfoot.withConfig({
 })<{ $composeHidden?: boolean }>`
   & td {
     background-color: ${(props) => tableHeadFill(getTheme(props))};
-    border-block-start: 2px solid ${(props) => getTheme(props).colors.border};
+    border-block-start: ${TABLE_EDGE_BORDER_WIDTH} solid
+      ${(props) => getTheme(props).colors.border};
   }
   ${(props) => (props.$composeHidden ? 'visibility: hidden;' : '')}
 `;
@@ -125,14 +136,14 @@ export const StyledTableBody = styled.tbody.withConfig({
 })<{ $hoverHighlight?: boolean; $striped?: boolean }>`
   ${(props) => {
     const theme = getTheme(props);
-    const rules: string[] = [
+    const styles: string[] = [
       `& td {
         border-block-end: 1px solid ${theme.colors.border};
       }`,
     ];
 
     if (props.$striped ?? DEFAULT_TABLE_STRIPED) {
-      rules.push(
+      styles.push(
         `& tr:nth-child(even) {
           background-color: ${tableStripeFill(theme)};
         }`
@@ -140,18 +151,18 @@ export const StyledTableBody = styled.tbody.withConfig({
     }
 
     if (props.$hoverHighlight ?? DEFAULT_TABLE_HOVER_HIGHLIGHT) {
-      rules.push(
+      styles.push(
         `& tr:hover {
           background-color: ${tableRowHoverFill(theme)};
         }`
       );
     }
 
-    rules.push(`& tr:last-child td {
+    styles.push(`& tr:last-child td {
       border-block-end: none;
     }`);
 
-    return rules.join('\n');
+    return styles.join('\n');
   }}
 `;
 
@@ -160,7 +171,7 @@ const TABLE_ROW_PROP_NAMES = new Set<string>(['$editHidden', 'sizePreset']);
 export const StyledTableRow = styled.tr.withConfig({
   shouldForwardProp: (prop) => !TABLE_ROW_PROP_NAMES.has(prop),
 })<{ $editHidden?: boolean; sizePreset?: TableSizePreset }>`
-  block-size: ${(props) => blockSizeRem(props.sizePreset ?? DEFAULT_SIZE_PRESET)};
+  block-size: ${(props) => getMinBlockSize(props.sizePreset ?? DEFAULT_SIZE_PRESET)};
   ${(props) => (props.$editHidden ? 'visibility: hidden;' : '')}
 `;
 
@@ -172,18 +183,21 @@ export const StyledTableComposePanel = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== 'sizePreset' && prop !== '$hasError',
 })<{ $hasError?: boolean; sizePreset?: TableSizePreset }>`
   position: fixed;
-  z-index: 2000;
+  z-index: ${STACKING_PORTAL};
   overflow: hidden;
+  ${(props) =>
+    getOutlineStyles(
+      props.$hasError
+        ? getTheme(props).colors.invalidOutline
+        : getTheme(props).colors.focusOutline
+    )}
   background-color: ${(props) => getTheme(props).colors.surface};
   border: 1px solid ${(props) => getTheme(props).colors.border};
-  border-radius: ${spacingRem(12)};
+  border-radius: ${resolveBlockRadius(
+    DEFAULT_SHAPE_PRESET,
+    getMinBlockSize(DEFAULT_SIZE_PRESET)
+  )};
   box-shadow: ${(props) => getTheme(props).shadow.surface};
-  outline: 2px solid
-    ${(props) =>
-      props.$hasError
-        ? getTheme(props).colors.invalidRing
-        : getTheme(props).colors.focusRing};
-  outline-offset: 2px;
 `;
 
 /**
@@ -198,17 +212,18 @@ export const StyledTableComposeInnerTable = styled.table.withConfig({
   border-collapse: collapse;
   ${(props) => {
     const theme = getTheme(props);
-
-    return [
+    const styles = [
       `& [data-compose-header] th {
         background-color: ${tableHeadFill(theme)};
-        border-block-end: 2px solid ${theme.colors.border};
+        border-block-end: ${TABLE_EDGE_BORDER_WIDTH} solid ${theme.colors.border};
       }`,
       `& [data-compose-footer] td {
         background-color: ${tableHeadFill(theme)};
-        border-block-start: 2px solid ${theme.colors.border};
+        border-block-start: ${TABLE_EDGE_BORDER_WIDTH} solid ${theme.colors.border};
       }`,
-    ].join('\n');
+    ];
+
+    return styles.join('\n');
   }}
 `;
 
@@ -216,14 +231,21 @@ export const StyledTableComposeInnerTable = styled.table.withConfig({
 export const StyledTableComposeErrorCell = styled.td.withConfig({
   shouldForwardProp: (prop) => prop !== 'sizePreset',
 })<{ sizePreset?: TableSizePreset }>`
-  padding-block: ${spacingRem(8)};
+  padding-block: ${getSpacingValue(8)};
   padding-inline: ${(props) =>
-    spacingRem(controlPaddingInline[props.sizePreset ?? DEFAULT_SIZE_PRESET])};
-  text-align: center;
+    getPaddingInline(props.sizePreset ?? DEFAULT_SIZE_PRESET)};
   vertical-align: middle;
+  text-align: center;
   border-block-end: none;
 `;
 
+/** Габарит метки чекбокса и кнопки «+» в шапке — TableCheckbox без подписи, размер small. */
+const tableHeaderMarkBlockSizeRem = getSpacingValue(checkboxSizePresets.small.size);
+
+/* TODO: ручное ревью — дубль кодировщика data-URI из `markIcon` в `checkbox.styles.ts`.
+   Там data-URI вынужден: марка рисуется фоном нативного `<input>` (void-элемент,
+   детей не принимает). Здесь марка стоит на `<button>` — ограничения нет; кандидат
+   на вынос общего хелпера или замену иконкой-компонентом. */
 function headerMarkIcon(pathD: string, strokeColor: string): string {
   const stroke = strokeColor.replace('#', '%23');
 
@@ -233,44 +255,46 @@ function headerMarkIcon(pathD: string, strokeColor: string): string {
 /** Кнопка «+» в шапке Keyword; активна при переданном `onAddRow`, иначе заглушка. */
 export const StyledTableHeaderAddButton = styled.button`
   flex-shrink: 0;
-  inline-size: ${spacingRem(12)};
-  block-size: ${spacingRem(12)};
+  inline-size: ${tableHeaderMarkBlockSizeRem};
+  block-size: ${tableHeaderMarkBlockSizeRem};
   appearance: none;
-  padding: 0;
-  margin: 0;
-  border: 1px solid ${(props) => getTheme(props).colors.border};
-  border-radius: ${spacingRem(4)};
-  box-shadow: ${(props) => getTheme(props).shadow.surface};
   background-color: ${(props) => getTheme(props).colors.surface};
   background-image: ${(props) =>
     headerMarkIcon('M3 6h6M6 3v6', getTheme(props).colors.default)};
   background-repeat: no-repeat;
   background-position: center;
-  background-size: ${spacingRem(8)} ${spacingRem(8)};
-  cursor: pointer;
+  background-size: ${getSpacingValue(8)} ${getSpacingValue(8)};
+  border: 1px solid ${(props) => getTheme(props).colors.border};
+  border-radius: ${getSpacingValue(4)};
+  box-shadow: ${(props) => getTheme(props).shadow.surface};
 
   &:disabled {
     cursor: default;
   }
 
   &:not(:disabled):hover {
-    background-color: ${(props) =>
-      `color-mix(in srgb, ${getTheme(props).colors.primary} 6%, ${getTheme(props).colors.surface})`};
+    background-color: ${(props) => tableRowHoverFill(getTheme(props))};
   }
 `;
 
-/** Заглушка под чекбокс / «+» в копии шапки внутри compose-панели. */
+/**
+ * Резерв под отсутствующую метку чекбокса или кнопку «+» в неинтерактивной копии шапки
+ * и в compose/edit-ячейках keyword-колонки. Colgroup выравнивает ширину колонок, но lead
+ * внутри keyword-ячейки должен совпадать с интерактивной шапкой; без резерва поля compose
+ * съезжают относительно заголовка Keyword.
+ */
 export const StyledTableHeaderMarkSpacer = styled.span`
   flex-shrink: 0;
-  inline-size: ${spacingRem(12)};
-  block-size: ${spacingRem(12)};
+  inline-size: ${tableHeaderMarkBlockSizeRem};
+  block-size: ${tableHeaderMarkBlockSizeRem};
 `;
 
 /** Шапка Keyword: ☐ + label слева, bulk-действия справа. */
 export const StyledTableHeaderKeywordBar = styled.span`
+  /* flex (не grid): первый слот растягивается (flex: 1 1 auto), действия — fit-content. */
   display: flex;
+  gap: ${getSpacingValue(12)};
   align-items: center;
-  gap: ${spacingRem(12)};
   inline-size: 100%;
   min-inline-size: 0;
 
@@ -287,9 +311,10 @@ export const StyledTableHeaderKeywordBar = styled.span`
 
 /** Содержимое ячейки + действие выбранной строки справа от текста. */
 export const StyledTableCellTrailing = styled.span`
+  /* flex (не grid): текст и trailing-control в одном потоке; gap между слотами. */
   display: flex;
+  gap: ${getSpacingValue(12)};
   align-items: center;
-  gap: ${spacingRem(12)};
   inline-size: 100%;
   min-inline-size: 0;
 
@@ -303,3 +328,9 @@ export const StyledTableCellTrailing = styled.span`
     max-inline-size: fit-content;
   }
 `;
+
+export {
+  computeTableColumnInlineSize,
+  computeTableColumnInlineSizes,
+  type TableColumnSizeSpec,
+} from './column-sizing';

@@ -1,3 +1,5 @@
+// TODO: ручное ревью — services/browser-ai/session.ts
+
 import { hasBrowserAiSupport } from './capability';
 import {
   BrowserAiUnavailableError,
@@ -16,6 +18,7 @@ const ENGLISH_TEXT_MODALITIES = {
 };
 
 export type BrowserAiSession = {
+  destroy: () => void;
   prompt: (input: string, options?: BrowserAiPromptOptions) => Promise<string>;
   /**
    * Parses JSON via `responseConstraint`; runtime shape is not validated — `T` is caller intent only.
@@ -25,7 +28,6 @@ export type BrowserAiSession = {
     schema: Record<string, unknown>,
     options?: Omit<BrowserAiPromptOptions, 'responseConstraint'>
   ) => Promise<T>;
-  destroy: () => void;
 };
 
 async function probeBrowserAiAvailability(): Promise<BrowserAiAvailability> {

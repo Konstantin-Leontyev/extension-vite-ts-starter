@@ -1,3 +1,4 @@
+// TODO: ручное ревью — ui/table/table-cell/index.tsx
 import { type ComponentPropsWithRef } from 'react';
 
 import { StyledTableCell, type TableCellStyleProps } from './table-cell.styles';
@@ -9,7 +10,7 @@ type TableCellProps = TableCellStyleProps & {
   scope?: 'col' | 'colgroup' | 'row' | 'rowgroup';
 } & Omit<
     ComponentPropsWithRef<'td'>,
-    keyof TableCellStyleProps | 'className' | 'scope' | 'style'
+    'className' | 'scope' | 'style' | keyof TableCellStyleProps
   >;
 
 export function TableCell({ head, ...props }: TableCellProps) {

@@ -1,3 +1,5 @@
+// TODO: ручное ревью — services/browser-ai/index.ts
+
 export { hasBrowserAiSupport } from './capability';
 export {
   BrowserAiAbortedError,
