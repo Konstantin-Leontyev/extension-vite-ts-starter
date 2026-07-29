@@ -14,6 +14,7 @@
  *  - `src/ui/checkbox/checkbox.styles.ts` — подставляет рамку с тенью бокса
  *  - styles-файлы контролов с режимом рамки, например Input, RoundButton,
  *    SegmentButton и DateRangeInput — подставляют переключаемое кольцо контрола
+ *  - `src/ui/listbox/listbox.styles.ts` — подставляет постоянное кольцо триггера
  *  - `src/ui/toast/toast.styles.ts` — подставляет постоянное кольцо вне layout-box,
  *    удерживая инвариант однострочного бокса
  */

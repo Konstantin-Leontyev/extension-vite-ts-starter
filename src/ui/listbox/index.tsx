@@ -386,11 +386,11 @@ function applyListboxPanelPosition(
 }
 
 /**
- * focusListboxPanelInitial — переводит фокус на выбранную или первую доступную опцию.
+ * handleOpenFocus — переводит фокус на выбранную или первую доступную опцию.
  *
  * @param panel элемент панели
  */
-function focusListboxPanelInitial(panel: HTMLElement): void {
+function handleOpenFocus(panel: HTMLElement): void {
   const selectedOption = panel.querySelector<HTMLElement>(
     'li[aria-selected="true"] button:not([disabled])'
   );
@@ -511,7 +511,7 @@ export function Listbox({
     onChange?.(multiple ? next : (next[0] ?? ''));
   }
 
-  function toggleOption(option: ListboxOption): void {
+  function handleOptionToggle(option: ListboxOption): void {
     if (disabled || option.disabled) {
       return;
     }
@@ -575,7 +575,7 @@ export function Listbox({
               inverted
               sizePreset={sizePreset}
               onChange={() => {
-                toggleOption(option);
+                handleOptionToggle(option);
                 (document.activeElement as HTMLElement | null)?.blur();
               }}
             />
@@ -594,14 +594,16 @@ export function Listbox({
           shape={shape}
           sizePreset={sizePreset}
           type="button"
-          onClick={() => toggleOption(option)}
+          onClick={() => handleOptionToggle(option)}
         >
           <Text data-slot="label" ellipsis sizePreset={textSizePreset}>
             {option.label}
           </Text>
           {isSelected && (
             <StyledListboxCheck data-slot="check">
-              <CheckIcon />
+              <Icon sizePreset={sizePreset}>
+                <CheckIcon />
+              </Icon>
             </StyledListboxCheck>
           )}
         </StyledListboxOptionButton>
@@ -683,7 +685,7 @@ export function Listbox({
         }}
         returnFocusRef={triggerRef}
         onDismiss={handleClose}
-        onOpenFocus={focusListboxPanelInitial}
+        onOpenFocus={handleOpenFocus}
       >
         <StyledListboxPanel
           aria-multiselectable={multiple || undefined}

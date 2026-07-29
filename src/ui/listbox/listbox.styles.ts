@@ -4,11 +4,12 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `ListboxStyleProps` и `ListboxSurfaceStyleProps`
- * 2. Предоставить функцию `getListboxTextSize`
- * 3. Предоставить styled-узлы `StyledListboxRoot`, `StyledListboxTrigger`,
+ * 2. Хранить максимум видимых строк панели в `LISTBOX_PANEL_MAX_OPTION_ROWS`
+ * 3. Предоставить функцию `getListboxTextSize`
+ * 4. Предоставить styled-узлы `StyledListboxRoot`, `StyledListboxTrigger`,
  *    `StyledListboxPanel`, `StyledListboxOptionButton`, `StyledListboxCheck`
  *    и `StyledListboxOptionRow`
- * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/listbox/index.tsx` — собирает компонент Listbox
@@ -17,6 +18,7 @@
 import styled from 'styled-components';
 
 import { getPortalPanelStyles } from '@ui/anchored-portal';
+import { getControlBorderStyles } from '@ui/border';
 import {
   ICON_SETTING_PROP_NAMES,
   getIconSectionSeamStyles,
@@ -84,21 +86,6 @@ type ListboxSurfaceStyleProps = {
 export type ListboxStyleProps = LayoutProps & ListboxSurfaceStyleProps;
 
 /**
- * LISTBOX_SURFACE_PROP_NAMES — объединяет имена настроек иконки и пропсов
- * стилизации поверхности Listbox.
- */
-const LISTBOX_SURFACE_PROP_NAMES = new Set<string>([
-  ...ICON_SETTING_PROP_NAMES,
-  'shape',
-  'sizePreset',
-]);
-
-/**
- * LISTBOX_BOX_PROP_NAMES — хранит имена пропсов стилизации строки и панели Listbox.
- */
-const LISTBOX_BOX_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
-
-/**
  * getListboxRootStyles — возвращает CSS-правила для корня `StyledListboxRoot`:
  * раскладку, зазор, ширину и подъём слоя при открытой панели.
  *
@@ -133,15 +120,27 @@ export const StyledListboxRoot = styled.div.withConfig({
 `;
 
 /**
+ * LISTBOX_SURFACE_PROP_NAMES — объединяет имена настроек иконки и пропсов
+ * стилизации поверхности Listbox.
+ */
+const LISTBOX_SURFACE_PROP_NAMES = new Set<string>([
+  ...ICON_SETTING_PROP_NAMES,
+  'shape',
+  'sizePreset',
+]);
+
+/**
  * getListboxTriggerStyles — возвращает CSS-правила для узла `StyledListboxTrigger`:
- * габариты, рамку, заливку, тень, раскладку лейбла, шов и канал состояний
- * секции шеврона. Статику секции красит внутренний Icon своими пропсами.
+ * габариты, рамку и тень через `getControlBorderStyles`, заливку, раскладку лейбла,
+ * шов и канал состояний секции шеврона. Статику секции красит внутренний Icon
+ * своими пропсами.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты пропсов
- * 2. Собирает габариты триггера, заливку, рамку и тень
+ * 2. Собирает габариты триггера, заливку, рамку и тень через `getControlBorderStyles`
  * 3. Кладёт трек, шов и канал секции через хелперы `@ui/icon`
- * 4. На наведении триггера подсвечивается только индикатор — шеврон не
+ * 4. На `:not(:disabled):hover` и `:focus-visible` выставляет
+ *    `--icon-state-background` — подсвечивается только индикатор, шеврон не
  *    самостоятельное действие
  *
  * @param props пропсы поверхности и тема
@@ -170,8 +169,7 @@ function getListboxTriggerStyles(
     'overflow: hidden;',
     'text-align: start;',
     `background-color: ${theme.colors.surface};`,
-    `border: 1px solid ${theme.colors.border};`,
-    `box-shadow: ${theme.shadow.surface};`,
+    getControlBorderStyles(theme),
     `&[data-open='true'] { visibility: hidden; }`,
     `[data-slot='label'] {`,
     'min-inline-size: 0;',
@@ -179,6 +177,9 @@ function getListboxTriggerStyles(
     `}`,
     getIconSectionSeamStyles({ borderColor: theme.colors.border }),
     `&:not(:disabled):hover {`,
+    `--icon-state-background: ${stateBackground};`,
+    `}`,
+    `&:focus-visible {`,
     `--icon-state-background: ${stateBackground};`,
     `}`,
   ];
@@ -191,7 +192,8 @@ function getListboxTriggerStyles(
  * Базируется на `<button>` и принимает пропсы из `ListboxSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getListboxTriggerStyles` — габариты, рамка, заливка, тень, лейбл и секция шеврона
+ *  - `getListboxTriggerStyles` — габариты, рамка и тень через `getControlBorderStyles`,
+ *    заливка, лейбл и секция шеврона
  *
  * Поверхность шеврона — правило по `[data-slot='icon']`.
  * При открытой панели триггер скрывается через `visibility: hidden`, чтобы панель
@@ -204,13 +206,25 @@ export const StyledListboxTrigger = styled.button.withConfig({
 `;
 
 /**
+ * LISTBOX_BOX_PROP_NAMES — хранит имена пропсов стилизации строки и панели Listbox.
+ */
+const LISTBOX_BOX_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
+
+/**
+ * LISTBOX_PANEL_MAX_OPTION_ROWS — задаёт максимум видимых строк опций в панели.
+ * Используется в `getListboxPanelStyles` для `max-block-size`.
+ */
+const LISTBOX_PANEL_MAX_OPTION_ROWS = 6;
+
+/**
  * getListboxPanelStyles — возвращает CSS-правила для узла `StyledListboxPanel`:
- * фиксированное положение, ограничение высоты шестью строками, прокрутку,
- * заливку, рамку, тень, радиус и кольцо фокуса.
+ * фиксированное положение, ограничение высоты через `LISTBOX_PANEL_MAX_OPTION_ROWS`,
+ * прокрутку, заливку, рамку, тень, радиус и кольцо фокуса.
  *
  * Как работает:
  * 1. Берёт тему, подставляет дефолты `shape` и `sizePreset`
- * 2. Собирает позицию, z-index и `max-block-size` в шесть строк опции с прокруткой
+ * 2. Собирает позицию, z-index и `max-block-size` по `LISTBOX_PANEL_MAX_OPTION_ROWS`
+ *    с прокруткой
  * 3. Красит заливку, рамку, тень, радиус и кольцо фокуса
  *
  * @param props пропсы формы, размера и тема
@@ -227,7 +241,7 @@ function getListboxPanelStyles(
       theme,
       borderRadius: resolveListboxBlockRadius(shape, sizePreset),
     }),
-    `max-block-size: calc(${getMinBlockSize(sizePreset)} * 6);`,
+    `max-block-size: calc(${getMinBlockSize(sizePreset)} * ${LISTBOX_PANEL_MAX_OPTION_ROWS});`,
     'overflow: hidden auto;',
   ];
 
@@ -338,7 +352,7 @@ export const StyledListboxOptionButton = styled.button.withConfig({
 
 /**
  * getListboxCheckStyles — возвращает CSS-правила для узла `StyledListboxCheck`:
- * размер глифа галочки и акцентный цвет.
+ * слой над подсветкой и акцентный цвет. Окно глифа создаёт внутренний Icon.
  *
  * @param props объект с текущей темой
  * @returns CSS-правила, каждое с новой строки
@@ -349,8 +363,6 @@ function getListboxCheckStyles(props: { theme: AppTheme }): string {
   const styles = [
     'position: relative;',
     'z-index: 1;',
-    `inline-size: ${getSpacingValue(20)};`,
-    `block-size: ${getSpacingValue(20)};`,
     `color: ${theme.colors.primary};`,
   ];
 
@@ -362,7 +374,7 @@ function getListboxCheckStyles(props: { theme: AppTheme }): string {
  * Базируется на `<span>`.
  *
  * Генерация стилей:
- *  - `getListboxCheckStyles` — размер и цвет галочки
+ *  - `getListboxCheckStyles` — слой и цвет галочки
  */
 export const StyledListboxCheck = styled.span`
   ${(props) => getListboxCheckStyles(props)}
