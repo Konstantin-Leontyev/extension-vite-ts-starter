@@ -156,7 +156,6 @@ function BrowserAiSmokeProbeActive() {
       {state.phase === 'downloading' && (
         <ProgressBar
           aria-labelledby={SMOKE_PROBE_TITLE_ID}
-          showText={true}
           value={state.downloadRatio}
         />
       )}

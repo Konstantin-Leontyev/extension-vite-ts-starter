@@ -42,7 +42,7 @@ import {
  * DEFAULT_PROGRESS_BAR_SHOW_TEXT — задаёт видимость подписи с процентом по умолчанию.
  * Используется, когда вызывающий код не передал проп `showText`.
  */
-const DEFAULT_PROGRESS_BAR_SHOW_TEXT = false;
+const DEFAULT_PROGRESS_BAR_SHOW_TEXT = true;
 
 /**
  * DEFAULT_PROGRESS_BAR_TEXT_TONE — задаёт тон подписи по умолчанию.
@@ -73,7 +73,7 @@ type ProgressBarProps = ProgressBarStyleProps & {
  *
  * @example
  * <ProgressBar value={0.75} />
- * <ProgressBar value={0.5} showText tone="success" />
+ * <ProgressBar value={0.5} tone="success" />
  */
 function ProgressBar({
   'aria-label': ariaLabel,
