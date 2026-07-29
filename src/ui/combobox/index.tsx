@@ -62,7 +62,6 @@ import {
   StyledComboboxOptionIcon,
   StyledComboboxPanel,
   StyledComboboxRoot,
-  StyledComboboxSearchRow,
   StyledComboboxTrigger,
   StyledComboboxValue,
   getComboboxTextSize,
@@ -72,6 +71,7 @@ import {
 
 /**
  * MIN_VISIBLE_OPTION_ROWS — задаёт минимум видимых строк списка в панели.
+ * Используется в `applyComboboxPanelPosition` для расчёта минимальной высоты панели.
  */
 const MIN_VISIBLE_OPTION_ROWS = 4;
 
@@ -222,13 +222,13 @@ function findEnabledIndex(
  * @param trigger элемент-триггер
  * @param panel элемент панели
  * @param optionCount число опций в списке
- * @param searchRowHeight высота строки поиска
+ * @param searchInputHeight высота поля поиска
  */
 function applyComboboxPanelPosition(
   trigger: HTMLElement,
   panel: HTMLElement,
   optionCount: number,
-  searchRowHeight: number | undefined
+  searchInputHeight: number | undefined
 ): void {
   const triggerRect = trigger.getBoundingClientRect();
   const rowHeight = triggerRect.height;
@@ -237,7 +237,7 @@ function applyComboboxPanelPosition(
     window.innerWidth - triggerRect.width - PORTAL_VIEWPORT_EDGE_INSET
   );
   const left = Math.min(Math.max(PORTAL_VIEWPORT_EDGE_INSET, triggerRect.left), maxLeft);
-  const searchHeight = searchRowHeight ?? rowHeight;
+  const searchHeight = searchInputHeight ?? rowHeight;
   const reservedRows = Math.min(MIN_VISIBLE_OPTION_ROWS, Math.max(1, optionCount));
   const minPanelHeight = searchHeight + reservedRows * rowHeight;
 
@@ -302,7 +302,7 @@ export function Combobox({
   );
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const searchRowRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const listId = useId();
   const triggerId = useId();
   const { handleClose, handleOpen, isOpen, panelRef } =
@@ -523,7 +523,7 @@ export function Combobox({
               anchor,
               panel,
               options.length,
-              searchRowRef.current?.offsetHeight
+              searchInputRef.current?.offsetHeight
             ),
           layoutDeps: [filtered.length, options.length],
         }}
@@ -537,21 +537,20 @@ export function Combobox({
           sizePreset={sizePreset}
           onKeyDown={handlePanelKeyDown}
         >
-          <StyledComboboxSearchRow ref={searchRowRef}>
-            <Input
-              aria-activedescendant={activeOptionId}
-              aria-controls={listId}
-              aria-expanded
-              placeholder={searchPlaceholder}
-              reserveErrorSpace={false}
-              role="combobox"
-              shape={shape}
-              sizePreset={sizePreset}
-              type="search"
-              value={query}
-              onChange={handleQueryChange}
-            />
-          </StyledComboboxSearchRow>
+          <Input
+            aria-activedescendant={activeOptionId}
+            aria-controls={listId}
+            aria-expanded
+            placeholder={searchPlaceholder}
+            ref={searchInputRef}
+            reserveErrorSpace={false}
+            shape={shape}
+            showBorder={false}
+            sizePreset={sizePreset}
+            type="search"
+            value={query}
+            onChange={handleQueryChange}
+          />
 
           <ScrollPort paddingBlock={4} paddingInlineEnd={8} veilInsetInline={0}>
             <StyledComboboxList
@@ -604,7 +603,9 @@ export function Combobox({
                       </Text>
                       {isSelected && (
                         <StyledComboboxCheck data-slot="check">
-                          <CheckIcon />
+                          <Icon sizePreset={sizePreset}>
+                            <CheckIcon />
+                          </Icon>
                         </StyledComboboxCheck>
                       )}
                     </StyledComboboxOption>

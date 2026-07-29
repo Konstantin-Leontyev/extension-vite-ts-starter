@@ -106,7 +106,8 @@ const INPUT_CONTROL_PROP_NAMES = new Set<string>([
  * 3. Сбрасывает layout-рамку через `border: none` и красит фон: при рамке —
  *    `surface`, без рамки — `transparent`. При `showBorder` кладёт кольцо
  *    `0 0 0 1px` цвета `border` и тень `shadow.surface` одним `box-shadow` через
- *    `getControlBorderStyles`. Без рамки хелпер не пишет CSS-правило. Красит
+ *    `getControlBorderStyles`. Без рамки хелпер не пишет CSS-правило; на
+ *    `:focus-visible` снимает `outline` глобального кольца из `@ui/reset`. Красит
  *    плейсхолдер тоном `muted`
  * 4. При переданном `textAlign` добавляет выравнивание значения
  * 5. При `textItalic` добавляет курсив значения
@@ -138,6 +139,10 @@ function getInputControlStyles(
     getControlBorderStyles(theme, showBorder),
     `&::placeholder { color: ${theme.colors.muted}; }`,
   ];
+
+  if (!showBorder) {
+    styles.push('&:focus-visible {', 'outline: none;', '}');
+  }
 
   if (textAlign !== undefined) {
     styles.push(`text-align: ${textAlign};`);
