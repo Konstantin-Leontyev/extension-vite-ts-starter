@@ -4,12 +4,12 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `ScrollPortStyleProps`
- * 2. Предоставить дефолты `DEFAULT_SCROLL_PORT_PADDING_INLINE_END` и
- *    `DEFAULT_SCROLL_PORT_SHOW_VEIL`
+ * 2. Предоставить дефолт `DEFAULT_SCROLL_PORT_SHOW_VEIL`
  * 3. Предоставить функции `resolveScrollPortPaddingEdge` и
  *    `omitScrollPortRoutedPaddingProps`
  * 4. Предоставить styled-узлы `StyledScrollPortRoot`, `StyledScrollPortContainer`
  *    и `StyledScrollPortViewport`
+ * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/scroll-port/index.tsx` — собирает компонент ScrollPort
@@ -20,48 +20,16 @@ import styled from 'styled-components';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { getSpacingValue, type SpacingProps, type SpacingValue } from '@ui/spacing';
 
-/**
- * VEIL_BLOCK_SIZE — задаёт высоту градиентной вуали на краях прокрутки.
- * Используется в `getScrollPortRootStyles`.
- */
-const VEIL_BLOCK_SIZE: SpacingValue = 32;
-
-/**
- * DEFAULT_SCROLL_PORT_VEIL_INSET_INLINE — задаёт выступ вуали за край по умолчанию.
- * Используется, когда вызывающий код не передал проп `veilInsetInline`.
- */
-const DEFAULT_SCROLL_PORT_VEIL_INSET_INLINE: SpacingValue = 4;
-
-/**
- * SCROLLBAR_TRACK_WIDTH — задаёт ширину трека скроллбара.
- * Используется в `resolveScrollPortTrackMarginInlineEnd`.
- */
-const SCROLLBAR_TRACK_WIDTH: SpacingValue = 8;
+export { splitLayoutProps } from '@ui/layout';
 
 /**
  * ScrollPortStyleProps — представляет пропсы стилизации ScrollPort и layout-пропсы.
- * `padding*` раскладываются во вьюпорт и желоб скроллбара. Остальные layout-пропсы —
- * на корень. `paddingInlineEnd` одновременно задаёт отступ контента и смещение трека.
+ * `paddingInlineEnd` одновременно задаёт отступ содержимого и смещение трека скроллбара.
  *
  * @property showVeil — включает градиентные вуали на краях при прокрутке
  * @property veilInsetInline — выступ вуали за inline-край. Перекрывает тень в отступе карточки
  */
 export type ScrollPortStyleProps = LayoutProps & {
-  showVeil?: boolean;
-  veilInsetInline?: SpacingValue;
-};
-
-/**
- * ScrollPortRootStyleProps — представляет пропсы стилизации корня ScrollPort.
- * Публичный `paddingInlineEnd` на корне переименован в `gutterInlineEnd`: питает
- * смещение трека и край вуали, а не CSS `padding-inline-end` через `getLayoutStyles`.
- *
- * @property gutterInlineEnd — ширина правого отступа под трек скроллбара и зазор вуали
- * @property showVeil — включает градиентные вуали на краях при прокрутке
- * @property veilInsetInline — выступ вуали за inline-край
- */
-type ScrollPortRootStyleProps = {
-  gutterInlineEnd: SpacingValue;
   showVeil?: boolean;
   veilInsetInline?: SpacingValue;
 };
@@ -81,32 +49,23 @@ const SCROLL_PORT_ROUTED_PADDING_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * SCROLL_PORT_ROOT_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации
- * корня ScrollPort.
- */
-const SCROLL_PORT_ROOT_PROP_NAMES = new Set<string>([
-  ...LAYOUT_PROP_NAMES,
-  'gutterInlineEnd',
-  'showVeil',
-  'veilInsetInline',
-]);
-
-/**
  * DEFAULT_SCROLL_PORT_PADDING_INLINE_END — задаёт отступ inline-end и желоб по умолчанию.
  * Используется, когда вызывающий код не передал проп `paddingInlineEnd`, `paddingInline`
  * или `padding`.
  */
-export const DEFAULT_SCROLL_PORT_PADDING_INLINE_END: SpacingValue = 16;
+const DEFAULT_SCROLL_PORT_PADDING_INLINE_END: SpacingValue = 16;
 
 /**
  * DEFAULT_SCROLL_PORT_PADDING_INLINE_START — задаёт отступ inline-start вьюпорта по умолчанию.
- * Используется, когда вызывающий код не передал проп `paddingInlineStart`.
+ * Используется, когда вызывающий код не передал проп `paddingInlineStart`, `paddingInline`
+ * или `padding`.
  */
 const DEFAULT_SCROLL_PORT_PADDING_INLINE_START: SpacingValue = 4;
 
 /**
  * DEFAULT_SCROLL_PORT_PADDING_BLOCK_START — задаёт отступ block-start вьюпорта по умолчанию.
- * Используется, когда вызывающий код не передал проп `paddingBlockStart`.
+ * Используется, когда вызывающий код не передал проп `paddingBlockStart`, `paddingBlock`
+ * или `padding`.
  */
 const DEFAULT_SCROLL_PORT_PADDING_BLOCK_START: SpacingValue = 0;
 
@@ -115,12 +74,6 @@ const DEFAULT_SCROLL_PORT_PADDING_BLOCK_START: SpacingValue = 0;
  * Запас под тень задаёт вызывающий код через `paddingBlockEnd` или `paddingBlock`.
  */
 const DEFAULT_SCROLL_PORT_PADDING_BLOCK_END: SpacingValue = 0;
-
-/**
- * DEFAULT_SCROLL_PORT_SHOW_VEIL — задаёт видимость вуали по умолчанию.
- * Используется, когда вызывающий код не передал проп `showVeil`.
- */
-export const DEFAULT_SCROLL_PORT_SHOW_VEIL = true;
 
 /**
  * resolveScrollPortPaddingEdge — вычисляет отступ края вьюпорта с каскадом шорткатов
@@ -187,6 +140,56 @@ export function omitScrollPortRoutedPaddingProps(props: LayoutProps): LayoutProp
 
   return rootLayoutProps as LayoutProps;
 }
+
+/**
+ * ScrollPortRootStyleProps — представляет пропсы стилизации корня ScrollPort.
+ * Публичный `paddingInlineEnd` на корне переименован в `gutterInlineEnd`: питает
+ * смещение трека и край вуали, а не CSS `padding-inline-end` через `getLayoutStyles`.
+ *
+ * @property gutterInlineEnd — ширина правого отступа под трек скроллбара и зазор вуали
+ * @property showVeil — включает градиентные вуали на краях при прокрутке
+ * @property veilInsetInline — выступ вуали за inline-край
+ */
+type ScrollPortRootStyleProps = {
+  gutterInlineEnd: SpacingValue;
+  showVeil?: boolean;
+  veilInsetInline?: SpacingValue;
+};
+
+/**
+ * SCROLL_PORT_ROOT_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации
+ * корня ScrollPort.
+ */
+const SCROLL_PORT_ROOT_PROP_NAMES = new Set<string>([
+  ...LAYOUT_PROP_NAMES,
+  'gutterInlineEnd',
+  'showVeil',
+  'veilInsetInline',
+]);
+
+/**
+ * DEFAULT_SCROLL_PORT_SHOW_VEIL — задаёт видимость вуали по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showVeil`.
+ */
+export const DEFAULT_SCROLL_PORT_SHOW_VEIL = true;
+
+/**
+ * DEFAULT_SCROLL_PORT_VEIL_INSET_INLINE — задаёт выступ вуали за край по умолчанию.
+ * Используется, когда вызывающий код не передал проп `veilInsetInline`.
+ */
+const DEFAULT_SCROLL_PORT_VEIL_INSET_INLINE: SpacingValue = 4;
+
+/**
+ * VEIL_BLOCK_SIZE — задаёт высоту градиентной вуали на краях прокрутки.
+ * Используется в `getScrollPortRootStyles`.
+ */
+const VEIL_BLOCK_SIZE: SpacingValue = 32;
+
+/**
+ * SCROLLBAR_TRACK_WIDTH — задаёт ширину трека скроллбара.
+ * Используется в `resolveScrollPortTrackMarginInlineEnd`.
+ */
+const SCROLLBAR_TRACK_WIDTH: SpacingValue = 8;
 
 /**
  * resolveScrollPortTrackMarginInlineEnd — вычисляет значение для CSS-свойства
@@ -299,13 +302,12 @@ export const StyledScrollPortRoot = styled.div.withConfig({
  * Базируется на `<div>` между корнем и вьюпортом прокрутки.
  *
  * Встроенные стили:
- *  - `min-inline-size: 0` — сжимается по строчной оси во flex/grid-родителе
- *  - `min-block-size: 0` — сжимается по блочной оси во flex/grid-родителе
+ *  - `min-inline-size: 0` — сжимается по строчной оси: неявная колонка корня — `auto`,
+ *    без обнуления автоминимум не даёт ужаться уже контента
  *  - `padding-block` — вертикальный зазор между корнем и вьюпортом
  */
 export const StyledScrollPortContainer = styled.div`
   min-inline-size: 0;
-  min-block-size: 0;
   padding-block: ${getSpacingValue(4)};
 `;
 
@@ -348,8 +350,6 @@ function getScrollPortViewportStyles(props: ScrollPortViewportStyleProps): strin
 
   const styles = [
     'block-size: 100%;',
-    'min-block-size: 0;',
-    'min-inline-size: 0;',
     'overflow: auto;',
     'overscroll-behavior: contain;',
     `padding-inline: ${getSpacingValue(paddingInlineStart)} ${getSpacingValue(paddingInlineEnd)};`,

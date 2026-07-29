@@ -28,8 +28,6 @@ import {
   type Ref,
 } from 'react';
 
-import { splitLayoutProps } from '@ui/layout';
-
 import {
   DEFAULT_SCROLL_PORT_SHOW_VEIL,
   StyledScrollPortContainer,
@@ -37,6 +35,7 @@ import {
   StyledScrollPortViewport,
   omitScrollPortRoutedPaddingProps,
   resolveScrollPortPaddingEdge,
+  splitLayoutProps,
   type ScrollPortStyleProps,
 } from './scroll-port.styles';
 
@@ -210,7 +209,6 @@ export function ScrollPort({
       showVeil={showVeil}
       veilInsetInline={veilInsetInline}
       {...rootLayoutProps}
-      {...restProps}
     >
       <StyledScrollPortContainer>
         <StyledScrollPortViewport
@@ -219,6 +217,7 @@ export function ScrollPort({
           paddingInlineEnd={paddingInlineEnd}
           paddingInlineStart={paddingInlineStart}
           ref={setViewportRef}
+          {...restProps}
         >
           {children}
         </StyledScrollPortViewport>
