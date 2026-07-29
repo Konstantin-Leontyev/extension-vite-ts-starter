@@ -143,7 +143,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
         dismissZoneRefs={[triggerRef, panelRef]}
         open={isOpen}
         panelRef={panelRef}
-        positioning={{
+        positionStrategy={{
           anchorRef: triggerRef,
           apply: applyProfileMenuPanelPosition,
         }}

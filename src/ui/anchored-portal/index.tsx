@@ -7,7 +7,7 @@
  * Поддерживает:
  *  - открытие и закрытие панели через проп `open`
  *  - содержимое панели через проп `children`
- *  - позиционирование относительно якоря через проп `positioning`
+ *  - позиционирование относительно якоря через проп `positionStrategy`
  *  - зоны, клик вне которых закрывает панель, через проп `dismissZoneRefs`
  *  - обработчик закрытия панели через проп `onDismiss`
  *  - независимое управление закрытием через проп `dismissActive`
@@ -19,7 +19,8 @@
  * Основные задачи:
  * 1. Экспортировать компонент AnchoredPortal
  * 2. Типизировать пропсы через `AnchoredPortalProps`
- * 3. Реэкспортировать `getPortalPanelStyles` — хром панели из `anchored-portal.styles.ts`
+ * 3. Реэкспортировать `getPortalPanelStyles` — хром панели из
+ *    `src/ui/anchored-portal/anchored-portal.styles.ts`
  *
  * Потребители:
  *  - контролы, например Combobox, Listbox, DateRangeInput и RangeInput —
@@ -56,7 +57,7 @@ const DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS: readonly unknown[] = [];
  * @property open — включает видимость панели
  * @property openFocusDeps — зависимости для перефокуса при смене содержимого панели
  * @property panelRef — ссылка на DOM-узел панели
- * @property positioning — стратегия позиционирования относительно якоря
+ * @property positionStrategy — стратегия позиционирования относительно якоря
  * @property returnFocusRef — ссылка на элемент для возврата фокуса при закрытии
  */
 type AnchoredPortalProps = {
@@ -68,7 +69,7 @@ type AnchoredPortalProps = {
   open: boolean;
   openFocusDeps?: readonly unknown[];
   panelRef: RefObject<HTMLElement | null>;
-  positioning?: AnchoredPortalPositionStrategy;
+  positionStrategy?: AnchoredPortalPositionStrategy;
   returnFocusRef?: RefObject<HTMLElement | null>;
 };
 
@@ -80,7 +81,7 @@ type AnchoredPortalProps = {
  *   dismissZoneRefs={[triggerRef, panelRef]}
  *   open={open}
  *   panelRef={panelRef}
- *   positioning={{
+ *   positionStrategy={{
  *     anchorRef: triggerRef,
  *     apply: matchTriggerRect,
  *   }}
@@ -99,7 +100,7 @@ export function AnchoredPortal({
   open,
   openFocusDeps = DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS,
   panelRef,
-  positioning,
+  positionStrategy,
   returnFocusRef,
 }: AnchoredPortalProps) {
   const dismissEnabled = dismissActive ?? open;
@@ -119,7 +120,7 @@ export function AnchoredPortal({
   useAnchoredPortalPosition({
     active: open,
     panelRef,
-    strategy: positioning,
+    strategy: positionStrategy,
   });
 
   const onOpenFocusEvent = useEffectEvent((panel: HTMLElement) => {

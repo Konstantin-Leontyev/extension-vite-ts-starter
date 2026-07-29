@@ -360,7 +360,7 @@ export function DateRangeInput({
         open={isOpen}
         openFocusDeps={[activeDay, viewMonth]}
         panelRef={panelRef}
-        positioning={{
+        positionStrategy={{
           anchorRef: triggerRowRef,
           apply: placeCalendarPanel,
           layoutDeps: [viewMonth],

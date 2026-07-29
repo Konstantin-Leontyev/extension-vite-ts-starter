@@ -675,7 +675,7 @@ export function Listbox({
         open={isOpen}
         openFocusDeps={[panelOrder, selectedIndex]}
         panelRef={panelRef}
-        positioning={{
+        positionStrategy={{
           anchorRef: triggerRef,
           apply: (anchor, panel) =>
             applyListboxPanelPosition(anchor, panel, panelOrderRef.current),

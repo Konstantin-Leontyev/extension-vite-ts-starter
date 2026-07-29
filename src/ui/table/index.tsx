@@ -863,7 +863,7 @@ export function Table<Row>(props: TableProps<Row>) {
       dismissZoneRefs={[panelRef]}
       open={showComposePanel}
       panelRef={panelRef}
-      positioning={{
+      positionStrategy={{
         anchorRef: composeAnchorRef,
         apply: (anchor, panel) => {
           if (composeRowSource === undefined) {
@@ -928,7 +928,7 @@ export function Table<Row>(props: TableProps<Row>) {
         dismissZoneRefs={[editPanelRef]}
         open={showEditPanel}
         panelRef={editPanelRef}
-        positioning={{
+        positionStrategy={{
           anchorRef: editRowAnchorRef,
           apply: applyTableEditPanelPosition,
           layoutDeps: [

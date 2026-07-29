@@ -516,7 +516,7 @@ export function Combobox({
         dismissZoneRefs={[rootRef, panelRef]}
         open={isOpen}
         panelRef={panelRef}
-        positioning={{
+        positionStrategy={{
           anchorRef: triggerRef,
           apply: (anchor, panel) =>
             applyComboboxPanelPosition(

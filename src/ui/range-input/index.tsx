@@ -669,7 +669,7 @@ export function RangeInput({
         open={isOpen}
         openFocusDeps={[fromInputId]}
         panelRef={panelRef}
-        positioning={{
+        positionStrategy={{
           anchorRef: triggerRowRef,
           apply: matchTriggerRect,
           layoutDeps: [presets?.length],
