@@ -18,8 +18,8 @@
  * 1. Экспортировать компонент Checkbox
  * 2. Типизировать пропсы через `CheckboxProps`
  * 3. Разделять layout-пропсы между корнем и боксом в обычном режиме
- * 4. Реэкспортировать пресеты `checkboxSizePresets`, перечни марок и мост размера текста
- *    `getCheckboxTextSize`
+ * 4. Реэкспортировать пресеты `checkboxSizePresets`, перечни марок, типы `CheckboxCheckedMark`
+ *    и `CheckboxUncheckedMark` и мост размера текста `getCheckboxTextSize`
  *
  * Потребители:
  *  - контролы и панели настроек витрины дизайн-системы, например FieldsetSettings и SwitchSettings —

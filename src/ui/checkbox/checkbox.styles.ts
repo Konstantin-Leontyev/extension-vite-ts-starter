@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 
+import { getBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
@@ -233,13 +234,13 @@ function markBackground(mark: string, iconSize: string): string {
 
 /**
  * getCheckboxControlStyles — возвращает CSS-правила для узла `StyledCheckboxControl`:
- * габариты, рамку, марки unchecked и checked.
+ * габариты, рамку с тенью, марки unchecked и checked.
  *
  * Как работает:
  * 1. Берёт тему, размер и марки, подставляет дефолт `inverted`
  * 2. При `inverted` красит checked-поле в `inverse` и марки в `primary` для
  *    подсветки строки, иначе — поле в `primary` и checked-марку в `inverse`
- * 3. Собирает габариты, рамку и фоновые марки unchecked и checked
+ * 3. Собирает габариты, рамку с тенью и фоновые марки unchecked и checked
  *
  * @param props пропсы стилизации бокса и тема
  * @returns CSS-правила, каждое с новой строки
@@ -269,9 +270,8 @@ function getCheckboxControlStyles(
     `block-size: ${size};`,
     'appearance: none;',
     `background-color: ${theme.colors.surface};`,
-    `border: 1px solid ${theme.colors.border};`,
+    getBorderStyles(theme),
     `border-radius: ${getSpacingValue(4)};`,
-    `box-shadow: ${theme.shadow.surface};`,
   ];
 
   if (uncheckedMark === 'plus') {
@@ -298,7 +298,7 @@ function getCheckboxControlStyles(
  * Базируется на `<input type="checkbox">` и поддерживает пропсы из `CheckboxStyleProps`.
  *
  * Генерация стилей:
- *  - `getCheckboxControlStyles` — габариты, рамка, марки состояний
+ *  - `getCheckboxControlStyles` — габариты, рамка с тенью, марки состояний
  *  - `getLayoutStyles` — отступы, позиционирование, размеры при рендере без обёртки
  */
 export const StyledCheckboxControl = styled.input.withConfig({
