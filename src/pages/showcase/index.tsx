@@ -309,7 +309,7 @@ const MODAL_INLINE_SIZE: Record<SizePreset, string> = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_INPUT_STATE: InputWidgetState = {
-  borderTone: 'default',
+  borderTone: 'neutral',
   disabled: false,
   error: '',
   errorAlign: 'center',
@@ -334,17 +334,17 @@ const DEFAULT_INPUT_STATE: InputWidgetState = {
 const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
   active: false,
   disabled: false,
-  iconFill: 'default',
+  iconFill: 'neutral',
   iconKey: 'search',
   iconPosition: 'end',
-  iconTone: 'default',
+  iconTone: 'neutral',
   shape: 'rounded',
   sizePreset: 'normal',
   text: 'Button',
   textItalic: false,
   textSize: getButtonTextSize('normal'),
-  textTone: 'default',
-  tone: 'default',
+  textTone: 'neutral',
+  tone: 'neutral',
   withIcon: false,
 };
 
@@ -353,11 +353,11 @@ const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_ICON_STATE: IconWidgetState = {
-  borderTone: 'default',
+  borderTone: 'neutral',
   disabled: false,
-  iconFill: 'default',
+  iconFill: 'neutral',
   iconKey: 'settings',
-  iconTone: 'default',
+  iconTone: 'neutral',
   padding: getIconPadding('normal'),
   shape: 'square',
   showBorder: false,
@@ -372,9 +372,9 @@ const DEFAULT_ICON_STATE: IconWidgetState = {
  */
 const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
   disabled: false,
-  iconFill: 'default',
+  iconFill: 'neutral',
   iconPosition: 'end',
-  iconTone: 'default',
+  iconTone: 'neutral',
   inlineCheckbox: false,
   label: 'Label:',
   multiple: false,
@@ -393,9 +393,9 @@ const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
 const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
   disabled: false,
   emptyMessage: 'Nothing found',
-  iconFill: 'default',
+  iconFill: 'neutral',
   iconPosition: 'end',
-  iconTone: 'default',
+  iconTone: 'neutral',
   label: 'Label:',
   placeholder: 'Select…',
   reserveErrorSpace: true,
@@ -415,13 +415,13 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   buttonShape: 'rounded',
   buttonSizePreset: 'normal',
   buttonText: 'Apply',
-  buttonTextTone: 'default',
+  buttonTextTone: 'neutral',
   buttonTone: 'primary',
   disabled: false,
   fromPlaceholder: 'From',
-  iconFill: 'default',
+  iconFill: 'neutral',
   iconPosition: 'end',
-  iconTone: 'default',
+  iconTone: 'neutral',
   inputShape: 'rounded',
   inputSizePreset: 'normal',
   label: 'Label:',
@@ -495,7 +495,7 @@ const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_FIELDSET_STATE: FieldsetWidgetState = {
-  borderTone: 'default',
+  borderTone: 'neutral',
   label: 'Label:',
   legendItalic: false,
   legendSizePreset: 'thin',
@@ -572,14 +572,14 @@ const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_TOAST_STATE: ToastWidgetState = {
-  borderTone: 'default',
+  borderTone: 'neutral',
   message: 'Very important message',
   showBorder: true,
   showShadow: true,
   sizePreset: 'normal',
   textItalic: false,
   textSize: getToastTextSize('normal'),
-  textTone: 'default',
+  textTone: 'neutral',
   tone: 'success',
 };
 
@@ -589,28 +589,28 @@ const DEFAULT_TOAST_STATE: ToastWidgetState = {
  */
 const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   centerDisabled: false,
-  centerIconFill: 'default',
+  centerIconFill: 'neutral',
   centerIconKey: 'settings',
   centerIconPosition: 'end',
   centerText: 'Change',
   centerTextTone: 'success',
-  centerTone: 'default',
+  centerTone: 'neutral',
   centerWithIcon: false,
   leftDisabled: false,
-  leftIconFill: 'default',
+  leftIconFill: 'neutral',
   leftIconKey: 'search',
   leftIconPosition: 'start',
   leftText: 'Select',
-  leftTextTone: 'default',
-  leftTone: 'default',
+  leftTextTone: 'neutral',
+  leftTone: 'neutral',
   leftWithIcon: false,
   rightDisabled: false,
-  rightIconFill: 'default',
+  rightIconFill: 'neutral',
   rightIconKey: 'close',
   rightIconPosition: 'end',
   rightText: 'Delete',
   rightTextTone: 'danger',
-  rightTone: 'default',
+  rightTone: 'neutral',
   rightWithIcon: false,
   segmentCount: '2',
   shape: 'rounded',
@@ -624,8 +624,8 @@ const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_TAG_STATE: TagWidgetState = {
-  borderTone: 'default',
-  dotTone: 'default',
+  borderTone: 'neutral',
+  dotTone: 'neutral',
   shape: 'pill',
   showBorder: true,
   showDot: true,
@@ -635,7 +635,7 @@ const DEFAULT_TAG_STATE: TagWidgetState = {
   text: 'Tag',
   textItalic: false,
   textSize: getTagTextSize('small'),
-  textTone: 'default',
+  textTone: 'neutral',
   tinted: false,
   tone: 'primary',
 };
@@ -680,7 +680,7 @@ const DEFAULT_MODAL_STATE: ModalWidgetState = {
  */
 const DEFAULT_CARD_STATE: CardWidgetState = {
   background: 'surface',
-  borderTone: 'default',
+  borderTone: 'neutral',
   headerActions: [
     {
       disabled: false,

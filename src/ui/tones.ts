@@ -13,7 +13,11 @@
  *    и `resolveVeilBackground`
  *
  * Потребители:
- *  - контролы, например Button, Tag и Toast — задают цвет через тон
+ *  - `@ui/border` — читает цвет рамки через `getToneColor`
+ *  - контролы, например Toast, Spinner, Switch, ProgressBar и Tag — читают цвет
+ *    темы через `getToneColor`
+ *  - контролы, например Button, Tag, Icon и SegmentButton — читают ключ цвета через
+ *    `getToneColorKey`
  *  - контролы, например Button, Tag, Icon и Table — смешивают цвета темы через
  *    `resolveColorMix`
  *  - `@ui/button` — читает доли смешения `BORDER_SURFACE_MIX_PERCENT` и
@@ -34,13 +38,13 @@ import { type AppTheme, type ThemeColors } from '@ui/theme';
  * TonePreset — представляет все доступные канонические тона.
  * Используется как основной тип для пропсов, связанных с цветовыми ролями.
  */
-export type TonePreset = 'danger' | 'default' | 'primary' | 'success' | 'warning';
+export type TonePreset = 'danger' | 'neutral' | 'primary' | 'success' | 'warning';
 
 /**
  * TONE_PRESETS — связывает канонические тона с ключами цвета в теме.
  *
  * Канон включает основные семантические роли:
- *  - `default` — нейтральный тон, цвет наследуется от родителя
+ *  - `neutral` — нейтральный тон, цвет наследуется от родителя
  *  - `danger`, `success`, `warning` — статусные цвета
  *  - `primary` — акцентный цвет
  *
@@ -49,7 +53,7 @@ export type TonePreset = 'danger' | 'default' | 'primary' | 'success' | 'warning
  */
 export const TONE_PRESETS = Object.freeze({
   danger: 'danger',
-  default: undefined,
+  neutral: undefined,
   primary: 'primary',
   success: 'success',
   warning: 'warning',
@@ -64,9 +68,10 @@ export const TONE_PRESET_KEYS = Object.freeze(Object.keys(TONE_PRESETS) as ToneP
 
 /**
  * DEFAULT_TONE — задаёт тон по умолчанию.
- * Используется, когда вызывающий код не передал проп `tone`.
+ * Используется, когда вызывающий код не передал проп `tone`, `iconTone` или
+ * `borderTone`.
  */
-export const DEFAULT_TONE: TonePreset = 'default';
+export const DEFAULT_TONE: TonePreset = 'neutral';
 
 /**
  * getToneColorKey — возвращает ключ цвета в теме для указанного тона.

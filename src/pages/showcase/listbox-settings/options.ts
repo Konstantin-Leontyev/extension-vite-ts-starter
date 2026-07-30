@@ -16,7 +16,7 @@ import { type ListboxOption } from '@ui/listbox';
  * Используется в превью Listbox витрины дизайн-системы.
  */
 export const LISTBOX_DEMO_OPTIONS: ListboxOption[] = [
-  { label: 'default', value: 'default' },
+  { label: 'neutral', value: 'neutral' },
   { label: 'primary', value: 'primary' },
   { label: 'success', value: 'success' },
   { label: 'warning', value: 'warning' },

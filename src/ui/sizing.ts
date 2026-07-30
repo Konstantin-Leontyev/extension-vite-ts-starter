@@ -16,28 +16,6 @@
  */
 
 /**
- * SizingProps — представляет пропсы размеров элемента.
- * Значения — произвольные CSS-значения, например `100%`, `max-content`, `min(360px, 50vh)`.
- * В отличие от `@ui/spacing`, размеры не ограничены фиксированной шкалой.
- * Названия соответствуют логическим CSS-свойствам и зависят от направления письма.
- *
- * @property blockSize — высота
- * @property inlineSize — ширина
- * @property maxBlockSize — максимальная высота
- * @property maxInlineSize — максимальная ширина
- * @property minBlockSize — минимальная высота
- * @property minInlineSize — минимальная ширина
- */
-export type SizingProps = {
-  blockSize?: string;
-  inlineSize?: string;
-  maxBlockSize?: string;
-  maxInlineSize?: string;
-  minBlockSize?: string;
-  minInlineSize?: string;
-};
-
-/**
  * SIZING_PROPERTIES — связывает имена пропсов с CSS-свойствами.
  * Необходим для динамической генерации CSS-стилей для каждого переданного пропса.
  *
@@ -54,7 +32,23 @@ const SIZING_PROPERTIES = {
   blockSize: 'block-size',
   minBlockSize: 'min-block-size',
   maxBlockSize: 'max-block-size',
-} as const satisfies Record<keyof SizingProps, string>;
+} as const;
+
+/**
+ * SizingProps — представляет пропсы размеров элемента.
+ * Имена свойств берутся из `SIZING_PROPERTIES`. Значения — произвольные CSS-значения,
+ * например `100%`, `max-content`, `min(360px, 50vh)`.
+ * В отличие от `@ui/spacing`, размеры не ограничены фиксированной шкалой.
+ * Названия соответствуют логическим CSS-свойствам и зависят от направления письма.
+ * Используется в `LayoutProps` для всех компонентов, поддерживающих размеры.
+ *
+ * Пример: `{ inlineSize: '100%', blockSize: '100%' }`.
+ * TypeScript проверит, что имена пропсов `inlineSize` и `blockSize` существуют
+ * в `SIZING_PROPERTIES`.
+ */
+export type SizingProps = {
+  [K in keyof typeof SIZING_PROPERTIES]?: string;
+};
 
 /**
  * SIZING_PROPERTY_NAMES — хранит имена всех пропсов из `SIZING_PROPERTIES`.

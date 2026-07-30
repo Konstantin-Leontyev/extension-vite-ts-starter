@@ -126,7 +126,7 @@ export type PositioningProps = {
  * Определяет способ обработки переданного значения:
  *  - `raw` — передаётся как есть
  *  - `inset` — допускает `auto` или ключ из `SPACING_VALUES`
- *  - `spacing` — только ключ из `SPACING_VALUES` через `getSpacingValue`
+ *  - `spacing` — только ключ из `SPACING_VALUES`, даёт длину шкалы в rem
  */
 type PositioningValueKind = 'inset' | 'raw' | 'spacing';
 
@@ -210,8 +210,8 @@ export const POSITIONING_PROPERTY_NAMES = new Set<string>(
  *
  * В зависимости от категории `kind`:
  *  - `raw` — возвращает значение как есть
- *  - `inset` — для `auto` возвращает `auto`, иначе преобразует через `getSpacingValue`
- *  - `spacing` — всегда преобразует через `getSpacingValue`
+ *  - `inset` — для `auto` возвращает `auto`, иначе длину шкалы в rem
+ *  - `spacing` — всегда возвращает длину шкалы в rem
  *
  * @param kind категория значения: `raw`, `inset` или `spacing`
  * @param value значение пропса
@@ -239,7 +239,8 @@ function resolvePropertyValue(
  * 1. Проходит по всем записям `POSITIONING_PROPERTIES`, где ключ — имя пропса,
  *    а значение — CSS-свойство и категория `kind`
  * 2. Для каждого пропса проверяет, передан ли он в `props`. Переданное значение
- *    преобразует через `resolvePropertyValue` и формирует CSS-правило вида `display: flex;`
+ *    приводит к CSS-значению по категории: как есть, `auto` или длина шкалы в rem —
+ *    и формирует CSS-правило вида `display: flex;` или `gap: 1rem;`
  * 3. Собирает такие правила в массив и склеивает через перенос строки
  * 4. Отдаёт результат для подстановки в CSS-шаблон styled-компонента
  *

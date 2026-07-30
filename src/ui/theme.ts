@@ -32,8 +32,8 @@ import './fonts/inter.css';
  * @property border — цвет рамок и разделителей
  * @property danger — цвет ошибок и опасных действий
  * @property default — основной цвет текста
- * @property focusOutline — цвет кольца фокуса
- * @property invalidOutline — цвет кольца для невалидных полей
+ * @property focusOutline — цвет `outline` фокуса
+ * @property invalidOutline — цвет `outline` для невалидных полей
  * @property inverse — контрастный текст на цветной заливке, например на кнопке или плашке
  * @property muted — второстепенный цвет текста
  * @property overlay — затемнение страницы под модальным слоем, например в `::backdrop`

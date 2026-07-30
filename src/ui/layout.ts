@@ -12,7 +12,8 @@
  * 4. Предоставить `splitLayoutProps` для разделения пропсов
  *
  * Потребители:
- *  - корневые `Styled*` компонентов — применяют `shouldForwardProp` и `getLayoutStyles`
+ *  - корневые `Styled*` компонентов — фильтруют layout-пропсы через `LAYOUT_PROP_NAMES`
+ *    и применяют `getLayoutStyles`
  *  - составные компоненты, например Input, Listbox и Stepper —
  *    разделяют пропсы через `splitLayoutProps`
  */
