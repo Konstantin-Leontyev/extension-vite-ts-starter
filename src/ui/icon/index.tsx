@@ -7,7 +7,9 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - форму через проп `shape`
- *  - рамку и тень через пропы `showBorder`, `showShadow` и `borderTone`
+ *  - рамку через проп `showBorder`
+ *  - тень через проп `showShadow`
+ *  - тон рамки через проп `borderTone`
  *  - канал hover через проп `showHover`
  *  - тон заливки окна через проп `iconTone`
  *  - тон глифа через проп `iconFill`
@@ -31,15 +33,14 @@
  *    показывают иконочные действия через `as="button"`
  *  - контролы с секцией иконки, например Button, Listbox, Combobox и RangeInput —
  *    подключают хелперы секции и читают позицию через `@ui/icon`
- *  - витрина — читает `getIconPadding` и демонстрирует состояния
+ *  - `src/pages/showcase` — читает `getIconPadding` и демонстрирует состояния
+ *    в витрине
  */
 
 import { createElement, type ComponentPropsWithRef, type ElementType } from 'react';
 
 import {
   DEFAULT_ICON_POSITION,
-  DEFAULT_ICON_SHAPE,
-  DEFAULT_ICON_SHOW_BORDER,
   ICON_POSITION_KEYS,
   ICON_SETTING_PROP_NAMES,
   ICON_SHAPE_PRESET_KEYS,
@@ -58,7 +59,7 @@ import {
  *
  * @template T тип корневого элемента, по умолчанию `span`
  *
- * @property as — переопределяет корневой HTML-тег, например `button`
+ * @property as — переопределяет корневой HTML-тег, например `<button>`
  */
 type IconProps<T extends ElementType = 'span'> = {
   as?: T;
@@ -98,8 +99,6 @@ export function Icon<T extends ElementType = 'span'>(props: IconProps<T>) {
 /* eslint-disable react-refresh/only-export-components -- реэкспорт моста и хелперов секции */
 export {
   DEFAULT_ICON_POSITION,
-  DEFAULT_ICON_SHAPE,
-  DEFAULT_ICON_SHOW_BORDER,
   ICON_POSITION_KEYS,
   ICON_SETTING_PROP_NAMES,
   ICON_SHAPE_PRESET_KEYS,

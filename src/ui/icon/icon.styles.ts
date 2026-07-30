@@ -3,7 +3,7 @@
  * Определяет внешний вид компонента Icon.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `IconStyleProps` и `IconPosition`
+ * 1. Типизировать пропсы через `IconStyleProps`, `IconPosition` и `IconShapePreset`
  * 2. Хранить локальные ряды габарита в `iconSize` и отступов в `iconPadding`
  * 3. Предоставить функции `getIconSize` и `getIconPadding`, дефолт
  *    `DEFAULT_ICON_POSITION`, перечни `ICON_POSITION_KEYS`,
@@ -46,37 +46,6 @@ import {
 } from '@ui/tones';
 
 /**
- * IconShapePreset — представляет форму окна иконки.
- * `round` на квадратном габарите даёт круг через `resolveBlockRadius('pill', …)`.
- */
-export type IconShapePreset = 'round' | 'rounded' | 'square';
-
-/**
- * ICON_SHAPE_PRESET_KEYS — задаёт перечень форм окна иконки.
- * Используется в панелях настроек витрины дизайн-системы: `ShapeListbox`
- * принимает его пропом `shapes`.
- */
-export const ICON_SHAPE_PRESET_KEYS = Object.freeze([
-  'square',
-  'rounded',
-  'round',
-] as const satisfies readonly IconShapePreset[]);
-
-/**
- * DEFAULT_ICON_SHAPE — задаёт форму окна иконки по умолчанию.
- * Используется, когда вызывающий код не передал проп `shape`.
- */
-export const DEFAULT_ICON_SHAPE: IconShapePreset = 'square';
-
-/**
- * DEFAULT_ICON_SHOW_BORDER — задаёт показ рамки окна иконки по умолчанию.
- * Рамка выключена: безрамные действия шапки и декоративные окна — норма без
- * явного `showBorder={false}`. Рамку включают точечно, например секция триггера
- * и аватар в ProfileMenu.
- */
-export const DEFAULT_ICON_SHOW_BORDER = false;
-
-/**
  * iconSize — хранит габарит окна иконки для каждого размера ряда.
  * Окно повторяет квадрат контрола своего размера из `minBlockSize`.
  */
@@ -116,6 +85,49 @@ const iconPadding = {
  */
 export function getIconPadding(sizePreset: SizePreset): SpacingValue {
   return iconPadding[sizePreset];
+}
+
+/**
+ * IconShapePreset — представляет форму окна иконки.
+ */
+export type IconShapePreset = 'round' | 'rounded' | 'square';
+
+/**
+ * ICON_SHAPE_PRESET_KEYS — задаёт перечень форм окна иконки.
+ * Используется в панелях настроек витрины дизайн-системы: `ShapeListbox`
+ * принимает его пропом `shapes`.
+ */
+export const ICON_SHAPE_PRESET_KEYS = Object.freeze([
+  'square',
+  'rounded',
+  'round',
+] as const satisfies readonly IconShapePreset[]);
+
+/**
+ * resolveIconBorderRadius — возвращает значение для CSS-свойства `border-radius`
+ * по `shape`.
+ *
+ * Как работает:
+ * 1. Для `square` отдаёт `0`
+ * 2. Для `round` отдаёт `50%`: круг при любом габарите, в том числе через layout
+ *    `inlineSize`/`blockSize`
+ * 3. Для `rounded` отдаёт скругление через `resolveBlockRadius` с формой `rounded`
+ *    и габаритом окна
+ *
+ * @param shape форма окна иконки
+ * @param size габарит окна в CSS
+ * @returns значение для CSS-свойства `border-radius`
+ */
+function resolveIconBorderRadius(shape: IconShapePreset, size: string): string {
+  if (shape === 'square') {
+    return '0';
+  }
+
+  if (shape === 'round') {
+    return '50%';
+  }
+
+  return resolveBlockRadius('rounded', size);
 }
 
 /**
@@ -238,35 +250,13 @@ export const ICON_SETTING_PROP_NAMES = new Set(['iconFill', 'iconPosition', 'ico
  * @returns CSS-правила, каждое с новой строки
  */
 export function getIconPositionStyles(): string {
-  const styles = [
-    'grid-template-columns: minmax(0, 1fr) auto;',
-    `&:has(> [data-slot='icon']:first-child) { grid-template-columns: auto minmax(0, 1fr); }`,
-    `[data-slot='icon'] {`,
-    'block-size: 100%;',
-    `}`,
-  ];
-
-  return styles.join('\n');
-}
-
-/**
- * resolveIconBorderRadius — возвращает значение `border-radius` по `shape`.
- *
- * @param shape форма окна иконки
- * @param size габарит окна в CSS
- * @returns значение для CSS-свойства `border-radius` или `undefined`
- */
-function resolveIconBorderRadius(shape: IconShapePreset, size: string): string {
-  if (shape === 'square') {
-    return '0';
-  }
-
-  // `50%` — круг при любом габарите, в том числе через layout `inlineSize`/`blockSize`
-  if (shape === 'round') {
-    return '50%';
-  }
-
-  return resolveBlockRadius('rounded', size);
+  return `
+    grid-template-columns: minmax(0, 1fr) auto;
+    &:has(> [data-slot='icon']:first-child) { grid-template-columns: auto minmax(0, 1fr); }
+    [data-slot='icon'] {
+      block-size: 100%;
+    }
+  `;
 }
 
 /**
@@ -305,6 +295,20 @@ const ICON_PROP_NAMES = new Set<string>([
 ]);
 
 /**
+ * DEFAULT_ICON_SHAPE — задаёт форму окна иконки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `shape`.
+ */
+const DEFAULT_ICON_SHAPE: IconShapePreset = 'square';
+
+/**
+ * DEFAULT_ICON_SHOW_BORDER — задаёт показ рамки окна иконки по умолчанию.
+ * Рамка выключена: безрамные действия шапки и декоративные окна — норма без
+ * явного `showBorder={false}`. Рамку включают точечно, например секция триггера
+ * и аватар в ProfileMenu.
+ */
+const DEFAULT_ICON_SHOW_BORDER = false;
+
+/**
  * DEFAULT_ICON_INTERACTIVE — задаёт отключённый канал состояний по умолчанию.
  * Используется, когда вызывающий код не передал проп `interactive`.
  */
@@ -321,10 +325,13 @@ const DEFAULT_ICON_SHOW_HOVER = true;
  * внутренний отступ, форму, рамку, статичную поверхность и канал состояний.
  *
  * Как работает:
- * 1. Собирает квадрат окна и внутренний отступ по `sizePreset`
- * 2. Задаёт `border-radius` по `shape` (дефолт `square`)
- * 3. Кладёт рамку и тень через `getBorderStyles` (дефолт рамки выключен)
- * 4. Считает статичную поверхность через `resolveIconSurface`
+ * 1. Собирает квадрат окна через `getIconSize` и `getSpacingValue` и внутренний
+ *    отступ через `getIconPadding` и `getSpacingValue` по `sizePreset`
+ * 2. Задаёт `border-radius` через `resolveIconBorderRadius` по `shape`. Без
+ *    `shape` подставляет `DEFAULT_ICON_SHAPE`
+ * 3. Кладёт рамку с тенью через `getBorderStyles`. Без `showBorder` рамка
+ *    выключена через `DEFAULT_ICON_SHOW_BORDER`
+ * 4. Считает статичную заливку и цвет глифа через `resolveIconSurface`
  * 5. При `interactive` или `showHover` кладёт заливку через канал
  *    `--icon-state-background` с запасным значением на статику
  * 6. При `showHover` на `:not(:disabled):hover` и `:focus-visible` пишет
@@ -387,7 +394,7 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
 /**
  * StyledIcon — задаёт корневой узел компонента Icon.
  * Базируется на `<span>` и поддерживает все пропсы из `IconStyleProps`.
- * Полиморфный `as` задаёт корневой тег, например `button`.
+ * Полиморфный `as` задаёт корневой тег, например `<button>`.
  *
  * Встроенные стили:
  *  - `display: grid` — раскладка по дефолту проекта
