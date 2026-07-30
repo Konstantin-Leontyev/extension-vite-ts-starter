@@ -12,16 +12,16 @@
  */
 
 /**
- * MOTION_SHELL_DURATION — задаёт длительность переходов каркаса оболочки:
- * выезд панели Sidebar, сворачивание шапки.
- * Используется в `getTransitionStyles`.
+ * MOTION_SHELL_DURATION — задаёт длительность переходов каркаса оболочки,
+ * например выезда панели Sidebar и сворачивания шапки.
+ * Используется как аргумент `duration` в вызовах `getTransitionStyles`.
  */
 export const MOTION_SHELL_DURATION = '0.3s';
 
 /**
- * MOTION_CONTROL_DURATION — задаёт длительность отклика контролов:
- * Switch, ProgressBar и строк-опций при наведении.
- * Используется в `getTransitionStyles`.
+ * MOTION_CONTROL_DURATION — задаёт длительность отклика контролов,
+ * например Switch, ProgressBar и строк-опций при наведении.
+ * Используется как аргумент `duration` в вызовах `getTransitionStyles`.
  */
 export const MOTION_CONTROL_DURATION = '0.15s';
 
@@ -40,12 +40,11 @@ const MOTION_EASING = 'ease';
  * @returns CSS-правила, каждое с новой строки
  */
 export function getTransitionStyles(properties: string, duration: string): string {
-  const styles = [
-    `transition: ${properties} ${duration} ${MOTION_EASING};`,
-    `@media (prefers-reduced-motion: reduce) {`,
-    `transition-duration: calc(${duration} * 2);`,
-    `}`,
-  ];
+  return `
+    transition: ${properties} ${duration} ${MOTION_EASING};
 
-  return styles.join('\n');
+    @media (prefers-reduced-motion: reduce) {
+      transition-duration: calc(${duration} * 2);
+    }
+  `;
 }

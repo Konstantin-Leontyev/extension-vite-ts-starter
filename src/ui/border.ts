@@ -7,8 +7,7 @@
  * Основные задачи:
  * 1. Типизировать пропсы рамки через `BorderProps` и перечень `BORDER_PROP_NAMES`
  * 2. Предоставить функцию `getBorderStyles` — рамка и тень вне layout-box
- * 3. Предоставить функцию `getBorderColor` — цвет рамки по `borderTone`
- * 4. Задать дефолты пропов `showBorder` и `showShadow` через
+ * 3. Задать дефолты пропов `showBorder` и `showShadow` через
  *    `DEFAULT_SHOW_BORDER` и `DEFAULT_SHOW_SHADOW`
  *
  * Потребители:
@@ -61,15 +60,13 @@ export const BORDER_PROP_NAMES = new Set(['borderTone', 'showBorder', 'showShado
 
 /**
  * getBorderColor — возвращает цвет рамки по `borderTone`.
+ * Используется внутри `getBorderStyles`.
  *
  * @param theme текущая тема
  * @param borderTone тон рамки
- * @returns CSS-цвет. Для тона по умолчанию — `theme.colors.border`
+ * @returns цвет рамки. Для тона по умолчанию — `theme.colors.border`
  */
-export function getBorderColor(
-  theme: AppTheme,
-  borderTone: TonePreset = DEFAULT_TONE
-): string {
+function getBorderColor(theme: AppTheme, borderTone: TonePreset = DEFAULT_TONE): string {
   return getToneColor(theme, borderTone, theme.colors.border);
 }
 
@@ -83,7 +80,7 @@ export function getBorderColor(
  * Combobox, Stepper и RangeInput, пропсы не получают без отдельного кейса и
  * вызывают хелпер с дефолтами. Оболочка композита и поверхность с постоянной
  * рамкой, например Checkbox и RadioButton, вызывают функцию без флагов.
- * При `showBorder` — обводка цвета из `getBorderColor` и при `showShadow` —
+ * При `showBorder` — обводка цвета рамки по `borderTone` и при `showShadow` —
  * тень `shadow.surface`. Без рамки — `box-shadow: none`: тени без рамки нет.
  * `border: none` вызывающий код пишет только там, где layout-рамку даёт
  * UA-стиль тега, например `<input>` и `<dialog>`: у `<button>` её снял reset,
@@ -93,7 +90,7 @@ export function getBorderColor(
  * @param showBorder включает рамку
  * @param showShadow включает тень при включённой рамке
  * @param borderTone тон цвета рамки
- * @returns CSS-правила, каждое с новой строки
+ * @returns CSS-правило `box-shadow`
  */
 export function getBorderStyles(
   theme: AppTheme,
@@ -106,7 +103,8 @@ export function getBorderStyles(
   }
 
   const border = `0 0 0 1px ${getBorderColor(theme, borderTone)}`;
-  const shadow = showShadow ? `, ${theme.shadow.surface}` : '';
 
-  return `box-shadow: ${border}${shadow};`;
+  return showShadow
+    ? `box-shadow: ${border}, ${theme.shadow.surface};`
+    : `box-shadow: ${border};`;
 }

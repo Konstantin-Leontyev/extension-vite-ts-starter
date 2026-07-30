@@ -10,11 +10,13 @@
  * 3. Экспортировать `OUTLINE_OVERHANG_PX` — вылет обводки для JS-математики
  *
  * Потребители:
- *  - `src/ui/reset.ts` — задаёт глобальную обводку `:focus-visible`
+ *  - `src/ui/reset.ts` — задаёт глобальную обводку `:focus-visible` и полей
+ *    с `aria-invalid="true"` через `getOutlineStyles`
  *  - styles-файлы контролов и панелей, например Switch, Stepper, Table
- *    и хром панели портала — задают обводку
- *  - `src/ui/segment-button-parts/segment-button-parts.styles.ts` — инвертирует отступ
- *  - `src/ui/viewport.ts` — учитывает вылет обводки в отступе clamp панелей
+ *    и AnchoredPortal — подставляют обводку через `getOutlineStyles`
+ *  - `src/ui/segment-button-parts/segment-button-parts.styles.ts` — подставляет
+ *    обводку через `getOutlineStyles` с инвертированным `OUTLINE_OFFSET`
+ *  - `src/ui/viewport.ts` — учитывает `OUTLINE_OVERHANG_PX` в отступе clamp панелей
  */
 
 /**
@@ -38,7 +40,9 @@ const OUTLINE_WIDTH = `${OUTLINE_WIDTH_PX}px`;
 
 /**
  * OUTLINE_OFFSET — формирует отступ обводки от края узла из `OUTLINE_OFFSET_PX`.
- * Используется в `getOutlineStyles` как значение по умолчанию.
+ * Используется в `getOutlineStyles` как значение по умолчанию и в
+ * `src/ui/segment-button-parts/segment-button-parts.styles.ts` для инвертированного
+ * отступа.
  */
 export const OUTLINE_OFFSET = `${OUTLINE_OFFSET_PX}px`;
 
@@ -55,15 +59,14 @@ export const OUTLINE_OVERHANG_PX = OUTLINE_WIDTH_PX + OUTLINE_OFFSET_PX;
  * `outline-offset`. Толщина — `OUTLINE_WIDTH`. Отступ — `options.offset`
  * или `OUTLINE_OFFSET`.
  *
- * @param color цвет обводки, обычно `theme.colors.focusOutline` / `invalidOutline`
- * @param options опциональный `offset`, например инвертированный у Parts
+ * @param color цвет обводки, обычно `theme.colors.focusOutline` или
+ *   `theme.colors.invalidOutline`
+ * @param options опциональный `offset`, например инвертированный у SegmentButton
  * @returns CSS-правила, каждое с новой строки
  */
 export function getOutlineStyles(color: string, options?: { offset?: string }): string {
-  const styles = [
-    `outline: ${OUTLINE_WIDTH} solid ${color};`,
-    `outline-offset: ${options?.offset ?? OUTLINE_OFFSET};`,
-  ];
-
-  return styles.join('\n');
+  return `
+    outline: ${OUTLINE_WIDTH} solid ${color};
+    outline-offset: ${options?.offset ?? OUTLINE_OFFSET};
+  `;
 }
