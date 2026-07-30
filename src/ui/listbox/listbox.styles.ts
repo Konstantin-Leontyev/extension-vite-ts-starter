@@ -152,10 +152,7 @@ function getListboxTriggerRowStyles(
   props: ListboxSurfaceStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const {
-    shape = DEFAULT_SHAPE_PRESET,
-    sizePreset = DEFAULT_SIZE_PRESET,
-  } = props;
+  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
   const size = getMinBlockSize(sizePreset);
 
   const styles = [
@@ -216,10 +213,7 @@ function getListboxTriggerStyles(
   props: ListboxSurfaceStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const {
-    iconTone = DEFAULT_TONE,
-    sizePreset = DEFAULT_SIZE_PRESET,
-  } = props;
+  const { iconTone = DEFAULT_TONE, sizePreset = DEFAULT_SIZE_PRESET } = props;
   const stateBackground = resolveIconStateBackground(theme, iconTone);
 
   const styles = [

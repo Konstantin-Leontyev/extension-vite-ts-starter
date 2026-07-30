@@ -151,10 +151,7 @@ function getComboboxTriggerRowStyles(
   props: ComboboxSurfaceStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const {
-    shape = DEFAULT_SHAPE_PRESET,
-    sizePreset = DEFAULT_SIZE_PRESET,
-  } = props;
+  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
 
   const styles = [
     'display: grid;',

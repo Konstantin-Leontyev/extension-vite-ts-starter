@@ -341,10 +341,7 @@ export function Combobox({
   const isControlled = value !== undefined;
   const selectedValue = isControlled ? value : internalSelected;
   const isClearVisible =
-    showClear &&
-    selectedValue !== undefined &&
-    selectedValue !== '' &&
-    !disabled;
+    showClear && selectedValue !== undefined && selectedValue !== '' && !disabled;
   const showChevron = !isClearVisible;
   const iconNode = showChevron ? (
     <Icon
