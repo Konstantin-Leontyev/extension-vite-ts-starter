@@ -4,11 +4,13 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `ScrollPortStyleProps`
- * 2. Предоставить функции `resolveScrollPortPaddingEdge` и
+ * 2. Хранить имена маршрутизируемых во вьюпорт и под трек скроллбара пропсов
+ *    отступов в `SCROLL_PORT_ROUTED_PADDING_PROP_NAMES`
+ * 3. Предоставить функции `resolveScrollPortPaddingEdge` и
  *    `omitScrollPortRoutedPaddingProps`, а также дефолт `DEFAULT_SCROLL_PORT_SHOW_VEIL`
- * 3. Предоставить styled-узлы `StyledScrollPortRoot`, `StyledScrollPortContainer`
+ * 4. Предоставить styled-узлы `StyledScrollPortRoot`, `StyledScrollPortContainer`
  *    и `StyledScrollPortViewport`
- * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/scroll-port/index.tsx` — собирает компонент ScrollPort
@@ -144,8 +146,6 @@ export function omitScrollPortRoutedPaddingProps(props: LayoutProps): LayoutProp
 
 /**
  * ScrollPortRootStyleProps — представляет пропсы стилизации корня ScrollPort.
- * Публичный `paddingInlineEnd` на корне переименован в `gutterInlineEnd`: питает
- * смещение трека и край вуали, а не CSS `padding-inline-end` через `getLayoutStyles`.
  *
  * @property gutterInlineEnd — ширина правого отступа под трек скроллбара и зазор вуали
  * @property showVeil — включает градиентные вуали на краях при прокрутке
@@ -210,8 +210,9 @@ function resolveScrollPortTrackMarginInlineEnd(gutterInlineEnd: SpacingValue): s
  * раскладку, смещение трека скроллбара и градиентные вуали.
  *
  * Как работает:
- * 1. Собирает раскладку корня и смещает трек через
- *    `resolveScrollPortTrackMarginInlineEnd`
+ * 1. Собирает раскладку корня и пишет `margin-inline-end` через
+ *    `resolveScrollPortTrackMarginInlineEnd`: значение `calc` смещает трек
+ *    в область правого отступа, оставляя видимой половину ширины трека
  * 2. При `showVeil` задаёт геометрию вуалей. Видимость краёв включает
  *    `src/ui/scroll-port/index.tsx` через `data-veil-block-start` и
  *    `data-veil-block-end` по скроллу
@@ -241,6 +242,7 @@ function getScrollPortRootStyles(props: ScrollPortRootStyleProps): string {
 
   if (showVeil) {
     const gutter = getSpacingValue(gutterInlineEnd);
+    const veilInset = getSpacingValue(veilInsetInline);
 
     styles.push(`
       &::before,
@@ -254,7 +256,7 @@ function getScrollPortRootStyles(props: ScrollPortRootStyleProps): string {
         inset-inline: ${
           veilInsetInline === 0
             ? `0 ${gutter}`
-            : `calc(${getSpacingValue(veilInsetInline)} * -1) calc(${gutter} - ${getSpacingValue(veilInsetInline)})`
+            : `calc(${veilInset} * -1) calc(${gutter} - ${veilInset})`
         };
         background-color: inherit;
       }
@@ -349,17 +351,18 @@ function getScrollPortViewportStyles(props: ScrollPortViewportStyleProps): strin
   const { paddingBlockEnd, paddingBlockStart, paddingInlineEnd, paddingInlineStart } =
     props;
 
-  const styles = [
-    'block-size: 100%;',
-    'overflow: auto;',
-    'overscroll-behavior: contain;',
-    `padding-inline: ${getSpacingValue(paddingInlineStart)} ${getSpacingValue(paddingInlineEnd)};`,
-    `padding-block-start: ${getSpacingValue(paddingBlockStart)};`,
-    `padding-block-end: ${getSpacingValue(paddingBlockEnd)};`,
-    `&::-webkit-scrollbar-track { margin-block-end: ${getSpacingValue(4)}; }`,
-  ];
+  return `
+    block-size: 100%;
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding-inline: ${getSpacingValue(paddingInlineStart)} ${getSpacingValue(paddingInlineEnd)};
+    padding-block-start: ${getSpacingValue(paddingBlockStart)};
+    padding-block-end: ${getSpacingValue(paddingBlockEnd)};
 
-  return styles.join('\n');
+    &::-webkit-scrollbar-track {
+      margin-block-end: ${getSpacingValue(4)};
+    }
+  `;
 }
 
 /**

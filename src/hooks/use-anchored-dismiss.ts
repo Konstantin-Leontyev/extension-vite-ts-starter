@@ -1,6 +1,6 @@
 /**
  * Файл: `src/hooks/use-anchored-dismiss.ts`
- * Предоставляет закрытие раскрытого слоя по `Escape`, клику вне зон и прокрутке страницы.
+ * Предоставляет закрытие раскрытого слоя по `Escape`, клику вне зон и прокрутке.
  *
  * Основные задачи:
  * 1. Предоставить хук `useAnchoredDismiss`
@@ -28,7 +28,7 @@ type UseAnchoredDismissOptions = {
  * isNodeInZones — возвращает, лежит ли узел внутри одной из зон.
  *
  * @param target проверяемый DOM-узел
- * @param zoneRefs ссылки на зоны, клик внутри которых не закрывает слой
+ * @param zoneRefs ссылки на зоны для проверки принадлежности узла
  * @returns `true`, если узел принадлежит хотя бы одной зоне
  */
 function isNodeInZones(
@@ -67,9 +67,7 @@ export function useAnchoredDismiss({
     }
 
     function handlePointerDown(event: PointerEvent): void {
-      const target = event.target as Node;
-
-      if (!isInside(target)) {
+      if (!isInside(event.target as Node)) {
         onDismissEvent();
       }
     }

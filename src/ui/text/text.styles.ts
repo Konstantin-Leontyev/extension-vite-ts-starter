@@ -113,13 +113,11 @@ const DEFAULT_TEXT_SIZE_PRESET: TextSizePreset = 'normal';
 export function getTextProperties(sizePreset: TextSizePreset): string {
   const preset = textSizePresets[sizePreset];
 
-  const styles = [
-    `font-size: ${preset.fontSize};`,
-    `font-weight: ${preset.fontWeight};`,
-    `line-height: ${preset.lineHeight};`,
-  ];
-
-  return styles.join('\n');
+  return `
+    font-size: ${preset.fontSize};
+    font-weight: ${preset.fontWeight};
+    line-height: ${preset.lineHeight};
+  `;
 }
 
 /**
@@ -147,6 +145,20 @@ export const TEXT_ALIGN_PRESET_KEYS = Object.freeze([
   'center',
   'end',
 ] as const satisfies readonly TextAlignPreset[]);
+
+/**
+ * getEllipsisStyles — возвращает CSS-правила обрезания однострочного текста:
+ * `overflow: hidden`, `text-overflow: ellipsis` и `white-space: nowrap`.
+ *
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getEllipsisStyles(): string {
+  return `
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  `;
+}
 
 /**
  * TEXT_TONE_PRESETS — связывает тоны текста с ключами цвета в теме.
@@ -245,22 +257,6 @@ const TEXT_PROP_NAMES = new Set<string>([
   'tone',
   'whiteSpace',
 ]);
-
-/**
- * getEllipsisStyles — возвращает CSS-правила обрезания однострочного текста:
- * `overflow: hidden`, `text-overflow: ellipsis` и `white-space: nowrap`.
- *
- * @returns CSS-правила, каждое с новой строки
- */
-export function getEllipsisStyles(): string {
-  const styles = [
-    'overflow: hidden;',
-    'text-overflow: ellipsis;',
-    'white-space: nowrap;',
-  ];
-
-  return styles.join('\n');
-}
 
 /**
  * getTextStyles — возвращает CSS-правила для корня `StyledText`: типографику,

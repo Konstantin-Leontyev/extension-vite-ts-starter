@@ -7,7 +7,7 @@
  * 2. Предоставить хук `useFocus`
  *
  * Потребители:
- *  - `@ui/anchored-portal` — удерживает фокус внутри открытой панели
+ *  - `@ui/anchored-portal` — удерживает фокус внутри открытой панели через `useFocus`
  *  - `@ui/listbox` — находит фокусируемые кнопки в панели через `getFocusables`
  */
 
@@ -15,7 +15,7 @@ import { useEffect, useRef, type RefObject } from 'react';
 
 /**
  * FOCUSABLE_SELECTOR — задаёт CSS-селектор фокусируемых элементов внутри контейнера.
- * Используется в `getFocusables` для обхода узлов ловушки фокуса.
+ * Используется в `getFocusables` для поиска фокусируемых узлов.
  */
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -92,9 +92,7 @@ function mountFocus(
 
   return () => {
     focusContainer.removeEventListener('keydown', handleKeyDown);
-    const returnTarget = returnFocusRef?.current ?? previousFocusRef.current;
-
-    returnTarget?.focus();
+    (returnFocusRef?.current ?? previousFocusRef.current)?.focus();
   };
 }
 

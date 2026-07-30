@@ -1,7 +1,7 @@
 /**
  * Файл: `src/hooks/use-anchored-open.ts`
  * Предоставляет open-state и ссылку на панель для anchored-контролов.
- * Позиционирование, dismiss и focus — зона `@ui/anchored-portal`.
+ * Оставляет позиционирование, закрытие и удержание фокуса зоне `@ui/anchored-portal`.
  *
  * Основные задачи:
  * 1. Предоставить хук `useAnchoredOpen`
@@ -18,10 +18,10 @@ import { useRef, useState, type RefObject } from 'react';
 
 /**
  * useAnchoredOpen — возвращает open-state, обработчики и ссылку на панель anchored-контрола.
- * Обработчики `handleOpen`, `handleClose` и `handleToggle` без побочной логики контрола.
+ * Обработчики `handleOpen`, `handleClose` и `handleToggle` не содержат побочной логики контрола.
  *
  * @template T тип DOM-узла панели, например `HTMLDivElement` или `HTMLUListElement`
- * @returns open-state, обработчики открытия и ссылка на панель
+ * @returns open-state, обработчики и ссылка на панель
  */
 export function useAnchoredOpen<T extends HTMLElement = HTMLElement>(): {
   handleClose: () => void;
@@ -42,7 +42,7 @@ export function useAnchoredOpen<T extends HTMLElement = HTMLElement>(): {
   }
 
   function handleToggle(): void {
-    setIsOpen((wasOpen) => !wasOpen);
+    setIsOpen((isOpen) => !isOpen);
   }
 
   return { handleClose, handleOpen, handleToggle, isOpen, panelRef };
