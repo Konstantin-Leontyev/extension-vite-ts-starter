@@ -10,7 +10,7 @@
  *
  * Потребители:
  *  - `src/pages/showcase/button-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
- *  - `src/pages/showcase/round-button-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
+ *  - `src/pages/showcase/icon-button-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
  *  - `src/pages/showcase/segment-button-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
  *  - `src/pages/showcase/card-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
  *  - `src/pages/showcase/combobox-settings/index.tsx` — использует `LIST_OPTIONS` для поля Value
@@ -87,7 +87,7 @@ export const LIST_OPTIONS: ListboxOption[] = Object.keys(ICONS).map((key) => ({
 
 /**
  * COMBOBOX_OPTIONS — формирует опции Combobox с иконкой и подписью из ключей `ICONS`.
- * Используется в выборе иконки в настройках Button, RoundButton, SegmentButton и Card
+ * Используется в выборе иконки в настройках Button, IconButton, SegmentButton и Card
  * и в превью Combobox с иконками.
  */
 export const COMBOBOX_OPTIONS: ComboboxOption[] = Object.keys(ICONS).map((key) => ({

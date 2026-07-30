@@ -7,7 +7,7 @@
  * 2. Предоставить дефолты `DEFAULT_DATE_RANGE_INPUT_SHAPE` и
  *    `DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET`
  * 3. Предоставить styled-узлы `StyledDateRangeInputRoot`,
- *    `StyledDateRangeInputTriggerRow`, `StyledDateRangeInputClearButton` и
+ *    `StyledDateRangeInputTriggerRow` и
  *    `StyledDateRangeInputPanel`
  * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
@@ -18,8 +18,7 @@
 import styled from 'styled-components';
 
 import { getPortalPanelStyles } from '@ui/anchored-portal';
-import { getControlBorderStyles } from '@ui/border';
-import { getIconSectionSeamStyles, resolveIconStateBackground } from '@ui/icon';
+import { getBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { getOutlineStyles } from '@ui/outline';
 import {
@@ -33,7 +32,6 @@ import {
 import { getSpacingValue } from '@ui/spacing';
 import { STACKING_OPEN_CONTROL } from '@ui/stacking';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { DEFAULT_TONE } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -147,12 +145,8 @@ function getDateRangeInputTriggerRowStyles(
     'overflow: hidden;',
     `background-color: ${theme.colors.surface};`,
     `border-radius: ${resolveDateRangeInputBlockRadius(props)};`,
-    getControlBorderStyles(theme),
+    getBorderStyles(theme),
     `&[data-open='true'] { visibility: hidden; }`,
-    getIconSectionSeamStyles({
-      borderColor: theme.colors.border,
-      slot: 'clear',
-    }),
     '&:focus-within {',
     getOutlineStyles(theme.colors.focusOutline),
     '}',
@@ -175,49 +169,6 @@ export const StyledDateRangeInputTriggerRow = styled.div.withConfig({
   shouldForwardProp: (prop) => !DATE_RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
 })<DateRangeInputSurfaceStyleProps>`
   ${(props) => getDateRangeInputTriggerRowStyles(props)}
-`;
-
-/**
- * getDateRangeInputClearButtonStyles — возвращает CSS-правила для узла
- * `StyledDateRangeInputClearButton`: квадрат сброса и канал состояний.
- * Статику красит внутренний Icon своими пропсами. Кнопка сброса — самостоятельное
- * действие, поэтому выставляет канал на собственных `hover` и `focus-visible`.
- *
- * @param props пропсы поверхности и тема
- * @returns CSS-правила, каждое с новой строки
- */
-function getDateRangeInputClearButtonStyles(
-  props: DateRangeInputSurfaceStyleProps & { theme: AppTheme }
-): string {
-  const theme = getTheme(props);
-  const sizePreset = props.sizePreset ?? DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET;
-  const size = getMinBlockSize(sizePreset);
-  const stateBackground = resolveIconStateBackground(theme, DEFAULT_TONE);
-
-  const styles = [
-    `inline-size: ${size};`,
-    `min-inline-size: ${size};`,
-    `&:not(:disabled):hover { --icon-state-background: ${stateBackground}; }`,
-    '&:focus-visible {',
-    'outline: none;',
-    `--icon-state-background: ${stateBackground};`,
-    '}',
-  ];
-
-  return styles.join('\n');
-}
-
-/**
- * StyledDateRangeInputClearButton — задаёт кнопку сброса компонента DateRangeInput.
- * Базируется на `<button>` и принимает пропсы из `DateRangeInputSurfaceStyleProps`.
- *
- * Генерация стилей:
- *  - `getDateRangeInputClearButtonStyles` — квадрат сброса и канал состояний
- */
-export const StyledDateRangeInputClearButton = styled.button.withConfig({
-  shouldForwardProp: (prop) => !DATE_RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
-})<DateRangeInputSurfaceStyleProps>`
-  ${(props) => getDateRangeInputClearButtonStyles(props)}
 `;
 
 /**

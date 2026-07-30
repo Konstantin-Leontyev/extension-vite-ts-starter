@@ -31,7 +31,7 @@
  *     - `src/pages/showcase/combobox-settings/index.tsx`
  *     - `src/pages/showcase/listbox-settings/index.tsx`
  *     - `src/pages/showcase/range-input-settings/index.tsx`
- *     - `src/pages/showcase/round-button-settings/index.tsx`
+ *     - `src/pages/showcase/icon-button-settings/index.tsx`
  *     - `src/pages/showcase/segment-button-settings/index.tsx`
  */
 
@@ -136,7 +136,7 @@ function formatIconGroupLabel(base: string, name?: string): string {
  *   onShowChange={(checked) => onChange('withIcon', checked)}
  *   onToneChange={(tone) => onChange('iconTone', tone)}
  * />
- * // RoundButton: без позиции и флага показа
+ * // IconButton: без позиции и флага показа
  * <IconGroup
  *   fill={state.iconFill}
  *   iconOptions={COMBOBOX_OPTIONS}

@@ -20,6 +20,8 @@
  *  - плейсхолдер неактивного триггера через проп `placeholder`
  *  - резерв высоты под строку ошибки через проп `reserveErrorSpace`
  *  - контролируемое значение через проп `value`
+ *  - опциональный сброс выбора через проп `showClear`. Базовая логика — шеврон;
+ *    clear появляется при выборе, только когда проп включён
  *
  * Основные задачи:
  * 1. Экспортировать компонент Listbox
@@ -45,7 +47,7 @@ import {
 
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { getFocusables } from '@hooks/use-focus';
-import { CheckIcon, ChevronDownIcon } from '@icons';
+import { CheckIcon, ChevronDownIcon, CloseIcon } from '@icons';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Checkbox } from '@ui/checkbox';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
@@ -59,6 +61,7 @@ import {
   StyledListboxPanel,
   StyledListboxRoot,
   StyledListboxTrigger,
+  StyledListboxTriggerRow,
   getListboxTextSize,
   splitLayoutProps,
   type ListboxStyleProps,
@@ -93,6 +96,19 @@ const DEFAULT_LISTBOX_PLACEHOLDER = 'Select…';
  * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
  */
 const DEFAULT_LISTBOX_RESERVE_ERROR_SPACE = true;
+
+/**
+ * DEFAULT_CLEAR_ARIA_LABEL — задаёт `aria-label` кнопки сброса по умолчанию.
+ * Используется, когда вызывающий код не передал проп `label`.
+ */
+const DEFAULT_CLEAR_ARIA_LABEL = 'Clear';
+
+/**
+ * DEFAULT_LISTBOX_SHOW_CLEAR — задаёт показ кнопки сброса выбора по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showClear`. Базовая логика —
+ * шеврон; clear включается явно.
+ */
+const DEFAULT_LISTBOX_SHOW_CLEAR = false;
 
 /**
  * LISTBOX_ERROR_TEXT_SIZE_PRESET — задаёт типографический пресет строки ошибки.
@@ -141,6 +157,7 @@ export type ListboxOption = {
  * @property placeholder — плейсхолдер неактивного триггера
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки, чтобы
  *   появление текста не сдвигало соседей
+ * @property showClear — включает кнопку сброса выбора при выбранном значении
  * @property value — контролируемое значение
  */
 type ListboxProps = ListboxStyleProps & {
@@ -155,6 +172,7 @@ type ListboxProps = ListboxStyleProps & {
   options: ListboxOption[];
   placeholder?: string;
   reserveErrorSpace?: boolean;
+  showClear?: boolean;
   value?: string | string[];
 } & Omit<
     ComponentPropsWithRef<'div'>,
@@ -189,6 +207,23 @@ function toSelectedValues(
   const single = Array.isArray(raw) ? raw[0] : raw;
 
   return single ? [single] : [];
+}
+
+/**
+ * clearButtonAriaLabel — возвращает `aria-label` кнопки сброса по подписи над триггером.
+ * Убирает завершающее двоеточие и подставляет `DEFAULT_CLEAR_ARIA_LABEL` без подписи.
+ *
+ * @param label подпись над триггером
+ * @returns текст для `aria-label`
+ */
+function clearButtonAriaLabel(label: string | undefined): string {
+  const trimmed = label?.trim();
+
+  if (!trimmed) {
+    return DEFAULT_CLEAR_ARIA_LABEL;
+  }
+
+  return `Clear ${trimmed.replace(/:$/, '')}`;
 }
 
 /**
@@ -464,6 +499,7 @@ export function Listbox({
   placeholder = DEFAULT_LISTBOX_PLACEHOLDER,
   reserveErrorSpace = DEFAULT_LISTBOX_RESERVE_ERROR_SPACE,
   shape,
+  showClear = DEFAULT_LISTBOX_SHOW_CLEAR,
   sizePreset,
   value,
   ...rest
@@ -471,19 +507,10 @@ export function Listbox({
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const surfaceProps = { iconTone, shape, sizePreset };
   const textSizePreset = getListboxTextSize(sizePreset);
-  const iconNode = (
-    <Icon
-      data-slot="icon"
-      iconFill={iconFill}
-      iconTone={iconTone}
-      interactive
-      sizePreset={sizePreset}
-    >
-      <ChevronDownIcon />
-    </Icon>
-  );
+  const isIconStart = iconPosition === 'start';
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const triggerRowRef = useRef<HTMLDivElement>(null);
   const panelOrderRef = useRef<null | PanelOrder>(null);
   const listId = useId();
   const triggerId = useId();
@@ -499,6 +526,21 @@ export function Listbox({
   const selectedValue = selected[0];
   const selectedIndex = options.findIndex((option) => option.value === selectedValue);
   const optionsKey = options.map((option) => option.value).join('\0');
+  const isClearVisible = showClear && selected.length > 0 && !disabled;
+  const showChevron = !isClearVisible;
+  const iconNode = showChevron ? (
+    <Icon
+      data-slot="icon"
+      iconFill={iconFill}
+      iconTone={iconTone}
+      interactive
+      showBorder
+      showShadow={false}
+      sizePreset={sizePreset}
+    >
+      <ChevronDownIcon />
+    </Icon>
+  ) : null;
 
   /**
    * Пересчитывает порядок строк панели при открытии и смене выбора или опций.
@@ -510,7 +552,7 @@ export function Listbox({
       return;
     }
 
-    const triggerElement = triggerRef.current;
+    const triggerElement = triggerRowRef.current;
 
     if (!triggerElement) {
       return;
@@ -546,6 +588,17 @@ export function Listbox({
     }
 
     onChange?.(multiple ? next : (next[0] ?? ''));
+  }
+
+  function handleClear(event: { stopPropagation: () => void }): void {
+    event.stopPropagation();
+
+    if (disabled) {
+      return;
+    }
+
+    commitSelected([]);
+    handleClose();
   }
 
   function handleOptionToggle(option: ListboxOption): void {
@@ -641,6 +694,9 @@ export function Listbox({
               data-slot="check"
               iconFill="primary"
               position="relative"
+              showBorder={false}
+              showHover={false}
+              showShadow={false}
               sizePreset={sizePreset}
               zIndex={1}
             >
@@ -679,30 +735,72 @@ export function Listbox({
           {label}
         </Text>
       )}
-      <StyledListboxTrigger
-        aria-controls={listId}
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
+      <StyledListboxTriggerRow
+        data-has-clear={isClearVisible ? '' : undefined}
         data-open={isOpen}
-        disabled={disabled}
-        id={triggerId}
-        ref={triggerRef}
-        type="button"
+        ref={triggerRowRef}
         {...surfaceProps}
-        onClick={handleToggle}
-        onKeyDown={handleTriggerKeyDown}
       >
-        {iconPosition === 'start' && iconNode}
-        <Text
-          data-slot="label"
-          ellipsis
-          sizePreset={textSizePreset}
-          tone={triggerLabel ? undefined : 'muted'}
+        {isClearVisible && isIconStart && (
+          <Icon
+            aria-label={clearButtonAriaLabel(label)}
+            as="button"
+            data-slot="clear"
+            disabled={disabled}
+            iconFill={iconFill}
+            iconTone={iconTone}
+            shape="square"
+            showBorder
+            showShadow={false}
+            sizePreset={sizePreset}
+            onClick={handleClear}
+          >
+            <CloseIcon />
+          </Icon>
+        )}
+
+        <StyledListboxTrigger
+          aria-controls={listId}
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
+          disabled={disabled}
+          id={triggerId}
+          ref={triggerRef}
+          type="button"
+          {...surfaceProps}
+          onClick={handleToggle}
+          onKeyDown={handleTriggerKeyDown}
         >
-          {triggerLabel ?? placeholder}
-        </Text>
-        {iconPosition === 'end' && iconNode}
-      </StyledListboxTrigger>
+          {iconPosition === 'start' && iconNode}
+          <Text
+            data-slot="label"
+            ellipsis
+            sizePreset={textSizePreset}
+            tone={triggerLabel ? undefined : 'muted'}
+          >
+            {triggerLabel ?? placeholder}
+          </Text>
+          {iconPosition === 'end' && iconNode}
+        </StyledListboxTrigger>
+
+        {isClearVisible && !isIconStart && (
+          <Icon
+            aria-label={clearButtonAriaLabel(label)}
+            as="button"
+            data-slot="clear"
+            disabled={disabled}
+            iconFill={iconFill}
+            iconTone={iconTone}
+            shape="square"
+            showBorder
+            showShadow={false}
+            sizePreset={sizePreset}
+            onClick={handleClear}
+          >
+            <CloseIcon />
+          </Icon>
+        )}
+      </StyledListboxTriggerRow>
 
       {reserveErrorSpace && (
         <Text
@@ -719,7 +817,7 @@ export function Listbox({
         openFocusDeps={[panelOrder, selectedIndex]}
         panelRef={panelRef}
         positionStrategy={{
-          anchorRef: triggerRef,
+          anchorRef: triggerRowRef,
           apply: (anchor, panel) =>
             applyListboxPanelPosition(anchor, panel, panelOrderRef.current),
           layoutDeps: [panelOrder],

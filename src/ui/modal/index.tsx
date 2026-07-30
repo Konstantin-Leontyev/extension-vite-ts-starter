@@ -45,7 +45,7 @@ const DEFAULT_MODAL_CLOSE_ARIA_LABEL = 'Close';
 
 /**
  * MODAL_CLOSE_ICON_PADDING — задаёт отступ окна Icon у кнопки закрытия.
- * Уменьшает глиф close при неизменной области клика RoundButton.
+ * Уменьшает глиф close при неизменной области клика Icon.
  */
 const MODAL_CLOSE_ICON_PADDING: SpacingValue = 8;
 

@@ -1,80 +1,112 @@
 /**
  * Файл: `src/ui/icon/index.tsx`
- * Предоставляет компонент Icon для отображения окна иконки.
+ * Предоставляет полиморфный компонент Icon для отображения окна иконки
+ * и standalone-действия через `as="button"`.
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
+ *  - форму через проп `shape`
+ *  - рамку и тень через пропы `showBorder`, `showShadow` и `borderTone`
+ *  - канал hover через проп `showHover`
  *  - тон заливки окна через проп `iconTone`
  *  - тон глифа через проп `iconFill`
  *  - канал состояний родителя через проп `interactive`
+ *  - переопределение корневого элемента через проп `as`
  *  - svg через `children`
  *
  * Основные задачи:
- * 1. Экспортировать компонент Icon
+ * 1. Экспортировать полиморфный компонент Icon
  * 2. Типизировать пропсы через `IconProps`
  * 3. Реэкспортировать публичное API оси иконки: `IconPosition`,
- *    `DEFAULT_ICON_POSITION`, `ICON_POSITION_KEYS`, `ICON_SETTING_PROP_NAMES`,
- *    мост `getIconPadding` и хелперы секции на родителе:
- *    `getIconSectionTrackStyles`, `getIconSectionSeamStyles`,
- *    `resolveIconStateBackground`
+ *    `IconShapePreset`, `DEFAULT_ICON_POSITION`, `ICON_POSITION_KEYS`,
+ *    `ICON_SHAPE_PRESET_KEYS`, `ICON_SETTING_PROP_NAMES`, мосты
+ *    `getIconPadding` и `getIconSize`, хелперы секции на родителе:
+ *    `getIconPositionStyles`, `resolveIconStateBackground`
  *
  * Потребители:
  *  - контролы с иконочными узлами, например Button, Listbox и Stepper —
  *    кладут Icon внутрь своего узла-места: секция триггера, кнопка-половинка
- *  - `@ui/round-button` — рендерит Icon сам и передаёт свой размерный ряд с `huge`
+ *  - компоненты приложения, например Header, Card, ThemeToggle и ProfileMenu —
+ *    показывают иконочные действия через `as="button"`
  *  - контролы с секцией иконки, например Button, Listbox, Combobox и RangeInput —
  *    подключают хелперы секции и читают позицию через `@ui/icon`
- *  - витрина — читает `getIconPadding` для отступа окна Icon:
- *     - `src/pages/showcase/index.tsx`
- *     - `src/pages/showcase/card-settings/index.tsx`
- *     - `src/pages/showcase/round-button-settings/index.tsx`
+ *  - витрина — читает `getIconPadding` и демонстрирует состояния
  */
 
-import { createElement, type ComponentPropsWithRef } from 'react';
+import { createElement, type ComponentPropsWithRef, type ElementType } from 'react';
 
 import {
   DEFAULT_ICON_POSITION,
+  DEFAULT_ICON_SHAPE,
+  DEFAULT_ICON_SHOW_BORDER,
   ICON_POSITION_KEYS,
   ICON_SETTING_PROP_NAMES,
+  ICON_SHAPE_PRESET_KEYS,
   StyledIcon,
   getIconPadding,
-  getIconSectionSeamStyles,
-  getIconSectionTrackStyles,
+  getIconPositionStyles,
+  getIconSize,
   resolveIconStateBackground,
   type IconPosition,
+  type IconShapePreset,
   type IconStyleProps,
 } from './icon.styles';
 
 /**
  * IconProps — представляет пропсы компонента Icon.
+ *
+ * @template T тип корневого элемента, по умолчанию `span`
+ *
+ * @property as — переопределяет корневой HTML-тег, например `button`
  */
-type IconProps = IconStyleProps &
-  Omit<ComponentPropsWithRef<'span'>, 'className' | 'style' | keyof IconStyleProps>;
+type IconProps<T extends ElementType = 'span'> = {
+  as?: T;
+} & IconStyleProps &
+  Omit<ComponentPropsWithRef<T>, 'className' | 'style' | keyof IconStyleProps>;
 
 /**
- * Icon — отображает окно иконки.
+ * Icon — отображает окно иконки. При `as="button"` — иконочное действие.
  *
  * @example
  * <Icon sizePreset="normal">
  *   <CalendarIcon />
  * </Icon>
- * <Icon iconTone="primary" interactive sizePreset={sizePreset}>
+ * <Icon as="button" aria-label="Settings" shape="round">
+ *   <SettingsIcon />
+ * </Icon>
+ * <Icon data-slot="icon" iconTone="primary" interactive showBorder showShadow={false} sizePreset={sizePreset}>
  *   <ChevronDownIcon />
  * </Icon>
  */
-export function Icon(props: IconProps) {
+export function Icon<T extends ElementType = 'span'>(props: IconProps<T>) {
+  const elementType: ElementType = props.as ?? 'span';
+
+  if (elementType === 'button') {
+    const { type, ...rest } = props as IconProps<'button'> & { type?: string };
+
+    return createElement(StyledIcon, {
+      ...rest,
+      as: 'button',
+      type: type ?? 'button',
+    });
+  }
+
   return createElement(StyledIcon, props);
 }
 
 /* eslint-disable react-refresh/only-export-components -- реэкспорт моста и хелперов секции */
 export {
   DEFAULT_ICON_POSITION,
+  DEFAULT_ICON_SHAPE,
+  DEFAULT_ICON_SHOW_BORDER,
   ICON_POSITION_KEYS,
   ICON_SETTING_PROP_NAMES,
+  ICON_SHAPE_PRESET_KEYS,
   getIconPadding,
-  getIconSectionSeamStyles,
-  getIconSectionTrackStyles,
+  getIconPositionStyles,
+  getIconSize,
   resolveIconStateBackground,
   type IconPosition,
+  type IconShapePreset,
 };

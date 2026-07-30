@@ -28,7 +28,7 @@ import { useNavigate } from 'react-router-dom';
 import { ProfileMenu } from '@components/profile-menu';
 import { ThemeToggle } from '@components/theme-toggle';
 import { SettingsIcon } from '@icons';
-import { RoundButton } from '@ui/round-button';
+import { Icon } from '@ui/icon';
 import { Text } from '@ui/text';
 
 import {
@@ -108,9 +108,14 @@ export function Header({
 
           <StyledHeaderActions>
             {leadingActions}
-            <RoundButton aria-label={settingsLabel} onClick={handleSettingsClick}>
+            <Icon
+              aria-label={settingsLabel}
+              as="button"
+              shape="round"
+              onClick={handleSettingsClick}
+            >
               <SettingsIcon />
-            </RoundButton>
+            </Icon>
             <ThemeToggle />
             <ProfileMenu />
           </StyledHeaderActions>

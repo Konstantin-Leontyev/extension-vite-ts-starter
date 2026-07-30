@@ -14,6 +14,12 @@
 
 import styled from 'styled-components';
 
+import {
+  BORDER_PROP_NAMES,
+  DEFAULT_SHOW_SHADOW,
+  getBorderStyles,
+  type BorderProps,
+} from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   minBlockSize,
@@ -161,17 +167,6 @@ function resolveTagSurface(
 }
 
 /**
- * getTagBorderColor — возвращает цвет границы по `borderTone`.
- *
- * @param theme текущая тема
- * @param borderTone тон границы
- * @returns CSS-цвет. Для тона по умолчанию — `theme.colors.border`
- */
-function getTagBorderColor(theme: AppTheme, borderTone: TonePreset): string {
-  return getToneColor(theme, borderTone, theme.colors.border);
-}
-
-/**
  * getTagDotColor — возвращает цвет точки по `dotTone`.
  * Без `dotTone` или при тоне по умолчанию возвращает `currentColor` —
  * точка наследует цвет текста корня `StyledTag`.
@@ -191,30 +186,26 @@ function getTagDotColor(theme: AppTheme, dotTone: TonePreset | undefined): strin
 /**
  * TagStyleProps — представляет пропсы стилизации Tag и layout-пропсы.
  *
- * @property borderTone — тон границы при включённом `showBorder`
  * @property shape — форма метки
- * @property showBorder — включает границу
  * @property sizePreset — размер метки
  * @property tinted — включает режим мягкой заливки
  * @property tone — тон заливки
  */
-export type TagStyleProps = LayoutProps & {
-  borderTone?: TonePreset;
-  shape?: ShapePreset;
-  showBorder?: boolean;
-  sizePreset?: TagSizePreset;
-  tinted?: boolean;
-  tone?: TonePreset;
-};
+export type TagStyleProps = LayoutProps &
+  BorderProps & {
+    shape?: ShapePreset;
+    sizePreset?: TagSizePreset;
+    tinted?: boolean;
+    tone?: TonePreset;
+  };
 
 /**
  * TAG_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Tag.
  */
 const TAG_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
-  'borderTone',
+  ...BORDER_PROP_NAMES,
   'shape',
-  'showBorder',
   'sizePreset',
   'tinted',
   'tone',
@@ -248,9 +239,10 @@ const DEFAULT_TAG_TINTED = false;
 function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
   const {
-    borderTone = DEFAULT_TONE,
+    borderTone,
     shape = DEFAULT_TAG_SHAPE,
     showBorder = DEFAULT_TAG_SHOW_BORDER,
+    showShadow = DEFAULT_SHOW_SHADOW,
     sizePreset = DEFAULT_TAG_SIZE_PRESET,
     tinted = DEFAULT_TAG_TINTED,
     tone = DEFAULT_TONE,
@@ -259,7 +251,7 @@ function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string {
   const styles = [
     `min-block-size: ${getTagMinBlockSize(sizePreset)};`,
     `padding-inline: ${getSpacingValue(tagPaddingInline[sizePreset])};`,
-    `border: 1px solid ${showBorder ? getTagBorderColor(theme, borderTone) : 'transparent'};`,
+    getBorderStyles(theme, showBorder, showShadow, borderTone),
     `border-radius: ${resolveBlockRadius(shape, getTagMinBlockSize(sizePreset))};`,
     `background-color: ${surface.backgroundColor};`,
     `color: ${surface.textColor};`,

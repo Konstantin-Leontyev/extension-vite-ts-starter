@@ -33,7 +33,7 @@ export type SizePreset = 'large' | 'normal' | 'small';
  * minBlockSize — хранит минимальную высоту бокса для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
  * При смене размера высота строки текста и отступы масштабируются синхронно.
- * Экспортируется для расширения спредом в `@ui/tag`, `@ui/round-button`
+ * Экспортируется для расширения спредом в `@ui/tag`
  * и `@ui/icon`, чтение высоты — через `getMinBlockSize`.
  */
 export const minBlockSize = Object.freeze({

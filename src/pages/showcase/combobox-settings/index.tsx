@@ -1,9 +1,9 @@
 /**
  * Файл: `src/pages/showcase/combobox-settings/index.tsx`
  * Определяет панель настроек компонента Combobox в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, иконки, подписи, плейсхолдеров,
- * текста пустого результата, резерва высоты под строку ошибки, демо-иконок опций
- * и состояния `disabled` в реальном времени.
+ * Содержит контролы для изменения размера, формы, иконки, сброса выбора, подписи,
+ * плейсхолдеров, текста пустого результата, резерва высоты под строку ошибки,
+ * демо-иконок опций и состояния `disabled` в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `ComboboxWidgetState`
@@ -41,6 +41,7 @@ import { StyledSettingsForm } from '../showcase.styles';
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки
  * @property searchPlaceholder — плейсхолдер поля поиска
  * @property shape — форма поверхности
+ * @property showClear — включает кнопку сброса выбора при выбранном значении
  * @property sizePreset — размер компонента
  * @property value — буфер выбранного значения в превью. В панель не выносится
  * @property withIcon — витринный ключ показа иконок в демо-опциях. Выключенный — опции без иконок
@@ -56,6 +57,7 @@ export type ComboboxWidgetState = {
   reserveErrorSpace: boolean;
   searchPlaceholder: string;
   shape: ShapePreset;
+  showClear: boolean;
   sizePreset: SizePreset;
   value: string;
   withIcon: boolean;
@@ -109,6 +111,15 @@ export function ComboboxSettings({ onChange, state }: ComboboxSettingsProps) {
         }
       >
         Show option icons
+      </Checkbox>
+
+      <Checkbox
+        checked={state.showClear}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('showClear', event.target.checked)
+        }
+      >
+        Show clear
       </Checkbox>
 
       <Input

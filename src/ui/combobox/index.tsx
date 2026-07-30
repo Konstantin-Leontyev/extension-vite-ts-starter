@@ -20,6 +20,8 @@
  *  - плейсхолдер поля поиска через проп `searchPlaceholder`
  *  - контролируемое значение через проп `value`
  *  - текстовую метку через проп `aria-label`
+ *  - опциональный сброс выбора через проп `showClear`. Базовая логика — шеврон;
+ *    clear появляется при выборе, только когда проп включён
  *
  * Основные задачи:
  * 1. Экспортировать компонент Combobox
@@ -46,11 +48,10 @@ import {
 } from 'react';
 
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
-import { CheckIcon, ChevronDownIcon } from '@icons';
+import { CheckIcon, ChevronDownIcon, CloseIcon } from '@icons';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Input } from '@ui/input';
-import { ScrollPort } from '@ui/scroll-port';
 import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
@@ -60,7 +61,9 @@ import {
   StyledComboboxOption,
   StyledComboboxPanel,
   StyledComboboxRoot,
+  StyledComboboxSearchRow,
   StyledComboboxTrigger,
+  StyledComboboxTriggerRow,
   StyledComboboxValue,
   getComboboxTextSize,
   splitLayoutProps,
@@ -102,6 +105,19 @@ const DEFAULT_COMBOBOX_RESERVE_ERROR_SPACE = true;
  * Используется, когда вызывающий код не передал проп `searchPlaceholder`.
  */
 const DEFAULT_COMBOBOX_SEARCH_PLACEHOLDER = 'Search…';
+
+/**
+ * DEFAULT_CLEAR_ARIA_LABEL — задаёт `aria-label` кнопки сброса по умолчанию.
+ * Используется, когда вызывающий код не передал проп `label`.
+ */
+const DEFAULT_CLEAR_ARIA_LABEL = 'Clear';
+
+/**
+ * DEFAULT_COMBOBOX_SHOW_CLEAR — задаёт показ кнопки сброса выбора по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showClear`. Базовая логика —
+ * шеврон; clear включается явно.
+ */
+const DEFAULT_COMBOBOX_SHOW_CLEAR = false;
 
 /**
  * COMBOBOX_ERROR_TEXT_SIZE_PRESET — задаёт типографический пресет строки ошибки.
@@ -151,6 +167,7 @@ export type ComboboxOption = {
  * @property placeholder — плейсхолдер неактивного триггера
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки
  * @property searchPlaceholder — плейсхолдер поля поиска
+ * @property showClear — включает кнопку сброса выбора при выбранном значении
  * @property value — контролируемое значение
  */
 type ComboboxProps = ComboboxStyleProps & {
@@ -166,6 +183,7 @@ type ComboboxProps = ComboboxStyleProps & {
   placeholder?: string;
   reserveErrorSpace?: boolean;
   searchPlaceholder?: string;
+  showClear?: boolean;
   value?: string;
 } & Omit<
     ComponentPropsWithRef<'div'>,
@@ -255,6 +273,23 @@ function applyComboboxPanelPosition(
 }
 
 /**
+ * clearButtonAriaLabel — возвращает `aria-label` кнопки сброса по подписи над триггером.
+ * Убирает завершающее двоеточие и подставляет `DEFAULT_CLEAR_ARIA_LABEL` без подписи.
+ *
+ * @param label подпись над триггером
+ * @returns текст для `aria-label`
+ */
+function clearButtonAriaLabel(label: string | undefined): string {
+  const trimmed = label?.trim();
+
+  if (!trimmed) {
+    return DEFAULT_CLEAR_ARIA_LABEL;
+  }
+
+  return `Clear ${trimmed.replace(/:$/, '')}`;
+}
+
+/**
  * Combobox — отображает выбор значения из списка с поиском в панели.
  *
  * @example
@@ -280,6 +315,7 @@ export function Combobox({
   reserveErrorSpace = DEFAULT_COMBOBOX_RESERVE_ERROR_SPACE,
   searchPlaceholder = DEFAULT_COMBOBOX_SEARCH_PLACEHOLDER,
   shape,
+  showClear = DEFAULT_COMBOBOX_SHOW_CLEAR,
   sizePreset,
   value,
   ...rest
@@ -287,19 +323,10 @@ export function Combobox({
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const surfaceProps = { iconTone, shape, sizePreset };
   const textSizePreset = getComboboxTextSize(sizePreset);
-  const iconNode = (
-    <Icon
-      data-slot="icon"
-      iconFill={iconFill}
-      iconTone={iconTone}
-      interactive
-      sizePreset={sizePreset}
-    >
-      <ChevronDownIcon />
-    </Icon>
-  );
+  const isIconStart = iconPosition === 'start';
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const triggerRowRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const listId = useId();
   const triggerId = useId();
@@ -313,6 +340,25 @@ export function Combobox({
 
   const isControlled = value !== undefined;
   const selectedValue = isControlled ? value : internalSelected;
+  const isClearVisible =
+    showClear &&
+    selectedValue !== undefined &&
+    selectedValue !== '' &&
+    !disabled;
+  const showChevron = !isClearVisible;
+  const iconNode = showChevron ? (
+    <Icon
+      data-slot="icon"
+      iconFill={iconFill}
+      iconTone={iconTone}
+      interactive
+      showBorder
+      showShadow={false}
+      sizePreset={sizePreset}
+    >
+      <ChevronDownIcon />
+    </Icon>
+  ) : null;
   const normalizedQuery = query.trim().toLowerCase();
   const filtered = useMemo(
     () => filterComboboxOptions(options, normalizedQuery),
@@ -382,6 +428,22 @@ export function Combobox({
     }
 
     onChange?.(option.value);
+    handleClose();
+    setQuery('');
+  }
+
+  function handleClear(event: { stopPropagation: () => void }): void {
+    event.stopPropagation();
+
+    if (disabled) {
+      return;
+    }
+
+    if (!isControlled) {
+      setInternalSelected(undefined);
+    }
+
+    onChange?.('');
     handleClose();
     setQuery('');
   }
@@ -474,36 +536,85 @@ export function Combobox({
           {label}
         </Text>
       )}
-      <StyledComboboxTrigger
-        aria-controls={listId}
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
-        aria-label={ariaLabel}
+      <StyledComboboxTriggerRow
+        data-has-clear={isClearVisible ? '' : undefined}
         data-open={isOpen}
-        disabled={disabled}
-        id={triggerId}
-        ref={triggerRef}
-        type="button"
+        ref={triggerRowRef}
         {...surfaceProps}
-        onClick={() => (isOpen ? handleClose() : openPanel())}
-        onKeyDown={handleTriggerKeyDown}
       >
-        {iconPosition === 'start' && iconNode}
-        <StyledComboboxValue sizePreset={sizePreset}>
-          {Boolean(selectedOption?.icon) && (
-            <Icon sizePreset={sizePreset}>{selectedOption?.icon}</Icon>
-          )}
-          <Text
-            ellipsis
-            minInlineSize="0"
-            sizePreset={textSizePreset}
-            tone={selectedOption ? undefined : 'muted'}
+        {isClearVisible && isIconStart && (
+          <Icon
+            aria-label={clearButtonAriaLabel(label)}
+            as="button"
+            data-slot="clear"
+            disabled={disabled}
+            iconFill={iconFill}
+            iconTone={iconTone}
+            shape="square"
+            showBorder
+            showShadow={false}
+            sizePreset={sizePreset}
+            onClick={handleClear}
           >
-            {selectedOption?.label ?? placeholder}
-          </Text>
-        </StyledComboboxValue>
-        {iconPosition === 'end' && iconNode}
-      </StyledComboboxTrigger>
+            <CloseIcon />
+          </Icon>
+        )}
+
+        <StyledComboboxTrigger
+          aria-controls={listId}
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
+          aria-label={ariaLabel}
+          disabled={disabled}
+          id={triggerId}
+          ref={triggerRef}
+          type="button"
+          {...surfaceProps}
+          onClick={() => (isOpen ? handleClose() : openPanel())}
+          onKeyDown={handleTriggerKeyDown}
+        >
+          {iconPosition === 'start' && iconNode}
+          <StyledComboboxValue sizePreset={sizePreset}>
+            {Boolean(selectedOption?.icon) && (
+              <Icon
+                showBorder={false}
+                showHover={false}
+                showShadow={false}
+                sizePreset={sizePreset}
+              >
+                {selectedOption?.icon}
+              </Icon>
+            )}
+            <Text
+              ellipsis
+              minInlineSize="0"
+              sizePreset={textSizePreset}
+              tone={selectedOption ? undefined : 'muted'}
+            >
+              {selectedOption?.label ?? placeholder}
+            </Text>
+          </StyledComboboxValue>
+          {iconPosition === 'end' && iconNode}
+        </StyledComboboxTrigger>
+
+        {isClearVisible && !isIconStart && (
+          <Icon
+            aria-label={clearButtonAriaLabel(label)}
+            as="button"
+            data-slot="clear"
+            disabled={disabled}
+            iconFill={iconFill}
+            iconTone={iconTone}
+            shape="square"
+            showBorder
+            showShadow={false}
+            sizePreset={sizePreset}
+            onClick={handleClear}
+          >
+            <CloseIcon />
+          </Icon>
+        )}
+      </StyledComboboxTriggerRow>
 
       {reserveErrorSpace && (
         <Text
@@ -519,15 +630,15 @@ export function Combobox({
         open={isOpen}
         panelRef={panelRef}
         positionStrategy={{
-          anchorRef: triggerRef,
+          anchorRef: triggerRowRef,
           apply: (anchor, panel) =>
             applyComboboxPanelPosition(
               anchor,
               panel,
-              options.length,
+              Math.max(filtered.length, 1),
               searchInputRef.current?.offsetHeight
             ),
-          layoutDeps: [filtered.length, options.length],
+          layoutDeps: [filtered.length],
         }}
         returnFocusRef={triggerRef}
         onDismiss={handleClose}
@@ -539,86 +650,113 @@ export function Combobox({
           sizePreset={sizePreset}
           onKeyDown={handlePanelKeyDown}
         >
-          <Input
-            aria-activedescendant={activeOptionId}
-            aria-controls={listId}
-            aria-expanded
-            placeholder={searchPlaceholder}
-            ref={searchInputRef}
-            reserveErrorSpace={false}
-            shape={shape}
-            showBorder={false}
+          <StyledComboboxSearchRow data-has-clear={query.length > 0 ? '' : undefined}>
+            <Input
+              aria-activedescendant={activeOptionId}
+              aria-controls={listId}
+              aria-expanded
+              placeholder={searchPlaceholder}
+              ref={searchInputRef}
+              reserveErrorSpace={false}
+              shape={shape}
+              showBorder={false}
+              sizePreset={sizePreset}
+              type="search"
+              value={query}
+              onChange={handleQueryChange}
+            />
+            {query.length > 0 && (
+              <Icon
+                aria-label="Clear search"
+                as="button"
+                padding={12}
+                shape="round"
+                showHover={false}
+                sizePreset="normal"
+                onClick={() => {
+                  setQuery('');
+                  searchInputRef.current?.focus();
+                }}
+              >
+                <CloseIcon />
+              </Icon>
+            )}
+          </StyledComboboxSearchRow>
+
+          <StyledComboboxList
+            aria-label={label ?? placeholder}
+            id={listId}
+            role="listbox"
             sizePreset={sizePreset}
-            type="search"
-            value={query}
-            onChange={handleQueryChange}
-          />
+          >
+            {filtered.length === 0 && (
+              <li role="presentation">
+                <Text
+                  paddingBlock={8}
+                  paddingInline={8}
+                  sizePreset={textSizePreset}
+                  tone="muted"
+                >
+                  {emptyMessage}
+                </Text>
+              </li>
+            )}
+            {filtered.map((option, index) => {
+              const isSelected = option.value === selectedValue;
 
-          <ScrollPort paddingBlock={4} paddingInlineEnd={8} veilInsetInline={0}>
-            <StyledComboboxList
-              aria-label={label ?? placeholder}
-              id={listId}
-              role="listbox"
-            >
-              {filtered.length === 0 && (
-                <li role="presentation">
-                  <Text
-                    paddingBlock={8}
-                    paddingInline={8}
-                    sizePreset={textSizePreset}
-                    tone="muted"
+              return (
+                <li key={option.value} role="presentation">
+                  <StyledComboboxOption
+                    aria-selected={isSelected}
+                    data-active={index === activeIndex}
+                    data-index={index}
+                    disabled={disabled || option.disabled}
+                    id={`${listId}-${option.value}`}
+                    role="option"
+                    shape={shape}
+                    sizePreset={sizePreset}
+                    type="button"
+                    onClick={() => commitSelected(option)}
+                    onMouseMove={() => setActiveIndex(index)}
                   >
-                    {emptyMessage}
-                  </Text>
-                </li>
-              )}
-              {filtered.map((option, index) => {
-                const isSelected = option.value === selectedValue;
-
-                return (
-                  <li key={option.value} role="presentation">
-                    <StyledComboboxOption
-                      aria-selected={isSelected}
-                      data-active={index === activeIndex}
-                      data-index={index}
-                      disabled={disabled || option.disabled}
-                      id={`${listId}-${option.value}`}
-                      role="option"
-                      shape={shape}
-                      sizePreset={sizePreset}
-                      type="button"
-                      onClick={() => commitSelected(option)}
-                      onMouseMove={() => setActiveIndex(index)}
-                    >
-                      {Boolean(option.icon) && (
-                        <Icon sizePreset={sizePreset}>{option.icon}</Icon>
-                      )}
-                      <Text
-                        ellipsis
-                        minInlineSize="0"
-                        sizePreset={textSizePreset}
-                        zIndex="1"
+                    {Boolean(option.icon) && (
+                      <Icon
+                        showBorder={false}
+                        showHover={false}
+                        showShadow={false}
+                        sizePreset={sizePreset}
                       >
-                        {option.label}
-                      </Text>
-                      {isSelected && (
-                        <Icon
-                          data-slot="check"
-                          iconFill="primary"
-                          marginInlineStart="auto"
-                          position="relative"
-                          sizePreset={sizePreset}
-                          zIndex={1}
-                        >
-                          <CheckIcon />
-                        </Icon>
-                      )}
-                    </StyledComboboxOption>
-                  </li>
-                );
-              })}
-            </StyledComboboxList>
-          </ScrollPort>
+                        {option.icon}
+                      </Icon>
+                    )}
+                    <Text
+                      ellipsis
+                      minInlineSize="0"
+                      sizePreset={textSizePreset}
+                      zIndex="1"
+                    >
+                      {option.label}
+                    </Text>
+                    {isSelected && (
+                      <Icon
+                        data-slot="check"
+                        iconFill="primary"
+                        marginInlineStart="auto"
+                        position="relative"
+                        showBorder={false}
+                        showHover={false}
+                        showShadow={false}
+                        sizePreset={sizePreset}
+                        zIndex={1}
+                      >
+                        <CheckIcon />
+                      </Icon>
+                    )}
+                  </StyledComboboxOption>
+                </li>
+              );
+            })}
+          </StyledComboboxList>
         </StyledComboboxPanel>
       </AnchoredPortal>
     </StyledComboboxRoot>

@@ -15,7 +15,14 @@
 
 import styled from 'styled-components';
 
-import { getBorderStyles } from '@ui/border';
+import {
+  BORDER_PROP_NAMES,
+  DEFAULT_SHOW_BORDER,
+  DEFAULT_SHOW_SHADOW,
+  getBorderStyles,
+  type BorderProps,
+} from '@ui/border';
+import { getIconSize } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -24,7 +31,6 @@ import {
   resolveBlockRadius,
   type SizePreset,
 } from '@ui/presets';
-import { getRoundButtonMinBlockSize } from '@ui/round-button';
 import { getSpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
@@ -33,14 +39,14 @@ import { getTheme, type AppTheme } from '@ui/theme';
  * Размер ряда — контракт Card, собственной оси размера у действия нет:
  * под этот пресет всегда резервируется высота первой строки шапки,
  * заголовок не смещается при добавлении и удалении действий.
- * Тип `SizePreset` без ключа `huge` ряда RoundButton: huge в хроме
- * карточки ломает композицию.
+ * Тип `SizePreset`: oversized-габарит через layout на Icon в хроме карточки
+ * ломает композицию.
  */
 export const CARD_HEADER_ACTION_SIZE_PRESET: SizePreset = 'normal';
 
 /**
  * CardBackground — представляет заливку карточки: поверхность, фон страницы
- * или прозрачную без тени.
+ * или прозрачную. Рамка и тень — через `showBorder` и `showShadow`, не через заливку.
  */
 export type CardBackground = 'background' | 'surface' | 'transparent';
 
@@ -61,16 +67,18 @@ export const CARD_BACKGROUND_KEYS = Object.freeze([
  * @property background — заливка карточки
  * @property hasHeader — включает строку шапки в grid-раскладке корня
  */
-export type CardStyleProps = LayoutProps & {
-  background?: CardBackground;
-  hasHeader: boolean;
-};
+export type CardStyleProps = LayoutProps &
+  BorderProps & {
+    background?: CardBackground;
+    hasHeader: boolean;
+  };
 
 /**
  * CARD_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Card.
  */
 const CARD_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
+  ...BORDER_PROP_NAMES,
   'background',
   'hasHeader',
 ]);
@@ -90,22 +98,28 @@ const DEFAULT_CARD_BACKGROUND: CardBackground = 'surface';
  */
 function getCardStyles(props: CardStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
-  const { background = DEFAULT_CARD_BACKGROUND, hasHeader } = props;
+  const {
+    background = DEFAULT_CARD_BACKGROUND,
+    borderTone,
+    hasHeader,
+    showBorder = DEFAULT_SHOW_BORDER,
+    showShadow = DEFAULT_SHOW_SHADOW,
+  } = props;
+
+  const backgroundColor =
+    background === 'transparent'
+      ? 'transparent'
+      : background === 'background'
+        ? theme.colors.background
+        : theme.colors.surface;
 
   const styles = [
     hasHeader
       ? 'grid-template-rows: auto minmax(0, 1fr);'
       : 'grid-template-rows: minmax(0, 1fr);',
+    `background-color: ${backgroundColor};`,
+    getBorderStyles(theme, showBorder, showShadow, borderTone),
   ];
-
-  if (background === 'transparent') {
-    styles.push(`border: 1px solid ${theme.colors.border};`);
-  } else {
-    styles.push(
-      `background-color: ${background === 'background' ? theme.colors.background : theme.colors.surface};`
-    );
-    styles.push(getBorderStyles(theme));
-  }
 
   return styles.join('\n');
 }
@@ -201,9 +215,7 @@ export const StyledCardHeaderFirstLine = styled.div`
   display: grid;
   align-content: center;
   min-inline-size: 0;
-  min-block-size: ${getSpacingValue(
-    getRoundButtonMinBlockSize(CARD_HEADER_ACTION_SIZE_PRESET)
-  )};
+  min-block-size: ${getSpacingValue(getIconSize(CARD_HEADER_ACTION_SIZE_PRESET))};
 `;
 
 /**

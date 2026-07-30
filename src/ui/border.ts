@@ -1,82 +1,112 @@
 /**
  * Файл: `src/ui/border.ts`
- * Содержит рамку поверхности: статичную пару «рамка 1px + тень» для карточек,
- * панелей, бокса Checkbox и кружка RadioButton и переключаемое кольцо контролов
- * вне layout-box.
+ * Содержит управляемую рамку и тень вне layout-box: обводка `0 0 0 1px` и
+ * опционально `shadow.surface` одним `box-shadow`, плюс пакет пропсов
+ * `BorderProps` для локального opt-in у потребителей.
  *
  * Основные задачи:
- * 1. Предоставить функцию `getBorderStyles` — рамка и тень поверхности
- * 2. Предоставить функцию `getControlBorderStyles` — переключаемое кольцо контрола
- * 3. Задать дефолт пропа `showBorder` через `DEFAULT_SHOW_BORDER`
+ * 1. Типизировать пропсы рамки через `BorderProps` и перечень `BORDER_PROP_NAMES`
+ * 2. Предоставить функцию `getBorderStyles` — рамка и тень вне layout-box
+ * 3. Предоставить функцию `getBorderColor` — цвет рамки по `borderTone`
+ * 4. Задать дефолты пропов `showBorder` и `showShadow` через
+ *    `DEFAULT_SHOW_BORDER` и `DEFAULT_SHOW_SHADOW`
  *
  * Потребители:
- *  - `src/ui/card/card.styles.ts`, `src/ui/anchored-portal/anchored-portal.styles.ts` —
- *    подставляют рамку и тень поверхности через `getBorderStyles`
- *  - `src/ui/checkbox/checkbox.styles.ts`, `src/ui/radio-button/radio-button.styles.ts` —
- *    подставляют рамку с тенью бокса и кружка через `getBorderStyles`
- *  - styles-файлы контролов с пропом `showBorder`, например Input и RoundButton —
- *    подставляют переключаемое кольцо через `getControlBorderStyles`
- *  - styles-файлы с постоянным кольцом вне layout-box, например Button, Listbox,
- *    SegmentButton и DateRangeInput — подставляют кольцо через `getControlBorderStyles`
- *  - `src/ui/toast/toast.styles.ts` — подставляет постоянное кольцо вне layout-box
- *    через `getControlBorderStyles`, удерживая инвариант однострочного бокса
+ *  - styles-файлы с рамкой и тенью, например Card, Icon, Input, Toast и Tag —
+ *    подключают `BorderProps` / `BORDER_PROP_NAMES` и подставляют рамку через
+ *    `getBorderStyles`
+ *  - styles-файлы с постоянной рамкой без публичных пропсов, например Button,
+ *    Listbox, Checkbox, RadioButton, AnchoredPortal и SegmentButton —
+ *    подставляют `getBorderStyles` с дефолтами
  */
 
 import { type AppTheme } from '@ui/theme';
+import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
 
 /**
- * DEFAULT_SHOW_BORDER — задаёт показ кольца контрола по умолчанию.
+ * DEFAULT_SHOW_BORDER — задаёт показ рамки по умолчанию.
  * Используется, когда вызывающий код не передал проп `showBorder`.
  */
 export const DEFAULT_SHOW_BORDER = true;
 
 /**
- * getBorderStyles — возвращает CSS-правила рамки поверхности: `border` 1px
- * цвета `border` и тень `shadow.surface`. Реальный `border` входит в layout-box
- * и пол `min-block-size`: карточки, панели портала, бокс Checkbox и кружок
- * RadioButton. Рамка вне layout-box — `getControlBorderStyles`.
+ * DEFAULT_SHOW_SHADOW — задаёт показ тени по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showShadow`.
+ * Тень без рамки в дизайн-системе не существует: при `showBorder={false}`
+ * хелпер гасит и тень.
+ */
+export const DEFAULT_SHOW_SHADOW = true;
+
+/**
+ * BorderProps — представляет пропсы управления рамкой и тенью.
+ * Подключается локально через `& BorderProps` и `...BORDER_PROP_NAMES`
+ * у потребителей, которым нужна ось управления; в `LayoutProps` не входит.
+ *
+ * @property borderTone — тон цвета рамки при включённом `showBorder`
+ * @property showBorder — включает рамку
+ * @property showShadow — включает тень при включённой рамке
+ */
+export type BorderProps = {
+  borderTone?: TonePreset;
+  showBorder?: boolean;
+  showShadow?: boolean;
+};
+
+/**
+ * BORDER_PROP_NAMES — хранит имена пропсов пакета `BorderProps`.
+ * Компоненты подключают набор спредом в свой `*_PROP_NAMES` вместе с
+ * layout-пропами и остальными пропами стилизации.
+ */
+export const BORDER_PROP_NAMES = new Set(['borderTone', 'showBorder', 'showShadow']);
+
+/**
+ * getBorderColor — возвращает цвет рамки по `borderTone`.
  *
  * @param theme текущая тема
- * @returns CSS-правила, каждое с новой строки
+ * @param borderTone тон рамки
+ * @returns CSS-цвет. Для тона по умолчанию — `theme.colors.border`
  */
-export function getBorderStyles(theme: AppTheme): string {
-  const styles = [
-    `border: 1px solid ${theme.colors.border};`,
-    `box-shadow: ${theme.shadow.surface};`,
-  ];
-
-  return styles.join('\n');
+export function getBorderColor(
+  theme: AppTheme,
+  borderTone: TonePreset = DEFAULT_TONE
+): string {
+  return getToneColor(theme, borderTone, theme.colors.border);
 }
 
 /**
- * getControlBorderStyles — возвращает CSS-правило рамки контрола вне layout-box:
- * кольцо и тень поверхности одним `box-shadow`. Рамочный и безрамочный режимы
- * дают один `content-box` и одно окно `Icon`, без резерва
- * `border: 1px solid transparent`.
- * Проп `showBorder` подключается контролу осознанно: эталоны RoundButton и Input.
- * Составные триггеры, например Listbox, Combobox, Stepper и RangeInput, проп не
- * получают без отдельного кейса. Оболочка композита и поверхность с постоянным
- * кольцом, например Toast, вызывают функцию без второго аргумента.
- * При `showBorder` — кольцо `0 0 0 1px` цвета `border` и тень `shadow.surface`.
- * Без рамки CSS-правило не пишется. `border: none` вызывающий код пишет только там,
- * где layout-рамку даёт UA-стиль тега, например `<input>` и `<dialog>`: у `<button>` её
- * снял reset, у `<div>` рамки нет — повтор запрещён.
+ * getBorderStyles — возвращает CSS-правило рамки вне layout-box: обводку
+ * `0 0 0 1px` и опционально тень `shadow.surface` одним `box-shadow`.
+ * Рамочный и безрамочный режимы дают один `content-box` и одно окно `Icon`,
+ * без резерва `border: 1px solid transparent`.
+ * Пропсы `showBorder` и `showShadow` подключает потребитель осознанно: эталоны
+ * Icon, Card, Input, Toast и Tag. Составные триггеры, например Listbox,
+ * Combobox, Stepper и RangeInput, пропсы не получают без отдельного кейса и
+ * вызывают хелпер с дефолтами. Оболочка композита и поверхность с постоянной
+ * рамкой, например Checkbox и RadioButton, вызывают функцию без флагов.
+ * При `showBorder` — обводка цвета из `getBorderColor` и при `showShadow` —
+ * тень `shadow.surface`. Без рамки — `box-shadow: none`: тени без рамки нет.
+ * `border: none` вызывающий код пишет только там, где layout-рамку даёт
+ * UA-стиль тега, например `<input>` и `<dialog>`: у `<button>` её снял reset,
+ * у `<div>` рамки нет — повтор запрещён.
  *
  * @param theme текущая тема
- * @param showBorder включает рамку контрола
+ * @param showBorder включает рамку
+ * @param showShadow включает тень при включённой рамке
+ * @param borderTone тон цвета рамки
  * @returns CSS-правила, каждое с новой строки
  */
-export function getControlBorderStyles(
+export function getBorderStyles(
   theme: AppTheme,
-  showBorder: boolean = DEFAULT_SHOW_BORDER
+  showBorder: boolean = DEFAULT_SHOW_BORDER,
+  showShadow: boolean = DEFAULT_SHOW_SHADOW,
+  borderTone: TonePreset = DEFAULT_TONE
 ): string {
-  const styles: string[] = [];
-
-  if (showBorder) {
-    styles.push(
-      `box-shadow: 0 0 0 1px ${theme.colors.border}, ${theme.shadow.surface};`
-    );
+  if (!showBorder) {
+    return 'box-shadow: none;';
   }
 
-  return styles.join('\n');
+  const border = `0 0 0 1px ${getBorderColor(theme, borderTone)}`;
+  const shadow = showShadow ? `, ${theme.shadow.surface}` : '';
+
+  return `box-shadow: ${border}${shadow};`;
 }

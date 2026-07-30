@@ -56,7 +56,6 @@ import {
 import {
   DEFAULT_DATE_RANGE_INPUT_SHAPE,
   DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET,
-  StyledDateRangeInputClearButton,
   StyledDateRangeInputPanel,
   StyledDateRangeInputRoot,
   StyledDateRangeInputTriggerRow,
@@ -340,18 +339,18 @@ export function DateRangeInput({
         />
 
         {showClear && (
-          <StyledDateRangeInputClearButton
+          <Icon
             aria-label={clearDateRangeButtonAriaLabel(startLabel, endLabel)}
+            as="button"
             data-slot="clear"
             disabled={disabled}
-            type="button"
-            {...surfaceProps}
+            shape="square"
+            showHover={false}
+            sizePreset={sizePreset}
             onClick={handleClear}
           >
-            <Icon interactive sizePreset={sizePreset}>
-              <CloseIcon />
-            </Icon>
-          </StyledDateRangeInputClearButton>
+            <CloseIcon />
+          </Icon>
         )}
       </StyledDateRangeInputTriggerRow>
 

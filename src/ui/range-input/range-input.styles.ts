@@ -7,7 +7,7 @@
  * 2. Предоставить функцию `getRangeInputTextSize` и дефолты `DEFAULT_RANGE_INPUT_SHAPE`
  *    и `DEFAULT_RANGE_INPUT_SIZE_PRESET`
  * 3. Предоставить styled-узлы `StyledRangeInputRoot`, `StyledRangeInputTriggerRow`,
- *    `StyledRangeInputTrigger`, `StyledRangeInputValue`, `StyledRangeInputClearButton`,
+ *    `StyledRangeInputTrigger`, `StyledRangeInputValue`,
  *    `StyledRangeInputPanel`, `StyledRangeInputPresetList`, `StyledRangeInputPresetButton`,
  *    `StyledRangeInputCustomSection`, `StyledRangeInputFields` и `StyledRangeInputButtonRow`
  * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
@@ -21,8 +21,7 @@ import styled from 'styled-components';
 import { getPortalPanelStyles } from '@ui/anchored-portal';
 import {
   ICON_SETTING_PROP_NAMES,
-  getIconSectionSeamStyles,
-  getIconSectionTrackStyles,
+  getIconPositionStyles,
   resolveIconStateBackground,
 } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
@@ -186,10 +185,6 @@ function getRangeInputTriggerRowStyles(
     `border-radius: ${resolveRangeInputBlockRadius(props)};`,
     `box-shadow: ${theme.shadow.surface};`,
     `&[data-open='true'] { visibility: hidden; }`,
-    getIconSectionSeamStyles({
-      borderColor: theme.colors.border,
-      slot: 'clear',
-    }),
     '&:focus-within {',
     getOutlineStyles(theme.colors.focusOutline),
     '}',
@@ -225,7 +220,7 @@ export const StyledRangeInputTriggerRow = styled.div.withConfig({
  * 1. Берёт тему и считает значение канала по `iconTone`
  * 2. Собирает сетку триггера и центрирует значение через `align-items: center`:
  *    высоту ряда держит `min-block-size` родителя
- * 3. Кладёт трек, шов и канал секции через хелперы `@ui/icon`
+ * 3. Кладёт раскладку позиции и канал секции через хелперы `@ui/icon`
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -241,12 +236,11 @@ function getRangeInputTriggerStyles(
 
   const styles = [
     'display: grid;',
-    getIconSectionTrackStyles(),
+    getIconPositionStyles(),
     'align-items: center;',
     'min-inline-size: 0;',
     'text-align: center;',
     '&:focus-visible { outline: none; }',
-    getIconSectionSeamStyles({ borderColor: theme.colors.border }),
     `&:not(:disabled):hover {`,
     `--icon-state-background: ${stateBackground};`,
     `}`,
@@ -300,52 +294,6 @@ export const StyledRangeInputValue = styled.span.withConfig({
   shouldForwardProp: (prop) => !RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
 })<RangeInputSurfaceStyleProps>`
   ${(props) => getRangeInputValueStyles(props)}
-`;
-
-/**
- * getRangeInputClearButtonStyles — возвращает CSS-правила для узла
- * `StyledRangeInputClearButton`: квадрат сброса, разделитель и канал состояний.
- * Статику красит внутренний Icon своими пропсами. Кнопка сброса — самостоятельное
- * действие, поэтому выставляет канал на собственных `hover` и `focus-visible`.
- *
- * @param props пропсы поверхности и тема
- * @returns CSS-правила, каждое с новой строки
- */
-function getRangeInputClearButtonStyles(
-  props: RangeInputSurfaceStyleProps & { theme: AppTheme }
-): string {
-  const theme = getTheme(props);
-  const sizePreset = props.sizePreset ?? DEFAULT_RANGE_INPUT_SIZE_PRESET;
-  const size = getMinBlockSize(sizePreset);
-  const stateBackground = resolveIconStateBackground(
-    theme,
-    props.iconTone ?? DEFAULT_TONE
-  );
-
-  const styles = [
-    `inline-size: ${size};`,
-    `min-inline-size: ${size};`,
-    `&:not(:disabled):hover { --icon-state-background: ${stateBackground}; }`,
-    '&:focus-visible {',
-    'outline: none;',
-    `--icon-state-background: ${stateBackground};`,
-    '}',
-  ];
-
-  return styles.join('\n');
-}
-
-/**
- * StyledRangeInputClearButton — задаёт кнопку сброса компонента RangeInput.
- * Базируется на `<button>` и принимает пропсы из `RangeInputSurfaceStyleProps`.
- *
- * Генерация стилей:
- *  - `getRangeInputClearButtonStyles` — квадрат сброса, разделитель и подсветка
- */
-export const StyledRangeInputClearButton = styled.button.withConfig({
-  shouldForwardProp: (prop) => !RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
-})<RangeInputSurfaceStyleProps>`
-  ${(props) => getRangeInputClearButtonStyles(props)}
 `;
 
 /**

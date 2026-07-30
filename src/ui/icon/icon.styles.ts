@@ -5,10 +5,11 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `IconStyleProps` и `IconPosition`
  * 2. Хранить локальные ряды габарита в `iconSize` и отступов в `iconPadding`
- * 3. Предоставить функцию `getIconPadding`, дефолт `DEFAULT_ICON_POSITION`,
- *    перечни `ICON_POSITION_KEYS` и `ICON_SETTING_PROP_NAMES`, а также хелперы
- *    секции на родителе: `getIconSectionTrackStyles`, `getIconSectionSeamStyles`
- *    и `resolveIconStateBackground`
+ * 3. Предоставить функции `getIconSize` и `getIconPadding`, дефолт
+ *    `DEFAULT_ICON_POSITION`, перечни `ICON_POSITION_KEYS`,
+ *    `ICON_SHAPE_PRESET_KEYS` и `ICON_SETTING_PROP_NAMES`, а также хелперы
+ *    секции на родителе: `getIconPositionStyles` и
+ *    `resolveIconStateBackground`
  * 4. Предоставить styled-узел `StyledIcon`
  *
  * Потребители:
@@ -16,12 +17,25 @@
  *    публичное API
  *  - контролы с секцией иконки, например Button, Listbox, Combobox и RangeInput —
  *    подключают хелперы секции и читают позицию через `@ui/icon`
+ *  - `src/ui/card/card.styles.ts` — читает `getIconSize` для резерва высоты
+ *    ряда действий шапки
  */
 
 import styled from 'styled-components';
 
+import {
+  BORDER_PROP_NAMES,
+  DEFAULT_SHOW_SHADOW,
+  getBorderStyles,
+  type BorderProps,
+} from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { DEFAULT_SIZE_PRESET, minBlockSize, type SizePreset } from '@ui/presets';
+import {
+  DEFAULT_SIZE_PRESET,
+  minBlockSize,
+  resolveBlockRadius,
+  type SizePreset,
+} from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 import {
@@ -32,22 +46,43 @@ import {
 } from '@ui/tones';
 
 /**
- * IconSizePreset — представляет размерный ряд окна иконки.
- * Расширяет канонический `SizePreset` ключом `huge`, не добавляя его
- * в общий ряд контролов: `huge` доступен только там, где родитель передаёт
- * свой расширенный ряд, например RoundButton.
+ * IconShapePreset — представляет форму окна иконки.
+ * `round` на квадратном габарите даёт круг через `resolveBlockRadius('pill', …)`.
  */
-type IconSizePreset = 'huge' | SizePreset;
+export type IconShapePreset = 'round' | 'rounded' | 'square';
+
+/**
+ * ICON_SHAPE_PRESET_KEYS — задаёт перечень форм окна иконки.
+ * Используется в панелях настроек витрины дизайн-системы: `ShapeListbox`
+ * принимает его пропом `shapes`.
+ */
+export const ICON_SHAPE_PRESET_KEYS = Object.freeze([
+  'square',
+  'rounded',
+  'round',
+] as const satisfies readonly IconShapePreset[]);
+
+/**
+ * DEFAULT_ICON_SHAPE — задаёт форму окна иконки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `shape`.
+ */
+export const DEFAULT_ICON_SHAPE: IconShapePreset = 'square';
+
+/**
+ * DEFAULT_ICON_SHOW_BORDER — задаёт показ рамки окна иконки по умолчанию.
+ * Рамка выключена: безрамные действия шапки и декоративные окна — норма без
+ * явного `showBorder={false}`. Рамку включают точечно, например секция триггера
+ * и аватар в ProfileMenu.
+ */
+export const DEFAULT_ICON_SHOW_BORDER = false;
 
 /**
  * iconSize — хранит габарит окна иконки для каждого размера ряда.
- * Расширяет `minBlockSize` из `@ui/presets` спредом, добавляя локальный ключ `huge`:
- * окно повторяет квадрат контрола своего размера.
+ * Окно повторяет квадрат контрола своего размера из `minBlockSize`.
  */
 const iconSize = {
   ...minBlockSize,
-  huge: 80,
-} as const satisfies Record<IconSizePreset, SpacingValue>;
+} as const satisfies Record<SizePreset, SpacingValue>;
 
 /**
  * getIconSize — возвращает ключ шкалы габарита окна иконки по `sizePreset`.
@@ -55,22 +90,21 @@ const iconSize = {
  * @param sizePreset размер окна иконки
  * @returns ключ шкалы отступов из `@ui/spacing`
  */
-function getIconSize(sizePreset: IconSizePreset): SpacingValue {
+export function getIconSize(sizePreset: SizePreset): SpacingValue {
   return iconSize[sizePreset];
 }
 
 /**
  * iconPadding — хранит внутренний отступ окна иконки для каждого размера ряда.
- * Ключ — размер из `IconSizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
- * Вместе с квадратом из `iconSize` задаёт окно под svg: 24/28/32/64
- * для `small`/`normal`/`large`/`huge` по контракту оси иконки.
+ * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
+ * Вместе с квадратом из `iconSize` задаёт окно под svg: 24/28/32
+ * для `small`/`normal`/`large` по контракту оси иконки.
  */
 const iconPadding = {
   small: 4,
   normal: 6,
   large: 8,
-  huge: 8,
-} as const satisfies Record<IconSizePreset, SpacingValue>;
+} as const satisfies Record<SizePreset, SpacingValue>;
 
 /**
  * getIconPadding — возвращает ключ шкалы внутреннего отступа окна иконки по `sizePreset`.
@@ -80,14 +114,14 @@ const iconPadding = {
  * @param sizePreset размер окна иконки
  * @returns ключ шкалы отступов из `@ui/spacing`
  */
-export function getIconPadding(sizePreset: IconSizePreset): SpacingValue {
+export function getIconPadding(sizePreset: SizePreset): SpacingValue {
   return iconPadding[sizePreset];
 }
 
 /**
  * IconSurface — представляет статичную поверхность окна иконки: заливку и цвет глифа.
- * Состояния наведения и нажатия поверхность не включает — их родитель передаёт
- * каналом `--icon-state-background`.
+ * Состояния наведения и нажатия поверхность не включает — их родитель или сам Icon
+ * при `showHover` передаёт каналом `--icon-state-background`.
  *
  * @property backgroundColor — заливка окна в покое. Нейтральный тон заливку не красит
  * @property color — цвет глифа. Нейтральный тон без `iconFill` наследует цвет контекста
@@ -196,20 +230,14 @@ export const DEFAULT_ICON_POSITION: IconPosition = 'end';
 export const ICON_SETTING_PROP_NAMES = new Set(['iconFill', 'iconPosition', 'iconTone']);
 
 /**
- * ICON_SECTION_SEAM_SLOT — задаёт `data-slot` секции шва, когда вызывающий код
- * не передал `slot`.
- */
-const ICON_SECTION_SEAM_SLOT = 'icon';
-
-/**
- * getIconSectionTrackStyles — возвращает CSS-правила переворота колонок родителя
+ * getIconPositionStyles — возвращает CSS-правила переворота колонок родителя
  * под позицию `[data-slot='icon']` и растяжение секции по высоте ряда.
  * Родитель задаёт `display: grid` сам: хелпер не зашивает display — у ряда
  * с кнопкой сброса свои треки.
  *
  * @returns CSS-правила, каждое с новой строки
  */
-export function getIconSectionTrackStyles(): string {
+export function getIconPositionStyles(): string {
   const styles = [
     'grid-template-columns: minmax(0, 1fr) auto;',
     `&:has(> [data-slot='icon']:first-child) { grid-template-columns: auto minmax(0, 1fr); }`,
@@ -222,28 +250,23 @@ export function getIconSectionTrackStyles(): string {
 }
 
 /**
- * getIconSectionSeamStyles — возвращает CSS-правила шва секции по
- * `:first-child` / `:last-child` через `box-shadow: inset …` без сдвига бокса.
+ * resolveIconBorderRadius — возвращает значение `border-radius` по `shape`.
  *
- * @param options цвет шва и опциональный `data-slot` секции
- * @returns CSS-правила, каждое с новой строки
+ * @param shape форма окна иконки
+ * @param size габарит окна в CSS
+ * @returns значение для CSS-свойства `border-radius` или `undefined`
  */
-export function getIconSectionSeamStyles(options: {
-  borderColor: string;
-  slot?: string;
-}): string {
-  const { borderColor, slot = ICON_SECTION_SEAM_SLOT } = options;
+function resolveIconBorderRadius(shape: IconShapePreset, size: string): string {
+  if (shape === 'square') {
+    return '0';
+  }
 
-  const styles = [
-    `[data-slot='${slot}']:first-child {`,
-    `box-shadow: inset -1px 0 0 ${borderColor};`,
-    `}`,
-    `[data-slot='${slot}']:last-child {`,
-    `box-shadow: inset 1px 0 0 ${borderColor};`,
-    `}`,
-  ];
+  // `50%` — круг при любом габарите, в том числе через layout `inlineSize`/`blockSize`
+  if (shape === 'round') {
+    return '50%';
+  }
 
-  return styles.join('\n');
+  return resolveBlockRadius('rounded', size);
 }
 
 /**
@@ -253,23 +276,31 @@ export function getIconSectionSeamStyles(options: {
  * @property iconTone — тон заливки окна иконки
  * @property interactive — включает канал состояний `--icon-state-background`
  *   родителя
+ * @property shape — форма окна иконки
+ * @property showHover — включает запись канала состояний на hover и focus-visible
  * @property sizePreset — размер окна иконки
  */
-export type IconStyleProps = LayoutProps & {
-  iconFill?: TonePreset;
-  iconTone?: TonePreset;
-  interactive?: boolean;
-  sizePreset?: IconSizePreset;
-};
+export type IconStyleProps = LayoutProps &
+  BorderProps & {
+    iconFill?: TonePreset;
+    iconTone?: TonePreset;
+    interactive?: boolean;
+    shape?: IconShapePreset;
+    showHover?: boolean;
+    sizePreset?: SizePreset;
+  };
 
 /**
  * ICON_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Icon.
  */
 const ICON_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
+  ...BORDER_PROP_NAMES,
   'iconFill',
   'iconTone',
   'interactive',
+  'shape',
+  'showHover',
   'sizePreset',
 ]);
 
@@ -280,16 +311,24 @@ const ICON_PROP_NAMES = new Set<string>([
 const DEFAULT_ICON_INTERACTIVE = false;
 
 /**
+ * DEFAULT_ICON_SHOW_HOVER — задаёт запись канала hover по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showHover`.
+ */
+const DEFAULT_ICON_SHOW_HOVER = true;
+
+/**
  * getIconStyles — возвращает CSS-правила для корня `StyledIcon`: габарит,
- * внутренний отступ и статичную поверхность по `iconTone` и `iconFill`.
+ * внутренний отступ, форму, рамку, статичную поверхность и канал состояний.
  *
  * Как работает:
  * 1. Собирает квадрат окна и внутренний отступ по `sizePreset`
- * 2. Считает статичную поверхность через `resolveIconSurface`
- * 3. При `interactive` кладёт заливку через канал `--icon-state-background`
- *    с запасным значением на статику: переменную выставляет родитель в своих
- *    состояниях
- * 4. Без `interactive` красит только статичную заливку, когда она есть
+ * 2. Задаёт `border-radius` по `shape` (дефолт `square`)
+ * 3. Кладёт рамку и тень через `getBorderStyles` (дефолт рамки выключен)
+ * 4. Считает статичную поверхность через `resolveIconSurface`
+ * 5. При `interactive` или `showHover` кладёт заливку через канал
+ *    `--icon-state-background` с запасным значением на статику
+ * 6. При `showHover` на `:not(:disabled):hover` и `:focus-visible` пишет
+ *    значение канала через `resolveIconStateBackground`
  *
  * @param props пропсы стилизации Icon и тема
  * @returns CSS-правила, каждое с новой строки
@@ -297,21 +336,29 @@ const DEFAULT_ICON_INTERACTIVE = false;
 function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
   const {
+    borderTone,
     iconFill,
     iconTone = DEFAULT_TONE,
     interactive = DEFAULT_ICON_INTERACTIVE,
+    shape = DEFAULT_ICON_SHAPE,
+    showBorder = DEFAULT_ICON_SHOW_BORDER,
+    showHover = DEFAULT_ICON_SHOW_HOVER,
+    showShadow = DEFAULT_SHOW_SHADOW,
     sizePreset = DEFAULT_SIZE_PRESET,
   } = props;
   const size = getSpacingValue(getIconSize(sizePreset));
   const surface = resolveIconSurface(theme, iconTone, iconFill);
+  const usesStateChannel = interactive || showHover;
 
   const styles = [
     `inline-size: ${size};`,
     `block-size: ${size};`,
     `padding: ${getSpacingValue(getIconPadding(sizePreset))};`,
+    `border-radius: ${resolveIconBorderRadius(shape, size)};`,
+    getBorderStyles(theme, showBorder, showShadow, borderTone),
   ];
 
-  if (interactive) {
+  if (usesStateChannel) {
     styles.push(
       `background-color: var(--icon-state-background, ${surface.backgroundColor ?? 'transparent'});`
     );
@@ -323,20 +370,33 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
     styles.push(`color: ${surface.color};`);
   }
 
+  if (showHover) {
+    const stateBackground = resolveIconStateBackground(theme, iconTone);
+
+    styles.push(
+      `&:not(:disabled):hover,`,
+      `&:focus-visible {`,
+      `--icon-state-background: ${stateBackground};`,
+      '}'
+    );
+  }
+
   return styles.join('\n');
 }
 
 /**
  * StyledIcon — задаёт корневой узел компонента Icon.
  * Базируется на `<span>` и поддерживает все пропсы из `IconStyleProps`.
+ * Полиморфный `as` задаёт корневой тег, например `button`.
  *
  * Встроенные стили:
  *  - `display: grid` — раскладка по дефолту проекта
  *  - `place-items: center` — центрирует svg в окне
  *  - `flex-shrink: 0` — окно не сжимается во flex-рядах
+ *  - `overflow: hidden` — обрезает квадратное окно по скруглению
  *
  * Генерация стилей:
- *  - `getIconStyles` — габарит, внутренний отступ и поверхность
+ *  - `getIconStyles` — габарит, внутренний отступ, форма, рамка и поверхность
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *
  * Единственный узел проекта, создающий условия рендера svg: центрирующий бокс.
@@ -348,6 +408,7 @@ export const StyledIcon = styled.span.withConfig({
   display: grid;
   flex-shrink: 0;
   place-items: center;
+  overflow: hidden;
   ${(props) => getIconStyles(props)}
   ${(props) => getLayoutStyles(props)}
 `;

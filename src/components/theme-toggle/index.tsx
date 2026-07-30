@@ -5,7 +5,7 @@
  * Основные задачи:
  * 1. Экспортировать компонент ThemeToggle
  * 2. Выставлять `aria-label` по текущей теме
- * 3. Связать `RoundButton` с `useTheme`
+ * 3. Связать `Icon` с `useTheme`
  *
  * Потребители:
  *  - `src/components/header/index.tsx` — показывает кнопку переключения темы в блоке действий шапки
@@ -13,7 +13,7 @@
 
 import { useTheme } from '@hooks/use-theme';
 import { ContrastIcon } from '@icons';
-import { RoundButton } from '@ui/round-button';
+import { Icon } from '@ui/icon';
 
 /**
  * SWITCH_TO_DARK_ARIA_LABEL — задаёт EN-текст `aria-label` для перехода на тёмную тему.
@@ -28,7 +28,7 @@ const SWITCH_TO_DARK_ARIA_LABEL = 'Switch to dark theme';
 const SWITCH_TO_LIGHT_ARIA_LABEL = 'Switch to light theme';
 
 /**
- * ThemeToggle — отображает круглую кнопку переключения темы приложения.
+ * ThemeToggle — отображает кнопку переключения темы приложения.
  *
  * @example
  * <ThemeToggle />
@@ -37,13 +37,15 @@ export function ThemeToggle() {
   const { mode, onThemeChange } = useTheme();
 
   return (
-    <RoundButton
+    <Icon
       aria-label={
         mode === 'dark' ? SWITCH_TO_LIGHT_ARIA_LABEL : SWITCH_TO_DARK_ARIA_LABEL
       }
+      as="button"
+      shape="round"
       onClick={onThemeChange}
     >
       <ContrastIcon />
-    </RoundButton>
+    </Icon>
   );
 }

@@ -13,12 +13,8 @@
 
 import styled from 'styled-components';
 
-import { getControlBorderStyles } from '@ui/border';
-import {
-  ICON_SETTING_PROP_NAMES,
-  getIconSectionSeamStyles,
-  resolveIconStateBackground,
-} from '@ui/icon';
+import { getBorderStyles } from '@ui/border';
+import { ICON_SETTING_PROP_NAMES, resolveIconStateBackground } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -155,7 +151,6 @@ const DEFAULT_BUTTON_ACTIVE = false;
  *
  * Как работает:
  * 1. Переносит `padding-inline` с корня на слот лейбла — секция иконки прижата к краю
- * 2. Добавляет безусловный шов секции через `getIconSectionSeamStyles`
  * 3. При цветном `iconTone` на наведении и `:focus-visible` выставляет
  *    `--icon-state-background` сдвигом тона к `shade`; нейтральная секция
  *    подсвечивается заливкой корня
@@ -179,7 +174,6 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
     `[data-slot='label'] {`,
     `padding-inline: ${getPaddingInline(sizePreset)};`,
     `}`,
-    getIconSectionSeamStyles({ borderColor: theme.colors.border }),
   ];
 
   if (hoverStateBackground) {
@@ -214,12 +208,12 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
 
 /**
  * getButtonStyles — возвращает CSS-правила для корня `StyledButton`: размер,
- * кольцо и тень через `getControlBorderStyles`, радиус, цвет текста, заливку
+ * кольцо и тень через `getBorderStyles`, радиус, цвет текста, заливку
  * с состояниями и раскладку слота лейбла.
  *
  * Как работает:
  * 1. Собирает общие правила корня: размер, постоянное кольцо через
- *    `getControlBorderStyles`, радиус, цвет и заливка — фон лейбла всегда фон
+ *    `getBorderStyles`, радиус, цвет и заливка — фон лейбла всегда фон
  *    корня, наведение и `active` меняют его целиком
  * 2. Задаёт раскладку слота лейбла на корне: Text остаётся контентом без
  *    layout-пропсов
@@ -246,7 +240,7 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
     `border-radius: ${resolveBlockRadius(shape, minBlockSize)};`,
     `color: ${surface.color};`,
     `background-color: ${surface.backgroundColor};`,
-    getControlBorderStyles(theme),
+    getBorderStyles(theme),
     `&:not(:disabled):hover { background: ${surface.hoverBackground}; }`,
     `[data-slot='label'] {`,
     `flex: 1 1 auto;`,
@@ -281,7 +275,7 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
  *    скругление секций — обрезка корнем, не радиусы на детях
  *
  * Генерация стилей:
- *  - `getButtonStyles` — размер, кольцо и тень через `getControlBorderStyles`,
+ *  - `getButtonStyles` — размер, кольцо и тень через `getBorderStyles`,
  *    радиус, цвет, заливка и слот лейбла
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *

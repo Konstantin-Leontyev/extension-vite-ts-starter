@@ -136,7 +136,10 @@ export function ToastProvider({ children }: ToastProviderProps) {
           <StyledToastViewport>
             {toasts.map((toast) => (
               <Toast
+                borderTone={toast.borderTone}
                 key={toast.id}
+                showBorder={toast.showBorder}
+                showShadow={toast.showShadow}
                 sizePreset={toast.sizePreset}
                 textItalic={toast.textItalic}
                 textSize={toast.textSize}

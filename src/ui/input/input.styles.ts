@@ -14,7 +14,13 @@
 import { type CSSProperties } from 'react';
 import styled from 'styled-components';
 
-import { DEFAULT_SHOW_BORDER, getControlBorderStyles } from '@ui/border';
+import {
+  BORDER_PROP_NAMES,
+  DEFAULT_SHOW_BORDER,
+  DEFAULT_SHOW_SHADOW,
+  getBorderStyles,
+  type BorderProps,
+} from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -59,33 +65,38 @@ export const StyledInputRoot = styled.div.withConfig({
  * InputStyleProps — представляет пропсы стилизации Input и layout-пропсы.
  *
  * @property shape — форма строки-поля
- * @property showBorder — включает рамку контрола вне layout-box
  * @property sizePreset — размер контрола
  * @property textAlign — горизонтальное выравнивание значения
  * @property textItalic — включает курсив значения
  */
-export type InputStyleProps = LayoutProps & {
-  shape?: ShapePreset;
-  showBorder?: boolean;
-  sizePreset?: SizePreset;
-  textAlign?: CSSProperties['textAlign'];
-  textItalic?: boolean;
-};
+export type InputStyleProps = LayoutProps &
+  BorderProps & {
+    shape?: ShapePreset;
+    sizePreset?: SizePreset;
+    textAlign?: CSSProperties['textAlign'];
+    textItalic?: boolean;
+  };
 
 /**
  * InputControlStyleProps — представляет пропсы стилизации нативного поля ввода.
  */
 type InputControlStyleProps = Pick<
   InputStyleProps,
-  'shape' | 'showBorder' | 'sizePreset' | 'textAlign' | 'textItalic'
+  | 'borderTone'
+  | 'shape'
+  | 'showBorder'
+  | 'showShadow'
+  | 'sizePreset'
+  | 'textAlign'
+  | 'textItalic'
 >;
 
 /**
  * INPUT_CONTROL_PROP_NAMES — хранит имена пропсов стилизации нативного поля ввода.
  */
 const INPUT_CONTROL_PROP_NAMES = new Set<string>([
+  ...BORDER_PROP_NAMES,
   'shape',
-  'showBorder',
   'sizePreset',
   'textAlign',
   'textItalic',
@@ -106,8 +117,8 @@ const INPUT_CONTROL_PROP_NAMES = new Set<string>([
  * 3. Сбрасывает layout-рамку через `border: none` и красит фон: при рамке —
  *    `surface`, без рамки — `transparent`. При `showBorder` кладёт кольцо
  *    `0 0 0 1px` цвета `border` и тень `shadow.surface` одним `box-shadow` через
- *    `getControlBorderStyles`. Без рамки хелпер не пишет CSS-правило; на
- *    `:focus-visible` снимает `outline` глобального кольца из `@ui/reset`. Красит
+ *    `getBorderStyles`. Без рамки хелпер пишет `box-shadow: none`; на
+ *    `:focus-visible` снимает `outline` глобального фокуса из `@ui/reset`. Красит
  *    плейсхолдер тоном `muted`
  * 4. При переданном `textAlign` добавляет выравнивание значения
  * 5. При `textItalic` добавляет курсив значения
@@ -120,8 +131,10 @@ function getInputControlStyles(
 ): string {
   const theme = getTheme(props);
   const {
+    borderTone,
     shape = DEFAULT_SHAPE_PRESET,
     showBorder = DEFAULT_SHOW_BORDER,
+    showShadow = DEFAULT_SHOW_SHADOW,
     sizePreset = DEFAULT_SIZE_PRESET,
     textAlign,
     textItalic,
@@ -136,7 +149,7 @@ function getInputControlStyles(
     `border-radius: ${resolveBlockRadius(shape, minBlockSize)};`,
     'border: none;',
     `background-color: ${showBorder ? theme.colors.surface : 'transparent'};`,
-    getControlBorderStyles(theme, showBorder),
+    getBorderStyles(theme, showBorder, showShadow, borderTone),
     `&::placeholder { color: ${theme.colors.muted}; }`,
   ];
 

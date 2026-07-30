@@ -14,7 +14,7 @@
  */
 import styled from 'styled-components';
 
-import { getControlBorderStyles } from '@ui/border';
+import { getBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { getOutlineStyles } from '@ui/outline';
 import {
@@ -88,7 +88,7 @@ const STEPPER_ROOT_PROP_NAMES = new Set<string>([
 
 /**
  * getStepperRootStyles — возвращает CSS-правила для корня `StyledStepperRoot`: габариты,
- * кольцо и тень через `getControlBorderStyles`, скругление, фон и кольцо фокуса.
+ * кольцо и тень через `getBorderStyles`, скругление, фон и кольцо фокуса.
  *
  * @param props пропсы стилизации корневого поля и тема
  * @returns CSS-правила, каждое с новой строки
@@ -104,7 +104,7 @@ function getStepperRootStyles(
     `min-block-size: ${minBlockSize};`,
     `border-radius: ${resolveBlockRadius(shape, minBlockSize)};`,
     `background-color: ${theme.colors.surface};`,
-    getControlBorderStyles(theme),
+    getBorderStyles(theme),
     '&:focus-within {',
     getOutlineStyles(theme.colors.focusOutline),
     '}',
@@ -123,7 +123,7 @@ function getStepperRootStyles(
  *  - `overflow: hidden` — обрезает содержимое по скруглению корня
  *
  * Генерация стилей:
- *  - `getStepperRootStyles` — габариты, кольцо и тень через `getControlBorderStyles`,
+ *  - `getStepperRootStyles` — габариты, кольцо и тень через `getBorderStyles`,
  *    скругление, фон и кольцо фокуса
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *

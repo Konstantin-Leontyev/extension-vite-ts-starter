@@ -382,6 +382,9 @@ export function Stepper({
             blockSize="100%"
             inlineSize="100%"
             padding={STEPPER_CHEVRON_ICON_PADDING}
+            showBorder={false}
+            showHover={false}
+            showShadow={false}
           >
             <ChevronUpIcon />
           </Icon>
@@ -400,6 +403,9 @@ export function Stepper({
             blockSize="100%"
             inlineSize="100%"
             padding={STEPPER_CHEVRON_ICON_PADDING}
+            showBorder={false}
+            showHover={false}
+            showShadow={false}
           >
             <ChevronDownIcon />
           </Icon>

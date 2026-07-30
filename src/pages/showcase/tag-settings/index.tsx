@@ -19,6 +19,7 @@ import { TAG_SIZE_PRESET_KEYS, getTagTextSize, type TagSizePreset } from '@ui/ta
 import { type TextSizePreset, type TextTone } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
+import { BorderGroup } from '../border-group';
 import { ShapeListbox } from '../shape-listbox';
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
@@ -31,11 +32,12 @@ import { ToneListbox } from '../tone-listbox';
  * `showText` управляет передачей содержимого в превью, `text` хранит содержимое `children`.
  * Используется для синхронизации значений между панелью управления и демонстрационной меткой.
  *
- * @property borderTone — тон границы при включённом `showBorder`
+ * @property borderTone — тон рамки при включённом `showBorder`
  * @property dotTone — тон точки
  * @property shape — форма метки
- * @property showBorder — включает границу
+ * @property showBorder — включает рамку
  * @property showDot — включает точку-индикатор
+ * @property showShadow — включает тень при включённой рамке
  * @property showText — витринный ключ показа текста. Выключенный — метка без текста
  * @property sizePreset — размер метки
  * @property text — содержимое метки
@@ -51,6 +53,7 @@ export type TagWidgetState = {
   shape: ShapePreset;
   showBorder: boolean;
   showDot: boolean;
+  showShadow: boolean;
   showText: boolean;
   sizePreset: TagSizePreset;
   text: string;
@@ -105,23 +108,14 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
         onChange={(tone) => onChange('tone', tone)}
       />
 
-      <Checkbox
-        checked={state.showBorder}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('showBorder', event.target.checked)
-        }
-      >
-        Show border
-      </Checkbox>
-
-      {state.showBorder && (
-        <ToneListbox
-          label="Border tone:"
-          tones={TONE_PRESET_KEYS}
-          value={state.borderTone}
-          onChange={(tone) => onChange('borderTone', tone)}
-        />
-      )}
+      <BorderGroup
+        borderTone={state.borderTone}
+        showBorder={state.showBorder}
+        showShadow={state.showShadow}
+        onBorderToneChange={(tone) => onChange('borderTone', tone)}
+        onShowBorderChange={(show) => onChange('showBorder', show)}
+        onShowShadowChange={(show) => onChange('showShadow', show)}
+      />
 
       <Checkbox
         checked={state.showDot}

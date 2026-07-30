@@ -22,8 +22,10 @@ import { getIconPadding } from '@ui/icon';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 import { type SpacingValue } from '@ui/spacing';
 import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
+import { type TonePreset } from '@ui/tones';
 
 import { BackgroundListbox } from '../background-listbox';
+import { BorderGroup } from '../border-group';
 import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
@@ -75,7 +77,10 @@ export type CardHeaderActionState = {
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Card.
  *
  * @property background — заливка карточки
+ * @property borderTone — тон рамки
  * @property headerActions — демо-ряд действий шапки
+ * @property showBorder — включает рамку
+ * @property showShadow — включает тень при включённой рамке
  * @property showSubtitle — витринный ключ показа подзаголовка. Выключенный — в превью остаётся только заголовок
  * @property subtitle — подзаголовок
  * @property subtitleAlign — выравнивание подзаголовка
@@ -88,7 +93,10 @@ export type CardHeaderActionState = {
  */
 export type CardWidgetState = {
   background: CardBackground;
+  borderTone: TonePreset;
   headerActions: CardHeaderActionState[];
+  showBorder: boolean;
+  showShadow: boolean;
   showSubtitle: boolean;
   subtitle: string;
   subtitleAlign: TextAlignPreset;
@@ -164,6 +172,15 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
 
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
+      <BorderGroup
+        borderTone={state.borderTone}
+        showBorder={state.showBorder}
+        showShadow={state.showShadow}
+        onBorderToneChange={(tone) => onChange('borderTone', tone)}
+        onShowBorderChange={(show) => onChange('showBorder', show)}
+        onShowShadowChange={(show) => onChange('showShadow', show)}
+      />
+
       <BackgroundListbox
         label="Background:"
         value={state.background}

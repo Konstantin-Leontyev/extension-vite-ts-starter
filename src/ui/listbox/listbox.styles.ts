@@ -6,8 +6,9 @@
  * 1. Типизировать пропсы через `ListboxStyleProps` и `ListboxSurfaceStyleProps`
  * 2. Хранить максимум видимых строк панели в `LISTBOX_PANEL_MAX_OPTION_ROWS`
  * 3. Предоставить функцию `getListboxTextSize`
- * 4. Предоставить styled-узлы `StyledListboxRoot`, `StyledListboxTrigger`,
- *    `StyledListboxPanel`, `StyledListboxOptionButton` и `StyledListboxOptionRow`
+ * 4. Предоставить styled-узлы `StyledListboxRoot`, `StyledListboxTriggerRow`,
+ *    `StyledListboxTrigger`, `StyledListboxPanel`, `StyledListboxOptionButton`
+ *    и `StyledListboxOptionRow`
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
@@ -17,15 +18,15 @@
 import styled from 'styled-components';
 
 import { getPortalPanelStyles } from '@ui/anchored-portal';
-import { getControlBorderStyles } from '@ui/border';
+import { getBorderStyles } from '@ui/border';
 import {
   ICON_SETTING_PROP_NAMES,
-  getIconSectionSeamStyles,
-  getIconSectionTrackStyles,
+  getIconPositionStyles,
   resolveIconStateBackground,
 } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { MOTION_CONTROL_DURATION, getTransitionStyles } from '@ui/motion';
+import { getOutlineStyles } from '@ui/outline';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
@@ -129,25 +130,84 @@ const LISTBOX_SURFACE_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * getListboxTriggerStyles — возвращает CSS-правила для узла `StyledListboxTrigger`:
- * габариты, кольцо и тень через `getControlBorderStyles`, заливку, раскладку лейбла,
- * шов и канал состояний секции шеврона. Статику секции красит внутренний Icon
- * своими пропсами.
+ * getListboxTriggerRowStyles — возвращает CSS-правила для узла
+ * `StyledListboxTriggerRow`: габариты, рамку, заливку, тень и кольцо фокуса.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты пропсов
- * 2. Собирает габариты триггера и заливку `surface`, затем кольцо `0 0 0 1px`
+ * 2. Собирает габариты ряда и заливку `surface`, затем кольцо `0 0 0 1px`
  *    цвета `border` и тень `shadow.surface` одним `box-shadow` через
- *    `getControlBorderStyles` без второго аргумента — постоянное кольцо
- * 3. Кладёт трек секции через `getIconSectionTrackStyles`: колонки под позицию
- *    `[data-slot='icon']` и `block-size: 100%` на слоте. Шов — через
- *    `getIconSectionSeamStyles`. Цвет канала состояний — через
+ *    `getBorderStyles` без второго аргумента — постоянное кольцо
+ * 3. Без clear оставляет одну колонку. При `data-has-clear` — две колонки.
+ *    Позиция сброса читается из DOM по `[data-slot='clear']:first-child`, не из пропа
+ * 4. Акцент фокуса даёт `outline` на ряде при `:focus-within`, потому что
+ *    `overflow` обрезает `outline` детей
+ * 5. При `data-open='true'` скрывает ряд через `visibility: hidden`, чтобы
+ *    панель наследовала ширину якоря без двойного отображения триггера
+ *
+ * @param props пропсы поверхности и тема
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getListboxTriggerRowStyles(
+  props: ListboxSurfaceStyleProps & { theme: AppTheme }
+): string {
+  const theme = getTheme(props);
+  const {
+    shape = DEFAULT_SHAPE_PRESET,
+    sizePreset = DEFAULT_SIZE_PRESET,
+  } = props;
+  const size = getMinBlockSize(sizePreset);
+
+  const styles = [
+    'display: grid;',
+    'grid-template-columns: minmax(0, 1fr);',
+    `&[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }`,
+    `&[data-has-clear]:has(> [data-slot='clear']:first-child) { grid-template-columns: auto minmax(0, 1fr); }`,
+    'inline-size: 100%;',
+    `min-block-size: ${size};`,
+    'overflow: hidden;',
+    `background-color: ${theme.colors.surface};`,
+    `border-radius: ${resolveBlockRadius(shape, size)};`,
+    getBorderStyles(theme),
+    `&[data-open='true'] { visibility: hidden; }`,
+    '&:focus-within {',
+    getOutlineStyles(theme.colors.focusOutline),
+    '}',
+  ];
+
+  return styles.join('\n');
+}
+
+/**
+ * StyledListboxTriggerRow — задаёт ряд триггера компонента Listbox.
+ * Базируется на `<div>` и принимает пропсы из `ListboxSurfaceStyleProps`.
+ *
+ * Генерация стилей:
+ *  - `getListboxTriggerRowStyles` — габариты, рамка, заливка, тень и кольцо фокуса
+ *
+ * При открытой панели ряд скрывается через `visibility: hidden`, чтобы панель
+ * наследовала ширину якоря без двойного отображения триггера.
+ */
+export const StyledListboxTriggerRow = styled.div.withConfig({
+  shouldForwardProp: (prop) => !LISTBOX_SURFACE_PROP_NAMES.has(prop),
+})<ListboxSurfaceStyleProps>`
+  ${(props) => getListboxTriggerRowStyles(props)}
+`;
+
+/**
+ * getListboxTriggerStyles — возвращает CSS-правила для узла `StyledListboxTrigger`:
+ * раскладку лейбла, шов и канал состояний секции шеврона. Статику секции красит
+ * внутренний Icon своими пропсами.
+ *
+ * Как работает:
+ * 1. Берёт тему и подставляет дефолты пропсов
+ * 2. Собирает сетку триггера: высоту ряда держит `min-block-size` родителя
+ * 3. Кладёт раскладку позиции через `getIconPositionStyles`: колонки под позицию
+ *    `[data-slot='icon']` и `block-size: 100%` на слоте. Цвет канала состояний — через
  *    `resolveIconStateBackground`
  * 4. На `:not(:disabled):hover` и `:focus-visible` выставляет
  *    `--icon-state-background` — подсвечивается только индикатор, шеврон не
  *    самостоятельное действие
- * 5. При `data-open='true'` скрывает триггер через `visibility: hidden`, чтобы
- *    панель наследовала ширину якоря без двойного отображения
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -158,34 +218,25 @@ function getListboxTriggerStyles(
   const theme = getTheme(props);
   const {
     iconTone = DEFAULT_TONE,
-    shape = DEFAULT_SHAPE_PRESET,
     sizePreset = DEFAULT_SIZE_PRESET,
   } = props;
-  const size = getMinBlockSize(sizePreset);
   const stateBackground = resolveIconStateBackground(theme, iconTone);
 
   const styles = [
     'display: grid;',
-    getIconSectionTrackStyles(),
+    getIconPositionStyles(),
     'align-items: center;',
-    `min-block-size: ${size};`,
-    `border-radius: ${resolveBlockRadius(shape, size)};`,
-    'inline-size: 100%;',
     'min-inline-size: 0;',
-    'overflow: hidden;',
     'text-align: start;',
-    `background-color: ${theme.colors.surface};`,
-    getControlBorderStyles(theme),
-    `&[data-open='true'] { visibility: hidden; }`,
     `[data-slot='label'] {`,
     'min-inline-size: 0;',
     `padding-inline: ${getPaddingInline(sizePreset)};`,
     `}`,
-    getIconSectionSeamStyles({ borderColor: theme.colors.border }),
     `&:not(:disabled):hover {`,
     `--icon-state-background: ${stateBackground};`,
     `}`,
     `&:focus-visible {`,
+    'outline: none;',
     `--icon-state-background: ${stateBackground};`,
     `}`,
   ];
@@ -198,8 +249,7 @@ function getListboxTriggerStyles(
  * Базируется на `<button>` и принимает пропсы из `ListboxSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getListboxTriggerStyles` — габариты, кольцо и тень через `getControlBorderStyles`,
- *    заливка, лейбл, секция шеврона и скрытие при открытой панели
+ *  - `getListboxTriggerStyles` — раскладка лейбла и секция шеврона
  */
 export const StyledListboxTrigger = styled.button.withConfig({
   shouldForwardProp: (prop) => !LISTBOX_SURFACE_PROP_NAMES.has(prop),

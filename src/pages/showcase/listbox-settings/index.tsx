@@ -2,8 +2,9 @@
  * Файл: `src/pages/showcase/listbox-settings/index.tsx`
  * Определяет панель настроек компонента Listbox в витрине дизайн-системы.
  * Содержит контролы для изменения размера, формы, иконки, режима
- * множественного выбора, чекбоксов в строках, подписи, плейсхолдера, резерва
- * высоты под строку ошибки и состояния `disabled` в реальном времени.
+ * множественного выбора, чекбоксов в строках, сброса выбора, подписи,
+ * плейсхолдера, резерва высоты под строку ошибки и состояния `disabled`
+ * в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `ListboxWidgetState`
@@ -40,6 +41,7 @@ import { StyledSettingsForm } from '../showcase.styles';
  * @property placeholder — плейсхолдер неактивного триггера
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки
  * @property shape — форма поверхности
+ * @property showClear — включает кнопку сброса выбора при выбранном значении
  * @property sizePreset — размер компонента
  * @property value — буфер выбранного значения в превью. В панель не выносится
  */
@@ -54,6 +56,7 @@ export type ListboxWidgetState = {
   placeholder: string;
   reserveErrorSpace: boolean;
   shape: ShapePreset;
+  showClear: boolean;
   sizePreset: SizePreset;
   value: string | string[];
 };
@@ -118,6 +121,15 @@ export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
           Inline checkbox
         </Checkbox>
       )}
+
+      <Checkbox
+        checked={state.showClear}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('showClear', event.target.checked)
+        }
+      >
+        Show clear
+      </Checkbox>
 
       <Input
         label="Placeholder:"

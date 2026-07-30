@@ -5,9 +5,9 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `ComboboxStyleProps` и `ComboboxSurfaceStyleProps`
  * 2. Предоставить функцию `getComboboxTextSize`
- * 3. Предоставить styled-узлы `StyledComboboxRoot`, `StyledComboboxTrigger`,
- *    `StyledComboboxValue`, `StyledComboboxPanel`, `StyledComboboxList`
- *    и `StyledComboboxOption`
+ * 3. Предоставить styled-узлы `StyledComboboxRoot`, `StyledComboboxTriggerRow`,
+ *    `StyledComboboxTrigger`, `StyledComboboxValue`, `StyledComboboxPanel`,
+ *    `StyledComboboxSearchRow`, `StyledComboboxList` и `StyledComboboxOption`
  * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
@@ -17,15 +17,15 @@
 import styled from 'styled-components';
 
 import { getPortalPanelStyles } from '@ui/anchored-portal';
-import { getControlBorderStyles } from '@ui/border';
+import { getBorderStyles } from '@ui/border';
 import {
   ICON_SETTING_PROP_NAMES,
-  getIconSectionSeamStyles,
-  getIconSectionTrackStyles,
+  getIconPositionStyles,
   resolveIconStateBackground,
 } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { MOTION_CONTROL_DURATION, getTransitionStyles } from '@ui/motion';
+import { getOutlineStyles } from '@ui/outline';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
@@ -129,24 +129,83 @@ const COMBOBOX_SURFACE_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * getComboboxTriggerStyles — возвращает CSS-правила для узла `StyledComboboxTrigger`:
- * габариты, кольцо и тень через `getControlBorderStyles`, заливку, шов и канал
- * состояний секции шеврона. Статику секции красит внутренний Icon своими пропсами.
+ * getComboboxTriggerRowStyles — возвращает CSS-правила для узла
+ * `StyledComboboxTriggerRow`: габариты, рамку, заливку, тень и кольцо фокуса.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты пропсов
- * 2. Собирает габариты триггера и заливку `surface`, затем кольцо `0 0 0 1px`
+ * 2. Собирает габариты ряда и заливку `surface`, затем кольцо `0 0 0 1px`
  *    цвета `border` и тень `shadow.surface` одним `box-shadow` через
- *    `getControlBorderStyles` без второго аргумента — постоянное кольцо
- * 3. Кладёт трек секции через `getIconSectionTrackStyles`: колонки под позицию
- *    `[data-slot='icon']` и `block-size: 100%` на слоте. Шов — через
- *    `getIconSectionSeamStyles`. Цвет канала состояний — через
+ *    `getBorderStyles` без второго аргумента — постоянное кольцо
+ * 3. Без clear оставляет одну колонку. При `data-has-clear` — две колонки.
+ *    Позиция сброса читается из DOM по `[data-slot='clear']:first-child`, не из пропа
+ * 4. Акцент фокуса даёт `outline` на ряде при `:focus-within`, потому что
+ *    `overflow` обрезает `outline` детей
+ * 5. При `data-open='true'` скрывает ряд через `visibility: hidden`, чтобы
+ *    панель наследовала ширину якоря без двойного отображения триггера
+ *
+ * @param props пропсы поверхности и тема
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getComboboxTriggerRowStyles(
+  props: ComboboxSurfaceStyleProps & { theme: AppTheme }
+): string {
+  const theme = getTheme(props);
+  const {
+    shape = DEFAULT_SHAPE_PRESET,
+    sizePreset = DEFAULT_SIZE_PRESET,
+  } = props;
+
+  const styles = [
+    'display: grid;',
+    'grid-template-columns: minmax(0, 1fr);',
+    `&[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }`,
+    `&[data-has-clear]:has(> [data-slot='clear']:first-child) { grid-template-columns: auto minmax(0, 1fr); }`,
+    'inline-size: 100%;',
+    `min-block-size: ${getMinBlockSize(sizePreset)};`,
+    'overflow: hidden;',
+    `background-color: ${theme.colors.surface};`,
+    `border-radius: ${resolveComboboxBlockRadius(shape, sizePreset)};`,
+    getBorderStyles(theme),
+    `&[data-open='true'] { visibility: hidden; }`,
+    '&:focus-within {',
+    getOutlineStyles(theme.colors.focusOutline),
+    '}',
+  ];
+
+  return styles.join('\n');
+}
+
+/**
+ * StyledComboboxTriggerRow — задаёт ряд триггера компонента Combobox.
+ * Базируется на `<div>` и принимает пропсы из `ComboboxSurfaceStyleProps`.
+ *
+ * Генерация стилей:
+ *  - `getComboboxTriggerRowStyles` — габариты, рамка, заливка, тень и кольцо фокуса
+ *
+ * При открытой панели ряд скрывается через `visibility: hidden`, чтобы панель
+ * наследовала ширину якоря без двойного отображения триггера.
+ */
+export const StyledComboboxTriggerRow = styled.div.withConfig({
+  shouldForwardProp: (prop) => !COMBOBOX_SURFACE_PROP_NAMES.has(prop),
+})<ComboboxSurfaceStyleProps>`
+  ${(props) => getComboboxTriggerRowStyles(props)}
+`;
+
+/**
+ * getComboboxTriggerStyles — возвращает CSS-правила для узла `StyledComboboxTrigger`:
+ * раскладку значения, шов и канал состояний секции шеврона. Статику секции красит
+ * внутренний Icon своими пропсами.
+ *
+ * Как работает:
+ * 1. Берёт тему и подставляет дефолты пропсов
+ * 2. Собирает сетку триггера: высоту ряда держит `min-block-size` родителя
+ * 3. Кладёт раскладку позиции через `getIconPositionStyles`: колонки под позицию
+ *    `[data-slot='icon']` и `block-size: 100%` на слоте. Цвет канала состояний — через
  *    `resolveIconStateBackground`
  * 4. На `:not(:disabled):hover` и `:focus-visible` выставляет
  *    `--icon-state-background` — подсвечивается только индикатор, шеврон не
  *    самостоятельное действие
- * 5. При `data-open='true'` скрывает триггер через `visibility: hidden`, чтобы
- *    панель наследовала ширину якоря без двойного отображения
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -155,32 +214,20 @@ function getComboboxTriggerStyles(
   props: ComboboxSurfaceStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const {
-    iconTone = DEFAULT_TONE,
-    shape = DEFAULT_SHAPE_PRESET,
-    sizePreset = DEFAULT_SIZE_PRESET,
-  } = props;
-  const size = getMinBlockSize(sizePreset);
+  const { iconTone = DEFAULT_TONE } = props;
   const stateBackground = resolveIconStateBackground(theme, iconTone);
 
   const styles = [
     'display: grid;',
-    getIconSectionTrackStyles(),
+    getIconPositionStyles(),
     'align-items: center;',
-    'inline-size: 100%;',
-    `min-block-size: ${size};`,
     'min-inline-size: 0;',
-    'overflow: hidden;',
     'text-align: start;',
-    `background-color: ${theme.colors.surface};`,
-    `border-radius: ${resolveComboboxBlockRadius(shape, sizePreset)};`,
-    getControlBorderStyles(theme),
-    `&[data-open='true'] { visibility: hidden; }`,
-    getIconSectionSeamStyles({ borderColor: theme.colors.border }),
     `&:not(:disabled):hover {`,
     `--icon-state-background: ${stateBackground};`,
     `}`,
     `&:focus-visible {`,
+    'outline: none;',
     `--icon-state-background: ${stateBackground};`,
     `}`,
   ];
@@ -193,8 +240,7 @@ function getComboboxTriggerStyles(
  * Базируется на `<button>` и принимает пропсы из `ComboboxSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getComboboxTriggerStyles` — габариты, кольцо и тень через `getControlBorderStyles`,
- *    заливка, секция шеврона и скрытие при открытой панели
+ *  - `getComboboxTriggerStyles` — раскладка значения и секция шеврона
  */
 export const StyledComboboxTrigger = styled.button.withConfig({
   shouldForwardProp: (prop) => !COMBOBOX_SURFACE_PROP_NAMES.has(prop),
@@ -243,6 +289,12 @@ export const StyledComboboxValue = styled.span.withConfig({
 `;
 
 /**
+ * COMBOBOX_PANEL_MAX_OPTION_ROWS — задаёт максимум видимых строк опций в списке панели.
+ * Используется в `getComboboxListStyles` для `max-block-size`.
+ */
+const COMBOBOX_PANEL_MAX_OPTION_ROWS = 6;
+
+/**
  * getComboboxPanelStyles — возвращает CSS-правила для узла `StyledComboboxPanel`:
  * сетку поиска и списка, обрезку и оболочку портальной панели.
  *
@@ -282,14 +334,69 @@ export const StyledComboboxPanel = styled.div.withConfig({
 `;
 
 /**
- * StyledComboboxList — задаёт список опций компонента Combobox.
- * Базируется на `<ul>`.
+ * StyledComboboxSearchRow — задаёт ряд поля поиска и кнопки сброса в панели Combobox.
+ * Базируется на `<div>`.
  *
  * Встроенные стили:
- *  - `display: grid` — опции столбиком
+ *  - `display: grid` — поле поиска и кнопка сброса в одной строке
+ *  - `grid-template-columns` при `data-has-clear` — вторая колонка под кнопку сброса
+ *  - `appearance: none` на `::-webkit-search-cancel-button` и `::-webkit-search-decoration` —
+ *    скрывает UA-кнопку сброса у `input[type='search']`, чтобы оставался только Icon
  */
-export const StyledComboboxList = styled.ul`
+export const StyledComboboxSearchRow = styled.div`
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  min-inline-size: 0;
+
+  &[data-has-clear] {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  & input[type='search']::-webkit-search-cancel-button {
+    appearance: none;
+  }
+
+  & input[type='search']::-webkit-search-decoration {
+    appearance: none;
+  }
+`;
+
+/**
+ * getComboboxListStyles — возвращает CSS-правила для узла `StyledComboboxList`:
+ * столбик опций, отступы, ограничение высоты и прокрутку по модели Listbox.
+ *
+ * @param props пропсы размера
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getComboboxListStyles(
+  props: Pick<ComboboxSurfaceStyleProps, 'sizePreset'>
+): string {
+  const sizePreset = props.sizePreset ?? DEFAULT_SIZE_PRESET;
+
+  const styles = [
+    'display: grid;',
+    'min-block-size: 0;',
+    `padding-block: ${getSpacingValue(4)};`,
+    `padding-inline-end: ${getSpacingValue(8)};`,
+    `max-block-size: calc(${getMinBlockSize(sizePreset)} * ${COMBOBOX_PANEL_MAX_OPTION_ROWS});`,
+    'overflow: hidden auto;',
+  ];
+
+  return styles.join('\n');
+}
+
+/**
+ * StyledComboboxList — задаёт список опций компонента Combobox.
+ * Базируется на `<ul>` и принимает проп `sizePreset`.
+ *
+ * Генерация стилей:
+ *  - `getComboboxListStyles` — столбик, отступы, max-высота и прокрутка
+ */
+export const StyledComboboxList = styled.ul.withConfig({
+  shouldForwardProp: (prop) => prop !== 'sizePreset',
+})<Pick<ComboboxSurfaceStyleProps, 'sizePreset'>>`
+  ${(props) => getComboboxListStyles(props)}
 `;
 
 /**

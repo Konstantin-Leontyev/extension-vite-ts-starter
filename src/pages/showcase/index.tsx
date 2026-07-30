@@ -22,7 +22,7 @@ import { Checkbox, getCheckboxTextSize } from '@ui/checkbox';
 import { Combobox, type ComboboxOption } from '@ui/combobox';
 import { DateRangeInput, todayUtc } from '@ui/date-range-input';
 import { Fieldset } from '@ui/fieldset';
-import { getIconPadding } from '@ui/icon';
+import { Icon, getIconPadding } from '@ui/icon';
 import { Input } from '@ui/input';
 import { Listbox } from '@ui/listbox';
 import { Modal } from '@ui/modal';
@@ -34,11 +34,6 @@ import {
   RangeInput,
   type RangeValue,
 } from '@ui/range-input';
-import {
-  DEFAULT_ROUND_BUTTON_SHOW_BORDER,
-  DEFAULT_ROUND_BUTTON_SIZE_PRESET,
-  RoundButton,
-} from '@ui/round-button';
 import { ScrollPort } from '@ui/scroll-port';
 import { SegmentButton, getSegmentButtonTextSize } from '@ui/segment-button';
 import { Sidebar } from '@ui/sidebar';
@@ -61,6 +56,7 @@ import {
 } from './date-range-input-settings';
 import { FieldsetSettings, type FieldsetWidgetState } from './fieldset-settings';
 import { HeaderSettings } from './header-settings';
+import { IconSettings, type IconWidgetState } from './icon-button-settings';
 import { InputSettings, type InputWidgetState } from './input-settings';
 import { ListboxSettings, type ListboxWidgetState } from './listbox-settings';
 import { LISTBOX_DEMO_OPTIONS } from './listbox-settings/options';
@@ -74,10 +70,6 @@ import {
   type RadioButtonWidgetState,
 } from './radio-button-settings';
 import { RangeInputSettings, type RangeInputWidgetState } from './range-input-settings';
-import {
-  RoundButtonSettings,
-  type RoundButtonWidgetState,
-} from './round-button-settings';
 import {
   SegmentButtonSettings,
   type SegmentButtonWidgetState,
@@ -117,10 +109,10 @@ const INPUT_WIDGET_TITLE_ID = 'showcase-input-heading';
 const BUTTON_WIDGET_TITLE_ID = 'showcase-button-heading';
 
 /**
- * ROUND_BUTTON_WIDGET_TITLE_ID — задаёт id заголовка виджета RoundButton в витрине.
+ * ICON_WIDGET_TITLE_ID — задаёт id заголовка виджета Icon в витрине.
  * Используется в `aria-labelledby` карточки и как `titleId` виджета.
  */
-const ROUND_BUTTON_WIDGET_TITLE_ID = 'showcase-round-button-heading';
+const ICON_WIDGET_TITLE_ID = 'showcase-icon-heading';
 
 /**
  * LISTBOX_WIDGET_TITLE_ID — задаёт id заголовка виджета Listbox в витрине.
@@ -258,13 +250,13 @@ type WidgetSettingsKey =
   | 'combobox'
   | 'date-range-input'
   | 'fieldset'
+  | 'icon'
   | 'input'
   | 'listbox'
   | 'modal'
   | 'progress'
   | 'radio-button'
   | 'range-input'
-  | 'round-button'
   | 'segment-button'
   | 'spinner'
   | 'stepper'
@@ -285,7 +277,7 @@ const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   'range-input': 'Range input',
   'date-range-input': 'Date range',
   button: 'Button',
-  'round-button': 'Round button',
+  icon: 'Icon',
   'segment-button': 'Segment button',
   tag: 'Tag',
   table: 'Table',
@@ -317,6 +309,7 @@ const MODAL_INLINE_SIZE: Record<SizePreset, string> = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_INPUT_STATE: InputWidgetState = {
+  borderTone: 'default',
   disabled: false,
   error: '',
   errorAlign: 'center',
@@ -327,6 +320,7 @@ const DEFAULT_INPUT_STATE: InputWidgetState = {
   reserveErrorSpace: true,
   shape: 'rounded',
   showBorder: true,
+  showShadow: true,
   sizePreset: 'normal',
   textAlign: undefined,
   textItalic: false,
@@ -355,17 +349,21 @@ const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
 };
 
 /**
- * DEFAULT_ROUND_BUTTON_STATE — задаёт начальное состояние виджета RoundButton в витрине.
+ * DEFAULT_ICON_STATE — задаёт начальное состояние виджета Icon в витрине.
  * Используется при инициализации состояния в `ShowcasePage`.
  */
-const DEFAULT_ROUND_BUTTON_STATE: RoundButtonWidgetState = {
+const DEFAULT_ICON_STATE: IconWidgetState = {
+  borderTone: 'default',
   disabled: false,
   iconFill: 'default',
   iconKey: 'settings',
-  iconPadding: getIconPadding(DEFAULT_ROUND_BUTTON_SIZE_PRESET),
   iconTone: 'default',
-  showBorder: DEFAULT_ROUND_BUTTON_SHOW_BORDER,
-  sizePreset: DEFAULT_ROUND_BUTTON_SIZE_PRESET,
+  padding: getIconPadding('normal'),
+  shape: 'square',
+  showBorder: false,
+  showHover: true,
+  showShadow: true,
+  sizePreset: 'normal',
 };
 
 /**
@@ -383,8 +381,9 @@ const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
   placeholder: 'Select…',
   reserveErrorSpace: true,
   shape: 'rounded',
+  showClear: false,
   sizePreset: 'normal',
-  value: 'default',
+  value: '',
 };
 
 /**
@@ -402,8 +401,9 @@ const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
   reserveErrorSpace: true,
   searchPlaceholder: 'Search…',
   shape: 'rounded',
+  showClear: false,
   sizePreset: 'normal',
-  value: 'search',
+  value: '',
   withIcon: false,
 };
 
@@ -572,7 +572,10 @@ const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_TOAST_STATE: ToastWidgetState = {
+  borderTone: 'default',
   message: 'Very important message',
+  showBorder: true,
+  showShadow: true,
   sizePreset: 'normal',
   textItalic: false,
   textSize: getToastTextSize('normal'),
@@ -626,6 +629,7 @@ const DEFAULT_TAG_STATE: TagWidgetState = {
   shape: 'pill',
   showBorder: true,
   showDot: true,
+  showShadow: true,
   showText: true,
   sizePreset: 'small',
   text: 'Tag',
@@ -676,6 +680,7 @@ const DEFAULT_MODAL_STATE: ModalWidgetState = {
  */
 const DEFAULT_CARD_STATE: CardWidgetState = {
   background: 'surface',
+  borderTone: 'default',
   headerActions: [
     {
       disabled: false,
@@ -683,6 +688,8 @@ const DEFAULT_CARD_STATE: CardWidgetState = {
       iconPadding: getIconPadding(CARD_HEADER_ACTION_SIZE_PRESET),
     },
   ],
+  showBorder: true,
+  showShadow: true,
   title: 'Card title',
   showSubtitle: true,
   subtitle: 'Subtitle text',
@@ -763,9 +770,7 @@ export function ShowcasePage() {
   const [activeSettings, setActiveSettings] = useState<null | WidgetSettingsKey>(null);
   const [input, setInput] = useState<InputWidgetState>(DEFAULT_INPUT_STATE);
   const [button, setButton] = useState<ButtonWidgetState>(DEFAULT_BUTTON_STATE);
-  const [roundButton, setRoundButton] = useState<RoundButtonWidgetState>(
-    DEFAULT_ROUND_BUTTON_STATE
-  );
+  const [icon, setIcon] = useState<IconWidgetState>(DEFAULT_ICON_STATE);
   const [listbox, setListbox] = useState<ListboxWidgetState>(DEFAULT_LISTBOX_STATE);
   const [combobox, setCombobox] = useState<ComboboxWidgetState>(DEFAULT_COMBOBOX_STATE);
   const [rangeInput, setRangeInput] = useState<RangeInputWidgetState>(
@@ -851,11 +856,11 @@ export function ShowcasePage() {
     setButton((current) => ({ ...current, [key]: value }));
   }
 
-  function updateRoundButton<K extends keyof RoundButtonWidgetState>(
+  function updateIcon<K extends keyof IconWidgetState>(
     key: K,
-    value: RoundButtonWidgetState[K]
+    value: IconWidgetState[K]
   ): void {
-    setRoundButton((current) => ({ ...current, [key]: value }));
+    setIcon((current) => ({ ...current, [key]: value }));
   }
 
   function updateListbox<K extends keyof ListboxWidgetState>(
@@ -870,9 +875,11 @@ export function ShowcasePage() {
           value === true
             ? Array.isArray(current.value)
               ? current.value
-              : [current.value]
+              : current.value
+                ? [current.value]
+                : []
             : Array.isArray(current.value)
-              ? (current.value[0] ?? 'default')
+              ? (current.value[0] ?? '')
               : current.value;
 
         if (value === false) {
@@ -882,7 +889,11 @@ export function ShowcasePage() {
 
       if (key === 'inlineCheckbox' && value === true) {
         next.multiple = true;
-        next.value = Array.isArray(current.value) ? current.value : [current.value];
+        next.value = Array.isArray(current.value)
+          ? current.value
+          : current.value
+            ? [current.value]
+            : [];
       }
 
       return next;
@@ -1047,8 +1058,8 @@ export function ShowcasePage() {
       return <ButtonSettings state={button} onChange={updateButton} />;
     }
 
-    if (activeSettings === 'round-button') {
-      return <RoundButtonSettings state={roundButton} onChange={updateRoundButton} />;
+    if (activeSettings === 'icon') {
+      return <IconSettings state={icon} onChange={updateIcon} />;
     }
 
     if (activeSettings === 'segment-button') {
@@ -1230,6 +1241,7 @@ export function ShowcasePage() {
                 CARD_WIDGET_TITLE_ID,
                 <Card
                   background={card.background}
+                  borderTone={card.borderTone}
                   headerActions={card.headerActions.map((action) => ({
                     ariaLabel: action.iconKey,
                     disabled: action.disabled,
@@ -1237,6 +1249,8 @@ export function ShowcasePage() {
                     iconPadding: action.iconPadding,
                     onClick: () => undefined,
                   }))}
+                  showBorder={card.showBorder}
+                  showShadow={card.showShadow}
                   subtitle={card.showSubtitle ? card.subtitle : undefined}
                   subtitleAlign={card.subtitleAlign}
                   subtitleSizePreset={card.subtitleSizePreset}
@@ -1270,6 +1284,7 @@ export function ShowcasePage() {
                 INPUT_WIDGET_TITLE_ID,
                 <Input
                   alignSelf="center"
+                  borderTone={input.borderTone}
                   disabled={input.disabled}
                   error={input.error || undefined}
                   errorAlign={input.errorAlign}
@@ -1280,6 +1295,7 @@ export function ShowcasePage() {
                   reserveErrorSpace={input.reserveErrorSpace}
                   shape={input.shape}
                   showBorder={input.showBorder}
+                  showShadow={input.showShadow}
                   sizePreset={input.sizePreset}
                   textAlign={input.textAlign}
                   textItalic={input.textItalic}
@@ -1304,6 +1320,7 @@ export function ShowcasePage() {
                   placeholder={listbox.placeholder}
                   reserveErrorSpace={listbox.reserveErrorSpace}
                   shape={listbox.shape}
+                  showClear={listbox.showClear}
                   sizePreset={listbox.sizePreset}
                   value={listbox.value}
                   onChange={(value) => updateListbox('value', value)}
@@ -1326,6 +1343,7 @@ export function ShowcasePage() {
                   reserveErrorSpace={combobox.reserveErrorSpace}
                   searchPlaceholder={combobox.searchPlaceholder}
                   shape={combobox.shape}
+                  showClear={combobox.showClear}
                   sizePreset={combobox.sizePreset}
                   value={combobox.value}
                   onChange={(value) => updateCombobox('value', value)}
@@ -1423,20 +1441,25 @@ export function ShowcasePage() {
               )}
 
               {renderWidgetCard(
-                'round-button',
-                ROUND_BUTTON_WIDGET_TITLE_ID,
-                <RoundButton
-                  aria-label="Demo round button"
-                  disabled={roundButton.disabled}
-                  iconFill={roundButton.iconFill}
-                  iconPadding={roundButton.iconPadding}
-                  iconTone={roundButton.iconTone}
+                'icon',
+                ICON_WIDGET_TITLE_ID,
+                <Icon
+                  aria-label="Demo icon"
+                  as="button"
+                  borderTone={icon.borderTone}
+                  disabled={icon.disabled}
+                  iconFill={icon.iconFill}
+                  iconTone={icon.iconTone}
+                  padding={icon.padding}
                   placeSelf="center"
-                  showBorder={roundButton.showBorder}
-                  sizePreset={roundButton.sizePreset}
+                  shape={icon.shape}
+                  showBorder={icon.showBorder}
+                  showHover={icon.showHover}
+                  showShadow={icon.showShadow}
+                  sizePreset={icon.sizePreset}
                 >
-                  {getIcon(roundButton.iconKey)}
-                </RoundButton>
+                  {getIcon(icon.iconKey)}
+                </Icon>
               )}
 
               {renderWidgetCard(
@@ -1504,6 +1527,7 @@ export function ShowcasePage() {
                   shape={tag.shape}
                   showBorder={tag.showBorder}
                   showDot={tag.showDot}
+                  showShadow={tag.showShadow}
                   sizePreset={tag.sizePreset}
                   textItalic={tag.textItalic}
                   textSize={tag.textSize}
@@ -1678,6 +1702,9 @@ export function ShowcasePage() {
                 <>
                   <Toast
                     alignSelf="center"
+                    borderTone={toast.borderTone}
+                    showBorder={toast.showBorder}
+                    showShadow={toast.showShadow}
                     sizePreset={toast.sizePreset}
                     textItalic={toast.textItalic}
                     textSize={toast.textSize}
@@ -1691,7 +1718,10 @@ export function ShowcasePage() {
                     tone="primary"
                     onClick={() =>
                       showToast({
+                        borderTone: toast.borderTone,
                         message: toast.message,
+                        showBorder: toast.showBorder,
+                        showShadow: toast.showShadow,
                         sizePreset: toast.sizePreset,
                         textItalic: toast.textItalic,
                         textSize: toast.textSize,

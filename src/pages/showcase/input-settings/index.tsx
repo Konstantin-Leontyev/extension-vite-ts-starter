@@ -18,7 +18,9 @@ import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { type TextAlignPreset } from '@ui/text';
+import { type TonePreset } from '@ui/tones';
 
+import { BorderGroup } from '../border-group';
 import { ControlGroup } from '../control-group';
 import { StyledSettingsForm } from '../showcase.styles';
 import { TextGroup } from '../text-group';
@@ -36,14 +38,17 @@ import { TextGroup } from '../text-group';
  * @property label — подпись над полем
  * @property placeholder — плейсхолдер значения
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки
+ * @property borderTone — тон рамки
  * @property shape — форма строки-поля
  * @property showBorder — включает рамку контрола
+ * @property showShadow — включает тень при включённой рамке
  * @property sizePreset — размер контрола
  * @property textAlign — горизонтальное выравнивание значения
  * @property textItalic — включает курсив значения
  * @property value — значение поля
  */
 export type InputWidgetState = {
+  borderTone: TonePreset;
   disabled: boolean;
   error: string;
   errorAlign: TextAlignPreset;
@@ -54,6 +59,7 @@ export type InputWidgetState = {
   reserveErrorSpace: boolean;
   shape: ShapePreset;
   showBorder: boolean;
+  showShadow: boolean;
   sizePreset: SizePreset;
   textAlign?: TextAlignPreset;
   textItalic: boolean;
@@ -92,14 +98,14 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         onSizeChange={(size) => onChange('sizePreset', size)}
       />
 
-      <Checkbox
-        checked={state.showBorder}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('showBorder', event.target.checked)
-        }
-      >
-        Show border
-      </Checkbox>
+      <BorderGroup
+        borderTone={state.borderTone}
+        showBorder={state.showBorder}
+        showShadow={state.showShadow}
+        onBorderToneChange={(tone) => onChange('borderTone', tone)}
+        onShowBorderChange={(show) => onChange('showBorder', show)}
+        onShowShadowChange={(show) => onChange('showShadow', show)}
+      />
 
       <Input
         label="Placeholder:"

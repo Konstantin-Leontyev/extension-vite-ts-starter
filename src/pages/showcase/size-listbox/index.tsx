@@ -18,7 +18,7 @@
  *     - `src/pages/showcase/progress-bar-settings/index.tsx`
  *     - `src/pages/showcase/radio-button-settings/index.tsx`
  *     - `src/pages/showcase/range-input-settings/index.tsx`
- *     - `src/pages/showcase/round-button-settings/index.tsx`
+ *     - `src/pages/showcase/icon-button-settings/index.tsx`
  *     - `src/pages/showcase/segment-button-settings/index.tsx`
  *     - `src/pages/showcase/spinner-settings/index.tsx`
  *     - `src/pages/showcase/stepper-settings/index.tsx`

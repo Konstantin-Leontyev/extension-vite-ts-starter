@@ -19,8 +19,9 @@ import { Fragment, useId, useRef, useState, type ComponentPropsWithRef } from 'r
 import { AddCircleIcon, AvatarIcon, CloseIcon, SignOutIcon } from '@icons';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Card } from '@ui/card';
-import { RoundButton } from '@ui/round-button';
+import { Icon } from '@ui/icon';
 import { SegmentButton } from '@ui/segment-button';
+import { getSpacingValue } from '@ui/spacing';
 import { STACKING_PROFILE_MENU } from '@ui/stacking';
 import { Text } from '@ui/text';
 import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
@@ -127,17 +128,19 @@ export function ProfileMenu(props: ProfileMenuProps) {
 
   return (
     <StyledProfileMenu {...props}>
-      <RoundButton
+      <Icon
         aria-controls={menuId}
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         aria-label={`Profile menu for ${displayName}`}
+        as="button"
         ref={triggerRef}
+        shape="round"
         title={displayEmail}
         onClick={handleToggle}
       >
         <AvatarIcon />
-      </RoundButton>
+      </Icon>
 
       <AnchoredPortal
         dismissZoneRefs={[triggerRef, panelRef]}
@@ -174,9 +177,18 @@ export function ProfileMenu(props: ProfileMenuProps) {
         >
           <StyledProfileMenuContent>
             <StyledProfileMenuHeader>
-              <RoundButton aria-hidden="true" showBorder sizePreset="huge" tabIndex={-1}>
+              <Icon
+                aria-hidden="true"
+                as="button"
+                blockSize={getSpacingValue(80)}
+                inlineSize={getSpacingValue(80)}
+                padding={8}
+                shape="round"
+                showBorder
+                tabIndex={-1}
+              >
                 <AvatarIcon />
-              </RoundButton>
+              </Icon>
               <Text align="center" as="p" id={titleId} sizePreset="extraBold">
                 Hello, {displayName}!
               </Text>

@@ -103,6 +103,9 @@ export function Button({
       iconFill={iconFill}
       iconTone={iconTone}
       interactive
+      showBorder
+      showHover={false}
+      showShadow={false}
       sizePreset={sizePreset}
     >
       {icon}

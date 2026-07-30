@@ -14,7 +14,7 @@
 
 import styled from 'styled-components';
 
-import { getControlBorderStyles } from '@ui/border';
+import { getBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -61,7 +61,7 @@ const SEGMENT_BUTTON_PROP_NAMES = new Set<string>([
 
 /**
  * getSegmentButtonStyles — возвращает CSS-правила для корня `StyledSegmentButton`:
- * высоту, заливку, рамку через `getControlBorderStyles` и радиус по `shape`.
+ * высоту, заливку, рамку через `getBorderStyles` и радиус по `shape`.
  *
  * @param props пропсы стилизации корня и тема
  * @returns CSS-правила, каждое с новой строки
@@ -75,7 +75,7 @@ function getSegmentButtonStyles(
   const styles = [
     `min-block-size: ${getMinBlockSize(sizePreset)};`,
     `background-color: ${theme.colors.surface};`,
-    getControlBorderStyles(theme),
+    getBorderStyles(theme),
     `border-radius: ${resolveBlockRadius(shape, getMinBlockSize(sizePreset))};`,
   ];
 

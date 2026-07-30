@@ -178,7 +178,14 @@ export function CalendarPanel({
           type="button"
           onClick={handlePreviousYearClick}
         >
-          <Icon blockSize={navGlyphSize} inlineSize={navGlyphSize} padding={0}>
+          <Icon
+            blockSize={navGlyphSize}
+            inlineSize={navGlyphSize}
+            padding={0}
+            showBorder={false}
+            showHover={false}
+            showShadow={false}
+          >
             <ChevronDoubleLeftIcon />
           </Icon>
         </StyledCalendarNavButton>
@@ -190,7 +197,14 @@ export function CalendarPanel({
           type="button"
           onClick={handlePreviousMonthClick}
         >
-          <Icon blockSize={navGlyphSize} inlineSize={navGlyphSize} padding={0}>
+          <Icon
+            blockSize={navGlyphSize}
+            inlineSize={navGlyphSize}
+            padding={0}
+            showBorder={false}
+            showHover={false}
+            showShadow={false}
+          >
             <ChevronLeftIcon />
           </Icon>
         </StyledCalendarNavButton>
@@ -213,7 +227,14 @@ export function CalendarPanel({
           type="button"
           onClick={handleNextMonthClick}
         >
-          <Icon blockSize={navGlyphSize} inlineSize={navGlyphSize} padding={0}>
+          <Icon
+            blockSize={navGlyphSize}
+            inlineSize={navGlyphSize}
+            padding={0}
+            showBorder={false}
+            showHover={false}
+            showShadow={false}
+          >
             <ChevronRightIcon />
           </Icon>
         </StyledCalendarNavButton>
@@ -225,7 +246,14 @@ export function CalendarPanel({
           type="button"
           onClick={handleNextYearClick}
         >
-          <Icon blockSize={navGlyphSize} inlineSize={navGlyphSize} padding={0}>
+          <Icon
+            blockSize={navGlyphSize}
+            inlineSize={navGlyphSize}
+            padding={0}
+            showBorder={false}
+            showHover={false}
+            showShadow={false}
+          >
             <ChevronDoubleRightIcon />
           </Icon>
         </StyledCalendarNavButton>

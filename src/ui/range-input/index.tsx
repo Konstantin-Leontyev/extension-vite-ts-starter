@@ -80,7 +80,6 @@ import {
   DEFAULT_RANGE_INPUT_SHAPE,
   DEFAULT_RANGE_INPUT_SIZE_PRESET,
   StyledRangeInputButtonRow,
-  StyledRangeInputClearButton,
   StyledRangeInputCustomSection,
   StyledRangeInputFields,
   StyledRangeInputPanel,
@@ -457,6 +456,8 @@ export function RangeInput({
       iconFill={iconFill}
       iconTone={iconTone}
       interactive
+      showBorder
+      showShadow={false}
       sizePreset={sizePreset}
     >
       <ChevronDownIcon />
@@ -590,23 +591,21 @@ export function RangeInput({
         {...surfaceProps}
       >
         {showClear && isIconStart && (
-          <StyledRangeInputClearButton
+          <Icon
             aria-label={clearButtonAriaLabel(label)}
+            as="button"
             data-slot="clear"
             disabled={disabled}
-            type="button"
-            {...surfaceProps}
+            iconFill={iconFill}
+            iconTone={iconTone}
+            shape="square"
+            showBorder
+            showShadow={false}
+            sizePreset={sizePreset}
             onClick={handleClear}
           >
-            <Icon
-              iconFill={iconFill}
-              iconTone={iconTone}
-              interactive
-              sizePreset={sizePreset}
-            >
-              <CloseIcon />
-            </Icon>
-          </StyledRangeInputClearButton>
+            <CloseIcon />
+          </Icon>
         )}
 
         <StyledRangeInputTrigger
@@ -635,23 +634,21 @@ export function RangeInput({
         </StyledRangeInputTrigger>
 
         {showClear && !isIconStart && (
-          <StyledRangeInputClearButton
+          <Icon
             aria-label={clearButtonAriaLabel(label)}
+            as="button"
             data-slot="clear"
             disabled={disabled}
-            type="button"
-            {...surfaceProps}
+            iconFill={iconFill}
+            iconTone={iconTone}
+            shape="square"
+            showBorder
+            showShadow={false}
+            sizePreset={sizePreset}
             onClick={handleClear}
           >
-            <Icon
-              iconFill={iconFill}
-              iconTone={iconTone}
-              interactive
-              sizePreset={sizePreset}
-            >
-              <CloseIcon />
-            </Icon>
-          </StyledRangeInputClearButton>
+            <CloseIcon />
+          </Icon>
         )}
       </StyledRangeInputTriggerRow>
 

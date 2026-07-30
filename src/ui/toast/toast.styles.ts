@@ -13,7 +13,13 @@
 
 import styled from 'styled-components';
 
-import { getControlBorderStyles } from '@ui/border';
+import {
+  BORDER_PROP_NAMES,
+  DEFAULT_SHOW_BORDER,
+  DEFAULT_SHOW_SHADOW,
+  getBorderStyles,
+  type BorderProps,
+} from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -47,15 +53,21 @@ export function getToastTextSize(sizePreset?: SizePreset): TextSizePreset {
  * @property tone — семантический тон. Задаёт акцентную полосу слева
  *   через `border-inline-start`, а не заливку
  */
-export type ToastStyleProps = LayoutProps & {
-  sizePreset?: SizePreset;
-  tone?: TonePreset;
-};
+export type ToastStyleProps = LayoutProps &
+  BorderProps & {
+    sizePreset?: SizePreset;
+    tone?: TonePreset;
+  };
 
 /**
  * TOAST_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Toast.
  */
-const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 'tone']);
+const TOAST_PROP_NAMES = new Set<string>([
+  ...LAYOUT_PROP_NAMES,
+  ...BORDER_PROP_NAMES,
+  'sizePreset',
+  'tone',
+]);
 
 /**
  * getToastStyles — возвращает CSS-правила для корня `StyledToast`:
@@ -69,7 +81,13 @@ const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 't
  */
 function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
-  const { sizePreset = DEFAULT_SIZE_PRESET, tone = DEFAULT_TONE } = props;
+  const {
+    borderTone,
+    showBorder = DEFAULT_SHOW_BORDER,
+    showShadow = DEFAULT_SHOW_SHADOW,
+    sizePreset = DEFAULT_SIZE_PRESET,
+    tone = DEFAULT_TONE,
+  } = props;
   const minBlockSize = getMinBlockSize(sizePreset);
   const padding = getPadding(sizePreset);
 
@@ -79,7 +97,7 @@ function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
     `padding-inline: ${padding.inline};`,
     `background-color: ${theme.colors.surface};`,
     `color: ${theme.colors.default};`,
-    getControlBorderStyles(theme),
+    getBorderStyles(theme, showBorder, showShadow, borderTone),
     `border-inline-start: ${getSpacingValue(4)} solid ${getToneColor(theme, tone, theme.colors.border)};`,
     `border-radius: ${resolveBlockRadius(DEFAULT_SHAPE_PRESET, minBlockSize)};`,
   ];

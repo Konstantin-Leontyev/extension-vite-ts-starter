@@ -38,7 +38,7 @@ import {
   type ReactNode,
 } from 'react';
 
-import { RoundButton } from '@ui/round-button';
+import { Icon } from '@ui/icon';
 import { type SpacingValue } from '@ui/spacing';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 
@@ -69,8 +69,8 @@ type CardHtmlTag = 'article' | 'div' | 'section';
  * @property disabled — включает недоступное состояние
  * @property icon — svg иконки действия
  * @property iconPadding — отступ окна Icon вместо отступа из размерного ряда.
- *   Область клика кнопки не меняет, увеличенный отступ зрительно уменьшает глиф,
- *   например close в Modal и ProfileMenu
+ *   Область клика не меняет, увеличенный отступ зрительно уменьшает глиф,
+ *   например close в Modal и ProfileMenu. Мапится в layout-проп `padding` у Icon
  * @property onClick — обработчик клика
  */
 type CardHeaderAction = {
@@ -185,20 +185,22 @@ function Card<T extends CardHtmlTag = 'div'>({
   const actionsRow = hasActions && (
     <StyledCardHeaderActions>
       {headerActions.map((action, index) => (
-        <RoundButton
+        <Icon
           aria-controls={action.ariaControls}
           aria-expanded={action.ariaExpanded}
           aria-hidden={action.ariaLabel ? undefined : true}
           aria-label={action.ariaLabel}
+          as="button"
           disabled={action.disabled}
-          iconPadding={action.iconPadding}
           key={index}
+          padding={action.iconPadding}
+          shape="round"
           sizePreset={CARD_HEADER_ACTION_SIZE_PRESET}
           tabIndex={action.ariaLabel ? undefined : -1}
           onClick={(event) => handleHeaderActionClick(action, event)}
         >
           {action.icon}
-        </RoundButton>
+        </Icon>
       ))}
     </StyledCardHeaderActions>
   );

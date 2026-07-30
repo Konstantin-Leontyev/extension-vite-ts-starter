@@ -15,6 +15,7 @@
 
 import { createContext } from 'react';
 
+import { type BorderProps } from '@ui/border';
 import { type SizePreset } from '@ui/presets';
 import { type TextSizePreset, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
@@ -29,7 +30,7 @@ import { type TonePreset } from '@ui/tones';
  * @property textTone — тон текста сообщения
  * @property tone — семантический тон
  */
-export type ToastInput = {
+export type ToastInput = BorderProps & {
   message: string;
   sizePreset?: SizePreset;
   textItalic?: boolean;
