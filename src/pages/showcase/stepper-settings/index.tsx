@@ -154,7 +154,6 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
           aria-labelledby={STEP_LABEL_ID}
           id={STEP_FIELD_ID}
           min={1}
-          textAlign="center"
           value={state.step}
           onChange={(value) => onChange('step', value)}
         />

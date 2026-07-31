@@ -4,11 +4,12 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `ComboboxStyleProps` и `ComboboxSurfaceStyleProps`
- * 2. Предоставить функцию `getComboboxTextSize`
- * 3. Предоставить styled-узлы `StyledComboboxRoot`, `StyledComboboxTriggerRow`,
+ * 2. Хранить максимум видимых строк опций в `COMBOBOX_PANEL_MAX_OPTION_ROWS`
+ * 3. Предоставить функцию `getComboboxTextSize`
+ * 4. Предоставить styled-узлы `StyledComboboxRoot`, `StyledComboboxTriggerRow`,
  *    `StyledComboboxTrigger`, `StyledComboboxValue`, `StyledComboboxPanel`,
  *    `StyledComboboxSearchRow`, `StyledComboboxList` и `StyledComboboxOption`
- * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/combobox/index.tsx` — собирает компонент Combobox
@@ -91,16 +92,14 @@ export type ComboboxStyleProps = LayoutProps & ComboboxSurfaceStyleProps;
  * @returns CSS-правила, каждое с новой строки
  */
 function getComboboxRootStyles(): string {
-  const styles = [
-    'position: relative;',
-    'display: grid;',
-    `gap: ${getSpacingValue(8)};`,
-    'inline-size: 100%;',
-    'min-inline-size: 0;',
-    `&[data-open='true'] { z-index: ${STACKING_OPEN_CONTROL}; }`,
-  ];
-
-  return styles.join('\n');
+  return `
+    position: relative;
+    display: grid;
+    gap: ${getSpacingValue(8)};
+    inline-size: 100%;
+    min-inline-size: 0;
+    &[data-open='true'] { z-index: ${STACKING_OPEN_CONTROL}; }
+  `;
 }
 
 /**
@@ -130,13 +129,12 @@ const COMBOBOX_SURFACE_PROP_NAMES = new Set<string>([
 
 /**
  * getComboboxTriggerRowStyles — возвращает CSS-правила для узла
- * `StyledComboboxTriggerRow`: габариты, рамку, заливку, тень и кольцо фокуса.
+ * `StyledComboboxTriggerRow`: габариты, заливку, рамку с тенью и `outline` фокуса.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты пропсов
- * 2. Собирает габариты ряда и заливку `surface`, затем кольцо `0 0 0 1px`
- *    цвета `border` и тень `shadow.surface` одним `box-shadow` через
- *    `getBorderStyles` без второго аргумента — постоянное кольцо
+ * 2. Собирает габариты ряда и заливку `surface`, затем рамку с тенью через
+ *    `getBorderStyles` без второго аргумента — постоянная рамка
  * 3. Без clear оставляет одну колонку. При `data-has-clear` — две колонки.
  *    Позиция сброса читается из DOM по `[data-slot='clear']:first-child`, не из пропа
  * 4. Акцент фокуса даёт `outline` на ряде при `:focus-within`, потому что
@@ -153,24 +151,24 @@ function getComboboxTriggerRowStyles(
   const theme = getTheme(props);
   const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
 
-  const styles = [
-    'display: grid;',
-    'grid-template-columns: minmax(0, 1fr);',
-    `&[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }`,
-    `&[data-has-clear]:has(> [data-slot='clear']:first-child) { grid-template-columns: auto minmax(0, 1fr); }`,
-    'inline-size: 100%;',
-    `min-block-size: ${getMinBlockSize(sizePreset)};`,
-    'overflow: hidden;',
-    `background-color: ${theme.colors.surface};`,
-    `border-radius: ${resolveComboboxBlockRadius(shape, sizePreset)};`,
-    getBorderStyles(theme),
-    `&[data-open='true'] { visibility: hidden; }`,
-    '&:focus-within {',
-    getOutlineStyles(theme.colors.focusOutline),
-    '}',
-  ];
-
-  return styles.join('\n');
+  return `
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    &[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }
+    &[data-has-clear]:has(> [data-slot='clear']:first-child) {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+    inline-size: 100%;
+    min-block-size: ${getMinBlockSize(sizePreset)};
+    overflow: hidden;
+    background-color: ${theme.colors.surface};
+    border-radius: ${resolveComboboxBlockRadius(shape, sizePreset)};
+    ${getBorderStyles(theme)}
+    &[data-open='true'] { visibility: hidden; }
+    &:focus-within {
+      ${getOutlineStyles(theme.colors.focusOutline)}
+    }
+  `;
 }
 
 /**
@@ -178,10 +176,7 @@ function getComboboxTriggerRowStyles(
  * Базируется на `<div>` и принимает пропсы из `ComboboxSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getComboboxTriggerRowStyles` — габариты, рамка, заливка, тень и кольцо фокуса
- *
- * При открытой панели ряд скрывается через `visibility: hidden`, чтобы панель
- * наследовала ширину якоря без двойного отображения триггера.
+ *  - `getComboboxTriggerRowStyles` — габариты, заливка, рамка с тенью и `outline` фокуса
  */
 export const StyledComboboxTriggerRow = styled.div.withConfig({
   shouldForwardProp: (prop) => !COMBOBOX_SURFACE_PROP_NAMES.has(prop),
@@ -214,22 +209,20 @@ function getComboboxTriggerStyles(
   const { iconTone = DEFAULT_TONE } = props;
   const stateBackground = resolveIconStateBackground(theme, iconTone);
 
-  const styles = [
-    'display: grid;',
-    getIconPositionStyles(),
-    'align-items: center;',
-    'min-inline-size: 0;',
-    'text-align: start;',
-    `&:not(:disabled):hover {`,
-    `--icon-state-background: ${stateBackground};`,
-    `}`,
-    `&:focus-visible {`,
-    'outline: none;',
-    `--icon-state-background: ${stateBackground};`,
-    `}`,
-  ];
-
-  return styles.join('\n');
+  return `
+    display: grid;
+    ${getIconPositionStyles()}
+    align-items: center;
+    min-inline-size: 0;
+    text-align: start;
+    &:not(:disabled):hover {
+      --icon-state-background: ${stateBackground};
+    }
+    &:focus-visible {
+      outline: none;
+      --icon-state-background: ${stateBackground};
+    }
+  `;
 }
 
 /**
@@ -255,21 +248,23 @@ const COMBOBOX_BOX_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
  * раскладку значения и горизонтальный отступ. `display: flex` — оправданное
  * исключение: отсутствующая иконка опции не резервирует трек.
  *
+ * Как работает:
+ * 1. Подставляет дефолт `sizePreset`
+ * 2. Собирает flex-ряд значения с `gap` и горизонтальным отступом
+ *
  * @param props пропсы поверхности
  * @returns CSS-правила, каждое с новой строки
  */
 function getComboboxValueStyles(props: ComboboxSurfaceStyleProps): string {
   const sizePreset = props.sizePreset ?? DEFAULT_SIZE_PRESET;
 
-  const styles = [
-    'display: flex;',
-    `gap: ${getSpacingValue(8)};`,
-    'align-items: center;',
-    'min-inline-size: 0;',
-    `padding-inline: ${getPaddingInline(sizePreset)};`,
-  ];
-
-  return styles.join('\n');
+  return `
+    display: flex;
+    gap: ${getSpacingValue(8)};
+    align-items: center;
+    min-inline-size: 0;
+    padding-inline: ${getPaddingInline(sizePreset)};
+  `;
 }
 
 /**
@@ -293,9 +288,18 @@ const COMBOBOX_PANEL_MAX_OPTION_ROWS = 6;
 
 /**
  * getComboboxPanelStyles — возвращает CSS-правила для узла `StyledComboboxPanel`:
- * сетку поиска и списка, обрезку и оболочку портальной панели.
+ * сетку поиска и списка, обрезку и хром портала через `getPortalPanelStyles`.
  *
- * @param props пропсы поверхности и тема
+ * Как работает:
+ * 1. Берёт тему, подставляет дефолты `shape` и `sizePreset`
+ * 2. Собирает сетку панели: ряд поиска и список
+ * 3. Подставляет хром панели через `getPortalPanelStyles`: fixed-позицию, слой
+ *    `STACKING_PORTAL`, заливку `surface`, рамку с тенью через `getBorderStyles`,
+ *    радиус через `resolveComboboxBlockRadius` и постоянный `outline` через
+ *    `getOutlineStyles`
+ * 4. Обрезает содержимое через `overflow: hidden`
+ *
+ * @param props пропсы формы, размера и тема
  * @returns CSS-правила, каждое с новой строки
  */
 function getComboboxPanelStyles(
@@ -304,17 +308,15 @@ function getComboboxPanelStyles(
   const theme = getTheme(props);
   const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
 
-  const styles = [
-    'display: grid;',
-    'grid-template-rows: auto minmax(0, 1fr);',
-    'overflow: hidden;',
-    getPortalPanelStyles({
+  return `
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+    ${getPortalPanelStyles({
       theme,
       borderRadius: resolveComboboxBlockRadius(shape, sizePreset),
-    }),
-  ];
-
-  return styles.join('\n');
+    })}
+  `;
 }
 
 /**
@@ -322,7 +324,8 @@ function getComboboxPanelStyles(
  * Базируется на `<div>` и принимает пропсы `shape` и `sizePreset`.
  *
  * Генерация стилей:
- *  - `getComboboxPanelStyles` — сетка панели и оболочка портала
+ *  - `getComboboxPanelStyles` — сетка поиска и списка, хром портала через
+ *    `getPortalPanelStyles`
  */
 export const StyledComboboxPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => !COMBOBOX_BOX_PROP_NAMES.has(prop),
@@ -363,6 +366,12 @@ export const StyledComboboxSearchRow = styled.div`
  * getComboboxListStyles — возвращает CSS-правила для узла `StyledComboboxList`:
  * столбик опций, отступы, ограничение высоты и прокрутку по модели Listbox.
  *
+ * Как работает:
+ * 1. Подставляет дефолт `sizePreset`
+ * 2. Собирает столбик опций с отступами
+ * 3. Ограничивает высоту через `COMBOBOX_PANEL_MAX_OPTION_ROWS` и включает
+ *    прокрутку `overflow: hidden auto`
+ *
  * @param props пропсы размера
  * @returns CSS-правила, каждое с новой строки
  */
@@ -371,16 +380,14 @@ function getComboboxListStyles(
 ): string {
   const sizePreset = props.sizePreset ?? DEFAULT_SIZE_PRESET;
 
-  const styles = [
-    'display: grid;',
-    'min-block-size: 0;',
-    `padding-block: ${getSpacingValue(4)};`,
-    `padding-inline-end: ${getSpacingValue(8)};`,
-    `max-block-size: calc(${getMinBlockSize(sizePreset)} * ${COMBOBOX_PANEL_MAX_OPTION_ROWS});`,
-    'overflow: hidden auto;',
-  ];
-
-  return styles.join('\n');
+  return `
+    display: grid;
+    min-block-size: 0;
+    padding-block: ${getSpacingValue(4)};
+    padding-inline-end: ${getSpacingValue(8)};
+    max-block-size: calc(${getMinBlockSize(sizePreset)} * ${COMBOBOX_PANEL_MAX_OPTION_ROWS});
+    overflow: hidden auto;
+  `;
 }
 
 /**
@@ -402,6 +409,14 @@ export const StyledComboboxList = styled.ul.withConfig({
  * оправданное исключение: иконка опции, текст и check в одном потоке с `gap`,
  * отсутствующие слоты не резервируют трек.
  *
+ * Как работает:
+ * 1. Берёт тему и подставляет дефолты `shape` и `sizePreset`
+ * 2. Собирает flex-раскладку опции, габариты и заливку `surface`
+ * 3. Кладёт абсолютный `::before` с отступом от края, скруглением и переходом
+ *    `background-color` — подложку наведения
+ * 4. На `data-active`, `:hover:not(:disabled)` и `:focus-visible` красит
+ *    подложку и текст в `primary` / `inverse`, включая слот галочки
+ *
  * @param props пропсы формы, размера и тема
  * @returns CSS-правила, каждое с новой строки
  */
@@ -411,45 +426,43 @@ function getComboboxOptionStyles(
   const theme = getTheme(props);
   const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
 
-  const styles = [
-    'position: relative;',
-    'z-index: 0;',
-    'display: flex;',
-    `gap: ${getSpacingValue(12)};`,
-    'align-items: center;',
-    'inline-size: 100%;',
-    `min-block-size: ${getMinBlockSize(sizePreset)};`,
-    `padding-inline: ${getPaddingInline(sizePreset)};`,
-    'text-align: start;',
-    `background-color: ${theme.colors.surface};`,
-    '&::before {',
-    'position: absolute;',
-    `inset: ${getSpacingValue(4)};`,
-    'z-index: -1;',
-    'pointer-events: none;',
-    "content: '';",
-    `border-radius: calc(${resolveComboboxBlockRadius(shape, sizePreset)} - ${getSpacingValue(4)});`,
-    getTransitionStyles('background-color', MOTION_CONTROL_DURATION),
-    '}',
-    '&:focus { outline: none; }',
-    `&[data-active='true']::before,`,
-    '&:hover:not(:disabled)::before,',
-    '&:focus-visible::before {',
-    `background-color: ${theme.colors.primary};`,
-    '}',
-    `&[data-active='true'],`,
-    '&:hover:not(:disabled),',
-    '&:focus-visible {',
-    `color: ${theme.colors.inverse};`,
-    '}',
-    `&[data-active='true'] [data-slot='check'],`,
-    `&:hover:not(:disabled) [data-slot='check'],`,
-    `&:focus-visible [data-slot='check'] {`,
-    'color: inherit;',
-    '}',
-  ];
-
-  return styles.join('\n');
+  return `
+    position: relative;
+    z-index: 0;
+    display: flex;
+    gap: ${getSpacingValue(12)};
+    align-items: center;
+    inline-size: 100%;
+    min-block-size: ${getMinBlockSize(sizePreset)};
+    padding-inline: ${getPaddingInline(sizePreset)};
+    text-align: start;
+    background-color: ${theme.colors.surface};
+    &::before {
+      position: absolute;
+      inset: ${getSpacingValue(4)};
+      z-index: -1;
+      pointer-events: none;
+      content: '';
+      border-radius: calc(${resolveComboboxBlockRadius(shape, sizePreset)} - ${getSpacingValue(4)});
+      ${getTransitionStyles('background-color', MOTION_CONTROL_DURATION)}
+    }
+    &:focus { outline: none; }
+    &[data-active='true']::before,
+    &:hover:not(:disabled)::before,
+    &:focus-visible::before {
+      background-color: ${theme.colors.primary};
+    }
+    &[data-active='true'],
+    &:hover:not(:disabled),
+    &:focus-visible {
+      color: ${theme.colors.inverse};
+    }
+    &[data-active='true'] [data-slot='check'],
+    &:hover:not(:disabled) [data-slot='check'],
+    &:focus-visible [data-slot='check'] {
+      color: inherit;
+    }
+  `;
 }
 
 /**

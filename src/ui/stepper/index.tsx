@@ -43,7 +43,7 @@ import {
 import { ChevronDownIcon, ChevronUpIcon } from '@icons';
 import { Icon } from '@ui/icon';
 import { type SpacingValue } from '@ui/spacing';
-import { Text, type TextAlignPreset, type TextTone } from '@ui/text';
+import { Text, type TextTone } from '@ui/text';
 
 import {
   StyledStepperButton,
@@ -67,12 +67,6 @@ const DEFAULT_STEPPER_STEP = 1;
  * Суффикс единицы — вторичный текст, поэтому `muted`.
  */
 const DEFAULT_STEPPER_SUFFIX_TONE: TextTone = 'muted';
-
-/**
- * DEFAULT_STEPPER_TEXT_ALIGN — задаёт выравнивание пары «значение + суффикс» по умолчанию.
- * Используется, когда вызывающий код не передал проп `textAlign`.
- */
-const DEFAULT_STEPPER_TEXT_ALIGN: TextAlignPreset = 'center';
 
 /**
  * DECREASE_LABEL — задаёт текст `aria-label` кнопки уменьшения.
@@ -173,7 +167,7 @@ export function Stepper({
   sizePreset,
   step = DEFAULT_STEPPER_STEP,
   suffix,
-  textAlign = DEFAULT_STEPPER_TEXT_ALIGN,
+  textAlign,
   textItalic,
   textSize,
   textTone,
@@ -382,9 +376,7 @@ export function Stepper({
             blockSize="100%"
             inlineSize="100%"
             padding={STEPPER_CHEVRON_ICON_PADDING}
-            showBorder={false}
             showHover={false}
-            showShadow={false}
           >
             <ChevronUpIcon />
           </Icon>
@@ -403,9 +395,7 @@ export function Stepper({
             blockSize="100%"
             inlineSize="100%"
             padding={STEPPER_CHEVRON_ICON_PADDING}
-            showBorder={false}
             showHover={false}
-            showShadow={false}
           >
             <ChevronDownIcon />
           </Icon>

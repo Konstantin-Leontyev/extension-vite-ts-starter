@@ -38,7 +38,6 @@
 import {
   useEffect,
   useId,
-  useMemo,
   useRef,
   useState,
   type ChangeEvent,
@@ -149,7 +148,8 @@ export type ComboboxOption = {
  * @property onChange — обработчик изменения значения
  * @property options — опции списка
  * @property placeholder — плейсхолдер неактивного триггера
- * @property reserveErrorSpace — включает резерв высоты под строку ошибки
+ * @property reserveErrorSpace — включает резерв высоты под строку ошибки, чтобы
+ *   появление текста не сдвигало соседей
  * @property searchPlaceholder — плейсхолдер поля поиска
  * @property showClear — включает кнопку сброса выбора при выбранном значении
  * @property value — контролируемое значение
@@ -177,6 +177,10 @@ type ComboboxProps = ComboboxStyleProps & {
 /**
  * filterComboboxOptions — возвращает опции, подходящие под нормализованный запрос.
  *
+ * Как работает:
+ * 1. Без запроса возвращает исходный перечень
+ * 2. Иначе оставляет опции, чей `label` содержит нормализованный запрос
+ *
  * @param options опции списка
  * @param normalizedQuery нормализованная строка поиска
  * @returns отфильтрованный перечень опций
@@ -196,6 +200,10 @@ function filterComboboxOptions(
 
 /**
  * findEnabledIndex — возвращает индекс ближайшей доступной опции по шагу.
+ *
+ * Как работает:
+ * 1. Идёт от `from` шагом `step` в пределах списка
+ * 2. Возвращает первый индекс без `disabled` или `-1`
  *
  * @param options опции списка
  * @param from индекс старта обхода
@@ -218,6 +226,15 @@ function findEnabledIndex(
 
 /**
  * applyComboboxPanelPosition — позиционирует панель относительно триггера.
+ *
+ * Как работает:
+ * 1. Берёт геометрию триггера и ограничивает `left` вьюпортом с учётом
+ *    `PORTAL_VIEWPORT_EDGE_INSET`
+ * 2. Считает минимальную высоту панели: высота поиска плюс высота строк —
+ *    не меньше одной и не больше `MIN_VISIBLE_OPTION_ROWS`
+ * 3. Поджимает `top`, если панель не влезает снизу, и не даёт уйти выше
+ *    отступа вьюпорта
+ * 4. Выставляет `left`, `width`, `maxHeight` и `top`
  *
  * @param trigger элемент-триггер
  * @param panel элемент панели
@@ -310,7 +327,7 @@ export function Combobox({
   const isClearVisible =
     showClear && selectedValue !== undefined && selectedValue !== '' && !disabled;
   const showChevron = !isClearVisible;
-  const iconNode = showChevron ? (
+  const iconNode = showChevron && (
     <Icon
       data-slot="icon"
       iconFill={iconFill}
@@ -322,12 +339,25 @@ export function Combobox({
     >
       <ChevronDownIcon />
     </Icon>
-  ) : null;
-  const normalizedQuery = query.trim().toLowerCase();
-  const filtered = useMemo(
-    () => filterComboboxOptions(options, normalizedQuery),
-    [options, normalizedQuery]
   );
+  const clearNode = isClearVisible && (
+    <Icon
+      aria-label={resolveClearAriaLabel(label)}
+      as="button"
+      data-slot="clear"
+      disabled={disabled}
+      iconFill={iconFill}
+      iconTone={iconTone}
+      showBorder
+      showShadow={false}
+      sizePreset={sizePreset}
+      onClick={handleClear}
+    >
+      <CloseIcon />
+    </Icon>
+  );
+  const normalizedQuery = query.trim().toLowerCase();
+  const filtered = filterComboboxOptions(options, normalizedQuery);
 
   function focusComboboxSearch(panel: HTMLElement): void {
     const searchInput = panel.querySelector<HTMLInputElement>('input[type="search"]');
@@ -497,23 +527,7 @@ export function Combobox({
         ref={triggerRowRef}
         {...surfaceProps}
       >
-        {isClearVisible && isIconStart && (
-          <Icon
-            aria-label={resolveClearAriaLabel(label)}
-            as="button"
-            data-slot="clear"
-            disabled={disabled}
-            iconFill={iconFill}
-            iconTone={iconTone}
-            shape="square"
-            showBorder
-            showShadow={false}
-            sizePreset={sizePreset}
-            onClick={handleClear}
-          >
-            <CloseIcon />
-          </Icon>
-        )}
+        {isIconStart && clearNode}
 
         <StyledComboboxTrigger
           aria-controls={listId}
@@ -531,12 +545,7 @@ export function Combobox({
           {iconPosition === 'start' && iconNode}
           <StyledComboboxValue sizePreset={sizePreset}>
             {Boolean(selectedOption?.icon) && (
-              <Icon
-                showBorder={false}
-                showHover={false}
-                showShadow={false}
-                sizePreset={sizePreset}
-              >
+              <Icon showHover={false} sizePreset={sizePreset}>
                 {selectedOption?.icon}
               </Icon>
             )}
@@ -552,23 +561,7 @@ export function Combobox({
           {iconPosition === 'end' && iconNode}
         </StyledComboboxTrigger>
 
-        {isClearVisible && !isIconStart && (
-          <Icon
-            aria-label={resolveClearAriaLabel(label)}
-            as="button"
-            data-slot="clear"
-            disabled={disabled}
-            iconFill={iconFill}
-            iconTone={iconTone}
-            shape="square"
-            showBorder
-            showShadow={false}
-            sizePreset={sizePreset}
-            onClick={handleClear}
-          >
-            <CloseIcon />
-          </Icon>
-        )}
+        {!isIconStart && clearNode}
       </StyledComboboxTriggerRow>
 
       {reserveErrorSpace && (
@@ -674,12 +667,7 @@ export function Combobox({
                     onMouseMove={() => setActiveIndex(index)}
                   >
                     {Boolean(option.icon) && (
-                      <Icon
-                        showBorder={false}
-                        showHover={false}
-                        showShadow={false}
-                        sizePreset={sizePreset}
-                      >
+                      <Icon showHover={false} sizePreset={sizePreset}>
                         {option.icon}
                       </Icon>
                     )}
@@ -697,9 +685,7 @@ export function Combobox({
                         iconFill="primary"
                         marginInlineStart="auto"
                         position="relative"
-                        showBorder={false}
                         showHover={false}
-                        showShadow={false}
                         sizePreset={sizePreset}
                         zIndex={1}
                       >

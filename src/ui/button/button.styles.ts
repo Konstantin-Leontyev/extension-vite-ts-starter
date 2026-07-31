@@ -14,7 +14,11 @@
 import styled from 'styled-components';
 
 import { getBorderStyles } from '@ui/border';
-import { ICON_SETTING_PROP_NAMES, resolveIconStateBackground } from '@ui/icon';
+import {
+  ICON_SETTING_PROP_NAMES,
+  getIconPositionStyles,
+  resolveIconStateBackground,
+} from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -146,11 +150,14 @@ const DEFAULT_BUTTON_ACTIVE = false;
 
 /**
  * getButtonSplitStyles — возвращает CSS-правила для корня `StyledButton`:
- * отступ лейбла, шов и канал состояний секции иконки. Статику секции красит
- * внутренний Icon своими пропсами, фон лейбла — собственная заливка корня.
+ * раскладку позиции иконки, отступ лейбла и канал состояний секции иконки.
+ * Статику секции красит внутренний Icon своими пропсами, фон лейбла —
+ * собственная заливка корня.
  *
  * Как работает:
- * 1. Переносит `padding-inline` с корня на слот лейбла — секция иконки прижата к краю
+ * 1. Кладёт раскладку позиции через `getIconPositionStyles`: колонки под
+ *    позицию `[data-slot='icon']` и `block-size: 100%` на слоте
+ * 2. Переносит `padding-inline` с корня на слот лейбла — секция иконки прижата к краю
  * 3. При цветном `iconTone` на наведении и `:focus-visible` выставляет
  *    `--icon-state-background` сдвигом тона к `shade`; нейтральная секция
  *    подсвечивается заливкой корня
@@ -171,6 +178,7 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
   const hoverStateBackground = resolveIconStateBackground(theme, iconTone, 'none');
 
   const styles = [
+    getIconPositionStyles(),
     `[data-slot='label'] {`,
     `padding-inline: ${getPaddingInline(sizePreset)};`,
     `}`,
@@ -208,17 +216,16 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
 
 /**
  * getButtonStyles — возвращает CSS-правила для корня `StyledButton`: размер,
- * кольцо и тень через `getBorderStyles`, радиус, цвет текста, заливку
- * с состояниями и раскладку слота лейбла.
+ * рамку с тенью через `getBorderStyles`, радиус, цвет текста, заливку
+ * с состояниями и раскладку при секции иконки.
  *
  * Как работает:
- * 1. Собирает общие правила корня: размер, постоянное кольцо через
- *    `getBorderStyles`, радиус, цвет и заливка — фон лейбла всегда фон
- *    корня, наведение и `active` меняют его целиком
- * 2. Задаёт раскладку слота лейбла на корне: Text остаётся контентом без
- *    layout-пропсов
- * 3. При `hasIcon` делегирует шов и канал секции иконки в `getButtonSplitStyles`
- * 4. Без иконки кладёт `padding-inline` на корень
+ * 1. Собирает общие правила корня: размер, рамку с тенью через `getBorderStyles`,
+ *    радиус, цвет и заливка — фон лейбла всегда фон корня, наведение и
+ *    `active` меняют его целиком
+ * 2. При `hasIcon` делегирует раскладку позиции, отступ лейбла и канал
+ *    секции иконки в `getButtonSplitStyles`
+ * 3. Без иконки кладёт `padding-inline` на корень
  *
  * @param props пропсы стилизации корня и текущая тема
  * @returns CSS-правила, каждое с новой строки
@@ -242,11 +249,6 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
     `background-color: ${surface.backgroundColor};`,
     getBorderStyles(theme),
     `&:not(:disabled):hover { background: ${surface.hoverBackground}; }`,
-    `[data-slot='label'] {`,
-    `flex: 1 1 auto;`,
-    `align-content: center;`,
-    `min-inline-size: 0;`,
-    `}`,
   ];
 
   if (active) {
@@ -267,25 +269,32 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
  * Базируется на `<button>` и поддерживает все пропсы из `ButtonStyledProps`.
  *
  * Встроенные стили:
- *  - `display: flex` — оправданное исключение из grid по умолчанию: ряд
- *    иконка-лейбл без динамических шаблонов колонок под наличие и позицию иконки
+ *  - `display: grid` — сетка ряда; при секции иконки колонки задаёт
+ *    `getIconPositionStyles` в `getButtonSplitStyles`
+ *  - `grid-template-columns: minmax(0, 1fr)` — колонка лейбла без иконки ужимается
+ *    ниже min-content nowrap-текста, иначе ellipsis не срабатывает и лейбл режет
+ *    `overflow: hidden` корня; при секции иконки шаблон переопределяет
+ *    `getIconPositionStyles`
+ *  - `align-items: center` — центрирует лейбл и секцию иконки по поперечной оси
  *  - `inline-size: 100%` — кнопка занимает ширину контейнера
- *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнере
+ *  - `min-inline-size: 0` — предотвращает переполнение во flex/grid-контейнере
  *  - `overflow: hidden` — обрезает квадратное окно Icon по радиусу корня:
  *    скругление секций — обрезка корнем, не радиусы на детях
  *
  * Генерация стилей:
- *  - `getButtonStyles` — размер, кольцо и тень через `getBorderStyles`,
- *    радиус, цвет, заливка и слот лейбла
+ *  - `getButtonStyles` — размер, рамка с тенью через `getBorderStyles`,
+ *    радиус, цвет, заливка; при иконке — раскладка и канал секции
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *
- * Слоты: раскладку лейбла, шов и канал состояний секции иконки задаёт корень
+ * Слоты: отступ лейбла и канал состояний секции иконки задаёт корень
  * по `[data-slot]`; статику секции красит внутренний Icon.
  */
 export const StyledButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !BUTTON_PROP_NAMES.has(prop),
 })<ButtonStyledProps>`
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
   inline-size: 100%;
   min-inline-size: 0;
   overflow: hidden;

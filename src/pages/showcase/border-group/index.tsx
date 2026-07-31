@@ -21,10 +21,9 @@
  * Потребители:
  *  - панели настроек витрины — настраивают рамку компонента:
  *     - `src/pages/showcase/card-settings/index.tsx`
- *     - `src/pages/showcase/icon-button-settings/index.tsx`
+ *     - `src/pages/showcase/icon-settings/index.tsx`
  *     - `src/pages/showcase/input-settings/index.tsx`
  *     - `src/pages/showcase/tag-settings/index.tsx`
- *     - `src/pages/showcase/toast-settings/index.tsx`
  */
 
 import { type ChangeEvent } from 'react';

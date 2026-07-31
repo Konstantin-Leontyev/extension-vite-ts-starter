@@ -1,11 +1,17 @@
 /**
  * Файл: `src/pages/showcase/size-listbox/index.tsx`
- * Предоставляет листбокс выбора размера для витрины дизайн-системы.
- * Ограничивает использование только витриной, не для продуктового кода и `@ui/`.
+ * Предоставляет компонент SizeListbox для выбора размера в витрине дизайн-системы.
+ * Используется только в витрине: в продуктовый код и `@ui/` не входит.
+ *
+ * Поддерживает:
+ *  - подпись через проп `label`
+ *  - обработчик изменения выбранного размера через проп `onChange`
+ *  - перечень размеров через проп `sizes`
+ *  - выбранный размер через проп `value`
  *
  * Основные задачи:
- * 1. Предоставить выбор размера в панелях настроек компонентов витрины
- * 2. Экспортировать компонент `SizeListbox`
+ * 1. Экспортировать компонент SizeListbox
+ * 2. Типизировать пропсы через `SizeListboxProps`
  *
  * Потребители:
  *  - панели настроек витрины — выбирают размер:
@@ -14,11 +20,11 @@
  *     - `src/pages/showcase/checkbox-settings/index.tsx`
  *     - `src/pages/showcase/control-group/index.tsx`
  *     - `src/pages/showcase/date-range-input-settings/index.tsx`
+ *     - `src/pages/showcase/icon-settings/index.tsx`
  *     - `src/pages/showcase/modal-settings/index.tsx`
  *     - `src/pages/showcase/progress-bar-settings/index.tsx`
  *     - `src/pages/showcase/radio-button-settings/index.tsx`
  *     - `src/pages/showcase/range-input-settings/index.tsx`
- *     - `src/pages/showcase/icon-button-settings/index.tsx`
  *     - `src/pages/showcase/segment-button-settings/index.tsx`
  *     - `src/pages/showcase/spinner-settings/index.tsx`
  *     - `src/pages/showcase/stepper-settings/index.tsx`

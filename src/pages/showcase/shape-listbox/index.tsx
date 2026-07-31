@@ -1,18 +1,24 @@
 /**
  * Файл: `src/pages/showcase/shape-listbox/index.tsx`
- * Предоставляет листбокс выбора формы для витрины дизайн-системы.
- * Ограничивает использование только витриной, не для продуктового кода и `@ui/`.
+ * Предоставляет компонент ShapeListbox для выбора формы в витрине дизайн-системы.
+ * Используется только в витрине: в продуктовый код и `@ui/` не входит.
+ *
+ * Поддерживает:
+ *  - подпись через проп `label`
+ *  - обработчик изменения выбранной формы через проп `onChange`
+ *  - перечень форм через проп `shapes`
+ *  - выбранную форму через проп `value`
  *
  * Основные задачи:
- * 1. Предоставить выбор формы в панелях настроек компонентов витрины
- * 2. Экспортировать компонент `ShapeListbox`
+ * 1. Экспортировать компонент ShapeListbox
+ * 2. Типизировать пропсы через `ShapeListboxProps`
  *
  * Потребители:
  *  - панели настроек витрины — выбирают форму:
  *     - `src/pages/showcase/button-settings/index.tsx`
  *     - `src/pages/showcase/control-group/index.tsx`
  *     - `src/pages/showcase/date-range-input-settings/index.tsx`
- *     - `src/pages/showcase/icon-button-settings/index.tsx`
+ *     - `src/pages/showcase/icon-settings/index.tsx`
  *     - `src/pages/showcase/range-input-settings/index.tsx`
  *     - `src/pages/showcase/segment-button-settings/index.tsx`
  *     - `src/pages/showcase/stepper-settings/index.tsx`

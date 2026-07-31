@@ -1,8 +1,8 @@
 /**
- * Файл: `src/pages/showcase/icon-button-settings/index.tsx`
- * Определяет панель настроек компонента Icon в режиме действия (`as="button"`)
- * в витрине дизайн-системы. Содержит контролы для изменения размера, формы,
- * иконки и её тонов, отступа окна, рамки/тени, hover и состояния `disabled`.
+ * Файл: `src/pages/showcase/icon-settings/index.tsx`
+ * Определяет панель настроек компонента Icon в витрине дизайн-системы.
+ * Содержит контролы для изменения размера, формы, иконки и её тонов, отступа
+ * окна, рамки, тени, hover и состояния `disabled` в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `IconWidgetState`
@@ -49,12 +49,10 @@ function resolveIconPaddingSizePreset(
 }
 
 /**
- * IconWidgetState — представляет состояние настроек компонента Icon в витрине
- * дизайн-системы в режиме действия. Ключи совпадают с именами пропов Icon,
- * кроме витринных ключей: `iconKey` выбирает иконку для `children` в превью,
- * `padding` — layout-отступ окна.
- * Используется для синхронизации значений между панелью управления и
- * демонстрационным Icon.
+ * IconWidgetState — представляет состояние настроек компонента Icon в витрине дизайн-системы.
+ * Ключи совпадают с именами пропов компонента Icon, кроме витринных ключей:
+ * `iconKey` выбирает иконку для `children` в превью.
+ * Используется для синхронизации значений между панелью управления и демонстрационным Icon.
  *
  * @property borderTone — тон рамки
  * @property disabled — включает недоступное состояние
@@ -131,7 +129,7 @@ export function IconSettings({ onChange, state }: IconSettingsProps) {
       />
 
       <SizeListbox
-        label="Icon padding:"
+        label="Padding:"
         sizes={SIZE_PRESET_KEYS}
         value={resolveIconPaddingSizePreset(state.padding, state.sizePreset)}
         onChange={(size) => onChange('padding', getIconPadding(size))}

@@ -55,6 +55,12 @@ import {
 } from './icon.styles';
 
 /**
+ * DEFAULT_ICON_TYPE — задаёт тип кнопки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `type`.
+ */
+const DEFAULT_ICON_TYPE = 'button';
+
+/**
  * IconProps — представляет пропсы компонента Icon.
  *
  * @template T тип корневого элемента, по умолчанию `span`
@@ -81,15 +87,13 @@ type IconProps<T extends ElementType = 'span'> = {
  * </Icon>
  */
 export function Icon<T extends ElementType = 'span'>(props: IconProps<T>) {
-  const elementType: ElementType = props.as ?? 'span';
-
-  if (elementType === 'button') {
+  if (props.as === 'button') {
     const { type, ...rest } = props as IconProps<'button'> & { type?: string };
 
     return createElement(StyledIcon, {
       ...rest,
       as: 'button',
-      type: type ?? 'button',
+      type: type ?? DEFAULT_ICON_TYPE,
     });
   }
 

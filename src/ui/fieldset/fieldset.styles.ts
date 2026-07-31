@@ -95,6 +95,11 @@ const DEFAULT_FIELDSET_BORDER_TONE: FieldsetBorderTone = DEFAULT_TONE;
  * getFieldsetStyles — возвращает CSS-правила для корня `StyledFieldset`: габариты, отступы
  * и рамка.
  *
+ * Как работает:
+ * 1. Берёт тему и подставляет дефолт `borderTone`
+ * 2. Собирает габариты, отступы через `getPadding`, рамку цветом через
+ *    `getFieldsetBorderColor` и `border-radius` через `resolveBlockRadius`
+ *
  * @param props пропсы стилизации Fieldset и тема
  * @returns CSS-правила, каждое с новой строки
  */
@@ -103,17 +108,15 @@ function getFieldsetStyles(props: FieldsetStyleProps & { theme: AppTheme }): str
   const { borderTone = DEFAULT_FIELDSET_BORDER_TONE } = props;
   const padding = getPadding(DEFAULT_SIZE_PRESET);
 
-  const styles = [
-    'margin: 0;',
-    'inline-size: 100%;',
-    'min-inline-size: 0;',
-    `padding-block: ${padding.block};`,
-    `padding-inline: ${padding.inline};`,
-    `border: 1px solid ${getFieldsetBorderColor(theme, borderTone)};`,
-    `border-radius: ${resolveBlockRadius(DEFAULT_SHAPE_PRESET, getMinBlockSize(DEFAULT_SIZE_PRESET))};`,
-  ];
-
-  return styles.join('\n');
+  return `
+    margin: 0;
+    inline-size: 100%;
+    min-inline-size: 0;
+    padding-block: ${padding.block};
+    padding-inline: ${padding.inline};
+    border: 1px solid ${getFieldsetBorderColor(theme, borderTone)};
+    border-radius: ${resolveBlockRadius(DEFAULT_SHAPE_PRESET, getMinBlockSize(DEFAULT_SIZE_PRESET))};
+  `;
 }
 
 /**

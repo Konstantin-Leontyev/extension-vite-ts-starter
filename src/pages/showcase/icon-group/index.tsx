@@ -31,7 +31,7 @@
  *     - `src/pages/showcase/combobox-settings/index.tsx`
  *     - `src/pages/showcase/listbox-settings/index.tsx`
  *     - `src/pages/showcase/range-input-settings/index.tsx`
- *     - `src/pages/showcase/icon-button-settings/index.tsx`
+ *     - `src/pages/showcase/icon-settings/index.tsx`
  *     - `src/pages/showcase/segment-button-settings/index.tsx`
  */
 
@@ -92,13 +92,13 @@ type IconGroupProps = {
 };
 
 /**
- * formatIconGroupLabel — собирает лейбл контрола с опциональным суффиксом `name`.
+ * resolveIconGroupLabel — собирает лейбл контрола с опциональным суффиксом `name`.
  *
  * @param base базовый лейбл контрола
  * @param name суффикс сегмента, например A
  * @returns лейбл с суффиксом или исходный `base`
  */
-function formatIconGroupLabel(base: string, name?: string): string {
+function resolveIconGroupLabel(base: string, name?: string): string {
   if (!name) {
     return base;
   }
@@ -136,7 +136,7 @@ function formatIconGroupLabel(base: string, name?: string): string {
  *   onShowChange={(checked) => onChange('withIcon', checked)}
  *   onToneChange={(tone) => onChange('iconTone', tone)}
  * />
- * // IconButton: без позиции и флага показа
+ * // Icon: без позиции и флага показа
  * <IconGroup
  *   fill={state.iconFill}
  *   iconOptions={COMBOBOX_OPTIONS}
@@ -172,7 +172,7 @@ export function IconGroup({
             onShowChange(event.target.checked)
           }
         >
-          {formatIconGroupLabel('Show icon', name)}
+          {resolveIconGroupLabel('Show icon', name)}
         </Checkbox>
       )}
 
@@ -180,7 +180,7 @@ export function IconGroup({
         <>
           {iconOptions !== undefined && onIconChange !== undefined && (
             <Combobox
-              label={formatIconGroupLabel('Icon:', name)}
+              label={resolveIconGroupLabel('Icon:', name)}
               options={iconOptions}
               value={iconValue}
               onChange={onIconChange}
@@ -189,7 +189,7 @@ export function IconGroup({
 
           {onToneChange !== undefined && tone !== undefined && (
             <ToneListbox
-              label={formatIconGroupLabel('Icon tone:', name)}
+              label={resolveIconGroupLabel('Icon tone:', name)}
               tones={TONE_PRESET_KEYS}
               value={tone}
               onChange={onToneChange}
@@ -198,7 +198,7 @@ export function IconGroup({
 
           <ToneListbox
             excludeTone={tone}
-            label={formatIconGroupLabel('Icon fill tone:', name)}
+            label={resolveIconGroupLabel('Icon fill tone:', name)}
             tones={TONE_PRESET_KEYS}
             value={fill}
             onChange={onFillChange}
@@ -206,7 +206,7 @@ export function IconGroup({
 
           {onPositionChange !== undefined && position !== undefined && (
             <Listbox
-              label={formatIconGroupLabel('Icon position:', name)}
+              label={resolveIconGroupLabel('Icon position:', name)}
               options={getIconPositionListboxOptions()}
               value={position}
               onChange={(value) => onPositionChange(value as IconPosition)}

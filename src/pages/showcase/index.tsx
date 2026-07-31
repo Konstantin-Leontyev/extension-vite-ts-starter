@@ -56,7 +56,7 @@ import {
 } from './date-range-input-settings';
 import { FieldsetSettings, type FieldsetWidgetState } from './fieldset-settings';
 import { HeaderSettings } from './header-settings';
-import { IconSettings, type IconWidgetState } from './icon-button-settings';
+import { IconSettings, type IconWidgetState } from './icon-settings';
 import { InputSettings, type InputWidgetState } from './input-settings';
 import { ListboxSettings, type ListboxWidgetState } from './listbox-settings';
 import { LISTBOX_DEMO_OPTIONS } from './listbox-settings/options';
