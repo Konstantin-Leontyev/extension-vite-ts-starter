@@ -8,8 +8,8 @@
  *  - опции глифов через проп `iconOptions`. Без `iconOptions` контрол `Icon:` не рендерится
  *  - ключ глифа через проп `iconValue`
  *  - префикс подписей контролов через проп `labelPrefix`. Пустой префикс даёт подписи
- *    без него, например `Tone:` у панели Icon. Сегменты SegmentButton передают
- *    `Icon A` и `Icon B`
+ *    без него, например `Tone:` и `Fill:` у панели Icon. Сегменты SegmentButton
+ *    передают `Icon A` и `Icon B`
  *  - обработчик изменения тона глифа через проп `onFillChange`
  *  - обработчик изменения ключа глифа через проп `onIconChange`
  *  - обработчик изменения позиции через проп `onPositionChange`. Без `onPositionChange`
@@ -191,7 +191,7 @@ export function IconGroup({
 
           <ToneListbox
             excludeTone={tone}
-            label={resolveGroupFieldLabel(labelPrefix, 'fill tone')}
+            label={resolveGroupFieldLabel(labelPrefix, 'fill')}
             tones={TONE_PRESET_KEYS}
             value={fill}
             onChange={onFillChange}

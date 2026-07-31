@@ -23,7 +23,8 @@
  * 4. Выставлять `aria-live="polite"`
  *
  * Потребители:
- *  - контролы, например Input и RangeInput — рендерят строку ошибки поля
+ *  - контролы, например Input, Listbox, Combobox и RangeInput — рендерят строку
+ *    ошибки поля и резерв высоты под неё
  */
 
 import { type CSSProperties, type ComponentProps, type ReactNode } from 'react';

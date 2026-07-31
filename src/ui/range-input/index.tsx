@@ -439,6 +439,7 @@ export function RangeInput({
       iconTone={iconTone}
       interactive
       showBorder
+      showHover={false}
       showShadow={false}
       sizePreset={sizePreset}
     >

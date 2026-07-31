@@ -267,7 +267,9 @@ export function getIconPositionStyles(): string {
  * @property interactive — включает канал состояний `--icon-state-background`
  *   родителя
  * @property shape — форма окна иконки
- * @property showHover — включает запись канала состояний на hover и focus-visible
+ * @property showHover — включает запись канала состояний на hover и focus-visible.
+ *   Внутри контрола с собственным hover-слоем выключается, чтобы не было двойной
+ *   подсветки
  * @property sizePreset — размер окна иконки
  */
 export type IconStyleProps = LayoutProps &

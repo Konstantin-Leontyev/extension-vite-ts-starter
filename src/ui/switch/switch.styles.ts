@@ -116,12 +116,6 @@ export type SwitchStyleProps = LayoutProps & {
 };
 
 /**
- * DEFAULT_SWITCH_TONE — задаёт тон включённого состояния по умолчанию.
- * Используется, когда вызывающий код не передал проп `tone`.
- */
-const DEFAULT_SWITCH_TONE: TonePreset = 'primary';
-
-/**
  * StyledSwitchRoot — задаёт корневой узел компонента Switch.
  * Базируется на `<label>` и поддерживает layout-пропсы.
  *
@@ -130,6 +124,7 @@ const DEFAULT_SWITCH_TONE: TonePreset = 'primary';
  *  - `grid-auto-flow: column` — элементы в ряд
  *  - `gap` — отступ между дорожкой и подписью
  *  - `align-items: center` — выравнивание по поперечной оси
+ *  - `justify-content: start` — при растяжении родителем подпись остаётся у дорожки
  *  - `cursor: pointer` — кликабельная область корня
  *
  * Генерация стилей:
@@ -142,6 +137,7 @@ export const StyledSwitchRoot = styled.label.withConfig({
   grid-auto-flow: column;
   gap: ${getSpacingValue(8)};
   align-items: center;
+  justify-content: start;
   cursor: pointer;
   ${(props) => getLayoutStyles(props)}
 `;
@@ -155,6 +151,12 @@ type SwitchTrackStyleProps = Pick<SwitchStyleProps, 'sizePreset' | 'tone'>;
  * SWITCH_TRACK_PROP_NAMES — хранит имена пропсов стилизации дорожки Switch.
  */
 const SWITCH_TRACK_PROP_NAMES = new Set<string>(['sizePreset', 'tone']);
+
+/**
+ * DEFAULT_SWITCH_TONE — задаёт тон включённого состояния по умолчанию.
+ * Используется, когда вызывающий код не передал проп `tone`.
+ */
+const DEFAULT_SWITCH_TONE: TonePreset = 'primary';
 
 /**
  * TRACK_BORDER — задаёт ширину рамки дорожки.

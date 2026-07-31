@@ -188,7 +188,8 @@ export const StyledListboxTriggerRow = styled.div.withConfig({
 /**
  * getListboxTriggerStyles — возвращает CSS-правила для узла `StyledListboxTrigger`:
  * раскладку лейбла, шов и канал состояний секции шеврона. Статику секции красит
- * внутренний Icon своими пропсами.
+ * внутренний Icon своими пропсами; собственную запись канала выключает через
+ * `showHover={false}`.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты пропсов

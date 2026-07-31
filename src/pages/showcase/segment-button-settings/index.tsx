@@ -2,7 +2,8 @@
  * Файл: `src/pages/showcase/segment-button-settings/index.tsx`
  * Определяет панель настроек компонента SegmentButton в витрине дизайн-системы.
  * Содержит контролы для изменения подписи, размера, формы, числа сегментов,
- * тона сегментов, иконок, текстов, типографики и состояний `disabled` в реальном времени.
+ * тона сегментов, иконок, текста, типографики и состояний `active` и `disabled`
+ * в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `SegmentButtonWidgetState`
@@ -31,34 +32,38 @@ import { ToneListbox } from '../tone-listbox';
 
 /**
  * SegmentButtonWidgetState — представляет состояние настроек компонента SegmentButton в витрине дизайн-системы.
- * Часть ключей задаёт общие пропсы ряда, остальные — параметры сегментов A, B и C.
+ * Часть ключей задаёт общие пропсы ряда, остальные — параметры левого, среднего
+ * и правого сегментов.
  * Витринные ключи: `segmentCount` управляет числом сегментов в превью, `*WithIcon` и
  * `*IconKey` выбирают иконки сегментов.
  * Используется для синхронизации значений между панелью управления и демонстрационным SegmentButton.
  *
+ * @property centerActive — включает активное состояние среднего сегмента
  * @property centerDisabled — включает недоступность среднего сегмента
  * @property centerIconFill — тон глифа иконки среднего сегмента
  * @property centerIconKey — витринный ключ выбора иконки среднего сегмента
  * @property centerIconPosition — позиция иконки среднего сегмента
  * @property centerLabel — текст среднего сегмента
- * @property centerLabelTone — тон текста среднего сегмента
+ * @property centerTextTone — тон текста среднего сегмента
  * @property centerTone — тон заливки среднего сегмента
  * @property centerWithIcon — витринный ключ показа иконки среднего сегмента. Выключенный — сегмент без иконки
  * @property label — подпись над рядом сегментов
+ * @property leftActive — включает активное состояние левого сегмента
  * @property leftDisabled — включает недоступность левого сегмента
  * @property leftIconFill — тон глифа иконки левого сегмента
  * @property leftIconKey — витринный ключ выбора иконки левого сегмента
  * @property leftIconPosition — позиция иконки левого сегмента
  * @property leftLabel — текст левого сегмента
- * @property leftLabelTone — тон текста левого сегмента
+ * @property leftTextTone — тон текста левого сегмента
  * @property leftTone — тон заливки левого сегмента
  * @property leftWithIcon — витринный ключ показа иконки левого сегмента. Выключенный — сегмент без иконки
+ * @property rightActive — включает активное состояние правого сегмента
  * @property rightDisabled — включает недоступность правого сегмента
  * @property rightIconFill — тон глифа иконки правого сегмента
  * @property rightIconKey — витринный ключ выбора иконки правого сегмента
  * @property rightIconPosition — позиция иконки правого сегмента
  * @property rightLabel — текст правого сегмента
- * @property rightLabelTone — тон текста правого сегмента
+ * @property rightTextTone — тон текста правого сегмента
  * @property rightTone — тон заливки правого сегмента
  * @property rightWithIcon — витринный ключ показа иконки правого сегмента. Выключенный — сегмент без иконки
  * @property segmentCount — витринный ключ числа сегментов в превью
@@ -68,29 +73,32 @@ import { ToneListbox } from '../tone-listbox';
  * @property textSize — размер текста сегмента
  */
 export type SegmentButtonWidgetState = {
+  centerActive: boolean;
   centerDisabled: boolean;
   centerIconFill: TonePreset;
   centerIconKey: IconKey;
   centerIconPosition: IconPosition;
   centerLabel: string;
-  centerLabelTone: TextTone;
+  centerTextTone: TextTone;
   centerTone: TonePreset;
   centerWithIcon: boolean;
   label: string;
+  leftActive: boolean;
   leftDisabled: boolean;
   leftIconFill: TonePreset;
   leftIconKey: IconKey;
   leftIconPosition: IconPosition;
   leftLabel: string;
-  leftLabelTone: TextTone;
+  leftTextTone: TextTone;
   leftTone: TonePreset;
   leftWithIcon: boolean;
+  rightActive: boolean;
   rightDisabled: boolean;
   rightIconFill: TonePreset;
   rightIconKey: IconKey;
   rightIconPosition: IconPosition;
   rightLabel: string;
-  rightLabelTone: TextTone;
+  rightTextTone: TextTone;
   rightTone: TonePreset;
   rightWithIcon: boolean;
   segmentCount: '2' | '3';
@@ -130,8 +138,6 @@ type SegmentButtonSettingsProps = {
  * <SegmentButtonSettings state={segmentButton} onChange={updateSegmentButton} />
  */
 export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettingsProps) {
-  const rightName = state.segmentCount === '3' ? 'C' : 'B';
-
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
       <ControlGroup
@@ -156,7 +162,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
       />
 
       <ToneListbox
-        label="Tone A:"
+        label="Left tone:"
         tones={TONE_PRESET_KEYS}
         value={state.leftTone}
         onChange={(tone) => onChange('leftTone', tone)}
@@ -166,7 +172,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
         fill={state.leftIconFill}
         iconOptions={COMBOBOX_OPTIONS}
         iconValue={state.leftIconKey}
-        labelPrefix="Icon A"
+        labelPrefix="Left icon"
         position={state.leftIconPosition}
         show={state.leftWithIcon}
         onFillChange={(tone) => onChange('leftIconFill', tone)}
@@ -178,7 +184,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
       {state.segmentCount === '3' && (
         <>
           <ToneListbox
-            label="Tone B:"
+            label="Center tone:"
             tones={TONE_PRESET_KEYS}
             value={state.centerTone}
             onChange={(tone) => onChange('centerTone', tone)}
@@ -188,7 +194,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
             fill={state.centerIconFill}
             iconOptions={COMBOBOX_OPTIONS}
             iconValue={state.centerIconKey}
-            labelPrefix="Icon B"
+            labelPrefix="Center icon"
             position={state.centerIconPosition}
             show={state.centerWithIcon}
             onFillChange={(tone) => onChange('centerIconFill', tone)}
@@ -200,7 +206,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
       )}
 
       <ToneListbox
-        label={`Tone ${rightName}:`}
+        label="Right tone:"
         tones={TONE_PRESET_KEYS}
         value={state.rightTone}
         onChange={(tone) => onChange('rightTone', tone)}
@@ -210,7 +216,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
         fill={state.rightIconFill}
         iconOptions={COMBOBOX_OPTIONS}
         iconValue={state.rightIconKey}
-        labelPrefix={`Icon ${rightName}`}
+        labelPrefix="Right icon"
         position={state.rightIconPosition}
         show={state.rightWithIcon}
         onFillChange={(tone) => onChange('rightIconFill', tone)}
@@ -222,21 +228,21 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
       <TextGroup
         contents={[
           {
-            label: 'Text A:',
+            label: 'Left text:',
             value: state.leftLabel,
             onChange: (value) => onChange('leftLabel', value),
           },
           ...(state.segmentCount === '3'
             ? [
                 {
-                  label: 'Text B:',
+                  label: 'Center text:',
                   value: state.centerLabel,
                   onChange: (value: string) => onChange('centerLabel', value),
                 },
               ]
             : []),
           {
-            label: state.segmentCount === '3' ? 'Text C:' : 'Text B:',
+            label: 'Right text:',
             value: state.rightLabel,
             onChange: (value) => onChange('rightLabel', value),
           },
@@ -245,23 +251,23 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
         size={state.textSize}
         tones={[
           {
-            label: 'Text A tone:',
-            value: state.leftLabelTone,
-            onChange: (tone) => onChange('leftLabelTone', tone),
+            label: 'Left text tone:',
+            value: state.leftTextTone,
+            onChange: (tone) => onChange('leftTextTone', tone),
           },
           ...(state.segmentCount === '3'
             ? [
                 {
-                  label: 'Text B tone:',
-                  value: state.centerLabelTone,
-                  onChange: (tone: TextTone) => onChange('centerLabelTone', tone),
+                  label: 'Center text tone:',
+                  value: state.centerTextTone,
+                  onChange: (tone: TextTone) => onChange('centerTextTone', tone),
                 },
               ]
             : []),
           {
-            label: state.segmentCount === '3' ? 'Text C tone:' : 'Text B tone:',
-            value: state.rightLabelTone,
-            onChange: (tone) => onChange('rightLabelTone', tone),
+            label: 'Right text tone:',
+            value: state.rightTextTone,
+            onChange: (tone) => onChange('rightTextTone', tone),
           },
         ]}
         onItalicChange={(value) => onChange('textItalic', value)}
@@ -269,24 +275,53 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
       />
 
       <Checkbox
+        checked={state.leftActive}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('leftActive', event.target.checked)
+        }
+      >
+        Active left
+      </Checkbox>
+
+      <Checkbox
         checked={state.leftDisabled}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('leftDisabled', event.target.checked)
         }
       >
-        Disable A
+        Disable left
       </Checkbox>
 
       {state.segmentCount === '3' && (
-        <Checkbox
-          checked={state.centerDisabled}
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            onChange('centerDisabled', event.target.checked)
-          }
-        >
-          Disable B
-        </Checkbox>
+        <>
+          <Checkbox
+            checked={state.centerActive}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              onChange('centerActive', event.target.checked)
+            }
+          >
+            Active center
+          </Checkbox>
+
+          <Checkbox
+            checked={state.centerDisabled}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              onChange('centerDisabled', event.target.checked)
+            }
+          >
+            Disable center
+          </Checkbox>
+        </>
       )}
+
+      <Checkbox
+        checked={state.rightActive}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('rightActive', event.target.checked)
+        }
+      >
+        Active right
+      </Checkbox>
 
       <Checkbox
         checked={state.rightDisabled}
@@ -294,7 +329,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
           onChange('rightDisabled', event.target.checked)
         }
       >
-        {state.segmentCount === '3' ? 'Disable C' : 'Disable B'}
+        Disable right
       </Checkbox>
     </StyledSettingsForm>
   );

@@ -214,6 +214,12 @@ const TAG_PROP_NAMES = new Set<string>([
 const DEFAULT_TAG_SHAPE: ShapePreset = 'pill';
 
 /**
+ * DEFAULT_TAG_SHOW_BORDER — задаёт показ рамки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showBorder`.
+ */
+const DEFAULT_TAG_SHOW_BORDER = true;
+
+/**
  * DEFAULT_TAG_TINTED — задаёт режим мягкой заливки по умолчанию.
  * Используется, когда вызывающий код не передал проп `tinted`.
  */
@@ -230,13 +236,12 @@ const DEFAULT_TAG_TONE: TonePreset = 'primary';
  * размер, отступы, рамку с тенью, форму и цвета.
  *
  * Как работает:
- * 1. Берёт тему и подставляет дефолты `borderTone`, `shape`, `showShadow`,
- *    `sizePreset`, `tinted` и `tone`
+ * 1. Берёт тему и подставляет дефолты `borderTone`, `shape`, `showBorder`,
+ *    `showShadow`, `sizePreset`, `tinted` и `tone`
  * 2. Считает пару цветов поверхности через `resolveTagSurface` по `tone` и `tinted`
  * 3. Собирает `min-block-size`, `padding-inline`, рамку с тенью через
  *    `getBorderStyles`, `border-radius` через `resolveBlockRadius` и цвета
- *    поверхности. `showBorder` без локального дефолта — хелпер подставляет
- *    `DEFAULT_SHOW_BORDER`
+ *    поверхности
  *
  * @param props пропсы стилизации Tag и тема
  * @returns CSS-правила, каждое с новой строки
@@ -246,7 +251,7 @@ function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string {
   const {
     borderTone = DEFAULT_TONE,
     shape = DEFAULT_TAG_SHAPE,
-    showBorder,
+    showBorder = DEFAULT_TAG_SHOW_BORDER,
     showShadow = DEFAULT_SHOW_SHADOW,
     sizePreset = DEFAULT_TAG_SIZE_PRESET,
     tinted = DEFAULT_TAG_TINTED,

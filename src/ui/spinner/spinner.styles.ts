@@ -89,12 +89,6 @@ export type SpinnerStyleProps = LayoutProps & {
 };
 
 /**
- * DEFAULT_SPINNER_TONE — задаёт тон по умолчанию.
- * Используется, когда вызывающий код не передал проп `tone`.
- */
-const DEFAULT_SPINNER_TONE: TonePreset = 'primary';
-
-/**
  * StyledSpinnerRoot — задаёт корневой узел компонента Spinner.
  * Базируется на `<div>` и поддерживает пропсы из `LayoutProps`.
  *
@@ -128,6 +122,12 @@ type SpinnerIndicatorStyleProps = Pick<SpinnerStyleProps, 'sizePreset' | 'tone'>
 const SPINNER_INDICATOR_PROP_NAMES = new Set<string>(['sizePreset', 'tone']);
 
 /**
+ * DEFAULT_SPINNER_TONE — задаёт тон по умолчанию.
+ * Используется, когда вызывающий код не передал проп `tone`.
+ */
+const DEFAULT_SPINNER_TONE: TonePreset = 'primary';
+
+/**
  * spinnerRotate — задаёт ключевые кадры анимации вращения спиннера.
  */
 const spinnerRotate = keyframes`
@@ -141,13 +141,6 @@ const spinnerRotate = keyframes`
  * Используется в `StyledSpinner`.
  */
 const SPINNER_ROTATE_DURATION = '0.8s';
-
-/**
- * SPINNER_REDUCED_ROTATE_DURATION — задаёт длительность оборота при
- * `prefers-reduced-motion: reduce`.
- * Используется в `StyledSpinner`.
- */
-const SPINNER_REDUCED_ROTATE_DURATION = '1.6s';
 
 /**
  * getSpinnerStyles — возвращает CSS-правила для узла `StyledSpinner`:
@@ -186,8 +179,8 @@ function getSpinnerStyles(
  * Встроенные стили:
  *  - `animation` — бесконечное вращение индикатора через `spinnerRotate` и
  *    `SPINNER_ROTATE_DURATION`
- *  - `animation-duration` при `prefers-reduced-motion: reduce` — удлиняет оборот
- *    до `SPINNER_REDUCED_ROTATE_DURATION`
+ *  - `animation-duration: calc(${SPINNER_ROTATE_DURATION} * 2)` при
+ *    `prefers-reduced-motion: reduce` — удваивает длительность оборота
  *
  * Генерация стилей:
  *  - `getSpinnerStyles` — размер, рамка, цвет и скругление
@@ -199,6 +192,6 @@ export const StyledSpinner = styled.div.withConfig({
   animation: ${spinnerRotate} ${SPINNER_ROTATE_DURATION} linear infinite;
 
   @media (prefers-reduced-motion: reduce) {
-    animation-duration: ${SPINNER_REDUCED_ROTATE_DURATION};
+    animation-duration: calc(${SPINNER_ROTATE_DURATION} * 2);
   }
 `;

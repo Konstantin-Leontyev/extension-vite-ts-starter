@@ -187,7 +187,8 @@ export const StyledComboboxTriggerRow = styled.div.withConfig({
 /**
  * getComboboxTriggerStyles — возвращает CSS-правила для узла `StyledComboboxTrigger`:
  * раскладку значения, шов и канал состояний секции шеврона. Статику секции красит
- * внутренний Icon своими пропсами.
+ * внутренний Icon своими пропсами; собственную запись канала выключает через
+ * `showHover={false}`.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты пропсов

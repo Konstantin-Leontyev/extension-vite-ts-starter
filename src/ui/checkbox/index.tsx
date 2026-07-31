@@ -91,6 +91,7 @@ function Checkbox({
   ...rest
 }: CheckboxProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
+  const hasText = Boolean(children);
 
   const control = (
     <StyledCheckboxControl
@@ -99,11 +100,11 @@ function Checkbox({
       sizePreset={sizePreset}
       type="checkbox"
       uncheckedMark={uncheckedMark}
-      {...(children ? restProps : rest)}
+      {...(hasText ? restProps : rest)}
     />
   );
 
-  if (!children) {
+  if (!hasText) {
     return control;
   }
 

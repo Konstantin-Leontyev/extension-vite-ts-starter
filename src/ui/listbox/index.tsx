@@ -51,9 +51,10 @@ import { CheckIcon, ChevronDownIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Checkbox } from '@ui/checkbox';
+import { FieldError } from '@ui/field-error';
 import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
-import { Text, getTextLineHeight, type TextSizePreset } from '@ui/text';
+import { Text } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
@@ -107,12 +108,6 @@ const DEFAULT_LISTBOX_RESERVE_ERROR_SPACE = false;
 const DEFAULT_LISTBOX_SHOW_CLEAR = false;
 
 /**
- * LISTBOX_ERROR_TEXT_SIZE_PRESET — задаёт типографический пресет строки ошибки.
- * Используется для расчёта резерва высоты под строку ошибки.
- */
-const LISTBOX_ERROR_TEXT_SIZE_PRESET: TextSizePreset = 'thin';
-
-/**
  * ListboxOption — представляет опцию списка Listbox.
  *
  * @property disabled — включает недоступное состояние опции
@@ -139,8 +134,7 @@ export type ListboxOption = {
  * @property onChange — обработчик изменения значения
  * @property options — опции списка
  * @property placeholder — плейсхолдер неактивного триггера
- * @property reserveErrorSpace — включает резерв высоты под строку ошибки, чтобы
- *   появление текста не сдвигало соседей
+ * @property reserveErrorSpace — включает резерв высоты под строку ошибки
  * @property showClear — включает кнопку сброса выбора при выбранном значении
  * @property value — контролируемое значение
  */
@@ -502,6 +496,7 @@ export function Listbox({
       iconTone={iconTone}
       interactive
       showBorder
+      showHover={false}
       showShadow={false}
       sizePreset={sizePreset}
     >
@@ -742,14 +737,7 @@ export function Listbox({
         {!isIconStart && clearNode}
       </StyledListboxTriggerRow>
 
-      {reserveErrorSpace && (
-        <Text
-          aria-hidden="true"
-          as="p"
-          minBlockSize={getTextLineHeight(LISTBOX_ERROR_TEXT_SIZE_PRESET)}
-          sizePreset={LISTBOX_ERROR_TEXT_SIZE_PRESET}
-        />
-      )}
+      <FieldError reserveErrorSpace={reserveErrorSpace} />
 
       <AnchoredPortal
         dismissZoneRefs={[rootRef, panelRef]}

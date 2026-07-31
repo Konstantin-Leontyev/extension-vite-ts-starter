@@ -87,12 +87,6 @@ export type ProgressBarStyleProps = LayoutProps & {
 };
 
 /**
- * DEFAULT_PROGRESS_BAR_TONE — задаёт тон заливки по умолчанию.
- * Используется, когда вызывающий код не передал проп `tone`.
- */
-const DEFAULT_PROGRESS_BAR_TONE: TonePreset = 'primary';
-
-/**
  * StyledProgressBarRoot — задаёт корневой узел компонента ProgressBar.
  * Базируется на `<div>` и поддерживает пропсы из `LayoutProps`.
  *
@@ -179,6 +173,12 @@ type ProgressBarFillStyleProps = Pick<ProgressBarStyleProps, 'tone' | 'value'>;
  * PROGRESS_BAR_FILL_PROP_NAMES — хранит имена пропсов стилизации заливки ProgressBar.
  */
 const PROGRESS_BAR_FILL_PROP_NAMES = new Set<string>(['tone', 'value']);
+
+/**
+ * DEFAULT_PROGRESS_BAR_TONE — задаёт тон заливки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `tone`.
+ */
+const DEFAULT_PROGRESS_BAR_TONE: TonePreset = 'primary';
 
 /**
  * getProgressBarFillStyles — возвращает CSS-правила для узла `StyledProgressBarFill`:

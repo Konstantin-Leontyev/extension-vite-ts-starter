@@ -50,10 +50,11 @@ import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { CheckIcon, ChevronDownIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
+import { FieldError } from '@ui/field-error';
 import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Input } from '@ui/input';
-import { Text, getTextLineHeight, type TextSizePreset } from '@ui/text';
+import { Text } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
@@ -115,12 +116,6 @@ const DEFAULT_COMBOBOX_SEARCH_PLACEHOLDER = 'Search…';
 const DEFAULT_COMBOBOX_SHOW_CLEAR = false;
 
 /**
- * COMBOBOX_ERROR_TEXT_SIZE_PRESET — задаёт типографический пресет строки ошибки.
- * Используется для расчёта резерва высоты под строку ошибки.
- */
-const COMBOBOX_ERROR_TEXT_SIZE_PRESET: TextSizePreset = 'thin';
-
-/**
  * ComboboxOption — представляет опцию списка Combobox.
  *
  * @property disabled — включает недоступное состояние опции
@@ -148,8 +143,7 @@ export type ComboboxOption = {
  * @property onChange — обработчик изменения значения
  * @property options — опции списка
  * @property placeholder — плейсхолдер неактивного триггера
- * @property reserveErrorSpace — включает резерв высоты под строку ошибки, чтобы
- *   появление текста не сдвигало соседей
+ * @property reserveErrorSpace — включает резерв высоты под строку ошибки
  * @property searchPlaceholder — плейсхолдер поля поиска
  * @property showClear — включает кнопку сброса выбора при выбранном значении
  * @property value — контролируемое значение
@@ -334,6 +328,7 @@ export function Combobox({
       iconTone={iconTone}
       interactive
       showBorder
+      showHover={false}
       showShadow={false}
       sizePreset={sizePreset}
     >
@@ -564,14 +559,7 @@ export function Combobox({
         {!isIconStart && clearNode}
       </StyledComboboxTriggerRow>
 
-      {reserveErrorSpace && (
-        <Text
-          aria-hidden="true"
-          as="p"
-          minBlockSize={getTextLineHeight(COMBOBOX_ERROR_TEXT_SIZE_PRESET)}
-          sizePreset={COMBOBOX_ERROR_TEXT_SIZE_PRESET}
-        />
-      )}
+      <FieldError reserveErrorSpace={reserveErrorSpace} />
 
       <AnchoredPortal
         dismissZoneRefs={[rootRef, panelRef]}

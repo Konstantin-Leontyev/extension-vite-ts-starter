@@ -588,29 +588,32 @@ const DEFAULT_TOAST_STATE: ToastWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
+  centerActive: false,
   centerDisabled: false,
   centerIconFill: 'neutral',
   centerIconKey: 'settings',
   centerIconPosition: 'end',
   centerLabel: 'Change',
-  centerLabelTone: 'success',
+  centerTextTone: 'success',
   centerTone: 'neutral',
   centerWithIcon: false,
   label: 'Label:',
+  leftActive: false,
   leftDisabled: false,
   leftIconFill: 'neutral',
   leftIconKey: 'search',
   leftIconPosition: 'start',
   leftLabel: 'Select',
-  leftLabelTone: 'neutral',
+  leftTextTone: 'neutral',
   leftTone: 'neutral',
   leftWithIcon: false,
+  rightActive: false,
   rightDisabled: false,
   rightIconFill: 'neutral',
   rightIconKey: 'close',
   rightIconPosition: 'end',
   rightLabel: 'Delete',
-  rightLabelTone: 'danger',
+  rightTextTone: 'danger',
   rightTone: 'neutral',
   rightWithIcon: false,
   segmentCount: '2',
@@ -1473,6 +1476,7 @@ export function ShowcasePage() {
                   center={
                     segmentButton.segmentCount === '3'
                       ? {
+                          active: segmentButton.centerActive,
                           disabled: segmentButton.centerDisabled,
                           icon: segmentButton.centerWithIcon
                             ? getIcon(segmentButton.centerIconKey)
@@ -1482,13 +1486,14 @@ export function ShowcasePage() {
                             : undefined,
                           iconPosition: segmentButton.centerIconPosition,
                           label: segmentButton.centerLabel,
-                          textTone: segmentButton.centerLabelTone,
+                          textTone: segmentButton.centerTextTone,
                           tone: segmentButton.centerTone,
                         }
                       : undefined
                   }
                   label={segmentButton.label || undefined}
                   left={{
+                    active: segmentButton.leftActive,
                     disabled: segmentButton.leftDisabled,
                     icon: segmentButton.leftWithIcon
                       ? getIcon(segmentButton.leftIconKey)
@@ -1498,10 +1503,11 @@ export function ShowcasePage() {
                       : undefined,
                     iconPosition: segmentButton.leftIconPosition,
                     label: segmentButton.leftLabel,
-                    textTone: segmentButton.leftLabelTone,
+                    textTone: segmentButton.leftTextTone,
                     tone: segmentButton.leftTone,
                   }}
                   right={{
+                    active: segmentButton.rightActive,
                     disabled: segmentButton.rightDisabled,
                     icon: segmentButton.rightWithIcon
                       ? getIcon(segmentButton.rightIconKey)
@@ -1511,7 +1517,7 @@ export function ShowcasePage() {
                       : undefined,
                     iconPosition: segmentButton.rightIconPosition,
                     label: segmentButton.rightLabel,
-                    textTone: segmentButton.rightLabelTone,
+                    textTone: segmentButton.rightTextTone,
                     tone: segmentButton.rightTone,
                   }}
                   shape={segmentButton.shape}

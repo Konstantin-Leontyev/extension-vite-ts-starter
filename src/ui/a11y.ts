@@ -17,7 +17,7 @@
  * DEFAULT_CLEAR_ARIA_LABEL — задаёт текст `aria-label` кнопки сброса по умолчанию.
  * Используется, когда вызывающий код не передал `fallback`.
  */
-export const DEFAULT_CLEAR_ARIA_LABEL = 'Clear';
+const DEFAULT_CLEAR_ARIA_LABEL = 'Clear';
 
 /**
  * resolveClearAriaLabel — возвращает `aria-label` кнопки сброса.

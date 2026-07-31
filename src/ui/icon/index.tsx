@@ -82,7 +82,15 @@ type IconProps<T extends ElementType = 'span'> = {
  * <Icon as="button" aria-label="Settings" shape="round">
  *   <SettingsIcon />
  * </Icon>
- * <Icon data-slot="icon" iconTone="primary" interactive showBorder showShadow={false} sizePreset={sizePreset}>
+ * <Icon
+ *   data-slot="icon"
+ *   iconTone="primary"
+ *   interactive
+ *   showBorder
+ *   showHover={false}
+ *   showShadow={false}
+ *   sizePreset={sizePreset}
+ * >
  *   <ChevronDownIcon />
  * </Icon>
  */
