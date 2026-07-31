@@ -9,6 +9,7 @@
  *  - левый сегмент через проп `left`
  *  - средний сегмент через проп `center`. Без `center` ряд из двух сегментов
  *  - правый сегмент через проп `right`
+ *  - подпись над рядом через проп `label`
  *  - размер текста сегмента через проп `textSize`
  *  - курсив текста сегмента через проп `textItalic`
  *
@@ -22,8 +23,9 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef } from 'react';
+import { useId, type ComponentPropsWithRef } from 'react';
 
+import { FieldLabel } from '@ui/field-label';
 import {
   SegmentButtonParts,
   type SegmentButtonPartsProps,
@@ -32,17 +34,21 @@ import { type TextSizePreset } from '@ui/text';
 
 import {
   StyledSegmentButton,
+  StyledSegmentButtonRoot,
   getSegmentButtonTextSize,
+  splitLayoutProps,
   type SegmentButtonStyleProps,
 } from './segment-button.styles';
 
 /**
  * SegmentButtonProps — представляет пропсы компонента SegmentButton.
  *
+ * @property label — подпись над рядом сегментов
  * @property textItalic — включает курсив текста сегмента
  * @property textSize — размер текста сегмента
  */
 type SegmentButtonProps = {
+  label?: string;
   textItalic?: boolean;
   textSize?: TextSizePreset;
 } & Omit<SegmentButtonStyleProps, 'left' | 'right'> &
@@ -69,6 +75,7 @@ type SegmentButtonProps = {
  */
 export function SegmentButton({
   center,
+  label,
   left,
   ref,
   right,
@@ -78,6 +85,8 @@ export function SegmentButton({
   textSize,
   ...rest
 }: SegmentButtonProps) {
+  const { layoutProps, restProps } = splitLayoutProps(rest);
+  const labelId = useId();
   const resolvedTextSize = textSize ?? getSegmentButtonTextSize(sizePreset);
 
   const partsProps = {
@@ -90,9 +99,17 @@ export function SegmentButton({
   } as SegmentButtonPartsProps;
 
   return (
-    <StyledSegmentButton ref={ref} shape={shape} sizePreset={sizePreset} {...rest}>
-      <SegmentButtonParts {...partsProps} />
-    </StyledSegmentButton>
+    <StyledSegmentButtonRoot
+      aria-labelledby={label ? labelId : undefined}
+      ref={ref}
+      {...layoutProps}
+      {...restProps}
+    >
+      <FieldLabel id={labelId}>{label}</FieldLabel>
+      <StyledSegmentButton shape={shape} sizePreset={sizePreset}>
+        <SegmentButtonParts {...partsProps} />
+      </StyledSegmentButton>
+    </StyledSegmentButtonRoot>
   );
 }
 

@@ -21,6 +21,7 @@
  *  - текст `title` начального сегмента через проп `startLabel`. Участвует в
  *    `aria-label` кнопки сброса, видимым лейблом сегмента не является
  *  - иконка календаря всегда в позиции `start`. Публичного пропа позиции нет
+ *  - подпись над рядом через проп `label`
  *
  * Основные задачи:
  * 1. Экспортировать компонент DateRangeInput
@@ -39,6 +40,7 @@ import { placeCalendarPanel } from '@hooks/use-anchored-portal-position';
 import { CalendarIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
+import { FieldLabel } from '@ui/field-label';
 import { Icon } from '@ui/icon';
 import { type ShapePreset } from '@ui/presets';
 import { getSegmentButtonTextSize } from '@ui/segment-button';
@@ -106,6 +108,7 @@ const DEFAULT_DATE_RANGE_INPUT_START_LABEL = 'Start date';
  * @property endDay — конечный день диапазона в формате ISO
  * @property endLabel — текст `title` конечного сегмента и фрагмент `aria-label`
  *   кнопки сброса. Видимым лейблом сегмента не является
+ * @property label — подпись над рядом сегментов
  * @property maxDay — верхняя граница допустимых дней в формате ISO
  * @property minDay — нижняя граница допустимых дней в формате ISO
  * @property onClear — обработчик сброса диапазона. Без обработчика кнопка сброса
@@ -130,6 +133,7 @@ type DateRangeInputProps = DateRangeInputStyleProps &
     disabled?: boolean;
     endDay?: string;
     endLabel?: string;
+    label?: string;
     maxDay?: string;
     minDay?: string;
     onClear?: () => void;
@@ -190,6 +194,7 @@ export function DateRangeInput({
   disabled = DEFAULT_DATE_RANGE_INPUT_DISABLED,
   endDay = DEFAULT_DATE_RANGE_INPUT_END_DAY,
   endLabel = DEFAULT_DATE_RANGE_INPUT_END_LABEL,
+  label,
   maxDay,
   minDay,
   onClear,
@@ -213,6 +218,7 @@ export function DateRangeInput({
   const startTriggerRef = useRef<HTMLButtonElement>(null);
   const endTriggerRef = useRef<HTMLButtonElement>(null);
   const returnFocusRef = useRef<HTMLButtonElement>(null);
+  const labelId = useId();
   const panelId = useId();
   const resolvedShape = shape ?? DEFAULT_DATE_RANGE_INPUT_SHAPE;
   const resolvedSizePreset = sizePreset ?? DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET;
@@ -322,11 +328,13 @@ export function DateRangeInput({
 
   return (
     <StyledDateRangeInputRoot
+      aria-labelledby={label ? labelId : undefined}
       data-open={isOpen ? 'true' : undefined}
       ref={rootRef}
       {...layoutProps}
       {...restProps}
     >
+      <FieldLabel id={labelId}>{label}</FieldLabel>
       <StyledDateRangeInputTriggerRow
         data-has-clear={showClear ? '' : undefined}
         data-open={isOpen ? 'true' : undefined}

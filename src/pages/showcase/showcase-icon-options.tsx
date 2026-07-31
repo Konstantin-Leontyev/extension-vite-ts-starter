@@ -32,7 +32,6 @@ import {
   UploadIcon,
 } from '@icons';
 import { type ComboboxOption } from '@ui/combobox';
-import { type ListboxOption } from '@ui/listbox';
 
 /**
  * ICONS — связывает ключи иконок с функциями рендеринга React-узлов.
@@ -80,7 +79,7 @@ export function getIcon(key: IconKey): ReactNode {
  * LIST_OPTIONS — формирует опции с подписью без иконки из ключей `ICONS`.
  * Используется в превью Combobox без иконок в `src/pages/showcase/index.tsx`.
  */
-export const LIST_OPTIONS: readonly ListboxOption[] = Object.freeze(
+export const LIST_OPTIONS: readonly ComboboxOption[] = Object.freeze(
   Object.keys(ICONS).map((key) => ({
     label: resolveIconLabel(key as IconKey),
     value: key,

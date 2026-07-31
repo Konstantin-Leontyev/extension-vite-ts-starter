@@ -16,7 +16,7 @@
  *
  * Основные задачи:
  * 1. Экспортировать компонент SegmentButtonParts
- * 2. Типизировать пропсы через `SegmentButtonPartsProps` и `SegmentButtonPartsAction`
+ * 2. Типизировать пропсы через `SegmentButtonPartsProps`
  *
  * Потребители:
  *  - `@ui/segment-button` — собирает SegmentButton поверх ряда
@@ -64,7 +64,7 @@ const SEGMENT_BUTTON_PARTS_ACTIVE_TEXT_TONE: TextTone = 'primary';
  * @property title — подсказка нативного `title`
  * @property tone — тон заливки сегмента
  */
-export type SegmentButtonPartsAction = {
+type SegmentButtonPartsAction = {
   active?: boolean;
   ariaControls?: string;
   ariaExpanded?: boolean;
@@ -114,9 +114,12 @@ export type SegmentButtonPartsProps = {
  *
  * Как работает:
  * 1. Берёт действие сегмента и подставляет дефолт `iconPosition`
- * 2. Определяет тон текста: явный `textTone`, иначе наследование на цветном `tone`,
- *    иначе `primary` у активного сегмента
- * 3. Собирает иконку в `Icon` и текст в `Text`. Без иконки центрирует строку
+ * 2. Подключает `useLongPress`: указательные события и подавление клика после
+ *    долгого нажатия
+ * 3. Через `getToneColorKey` проверяет, есть ли у `tone` цвет в теме: явный
+ *    `textTone`, иначе наследование на цветном `tone`, иначе `primary` у
+ *    активного сегмента
+ * 4. Собирает иконку в `Icon` и текст в `Text`. Без иконки центрирует строку
  *    через `align`, чтобы лейбл оставался на всю ширину
  *
  * @param action действие сегмента
@@ -184,6 +187,7 @@ function SegmentButtonPartsPart({
       iconFill={iconFill}
       iconTone={tone}
       interactive
+      showHover={false}
       sizePreset={sizePreset}
     >
       {icon}

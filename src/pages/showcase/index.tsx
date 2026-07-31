@@ -19,7 +19,7 @@ import { SettingsIcon } from '@icons';
 import { Button, getButtonTextSize } from '@ui/button';
 import { CARD_HEADER_ACTION_SIZE_PRESET, Card } from '@ui/card';
 import { Checkbox, getCheckboxTextSize } from '@ui/checkbox';
-import { Combobox, type ComboboxOption } from '@ui/combobox';
+import { Combobox } from '@ui/combobox';
 import { DateRangeInput, todayUtc } from '@ui/date-range-input';
 import { Fieldset } from '@ui/fieldset';
 import { Icon, getIconPadding } from '@ui/icon';
@@ -338,6 +338,7 @@ const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
   iconKey: 'search',
   iconPosition: 'end',
   iconTone: 'neutral',
+  label: 'Label:',
   shape: 'rounded',
   sizePreset: 'normal',
   text: 'Button',
@@ -379,7 +380,7 @@ const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
   label: 'Label:',
   multiple: false,
   placeholder: 'Select…',
-  reserveErrorSpace: true,
+  reserveErrorSpace: false,
   shape: 'rounded',
   showClear: false,
   sizePreset: 'normal',
@@ -436,7 +437,7 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   toPlaceholder: 'To',
   validationMessages: { ...DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES },
   value: { from: '', to: '' },
-  withClear: true,
+  withClear: false,
 };
 
 /**
@@ -447,6 +448,7 @@ const DEFAULT_DATE_RANGE_INPUT_STATE: DateRangeInputWidgetState = {
   disabled: false,
   endDay: '',
   endLabel: 'End date',
+  label: 'Label:',
   maxDay: todayUtc(),
   minDay: '',
   shape: 'rounded',
@@ -538,6 +540,7 @@ const DEFAULT_SPINNER_STATE: SpinnerWidgetState = {
  */
 const DEFAULT_STEPPER_STATE: StepperWidgetState = {
   disabled: false,
+  label: 'Label:',
   max: undefined,
   min: undefined,
   shape: 'rounded',
@@ -593,6 +596,7 @@ const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   centerTextTone: 'success',
   centerTone: 'neutral',
   centerWithIcon: false,
+  label: 'Label:',
   leftDisabled: false,
   leftIconFill: 'neutral',
   leftIconKey: 'search',
@@ -905,8 +909,7 @@ export function ShowcasePage() {
   }
 
   const comboboxDemoOptions = useMemo(
-    () =>
-      combobox.withIcon ? COMBOBOX_OPTIONS : (LIST_OPTIONS as readonly ComboboxOption[]),
+    () => (combobox.withIcon ? COMBOBOX_OPTIONS : LIST_OPTIONS),
     [combobox.withIcon]
   );
 
@@ -1398,6 +1401,7 @@ export function ShowcasePage() {
                   disabled={dateRangeInput.disabled}
                   endDay={dateRangeInput.endDay}
                   endLabel={dateRangeInput.endLabel}
+                  label={dateRangeInput.label || undefined}
                   maxDay={dateRangeInput.maxDay || undefined}
                   minDay={dateRangeInput.minDay || undefined}
                   shape={dateRangeInput.shape}
@@ -1427,6 +1431,7 @@ export function ShowcasePage() {
                   iconFill={button.withIcon ? button.iconFill : undefined}
                   iconPosition={button.iconPosition}
                   iconTone={button.withIcon ? button.iconTone : undefined}
+                  label={button.label || undefined}
                   shape={button.shape}
                   sizePreset={button.sizePreset}
                   textItalic={button.textItalic}
@@ -1482,6 +1487,7 @@ export function ShowcasePage() {
                         }
                       : undefined
                   }
+                  label={segmentButton.label || undefined}
                   left={{
                     disabled: segmentButton.leftDisabled,
                     icon: segmentButton.leftWithIcon
@@ -1659,7 +1665,6 @@ export function ShowcasePage() {
                 STEPPER_WIDGET_TITLE_ID,
                 <Stepper
                   alignSelf="center"
-                  aria-label="Demo stepper"
                   disabled={stepper.disabled}
                   max={stepper.max}
                   min={stepper.min}
@@ -1673,6 +1678,9 @@ export function ShowcasePage() {
                   textTone={stepper.textTone}
                   value={stepper.value}
                   onChange={(value) => updateStepper('value', value)}
+                  {...(stepper.label.trim()
+                    ? { label: stepper.label }
+                    : { 'aria-label': 'Demo stepper' })}
                 />
               )}
 

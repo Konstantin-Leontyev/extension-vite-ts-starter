@@ -7,15 +7,13 @@
  * 2. Предоставить styled-узел `StyledMain` для корневого landmark страницы
  * 3. Предоставить styled-узлы `StyledShowcaseWidgets` и `StyledShowcaseWidgetFullRow`
  *    для сетки виджетов
- * 4. Предоставить styled-узлы `StyledSettingsForm` и `StyledSettingsField` для формы
- *    настроек в Sidebar
+ * 4. Предоставить styled-узел `StyledSettingsForm` для формы настроек в Sidebar
  * 5. Предоставить styled-узел демо-превью `StyledRadioButtonDemo`
  *
  * Потребители:
  *  - `src/pages/showcase/index.tsx` — собирает layout витрины и оборачивает карточки
  *    виджетов
- *  - панели настроек витрины дизайн-системы — рендерят `StyledSettingsForm` и
- *    `StyledSettingsField` в Sidebar
+ *  - панели настроек витрины дизайн-системы — рендерят `StyledSettingsForm` в Sidebar
  */
 import styled from 'styled-components';
 
@@ -107,20 +105,6 @@ export const StyledShowcaseWidgets = styled.div`
 export const StyledSettingsForm = styled.form`
   display: grid;
   gap: ${getSpacingValue(16)};
-`;
-
-/**
- * StyledSettingsField — задаёт поле настройки с подписью над контролом.
- * Базируется на `<div>`.
- * Используется для контролов без встроенной подписи, например Stepper.
- *
- * Встроенные стили:
- *  - `display: grid` — подпись над контролом
- *  - `gap` — отступ между подписью и контролом
- */
-export const StyledSettingsField = styled.div`
-  display: grid;
-  gap: ${getSpacingValue(8)};
 `;
 
 /**

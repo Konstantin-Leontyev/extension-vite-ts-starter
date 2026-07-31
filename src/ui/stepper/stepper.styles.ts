@@ -5,8 +5,8 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `StepperStyleProps`
  * 2. Предоставить функцию `getStepperTextSize`
- * 3. Предоставить styled-узлы `StyledStepperRoot`, `StyledStepperValue`, `StyledStepperInput`,
- *    `StyledStepperSpin` и `StyledStepperButton`
+ * 3. Предоставить styled-узлы `StyledStepperFieldRoot`, `StyledStepperRoot`,
+ *    `StyledStepperValue`, `StyledStepperInput`, `StyledStepperSpin` и `StyledStepperButton`
  * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
@@ -78,25 +78,21 @@ export type StepperStyleProps = LayoutProps &
   };
 
 /**
- * STEPPER_ROOT_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации корня Stepper.
+ * STEPPER_ROOT_PROP_NAMES — хранит имена пропсов стилизации поля Stepper.
  */
-const STEPPER_ROOT_PROP_NAMES = new Set<string>([
-  ...LAYOUT_PROP_NAMES,
-  'shape',
-  'sizePreset',
-]);
+const STEPPER_ROOT_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
 
 /**
- * getStepperRootStyles — возвращает CSS-правила для корня `StyledStepperRoot`: габариты,
+ * getStepperRootStyles — возвращает CSS-правила для узла `StyledStepperRoot`: габариты,
  * рамку с тенью через `getBorderStyles`, скругление, фон и `outline` фокуса.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты `shape` и `sizePreset`
  * 2. Собирает `min-block-size`, `border-radius` через `resolveBlockRadius`,
  *    заливку `surface` и рамку с тенью через `getBorderStyles`
- * 3. Акцент фокуса даёт `outline` на корне при `:focus-within`
+ * 3. Акцент фокуса даёт `outline` на узле при `:focus-within`
  *
- * @param props пропсы стилизации корневого поля и тема
+ * @param props пропсы стилизации поля и тема
  * @returns CSS-правила, каждое с новой строки
  */
 function getStepperRootStyles(
@@ -119,8 +115,31 @@ function getStepperRootStyles(
 }
 
 /**
- * StyledStepperRoot — задаёт корневой узел компонента Stepper.
- * Базируется на `<div>` и поддерживает все пропсы из `StepperRootStyleProps` и `LayoutProps`.
+ * StyledStepperFieldRoot — задаёт корневой узел компонента Stepper.
+ * Базируется на `<div>` и поддерживает layout-пропсы.
+ *
+ * Встроенные стили:
+ *  - `display: grid` — вертикальный поток подписи и поля
+ *  - `gap` — отступ между подписью и полем
+ *  - `inline-size: 100%` — занимает ширину родителя
+ *  - `min-inline-size: 0` — предотвращает переполнение
+ *
+ * Генерация стилей:
+ *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ */
+export const StyledStepperFieldRoot = styled.div.withConfig({
+  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
+})<LayoutProps>`
+  display: grid;
+  gap: ${getSpacingValue(8)};
+  inline-size: 100%;
+  min-inline-size: 0;
+  ${(props) => getLayoutStyles(props)}
+`;
+
+/**
+ * StyledStepperRoot — задаёт узел поля компонента Stepper.
+ * Базируется на `<div>` и поддерживает пропсы из `StepperRootStyleProps`.
  *
  * Встроенные стили:
  *  - `display: grid` и `grid-template-columns: minmax(0, 1fr) auto` — ячейка значения
@@ -130,21 +149,19 @@ function getStepperRootStyles(
  * Генерация стилей:
  *  - `getStepperRootStyles` — габариты, рамка с тенью через `getBorderStyles`,
  *    скругление, фон и `outline` фокуса
- *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *
  * Атрибут `data-disabled` на корне включает приглушение рамки, фона, значения, суффикса
  * и стрелок через контракт `@ui/reset`, без локального disabled-стиля.
  */
 export const StyledStepperRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !STEPPER_ROOT_PROP_NAMES.has(prop),
-})<StepperRootStyleProps & LayoutProps>`
+})<StepperRootStyleProps>`
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   inline-size: 100%;
   min-inline-size: 0;
   overflow: hidden;
   ${(props) => getStepperRootStyles(props)}
-  ${(props) => getLayoutStyles(props)}
 `;
 
 /**

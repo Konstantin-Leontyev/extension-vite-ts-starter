@@ -21,8 +21,8 @@
  * 3. Фиксировать типографику подписи и корневой элемент `label`
  *
  * Потребители:
- *  - контролы, например Input, Listbox, Combobox и RangeInput — рендерят подпись поля
- *  - `src/pages/showcase/stepper-settings/index.tsx` — рендерит подпись поля шага
+ *  - контролы, например Input, Listbox, Combobox, RangeInput, Button, SegmentButton,
+ *    DateRangeInput и Stepper — рендерят подпись поля
  */
 
 import { type ComponentProps, type ReactNode } from 'react';
@@ -59,10 +59,8 @@ type FieldLabelProps = {
  * FieldLabel — отображает подпись поля.
  *
  * @example
- * <FieldLabel htmlFor={id}>{label}</FieldLabel>
- * <FieldLabel htmlFor={STEP_FIELD_ID} id={STEP_LABEL_ID}>
- *   Step:
- * </FieldLabel>
+ * <FieldLabel htmlFor={buttonId}>{label}</FieldLabel>
+ * <FieldLabel id={labelId}>{label}</FieldLabel>
  */
 export function FieldLabel({ children, htmlFor, ...rest }: FieldLabelProps) {
   if (!children) {

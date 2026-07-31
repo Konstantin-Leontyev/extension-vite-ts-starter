@@ -1,8 +1,8 @@
 /**
  * Файл: `src/pages/showcase/button-settings/index.tsx`
  * Определяет панель настроек компонента Button в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, тона, иконки, текста лейбла
- * и состояний `active` и `disabled` в реальном времени.
+ * Содержит контролы для изменения подписи, размера, формы, тона, иконки,
+ * содержимого лейбла и состояний `active` и `disabled` в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `ButtonWidgetState`
@@ -17,20 +17,14 @@ import { type ChangeEvent } from 'react';
 import { getButtonTextSize } from '@ui/button';
 import { Checkbox } from '@ui/checkbox';
 import { type IconPosition } from '@ui/icon';
-import {
-  SHAPE_PRESET_KEYS,
-  SIZE_PRESET_KEYS,
-  type ShapePreset,
-  type SizePreset,
-} from '@ui/presets';
+import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { type TextSizePreset, type TextTone } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
+import { ControlGroup } from '../control-group';
 import { IconGroup } from '../icon-group';
-import { ShapeListbox } from '../shape-listbox';
 import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
 import { StyledSettingsForm } from '../showcase.styles';
-import { SizeListbox } from '../size-listbox';
 import { TextGroup } from '../text-group';
 import { ToneListbox } from '../tone-listbox';
 
@@ -47,9 +41,10 @@ import { ToneListbox } from '../tone-listbox';
  * @property iconKey — витринный ключ выбора глифа иконки для превью
  * @property iconPosition — позиция иконки относительно лейбла
  * @property iconTone — тон секции иконки
+ * @property label — подпись над кнопкой
  * @property shape — форма кнопки
  * @property sizePreset — размер компонента
- * @property text — содержимое лейбла
+ * @property text — содержимое `children` кнопки
  * @property textItalic — включает курсив лейбла
  * @property textSize — размер лейбла
  * @property textTone — тон лейбла
@@ -63,6 +58,7 @@ export type ButtonWidgetState = {
   iconKey: IconKey;
   iconPosition: IconPosition;
   iconTone: TonePreset;
+  label: string;
   shape: ShapePreset;
   sizePreset: SizePreset;
   text: string;
@@ -96,21 +92,16 @@ type ButtonSettingsProps = {
 export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
-      <SizeListbox
-        label="Size:"
-        sizes={SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => {
+      <ControlGroup
+        label={state.label}
+        shape={state.shape}
+        sizePreset={state.sizePreset}
+        onLabelChange={(label) => onChange('label', label)}
+        onShapeChange={(shape) => onChange('shape', shape)}
+        onSizeChange={(size) => {
           onChange('sizePreset', size);
           onChange('textSize', getButtonTextSize(size));
         }}
-      />
-
-      <ShapeListbox
-        label="Shape:"
-        shapes={SHAPE_PRESET_KEYS}
-        value={state.shape}
-        onChange={(shape) => onChange('shape', shape)}
       />
 
       <ToneListbox

@@ -29,7 +29,9 @@
  * 2. Типизировать пропсы через `TextGroupProps`
  * 3. Рендерить единый блок текстовых настроек в порядке: показ, содержимое, размер,
  *    выравнивание, тон, обрезание и курсив
- * 4. Строить подписи контролов из префикса `labelPrefix`
+ * 4. Собирать подписи контролов через `resolveGroupFieldLabel`,
+ *    `resolveGroupContentLabel` и `resolveGroupShowLabel` из
+ *    `src/pages/showcase/showcase-labels.ts`
  *
  * Потребители:
  *  - панели настроек витрины — настраивают текст компонента:
@@ -62,6 +64,11 @@ import {
 } from '@ui/text';
 
 import { AlignListbox } from '../align-listbox';
+import {
+  resolveGroupContentLabel,
+  resolveGroupFieldLabel,
+  resolveGroupShowLabel,
+} from '../showcase-labels';
 import { SizeListbox } from '../size-listbox';
 import { ToneListbox } from '../tone-listbox';
 
@@ -107,66 +114,6 @@ const DEFAULT_TEXT_GROUP_LABEL_PREFIX = 'Text';
  * Используется, когда вызывающий код не передал проп `showOptionsWithEmptyContent`.
  */
 const DEFAULT_TEXT_GROUP_SHOW_OPTIONS_WITH_EMPTY_CONTENT = false;
-
-/**
- * resolveTextGroupLabel — возвращает подпись контрола группы из префикса и имени поля.
- * С префиксом — `Text size:`, `Legend size:`. С пустым префиксом слово поля
- * начинает подпись с заглавной буквы — `Size:`.
- *
- * Как работает:
- * 1. При пустом префиксе делает первую букву `name` заглавной и добавляет `:`
- * 2. Иначе склеивает префикс, имя поля и `:`
- *
- * @param labelPrefix префикс подписей контролов
- * @param name имя поля в нижнем регистре, например `size`
- * @returns подпись контрола с двоеточием
- */
-function resolveTextGroupLabel(labelPrefix: string, name: string): string {
-  if (labelPrefix === '') {
-    return `${name.charAt(0).toUpperCase()}${name.slice(1)}:`;
-  }
-
-  return `${labelPrefix} ${name}:`;
-}
-
-/**
- * resolveTextGroupContentLabel — возвращает подпись инпута содержимого из префикса.
- * С префиксом — `Text:`, `Legend:`. С пустым префиксом — `Text:`.
- * Панель Text передаёт `Sample:` явно через `contents[].label`.
- *
- * Как работает:
- * 1. При пустом префиксе возвращает `Text:`
- * 2. Иначе возвращает префикс с `:`
- *
- * @param labelPrefix префикс подписей контролов
- * @returns подпись инпута содержимого с двоеточием
- */
-function resolveTextGroupContentLabel(labelPrefix: string): string {
-  if (labelPrefix === '') {
-    return 'Text:';
-  }
-
-  return `${labelPrefix}:`;
-}
-
-/**
- * resolveTextGroupShowLabel — возвращает подпись чекбокса показа.
- * С префиксом — `Show text`, `Show legend`. Пустой префикс даёт `Show text`.
- *
- * Как работает:
- * 1. При пустом префиксе возвращает `Show text`
- * 2. Иначе возвращает `Show` и префикс в нижнем регистре
- *
- * @param labelPrefix префикс подписей контролов
- * @returns подпись чекбокса показа
- */
-function resolveTextGroupShowLabel(labelPrefix: string): string {
-  if (labelPrefix === '') {
-    return 'Show text';
-  }
-
-  return `Show ${labelPrefix.toLowerCase()}`;
-}
 
 /**
  * TextGroupProps — представляет пропсы компонента TextGroup.
@@ -267,7 +214,7 @@ export function TextGroup({
             show.onChange(event.target.checked)
           }
         >
-          {show.label ?? resolveTextGroupShowLabel(labelPrefix)}
+          {show.label ?? resolveGroupShowLabel(labelPrefix, 'Text')}
         </Checkbox>
       )}
 
@@ -275,7 +222,7 @@ export function TextGroup({
         <>
           {contents?.map((content, index) => {
             const contentLabel =
-              content.label ?? resolveTextGroupContentLabel(labelPrefix);
+              content.label ?? resolveGroupContentLabel(labelPrefix, 'Text');
 
             return (
               <Input
@@ -293,7 +240,7 @@ export function TextGroup({
             <>
               {onSizeChange && size !== undefined && (
                 <SizeListbox
-                  label={resolveTextGroupLabel(labelPrefix, 'size')}
+                  label={resolveGroupFieldLabel(labelPrefix, 'size')}
                   sizes={TEXT_SIZE_PRESET_KEYS}
                   value={size}
                   onChange={onSizeChange}
@@ -303,7 +250,7 @@ export function TextGroup({
               {onAlignChange && (
                 <AlignListbox
                   aligns={TEXT_ALIGN_PRESET_KEYS}
-                  label={resolveTextGroupLabel(labelPrefix, 'align')}
+                  label={resolveGroupFieldLabel(labelPrefix, 'align')}
                   value={align}
                   onChange={onAlignChange}
                 />
@@ -311,7 +258,7 @@ export function TextGroup({
 
               {tones?.map((toneControl, index) => {
                 const toneLabel =
-                  toneControl.label ?? resolveTextGroupLabel(labelPrefix, 'tone');
+                  toneControl.label ?? resolveGroupFieldLabel(labelPrefix, 'tone');
 
                 return (
                   <ToneListbox

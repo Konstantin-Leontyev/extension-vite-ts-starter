@@ -100,6 +100,7 @@ function getDateRangeInputRootStyles(): string {
   const styles = [
     'position: relative;',
     'display: grid;',
+    `gap: ${getSpacingValue(8)};`,
     'inline-size: 100%;',
     'min-inline-size: 0;',
     `&[data-open='true'] { z-index: ${STACKING_OPEN_CONTROL}; }`,
@@ -125,7 +126,8 @@ export const StyledDateRangeInputRoot = styled.div.withConfig({
 
 /**
  * getDateRangeInputTriggerRowStyles — возвращает CSS-правила для узла
- * `StyledDateRangeInputTriggerRow`: габариты, рамку, заливку и кольцо фокуса.
+ * `StyledDateRangeInputTriggerRow`: габариты, рамку с тенью через `getBorderStyles`,
+ * заливку и кольцо фокуса.
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -160,7 +162,7 @@ function getDateRangeInputTriggerRowStyles(
  * Базируется на `<div>` и принимает пропсы из `DateRangeInputSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getDateRangeInputTriggerRowStyles` — габариты, рамка, заливка и кольцо фокуса
+ *  - `getDateRangeInputTriggerRowStyles` — габариты, рамка с тенью, заливка и кольцо фокуса
  *
  * При открытой панели ряд скрывается через `visibility: hidden`, чтобы панель
  * наследовала ширину якоря без двойного отображения триггера.
@@ -173,7 +175,8 @@ export const StyledDateRangeInputTriggerRow = styled.div.withConfig({
 
 /**
  * getDateRangeInputPanelStyles — возвращает CSS-правила для узла
- * `StyledDateRangeInputPanel`: оформление портальной панели календаря.
+ * `StyledDateRangeInputPanel`: хром портальной панели через `getPortalPanelStyles` —
+ * fixed-позицию, слой, отступ, поверхность, рамку с тенью, радиус и `outline`.
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -203,7 +206,7 @@ function getDateRangeInputPanelStyles(
  *  - `min-inline-size: 0` — предотвращает переполнение
  *
  * Генерация стилей:
- *  - `getDateRangeInputPanelStyles` — оформление портальной панели
+ *  - `getDateRangeInputPanelStyles` — хром портальной панели через `getPortalPanelStyles`
  */
 export const StyledDateRangeInputPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => !DATE_RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),

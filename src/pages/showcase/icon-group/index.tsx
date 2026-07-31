@@ -28,7 +28,9 @@
  * 2. Типизировать пропсы через `IconGroupProps`
  * 3. Рендерить единый блок настроек иконки в порядке: показ, глиф, тон секции,
  *    тон глифа и позиция
- * 4. Строить подписи контролов из префикса `labelPrefix`
+ * 4. Собирать подписи контролов через `resolveGroupFieldLabel`,
+ *    `resolveGroupContentLabel` и `resolveGroupShowLabel` из
+ *    `src/pages/showcase/showcase-labels.ts`
  *
  * Потребители:
  *  - панели настроек витрины дизайн-системы — настраивают иконку компонента:
@@ -48,6 +50,11 @@ import { ICON_POSITION_KEYS, type IconPosition } from '@ui/icon';
 import { Listbox, type ListboxOption } from '@ui/listbox';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
+import {
+  resolveGroupContentLabel,
+  resolveGroupFieldLabel,
+  resolveGroupShowLabel,
+} from '../showcase-labels';
 import { ToneListbox } from '../tone-listbox';
 
 /**
@@ -104,65 +111,6 @@ type IconGroupProps = {
 };
 
 /**
- * resolveIconGroupLabel — возвращает подпись контрола группы из префикса и имени поля.
- * С префиксом — `Icon tone:`, `Icon A tone:`. С пустым префиксом слово поля
- * начинает подпись с заглавной буквы — `Tone:`.
- *
- * Как работает:
- * 1. При пустом префиксе делает первую букву `name` заглавной и добавляет `:`
- * 2. Иначе склеивает префикс, имя поля и `:`
- *
- * @param labelPrefix префикс подписей контролов
- * @param name имя поля в нижнем регистре, например `tone`
- * @returns подпись контрола с двоеточием
- */
-function resolveIconGroupLabel(labelPrefix: string, name: string): string {
-  if (labelPrefix === '') {
-    return `${name.charAt(0).toUpperCase()}${name.slice(1)}:`;
-  }
-
-  return `${labelPrefix} ${name}:`;
-}
-
-/**
- * resolveIconGroupIconLabel — возвращает подпись Combobox глифа из префикса.
- * С префиксом — `Icon:`, `Icon A:`. С пустым префиксом — `Icon:`.
- *
- * Как работает:
- * 1. При пустом префиксе возвращает `Icon:`
- * 2. Иначе возвращает префикс с `:`
- *
- * @param labelPrefix префикс подписей контролов
- * @returns подпись Combobox глифа с двоеточием
- */
-function resolveIconGroupIconLabel(labelPrefix: string): string {
-  if (labelPrefix === '') {
-    return 'Icon:';
-  }
-
-  return `${labelPrefix}:`;
-}
-
-/**
- * resolveIconGroupShowLabel — возвращает подпись чекбокса показа.
- * С префиксом — `Show icon`, `Show icon A`. Пустой префикс даёт `Show icon`.
- *
- * Как работает:
- * 1. При пустом префиксе возвращает `Show icon`
- * 2. Иначе возвращает `Show` и префикс с пониженной первой буквой
- *
- * @param labelPrefix префикс подписей контролов
- * @returns подпись чекбокса показа
- */
-function resolveIconGroupShowLabel(labelPrefix: string): string {
-  if (labelPrefix === '') {
-    return 'Show icon';
-  }
-
-  return `Show ${labelPrefix.charAt(0).toLowerCase()}${labelPrefix.slice(1)}`;
-}
-
-/**
  * IconGroup — отображает группу настроек иконки в витрине дизайн-системы.
  *
  * @example
@@ -217,7 +165,7 @@ export function IconGroup({
             onShowChange(event.target.checked)
           }
         >
-          {resolveIconGroupShowLabel(labelPrefix)}
+          {resolveGroupShowLabel(labelPrefix, 'Icon')}
         </Checkbox>
       )}
 
@@ -225,7 +173,7 @@ export function IconGroup({
         <>
           {iconOptions !== undefined && onIconChange !== undefined && (
             <Combobox
-              label={resolveIconGroupIconLabel(labelPrefix)}
+              label={resolveGroupContentLabel(labelPrefix, 'Icon')}
               options={iconOptions}
               value={iconValue}
               onChange={onIconChange}
@@ -234,7 +182,7 @@ export function IconGroup({
 
           {onToneChange !== undefined && tone !== undefined && (
             <ToneListbox
-              label={resolveIconGroupLabel(labelPrefix, 'tone')}
+              label={resolveGroupFieldLabel(labelPrefix, 'tone')}
               tones={TONE_PRESET_KEYS}
               value={tone}
               onChange={onToneChange}
@@ -243,7 +191,7 @@ export function IconGroup({
 
           <ToneListbox
             excludeTone={tone}
-            label={resolveIconGroupLabel(labelPrefix, 'fill tone')}
+            label={resolveGroupFieldLabel(labelPrefix, 'fill tone')}
             tones={TONE_PRESET_KEYS}
             value={fill}
             onChange={onFillChange}
@@ -251,7 +199,7 @@ export function IconGroup({
 
           {onPositionChange !== undefined && position !== undefined && (
             <Listbox
-              label={resolveIconGroupLabel(labelPrefix, 'position')}
+              label={resolveGroupFieldLabel(labelPrefix, 'position')}
               options={getIconPositionListboxOptions()}
               value={position}
               onChange={(value) => onPositionChange(value as IconPosition)}

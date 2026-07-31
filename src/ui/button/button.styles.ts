@@ -5,7 +5,8 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `ButtonStyleProps`
  * 2. Предоставить функцию `getButtonTextSize`
- * 3. Предоставить styled-узел `StyledButton`
+ * 3. Предоставить styled-узлы `StyledButtonRoot` и `StyledButton`
+ * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/button/index.tsx` — собирает компонент Button и реэкспортирует публичное API
@@ -30,6 +31,7 @@ import {
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
+import { getSpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import {
@@ -41,6 +43,8 @@ import {
   resolveVeilBackground,
   type TonePreset,
 } from '@ui/tones';
+
+export { splitLayoutProps } from '@ui/layout';
 
 /**
  * getButtonTextSize — возвращает размер лейбла по `sizePreset`.
@@ -122,18 +126,17 @@ export type ButtonStyleProps = LayoutProps & {
 };
 
 /**
- * ButtonStyledProps — представляет пропсы стилизации корня `StyledButton`.
+ * ButtonStyledProps — представляет пропсы стилизации узла `StyledButton`.
  *
  * @property hasIcon — включает split-раскладку с секцией иконки. Выключенный —
- *   корень рисуется solid-заливкой
+ *   узел рисуется solid-заливкой
  */
 type ButtonStyledProps = ButtonStyleProps & { hasIcon: boolean };
 
 /**
- * BUTTON_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Button.
+ * BUTTON_PROP_NAMES — объединяет имена пропсов стилизации кнопки `StyledButton`.
  */
 const BUTTON_PROP_NAMES = new Set<string>([
-  ...LAYOUT_PROP_NAMES,
   ...ICON_SETTING_PROP_NAMES,
   'active',
   'hasIcon',
@@ -143,29 +146,52 @@ const BUTTON_PROP_NAMES = new Set<string>([
 ]);
 
 /**
+ * StyledButtonRoot — задаёт корневой узел компонента Button.
+ * Базируется на `<div>` и поддерживает layout-пропсы.
+ *
+ * Встроенные стили:
+ *  - `display: grid` — вертикальный поток подписи и кнопки
+ *  - `gap` — отступ между подписью и кнопкой
+ *  - `inline-size: 100%` — занимает ширину родителя
+ *  - `min-inline-size: 0` — предотвращает переполнение
+ *
+ * Генерация стилей:
+ *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ */
+export const StyledButtonRoot = styled.div.withConfig({
+  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
+})<LayoutProps>`
+  display: grid;
+  gap: ${getSpacingValue(8)};
+  inline-size: 100%;
+  min-inline-size: 0;
+  ${(props) => getLayoutStyles(props)}
+`;
+
+/**
  * DEFAULT_BUTTON_ACTIVE — задаёт зафиксированное нажатое состояние по умолчанию.
  * Используется, когда вызывающий код не передал проп `active`.
  */
 const DEFAULT_BUTTON_ACTIVE = false;
 
 /**
- * getButtonSplitStyles — возвращает CSS-правила для корня `StyledButton`:
+ * getButtonSplitStyles — возвращает CSS-правила для узла `StyledButton`:
  * раскладку позиции иконки, отступ лейбла и канал состояний секции иконки.
  * Статику секции красит внутренний Icon своими пропсами, фон лейбла —
- * собственная заливка корня.
+ * собственная заливка узла.
  *
  * Как работает:
  * 1. Кладёт раскладку позиции через `getIconPositionStyles`: колонки под
  *    позицию `[data-slot='icon']` и `block-size: 100%` на слоте
- * 2. Переносит `padding-inline` с корня на слот лейбла — секция иконки прижата к краю
+ * 2. Переносит `padding-inline` с узла на слот лейбла — секция иконки прижата к краю
  * 3. При цветном `iconTone` на наведении и `:focus-visible` выставляет
  *    `--icon-state-background` сдвигом тона к `shade`. Нейтральная секция
- *    подсвечивается заливкой корня
+ *    подсвечивается заливкой узла
  * 4. При `active` фиксирует значение канала: для цветной секции — сдвигом
  *    тона к `shade`, для нейтральной — смесь `primary` с `surface` через
  *    `VARIANT_SURFACE_MIX_PERCENT`
  *
- * @param props пропсы стилизации корня и текущая тема
+ * @param props пропсы стилизации узла и текущая тема
  * @returns CSS-правила, каждое с новой строки
  */
 function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): string {
@@ -216,19 +242,19 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
 }
 
 /**
- * getButtonStyles — возвращает CSS-правила для корня `StyledButton`: размер,
+ * getButtonStyles — возвращает CSS-правила для узла `StyledButton`: размер,
  * рамку с тенью через `getBorderStyles`, радиус, цвет текста, заливку
  * с состояниями и раскладку при секции иконки.
  *
  * Как работает:
- * 1. Собирает общие правила корня: размер, рамку с тенью через `getBorderStyles`,
- *    радиус, цвет и заливка — фон лейбла всегда фон корня, наведение и
+ * 1. Собирает общие правила узла: размер, рамку с тенью через `getBorderStyles`,
+ *    радиус, цвет и заливка — фон лейбла всегда фон узла, наведение и
  *    `active` меняют его целиком
  * 2. При `hasIcon` делегирует раскладку позиции, отступ лейбла и канал
  *    секции иконки в `getButtonSplitStyles`
- * 3. Без иконки кладёт `padding-inline` на корень
+ * 3. Без иконки кладёт `padding-inline` на узел
  *
- * @param props пропсы стилизации корня и текущая тема
+ * @param props пропсы стилизации узла и текущая тема
  * @returns CSS-правила, каждое с новой строки
  */
 function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string {
@@ -266,7 +292,7 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
 }
 
 /**
- * StyledButton — задаёт корневой узел компонента Button.
+ * StyledButton — задаёт узел кнопки компонента Button.
  * Базируется на `<button>` и поддерживает все пропсы из `ButtonStyledProps`.
  *
  * Встроенные стили:
@@ -285,9 +311,8 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
  * Генерация стилей:
  *  - `getButtonStyles` — размер, рамка с тенью через `getBorderStyles`,
  *    радиус, цвет, заливка. При иконке — раскладка и канал секции
- *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *
- * Слоты: отступ лейбла и канал состояний секции иконки задаёт корень
+ * Слоты: отступ лейбла и канал состояний секции иконки задаёт узел
  * по `[data-slot]`. Статику секции красит внутренний Icon.
  */
 export const StyledButton = styled.button.withConfig({
@@ -300,5 +325,4 @@ export const StyledButton = styled.button.withConfig({
   min-inline-size: 0;
   overflow: hidden;
   ${(props) => getButtonStyles(props)}
-  ${(props) => getLayoutStyles(props)}
 `;

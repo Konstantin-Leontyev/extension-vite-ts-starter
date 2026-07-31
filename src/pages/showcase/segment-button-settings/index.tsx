@@ -1,8 +1,8 @@
 /**
  * Файл: `src/pages/showcase/segment-button-settings/index.tsx`
  * Определяет панель настроек компонента SegmentButton в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, числа сегментов, тона сегментов,
- * иконок, текстов, типографики и состояний `disabled` в реальном времени.
+ * Содержит контролы для изменения подписи, размера, формы, числа сегментов,
+ * тона сегментов, иконок, текстов, типографики и состояний `disabled` в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `SegmentButtonWidgetState`
@@ -17,21 +17,15 @@ import { type ChangeEvent } from 'react';
 import { Checkbox } from '@ui/checkbox';
 import { type IconPosition } from '@ui/icon';
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import {
-  SHAPE_PRESET_KEYS,
-  SIZE_PRESET_KEYS,
-  type ShapePreset,
-  type SizePreset,
-} from '@ui/presets';
+import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { getSegmentButtonTextSize } from '@ui/segment-button';
 import { type TextSizePreset, type TextTone } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
+import { ControlGroup } from '../control-group';
 import { IconGroup } from '../icon-group';
-import { ShapeListbox } from '../shape-listbox';
 import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
 import { StyledSettingsForm } from '../showcase.styles';
-import { SizeListbox } from '../size-listbox';
 import { TextGroup } from '../text-group';
 import { ToneListbox } from '../tone-listbox';
 
@@ -50,6 +44,7 @@ import { ToneListbox } from '../tone-listbox';
  * @property centerTextTone — тон текста среднего сегмента
  * @property centerTone — тон заливки среднего сегмента
  * @property centerWithIcon — витринный ключ показа иконки среднего сегмента. Выключенный — сегмент без иконки
+ * @property label — подпись над рядом сегментов
  * @property leftDisabled — включает недоступность левого сегмента
  * @property leftIconFill — тон глифа иконки левого сегмента
  * @property leftIconKey — витринный ключ выбора иконки левого сегмента
@@ -81,6 +76,7 @@ export type SegmentButtonWidgetState = {
   centerTextTone: TextTone;
   centerTone: TonePreset;
   centerWithIcon: boolean;
+  label: string;
   leftDisabled: boolean;
   leftIconFill: TonePreset;
   leftIconKey: IconKey;
@@ -138,21 +134,16 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
 
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
-      <SizeListbox
-        label="Size:"
-        sizes={SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => {
+      <ControlGroup
+        label={state.label}
+        shape={state.shape}
+        sizePreset={state.sizePreset}
+        onLabelChange={(label) => onChange('label', label)}
+        onShapeChange={(shape) => onChange('shape', shape)}
+        onSizeChange={(size) => {
           onChange('sizePreset', size);
           onChange('textSize', getSegmentButtonTextSize(size));
         }}
-      />
-
-      <ShapeListbox
-        label="Shape:"
-        shapes={SHAPE_PRESET_KEYS}
-        value={state.shape}
-        onChange={(shape) => onChange('shape', shape)}
       />
 
       <Listbox

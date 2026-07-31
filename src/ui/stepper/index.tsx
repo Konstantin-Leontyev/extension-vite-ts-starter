@@ -17,6 +17,7 @@
  *  - размер значения и суффикса через проп `textSize`
  *  - курсив значения и суффикса через проп `textItalic`
  *  - горизонтальное выравнивание пары «значение + суффикс» через проп `textAlign`
+ *  - подпись над полем через проп `label`
  *  - текстовую метку через проп `aria-label`
  *  - id метки через проп `aria-labelledby`
  *
@@ -33,6 +34,7 @@
 import {
   useCallback,
   useEffect,
+  useId,
   useRef,
   useState,
   type ChangeEvent,
@@ -41,12 +43,14 @@ import {
 } from 'react';
 
 import { ChevronDownIcon, ChevronUpIcon } from '@icons';
+import { FieldLabel } from '@ui/field-label';
 import { Icon } from '@ui/icon';
 import { type SpacingValue } from '@ui/spacing';
 import { Text, type TextTone } from '@ui/text';
 
 import {
   StyledStepperButton,
+  StyledStepperFieldRoot,
   StyledStepperInput,
   StyledStepperRoot,
   StyledStepperSpin,
@@ -100,14 +104,16 @@ const STEP_REPEAT_INTERVAL_MS = 60;
 
 /**
  * StepperAccessibleName — представляет обязательное доступное имя spinbutton.
- * Требует проп `aria-label` или `aria-labelledby`.
+ * Требует один из пропов: `label`, `aria-label` или `aria-labelledby`.
  *
  * @property aria-label — текстовая метка поля
  * @property aria-labelledby — id элемента с меткой поля
+ * @property label — подпись над полем; при передаче выставляет `aria-labelledby` на корень
  */
 type StepperAccessibleName =
-  | { 'aria-label': string; 'aria-labelledby'?: never }
-  | { 'aria-label'?: never; 'aria-labelledby': string };
+  | { 'aria-label': string; 'aria-labelledby'?: never; label?: never }
+  | { 'aria-label'?: never; 'aria-labelledby': string; label?: never }
+  | { 'aria-label'?: never; 'aria-labelledby'?: never; label: string };
 
 /**
  * StepperProps — представляет пропсы компонента Stepper.
@@ -151,6 +157,7 @@ type StepperProps = StepperStyleProps &
  * Stepper — отображает числовой счётчик с полем ввода и стрелками.
  *
  * @example
+ * <Stepper label="Quantity:" value={1} onChange={setValue} />
  * <Stepper aria-label="Quantity" value={1} onChange={setValue} />
  * <Stepper aria-labelledby="qty-label" min={0} max={10} step={1} value={5} onChange={setValue} />
  * <Stepper sizePreset="normal" suffix="K" textAlign="start" value={100} onChange={setValue} />
@@ -159,6 +166,7 @@ export function Stepper({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   disabled,
+  label,
   max,
   min,
   onChange,
@@ -175,6 +183,8 @@ export function Stepper({
   ...rest
 }: StepperProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
+  const labelId = useId();
+  const resolvedLabelledBy = label ? labelId : ariaLabelledBy;
 
   // Размер пары «значение + суффикс» вычисляется один раз: поле и Text получают готовое значение
   const resolvedTextSize = textSize ?? getStepperTextSize(sizePreset);
@@ -324,84 +334,89 @@ export function Stepper({
   useEffect(() => stopHold, [stopHold]);
 
   return (
-    <StyledStepperRoot
+    <StyledStepperFieldRoot
+      aria-labelledby={label ? labelId : undefined}
       {...layoutProps}
-      data-disabled={disabled ? '' : undefined}
-      shape={shape}
-      sizePreset={sizePreset}
     >
-      <StyledStepperValue sizePreset={sizePreset} textAlign={textAlign}>
-        <StyledStepperInput
-          inputMode="numeric"
-          textItalic={textItalic}
-          textSize={resolvedTextSize}
-          textTone={textTone}
-          {...restProps}
-          aria-label={ariaLabel}
-          aria-labelledby={ariaLabelledBy}
-          aria-valuemax={max}
-          aria-valuemin={min}
-          aria-valuenow={value}
-          disabled={disabled}
-          role="spinbutton"
-          type="text"
-          value={draft ?? String(value)}
-          onBlur={handleBlur}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-        />
-        {Boolean(suffix) && (
-          <Text
-            italic={textItalic}
-            sizePreset={resolvedTextSize}
-            tone={textTone ?? DEFAULT_STEPPER_SUFFIX_TONE}
-          >
-            {suffix}
-          </Text>
-        )}
-      </StyledStepperValue>
+      <FieldLabel id={labelId}>{label}</FieldLabel>
+      <StyledStepperRoot
+        data-disabled={disabled ? '' : undefined}
+        shape={shape}
+        sizePreset={sizePreset}
+      >
+        <StyledStepperValue sizePreset={sizePreset} textAlign={textAlign}>
+          <StyledStepperInput
+            inputMode="numeric"
+            textItalic={textItalic}
+            textSize={resolvedTextSize}
+            textTone={textTone}
+            {...restProps}
+            aria-label={ariaLabel}
+            aria-labelledby={resolvedLabelledBy}
+            aria-valuemax={max}
+            aria-valuemin={min}
+            aria-valuenow={value}
+            disabled={disabled}
+            role="spinbutton"
+            type="text"
+            value={draft ?? String(value)}
+            onBlur={handleBlur}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+          />
+          {Boolean(suffix) && (
+            <Text
+              italic={textItalic}
+              sizePreset={resolvedTextSize}
+              tone={textTone ?? DEFAULT_STEPPER_SUFFIX_TONE}
+            >
+              {suffix}
+            </Text>
+          )}
+        </StyledStepperValue>
 
-      <StyledStepperSpin sizePreset={sizePreset}>
-        <StyledStepperButton
-          aria-label={INCREASE_LABEL}
-          disabled={disabled}
-          sizePreset={sizePreset}
-          type="button"
-          onClick={handleIncreaseClick}
-          onPointerDown={handleIncreasePointerDown}
-          onPointerLeave={stopHold}
-          onPointerUp={stopHold}
-        >
-          <Icon
-            blockSize="100%"
-            inlineSize="100%"
-            padding={STEPPER_CHEVRON_ICON_PADDING}
-            showHover={false}
+        <StyledStepperSpin sizePreset={sizePreset}>
+          <StyledStepperButton
+            aria-label={INCREASE_LABEL}
+            disabled={disabled}
+            sizePreset={sizePreset}
+            type="button"
+            onClick={handleIncreaseClick}
+            onPointerDown={handleIncreasePointerDown}
+            onPointerLeave={stopHold}
+            onPointerUp={stopHold}
           >
-            <ChevronUpIcon />
-          </Icon>
-        </StyledStepperButton>
-        <StyledStepperButton
-          aria-label={DECREASE_LABEL}
-          disabled={disabled}
-          sizePreset={sizePreset}
-          type="button"
-          onClick={handleDecreaseClick}
-          onPointerDown={handleDecreasePointerDown}
-          onPointerLeave={stopHold}
-          onPointerUp={stopHold}
-        >
-          <Icon
-            blockSize="100%"
-            inlineSize="100%"
-            padding={STEPPER_CHEVRON_ICON_PADDING}
-            showHover={false}
+            <Icon
+              blockSize="100%"
+              inlineSize="100%"
+              padding={STEPPER_CHEVRON_ICON_PADDING}
+              showHover={false}
+            >
+              <ChevronUpIcon />
+            </Icon>
+          </StyledStepperButton>
+          <StyledStepperButton
+            aria-label={DECREASE_LABEL}
+            disabled={disabled}
+            sizePreset={sizePreset}
+            type="button"
+            onClick={handleDecreaseClick}
+            onPointerDown={handleDecreasePointerDown}
+            onPointerLeave={stopHold}
+            onPointerUp={stopHold}
           >
-            <ChevronDownIcon />
-          </Icon>
-        </StyledStepperButton>
-      </StyledStepperSpin>
-    </StyledStepperRoot>
+            <Icon
+              blockSize="100%"
+              inlineSize="100%"
+              padding={STEPPER_CHEVRON_ICON_PADDING}
+              showHover={false}
+            >
+              <ChevronDownIcon />
+            </Icon>
+          </StyledStepperButton>
+        </StyledStepperSpin>
+      </StyledStepperRoot>
+    </StyledStepperFieldRoot>
   );
 }
 

@@ -8,6 +8,7 @@
  *  - семантический тон через проп `tone`
  *  - форму через проп `shape`
  *  - содержимое через `children`
+ *  - подпись над кнопкой через проп `label`
  *  - тон лейбла через проп `textTone`
  *  - размер лейбла через проп `textSize`
  *  - курсив лейбла через проп `textItalic`
@@ -28,13 +29,20 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { useId, type ComponentPropsWithRef, type ReactNode } from 'react';
 
+import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
-import { StyledButton, getButtonTextSize, type ButtonStyleProps } from './button.styles';
+import {
+  StyledButton,
+  StyledButtonRoot,
+  getButtonTextSize,
+  splitLayoutProps,
+  type ButtonStyleProps,
+} from './button.styles';
 
 /**
  * DEFAULT_BUTTON_TYPE — задаёт тип кнопки по умолчанию.
@@ -49,6 +57,7 @@ const DEFAULT_BUTTON_TYPE = 'button';
  * @property icon — svg иконки действия
  * @property iconFill — тон глифа иконки при нейтральном `iconTone`
  * @property iconPosition — позиция иконки относительно лейбла
+ * @property label — подпись над кнопкой
  * @property textItalic — включает курсив лейбла
  * @property textSize — размер лейбла
  * @property textTone — тон лейбла
@@ -58,6 +67,7 @@ type ButtonProps = {
   icon?: ReactNode;
   iconFill?: TonePreset;
   iconPosition?: IconPosition;
+  label?: string;
   textItalic?: boolean;
   textSize?: TextSizePreset;
   textTone?: TextTone;
@@ -87,6 +97,8 @@ export function Button({
   iconFill,
   iconPosition = DEFAULT_ICON_POSITION,
   iconTone,
+  id,
+  label,
   sizePreset,
   textItalic,
   textSize,
@@ -95,6 +107,9 @@ export function Button({
   type = DEFAULT_BUTTON_TYPE,
   ...rest
 }: ButtonProps) {
+  const { layoutProps, restProps } = splitLayoutProps(rest);
+  const fallbackId = useId();
+  const buttonId = id ?? fallbackId;
   const hasIcon = Boolean(icon);
 
   const iconNode = hasIcon && (
@@ -113,27 +128,31 @@ export function Button({
   );
 
   return (
-    <StyledButton
-      hasIcon={hasIcon}
-      iconTone={iconTone}
-      sizePreset={sizePreset}
-      tone={tone}
-      type={type}
-      {...rest}
-    >
-      {iconPosition === 'start' && iconNode}
-      <Text
-        align="center"
-        data-slot="label"
-        ellipsis
-        italic={textItalic}
-        sizePreset={textSize ?? getButtonTextSize(sizePreset)}
-        tone={textTone}
+    <StyledButtonRoot {...layoutProps}>
+      <FieldLabel htmlFor={buttonId}>{label}</FieldLabel>
+      <StyledButton
+        hasIcon={hasIcon}
+        iconTone={iconTone}
+        id={buttonId}
+        sizePreset={sizePreset}
+        tone={tone}
+        type={type}
+        {...restProps}
       >
-        {children}
-      </Text>
-      {iconPosition === 'end' && iconNode}
-    </StyledButton>
+        {iconPosition === 'start' && iconNode}
+        <Text
+          align="center"
+          data-slot="label"
+          ellipsis
+          italic={textItalic}
+          sizePreset={textSize ?? getButtonTextSize(sizePreset)}
+          tone={textTone}
+        >
+          {children}
+        </Text>
+        {iconPosition === 'end' && iconNode}
+      </StyledButton>
+    </StyledButtonRoot>
   );
 }
 

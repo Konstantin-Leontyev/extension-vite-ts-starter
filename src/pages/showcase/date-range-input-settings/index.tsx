@@ -1,7 +1,7 @@
 /**
  * Файл: `src/pages/showcase/date-range-input-settings/index.tsx`
  * Определяет панель настроек компонента DateRangeInput в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, текстов `title` сегментов,
+ * Содержит контролы для изменения подписи, размера, формы, текстов `title` сегментов,
  * границ диапазона, границ дней, формы подсветки дня и состояния `disabled`
  * в реальном времени.
  *
@@ -17,16 +17,11 @@ import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
-import {
-  SHAPE_PRESET_KEYS,
-  SIZE_PRESET_KEYS,
-  type ShapePreset,
-  type SizePreset,
-} from '@ui/presets';
+import { SHAPE_PRESET_KEYS, type ShapePreset, type SizePreset } from '@ui/presets';
 
+import { ControlGroup } from '../control-group';
 import { ShapeListbox } from '../shape-listbox';
 import { StyledSettingsForm } from '../showcase.styles';
-import { SizeListbox } from '../size-listbox';
 
 /**
  * DateRangeInputWidgetState — представляет состояние настроек компонента DateRangeInput в витрине дизайн-системы.
@@ -37,6 +32,7 @@ import { SizeListbox } from '../size-listbox';
  * @property disabled — включает недоступное состояние
  * @property endDay — конечный день диапазона в превью в формате ISO
  * @property endLabel — текст `title` конечного сегмента и фрагмент `aria-label` сброса
+ * @property label — подпись над рядом сегментов
  * @property maxDay — верхняя граница допустимых дней в формате ISO
  * @property minDay — нижняя граница допустимых дней в формате ISO
  * @property shape — форма поверхности
@@ -49,6 +45,7 @@ export type DateRangeInputWidgetState = {
   disabled: boolean;
   endDay: string;
   endLabel: string;
+  label: string;
   maxDay: string;
   minDay: string;
   shape: ShapePreset;
@@ -83,18 +80,13 @@ export function DateRangeInputSettings({
 }: DateRangeInputSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
-      <SizeListbox
-        label="Size:"
-        sizes={SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
-      />
-
-      <ShapeListbox
-        label="Shape:"
-        shapes={SHAPE_PRESET_KEYS}
-        value={state.shape}
-        onChange={(shape) => onChange('shape', shape)}
+      <ControlGroup
+        label={state.label}
+        shape={state.shape}
+        sizePreset={state.sizePreset}
+        onLabelChange={(label) => onChange('label', label)}
+        onShapeChange={(shape) => onChange('shape', shape)}
+        onSizeChange={(size) => onChange('sizePreset', size)}
       />
 
       <Input

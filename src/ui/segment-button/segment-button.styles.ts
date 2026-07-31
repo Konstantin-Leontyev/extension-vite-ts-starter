@@ -5,7 +5,8 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `SegmentButtonStyleProps`
  * 2. Предоставить функцию `getSegmentButtonTextSize`
- * 3. Предоставить styled-узел `StyledSegmentButton`
+ * 3. Предоставить styled-узлы `StyledSegmentButtonRoot` и `StyledSegmentButton`
+ * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/segment-button/index.tsx` — собирает компонент SegmentButton и реэкспортирует
@@ -25,8 +26,11 @@ import {
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
+import { getSpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
+
+export { splitLayoutProps } from '@ui/layout';
 
 /**
  * getSegmentButtonTextSize — возвращает размер текста сегмента по `sizePreset`.
@@ -51,23 +55,27 @@ export type SegmentButtonStyleProps = LayoutProps & {
 };
 
 /**
- * SEGMENT_BUTTON_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации SegmentButton.
+ * SegmentButtonSurfaceStyleProps — представляет пропсы стилизации оболочки ряда.
  */
-const SEGMENT_BUTTON_PROP_NAMES = new Set<string>([
-  ...LAYOUT_PROP_NAMES,
-  'shape',
-  'sizePreset',
-]);
+type SegmentButtonSurfaceStyleProps = {
+  shape?: ShapePreset;
+  sizePreset?: SizePreset;
+};
 
 /**
- * getSegmentButtonStyles — возвращает CSS-правила для корня `StyledSegmentButton`:
- * высоту, заливку, рамку через `getBorderStyles` и радиус по `shape`.
+ * SEGMENT_BUTTON_SURFACE_PROP_NAMES — хранит имена пропсов стилизации оболочки ряда.
+ */
+const SEGMENT_BUTTON_SURFACE_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
+
+/**
+ * getSegmentButtonStyles — возвращает CSS-правила для оболочки `StyledSegmentButton`:
+ * высоту, заливку, рамку с тенью через `getBorderStyles` и радиус по `shape`.
  *
- * @param props пропсы стилизации корня и тема
+ * @param props пропсы стилизации оболочки и тема
  * @returns CSS-правила, каждое с новой строки
  */
 function getSegmentButtonStyles(
-  props: SegmentButtonStyleProps & { theme: AppTheme }
+  props: SegmentButtonSurfaceStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
   const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
@@ -83,8 +91,31 @@ function getSegmentButtonStyles(
 }
 
 /**
- * StyledSegmentButton — задаёт корневой узел компонента SegmentButton.
- * Базируется на `<div>` и поддерживает все пропсы из `SegmentButtonStyleProps`.
+ * StyledSegmentButtonRoot — задаёт корневой узел компонента SegmentButton.
+ * Базируется на `<div>` и поддерживает layout-пропсы.
+ *
+ * Встроенные стили:
+ *  - `display: grid` — вертикальный поток подписи и оболочки
+ *  - `gap` — отступ между подписью и оболочкой
+ *  - `inline-size: 100%` — занимает ширину родителя
+ *  - `min-inline-size: 0` — предотвращает переполнение
+ *
+ * Генерация стилей:
+ *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ */
+export const StyledSegmentButtonRoot = styled.div.withConfig({
+  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
+})<LayoutProps>`
+  display: grid;
+  gap: ${getSpacingValue(8)};
+  inline-size: 100%;
+  min-inline-size: 0;
+  ${(props) => getLayoutStyles(props)}
+`;
+
+/**
+ * StyledSegmentButton — задаёт оболочку ряда сегментов компонента SegmentButton.
+ * Базируется на `<div>` и принимает пропсы из `SegmentButtonSurfaceStyleProps`.
  *
  * Встроенные стили:
  *  - `display: grid` — оболочка над рядом сегментов
@@ -94,17 +125,15 @@ function getSegmentButtonStyles(
  *  - `overflow: hidden` — обрезает сегменты по скруглению оболочки
  *
  * Генерация стилей:
- *  - `getSegmentButtonStyles` — высота, заливка, рамка и радиус
- *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ *  - `getSegmentButtonStyles` — высота, заливка, рамка с тенью и радиус
  */
 export const StyledSegmentButton = styled.div.withConfig({
-  shouldForwardProp: (prop) => !SEGMENT_BUTTON_PROP_NAMES.has(prop),
-})<SegmentButtonStyleProps>`
+  shouldForwardProp: (prop) => !SEGMENT_BUTTON_SURFACE_PROP_NAMES.has(prop),
+})<SegmentButtonSurfaceStyleProps>`
   display: grid;
   flex-shrink: 0;
   inline-size: 100%;
   min-inline-size: 0;
   overflow: hidden;
   ${(props) => getSegmentButtonStyles(props)}
-  ${(props) => getLayoutStyles(props)}
 `;

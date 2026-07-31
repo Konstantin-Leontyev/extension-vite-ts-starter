@@ -1,8 +1,8 @@
 /**
  * Файл: `src/pages/showcase/stepper-settings/index.tsx`
  * Определяет панель настроек компонента Stepper в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, минимума, максимума, шага, суффикса,
- * значения, его текстовых настроек и недоступного состояния в реальном времени.
+ * Содержит контролы для изменения подписи, размера, формы, минимума, максимума, шага,
+ * суффикса, значения, его текстовых настроек и недоступного состояния в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `StepperWidgetState`
@@ -15,33 +15,14 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { FieldLabel } from '@ui/field-label';
 import { Input } from '@ui/input';
-import {
-  SHAPE_PRESET_KEYS,
-  SIZE_PRESET_KEYS,
-  type ShapePreset,
-  type SizePreset,
-} from '@ui/presets';
+import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { Stepper, getStepperTextSize } from '@ui/stepper';
 import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
 
-import { ShapeListbox } from '../shape-listbox';
-import { StyledSettingsField, StyledSettingsForm } from '../showcase.styles';
-import { SizeListbox } from '../size-listbox';
+import { ControlGroup } from '../control-group';
+import { StyledSettingsForm } from '../showcase.styles';
 import { TextGroup } from '../text-group';
-
-/**
- * STEP_FIELD_ID — задаёт id поля шага в панели настроек.
- * Связывает подпись `Step:` с контролом Stepper через `htmlFor` и `id`.
- */
-const STEP_FIELD_ID = 'showcase-stepper-step';
-
-/**
- * STEP_LABEL_ID — задаёт id подписи поля шага в панели настроек.
- * Передаётся в `aria-labelledby` у Stepper как доступное имя.
- */
-const STEP_LABEL_ID = 'showcase-stepper-step-label';
 
 /**
  * StepperWidgetState — представляет состояние настроек компонента Stepper в витрине дизайн-системы.
@@ -49,6 +30,7 @@ const STEP_LABEL_ID = 'showcase-stepper-step-label';
  * Используется для синхронизации значений между панелью управления и демонстрационным счётчиком.
  *
  * @property disabled — включает недоступное состояние
+ * @property label — подпись над полем
  * @property max — верхняя граница значения
  * @property min — нижняя граница значения
  * @property shape — форма поля
@@ -63,6 +45,7 @@ const STEP_LABEL_ID = 'showcase-stepper-step-label';
  */
 export type StepperWidgetState = {
   disabled: boolean;
+  label: string;
   max?: number;
   min?: number;
   shape: ShapePreset;
@@ -99,21 +82,16 @@ type StepperSettingsProps = {
 export function StepperSettings({ onChange, state }: StepperSettingsProps) {
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
-      <SizeListbox
-        label="Size:"
-        sizes={SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => {
+      <ControlGroup
+        label={state.label}
+        shape={state.shape}
+        sizePreset={state.sizePreset}
+        onLabelChange={(label) => onChange('label', label)}
+        onShapeChange={(shape) => onChange('shape', shape)}
+        onSizeChange={(size) => {
           onChange('sizePreset', size);
           onChange('textSize', getStepperTextSize(size));
         }}
-      />
-
-      <ShapeListbox
-        label="Shape:"
-        shapes={SHAPE_PRESET_KEYS}
-        value={state.shape}
-        onChange={(shape) => onChange('shape', shape)}
       />
 
       <Input
@@ -146,18 +124,12 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
         }}
       />
 
-      <StyledSettingsField>
-        <FieldLabel htmlFor={STEP_FIELD_ID} id={STEP_LABEL_ID}>
-          Step:
-        </FieldLabel>
-        <Stepper
-          aria-labelledby={STEP_LABEL_ID}
-          id={STEP_FIELD_ID}
-          min={1}
-          value={state.step}
-          onChange={(value) => onChange('step', value)}
-        />
-      </StyledSettingsField>
+      <Stepper
+        label="Step:"
+        min={1}
+        value={state.step}
+        onChange={(value) => onChange('step', value)}
+      />
 
       <Input
         label="Suffix:"

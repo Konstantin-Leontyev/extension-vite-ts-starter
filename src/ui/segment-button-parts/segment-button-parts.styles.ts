@@ -67,7 +67,7 @@ type SegmentButtonPartsRootStyleProps = {
 const SEGMENT_BUTTON_PARTS_ROOT_PROP_NAMES = new Set<string>(['sizePreset']);
 
 /**
- * getSegmentButtonPartsRootStyles — возвращает CSS-правила для узла
+ * getSegmentButtonPartsRootStyles — возвращает CSS-правила для корня
  * `StyledSegmentButtonPartsRoot`: минимальную высоту ряда по `sizePreset`.
  *
  * @param props пропсы стилизации корня
@@ -78,9 +78,7 @@ function getSegmentButtonPartsRootStyles(
 ): string {
   const { sizePreset = DEFAULT_SIZE_PRESET } = props;
 
-  const styles = [`min-block-size: ${getMinBlockSize(sizePreset)};`];
-
-  return styles.join('\n');
+  return `min-block-size: ${getMinBlockSize(sizePreset)};`;
 }
 
 /**
@@ -90,6 +88,7 @@ function getSegmentButtonPartsRootStyles(
  * Встроенные стили:
  *  - `display: inline-grid` — ряд сегментов и разделителей
  *  - `flex-shrink: 0` — ряд не сжимается во flex-контейнере
+ *  - `inline-size: 100%` — ряд занимает всю ширину родителя
  *  - `min-inline-size: 0` — предотвращает переполнение
  *  - `overflow: hidden` — обрезает содержимое по границе ряда
  *  - `grid-template-columns` при `[data-segments='2'|'3']` — равные колонки
@@ -103,18 +102,16 @@ export const StyledSegmentButtonPartsRoot = styled.div.withConfig({
 })<SegmentButtonPartsRootStyleProps>`
   display: inline-grid;
   flex-shrink: 0;
-  grid-template-columns: 1fr;
+  inline-size: 100%;
   min-inline-size: 0;
   overflow: hidden;
 
   &[data-segments='2'] {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    inline-size: 100%;
   }
 
   &[data-segments='3'] {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
-    inline-size: 100%;
   }
 
   ${(props) => getSegmentButtonPartsRootStyles(props)}
@@ -156,13 +153,19 @@ const SEGMENT_BUTTON_PARTS_PART_PROP_NAMES = new Set<string>([
  *
  * Как работает:
  * 1. Берёт тему и дефолты пропсов
- * 2. Красит заливку и цвет текста по `tone`. Нейтраль — без собственной заливки
- * 3. Кладёт `padding-inline` на сегмент. С иконкой — колоночный грид с `gap` и
- *    `justify-content: center`, без track и seam. Без иконки лейбл растягивается
- *    на сегмент без `justify-items: center`, чтобы `ellipsis` имел потолок ширины
- * 4. На наведении ставит вуаль сегмента. Цветной `tone` дополнительно ставит канал
- *    `--icon-state-background` с политикой `'none'` для нейтрали
- * 5. Скругляет первый и последний сегмент через `resolveBlockRadius`
+ * 2. Красит заливку и цвет текста по `tone`. Нейтраль — без собственной заливки.
+ *    На наведении цветного тона смешивает заливку с `shade` через `resolveColorMix`
+ * 3. Кладёт `padding-inline` из `getPaddingInline` на сегмент. С иконкой — колоночный
+ *    грид с `gap` и `justify-content: center`, без track и seam. Без иконки лейбл
+ *    растягивается на сегмент без `justify-items: center`, чтобы `ellipsis` имел
+ *    потолок ширины
+ * 4. На наведении нейтрали ставит вуаль сегмента. Цветной `tone` дополнительно
+ *    отдаёт в `--icon-state-background` цвет из `resolveIconStateBackground` с
+ *    политикой `'none'` для нейтрали
+ * 5. На `:focus-visible` поднимает сегмент по `z-index` и рисует кольцо фокуса
+ *    из `getOutlineStyles` со смещением внутрь на `OUTLINE_OFFSET`
+ * 6. Скругляет первый и последний сегмент радиусом из `resolveBlockRadius` по
+ *    `shape` и минимальной высоте ряда
  *
  * @param props пропсы стилизации сегмента и тема
  * @returns CSS-правила, каждое с новой строки
@@ -206,10 +209,7 @@ function getSegmentButtonPartsPartStyles(
     styles.push(
       'grid-auto-flow: column;',
       'justify-content: center;',
-      `gap: ${getSpacingValue(SEGMENT_BUTTON_PARTS_ICON_LABEL_GAP)};`,
-      `[data-slot='label'] {`,
-      'min-inline-size: 0;',
-      '}'
+      `gap: ${getSpacingValue(SEGMENT_BUTTON_PARTS_ICON_LABEL_GAP)};`
     );
 
     if (hoverStateBackground) {
@@ -288,12 +288,10 @@ function getSegmentButtonPartsDividerStyles(
   const theme = getTheme(props);
   const { sizePreset = DEFAULT_SIZE_PRESET } = props;
 
-  const styles = [
-    `margin-block: ${getSpacingValue(segmentButtonPartsDividerMarginBlock[sizePreset])};`,
-    `background-color: ${theme.colors.border};`,
-  ];
-
-  return styles.join('\n');
+  return `
+    margin-block: ${getSpacingValue(segmentButtonPartsDividerMarginBlock[sizePreset])};
+    background-color: ${theme.colors.border};
+  `;
 }
 
 /**
