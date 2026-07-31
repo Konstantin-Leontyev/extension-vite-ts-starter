@@ -125,6 +125,11 @@ const PROGRESS_BAR_PROP_NAMES = new Set<string>(['sizePreset']);
  * getProgressBarStyles — возвращает CSS-правила для узла `StyledProgressBar`:
  * высоту, скругление и цвет дорожки.
  *
+ * Как работает:
+ * 1. Берёт тему и подставляет дефолт `sizePreset`
+ * 2. Собирает `block-size` и `border-radius` через `getProgressBarBlockSize`
+ *    и цвет дорожки `theme.colors.border`
+ *
  * @param props пропсы стилизации полосы прогресса и тема
  * @returns CSS-правила, каждое с новой строки
  */
@@ -135,13 +140,11 @@ function getProgressBarStyles(
   const { sizePreset = DEFAULT_SIZE_PRESET } = props;
   const blockSize = getProgressBarBlockSize(sizePreset);
 
-  const styles = [
-    `block-size: ${blockSize};`,
-    `border-radius: ${blockSize};`,
-    `background-color: ${theme.colors.border};`,
-  ];
-
-  return styles.join('\n');
+  return `
+    block-size: ${blockSize};
+    border-radius: ${blockSize};
+    background-color: ${theme.colors.border};
+  `;
 }
 
 /**
@@ -195,12 +198,10 @@ function getProgressBarFillStyles(
   const theme = getTheme(props);
   const { tone = DEFAULT_PROGRESS_BAR_TONE, value } = props;
 
-  const styles = [
-    `inline-size: ${value * 100}%;`,
-    `background-color: ${getToneColor(theme, tone, theme.colors.border)};`,
-  ];
-
-  return styles.join('\n');
+  return `
+    inline-size: ${value * 100}%;
+    background-color: ${getToneColor(theme, tone, theme.colors.border)};
+  `;
 }
 
 /**

@@ -13,7 +13,7 @@
  *  - `src/ui/spinner/index.tsx` — собирает компонент Spinner и реэкспортирует публичное API
  */
 
-import { css, keyframes, styled } from 'styled-components';
+import { keyframes, styled } from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
@@ -138,45 +138,44 @@ const spinnerRotate = keyframes`
 
 /**
  * SPINNER_ROTATE_DURATION — задаёт длительность оборота индикатора.
- * Используется в `getSpinnerStyles`.
+ * Используется в `StyledSpinner`.
  */
 const SPINNER_ROTATE_DURATION = '0.8s';
 
 /**
  * SPINNER_REDUCED_ROTATE_DURATION — задаёт длительность оборота при
  * `prefers-reduced-motion: reduce`.
- * Используется в `getSpinnerStyles`.
+ * Используется в `StyledSpinner`.
  */
 const SPINNER_REDUCED_ROTATE_DURATION = '1.6s';
 
 /**
  * getSpinnerStyles — возвращает CSS-правила для узла `StyledSpinner`:
- * размер, рамку, цвет и анимацию.
+ * размер, рамку, цвет и скругление.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты `sizePreset` и `tone`
- * 2. Собирает размер, рамку, цвет верхней грани через `getToneColor` с запасным
- *    `theme.colors.border` и анимацию вращения
+ * 2. Собирает габариты через `getSpinnerSize`, рамку нейтральным
+ *    `theme.colors.border` с толщиной из `getSpinnerBorderWidth`, цвет верхней
+ *    грани через `getToneColor` с запасным `theme.colors.border` и
+ *    `border-radius: 50%`
  *
  * @param props пропсы стилизации индикатора и тема
- * @returns CSS-правила через хелпер `css` — иначе интерполяция `keyframes` роняет рендер
+ * @returns CSS-правила, каждое с новой строки
  */
-function getSpinnerStyles(props: SpinnerIndicatorStyleProps & { theme: AppTheme }) {
+function getSpinnerStyles(
+  props: SpinnerIndicatorStyleProps & { theme: AppTheme }
+): string {
   const theme = getTheme(props);
   const { sizePreset = DEFAULT_SIZE_PRESET, tone = DEFAULT_SPINNER_TONE } = props;
   const size = getSpinnerSize(sizePreset);
 
-  return css`
+  return `
     inline-size: ${size};
     block-size: ${size};
     border: ${getSpinnerBorderWidth(sizePreset)}px solid ${theme.colors.border};
     border-block-start-color: ${getToneColor(theme, tone, theme.colors.border)};
     border-radius: 50%;
-    animation: ${spinnerRotate} ${SPINNER_ROTATE_DURATION} linear infinite;
-
-    @media (prefers-reduced-motion: reduce) {
-      animation-duration: ${SPINNER_REDUCED_ROTATE_DURATION};
-    }
   `;
 }
 
@@ -184,11 +183,22 @@ function getSpinnerStyles(props: SpinnerIndicatorStyleProps & { theme: AppTheme 
  * StyledSpinner — задаёт индикатор компонента Spinner.
  * Базируется на `<div>` и поддерживает пропсы из `SpinnerIndicatorStyleProps`.
  *
+ * Встроенные стили:
+ *  - `animation` — бесконечное вращение индикатора через `spinnerRotate` и
+ *    `SPINNER_ROTATE_DURATION`
+ *  - `animation-duration` при `prefers-reduced-motion: reduce` — удлиняет оборот
+ *    до `SPINNER_REDUCED_ROTATE_DURATION`
+ *
  * Генерация стилей:
- *  - `getSpinnerStyles` — размер, рамка, цвет, анимация
+ *  - `getSpinnerStyles` — размер, рамка, цвет и скругление
  */
 export const StyledSpinner = styled.div.withConfig({
   shouldForwardProp: (prop) => !SPINNER_INDICATOR_PROP_NAMES.has(prop),
 })<SpinnerIndicatorStyleProps>`
   ${(props) => getSpinnerStyles(props)}
+  animation: ${spinnerRotate} ${SPINNER_ROTATE_DURATION} linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: ${SPINNER_REDUCED_ROTATE_DURATION};
+  }
 `;

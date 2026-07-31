@@ -101,6 +101,14 @@ const RADIO_BUTTON_CONTROL_PROP_NAMES = new Set<string>([
  * getRadioButtonControlStyles — возвращает CSS-правила для узла `StyledRadioButtonControl`:
  * габариты, рамку с тенью и состояние `checked`.
  *
+ * Как работает:
+ * 1. Берёт тему и подставляет дефолт `sizePreset`
+ * 2. Собирает габариты, сброс layout-рамки UA через `border: none`, заливку
+ *    `surface`, рамку с тенью через `getBorderStyles` без флагов и
+ *    `border-radius: 50%`
+ * 3. В `&:checked` кладёт фоновую марку-точку цветом `primary` и рамку с
+ *    тенью тона `primary` через `getBorderStyles`
+ *
  * @param props пропсы стилизации RadioButton и тема
  * @returns CSS-правила, каждое с новой строки
  */
