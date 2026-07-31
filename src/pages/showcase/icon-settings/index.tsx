@@ -122,6 +122,7 @@ export function IconSettings({ onChange, state }: IconSettingsProps) {
         fill={state.iconFill}
         iconOptions={COMBOBOX_OPTIONS}
         iconValue={state.iconKey}
+        labelPrefix=""
         tone={state.iconTone}
         onFillChange={(tone) => onChange('iconFill', tone)}
         onIconChange={(value) => onChange('iconKey', value as IconKey)}

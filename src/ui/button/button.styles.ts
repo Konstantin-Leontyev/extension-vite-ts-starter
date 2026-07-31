@@ -159,10 +159,11 @@ const DEFAULT_BUTTON_ACTIVE = false;
  *    позицию `[data-slot='icon']` и `block-size: 100%` на слоте
  * 2. Переносит `padding-inline` с корня на слот лейбла — секция иконки прижата к краю
  * 3. При цветном `iconTone` на наведении и `:focus-visible` выставляет
- *    `--icon-state-background` сдвигом тона к `shade`; нейтральная секция
+ *    `--icon-state-background` сдвигом тона к `shade`. Нейтральная секция
  *    подсвечивается заливкой корня
- * 4. При `active` фиксирует значение канала: для нейтральной секции — смесь
- *    `primary` с `surface` через `VARIANT_SURFACE_MIX_PERCENT`
+ * 4. При `active` фиксирует значение канала: для цветной секции — сдвигом
+ *    тона к `shade`, для нейтральной — смесь `primary` с `surface` через
+ *    `VARIANT_SURFACE_MIX_PERCENT`
  *
  * @param props пропсы стилизации корня и текущая тема
  * @returns CSS-правила, каждое с новой строки
@@ -269,11 +270,11 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
  * Базируется на `<button>` и поддерживает все пропсы из `ButtonStyledProps`.
  *
  * Встроенные стили:
- *  - `display: grid` — сетка ряда; при секции иконки колонки задаёт
+ *  - `display: grid` — сетка ряда. При секции иконки колонки задаёт
  *    `getIconPositionStyles` в `getButtonSplitStyles`
  *  - `grid-template-columns: minmax(0, 1fr)` — колонка лейбла без иконки ужимается
  *    ниже min-content nowrap-текста, иначе ellipsis не срабатывает и лейбл режет
- *    `overflow: hidden` корня; при секции иконки шаблон переопределяет
+ *    `overflow: hidden` корня. При секции иконки шаблон переопределяет
  *    `getIconPositionStyles`
  *  - `align-items: center` — центрирует лейбл и секцию иконки по поперечной оси
  *  - `inline-size: 100%` — кнопка занимает ширину контейнера
@@ -283,11 +284,11 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
  *
  * Генерация стилей:
  *  - `getButtonStyles` — размер, рамка с тенью через `getBorderStyles`,
- *    радиус, цвет, заливка; при иконке — раскладка и канал секции
+ *    радиус, цвет, заливка. При иконке — раскладка и канал секции
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *
  * Слоты: отступ лейбла и канал состояний секции иконки задаёт корень
- * по `[data-slot]`; статику секции красит внутренний Icon.
+ * по `[data-slot]`. Статику секции красит внутренний Icon.
  */
 export const StyledButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !BUTTON_PROP_NAMES.has(prop),

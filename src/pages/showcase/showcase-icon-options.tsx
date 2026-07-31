@@ -6,16 +6,15 @@
  * 1. Связать ключи иконок с функциями рендеринга в `ICONS`
  * 2. Типизировать ключи иконок через `IconKey`
  * 3. Предоставить функцию `getIcon`
- * 4. Предоставить опции `LIST_OPTIONS` и `COMBOBOX_OPTIONS` для Listbox и Combobox
+ * 4. Предоставить опции `LIST_OPTIONS` и `COMBOBOX_OPTIONS`
  *
  * Потребители:
  *  - `src/pages/showcase/button-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
  *  - `src/pages/showcase/icon-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
  *  - `src/pages/showcase/segment-button-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
  *  - `src/pages/showcase/card-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
- *  - `src/pages/showcase/combobox-settings/index.tsx` — использует `LIST_OPTIONS` для поля Value
- *  - `src/pages/showcase/index.tsx` — подставляет иконки в превью через `getIcon` и опции
- *    Listbox и Combobox
+ *  - `src/pages/showcase/index.tsx` — подставляет глифы через `getIcon`, опции превью Combobox
+ *    через `LIST_OPTIONS` и `COMBOBOX_OPTIONS`
  */
 
 import { type ReactNode } from 'react';
@@ -78,25 +77,25 @@ export function getIcon(key: IconKey): ReactNode {
 }
 
 /**
- * LIST_OPTIONS — формирует опции Listbox с подписью без иконки из ключей `ICONS`.
- * Используется в настройках Combobox для поля Value и в превью Combobox без иконок.
+ * LIST_OPTIONS — формирует опции с подписью без иконки из ключей `ICONS`.
+ * Используется в превью Combobox без иконок в `src/pages/showcase/index.tsx`.
  */
-export const LIST_OPTIONS: ListboxOption[] = Object.freeze(
+export const LIST_OPTIONS: readonly ListboxOption[] = Object.freeze(
   Object.keys(ICONS).map((key) => ({
     label: resolveIconLabel(key as IconKey),
     value: key,
   }))
-) as ListboxOption[];
+);
 
 /**
  * COMBOBOX_OPTIONS — формирует опции Combobox с иконкой и подписью из ключей `ICONS`.
  * Используется в выборе иконки в настройках Button, Icon, SegmentButton и Card
  * и в превью Combobox с иконками.
  */
-export const COMBOBOX_OPTIONS: ComboboxOption[] = Object.freeze(
+export const COMBOBOX_OPTIONS: readonly ComboboxOption[] = Object.freeze(
   Object.keys(ICONS).map((key) => ({
     icon: getIcon(key as IconKey),
     label: resolveIconLabel(key as IconKey),
     value: key,
   }))
-) as ComboboxOption[];
+);

@@ -281,12 +281,6 @@ export const StyledComboboxValue = styled.span.withConfig({
 `;
 
 /**
- * COMBOBOX_PANEL_MAX_OPTION_ROWS — задаёт максимум видимых строк опций в списке панели.
- * Используется в `getComboboxListStyles` для `max-block-size`.
- */
-const COMBOBOX_PANEL_MAX_OPTION_ROWS = 6;
-
-/**
  * getComboboxPanelStyles — возвращает CSS-правила для узла `StyledComboboxPanel`:
  * сетку поиска и списка, обрезку и хром портала через `getPortalPanelStyles`.
  *
@@ -361,6 +355,12 @@ export const StyledComboboxSearchRow = styled.div`
     appearance: none;
   }
 `;
+
+/**
+ * COMBOBOX_PANEL_MAX_OPTION_ROWS — задаёт максимум видимых строк опций в списке панели.
+ * Используется в `getComboboxListStyles` для `max-block-size`.
+ */
+const COMBOBOX_PANEL_MAX_OPTION_ROWS = 6;
 
 /**
  * getComboboxListStyles — возвращает CSS-правила для узла `StyledComboboxList`:

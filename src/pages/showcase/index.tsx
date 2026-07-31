@@ -905,7 +905,8 @@ export function ShowcasePage() {
   }
 
   const comboboxDemoOptions = useMemo(
-    () => (combobox.withIcon ? COMBOBOX_OPTIONS : (LIST_OPTIONS as ComboboxOption[])),
+    () =>
+      combobox.withIcon ? COMBOBOX_OPTIONS : (LIST_OPTIONS as readonly ComboboxOption[]),
     [combobox.withIcon]
   );
 

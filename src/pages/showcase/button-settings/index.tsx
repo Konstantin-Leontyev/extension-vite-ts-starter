@@ -49,7 +49,7 @@ import { ToneListbox } from '../tone-listbox';
  * @property iconTone — тон секции иконки
  * @property shape — форма кнопки
  * @property sizePreset — размер компонента
- * @property text — витринный ключ содержимого `children`
+ * @property text — содержимое лейбла
  * @property textItalic — включает курсив лейбла
  * @property textSize — размер лейбла
  * @property textTone — тон лейбла

@@ -15,10 +15,10 @@ import { type ListboxOption } from '@ui/listbox';
  * LISTBOX_DEMO_OPTIONS — задаёт опции Listbox в демо витрины.
  * Используется в превью Listbox витрины дизайн-системы.
  */
-export const LISTBOX_DEMO_OPTIONS: ListboxOption[] = [
+export const LISTBOX_DEMO_OPTIONS = Object.freeze([
   { label: 'neutral', value: 'neutral' },
   { label: 'primary', value: 'primary' },
   { label: 'success', value: 'success' },
   { label: 'warning', value: 'warning' },
   { label: 'danger', value: 'danger' },
-];
+] as const satisfies readonly ListboxOption[]);

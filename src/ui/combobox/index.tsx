@@ -163,7 +163,7 @@ type ComboboxProps = ComboboxStyleProps & {
   iconPosition?: IconPosition;
   label?: string;
   onChange?: (value: string) => void;
-  options: ComboboxOption[];
+  options: readonly ComboboxOption[];
   placeholder?: string;
   reserveErrorSpace?: boolean;
   searchPlaceholder?: string;
@@ -186,9 +186,9 @@ type ComboboxProps = ComboboxStyleProps & {
  * @returns отфильтрованный перечень опций
  */
 function filterComboboxOptions(
-  options: ComboboxOption[],
+  options: readonly ComboboxOption[],
   normalizedQuery: string
-): ComboboxOption[] {
+): readonly ComboboxOption[] {
   if (!normalizedQuery) {
     return options;
   }
@@ -211,7 +211,7 @@ function filterComboboxOptions(
  * @returns индекс доступной опции или `-1`
  */
 function findEnabledIndex(
-  options: ComboboxOption[],
+  options: readonly ComboboxOption[],
   from: number,
   step: -1 | 1
 ): number {
@@ -382,7 +382,7 @@ export function Combobox({
   }, [isOpen, activeIndex, panelRef]);
 
   function initialActiveIndex(
-    list: ComboboxOption[],
+    list: readonly ComboboxOption[],
     selected: string | undefined
   ): number {
     const selectedFilteredIndex = list.findIndex(

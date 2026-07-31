@@ -68,11 +68,15 @@ import { FieldError } from '@ui/field-error';
 import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Input } from '@ui/input';
-import { type ShapePreset, type SizePreset } from '@ui/presets';
+import {
+  DEFAULT_SHAPE_PRESET,
+  DEFAULT_SIZE_PRESET,
+  type ShapePreset,
+  type SizePreset,
+} from '@ui/presets';
 import { type SpacingValue } from '@ui/spacing';
 import {
   Text,
-  getTextLineHeight,
   type TextAlignPreset,
   type TextSizePreset,
   type TextTone,
@@ -80,8 +84,6 @@ import {
 import { type TonePreset } from '@ui/tones';
 
 import {
-  DEFAULT_RANGE_INPUT_SHAPE,
-  DEFAULT_RANGE_INPUT_SIZE_PRESET,
   StyledRangeInputButtonRow,
   StyledRangeInputCustomSection,
   StyledRangeInputFields,
@@ -396,8 +398,8 @@ export function RangeInput({
     }),
     [validationMessagesProp]
   );
-  const resolvedShape = shape ?? DEFAULT_RANGE_INPUT_SHAPE;
-  const resolvedSizePreset = sizePreset ?? DEFAULT_RANGE_INPUT_SIZE_PRESET;
+  const resolvedShape = shape ?? DEFAULT_SHAPE_PRESET;
+  const resolvedSizePreset = sizePreset ?? DEFAULT_SIZE_PRESET;
   const buttonShape = buttonShapeProp ?? resolvedShape;
   const buttonSizePreset = buttonSizePresetProp ?? resolvedSizePreset;
   const inputShape = inputShapeProp ?? resolvedShape;
@@ -551,6 +553,23 @@ export function RangeInput({
     }
   }
 
+  const clearNode = showClear && (
+    <Icon
+      aria-label={resolveClearAriaLabel(label)}
+      as="button"
+      data-slot="clear"
+      disabled={disabled}
+      iconFill={iconFill}
+      iconTone={iconTone}
+      showBorder
+      showShadow={false}
+      sizePreset={sizePreset}
+      onClick={handleClear}
+    >
+      <CloseIcon />
+    </Icon>
+  );
+
   return (
     <StyledRangeInputRoot
       data-disabled={disabled ? '' : undefined}
@@ -566,23 +585,7 @@ export function RangeInput({
         ref={triggerRowRef}
         {...surfaceProps}
       >
-        {showClear && isIconStart && (
-          <Icon
-            aria-label={resolveClearAriaLabel(label)}
-            as="button"
-            data-slot="clear"
-            disabled={disabled}
-            iconFill={iconFill}
-            iconTone={iconTone}
-            shape="square"
-            showBorder
-            showShadow={false}
-            sizePreset={sizePreset}
-            onClick={handleClear}
-          >
-            <CloseIcon />
-          </Icon>
-        )}
+        {isIconStart && clearNode}
 
         <StyledRangeInputTrigger
           aria-controls={panelId}
@@ -609,33 +612,8 @@ export function RangeInput({
           {iconPosition === 'end' && iconNode}
         </StyledRangeInputTrigger>
 
-        {showClear && !isIconStart && (
-          <Icon
-            aria-label={resolveClearAriaLabel(label)}
-            as="button"
-            data-slot="clear"
-            disabled={disabled}
-            iconFill={iconFill}
-            iconTone={iconTone}
-            shape="square"
-            showBorder
-            showShadow={false}
-            sizePreset={sizePreset}
-            onClick={handleClear}
-          >
-            <CloseIcon />
-          </Icon>
-        )}
+        {!isIconStart && clearNode}
       </StyledRangeInputTriggerRow>
-
-      {reserveErrorSpace && (
-        <Text
-          aria-hidden="true"
-          as="p"
-          minBlockSize={getTextLineHeight('thin')}
-          sizePreset="thin"
-        />
-      )}
 
       <AnchoredPortal
         dismissZoneRefs={[rootRef, panelRef]}
@@ -723,7 +701,7 @@ export function RangeInput({
                 onKeyDown={handleFieldKeyDown}
               />
             </StyledRangeInputFields>
-            <FieldError id={panelErrorId} reserveErrorSpace>
+            <FieldError id={panelErrorId} reserveErrorSpace={reserveErrorSpace}>
               {panelError}
             </FieldError>
             <StyledRangeInputButtonRow>

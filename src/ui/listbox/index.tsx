@@ -153,7 +153,7 @@ type ListboxProps = ListboxStyleProps & {
   label?: string;
   multiple?: boolean;
   onChange?: (value: string | string[]) => void;
-  options: ListboxOption[];
+  options: readonly ListboxOption[];
   placeholder?: string;
   reserveErrorSpace?: boolean;
   showClear?: boolean;
@@ -207,8 +207,8 @@ function toSelectedValues(
  * @returns подпись одной опции, счётчик выбранных или `null`
  */
 function formatMultipleTriggerLabel(
-  options: ListboxOption[],
-  selected: string[]
+  options: readonly ListboxOption[],
+  selected: readonly string[]
 ): ReactNode {
   const labels = options
     .filter((option) => selected.includes(option.value))

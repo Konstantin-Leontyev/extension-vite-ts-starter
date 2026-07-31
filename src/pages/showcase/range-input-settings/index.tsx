@@ -131,15 +131,6 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         onSizeChange={(size) => onChange('sizePreset', size)}
       />
 
-      <Checkbox
-        checked={state.withClear}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('withClear', event.target.checked)
-        }
-      >
-        Show clear icon
-      </Checkbox>
-
       <IconGroup
         fill={state.iconFill}
         position={state.iconPosition}
@@ -148,6 +139,15 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         onPositionChange={(position) => onChange('iconPosition', position)}
         onToneChange={(tone) => onChange('iconTone', tone)}
       />
+
+      <Checkbox
+        checked={state.withClear}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('withClear', event.target.checked)
+        }
+      >
+        Show clear
+      </Checkbox>
 
       <Input
         label="Placeholder:"

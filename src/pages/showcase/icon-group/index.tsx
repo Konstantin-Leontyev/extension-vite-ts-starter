@@ -7,7 +7,9 @@
  *  - тон глифа иконки через проп `fill`
  *  - опции глифов через проп `iconOptions`. Без `iconOptions` контрол `Icon:` не рендерится
  *  - ключ глифа через проп `iconValue`
- *  - суффикс лейблов через проп `name`. Например для SegmentButton — A, B или C
+ *  - префикс подписей контролов через проп `labelPrefix`. Пустой префикс даёт подписи
+ *    без него, например `Tone:` у панели Icon. Сегменты SegmentButton передают
+ *    `Icon A` и `Icon B`
  *  - обработчик изменения тона глифа через проп `onFillChange`
  *  - обработчик изменения ключа глифа через проп `onIconChange`
  *  - обработчик изменения позиции через проп `onPositionChange`. Без `onPositionChange`
@@ -24,6 +26,9 @@
  * Основные задачи:
  * 1. Экспортировать компонент IconGroup
  * 2. Типизировать пропсы через `IconGroupProps`
+ * 3. Рендерить единый блок настроек иконки в порядке: показ, глиф, тон секции,
+ *    тон глифа и позиция
+ * 4. Строить подписи контролов из префикса `labelPrefix`
  *
  * Потребители:
  *  - панели настроек витрины дизайн-системы — настраивают иконку компонента:
@@ -58,12 +63,19 @@ function getIconPositionListboxOptions(): ListboxOption[] {
 }
 
 /**
+ * DEFAULT_ICON_GROUP_LABEL_PREFIX — задаёт префикс подписей контролов по умолчанию.
+ * Используется, когда вызывающий код не передал проп `labelPrefix`.
+ */
+const DEFAULT_ICON_GROUP_LABEL_PREFIX = 'Icon';
+
+/**
  * IconGroupProps — представляет пропсы компонента IconGroup.
  *
  * @property fill — текущий тон глифа иконки
  * @property iconOptions — опции Combobox с глифами. Без него контрол `Icon:` не рендерится
  * @property iconValue — текущий ключ глифа
- * @property name — суффикс лейблов группы. Например A даёт `Show icon A` и `Icon A tone:`
+ * @property labelPrefix — префикс подписей контролов, например `Icon A`.
+ *   Пустая строка даёт подписи без префикса
  * @property onFillChange — обработчик изменения тона глифа
  * @property onIconChange — обработчик изменения ключа глифа
  * @property onPositionChange — обработчик изменения позиции. Без него контрол позиции
@@ -78,9 +90,9 @@ function getIconPositionListboxOptions(): ListboxOption[] {
  */
 type IconGroupProps = {
   fill: TonePreset;
-  iconOptions?: ComboboxOption[];
+  iconOptions?: readonly ComboboxOption[];
   iconValue?: string;
-  name?: string;
+  labelPrefix?: string;
   onFillChange: (tone: TonePreset) => void;
   onIconChange?: (value: string) => void;
   onPositionChange?: (position: IconPosition) => void;
@@ -92,30 +104,62 @@ type IconGroupProps = {
 };
 
 /**
- * resolveIconGroupLabel — собирает лейбл контрола с опциональным суффиксом `name`.
+ * resolveIconGroupLabel — возвращает подпись контрола группы из префикса и имени поля.
+ * С префиксом — `Icon tone:`, `Icon A tone:`. С пустым префиксом слово поля
+ * начинает подпись с заглавной буквы — `Tone:`.
  *
- * @param base базовый лейбл контрола
- * @param name суффикс сегмента, например A
- * @returns лейбл с суффиксом или исходный `base`
+ * Как работает:
+ * 1. При пустом префиксе делает первую букву `name` заглавной и добавляет `:`
+ * 2. Иначе склеивает префикс, имя поля и `:`
+ *
+ * @param labelPrefix префикс подписей контролов
+ * @param name имя поля в нижнем регистре, например `tone`
+ * @returns подпись контрола с двоеточием
  */
-function resolveIconGroupLabel(base: string, name?: string): string {
-  if (!name) {
-    return base;
+function resolveIconGroupLabel(labelPrefix: string, name: string): string {
+  if (labelPrefix === '') {
+    return `${name.charAt(0).toUpperCase()}${name.slice(1)}:`;
   }
 
-  if (base === 'Show icon') {
-    return `Show icon ${name}`;
+  return `${labelPrefix} ${name}:`;
+}
+
+/**
+ * resolveIconGroupIconLabel — возвращает подпись Combobox глифа из префикса.
+ * С префиксом — `Icon:`, `Icon A:`. С пустым префиксом — `Icon:`.
+ *
+ * Как работает:
+ * 1. При пустом префиксе возвращает `Icon:`
+ * 2. Иначе возвращает префикс с `:`
+ *
+ * @param labelPrefix префикс подписей контролов
+ * @returns подпись Combobox глифа с двоеточием
+ */
+function resolveIconGroupIconLabel(labelPrefix: string): string {
+  if (labelPrefix === '') {
+    return 'Icon:';
   }
 
-  if (base.startsWith('Icon ') && base.endsWith(':')) {
-    return `Icon ${name} ${base.slice('Icon '.length)}`;
+  return `${labelPrefix}:`;
+}
+
+/**
+ * resolveIconGroupShowLabel — возвращает подпись чекбокса показа.
+ * С префиксом — `Show icon`, `Show icon A`. Пустой префикс даёт `Show icon`.
+ *
+ * Как работает:
+ * 1. При пустом префиксе возвращает `Show icon`
+ * 2. Иначе возвращает `Show` и префикс с пониженной первой буквой
+ *
+ * @param labelPrefix префикс подписей контролов
+ * @returns подпись чекбокса показа
+ */
+function resolveIconGroupShowLabel(labelPrefix: string): string {
+  if (labelPrefix === '') {
+    return 'Show icon';
   }
 
-  if (base === 'Icon:') {
-    return `Icon ${name}:`;
-  }
-
-  return base;
+  return `Show ${labelPrefix.charAt(0).toLowerCase()}${labelPrefix.slice(1)}`;
 }
 
 /**
@@ -136,11 +180,12 @@ function resolveIconGroupLabel(base: string, name?: string): string {
  *   onShowChange={(checked) => onChange('withIcon', checked)}
  *   onToneChange={(tone) => onChange('iconTone', tone)}
  * />
- * // Icon: без позиции и флага показа
+ * // Icon: без позиции и флага показа, пустой префикс
  * <IconGroup
  *   fill={state.iconFill}
  *   iconOptions={COMBOBOX_OPTIONS}
  *   iconValue={state.iconKey}
+ *   labelPrefix=""
  *   tone={state.iconTone}
  *   onFillChange={(tone) => onChange('iconFill', tone)}
  *   onIconChange={(value) => onChange('iconKey', value as IconKey)}
@@ -151,7 +196,7 @@ export function IconGroup({
   fill,
   iconOptions,
   iconValue,
-  name,
+  labelPrefix = DEFAULT_ICON_GROUP_LABEL_PREFIX,
   onFillChange,
   onIconChange,
   onPositionChange,
@@ -172,7 +217,7 @@ export function IconGroup({
             onShowChange(event.target.checked)
           }
         >
-          {resolveIconGroupLabel('Show icon', name)}
+          {resolveIconGroupShowLabel(labelPrefix)}
         </Checkbox>
       )}
 
@@ -180,7 +225,7 @@ export function IconGroup({
         <>
           {iconOptions !== undefined && onIconChange !== undefined && (
             <Combobox
-              label={resolveIconGroupLabel('Icon:', name)}
+              label={resolveIconGroupIconLabel(labelPrefix)}
               options={iconOptions}
               value={iconValue}
               onChange={onIconChange}
@@ -189,7 +234,7 @@ export function IconGroup({
 
           {onToneChange !== undefined && tone !== undefined && (
             <ToneListbox
-              label={resolveIconGroupLabel('Icon tone:', name)}
+              label={resolveIconGroupLabel(labelPrefix, 'tone')}
               tones={TONE_PRESET_KEYS}
               value={tone}
               onChange={onToneChange}
@@ -198,7 +243,7 @@ export function IconGroup({
 
           <ToneListbox
             excludeTone={tone}
-            label={resolveIconGroupLabel('Icon fill tone:', name)}
+            label={resolveIconGroupLabel(labelPrefix, 'fill tone')}
             tones={TONE_PRESET_KEYS}
             value={fill}
             onChange={onFillChange}
@@ -206,7 +251,7 @@ export function IconGroup({
 
           {onPositionChange !== undefined && position !== undefined && (
             <Listbox
-              label={resolveIconGroupLabel('Icon position:', name)}
+              label={resolveIconGroupLabel(labelPrefix, 'position')}
               options={getIconPositionListboxOptions()}
               value={position}
               onChange={(value) => onPositionChange(value as IconPosition)}

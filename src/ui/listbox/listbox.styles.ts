@@ -303,7 +303,7 @@ export const StyledListboxPanel = styled.ul.withConfig({
 
 /**
  * getListboxOptionSurfaceBaseStyles — возвращает CSS-правила общей поверхности
- * строки опции: раскладку, габариты и подложку наведения через `::before`.
+ * строки опции: раскладку, габариты, заливку и подложку наведения через `::before`.
  *
  * Как работает:
  * 1. Собирает раскладку строки, габариты по `sizePreset` и заливку `surface`
@@ -404,7 +404,8 @@ export const StyledListboxOptionButton = styled.button.withConfig({
  * базовую поверхность опции, курсор и синюю подсветку наведения.
  *
  * Как работает:
- * 1. Берёт базовую поверхность через `getListboxOptionSurfaceBaseStyles`
+ * 1. Берёт базовую поверхность через `getListboxOptionSurfaceBaseStyles`: раскладку,
+ *    габариты, заливку и подложку наведения через `::before`
  * 2. Задаёт `cursor: pointer` на строке-метке: сброс даёт `pointer` только button
  * 3. Добавляет отступы и синюю подсветку при наведении и фокусе внутри
  *

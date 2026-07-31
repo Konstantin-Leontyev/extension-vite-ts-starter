@@ -175,7 +175,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
         fill={state.leftIconFill}
         iconOptions={COMBOBOX_OPTIONS}
         iconValue={state.leftIconKey}
-        name="A"
+        labelPrefix="Icon A"
         position={state.leftIconPosition}
         show={state.leftWithIcon}
         onFillChange={(tone) => onChange('leftIconFill', tone)}
@@ -197,7 +197,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
             fill={state.centerIconFill}
             iconOptions={COMBOBOX_OPTIONS}
             iconValue={state.centerIconKey}
-            name="B"
+            labelPrefix="Icon B"
             position={state.centerIconPosition}
             show={state.centerWithIcon}
             onFillChange={(tone) => onChange('centerIconFill', tone)}
@@ -219,7 +219,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
         fill={state.rightIconFill}
         iconOptions={COMBOBOX_OPTIONS}
         iconValue={state.rightIconKey}
-        name={rightName}
+        labelPrefix={`Icon ${rightName}`}
         position={state.rightIconPosition}
         show={state.rightWithIcon}
         onFillChange={(tone) => onChange('rightIconFill', tone)}
