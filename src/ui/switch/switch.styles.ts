@@ -105,6 +105,17 @@ export function getSwitchTextSize(sizePreset?: SizePreset): TextSizePreset {
 }
 
 /**
+ * SwitchStyleProps — представляет пропсы стилизации Switch и layout-пропсы.
+ *
+ * @property sizePreset — размер дорожки
+ * @property tone — тон включённого состояния
+ */
+export type SwitchStyleProps = LayoutProps & {
+  sizePreset?: SizePreset;
+  tone?: TonePreset;
+};
+
+/**
  * StyledSwitchRoot — задаёт корневой узел компонента Switch.
  * Базируется на `<label>` и поддерживает layout-пропсы.
  *
@@ -113,8 +124,6 @@ export function getSwitchTextSize(sizePreset?: SizePreset): TextSizePreset {
  *  - `grid-auto-flow: column` — элементы в ряд
  *  - `gap` — отступ между дорожкой и подписью
  *  - `align-items: center` — выравнивание по поперечной оси
- *  - `justify-content: start` — при растяжении корня родителем
- *    подпись остаётся прижатой к дорожке
  *  - `cursor: pointer` — кликабельная область корня
  *
  * Генерация стилей:
@@ -127,21 +136,9 @@ export const StyledSwitchRoot = styled.label.withConfig({
   grid-auto-flow: column;
   gap: ${getSpacingValue(8)};
   align-items: center;
-  justify-content: start;
   cursor: pointer;
   ${(props) => getLayoutStyles(props)}
 `;
-
-/**
- * SwitchStyleProps — представляет пропсы стилизации Switch и layout-пропсы.
- *
- * @property sizePreset — размер дорожки
- * @property tone — тон включённого состояния
- */
-export type SwitchStyleProps = LayoutProps & {
-  sizePreset?: SizePreset;
-  tone?: TonePreset;
-};
 
 /**
  * SwitchTrackStyleProps — представляет пропсы стилизации дорожки Switch.
@@ -188,15 +185,16 @@ function getSwitchTrackStyles(
   const knobTravel = `calc(${trackInlineSize} - ${trackBlockSize})`;
   const checkedBackground = getToneColor(theme, tone, theme.colors.primary);
 
-  const styles = [
-    'position: relative;',
-    `inline-size: ${trackInlineSize};`,
-    `block-size: ${trackBlockSize};`,
-    `background-color: ${theme.colors.border};`,
-    `border: ${TRACK_BORDER} solid ${theme.colors.border};`,
-    `border-radius: ${resolveBlockRadius('pill', trackBlockSize)};`,
-    getTransitionStyles('background-color, border-color', MOTION_CONTROL_DURATION),
-    `&::after {
+  return `
+    position: relative;
+    inline-size: ${trackInlineSize};
+    block-size: ${trackBlockSize};
+    background-color: ${theme.colors.border};
+    border: ${TRACK_BORDER} solid ${theme.colors.border};
+    border-radius: ${resolveBlockRadius('pill', trackBlockSize)};
+    ${getTransitionStyles('background-color, border-color', MOTION_CONTROL_DURATION)}
+
+    &::after {
       position: absolute;
       inset-block-start: ${knobInset};
       inset-inline-start: ${knobInset};
@@ -207,20 +205,21 @@ function getSwitchTrackStyles(
       border-radius: 50%;
       box-shadow: ${theme.shadow.surface};
       ${getTransitionStyles('transform', MOTION_CONTROL_DURATION)}
-    }`,
-    `input:checked + & {
+    }
+
+    input:checked + & {
       background-color: ${checkedBackground};
       border-color: ${checkedBackground};
-    }`,
-    `input:checked + &::after {
-      transform: translateX(${knobTravel});
-    }`,
-    `input:focus-visible + & {
-      ${getOutlineStyles(theme.colors.focusOutline)}
-    }`,
-  ];
+    }
 
-  return styles.join('\n');
+    input:checked + &::after {
+      transform: translateX(${knobTravel});
+    }
+
+    input:focus-visible + & {
+      ${getOutlineStyles(theme.colors.focusOutline)}
+    }
+  `;
 }
 
 /**

@@ -176,11 +176,7 @@ function resolveTagSurface(
  * @returns CSS-цвет точки
  */
 function getTagDotColor(theme: AppTheme, dotTone: TonePreset | undefined): string {
-  if (!dotTone || dotTone === DEFAULT_TONE) {
-    return 'currentColor';
-  }
-
-  return getToneColor(theme, dotTone, 'currentColor');
+  return getToneColor(theme, dotTone ?? DEFAULT_TONE, 'currentColor');
 }
 
 /**
@@ -218,20 +214,29 @@ const TAG_PROP_NAMES = new Set<string>([
 const DEFAULT_TAG_SHAPE: ShapePreset = 'pill';
 
 /**
- * DEFAULT_TAG_SHOW_BORDER — задаёт показ границы по умолчанию.
- * Используется, когда вызывающий код не передал проп `showBorder`.
- */
-const DEFAULT_TAG_SHOW_BORDER = false;
-
-/**
  * DEFAULT_TAG_TINTED — задаёт режим мягкой заливки по умолчанию.
  * Используется, когда вызывающий код не передал проп `tinted`.
  */
 const DEFAULT_TAG_TINTED = false;
 
 /**
+ * DEFAULT_TAG_TONE — задаёт тон заливки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `tone`.
+ */
+const DEFAULT_TAG_TONE: TonePreset = 'primary';
+
+/**
  * getTagStyles — возвращает CSS-правила для корня `StyledTag`:
- * размер, отступы, границу, форму и цвета.
+ * размер, отступы, рамку с тенью, форму и цвета.
+ *
+ * Как работает:
+ * 1. Берёт тему и подставляет дефолты `borderTone`, `shape`, `showShadow`,
+ *    `sizePreset`, `tinted` и `tone`
+ * 2. Считает пару цветов поверхности через `resolveTagSurface` по `tone` и `tinted`
+ * 3. Собирает `min-block-size`, `padding-inline`, рамку с тенью через
+ *    `getBorderStyles`, `border-radius` через `resolveBlockRadius` и цвета
+ *    поверхности. `showBorder` без локального дефолта — хелпер подставляет
+ *    `DEFAULT_SHOW_BORDER`
  *
  * @param props пропсы стилизации Tag и тема
  * @returns CSS-правила, каждое с новой строки
@@ -239,25 +244,24 @@ const DEFAULT_TAG_TINTED = false;
 function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
   const {
-    borderTone,
+    borderTone = DEFAULT_TONE,
     shape = DEFAULT_TAG_SHAPE,
-    showBorder = DEFAULT_TAG_SHOW_BORDER,
+    showBorder,
     showShadow = DEFAULT_SHOW_SHADOW,
     sizePreset = DEFAULT_TAG_SIZE_PRESET,
     tinted = DEFAULT_TAG_TINTED,
-    tone = DEFAULT_TONE,
+    tone = DEFAULT_TAG_TONE,
   } = props;
   const surface = resolveTagSurface(theme, tone, tinted);
-  const styles = [
-    `min-block-size: ${getTagMinBlockSize(sizePreset)};`,
-    `padding-inline: ${getSpacingValue(tagPaddingInline[sizePreset])};`,
-    getBorderStyles(theme, showBorder, showShadow, borderTone),
-    `border-radius: ${resolveBlockRadius(shape, getTagMinBlockSize(sizePreset))};`,
-    `background-color: ${surface.backgroundColor};`,
-    `color: ${surface.textColor};`,
-  ];
 
-  return styles.join('\n');
+  return `
+    min-block-size: ${getTagMinBlockSize(sizePreset)};
+    padding-inline: ${getSpacingValue(tagPaddingInline[sizePreset])};
+    ${getBorderStyles(theme, showBorder, showShadow, borderTone)}
+    border-radius: ${resolveBlockRadius(shape, getTagMinBlockSize(sizePreset))};
+    background-color: ${surface.backgroundColor};
+    color: ${surface.textColor};
+  `;
 }
 
 /**
@@ -272,7 +276,7 @@ function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string {
  *    обрезает внутренний Text с `ellipsis`
  *
  * Генерация стилей:
- *  - `getTagStyles` — размер, отступы, граница, форма и цвета
+ *  - `getTagStyles` — размер, отступы, рамка с тенью, форма и цвета
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledTag = styled.span.withConfig({
@@ -299,11 +303,7 @@ const TAG_DOT_PROP_NAMES = new Set<string>(['dotTone']);
  * @returns CSS-правила, каждое с новой строки
  */
 function getTagDotStyles(props: { dotTone?: TonePreset; theme: AppTheme }): string {
-  const styles = [
-    `background-color: ${getTagDotColor(getTheme(props), props.dotTone)};`,
-  ];
-
-  return styles.join('\n');
+  return `background-color: ${getTagDotColor(getTheme(props), props.dotTone)};`;
 }
 
 /**

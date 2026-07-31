@@ -13,8 +13,9 @@
  *  - курсив текста через проп `textItalic`
  *  - точку-индикатор через проп `showDot`
  *  - тон точки через проп `dotTone`
- *  - границу через проп `showBorder`
- *  - тон границы через проп `borderTone`
+ *  - рамку через проп `showBorder`
+ *  - тень через проп `showShadow`
+ *  - тон рамки через проп `borderTone`
  *  - режим мягкой заливки через проп `tinted`
  *
  * Основные задачи:
@@ -63,7 +64,13 @@ type TagProps = {
   Omit<ComponentPropsWithRef<'span'>, 'className' | 'style' | keyof TagStyleProps>;
 
 /**
- * Tag — отображает метку с заливкой, границей и точкой-индикатором.
+ * DEFAULT_TAG_SHOW_DOT — задаёт показ точки-индикатора по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showDot`.
+ */
+const DEFAULT_TAG_SHOW_DOT = true;
+
+/**
+ * Tag — отображает метку с заливкой, рамкой и точкой-индикатором.
  *
  * @example
  * <Tag>Метка</Tag>
@@ -73,7 +80,7 @@ type TagProps = {
 export function Tag({
   children,
   dotTone,
-  showDot,
+  showDot = DEFAULT_TAG_SHOW_DOT,
   sizePreset,
   textItalic,
   textSize,
