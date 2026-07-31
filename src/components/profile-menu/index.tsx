@@ -200,12 +200,12 @@ export function ProfileMenu(props: ProfileMenuProps) {
                   icon: <AddCircleIcon />,
                   iconPosition: 'start',
                   iconFill: 'primary',
-                  text: 'Profile',
+                  label: 'Profile',
                   onClick: handleClose,
                 }}
                 right={{
                   icon: <SignOutIcon />,
-                  text: 'Sign out',
+                  label: 'Sign out',
                   onClick: handleClose,
                 }}
                 shape="pill"

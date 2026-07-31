@@ -26,7 +26,8 @@
  * Основные задачи:
  * 1. Экспортировать компонент DateRangeInput
  * 2. Типизировать пропсы через `DateRangeInputProps`
- * 3. Выставлять `aria`-атрибуты сегментов и панели календаря
+ * 3. Выставлять `role="group"` и `aria-labelledby` при передаче `label`, а также
+ *    `aria`-атрибуты сегментов и панели календаря
  * 4. Реэкспортировать `todayUtc` из вложенного `calendar-panel`
  *
  * Потребители:
@@ -305,7 +306,7 @@ export function DateRangeInput({
     icon: calendarIcon,
     iconPosition: 'start' as const,
     ref: startTriggerRef,
-    text: formatSegmentText(startDay),
+    label: formatSegmentText(startDay),
     textTone: startDay === '' ? ('muted' as const) : undefined,
     title: startLabel,
     onClick: handleOpenStart,
@@ -320,17 +321,20 @@ export function DateRangeInput({
     icon: calendarIcon,
     iconPosition: 'start' as const,
     ref: endTriggerRef,
-    text: formatSegmentText(endDay),
+    label: formatSegmentText(endDay),
     textTone: endDay === '' ? ('muted' as const) : undefined,
     title: endLabel,
     onClick: handleOpenEnd,
   };
 
+  const labelledBy = label ? labelId : undefined;
+
   return (
     <StyledDateRangeInputRoot
-      aria-labelledby={label ? labelId : undefined}
+      aria-labelledby={labelledBy}
       data-open={isOpen ? 'true' : undefined}
       ref={rootRef}
+      role={labelledBy ? 'group' : undefined}
       {...layoutProps}
       {...restProps}
     >

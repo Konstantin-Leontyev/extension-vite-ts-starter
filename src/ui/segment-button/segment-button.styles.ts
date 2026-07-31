@@ -55,42 +55,6 @@ export type SegmentButtonStyleProps = LayoutProps & {
 };
 
 /**
- * SegmentButtonSurfaceStyleProps — представляет пропсы стилизации оболочки ряда.
- */
-type SegmentButtonSurfaceStyleProps = {
-  shape?: ShapePreset;
-  sizePreset?: SizePreset;
-};
-
-/**
- * SEGMENT_BUTTON_SURFACE_PROP_NAMES — хранит имена пропсов стилизации оболочки ряда.
- */
-const SEGMENT_BUTTON_SURFACE_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
-
-/**
- * getSegmentButtonStyles — возвращает CSS-правила для оболочки `StyledSegmentButton`:
- * высоту, заливку, рамку с тенью через `getBorderStyles` и радиус по `shape`.
- *
- * @param props пропсы стилизации оболочки и тема
- * @returns CSS-правила, каждое с новой строки
- */
-function getSegmentButtonStyles(
-  props: SegmentButtonSurfaceStyleProps & { theme: AppTheme }
-): string {
-  const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
-
-  const styles = [
-    `min-block-size: ${getMinBlockSize(sizePreset)};`,
-    `background-color: ${theme.colors.surface};`,
-    getBorderStyles(theme),
-    `border-radius: ${resolveBlockRadius(shape, getMinBlockSize(sizePreset))};`,
-  ];
-
-  return styles.join('\n');
-}
-
-/**
  * StyledSegmentButtonRoot — задаёт корневой узел компонента SegmentButton.
  * Базируется на `<div>` и поддерживает layout-пропсы.
  *
@@ -114,24 +78,56 @@ export const StyledSegmentButtonRoot = styled.div.withConfig({
 `;
 
 /**
+ * SEGMENT_BUTTON_PROP_NAMES — хранит имена пропсов стилизации оболочки ряда.
+ */
+const SEGMENT_BUTTON_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
+
+/**
+ * getSegmentButtonStyles — возвращает CSS-правила для узла `StyledSegmentButton`:
+ * высоту, заливку, рамку с тенью через `getBorderStyles` и радиус по `shape`.
+ *
+ * Как работает:
+ * 1. Берёт тему и подставляет дефолты `shape` и `sizePreset`
+ * 2. Собирает `min-block-size` через `getMinBlockSize`, заливку `surface`,
+ *    рамку с тенью через `getBorderStyles` и `border-radius` через
+ *    `resolveBlockRadius` по форме и высоте
+ *
+ * @param props пропсы стилизации оболочки и тема
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getSegmentButtonStyles(
+  props: Pick<SegmentButtonStyleProps, 'shape' | 'sizePreset'> & { theme: AppTheme }
+): string {
+  const theme = getTheme(props);
+  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const minBlockSize = getMinBlockSize(sizePreset);
+
+  return `
+    min-block-size: ${minBlockSize};
+    background-color: ${theme.colors.surface};
+    ${getBorderStyles(theme)}
+    border-radius: ${resolveBlockRadius(shape, minBlockSize)};
+  `;
+}
+
+/**
  * StyledSegmentButton — задаёт оболочку ряда сегментов компонента SegmentButton.
- * Базируется на `<div>` и принимает пропсы из `SegmentButtonSurfaceStyleProps`.
+ * Базируется на `<div>` и принимает пропсы `shape` и `sizePreset`.
  *
  * Встроенные стили:
  *  - `display: grid` — оболочка над рядом сегментов
- *  - `flex-shrink: 0` — ряд не сжимается во flex-контейнере
  *  - `inline-size: 100%` — занимает ширину родителя
  *  - `min-inline-size: 0` — предотвращает переполнение
  *  - `overflow: hidden` — обрезает сегменты по скруглению оболочки
  *
  * Генерация стилей:
- *  - `getSegmentButtonStyles` — высота, заливка, рамка с тенью и радиус
+ *  - `getSegmentButtonStyles` — высота, заливка, рамка с тенью через `getBorderStyles`
+ *    и радиус
  */
 export const StyledSegmentButton = styled.div.withConfig({
-  shouldForwardProp: (prop) => !SEGMENT_BUTTON_SURFACE_PROP_NAMES.has(prop),
-})<SegmentButtonSurfaceStyleProps>`
+  shouldForwardProp: (prop) => !SEGMENT_BUTTON_PROP_NAMES.has(prop),
+})<Pick<SegmentButtonStyleProps, 'shape' | 'sizePreset'>>`
   display: grid;
-  flex-shrink: 0;
   inline-size: 100%;
   min-inline-size: 0;
   overflow: hidden;

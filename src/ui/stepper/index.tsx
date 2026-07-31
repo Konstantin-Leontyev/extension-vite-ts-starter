@@ -108,7 +108,8 @@ const STEP_REPEAT_INTERVAL_MS = 60;
  *
  * @property aria-label — текстовая метка поля
  * @property aria-labelledby — id элемента с меткой поля
- * @property label — подпись над полем; при передаче выставляет `aria-labelledby` на корень
+ * @property label — подпись над полем; при передаче выставляет `aria-labelledby`
+ *   на spinbutton через `resolvedLabelledBy`
  */
 type StepperAccessibleName =
   | { 'aria-label': string; 'aria-labelledby'?: never; label?: never }
@@ -334,10 +335,7 @@ export function Stepper({
   useEffect(() => stopHold, [stopHold]);
 
   return (
-    <StyledStepperFieldRoot
-      aria-labelledby={label ? labelId : undefined}
-      {...layoutProps}
-    >
+    <StyledStepperFieldRoot {...layoutProps}>
       <FieldLabel id={labelId}>{label}</FieldLabel>
       <StyledStepperRoot
         data-disabled={disabled ? '' : undefined}

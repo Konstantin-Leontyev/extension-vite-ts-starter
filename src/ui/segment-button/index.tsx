@@ -16,10 +16,12 @@
  * Основные задачи:
  * 1. Экспортировать компонент SegmentButton
  * 2. Типизировать пропсы через `SegmentButtonProps`
- * 3. Реэкспортировать мост размера текста `getSegmentButtonTextSize`
+ * 3. Выставлять `role="group"` и `aria-labelledby` при передаче `label`
+ * 4. Реэкспортировать мост размера текста `getSegmentButtonTextSize`
  *
  * Потребители:
  *  - компоненты приложения, например ProfileMenu — переключают режимы и действия
+ *  - `@ui/date-range-input` — берёт размер текста сегментов через `getSegmentButtonTextSize`
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
@@ -63,13 +65,13 @@ type SegmentButtonProps = {
  *
  * @example
  * <SegmentButton
- *   left={{ text: 'Day', onClick: showDay }}
- *   right={{ text: 'Week', onClick: showWeek }}
+ *   left={{ label: 'Day', onClick: showDay }}
+ *   right={{ label: 'Week', onClick: showWeek }}
  * />
  * <SegmentButton
- *   left={{ text: 'A', active: true }}
- *   center={{ text: 'B' }}
- *   right={{ text: 'C' }}
+ *   left={{ label: 'A', active: true }}
+ *   center={{ label: 'B' }}
+ *   right={{ label: 'C' }}
  *   sizePreset="normal"
  * />
  */
@@ -87,6 +89,7 @@ export function SegmentButton({
 }: SegmentButtonProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const labelId = useId();
+  const labelledBy = label ? labelId : undefined;
   const resolvedTextSize = textSize ?? getSegmentButtonTextSize(sizePreset);
 
   const partsProps = {
@@ -100,8 +103,9 @@ export function SegmentButton({
 
   return (
     <StyledSegmentButtonRoot
-      aria-labelledby={label ? labelId : undefined}
+      aria-labelledby={labelledBy}
       ref={ref}
+      role={labelledBy ? 'group' : undefined}
       {...layoutProps}
       {...restProps}
     >

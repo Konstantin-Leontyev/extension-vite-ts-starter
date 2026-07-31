@@ -33,15 +33,15 @@ import { ToneListbox } from '../tone-listbox';
  * SegmentButtonWidgetState — представляет состояние настроек компонента SegmentButton в витрине дизайн-системы.
  * Часть ключей задаёт общие пропсы ряда, остальные — параметры сегментов A, B и C.
  * Витринные ключи: `segmentCount` управляет числом сегментов в превью, `*WithIcon` и
- * `*IconKey` выбирают иконки сегментов, `*Disabled` включает недоступность сегмента.
+ * `*IconKey` выбирают иконки сегментов.
  * Используется для синхронизации значений между панелью управления и демонстрационным SegmentButton.
  *
  * @property centerDisabled — включает недоступность среднего сегмента
  * @property centerIconFill — тон глифа иконки среднего сегмента
  * @property centerIconKey — витринный ключ выбора иконки среднего сегмента
  * @property centerIconPosition — позиция иконки среднего сегмента
- * @property centerText — текст среднего сегмента
- * @property centerTextTone — тон текста среднего сегмента
+ * @property centerLabel — текст среднего сегмента
+ * @property centerLabelTone — тон текста среднего сегмента
  * @property centerTone — тон заливки среднего сегмента
  * @property centerWithIcon — витринный ключ показа иконки среднего сегмента. Выключенный — сегмент без иконки
  * @property label — подпись над рядом сегментов
@@ -49,16 +49,16 @@ import { ToneListbox } from '../tone-listbox';
  * @property leftIconFill — тон глифа иконки левого сегмента
  * @property leftIconKey — витринный ключ выбора иконки левого сегмента
  * @property leftIconPosition — позиция иконки левого сегмента
- * @property leftText — текст левого сегмента
- * @property leftTextTone — тон текста левого сегмента
+ * @property leftLabel — текст левого сегмента
+ * @property leftLabelTone — тон текста левого сегмента
  * @property leftTone — тон заливки левого сегмента
  * @property leftWithIcon — витринный ключ показа иконки левого сегмента. Выключенный — сегмент без иконки
  * @property rightDisabled — включает недоступность правого сегмента
  * @property rightIconFill — тон глифа иконки правого сегмента
  * @property rightIconKey — витринный ключ выбора иконки правого сегмента
  * @property rightIconPosition — позиция иконки правого сегмента
- * @property rightText — текст правого сегмента
- * @property rightTextTone — тон текста правого сегмента
+ * @property rightLabel — текст правого сегмента
+ * @property rightLabelTone — тон текста правого сегмента
  * @property rightTone — тон заливки правого сегмента
  * @property rightWithIcon — витринный ключ показа иконки правого сегмента. Выключенный — сегмент без иконки
  * @property segmentCount — витринный ключ числа сегментов в превью
@@ -72,8 +72,8 @@ export type SegmentButtonWidgetState = {
   centerIconFill: TonePreset;
   centerIconKey: IconKey;
   centerIconPosition: IconPosition;
-  centerText: string;
-  centerTextTone: TextTone;
+  centerLabel: string;
+  centerLabelTone: TextTone;
   centerTone: TonePreset;
   centerWithIcon: boolean;
   label: string;
@@ -81,16 +81,16 @@ export type SegmentButtonWidgetState = {
   leftIconFill: TonePreset;
   leftIconKey: IconKey;
   leftIconPosition: IconPosition;
-  leftText: string;
-  leftTextTone: TextTone;
+  leftLabel: string;
+  leftLabelTone: TextTone;
   leftTone: TonePreset;
   leftWithIcon: boolean;
   rightDisabled: boolean;
   rightIconFill: TonePreset;
   rightIconKey: IconKey;
   rightIconPosition: IconPosition;
-  rightText: string;
-  rightTextTone: TextTone;
+  rightLabel: string;
+  rightLabelTone: TextTone;
   rightTone: TonePreset;
   rightWithIcon: boolean;
   segmentCount: '2' | '3';
@@ -223,22 +223,22 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
         contents={[
           {
             label: 'Text A:',
-            value: state.leftText,
-            onChange: (value) => onChange('leftText', value),
+            value: state.leftLabel,
+            onChange: (value) => onChange('leftLabel', value),
           },
           ...(state.segmentCount === '3'
             ? [
                 {
                   label: 'Text B:',
-                  value: state.centerText,
-                  onChange: (value: string) => onChange('centerText', value),
+                  value: state.centerLabel,
+                  onChange: (value: string) => onChange('centerLabel', value),
                 },
               ]
             : []),
           {
             label: state.segmentCount === '3' ? 'Text C:' : 'Text B:',
-            value: state.rightText,
-            onChange: (value) => onChange('rightText', value),
+            value: state.rightLabel,
+            onChange: (value) => onChange('rightLabel', value),
           },
         ]}
         italic={state.textItalic}
@@ -246,22 +246,22 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
         tones={[
           {
             label: 'Text A tone:',
-            value: state.leftTextTone,
-            onChange: (tone) => onChange('leftTextTone', tone),
+            value: state.leftLabelTone,
+            onChange: (tone) => onChange('leftLabelTone', tone),
           },
           ...(state.segmentCount === '3'
             ? [
                 {
                   label: 'Text B tone:',
-                  value: state.centerTextTone,
-                  onChange: (tone: TextTone) => onChange('centerTextTone', tone),
+                  value: state.centerLabelTone,
+                  onChange: (tone: TextTone) => onChange('centerLabelTone', tone),
                 },
               ]
             : []),
           {
             label: state.segmentCount === '3' ? 'Text C tone:' : 'Text B tone:',
-            value: state.rightTextTone,
-            onChange: (tone) => onChange('rightTextTone', tone),
+            value: state.rightLabelTone,
+            onChange: (tone) => onChange('rightLabelTone', tone),
           },
         ]}
         onItalicChange={(value) => onChange('textItalic', value)}

@@ -55,11 +55,11 @@ const SEGMENT_BUTTON_PARTS_ACTIVE_TEXT_TONE: TextTone = 'primary';
  * @property icon — svg иконки сегмента
  * @property iconFill — тон глифа иконки
  * @property iconPosition — позиция иконки относительно текста
+ * @property label — текст сегмента
  * @property onClick — обработчик клика по сегменту
  * @property onDoubleClick — обработчик двойного клика по сегменту
  * @property onLongPress — обработчик долгого нажатия по сегменту
  * @property ref — ссылка на DOM-узел кнопки сегмента
- * @property text — текст сегмента
  * @property textTone — тон текста сегмента
  * @property title — подсказка нативного `title`
  * @property tone — тон заливки сегмента
@@ -73,11 +73,11 @@ type SegmentButtonPartsAction = {
   icon?: ReactNode;
   iconFill?: TonePreset;
   iconPosition?: IconPosition;
+  label: string;
   onClick?: () => void;
   onDoubleClick?: () => void;
   onLongPress?: () => void;
   ref?: RefObject<HTMLButtonElement | null>;
-  text: string;
   textTone?: TextTone;
   title?: string;
   tone?: TonePreset;
@@ -120,7 +120,7 @@ export type SegmentButtonPartsProps = {
  *    `textTone`, иначе наследование на цветном `tone`, иначе `primary` у
  *    активного сегмента
  * 4. Собирает иконку в `Icon` и текст в `Text`. Без иконки центрирует строку
- *    через `align`, чтобы лейбл оставался на всю ширину
+ *    через `align`, чтобы текст сегмента оставался на всю ширину
  *
  * @param action действие сегмента
  * @param shape форма ряда
@@ -151,11 +151,11 @@ function SegmentButtonPartsPart({
     icon,
     iconFill,
     iconPosition = DEFAULT_ICON_POSITION,
+    label,
     onClick,
     onDoubleClick,
     onLongPress,
     ref,
-    text,
     textTone,
     title,
     tone,
@@ -222,7 +222,7 @@ function SegmentButtonPartsPart({
         sizePreset={textSize}
         tone={resolvedTextTone}
       >
-        {text}
+        {label}
       </Text>
       {iconPosition === 'end' && iconNode}
     </StyledSegmentButtonPartsPart>
@@ -234,8 +234,8 @@ function SegmentButtonPartsPart({
  *
  * @example
  * <SegmentButtonParts
- *   left={{ text: 'From', onClick: openFrom }}
- *   right={{ text: 'To', onClick: openTo }}
+ *   left={{ label: 'From', onClick: openFrom }}
+ *   right={{ label: 'To', onClick: openTo }}
  *   textSize="normal"
  * />
  */

@@ -592,8 +592,8 @@ const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   centerIconFill: 'neutral',
   centerIconKey: 'settings',
   centerIconPosition: 'end',
-  centerText: 'Change',
-  centerTextTone: 'success',
+  centerLabel: 'Change',
+  centerLabelTone: 'success',
   centerTone: 'neutral',
   centerWithIcon: false,
   label: 'Label:',
@@ -601,16 +601,16 @@ const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   leftIconFill: 'neutral',
   leftIconKey: 'search',
   leftIconPosition: 'start',
-  leftText: 'Select',
-  leftTextTone: 'neutral',
+  leftLabel: 'Select',
+  leftLabelTone: 'neutral',
   leftTone: 'neutral',
   leftWithIcon: false,
   rightDisabled: false,
   rightIconFill: 'neutral',
   rightIconKey: 'close',
   rightIconPosition: 'end',
-  rightText: 'Delete',
-  rightTextTone: 'danger',
+  rightLabel: 'Delete',
+  rightLabelTone: 'danger',
   rightTone: 'neutral',
   rightWithIcon: false,
   segmentCount: '2',
@@ -1481,8 +1481,8 @@ export function ShowcasePage() {
                             ? segmentButton.centerIconFill
                             : undefined,
                           iconPosition: segmentButton.centerIconPosition,
-                          text: segmentButton.centerText,
-                          textTone: segmentButton.centerTextTone,
+                          label: segmentButton.centerLabel,
+                          textTone: segmentButton.centerLabelTone,
                           tone: segmentButton.centerTone,
                         }
                       : undefined
@@ -1497,8 +1497,8 @@ export function ShowcasePage() {
                       ? segmentButton.leftIconFill
                       : undefined,
                     iconPosition: segmentButton.leftIconPosition,
-                    text: segmentButton.leftText,
-                    textTone: segmentButton.leftTextTone,
+                    label: segmentButton.leftLabel,
+                    textTone: segmentButton.leftLabelTone,
                     tone: segmentButton.leftTone,
                   }}
                   right={{
@@ -1510,8 +1510,8 @@ export function ShowcasePage() {
                       ? segmentButton.rightIconFill
                       : undefined,
                     iconPosition: segmentButton.rightIconPosition,
-                    text: segmentButton.rightText,
-                    textTone: segmentButton.rightTextTone,
+                    label: segmentButton.rightLabel,
+                    textTone: segmentButton.rightLabelTone,
                     tone: segmentButton.rightTone,
                   }}
                   shape={segmentButton.shape}
