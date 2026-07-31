@@ -61,8 +61,10 @@ import {
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { matchTriggerRect } from '@hooks/use-anchored-portal-position';
 import { ChevronDownIcon, CloseIcon } from '@icons';
+import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Button } from '@ui/button';
+import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Input } from '@ui/input';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
@@ -183,12 +185,6 @@ const DEFAULT_RANGE_INPUT_RESERVE_ERROR_SPACE = true;
 const DEFAULT_RANGE_INPUT_TITLE_ALIGN: TextAlignPreset = 'center';
 
 /**
- * DEFAULT_CLEAR_ARIA_LABEL — задаёт `aria-label` кнопки сброса по умолчанию.
- * Используется, когда над триггером нет подписи.
- */
-const DEFAULT_CLEAR_ARIA_LABEL = 'Clear';
-
-/**
  * RangeInputButtonProps — представляет пропсы кнопки применения RangeInput.
  *
  * @property buttonInlineSize — ширина кнопки применения
@@ -298,23 +294,6 @@ function normalizeRangeValue(value: RangeValue): RangeValue {
     from: value.from.trim(),
     to: value.to.trim(),
   };
-}
-
-/**
- * clearButtonAriaLabel — возвращает `aria-label` кнопки сброса по подписи над триггером.
- * Убирает завершающее двоеточие и подставляет `DEFAULT_CLEAR_ARIA_LABEL` без подписи.
- *
- * @param label подпись над триггером
- * @returns текст для `aria-label`
- */
-function clearButtonAriaLabel(label: string | undefined): string {
-  const trimmed = label?.trim();
-
-  if (!trimmed) {
-    return DEFAULT_CLEAR_ARIA_LABEL;
-  }
-
-  return `Clear ${trimmed.replace(/:$/, '')}`;
 }
 
 /**
@@ -578,11 +557,7 @@ export function RangeInput({
       ref={rootRef}
       {...layoutProps}
     >
-      {Boolean(label) && (
-        <Text as="label" htmlFor={triggerId} sizePreset="thin" tone="muted">
-          {label}
-        </Text>
-      )}
+      <FieldLabel htmlFor={triggerId}>{label}</FieldLabel>
       <StyledRangeInputTriggerRow
         data-active={isActive}
         data-has-clear={showClear ? '' : undefined}
@@ -592,7 +567,7 @@ export function RangeInput({
       >
         {showClear && isIconStart && (
           <Icon
-            aria-label={clearButtonAriaLabel(label)}
+            aria-label={resolveClearAriaLabel(label)}
             as="button"
             data-slot="clear"
             disabled={disabled}
@@ -635,7 +610,7 @@ export function RangeInput({
 
         {showClear && !isIconStart && (
           <Icon
-            aria-label={clearButtonAriaLabel(label)}
+            aria-label={resolveClearAriaLabel(label)}
             as="button"
             data-slot="clear"
             disabled={disabled}

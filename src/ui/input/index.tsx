@@ -32,6 +32,7 @@
 
 import { useId, type CSSProperties, type ComponentPropsWithRef } from 'react';
 
+import { FieldLabel } from '@ui/field-label';
 import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
 
 import {
@@ -70,18 +71,6 @@ const INPUT_ERROR_TEXT_SIZE_PRESET: TextSizePreset = 'thin';
  * Сообщение об ошибке выделяется семантическим тоном `danger`.
  */
 const INPUT_ERROR_TONE: TextTone = 'danger';
-
-/**
- * INPUT_LABEL_SIZE_PRESET — задаёт размер подписи над полем.
- * Используется для текста в `label`.
- */
-const INPUT_LABEL_SIZE_PRESET: TextSizePreset = 'thin';
-
-/**
- * INPUT_LABEL_TEXT_TONE — задаёт тон подписи.
- * Подпись контрола — вторичный текст, поэтому `muted`.
- */
-const INPUT_LABEL_TEXT_TONE: TextTone = 'muted';
 
 /**
  * InputProps — представляет пропсы компонента Input.
@@ -132,16 +121,7 @@ export function Input({
 
   return (
     <StyledInputRoot {...layoutProps}>
-      {Boolean(label) && (
-        <Text
-          as="label"
-          htmlFor={id}
-          sizePreset={INPUT_LABEL_SIZE_PRESET}
-          tone={INPUT_LABEL_TEXT_TONE}
-        >
-          {label}
-        </Text>
-      )}
+      <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <StyledInputControl
         type="text"
         {...restProps}

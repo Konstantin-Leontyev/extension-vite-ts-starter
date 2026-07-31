@@ -49,10 +49,12 @@ import {
 
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { CheckIcon, ChevronDownIcon, CloseIcon } from '@icons';
+import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
+import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Input } from '@ui/input';
-import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
+import { Text, getTextLineHeight, type TextSizePreset } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
@@ -107,12 +109,6 @@ const DEFAULT_COMBOBOX_RESERVE_ERROR_SPACE = true;
 const DEFAULT_COMBOBOX_SEARCH_PLACEHOLDER = 'Search…';
 
 /**
- * DEFAULT_CLEAR_ARIA_LABEL — задаёт `aria-label` кнопки сброса по умолчанию.
- * Используется, когда вызывающий код не передал проп `label`.
- */
-const DEFAULT_CLEAR_ARIA_LABEL = 'Clear';
-
-/**
  * DEFAULT_COMBOBOX_SHOW_CLEAR — задаёт показ кнопки сброса выбора по умолчанию.
  * Используется, когда вызывающий код не передал проп `showClear`. Базовая логика —
  * шеврон; clear включается явно.
@@ -124,18 +120,6 @@ const DEFAULT_COMBOBOX_SHOW_CLEAR = false;
  * Используется для расчёта резерва высоты под строку ошибки.
  */
 const COMBOBOX_ERROR_TEXT_SIZE_PRESET: TextSizePreset = 'thin';
-
-/**
- * COMBOBOX_LABEL_SIZE_PRESET — задаёт размер подписи над триггером.
- * Используется для текста в `label`.
- */
-const COMBOBOX_LABEL_SIZE_PRESET: TextSizePreset = 'thin';
-
-/**
- * COMBOBOX_LABEL_TEXT_TONE — задаёт тон подписи над триггером.
- * Подпись контрола — вторичный текст, поэтому `muted`.
- */
-const COMBOBOX_LABEL_TEXT_TONE: TextTone = 'muted';
 
 /**
  * ComboboxOption — представляет опцию списка Combobox.
@@ -270,23 +254,6 @@ function applyComboboxPanelPosition(
   panel.style.width = `${triggerRect.width}px`;
   panel.style.maxHeight = `${Math.max(rowHeight, maxBlockSize)}px`;
   panel.style.top = `${top}px`;
-}
-
-/**
- * clearButtonAriaLabel — возвращает `aria-label` кнопки сброса по подписи над триггером.
- * Убирает завершающее двоеточие и подставляет `DEFAULT_CLEAR_ARIA_LABEL` без подписи.
- *
- * @param label подпись над триггером
- * @returns текст для `aria-label`
- */
-function clearButtonAriaLabel(label: string | undefined): string {
-  const trimmed = label?.trim();
-
-  if (!trimmed) {
-    return DEFAULT_CLEAR_ARIA_LABEL;
-  }
-
-  return `Clear ${trimmed.replace(/:$/, '')}`;
 }
 
 /**
@@ -523,16 +490,7 @@ export function Combobox({
       {...layoutProps}
       {...restProps}
     >
-      {Boolean(label) && (
-        <Text
-          as="label"
-          htmlFor={triggerId}
-          sizePreset={COMBOBOX_LABEL_SIZE_PRESET}
-          tone={COMBOBOX_LABEL_TEXT_TONE}
-        >
-          {label}
-        </Text>
-      )}
+      <FieldLabel htmlFor={triggerId}>{label}</FieldLabel>
       <StyledComboboxTriggerRow
         data-has-clear={isClearVisible ? '' : undefined}
         data-open={isOpen}
@@ -541,7 +499,7 @@ export function Combobox({
       >
         {isClearVisible && isIconStart && (
           <Icon
-            aria-label={clearButtonAriaLabel(label)}
+            aria-label={resolveClearAriaLabel(label)}
             as="button"
             data-slot="clear"
             disabled={disabled}
@@ -596,7 +554,7 @@ export function Combobox({
 
         {isClearVisible && !isIconStart && (
           <Icon
-            aria-label={clearButtonAriaLabel(label)}
+            aria-label={resolveClearAriaLabel(label)}
             as="button"
             data-slot="clear"
             disabled={disabled}

@@ -19,7 +19,7 @@
  * Основные задачи:
  * 1. Экспортировать компонент CalendarPanel
  * 2. Типизировать пропсы через `CalendarPanelProps`
- * 3. Предоставить `clearButtonAriaLabel` и `focusCalendarPanelInitial`
+ * 3. Предоставить `focusCalendarPanelInitial`
  * 4. Реэкспортировать утилиты дат и тип `MonthView` из
  *    `src/ui/date-range-input/calendar-panel/day.ts`
  * 5. Выставлять `aria`-атрибуты навигации и кнопок дней
@@ -65,13 +65,6 @@ import {
   isIsoDayInBounds,
   type MonthView,
 } from './day';
-
-/**
- * DEFAULT_CLEAR_DATE_ARIA_LABEL — задаёт запасной текст `aria-label` кнопки сброса
- * по умолчанию.
- * Используется, когда вызывающий код не передал `fallback`.
- */
-const DEFAULT_CLEAR_DATE_ARIA_LABEL = 'Clear date';
 
 /**
  * CalendarPanelProps — представляет пропсы компонента CalendarPanel.
@@ -316,27 +309,6 @@ export function CalendarPanel({
 }
 
 /* eslint-disable react-refresh/only-export-components -- публичные утилиты calendar-panel */
-
-/**
- * clearButtonAriaLabel — возвращает `aria-label` кнопки сброса по доступному имени.
- * Убирает завершающее двоеточие и подставляет `fallback` без имени.
- *
- * @param ariaLabel доступное имя поля или текст `title` сегмента
- * @param fallback запасной текст без имени
- * @returns текст для `aria-label`
- */
-export function clearButtonAriaLabel(
-  ariaLabel: string | undefined,
-  fallback = DEFAULT_CLEAR_DATE_ARIA_LABEL
-): string {
-  const trimmed = ariaLabel?.trim();
-
-  if (!trimmed) {
-    return fallback;
-  }
-
-  return `Clear ${trimmed.replace(/:$/, '')}`;
-}
 
 /**
  * focusCalendarPanelInitial — переводит фокус на выбранный или первый доступный день.

@@ -64,10 +64,10 @@ type TextProps<T extends ElementType = 'span'> = {
  * Text — отображает текст с типографикой и тоном из темы.
  *
  * @example
- * // Прямое использование: подписи, заголовки, muted-лейблы
+ * // Прямое использование: текст, заголовки
  * <Text>Обычный текст</Text>
  * <Text as="h1" sizePreset="bold" tone="primary">Заголовок</Text>
- * <Text as="label" sizePreset="thin" tone="muted">Подпись поля</Text>
+ * // Подпись поля — компонент FieldLabel из `@ui/field-label`, не Text напрямую
  * // Внутри контрола — через пропсы родителя, не tone на Text из вызывающего кода:
  * <Button textTone="primary" sizePreset="large">Сохранить</Button>
  */

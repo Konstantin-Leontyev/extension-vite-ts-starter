@@ -1,7 +1,7 @@
 /**
  * Файл: `src/pages/showcase/stepper-settings/index.tsx`
  * Определяет панель настроек компонента Stepper в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, границ, шага, суффикса,
+ * Содержит контролы для изменения размера, формы, минимума, максимума, шага, суффикса,
  * значения, его текстовых настроек и недоступного состояния в реальном времени.
  *
  * Основные задачи:
@@ -15,6 +15,7 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
+import { FieldLabel } from '@ui/field-label';
 import { Input } from '@ui/input';
 import {
   SHAPE_PRESET_KEYS,
@@ -23,12 +24,7 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import { Stepper, getStepperTextSize } from '@ui/stepper';
-import {
-  Text,
-  type TextAlignPreset,
-  type TextSizePreset,
-  type TextTone,
-} from '@ui/text';
+import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
 
 import { ShapeListbox } from '../shape-listbox';
 import { StyledSettingsField, StyledSettingsForm } from '../showcase.styles';
@@ -153,15 +149,9 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
       />
 
       <StyledSettingsField>
-        <Text
-          as="label"
-          htmlFor={STEP_FIELD_ID}
-          id={STEP_LABEL_ID}
-          sizePreset="thin"
-          tone="muted"
-        >
+        <FieldLabel htmlFor={STEP_FIELD_ID} id={STEP_LABEL_ID}>
           Step:
-        </Text>
+        </FieldLabel>
         <Stepper
           aria-labelledby={STEP_LABEL_ID}
           id={STEP_FIELD_ID}

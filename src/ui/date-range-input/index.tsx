@@ -37,6 +37,7 @@ import { useId, useRef, useState, type ComponentPropsWithRef } from 'react';
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { placeCalendarPanel } from '@hooks/use-anchored-portal-position';
 import { CalendarIcon, CloseIcon } from '@icons';
+import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Icon } from '@ui/icon';
 import { type ShapePreset } from '@ui/presets';
@@ -46,7 +47,6 @@ import { SegmentButtonParts } from '@ui/segment-button-parts';
 import {
   CalendarPanel,
   DATE_PLACEHOLDER,
-  clearButtonAriaLabel,
   focusCalendarPanelInitial,
   formatIsoDayCompact,
   isIsoDayAfter,
@@ -81,8 +81,7 @@ const DEFAULT_DATE_RANGE_INPUT_DISABLED = false;
 const DEFAULT_DATE_RANGE_INPUT_END_DAY = '';
 
 /**
- * DEFAULT_DATE_RANGE_INPUT_END_LABEL — задаёт текст `title` конечного сегмента
- * по умолчанию.
+ * DEFAULT_DATE_RANGE_INPUT_END_LABEL — задаёт текст `title` конечного сегмента по умолчанию.
  * Используется, когда вызывающий код не передал проп `endLabel`.
  */
 const DEFAULT_DATE_RANGE_INPUT_END_LABEL = 'End date';
@@ -94,8 +93,7 @@ const DEFAULT_DATE_RANGE_INPUT_END_LABEL = 'End date';
 const DEFAULT_DATE_RANGE_INPUT_START_DAY = '';
 
 /**
- * DEFAULT_DATE_RANGE_INPUT_START_LABEL — задаёт текст `title` начального сегмента
- * по умолчанию.
+ * DEFAULT_DATE_RANGE_INPUT_START_LABEL — задаёт текст `title` начального сегмента по умолчанию.
  * Используется, когда вызывающий код не передал проп `startLabel`.
  */
 const DEFAULT_DATE_RANGE_INPUT_START_LABEL = 'Start date';
@@ -153,7 +151,12 @@ function formatSegmentText(isoDay: string): string {
 
 /**
  * clearDateRangeButtonAriaLabel — возвращает `aria-label` кнопки сброса диапазона.
- * Склеивает тексты `startLabel` и `endLabel` через `/` или берёт один непустой.
+ *
+ * Как работает:
+ * 1. Обрезает краевые пробелы у `startLabel` и `endLabel`
+ * 2. Склеивает оба непустых текста через `/` или берёт один непустой
+ * 3. Собирает подпись сброса: при непустом фрагменте — `Clear` и фрагмент без
+ *    завершающего `:`, иначе запасной текст `Clear date range`
  *
  * @param startLabel текст `title` начального сегмента
  * @param endLabel текст `title` конечного сегмента
@@ -164,10 +167,10 @@ function clearDateRangeButtonAriaLabel(startLabel: string, endLabel: string): st
   const end = endLabel.trim();
 
   if (start !== '' && end !== '') {
-    return clearButtonAriaLabel(`${start} / ${end}`, 'Clear date range');
+    return resolveClearAriaLabel(`${start} / ${end}`, 'Clear date range');
   }
 
-  return clearButtonAriaLabel(start || end, 'Clear date range');
+  return resolveClearAriaLabel(start || end, 'Clear date range');
 }
 
 /**
