@@ -182,7 +182,6 @@ export function IconGroup({
             <Combobox
               label={formatIconGroupLabel('Icon:', name)}
               options={iconOptions}
-              reserveErrorSpace={false}
               value={iconValue}
               onChange={onIconChange}
             />
@@ -209,7 +208,6 @@ export function IconGroup({
             <Listbox
               label={formatIconGroupLabel('Icon position:', name)}
               options={getIconPositionListboxOptions()}
-              reserveErrorSpace={false}
               value={position}
               onChange={(value) => onPositionChange(value as IconPosition)}
             />

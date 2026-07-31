@@ -317,7 +317,7 @@ const DEFAULT_INPUT_STATE: InputWidgetState = {
   invalid: false,
   label: 'Label:',
   placeholder: 'e.g. value',
-  reserveErrorSpace: true,
+  reserveErrorSpace: false,
   shape: 'rounded',
   showBorder: true,
   showShadow: true,
@@ -379,7 +379,7 @@ const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
   label: 'Label:',
   multiple: false,
   placeholder: 'Select…',
-  reserveErrorSpace: true,
+  reserveErrorSpace: false,
   shape: 'rounded',
   showClear: false,
   sizePreset: 'normal',
@@ -398,7 +398,7 @@ const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
   iconTone: 'neutral',
   label: 'Label:',
   placeholder: 'Select…',
-  reserveErrorSpace: true,
+  reserveErrorSpace: false,
   searchPlaceholder: 'Search…',
   shape: 'rounded',
   showClear: false,
@@ -426,7 +426,7 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   inputSizePreset: 'normal',
   label: 'Label:',
   placeholder: 'Range: any',
-  reserveErrorSpace: true,
+  reserveErrorSpace: false,
   shape: 'rounded',
   sizePreset: 'normal',
   title: 'Custom range:',
@@ -572,10 +572,7 @@ const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_TOAST_STATE: ToastWidgetState = {
-  borderTone: 'neutral',
   message: 'Very important message',
-  showBorder: true,
-  showShadow: true,
   sizePreset: 'normal',
   textItalic: false,
   textSize: getToastTextSize('normal'),
@@ -1702,9 +1699,6 @@ export function ShowcasePage() {
                 <>
                   <Toast
                     alignSelf="center"
-                    borderTone={toast.borderTone}
-                    showBorder={toast.showBorder}
-                    showShadow={toast.showShadow}
                     sizePreset={toast.sizePreset}
                     textItalic={toast.textItalic}
                     textSize={toast.textSize}
@@ -1718,10 +1712,7 @@ export function ShowcasePage() {
                     tone="primary"
                     onClick={() =>
                       showToast({
-                        borderTone: toast.borderTone,
                         message: toast.message,
-                        showBorder: toast.showBorder,
-                        showShadow: toast.showShadow,
                         sizePreset: toast.sizePreset,
                         textItalic: toast.textItalic,
                         textSize: toast.textSize,

@@ -77,7 +77,6 @@ export function AlignListbox<Align extends string = TextAlignPreset>({
     <Listbox
       label={label}
       options={getAlignListboxOptions(aligns)}
-      reserveErrorSpace={false}
       value={value}
       onChange={(nextAlign) => onChange(nextAlign as Align)}
     />

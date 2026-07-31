@@ -30,15 +30,15 @@ import { TextGroup } from '../text-group';
  * Ключи совпадают с именами пропов компонента Input.
  * Используется для синхронизации значений между панелью управления и демонстрационным Input.
  *
+ * @property borderTone — тон рамки
  * @property disabled — включает недоступное состояние поля
  * @property error — текст ошибки под полем
  * @property errorAlign — горизонтальное выравнивание строки ошибки
  * @property errorItalic — включает курсив строки ошибки
- * @property invalid — включает кольцо ошибки без текста
+ * @property invalid — включает обводку ошибки без текста, если проп `error` не передан
  * @property label — подпись над полем
  * @property placeholder — плейсхолдер значения
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки
- * @property borderTone — тон рамки
  * @property shape — форма строки-поля
  * @property showBorder — включает рамку контрола
  * @property showShadow — включает тень при включённой рамке
@@ -109,7 +109,6 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
 
       <Input
         label="Placeholder:"
-        reserveErrorSpace={false}
         value={state.placeholder}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('placeholder', event.target.value)

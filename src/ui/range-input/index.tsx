@@ -64,6 +64,7 @@ import { ChevronDownIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Button } from '@ui/button';
+import { FieldError } from '@ui/field-error';
 import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Input } from '@ui/input';
@@ -176,7 +177,7 @@ const DEFAULT_RANGE_INPUT_DISABLED = false;
  * DEFAULT_RANGE_INPUT_RESERVE_ERROR_SPACE — задаёт резерв высоты под строку ошибки по умолчанию.
  * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
  */
-const DEFAULT_RANGE_INPUT_RESERVE_ERROR_SPACE = true;
+const DEFAULT_RANGE_INPUT_RESERVE_ERROR_SPACE = false;
 
 /**
  * DEFAULT_RANGE_INPUT_TITLE_ALIGN — задаёт выравнивание заголовка панели по умолчанию.
@@ -698,7 +699,6 @@ export function RangeInput({
                 inputMode="numeric"
                 invalid={hasPanelError}
                 placeholder={fromPlaceholder}
-                reserveErrorSpace={false}
                 shape={inputShape}
                 sizePreset={inputSizePreset}
                 value={draftFrom}
@@ -713,7 +713,6 @@ export function RangeInput({
                 inputMode="numeric"
                 invalid={hasPanelError}
                 placeholder={toPlaceholder}
-                reserveErrorSpace={false}
                 shape={inputShape}
                 sizePreset={inputSizePreset}
                 value={draftTo}
@@ -724,17 +723,9 @@ export function RangeInput({
                 onKeyDown={handleFieldKeyDown}
               />
             </StyledRangeInputFields>
-            <Text
-              align="center"
-              aria-live="polite"
-              as="p"
-              id={panelErrorId}
-              minBlockSize={getTextLineHeight('thin')}
-              sizePreset="thin"
-              tone="danger"
-            >
-              {hasPanelError ? panelError : null}
-            </Text>
+            <FieldError id={panelErrorId} reserveErrorSpace>
+              {panelError}
+            </FieldError>
             <StyledRangeInputButtonRow>
               <Button
                 disabled={disabled}

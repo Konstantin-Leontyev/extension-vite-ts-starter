@@ -192,7 +192,6 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
           <Combobox
             label={`Header action ${index + 1} icon:`}
             options={COMBOBOX_OPTIONS}
-            reserveErrorSpace={false}
             value={action.iconKey}
             onChange={(value) =>
               updateHeaderAction(index, { iconKey: value as IconKey })

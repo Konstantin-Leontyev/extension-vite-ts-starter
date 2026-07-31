@@ -91,7 +91,6 @@ export function SizeListbox<Size extends string = SizePreset>({
     <Listbox
       label={label}
       options={getSizeListboxOptions(sizes)}
-      reserveErrorSpace={false}
       value={value}
       onChange={(nextSize) => onChange(nextSize as Size)}
     />

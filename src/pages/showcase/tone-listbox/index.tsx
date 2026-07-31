@@ -138,7 +138,6 @@ export function ToneListbox<Tone extends string = TonePreset>({
     <Listbox
       label={label}
       options={getToneListboxOptions(availableTones)}
-      reserveErrorSpace={false}
       value={resolveToneListboxValue(value, availableTones)}
       onChange={(nextTone) => onChange(nextTone as Tone)}
     />

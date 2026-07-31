@@ -133,7 +133,6 @@ export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
 
       <Input
         label="Placeholder:"
-        reserveErrorSpace={false}
         value={state.placeholder}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('placeholder', event.target.value)

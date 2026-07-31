@@ -74,7 +74,6 @@ export function ShapeListbox<Shape extends string = ShapePreset>({
     <Listbox
       label={label}
       options={getShapeListboxOptions(shapes)}
-      reserveErrorSpace={false}
       value={value}
       onChange={(nextShape) => onChange(nextShape as Shape)}
     />

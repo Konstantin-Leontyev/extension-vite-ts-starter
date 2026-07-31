@@ -164,7 +164,6 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
         <Listbox
           label="Checked mark:"
           options={CHECKED_MARK_OPTIONS}
-          reserveErrorSpace={false}
           value={state.checkedMark}
           onChange={(value) => onChange('checkedMark', value as CheckboxCheckedMark)}
         />
@@ -172,7 +171,6 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
         <Listbox
           label="Unchecked mark:"
           options={UNCHECKED_MARK_OPTIONS}
-          reserveErrorSpace={false}
           value={state.uncheckedMark}
           onChange={(value) => onChange('uncheckedMark', value as CheckboxUncheckedMark)}
         />

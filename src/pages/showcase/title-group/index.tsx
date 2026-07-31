@@ -101,7 +101,6 @@ export function TitleGroup({
     <>
       <Input
         label={`${labelPrefix}:`}
-        reserveErrorSpace={false}
         value={title}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onTitleChange(event.target.value)

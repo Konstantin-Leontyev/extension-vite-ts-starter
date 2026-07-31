@@ -32,8 +32,8 @@
 
 import { useId, type CSSProperties, type ComponentPropsWithRef } from 'react';
 
+import { FieldError } from '@ui/field-error';
 import { FieldLabel } from '@ui/field-label';
-import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
 
 import {
   StyledInputControl,
@@ -41,12 +41,6 @@ import {
   splitLayoutProps,
   type InputStyleProps,
 } from './input.styles';
-
-/**
- * DEFAULT_INPUT_ERROR_ALIGN — задаёт горизонтальное выравнивание строки ошибки по умолчанию.
- * Используется, когда вызывающий код не передал проп `errorAlign`.
- */
-const DEFAULT_INPUT_ERROR_ALIGN: CSSProperties['textAlign'] = 'center';
 
 /**
  * DEFAULT_INPUT_INVALID — задаёт состояние обводки ошибки по умолчанию.
@@ -58,19 +52,7 @@ const DEFAULT_INPUT_INVALID = false;
  * DEFAULT_INPUT_RESERVE_ERROR_SPACE — задаёт резерв высоты под строку ошибки по умолчанию.
  * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
  */
-const DEFAULT_INPUT_RESERVE_ERROR_SPACE = true;
-
-/**
- * INPUT_ERROR_TEXT_SIZE_PRESET — задаёт типографический пресет строки ошибки.
- * Используется для текста ошибки и расчёта резерва высоты.
- */
-const INPUT_ERROR_TEXT_SIZE_PRESET: TextSizePreset = 'thin';
-
-/**
- * INPUT_ERROR_TONE — задаёт тон строки ошибки.
- * Сообщение об ошибке выделяется семантическим тоном `danger`.
- */
-const INPUT_ERROR_TONE: TextTone = 'danger';
+const DEFAULT_INPUT_RESERVE_ERROR_SPACE = false;
 
 /**
  * InputProps — представляет пропсы компонента Input.
@@ -100,7 +82,7 @@ type InputProps = InputStyleProps & {
  */
 export function Input({
   error,
-  errorAlign = DEFAULT_INPUT_ERROR_ALIGN,
+  errorAlign,
   errorItalic,
   invalid = DEFAULT_INPUT_INVALID,
   label,
@@ -113,7 +95,6 @@ export function Input({
   const errorId = `${id}-error`;
   const hasError = Boolean(error?.trim());
   const isInvalid = hasError || invalid;
-  const showError = hasError || reserveErrorSpace;
   const describedBy =
     [hasError ? errorId : null, restProps['aria-describedby']]
       .filter(Boolean)
@@ -129,24 +110,14 @@ export function Input({
         aria-invalid={isInvalid ? true : undefined}
         id={id}
       />
-      {showError && (
-        <Text
-          align={errorAlign}
-          aria-live="polite"
-          as="p"
-          id={errorId}
-          italic={errorItalic}
-          minBlockSize={
-            reserveErrorSpace
-              ? getTextLineHeight(INPUT_ERROR_TEXT_SIZE_PRESET)
-              : undefined
-          }
-          sizePreset={INPUT_ERROR_TEXT_SIZE_PRESET}
-          tone={INPUT_ERROR_TONE}
-        >
-          {hasError && error}
-        </Text>
-      )}
+      <FieldError
+        align={errorAlign}
+        id={errorId}
+        italic={errorItalic}
+        reserveErrorSpace={reserveErrorSpace}
+      >
+        {error}
+      </FieldError>
     </StyledInputRoot>
   );
 }

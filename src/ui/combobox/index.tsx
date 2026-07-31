@@ -20,8 +20,8 @@
  *  - плейсхолдер поля поиска через проп `searchPlaceholder`
  *  - контролируемое значение через проп `value`
  *  - текстовую метку через проп `aria-label`
- *  - опциональный сброс выбора через проп `showClear`. Базовая логика — шеврон;
- *    clear появляется при выборе, только когда проп включён
+ *  - опциональный сброс выбора через проп `showClear`. Базовая логика — шеврон.
+ *    Clear появляется при выборе, только когда проп включён
  *
  * Основные задачи:
  * 1. Экспортировать компонент Combobox
@@ -100,7 +100,7 @@ const DEFAULT_COMBOBOX_PLACEHOLDER = 'Select…';
  * DEFAULT_COMBOBOX_RESERVE_ERROR_SPACE — задаёт резерв высоты под строку ошибки по умолчанию.
  * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
  */
-const DEFAULT_COMBOBOX_RESERVE_ERROR_SPACE = true;
+const DEFAULT_COMBOBOX_RESERVE_ERROR_SPACE = false;
 
 /**
  * DEFAULT_COMBOBOX_SEARCH_PLACEHOLDER — задаёт плейсхолдер поля поиска по умолчанию.
@@ -111,7 +111,7 @@ const DEFAULT_COMBOBOX_SEARCH_PLACEHOLDER = 'Search…';
 /**
  * DEFAULT_COMBOBOX_SHOW_CLEAR — задаёт показ кнопки сброса выбора по умолчанию.
  * Используется, когда вызывающий код не передал проп `showClear`. Базовая логика —
- * шеврон; clear включается явно.
+ * шеврон. Clear включается явно.
  */
 const DEFAULT_COMBOBOX_SHOW_CLEAR = false;
 
@@ -612,7 +612,6 @@ export function Combobox({
               aria-expanded
               placeholder={searchPlaceholder}
               ref={searchInputRef}
-              reserveErrorSpace={false}
               shape={shape}
               showBorder={false}
               sizePreset={sizePreset}

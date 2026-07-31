@@ -99,7 +99,6 @@ export function DateRangeInputSettings({
 
       <Input
         label="Start label:"
-        reserveErrorSpace={false}
         value={state.startLabel}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           onChange('startLabel', event.target.value);
@@ -108,7 +107,6 @@ export function DateRangeInputSettings({
 
       <Input
         label="End label:"
-        reserveErrorSpace={false}
         value={state.endLabel}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           onChange('endLabel', event.target.value);
@@ -117,7 +115,6 @@ export function DateRangeInputSettings({
 
       <Input
         label="Start day:"
-        reserveErrorSpace={false}
         value={state.startDay}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           onChange('startDay', event.target.value);
@@ -126,7 +123,6 @@ export function DateRangeInputSettings({
 
       <Input
         label="End day:"
-        reserveErrorSpace={false}
         value={state.endDay}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           onChange('endDay', event.target.value);
@@ -135,7 +131,6 @@ export function DateRangeInputSettings({
 
       <Input
         label="Min day:"
-        reserveErrorSpace={false}
         value={state.minDay}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           onChange('minDay', event.target.value);
@@ -144,7 +139,6 @@ export function DateRangeInputSettings({
 
       <Input
         label="Max day:"
-        reserveErrorSpace={false}
         value={state.maxDay}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           onChange('maxDay', event.target.value);

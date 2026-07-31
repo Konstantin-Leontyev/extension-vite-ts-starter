@@ -84,7 +84,6 @@ export function ControlGroup({
     <>
       <Input
         label="Label:"
-        reserveErrorSpace={false}
         value={label}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onLabelChange(event.target.value)

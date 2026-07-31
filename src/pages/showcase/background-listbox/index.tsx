@@ -57,7 +57,6 @@ export function BackgroundListbox({ label, onChange, value }: BackgroundListboxP
     <Listbox
       label={label}
       options={getBackgroundListboxOptions()}
-      reserveErrorSpace={false}
       value={value}
       onChange={(nextBackground) => onChange(nextBackground as CardBackground)}
     />

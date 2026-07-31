@@ -281,7 +281,6 @@ export function TextGroup({
               <Input
                 key={`${contentLabel}-${index}`}
                 label={contentLabel}
-                reserveErrorSpace={false}
                 value={content.value}
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   content.onChange(event.target.value)

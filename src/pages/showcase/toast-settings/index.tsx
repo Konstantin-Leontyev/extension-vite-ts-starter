@@ -16,7 +16,6 @@ import { type TextSizePreset, type TextTone } from '@ui/text';
 import { getToastTextSize } from '@ui/toast';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
-import { BorderGroup } from '../border-group';
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
 import { TextGroup } from '../text-group';
@@ -29,10 +28,7 @@ import { ToneListbox } from '../tone-listbox';
  * а в превью передаётся как `children`.
  * Используется для синхронизации значений между панелью управления и демонстрационным уведомлением.
  *
- * @property borderTone — тон рамки
  * @property message — текст сообщения в уведомлении
- * @property showBorder — включает рамку
- * @property showShadow — включает тень при включённой рамке
  * @property sizePreset — размер уведомления
  * @property textItalic — включает курсив текста сообщения
  * @property textSize — размер текста сообщения
@@ -40,10 +36,7 @@ import { ToneListbox } from '../tone-listbox';
  * @property tone — семантический тон уведомления
  */
 export type ToastWidgetState = {
-  borderTone: TonePreset;
   message: string;
-  showBorder: boolean;
-  showShadow: boolean;
   sizePreset: SizePreset;
   textItalic: boolean;
   textSize: TextSizePreset;
@@ -89,15 +82,6 @@ export function ToastSettings({ onChange, state }: ToastSettingsProps) {
         tones={TONE_PRESET_KEYS}
         value={state.tone}
         onChange={(tone) => onChange('tone', tone)}
-      />
-
-      <BorderGroup
-        borderTone={state.borderTone}
-        showBorder={state.showBorder}
-        showShadow={state.showShadow}
-        onBorderToneChange={(tone) => onChange('borderTone', tone)}
-        onShowBorderChange={(show) => onChange('showBorder', show)}
-        onShowShadowChange={(show) => onChange('showShadow', show)}
       />
 
       <TextGroup

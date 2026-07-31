@@ -100,7 +100,6 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
       <Listbox
         label="Selected:"
         options={SELECTED_OPTIONS}
-        reserveErrorSpace={false}
         value={state.selected}
         onChange={(value) =>
           onChange('selected', value as RadioButtonWidgetState['selected'])

@@ -158,7 +158,6 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
       <Listbox
         label="Segments:"
         options={SEGMENT_COUNT_OPTIONS}
-        reserveErrorSpace={false}
         value={state.segmentCount}
         onChange={(value) =>
           onChange('segmentCount', value as SegmentButtonWidgetState['segmentCount'])

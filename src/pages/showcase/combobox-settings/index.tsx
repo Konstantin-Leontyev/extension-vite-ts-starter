@@ -124,7 +124,6 @@ export function ComboboxSettings({ onChange, state }: ComboboxSettingsProps) {
 
       <Input
         label="Placeholder:"
-        reserveErrorSpace={false}
         value={state.placeholder}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('placeholder', event.target.value)
@@ -133,7 +132,6 @@ export function ComboboxSettings({ onChange, state }: ComboboxSettingsProps) {
 
       <Input
         label="Search placeholder:"
-        reserveErrorSpace={false}
         value={state.searchPlaceholder}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('searchPlaceholder', event.target.value)
@@ -142,7 +140,6 @@ export function ComboboxSettings({ onChange, state }: ComboboxSettingsProps) {
 
       <Input
         label="Empty message:"
-        reserveErrorSpace={false}
         value={state.emptyMessage}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('emptyMessage', event.target.value)

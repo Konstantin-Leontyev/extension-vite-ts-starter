@@ -119,7 +119,6 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
       <Input
         inputMode="numeric"
         label="Min:"
-        reserveErrorSpace={false}
         value={state.min === undefined ? '' : String(state.min)}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           const parsed = Number(event.target.value);
@@ -135,7 +134,6 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
       <Input
         inputMode="numeric"
         label="Max:"
-        reserveErrorSpace={false}
         value={state.max === undefined ? '' : String(state.max)}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           const parsed = Number(event.target.value);
@@ -164,7 +162,6 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
 
       <Input
         label="Suffix:"
-        reserveErrorSpace={false}
         value={state.suffix}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('suffix', event.target.value)

@@ -151,7 +151,6 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
 
       <Input
         label="Placeholder:"
-        reserveErrorSpace={false}
         value={state.placeholder}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('placeholder', event.target.value)
@@ -172,7 +171,6 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
 
       <Input
         label="From placeholder:"
-        reserveErrorSpace={false}
         value={state.fromPlaceholder}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('fromPlaceholder', event.target.value)
@@ -181,7 +179,6 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
 
       <Input
         label="To placeholder:"
-        reserveErrorSpace={false}
         value={state.toPlaceholder}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('toPlaceholder', event.target.value)
@@ -225,7 +222,6 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
 
       <Input
         label="Button text:"
-        reserveErrorSpace={false}
         value={state.buttonText}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('buttonText', event.target.value)
@@ -242,7 +238,6 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
 
       <Input
         label="Validation empty bounds:"
-        reserveErrorSpace={false}
         value={state.validationMessages.emptyBounds}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('validationMessages', {
@@ -254,7 +249,6 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
 
       <Input
         label="Validation invalid from:"
-        reserveErrorSpace={false}
         value={state.validationMessages.invalidFrom}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('validationMessages', {
@@ -266,7 +260,6 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
 
       <Input
         label="Validation invalid to:"
-        reserveErrorSpace={false}
         value={state.validationMessages.invalidTo}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('validationMessages', {

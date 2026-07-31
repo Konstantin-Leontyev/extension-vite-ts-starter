@@ -97,7 +97,7 @@ const DEFAULT_LISTBOX_PLACEHOLDER = 'Select…';
  * DEFAULT_LISTBOX_RESERVE_ERROR_SPACE — задаёт резерв высоты под строку ошибки по умолчанию.
  * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
  */
-const DEFAULT_LISTBOX_RESERVE_ERROR_SPACE = true;
+const DEFAULT_LISTBOX_RESERVE_ERROR_SPACE = false;
 
 /**
  * DEFAULT_LISTBOX_SHOW_CLEAR — задаёт показ кнопки сброса выбора по умолчанию.
