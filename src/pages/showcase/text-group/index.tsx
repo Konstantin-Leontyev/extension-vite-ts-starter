@@ -87,7 +87,7 @@ type TextGroupContent = {
  * @property label — подпись листбокса, например `Text A tone:`. Без значения
  *   собирается из `labelPrefix` — `Text tone:`, `Legend tone:`. При пустом префиксе — `Tone:`
  * @property onChange — обработчик изменения тона
- * @property value — текущий тон. Без значения листбокс показывает `default`
+ * @property value — текущий тон. Без значения листбокс показывает `neutral`
  */
 type TextGroupTone = {
   label?: string;

@@ -39,6 +39,22 @@ import { getTheme, type AppTheme } from '@ui/theme';
 export { splitLayoutProps } from '@ui/layout';
 
 /**
+ * InputStyleProps — представляет пропсы стилизации Input и layout-пропсы.
+ *
+ * @property shape — форма строки-поля
+ * @property sizePreset — размер контрола
+ * @property textAlign — горизонтальное выравнивание значения
+ * @property textItalic — включает курсив значения
+ */
+export type InputStyleProps = LayoutProps &
+  BorderProps & {
+    shape?: ShapePreset;
+    sizePreset?: SizePreset;
+    textAlign?: CSSProperties['textAlign'];
+    textItalic?: boolean;
+  };
+
+/**
  * StyledInputRoot — задаёт корневой узел компонента Input.
  * Базируется на `<div>` и поддерживает все пропсы из `LayoutProps`.
  *
@@ -60,22 +76,6 @@ export const StyledInputRoot = styled.div.withConfig({
   min-inline-size: 0;
   ${(props) => getLayoutStyles(props)}
 `;
-
-/**
- * InputStyleProps — представляет пропсы стилизации Input и layout-пропсы.
- *
- * @property shape — форма строки-поля
- * @property sizePreset — размер контрола
- * @property textAlign — горизонтальное выравнивание значения
- * @property textItalic — включает курсив значения
- */
-export type InputStyleProps = LayoutProps &
-  BorderProps & {
-    shape?: ShapePreset;
-    sizePreset?: SizePreset;
-    textAlign?: CSSProperties['textAlign'];
-    textItalic?: boolean;
-  };
 
 /**
  * InputControlStyleProps — представляет пропсы стилизации нативного поля ввода.
@@ -104,19 +104,18 @@ const INPUT_CONTROL_PROP_NAMES = new Set<string>([
 
 /**
  * getInputControlStyles — возвращает CSS-правила для узла `StyledInputControl`:
- * стандартный бокс однострочного контрола, рамку, фон, плейсхолдер
+ * стандартный бокс однострочного контрола, рамку с тенью, фон, плейсхолдер
  * и условное выравнивание и курсив значения.
  *
  * Как работает:
- * 1. Подставляет дефолты `shape`, `showBorder` и `sizePreset`
+ * 1. Подставляет дефолты `shape`, `showBorder`, `showShadow` и `sizePreset`
  * 2. Собирает бокс из геттеров пресетов: `min-block-size`, `padding-inline`,
  *    типографика через `getTextProperties(getTextSize(…))` — `font-size`,
  *    `font-weight` и `line-height` — и `border-radius` через `resolveBlockRadius`.
  *    `padding-block` не пишется: UA-отступ сбросил `GlobalResetStyle`, высоту
  *    держит `min-block-size`
  * 3. Сбрасывает layout-рамку через `border: none` и красит фон: при рамке —
- *    `surface`, без рамки — `transparent`. При `showBorder` кладёт кольцо
- *    `0 0 0 1px` цвета `border` и тень `shadow.surface` одним `box-shadow` через
+ *    `surface`, без рамки — `transparent`. Кладёт рамку с тенью через
  *    `getBorderStyles`. Без рамки хелпер пишет `box-shadow: none`; на
  *    `:focus-visible` снимает `outline` глобального фокуса из `@ui/reset`. Красит
  *    плейсхолдер тоном `muted`
@@ -177,7 +176,7 @@ function getInputControlStyles(
  *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
  *
  * Генерация стилей:
- *  - `getInputControlStyles` — бокс, рамка, фон, плейсхолдер, выравнивание, курсив
+ *  - `getInputControlStyles` — бокс, рамка с тенью, фон, плейсхолдер, выравнивание, курсив
  */
 export const StyledInputControl = styled.input.withConfig({
   shouldForwardProp: (prop) => !INPUT_CONTROL_PROP_NAMES.has(prop),

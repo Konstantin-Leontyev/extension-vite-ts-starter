@@ -17,8 +17,9 @@
  * Основные задачи:
  * 1. Экспортировать компонент Checkbox
  * 2. Типизировать пропсы через `CheckboxProps`
- * 3. Реэкспортировать пресеты `checkboxSizePresets`, перечни марок, типы `CheckboxCheckedMark`
- *    и `CheckboxUncheckedMark` и мост размера текста `getCheckboxTextSize`
+ * 3. Реэкспортировать пресеты `checkboxSizePresets`, перечни марок и типы
+ *    `CheckboxCheckedMark` и `CheckboxUncheckedMark`
+ * 4. Реэкспортировать мост размера текста `getCheckboxTextSize`
  *
  * Потребители:
  *  - контролы, например Listbox и Table — рендерят чекбоксы

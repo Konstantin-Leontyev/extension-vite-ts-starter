@@ -92,16 +92,14 @@ export type ListboxStyleProps = LayoutProps & ListboxSurfaceStyleProps;
  * @returns CSS-правила, каждое с новой строки
  */
 function getListboxRootStyles(): string {
-  const styles = [
-    'position: relative;',
-    'display: grid;',
-    `gap: ${getSpacingValue(8)};`,
-    'inline-size: 100%;',
-    'min-inline-size: 0;',
-    `&[data-open='true'] { z-index: ${STACKING_OPEN_CONTROL}; }`,
-  ];
-
-  return styles.join('\n');
+  return `
+    position: relative;
+    display: grid;
+    gap: ${getSpacingValue(8)};
+    inline-size: 100%;
+    min-inline-size: 0;
+    &[data-open='true'] { z-index: ${STACKING_OPEN_CONTROL}; }
+  `;
 }
 
 /**
@@ -131,13 +129,12 @@ const LISTBOX_SURFACE_PROP_NAMES = new Set<string>([
 
 /**
  * getListboxTriggerRowStyles — возвращает CSS-правила для узла
- * `StyledListboxTriggerRow`: габариты, рамку, заливку, тень и кольцо фокуса.
+ * `StyledListboxTriggerRow`: габариты, заливку, рамку с тенью и `outline` фокуса.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты пропсов
- * 2. Собирает габариты ряда и заливку `surface`, затем кольцо `0 0 0 1px`
- *    цвета `border` и тень `shadow.surface` одним `box-shadow` через
- *    `getBorderStyles` без второго аргумента — постоянное кольцо
+ * 2. Собирает габариты ряда и заливку `surface`, затем рамку с тенью через
+ *    `getBorderStyles` без второго аргумента — постоянная рамка
  * 3. Без clear оставляет одну колонку. При `data-has-clear` — две колонки.
  *    Позиция сброса читается из DOM по `[data-slot='clear']:first-child`, не из пропа
  * 4. Акцент фокуса даёт `outline` на ряде при `:focus-within`, потому что
@@ -155,24 +152,24 @@ function getListboxTriggerRowStyles(
   const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
   const size = getMinBlockSize(sizePreset);
 
-  const styles = [
-    'display: grid;',
-    'grid-template-columns: minmax(0, 1fr);',
-    `&[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }`,
-    `&[data-has-clear]:has(> [data-slot='clear']:first-child) { grid-template-columns: auto minmax(0, 1fr); }`,
-    'inline-size: 100%;',
-    `min-block-size: ${size};`,
-    'overflow: hidden;',
-    `background-color: ${theme.colors.surface};`,
-    `border-radius: ${resolveBlockRadius(shape, size)};`,
-    getBorderStyles(theme),
-    `&[data-open='true'] { visibility: hidden; }`,
-    '&:focus-within {',
-    getOutlineStyles(theme.colors.focusOutline),
-    '}',
-  ];
-
-  return styles.join('\n');
+  return `
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    &[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }
+    &[data-has-clear]:has(> [data-slot='clear']:first-child) {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+    inline-size: 100%;
+    min-block-size: ${size};
+    overflow: hidden;
+    background-color: ${theme.colors.surface};
+    border-radius: ${resolveBlockRadius(shape, size)};
+    ${getBorderStyles(theme)}
+    &[data-open='true'] { visibility: hidden; }
+    &:focus-within {
+      ${getOutlineStyles(theme.colors.focusOutline)}
+    }
+  `;
 }
 
 /**
@@ -180,10 +177,7 @@ function getListboxTriggerRowStyles(
  * Базируется на `<div>` и принимает пропсы из `ListboxSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getListboxTriggerRowStyles` — габариты, рамка, заливка, тень и кольцо фокуса
- *
- * При открытой панели ряд скрывается через `visibility: hidden`, чтобы панель
- * наследовала ширину якоря без двойного отображения триггера.
+ *  - `getListboxTriggerRowStyles` — габариты, заливка, рамка с тенью и `outline` фокуса
  */
 export const StyledListboxTriggerRow = styled.div.withConfig({
   shouldForwardProp: (prop) => !LISTBOX_SURFACE_PROP_NAMES.has(prop),
@@ -216,26 +210,24 @@ function getListboxTriggerStyles(
   const { iconTone = DEFAULT_TONE, sizePreset = DEFAULT_SIZE_PRESET } = props;
   const stateBackground = resolveIconStateBackground(theme, iconTone);
 
-  const styles = [
-    'display: grid;',
-    getIconPositionStyles(),
-    'align-items: center;',
-    'min-inline-size: 0;',
-    'text-align: start;',
-    `[data-slot='label'] {`,
-    'min-inline-size: 0;',
-    `padding-inline: ${getPaddingInline(sizePreset)};`,
-    `}`,
-    `&:not(:disabled):hover {`,
-    `--icon-state-background: ${stateBackground};`,
-    `}`,
-    `&:focus-visible {`,
-    'outline: none;',
-    `--icon-state-background: ${stateBackground};`,
-    `}`,
-  ];
-
-  return styles.join('\n');
+  return `
+    display: grid;
+    ${getIconPositionStyles()}
+    align-items: center;
+    min-inline-size: 0;
+    text-align: start;
+    [data-slot='label'] {
+      min-inline-size: 0;
+      padding-inline: ${getPaddingInline(sizePreset)};
+    }
+    &:not(:disabled):hover {
+      --icon-state-background: ${stateBackground};
+    }
+    &:focus-visible {
+      outline: none;
+      --icon-state-background: ${stateBackground};
+    }
+  `;
 }
 
 /**
@@ -270,9 +262,9 @@ const LISTBOX_PANEL_MAX_OPTION_ROWS = 6;
  * Как работает:
  * 1. Берёт тему, подставляет дефолты `shape` и `sizePreset`
  * 2. Подставляет хром панели через `getPortalPanelStyles`: fixed-позицию, слой
- *    `STACKING_PORTAL`, заливку `surface`, рамку `border` 1px и тень
- *    `shadow.surface` через `getBorderStyles`, радиус через
- *    `resolveListboxBlockRadius` и постоянное фокус-кольцо через `getOutlineStyles`
+ *    `STACKING_PORTAL`, заливку `surface`, рамку с тенью через `getBorderStyles`,
+ *    радиус через `resolveListboxBlockRadius` и постоянный `outline` через
+ *    `getOutlineStyles`
  * 3. Ограничивает высоту через `LISTBOX_PANEL_MAX_OPTION_ROWS` и включает
  *    прокрутку `overflow: hidden auto`
  *
@@ -285,16 +277,14 @@ function getListboxPanelStyles(
   const theme = getTheme(props);
   const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
 
-  const styles = [
-    getPortalPanelStyles({
+  return `
+    ${getPortalPanelStyles({
       theme,
       borderRadius: resolveListboxBlockRadius(shape, sizePreset),
-    }),
-    `max-block-size: calc(${getMinBlockSize(sizePreset)} * ${LISTBOX_PANEL_MAX_OPTION_ROWS});`,
-    'overflow: hidden auto;',
-  ];
-
-  return styles.join('\n');
+    })}
+    max-block-size: calc(${getMinBlockSize(sizePreset)} * ${LISTBOX_PANEL_MAX_OPTION_ROWS});
+    overflow: hidden auto;
+  `;
 }
 
 /**
@@ -330,32 +320,30 @@ function getListboxOptionSurfaceBaseStyles(
   const theme = getTheme(props);
   const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
 
-  const styles = [
-    'position: relative;',
-    'z-index: 0;',
-    'display: grid;',
-    `gap: ${getSpacingValue(12)};`,
-    'align-items: center;',
-    'inline-size: 100%;',
-    `min-block-size: ${getMinBlockSize(sizePreset)};`,
-    'text-align: start;',
-    `background-color: ${theme.colors.surface};`,
-    `[data-slot='label'] {`,
-    'min-inline-size: 0;',
-    'z-index: 1;',
-    '}',
-    '&::before {',
-    'position: absolute;',
-    `inset: ${getSpacingValue(4)};`,
-    'z-index: -1;',
-    'pointer-events: none;',
-    "content: '';",
-    `border-radius: calc(${resolveListboxBlockRadius(shape, sizePreset)} - ${getSpacingValue(4)});`,
-    getTransitionStyles('background-color', MOTION_CONTROL_DURATION),
-    '}',
-  ];
-
-  return styles.join('\n');
+  return `
+    position: relative;
+    z-index: 0;
+    display: grid;
+    gap: ${getSpacingValue(12)};
+    align-items: center;
+    inline-size: 100%;
+    min-block-size: ${getMinBlockSize(sizePreset)};
+    text-align: start;
+    background-color: ${theme.colors.surface};
+    [data-slot='label'] {
+      min-inline-size: 0;
+      z-index: 1;
+    }
+    &::before {
+      position: absolute;
+      inset: ${getSpacingValue(4)};
+      z-index: -1;
+      pointer-events: none;
+      content: '';
+      border-radius: calc(${resolveListboxBlockRadius(shape, sizePreset)} - ${getSpacingValue(4)});
+      ${getTransitionStyles('background-color', MOTION_CONTROL_DURATION)}
+    }
+  `;
 }
 
 /**
@@ -378,26 +366,24 @@ function getListboxOptionButtonStyles(
   const theme = getTheme(props);
   const { sizePreset = DEFAULT_SIZE_PRESET } = props;
 
-  const styles = [
-    getListboxOptionSurfaceBaseStyles(props),
-    'grid-template-columns: minmax(0, 1fr) auto;',
-    `padding-inline: ${getPaddingInline(sizePreset)};`,
-    '&:focus { outline: none; }',
-    '&:hover:not(:disabled)::before,',
-    '&:focus-visible::before {',
-    `background-color: ${theme.colors.primary};`,
-    '}',
-    '&:hover:not(:disabled),',
-    '&:focus-visible {',
-    `color: ${theme.colors.inverse};`,
-    '}',
-    `&:hover:not(:disabled) [data-slot='check'],`,
-    `&:focus-visible [data-slot='check'] {`,
-    `color: ${theme.colors.inverse};`,
-    '}',
-  ];
-
-  return styles.join('\n');
+  return `
+    ${getListboxOptionSurfaceBaseStyles(props)}
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-inline: ${getPaddingInline(sizePreset)};
+    &:focus { outline: none; }
+    &:hover:not(:disabled)::before,
+    &:focus-visible::before {
+      background-color: ${theme.colors.primary};
+    }
+    &:hover:not(:disabled),
+    &:focus-visible {
+      color: ${theme.colors.inverse};
+    }
+    &:hover:not(:disabled) [data-slot='check'],
+    &:focus-visible [data-slot='check'] {
+      color: ${theme.colors.inverse};
+    }
+  `;
 }
 
 /**
@@ -431,22 +417,20 @@ function getListboxOptionRowStyles(
   const theme = getTheme(props);
   const { sizePreset = DEFAULT_SIZE_PRESET } = props;
 
-  const styles = [
-    getListboxOptionSurfaceBaseStyles(props),
-    'grid-template-columns: auto minmax(0, 1fr);',
-    'cursor: pointer;',
-    `padding-inline: ${getPaddingInline(sizePreset)};`,
-    '&:not(:has(input:disabled)):hover::before,',
-    '&:focus-within::before {',
-    `background-color: ${theme.colors.primary};`,
-    '}',
-    '&:not(:has(input:disabled)):hover,',
-    '&:focus-within {',
-    `color: ${theme.colors.inverse};`,
-    '}',
-  ];
-
-  return styles.join('\n');
+  return `
+    ${getListboxOptionSurfaceBaseStyles(props)}
+    grid-template-columns: auto minmax(0, 1fr);
+    cursor: pointer;
+    padding-inline: ${getPaddingInline(sizePreset)};
+    &:not(:has(input:disabled)):hover::before,
+    &:focus-within::before {
+      background-color: ${theme.colors.primary};
+    }
+    &:not(:has(input:disabled)):hover,
+    &:focus-within {
+      color: ${theme.colors.inverse};
+    }
+  `;
 }
 
 /**

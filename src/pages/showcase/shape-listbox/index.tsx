@@ -12,6 +12,7 @@
  *     - `src/pages/showcase/button-settings/index.tsx`
  *     - `src/pages/showcase/control-group/index.tsx`
  *     - `src/pages/showcase/date-range-input-settings/index.tsx`
+ *     - `src/pages/showcase/icon-button-settings/index.tsx`
  *     - `src/pages/showcase/range-input-settings/index.tsx`
  *     - `src/pages/showcase/segment-button-settings/index.tsx`
  *     - `src/pages/showcase/stepper-settings/index.tsx`

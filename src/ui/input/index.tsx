@@ -7,13 +7,15 @@
  *  - размерный ряд через проп `sizePreset`
  *  - форму строки-поля через проп `shape`
  *  - рамку контрола через проп `showBorder`
+ *  - тень через проп `showShadow`
+ *  - тон рамки через проп `borderTone`
  *  - горизонтальное выравнивание значения через проп `textAlign`
  *  - курсив значения через проп `textItalic`
  *  - подпись над полем через проп `label`
  *  - встроенную строку ошибки через проп `error`
  *  - выравнивание строки ошибки через проп `errorAlign`
  *  - курсив строки ошибки через проп `errorItalic`
- *  - кольцо ошибки без текста через проп `invalid`
+ *  - обводку ошибки без текста через проп `invalid`
  *  - резерв высоты под строку ошибки через проп `reserveErrorSpace`
  *
  * Основные задачи:
@@ -46,7 +48,7 @@ import {
 const DEFAULT_INPUT_ERROR_ALIGN: CSSProperties['textAlign'] = 'center';
 
 /**
- * DEFAULT_INPUT_INVALID — задаёт состояние кольца ошибки по умолчанию.
+ * DEFAULT_INPUT_INVALID — задаёт состояние обводки ошибки по умолчанию.
  * Используется, когда вызывающий код не передал проп `invalid`.
  */
 const DEFAULT_INPUT_INVALID = false;
@@ -87,7 +89,7 @@ const INPUT_LABEL_TEXT_TONE: TextTone = 'muted';
  * @property error — текст ошибки под полем
  * @property errorAlign — горизонтальное выравнивание строки ошибки
  * @property errorItalic — включает курсив строки ошибки
- * @property invalid — включает кольцо ошибки без текста, если проп `error` не передан
+ * @property invalid — включает обводку ошибки без текста, если проп `error` не передан
  * @property label — подпись над полем
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки, чтобы появление текста не сдвигало соседей
  */
@@ -114,11 +116,6 @@ export function Input({
   invalid = DEFAULT_INPUT_INVALID,
   label,
   reserveErrorSpace = DEFAULT_INPUT_RESERVE_ERROR_SPACE,
-  shape,
-  showBorder,
-  sizePreset,
-  textAlign,
-  textItalic,
   ...rest
 }: InputProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
@@ -149,13 +146,8 @@ export function Input({
         type="text"
         {...restProps}
         aria-describedby={describedBy}
-        aria-invalid={isInvalid || undefined}
+        aria-invalid={isInvalid ? true : undefined}
         id={id}
-        shape={shape}
-        showBorder={showBorder}
-        sizePreset={sizePreset}
-        textAlign={textAlign}
-        textItalic={textItalic}
       />
       {showError && (
         <Text

@@ -20,8 +20,8 @@
  *  - плейсхолдер неактивного триггера через проп `placeholder`
  *  - резерв высоты под строку ошибки через проп `reserveErrorSpace`
  *  - контролируемое значение через проп `value`
- *  - опциональный сброс выбора через проп `showClear`. Базовая логика — шеврон;
- *    clear появляется при выборе, только когда проп включён
+ *  - опциональный сброс выбора через проп `showClear`. Базовая логика — шеврон.
+ *    Clear появляется при выборе, только когда проп включён
  *
  * Основные задачи:
  * 1. Экспортировать компонент Listbox
@@ -106,7 +106,7 @@ const DEFAULT_CLEAR_ARIA_LABEL = 'Clear';
 /**
  * DEFAULT_LISTBOX_SHOW_CLEAR — задаёт показ кнопки сброса выбора по умолчанию.
  * Используется, когда вызывающий код не передал проп `showClear`. Базовая логика —
- * шеврон; clear включается явно.
+ * шеврон. Clear включается явно.
  */
 const DEFAULT_LISTBOX_SHOW_CLEAR = false;
 
@@ -528,7 +528,7 @@ export function Listbox({
   const optionsKey = options.map((option) => option.value).join('\0');
   const isClearVisible = showClear && selected.length > 0 && !disabled;
   const showChevron = !isClearVisible;
-  const iconNode = showChevron ? (
+  const iconNode = showChevron && (
     <Icon
       data-slot="icon"
       iconFill={iconFill}
@@ -540,7 +540,23 @@ export function Listbox({
     >
       <ChevronDownIcon />
     </Icon>
-  ) : null;
+  );
+  const clearNode = isClearVisible && (
+    <Icon
+      aria-label={clearButtonAriaLabel(label)}
+      as="button"
+      data-slot="clear"
+      disabled={disabled}
+      iconFill={iconFill}
+      iconTone={iconTone}
+      showBorder
+      showShadow={false}
+      sizePreset={sizePreset}
+      onClick={handleClear}
+    >
+      <CloseIcon />
+    </Icon>
+  );
 
   /**
    * Пересчитывает порядок строк панели при открытии и смене выбора или опций.
@@ -694,9 +710,7 @@ export function Listbox({
               data-slot="check"
               iconFill="primary"
               position="relative"
-              showBorder={false}
               showHover={false}
-              showShadow={false}
               sizePreset={sizePreset}
               zIndex={1}
             >
@@ -741,23 +755,7 @@ export function Listbox({
         ref={triggerRowRef}
         {...surfaceProps}
       >
-        {isClearVisible && isIconStart && (
-          <Icon
-            aria-label={clearButtonAriaLabel(label)}
-            as="button"
-            data-slot="clear"
-            disabled={disabled}
-            iconFill={iconFill}
-            iconTone={iconTone}
-            shape="square"
-            showBorder
-            showShadow={false}
-            sizePreset={sizePreset}
-            onClick={handleClear}
-          >
-            <CloseIcon />
-          </Icon>
-        )}
+        {isIconStart && clearNode}
 
         <StyledListboxTrigger
           aria-controls={listId}
@@ -783,23 +781,7 @@ export function Listbox({
           {iconPosition === 'end' && iconNode}
         </StyledListboxTrigger>
 
-        {isClearVisible && !isIconStart && (
-          <Icon
-            aria-label={clearButtonAriaLabel(label)}
-            as="button"
-            data-slot="clear"
-            disabled={disabled}
-            iconFill={iconFill}
-            iconTone={iconTone}
-            shape="square"
-            showBorder
-            showShadow={false}
-            sizePreset={sizePreset}
-            onClick={handleClear}
-          >
-            <CloseIcon />
-          </Icon>
-        )}
+        {!isIconStart && clearNode}
       </StyledListboxTriggerRow>
 
       {reserveErrorSpace && (

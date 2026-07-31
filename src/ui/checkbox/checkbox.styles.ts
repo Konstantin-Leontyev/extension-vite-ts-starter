@@ -222,14 +222,12 @@ function minusIcon(strokeColor: string): string {
  * @returns CSS-правила, каждое с новой строки
  */
 function markBackground(mark: string, iconSize: string): string {
-  const styles = [
-    `background-image: ${mark};`,
-    'background-repeat: no-repeat;',
-    'background-position: center;',
-    `background-size: ${iconSize} ${iconSize};`,
-  ];
-
-  return styles.join('\n');
+  return `
+    background-image: ${mark};
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: ${iconSize} ${iconSize};
+  `;
 }
 
 /**
@@ -239,8 +237,13 @@ function markBackground(mark: string, iconSize: string): string {
  * Как работает:
  * 1. Берёт тему, размер и марки, подставляет дефолт `inverted`
  * 2. При `inverted` красит checked-поле в `inverse` и марки в `primary` для
- *    подсветки строки, иначе — поле в `primary` и checked-марку в `inverse`
- * 3. Собирает габариты, рамку с тенью и фоновые марки unchecked и checked
+ *    подсветки строки, иначе — поле в `primary`, checked-марку в `inverse`
+ *    и unchecked-марку в `default`
+ * 3. Собирает начальный массив: габариты, сброс layout-рамки UA через
+ *    `border: none`, рамку с тенью через `getBorderStyles` и безусловный
+ *    `&:checked` с заливкой, фоновой маркой и рамкой с тенью тона `primary`
+ * 4. При значении `plus` у `uncheckedMark` добавляет `&:not(:checked)` с
+ *    фоновой маркой
  *
  * @param props пропсы стилизации бокса и тема
  * @returns CSS-правила, каждое с новой строки
@@ -269,9 +272,15 @@ function getCheckboxControlStyles(
     `inline-size: ${size};`,
     `block-size: ${size};`,
     'appearance: none;',
+    'border: none;',
     `background-color: ${theme.colors.surface};`,
     getBorderStyles(theme),
     `border-radius: ${getSpacingValue(4)};`,
+    `&:checked {
+      background-color: ${checkedBackground};
+      ${markBackground(checkedMarkIcon, iconSize)}
+      ${getBorderStyles(theme, true, true, 'primary')}
+    }`,
   ];
 
   if (uncheckedMark === 'plus') {
@@ -281,14 +290,6 @@ function getCheckboxControlStyles(
       }`
     );
   }
-
-  styles.push(
-    `&:checked {
-      background-color: ${checkedBackground};
-      ${markBackground(checkedMarkIcon, iconSize)}
-      border-color: ${theme.colors.primary};
-    }`
-  );
 
   return styles.join('\n');
 }
