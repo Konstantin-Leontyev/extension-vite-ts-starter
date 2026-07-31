@@ -20,7 +20,7 @@ import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
+import { getToneColor, type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -89,6 +89,12 @@ export type SpinnerStyleProps = LayoutProps & {
 };
 
 /**
+ * DEFAULT_SPINNER_TONE — задаёт тон по умолчанию.
+ * Используется, когда вызывающий код не передал проп `tone`.
+ */
+const DEFAULT_SPINNER_TONE: TonePreset = 'primary';
+
+/**
  * StyledSpinnerRoot — задаёт корневой узел компонента Spinner.
  * Базируется на `<div>` и поддерживает пропсы из `LayoutProps`.
  *
@@ -147,19 +153,24 @@ const SPINNER_REDUCED_ROTATE_DURATION = '1.6s';
  * getSpinnerStyles — возвращает CSS-правила для узла `StyledSpinner`:
  * размер, рамку, цвет и анимацию.
  *
+ * Как работает:
+ * 1. Берёт тему и подставляет дефолты `sizePreset` и `tone`
+ * 2. Собирает размер, рамку, цвет верхней грани через `getToneColor` с запасным
+ *    `theme.colors.border` и анимацию вращения
+ *
  * @param props пропсы стилизации индикатора и тема
  * @returns CSS-правила через хелпер `css` — иначе интерполяция `keyframes` роняет рендер
  */
 function getSpinnerStyles(props: SpinnerIndicatorStyleProps & { theme: AppTheme }) {
   const theme = getTheme(props);
-  const { sizePreset = DEFAULT_SIZE_PRESET, tone = DEFAULT_TONE } = props;
+  const { sizePreset = DEFAULT_SIZE_PRESET, tone = DEFAULT_SPINNER_TONE } = props;
   const size = getSpinnerSize(sizePreset);
 
   return css`
     inline-size: ${size};
     block-size: ${size};
     border: ${getSpinnerBorderWidth(sizePreset)}px solid ${theme.colors.border};
-    border-block-start-color: ${getToneColor(theme, tone, theme.colors.primary)};
+    border-block-start-color: ${getToneColor(theme, tone, theme.colors.border)};
     border-radius: 50%;
     animation: ${spinnerRotate} ${SPINNER_ROTATE_DURATION} linear infinite;
 

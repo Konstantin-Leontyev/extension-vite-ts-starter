@@ -111,21 +111,20 @@ function getRadioButtonControlStyles(
   const { sizePreset = DEFAULT_SIZE_PRESET } = props;
   const size = getRadioSize(sizePreset);
 
-  const styles = [
-    'flex-shrink: 0;',
-    `inline-size: ${size};`,
-    `block-size: ${size};`,
-    'appearance: none;',
-    `background-color: ${theme.colors.surface};`,
-    getBorderStyles(theme),
-    'border-radius: 50%;',
-    `&:checked {
+  return `
+    flex-shrink: 0;
+    inline-size: ${size};
+    block-size: ${size};
+    appearance: none;
+    border: none;
+    background-color: ${theme.colors.surface};
+    ${getBorderStyles(theme)}
+    border-radius: 50%;
+    &:checked {
       background-image: radial-gradient(circle at center, ${theme.colors.primary} 48%, transparent 49%);
-      border-color: ${theme.colors.primary};
-    }`,
-  ];
-
-  return styles.join('\n');
+      ${getBorderStyles(theme, true, true, 'primary')}
+    }
+  `;
 }
 
 /**

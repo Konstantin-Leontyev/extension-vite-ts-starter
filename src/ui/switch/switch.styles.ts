@@ -28,7 +28,7 @@ import {
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
+import { getToneColor, type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -116,6 +116,12 @@ export type SwitchStyleProps = LayoutProps & {
 };
 
 /**
+ * DEFAULT_SWITCH_TONE — задаёт тон включённого состояния по умолчанию.
+ * Используется, когда вызывающий код не передал проп `tone`.
+ */
+const DEFAULT_SWITCH_TONE: TonePreset = 'primary';
+
+/**
  * StyledSwitchRoot — задаёт корневой узел компонента Switch.
  * Базируется на `<label>` и поддерживает layout-пропсы.
  *
@@ -162,13 +168,15 @@ const TRACK_BORDER = '1px';
  * Состояния читаются со скрытого соседнего input через селектор `input:checked + &`.
  *
  * Как работает:
- * 1. Считает габариты дорожки и бегунка по `sizePreset`
- * 2. Центрирует бегунок смещением от края: из расчёта вычитает `TRACK_BORDER`,
+ * 1. Берёт тему и подставляет дефолты `sizePreset` и `tone`
+ * 2. Считает габариты дорожки и бегунка по `sizePreset`
+ * 3. Центрирует бегунок смещением от края: из расчёта вычитает `TRACK_BORDER`,
  *    потому что `inset` отсчитывается от края области отступа
- * 3. Задаёт ход бегунка как ширину дорожки минус её высоту — обе позиции смещены
+ * 4. Задаёт ход бегунка как ширину дорожки минус её высоту — обе позиции смещены
  *    рамкой одинаково
- * 4. Собирает заливку, рамку, `border-radius` через `resolveBlockRadius` с формой
- *    `pill` по высоте дорожки, бегунок и checked/focus-вид по `tone`
+ * 5. Собирает заливку, рамку, `border-radius` через `resolveBlockRadius` с формой
+ *    `pill` по высоте дорожки, бегунок и checked/focus-вид. Цвет checked —
+ *    через `getToneColor` с запасным `theme.colors.border`
  *
  * @param props пропсы стилизации дорожки и тема
  * @returns CSS-правила, каждое с новой строки
@@ -177,13 +185,13 @@ function getSwitchTrackStyles(
   props: SwitchTrackStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { sizePreset = DEFAULT_SIZE_PRESET, tone = DEFAULT_TONE } = props;
+  const { sizePreset = DEFAULT_SIZE_PRESET, tone = DEFAULT_SWITCH_TONE } = props;
   const trackInlineSize = getSwitchTrackInlineSize(sizePreset);
   const trackBlockSize = getSwitchTrackBlockSize(sizePreset);
   const knobSize = getSwitchKnobSize(sizePreset);
   const knobInset = `calc((${trackBlockSize} - ${knobSize}) / 2 - ${TRACK_BORDER})`;
   const knobTravel = `calc(${trackInlineSize} - ${trackBlockSize})`;
-  const checkedBackground = getToneColor(theme, tone, theme.colors.primary);
+  const checkedBackground = getToneColor(theme, tone, theme.colors.border);
 
   return `
     position: relative;

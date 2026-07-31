@@ -21,7 +21,7 @@ import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
+import { getToneColor, type TonePreset } from '@ui/tones';
 
 /**
  * progressBarBlockSize — хранит высоту полосы прогресса для каждого размера ряда.
@@ -85,6 +85,12 @@ export type ProgressBarStyleProps = LayoutProps & {
   tone?: TonePreset;
   value: number;
 };
+
+/**
+ * DEFAULT_PROGRESS_BAR_TONE — задаёт тон заливки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `tone`.
+ */
+const DEFAULT_PROGRESS_BAR_TONE: TonePreset = 'primary';
 
 /**
  * StyledProgressBarRoot — задаёт корневой узел компонента ProgressBar.
@@ -175,6 +181,11 @@ const PROGRESS_BAR_FILL_PROP_NAMES = new Set<string>(['tone', 'value']);
  * getProgressBarFillStyles — возвращает CSS-правила для узла `StyledProgressBarFill`:
  * ширину по значению и цвет по тону.
  *
+ * Как работает:
+ * 1. Берёт тему и подставляет дефолт `tone`
+ * 2. Собирает `inline-size` по `value` и цвет через `getToneColor` с запасным
+ *    `theme.colors.border`
+ *
  * @param props пропсы стилизации заливки полосы прогресса и тема
  * @returns CSS-правила, каждое с новой строки
  */
@@ -182,11 +193,11 @@ function getProgressBarFillStyles(
   props: ProgressBarFillStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { tone = DEFAULT_TONE, value } = props;
+  const { tone = DEFAULT_PROGRESS_BAR_TONE, value } = props;
 
   const styles = [
     `inline-size: ${value * 100}%;`,
-    `background-color: ${getToneColor(theme, tone, theme.colors.primary)};`,
+    `background-color: ${getToneColor(theme, tone, theme.colors.border)};`,
   ];
 
   return styles.join('\n');
