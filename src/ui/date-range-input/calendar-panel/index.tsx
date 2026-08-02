@@ -1,7 +1,7 @@
 /**
  * Файл: `src/ui/date-range-input/calendar-panel/index.tsx`
- * Предоставляет вложенный компонент CalendarPanel — сетку выбора дня
- * для DateRangeInput.
+ * Предоставляет компонент CalendarPanel для отображения сетки месяца
+ * с навигацией и выбором дня.
  *
  * Поддерживает:
  *  - размерный ряд через проп `sizePreset`
@@ -175,7 +175,6 @@ export function CalendarPanel({
             blockSize={navGlyphSize}
             inlineSize={navGlyphSize}
             padding={0}
-            showBorder={false}
             showHover={false}
             showShadow={false}
           >
@@ -194,7 +193,6 @@ export function CalendarPanel({
             blockSize={navGlyphSize}
             inlineSize={navGlyphSize}
             padding={0}
-            showBorder={false}
             showHover={false}
             showShadow={false}
           >
@@ -224,7 +222,6 @@ export function CalendarPanel({
             blockSize={navGlyphSize}
             inlineSize={navGlyphSize}
             padding={0}
-            showBorder={false}
             showHover={false}
             showShadow={false}
           >
@@ -243,7 +240,6 @@ export function CalendarPanel({
             blockSize={navGlyphSize}
             inlineSize={navGlyphSize}
             padding={0}
-            showBorder={false}
             showHover={false}
             showShadow={false}
           >
@@ -293,7 +289,7 @@ export function CalendarPanel({
               dayShape={dayShape}
               disabled={!isSelectable}
               key={cell.isoDay}
-              sizePreset={sizePreset}
+              sizePreset={resolvedSizePreset}
               type="button"
               onClick={handleDayClick}
             >

@@ -1,6 +1,6 @@
 /**
  * Файл: `src/ui/date-range-input/calendar-panel/calendar-panel.styles.ts`
- * Определяет внешний вид вложенного компонента CalendarPanel.
+ * Определяет внешний вид компонента CalendarPanel.
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `CalendarPanelStyleProps`, `CalendarNavButtonStyleProps`
@@ -8,8 +8,8 @@
  * 2. Хранить минимальные размеры подсветки дня в `calendarDayHighlightMinBlockSize`,
  *    потолок квадрата стрелки в `calendarNavButtonMaxSize` и глиф без паддинга в
  *    `calendarNavGlyphSize`
- * 3. Предоставить функции `getCalendarPanelTextSize` и `getCalendarNavGlyphSize`,
- *    дефолт `DEFAULT_CALENDAR_PANEL_SIZE_PRESET`
+ * 3. Предоставить функции `getCalendarNavGlyphSize` и `getCalendarPanelTextSize`,
+ *    а также дефолт `DEFAULT_CALENDAR_PANEL_SIZE_PRESET`
  * 4. Предоставить styled-узлы `StyledCalendarPanelRoot`, `StyledCalendarHeader`,
  *    `StyledCalendarMonthTitle`, `StyledCalendarNavButton`, `StyledCalendarWeekdayRow`,
  *    `StyledCalendarWeekdayCell`, `StyledCalendarGrid` и `StyledCalendarDayButton`
@@ -33,6 +33,12 @@ import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 /**
+ * CALENDAR_DAY_GRID_GAP — задаёт зазор сетки дней и шапки в rem.
+ * Один зазор у шапки и у `StyledCalendarGrid`, чтобы колонки совпадали.
+ */
+const CALENDAR_DAY_GRID_GAP = getSpacingValue(4);
+
+/**
  * calendarDayHighlightMinBlockSize — хранит минимальный размер подсветки дня
  * для каждого размера ряда.
  * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
@@ -42,74 +48,6 @@ const calendarDayHighlightMinBlockSize = {
   normal: 28,
   large: 32,
 } as const satisfies Record<SizePreset, SpacingValue>;
-
-/**
- * calendarNavButtonMaxSize — хранит потолок квадрата стрелки шапки.
- * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
- * Квадрат не шире колонки сетки и не больше этого потолка: `24`, `32` или `40`.
- */
-const calendarNavButtonMaxSize = {
-  small: 24,
-  normal: 32,
-  large: 40,
-} as const satisfies Record<SizePreset, SpacingValue>;
-
-/**
- * calendarNavGlyphSize — хранит сторону глифа стрелки без паддинга Icon.
- * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
- * Ряд 16 / 24 / 32 экономит место строки под заголовок месяца.
- */
-const calendarNavGlyphSize = {
-  small: 16,
-  normal: 24,
-  large: 32,
-} as const satisfies Record<SizePreset, SpacingValue>;
-
-/**
- * CALENDAR_DAY_GRID_GAP — задаёт зазор сетки дней и шапки в rem.
- * Один зазор у шапки и у `StyledCalendarGrid`, чтобы колонки совпадали.
- */
-const CALENDAR_DAY_GRID_GAP = getSpacingValue(4);
-
-/**
- * DEFAULT_CALENDAR_PANEL_SIZE_PRESET — задаёт размер CalendarPanel по умолчанию.
- * Используется, когда вызывающий код не передал проп `sizePreset`.
- */
-export const DEFAULT_CALENDAR_PANEL_SIZE_PRESET: SizePreset = DEFAULT_SIZE_PRESET;
-
-/**
- * getCalendarPanelTextSize — возвращает размер текста дня и заголовка по `sizePreset`.
- * Подставляет `DEFAULT_CALENDAR_PANEL_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер панели календаря
- * @returns метка размера текста из `TextSizePreset` для дня и заголовка месяца
- */
-export function getCalendarPanelTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET);
-}
-
-/**
- * getCalendarNavGlyphSize — возвращает CSS-сторону глифа стрелки без паддинга.
- * Подставляет `DEFAULT_CALENDAR_PANEL_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер панели календаря
- * @returns значение для CSS-свойств `inline-size` и `block-size` окна Icon
- */
-export function getCalendarNavGlyphSize(sizePreset?: SizePreset): string {
-  return getSpacingValue(
-    calendarNavGlyphSize[sizePreset ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET]
-  );
-}
-
-/**
- * getCalendarNavButtonMaxSize — возвращает потолок квадрата стрелки шапки.
- *
- * @param sizePreset размер панели
- * @returns значение для CSS-свойств `max-inline-size` и `max-block-size`
- */
-function getCalendarNavButtonMaxSize(sizePreset: SizePreset): string {
-  return getSpacingValue(calendarNavButtonMaxSize[sizePreset]);
-}
 
 /**
  * getCalendarDayHighlightMinBlockSize — возвращает минимальный размер подсветки дня.
@@ -147,6 +85,68 @@ function resolveCalendarDayHighlightRadius(
 }
 
 /**
+ * calendarNavButtonMaxSize — хранит потолок квадрата стрелки шапки.
+ * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
+ * Квадрат не шире колонки сетки и не больше этого потолка.
+ */
+const calendarNavButtonMaxSize = {
+  small: 24,
+  normal: 32,
+  large: 40,
+} as const satisfies Record<SizePreset, SpacingValue>;
+
+/**
+ * getCalendarNavButtonMaxSize — возвращает потолок квадрата стрелки шапки.
+ *
+ * @param sizePreset размер панели
+ * @returns значение для CSS-свойств `max-inline-size` и `max-block-size`
+ */
+function getCalendarNavButtonMaxSize(sizePreset: SizePreset): string {
+  return getSpacingValue(calendarNavButtonMaxSize[sizePreset]);
+}
+
+/**
+ * calendarNavGlyphSize — хранит сторону глифа стрелки без паддинга Icon.
+ * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
+ * Компактный ряд экономит место строки под заголовок месяца.
+ */
+const calendarNavGlyphSize = {
+  small: 16,
+  normal: 24,
+  large: 32,
+} as const satisfies Record<SizePreset, SpacingValue>;
+
+/**
+ * DEFAULT_CALENDAR_PANEL_SIZE_PRESET — задаёт размер CalendarPanel по умолчанию.
+ * Используется, когда вызывающий код не передал проп `sizePreset`.
+ */
+export const DEFAULT_CALENDAR_PANEL_SIZE_PRESET: SizePreset = DEFAULT_SIZE_PRESET;
+
+/**
+ * getCalendarNavGlyphSize — возвращает CSS-сторону глифа стрелки без паддинга.
+ * Подставляет `DEFAULT_CALENDAR_PANEL_SIZE_PRESET`, когда размер не задан.
+ *
+ * @param sizePreset размер панели календаря
+ * @returns значение для CSS-свойств `inline-size` и `block-size` окна Icon
+ */
+export function getCalendarNavGlyphSize(sizePreset?: SizePreset): string {
+  return getSpacingValue(
+    calendarNavGlyphSize[sizePreset ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET]
+  );
+}
+
+/**
+ * getCalendarPanelTextSize — возвращает размер текста дня и заголовка по `sizePreset`.
+ * Подставляет `DEFAULT_CALENDAR_PANEL_SIZE_PRESET`, когда размер не задан.
+ *
+ * @param sizePreset размер панели календаря
+ * @returns метка размера текста из `TextSizePreset` для дня и заголовка месяца
+ */
+export function getCalendarPanelTextSize(sizePreset?: SizePreset): TextSizePreset {
+  return getTextSize(sizePreset ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET);
+}
+
+/**
  * CalendarPanelStyleProps — представляет пропсы стилизации CalendarPanel.
  *
  * @property dayShape — форма подсветки дня
@@ -172,14 +172,12 @@ const DEFAULT_CALENDAR_PANEL_SHAPE: ShapePreset = DEFAULT_SHAPE_PRESET;
  * @returns CSS-правила, каждое с новой строки
  */
 function getCalendarPanelRootStyles(): string {
-  const styles = [
-    'display: grid;',
-    `gap: ${getSpacingValue(8)};`,
-    'inline-size: 100%;',
-    'min-inline-size: 0;',
-  ];
-
-  return styles.join('\n');
+  return `
+    display: grid;
+    gap: ${getSpacingValue(8)};
+    inline-size: 100%;
+    min-inline-size: 0;
+  `;
 }
 
 /**
@@ -244,8 +242,8 @@ const CALENDAR_NAV_BUTTON_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
 
 /**
  * getCalendarNavButtonStyles — возвращает CSS-правила для узла
- * `StyledCalendarNavButton`: квадрат не шире колонки и не выше потолка модуля
- * шапки `24`, `32` или `40`, цвет, радиус и наведение. Глиф Icon задаёт JSX
+ * `StyledCalendarNavButton`: квадрат не шире колонки и не выше потолка из
+ * `calendarNavButtonMaxSize`, цвет, радиус и наведение. Глиф Icon задаёт JSX
  * через `getCalendarNavGlyphSize` без паддинга.
  *
  * @param props пропсы стилизации кнопки и тема
@@ -260,20 +258,18 @@ function getCalendarNavButtonStyles(
   const maxSize = getCalendarNavButtonMaxSize(sizePreset);
   const size = `min(100%, ${maxSize})`;
 
-  const styles = [
-    'display: grid;',
-    'place-items: center;',
-    'justify-self: center;',
-    `inline-size: ${size};`,
-    'aspect-ratio: 1;',
-    `max-block-size: ${maxSize};`,
-    `color: ${theme.colors.default};`,
-    `border-radius: ${resolveBlockRadius(shape, maxSize)};`,
-    `&:not(:disabled):hover { background-color: ${theme.colors.veil}; }`,
-    '& > * { max-inline-size: 100%; max-block-size: 100%; }',
-  ];
-
-  return styles.join('\n');
+  return `
+    display: grid;
+    place-items: center;
+    justify-self: center;
+    inline-size: ${size};
+    aspect-ratio: 1;
+    max-block-size: ${maxSize};
+    color: ${theme.colors.default};
+    border-radius: ${resolveBlockRadius(shape, maxSize)};
+    &:not(:disabled):hover { background-color: ${theme.colors.veil}; }
+    & > * { max-inline-size: 100%; max-block-size: 100%; }
+  `;
 }
 
 /**
@@ -314,14 +310,12 @@ export const StyledCalendarWeekdayRow = styled.div`
  * @returns CSS-правила, каждое с новой строки
  */
 function getCalendarWeekdayCellStyles(): string {
-  const styles = [
-    'display: grid;',
-    'place-items: center;',
-    'min-block-size: 0;',
-    `padding-block: ${getSpacingValue(4)};`,
-  ];
-
-  return styles.join('\n');
+  return `
+    display: grid;
+    place-items: center;
+    min-block-size: 0;
+    padding-block: ${getSpacingValue(4)};
+  `;
 }
 
 /**
@@ -387,56 +381,54 @@ function getCalendarDayButtonStyles(
   const highlightMaxSize = getCalendarDayHighlightMaxSize(sizePreset);
   const highlightRadius = resolveCalendarDayHighlightRadius(dayShape, sizePreset);
 
-  const styles = [
-    'position: relative;',
-    'z-index: 0;',
-    'display: grid;',
-    'place-items: center;',
-    'inline-size: 100%;',
-    'min-inline-size: 0;',
-    'min-block-size: 0;',
-    `padding-block: ${getSpacingValue(4)};`,
-    `color: ${theme.colors.default};`,
-    '&::before {',
-    'position: absolute;',
-    'inset-block-start: 50%;',
-    'inset-inline-start: 50%;',
-    'z-index: -1;',
-    `inline-size: ${highlightMaxSize};`,
-    'block-size: auto;',
-    `max-block-size: ${highlightMaxSize};`,
-    'aspect-ratio: 1;',
-    'pointer-events: none;',
-    "content: '';",
-    'border: 1px solid transparent;',
-    `border-radius: ${highlightRadius};`,
-    'opacity: 0;',
-    'translate: -50% -50%;',
-    '}',
-    `&[data-in-range='true']::before {`,
-    `background-color: ${theme.colors.scrollbarThumb};`,
-    'opacity: 1;',
-    '}',
-    `&[data-in-range='true']:not(:disabled):hover::before {`,
-    'background-color: transparent;',
-    `border-color: ${theme.colors.primary};`,
-    'opacity: 1;',
-    '}',
-    `&[data-selected='true'] { color: ${theme.colors.inverse}; }`,
-    `&[data-selected='true']::before {`,
-    `background-color: ${theme.colors.primary};`,
-    'opacity: 1;',
-    '}',
-    `&[data-adjacent='true'] { color: ${theme.colors.muted}; }`,
-    `&[data-in-range='true'] { color: ${theme.colors.default}; }`,
-    `&:not(:disabled):hover::before {`,
-    'background-color: transparent;',
-    `border-color: ${theme.colors.primary};`,
-    'opacity: 1;',
-    '}',
-  ];
-
-  return styles.join('\n');
+  return `
+    position: relative;
+    z-index: 0;
+    display: grid;
+    place-items: center;
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: 0;
+    padding-block: ${getSpacingValue(4)};
+    color: ${theme.colors.default};
+    &::before {
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-start: 50%;
+      z-index: -1;
+      inline-size: ${highlightMaxSize};
+      block-size: auto;
+      max-block-size: ${highlightMaxSize};
+      aspect-ratio: 1;
+      pointer-events: none;
+      content: '';
+      border: 1px solid transparent;
+      border-radius: ${highlightRadius};
+      opacity: 0;
+      translate: -50% -50%;
+    }
+    &[data-in-range='true']::before {
+      background-color: ${theme.colors.scrollbarThumb};
+      opacity: 1;
+    }
+    &[data-in-range='true']:not(:disabled):hover::before {
+      background-color: transparent;
+      border-color: ${theme.colors.primary};
+      opacity: 1;
+    }
+    &[data-selected='true'] { color: ${theme.colors.inverse}; }
+    &[data-selected='true']::before {
+      background-color: ${theme.colors.primary};
+      opacity: 1;
+    }
+    &[data-adjacent='true'] { color: ${theme.colors.muted}; }
+    &[data-in-range='true'] { color: ${theme.colors.default}; }
+    &:not(:disabled):hover::before {
+      background-color: transparent;
+      border-color: ${theme.colors.primary};
+      opacity: 1;
+    }
+  `;
 }
 
 /**

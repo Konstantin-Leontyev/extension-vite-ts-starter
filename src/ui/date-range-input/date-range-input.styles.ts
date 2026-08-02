@@ -97,16 +97,14 @@ function resolveDateRangeInputBlockRadius(
  * @returns CSS-правила, каждое с новой строки
  */
 function getDateRangeInputRootStyles(): string {
-  const styles = [
-    'position: relative;',
-    'display: grid;',
-    `gap: ${getSpacingValue(8)};`,
-    'inline-size: 100%;',
-    'min-inline-size: 0;',
-    `&[data-open='true'] { z-index: ${STACKING_OPEN_CONTROL}; }`,
-  ];
-
-  return styles.join('\n');
+  return `
+    position: relative;
+    display: grid;
+    gap: ${getSpacingValue(8)};
+    inline-size: 100%;
+    min-inline-size: 0;
+    &[data-open='true'] { z-index: ${STACKING_OPEN_CONTROL}; }
+  `;
 }
 
 /**
@@ -138,23 +136,21 @@ function getDateRangeInputTriggerRowStyles(
   const theme = getTheme(props);
   const sizePreset = props.sizePreset ?? DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET;
 
-  const styles = [
-    'display: grid;',
-    'grid-template-columns: minmax(0, 1fr);',
-    `&[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }`,
-    'inline-size: 100%;',
-    `min-block-size: ${getMinBlockSize(sizePreset)};`,
-    'overflow: hidden;',
-    `background-color: ${theme.colors.surface};`,
-    `border-radius: ${resolveDateRangeInputBlockRadius(props)};`,
-    getBorderStyles(theme),
-    `&[data-open='true'] { visibility: hidden; }`,
-    '&:focus-within {',
-    getOutlineStyles(theme.colors.focusOutline),
-    '}',
-  ];
-
-  return styles.join('\n');
+  return `
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    &[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }
+    inline-size: 100%;
+    min-block-size: ${getMinBlockSize(sizePreset)};
+    overflow: hidden;
+    background-color: ${theme.colors.surface};
+    border-radius: ${resolveDateRangeInputBlockRadius(props)};
+    ${getBorderStyles(theme)}
+    &[data-open='true'] { visibility: hidden; }
+    &:focus-within {
+      ${getOutlineStyles(theme.colors.focusOutline)}
+    }
+  `;
 }
 
 /**
@@ -186,15 +182,11 @@ function getDateRangeInputPanelStyles(
 ): string {
   const theme = getTheme(props);
 
-  const styles = [
-    getPortalPanelStyles({
-      theme,
-      borderRadius: resolveDateRangeInputBlockRadius(props),
-      padding: getSpacingValue(16),
-    }),
-  ];
-
-  return styles.join('\n');
+  return getPortalPanelStyles({
+    theme,
+    borderRadius: resolveDateRangeInputBlockRadius(props),
+    padding: getSpacingValue(16),
+  });
 }
 
 /**

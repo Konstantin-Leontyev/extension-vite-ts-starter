@@ -1,6 +1,6 @@
 /**
  * Файл: `src/ui/date-range-input/index.tsx`
- * Предоставляет компонент DateRangeInput для выбора диапазона дат.
+ * Предоставляет компонент DateRangeInput для отображения выбора диапазона дат.
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
@@ -28,7 +28,7 @@
  * 2. Типизировать пропсы через `DateRangeInputProps`
  * 3. Выставлять `role="group"` и `aria-labelledby` при передаче `label`, а также
  *    `aria`-атрибуты сегментов и панели календаря
- * 4. Реэкспортировать `todayUtc` из вложенного `calendar-panel`
+ * 4. Реэкспортировать `todayUtc` из `src/ui/date-range-input/calendar-panel`
  *
  * Потребители:
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
@@ -359,8 +359,8 @@ export function DateRangeInput({
             as="button"
             data-slot="clear"
             disabled={disabled}
-            shape="square"
-            showHover={false}
+            showBorder
+            showShadow={false}
             sizePreset={sizePreset}
             onClick={handleClear}
           >

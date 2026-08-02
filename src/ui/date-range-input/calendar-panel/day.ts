@@ -8,9 +8,8 @@
  * 3. Предоставить `todayUtc`, `formatIsoDayCompact`, `isIsoDayAfter`,
  *    `isIsoDayBetweenRange` и `isIsoDayInBounds`
  * 4. Предоставить `monthViewFromIsoDayOrToday`, `addMonths`, `addYears`,
- *    `formatMonthName`, `formatMonthTitle`, `buildMonthGrid`,
- *    `canNavigateMonthPrevious`, `canNavigateMonthNext`, `canNavigateYearPrevious`
- *    и `canNavigateYearNext`
+ *    `formatMonthTitle`, `buildMonthGrid`, `canNavigateMonthPrevious`,
+ *    `canNavigateMonthNext`, `canNavigateYearPrevious` и `canNavigateYearNext`
  *
  * Потребители:
  *  - `src/ui/date-range-input/calendar-panel/index.tsx` — собирает сетку, навигацию
@@ -222,8 +221,8 @@ function monthViewFromIsoDay(isoDay: string): MonthView | null {
  * monthViewFromIsoDayOrToday — возвращает вид месяца по ISO-дню с запасными вариантами.
  *
  * Как работает:
- * 1. Без валидного `isoDay` берёт сегодня UTC, а при выходе сегодня за `maxDay` —
- *    сам `maxDay`
+ * 1. Без валидного `isoDay` выбирает запасной день: при заданном `maxDay`, если
+ *    сегодня UTC выходит за эту границу — берёт `maxDay`, иначе сегодня UTC
  * 2. Разбирает выбранный день в вид месяца
  * 3. При ошибке разбора повторяет разбор запасного дня и при неудаче отдаёт
  *    `FALLBACK_MONTH_VIEW`
@@ -237,7 +236,7 @@ export function monthViewFromIsoDayOrToday(
   maxDay?: string
 ): MonthView {
   const fallbackDay =
-    maxDay != null && maxDay !== '' && isIsoDayInBounds(todayUtc(), undefined, maxDay)
+    maxDay != null && maxDay !== '' && !isIsoDayInBounds(todayUtc(), undefined, maxDay)
       ? maxDay
       : todayUtc();
   const sourceDay = isoDay != null && isoDay !== '' ? isoDay : fallbackDay;
@@ -311,7 +310,7 @@ function weekdayMondayFirst(view: MonthView, day: number): number {
  * @param view вид месяца
  * @returns строка вида «июль» в локали `ru-RU`
  */
-export function formatMonthName(view: MonthView): string {
+function formatMonthName(view: MonthView): string {
   const date = new Date(Date.UTC(view.year, view.month - 1, 1));
 
   return new Intl.DateTimeFormat('ru-RU', {
