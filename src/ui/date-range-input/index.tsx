@@ -121,6 +121,12 @@ const PANEL_RESET_LABEL = 'Reset';
 const PANEL_DISMISS_LABEL = 'Close';
 
 /**
+ * CALENDAR_PANEL_ARIA_LABEL — задаёт текст `aria-label` диалога панели календаря.
+ * Используется для статичного доступного имени панели без собственного титула.
+ */
+const CALENDAR_PANEL_ARIA_LABEL = 'Date range calendar';
+
+/**
  * DateRangeInputProps — представляет пропсы компонента DateRangeInput.
  *
  * @property dayShape — форма подсветки дня в панели. Без пропа совпадает с `shape`
@@ -505,7 +511,7 @@ export function DateRangeInput({
         onOpenFocus={focusCalendarPanelInitial}
       >
         <StyledDateRangeInputPanel
-          aria-label="Date range calendar"
+          aria-label={CALENDAR_PANEL_ARIA_LABEL}
           aria-modal={true}
           id={panelId}
           ref={panelRef}

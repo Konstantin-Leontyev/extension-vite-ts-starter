@@ -4,9 +4,10 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `CardStyleProps` и `CardBackground`
- * 2. Предоставить константу `CARD_HEADER_ACTION_SIZE_PRESET` и перечень
+ * 2. Хранить внутренний отступ поверхности в `CARD_PADDING`
+ * 3. Предоставить константу `CARD_HEADER_ACTION_SIZE_PRESET` и перечень
  *    `CARD_BACKGROUND_KEYS`
- * 3. Предоставить styled-узлы `StyledCard`, `StyledCardHeader`,
+ * 4. Предоставить styled-узлы `StyledCard`, `StyledCardHeader`,
  *    `StyledCardHeaderActions`, `StyledCardHeaderFirstLine` и `StyledCardBody`
  *
  * Потребители:
@@ -31,7 +32,7 @@ import {
   resolveBlockRadius,
   type SizePreset,
 } from '@ui/presets';
-import { getSpacingValue } from '@ui/spacing';
+import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 /**
@@ -90,8 +91,14 @@ const CARD_PROP_NAMES = new Set<string>([
 const DEFAULT_CARD_BACKGROUND: CardBackground = 'surface';
 
 /**
+ * CARD_PADDING — задаёт внутренний отступ поверхности карточки.
+ * Тем же значением позиционируется абсолютный ряд действий шапки.
+ */
+const CARD_PADDING: SpacingValue = 16;
+
+/**
  * getCardStyles — возвращает CSS-правила для корня `StyledCard`: grid-ряды,
- * заливку, тень и рамку.
+ * заливку и рамку с тенью.
  *
  * @param props пропсы стилизации Card и тема
  * @returns CSS-правила, каждое с новой строки
@@ -113,15 +120,11 @@ function getCardStyles(props: CardStyleProps & { theme: AppTheme }): string {
         ? theme.colors.background
         : theme.colors.surface;
 
-  const styles = [
-    hasHeader
-      ? 'grid-template-rows: auto minmax(0, 1fr);'
-      : 'grid-template-rows: minmax(0, 1fr);',
-    `background-color: ${backgroundColor};`,
-    getBorderStyles(theme, showBorder, showShadow, borderTone),
-  ];
-
-  return styles.join('\n');
+  return `
+    grid-template-rows: ${hasHeader ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr)'};
+    background-color: ${backgroundColor};
+    ${getBorderStyles(theme, showBorder, showShadow, borderTone)}
+  `;
 }
 
 /**
@@ -137,7 +140,7 @@ function getCardStyles(props: CardStyleProps & { theme: AppTheme }): string {
  *  - `border-radius` — скругление поверхности через `resolveBlockRadius`
  *
  * Генерация стилей:
- *  - `getCardStyles` — grid-ряды, заливка, тень и рамка
+ *  - `getCardStyles` — grid-ряды, заливка и рамка с тенью
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledCard = styled.div.withConfig({
@@ -147,7 +150,7 @@ export const StyledCard = styled.div.withConfig({
   display: grid;
   min-inline-size: 0;
   min-block-size: 0;
-  padding: ${getSpacingValue(16)};
+  padding: ${getSpacingValue(CARD_PADDING)};
   overflow: hidden;
   border-radius: ${resolveBlockRadius(
     DEFAULT_SHAPE_PRESET,
@@ -189,8 +192,8 @@ export const StyledCardHeader = styled.header`
  */
 export const StyledCardHeaderActions = styled.div`
   position: absolute;
-  inset-block-start: ${getSpacingValue(16)};
-  inset-inline-end: ${getSpacingValue(16)};
+  inset-block-start: ${getSpacingValue(CARD_PADDING)};
+  inset-inline-end: ${getSpacingValue(CARD_PADDING)};
   z-index: 1;
   display: grid;
   grid-auto-flow: column;

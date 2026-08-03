@@ -5,6 +5,9 @@
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - заливку через проп `background`
+ *  - рамку через проп `showBorder`
+ *  - тень через проп `showShadow`
+ *  - тон рамки через проп `borderTone`
  *  - тело карточки через `children`
  *  - заголовок через проп `title`
  *  - подзаголовок через проп `subtitle`
@@ -67,10 +70,10 @@ type CardHtmlTag = 'article' | 'div' | 'section';
  * @property ariaExpanded — состояние раскрытия для `aria-expanded`
  * @property ariaLabel — доступное имя кнопки
  * @property disabled — включает недоступное состояние
- * @property icon — svg иконки действия
+ * @property icon — svg-глиф действия
  * @property iconPadding — отступ окна Icon вместо отступа из размерного ряда.
  *   Область клика не меняет, увеличенный отступ зрительно уменьшает глиф,
- *   например close в Modal и ProfileMenu. Мапится в layout-проп `padding` у Icon
+ *   например close в Modal и ProfileMenu
  * @property onClick — обработчик клика
  */
 type CardHeaderAction = {
@@ -88,12 +91,6 @@ type CardHeaderAction = {
  * Используется, когда вызывающий код не передал проп `titleSizePreset`.
  */
 const DEFAULT_CARD_TITLE_SIZE_PRESET: TextSizePreset = 'bold';
-
-/**
- * DEFAULT_CARD_SUBTITLE_SIZE_PRESET — задаёт размер подзаголовка по умолчанию.
- * Используется, когда вызывающий код не передал проп `subtitleSizePreset`.
- */
-const DEFAULT_CARD_SUBTITLE_SIZE_PRESET: TextSizePreset = 'normal';
 
 /**
  * DEFAULT_CARD_SUBTITLE_TONE — задаёт тон подзаголовка по умолчанию.
@@ -134,7 +131,7 @@ function handleHeaderActionClick(
  * @property subtitleAlign — выравнивание подзаголовка
  * @property subtitleSizePreset — размер подзаголовка
  * @property subtitleTone — тон подзаголовка
- * @property title — заголовок в `<h2>`
+ * @property title — заголовок
  * @property titleAlign — выравнивание заголовка
  * @property titleId — id заголовка для `aria-labelledby`
  * @property titleSizePreset — размер заголовка
@@ -170,7 +167,7 @@ function Card<T extends CardHtmlTag = 'div'>({
   headerActions = DEFAULT_CARD_HEADER_ACTIONS,
   subtitle,
   subtitleAlign,
-  subtitleSizePreset = DEFAULT_CARD_SUBTITLE_SIZE_PRESET,
+  subtitleSizePreset,
   subtitleTone = DEFAULT_CARD_SUBTITLE_TONE,
   title,
   titleAlign,

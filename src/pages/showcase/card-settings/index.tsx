@@ -1,8 +1,8 @@
 /**
  * Файл: `src/pages/showcase/card-settings/index.tsx`
  * Определяет панель настроек компонента Card в витрине дизайн-системы.
- * Содержит контролы для изменения фона, шапки, подзаголовка и действий
- * в реальном времени.
+ * Содержит контролы для изменения рамки и тени, фона, действий шапки,
+ * заголовка и подзаголовка в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `CardWidgetState` и `CardHeaderActionState`
@@ -33,7 +33,7 @@ import { TitleGroup } from '../title-group';
 
 /**
  * DEFAULT_CARD_HEADER_ACTION_ICON_PADDING — задаёт отступ окна Icon действия шапки по умолчанию.
- * Берётся из `getIconPadding` для `CARD_HEADER_ACTION_SIZE_PRESET`.
+ * Совпадает с отступом окна для `CARD_HEADER_ACTION_SIZE_PRESET`.
  */
 const DEFAULT_CARD_HEADER_ACTION_ICON_PADDING = getIconPadding(
   CARD_HEADER_ACTION_SIZE_PRESET
@@ -42,7 +42,7 @@ const DEFAULT_CARD_HEADER_ACTION_ICON_PADDING = getIconPadding(
 /**
  * resolveIconPaddingSizePreset — возвращает ключ канонического размерного ряда
  * под текущий `iconPadding`. Берёт первый ключ ряда, у которого `getIconPadding`
- * даёт то же значение; иначе `CARD_HEADER_ACTION_SIZE_PRESET`.
+ * даёт то же значение. Иначе возвращает `CARD_HEADER_ACTION_SIZE_PRESET`.
  *
  * @param iconPadding текущий отступ окна Icon
  * @returns ключ ряда для контрола отступа окна Icon
@@ -99,11 +99,11 @@ export type CardWidgetState = {
   showShadow: boolean;
   showSubtitle: boolean;
   subtitle: string;
-  subtitleAlign: TextAlignPreset;
+  subtitleAlign?: TextAlignPreset;
   subtitleSizePreset: TextSizePreset;
   subtitleTone: TextTone;
   title: string;
-  titleAlign: TextAlignPreset;
+  titleAlign?: TextAlignPreset;
   titleSizePreset: TextSizePreset;
   titleTone: TextTone;
 };
@@ -207,15 +207,6 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
             }
           />
 
-          <Checkbox
-            checked={action.disabled}
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              updateHeaderAction(index, { disabled: event.target.checked })
-            }
-          >
-            {`Disable action ${index + 1}`}
-          </Checkbox>
-
           <Button
             tone="danger"
             onClick={() => {
@@ -265,6 +256,18 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
           onToneChange={(tone) => onChange('subtitleTone', tone)}
         />
       )}
+
+      {state.headerActions.map((action, index) => (
+        <Checkbox
+          checked={action.disabled}
+          key={index}
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            updateHeaderAction(index, { disabled: event.target.checked })
+          }
+        >
+          {`Disable action ${index + 1}`}
+        </Checkbox>
+      ))}
     </StyledSettingsForm>
   );
 }

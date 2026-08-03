@@ -59,7 +59,7 @@ import { ToneListbox } from '../tone-listbox';
  * @property tone — текущий тон заголовка
  */
 type TitleGroupProps = {
-  align: TextAlignPreset;
+  align?: TextAlignPreset;
   labelPrefix: string;
   onAlignChange: (align: TextAlignPreset) => void;
   onSizeChange: (size: TextSizePreset) => void;

@@ -697,10 +697,8 @@ const DEFAULT_CARD_STATE: CardWidgetState = {
   title: 'Card title',
   showSubtitle: true,
   subtitle: 'Subtitle text',
-  subtitleAlign: 'start',
   subtitleSizePreset: 'normal',
   subtitleTone: 'muted',
-  titleAlign: 'start',
   titleSizePreset: 'bold',
   titleTone: DEFAULT_TONE,
 };
