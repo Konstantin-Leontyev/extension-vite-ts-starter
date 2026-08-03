@@ -3,7 +3,9 @@
  * Предоставляет компонент Sidebar для отображения страницы с выезжающей панелью.
  *
  * Поддерживает:
- *  - layout-пропсы: отступы, позиционирование, размеры
+ *  - layout-пропсы: отступы. Позиционирование и размеры каркас не принимает —
+ *    высоту и место в потоке задаёт обёртка вызывающего кода
+ *  - зазор между областью контента и панелью через проп `gap`
  *  - область страницы через `children`
  *  - ref области контента через проп `contentRef`
  *  - дополнительные кнопки в шапке панели через проп `headerActions`. Рендерятся перед
@@ -15,6 +17,9 @@
  *  - открытое состояние панели через проп `open`
  *  - содержимое панели через проп `sidebarContent`
  *  - заливку панели через проп `background`
+ *  - рамку панели через проп `showBorder`
+ *  - тень панели через проп `showShadow`
+ *  - тон рамки панели через проп `borderTone`
  *  - заголовок панели через проп `title`
  *  - подзаголовок панели через проп `subtitle`
  *  - размер заголовка через проп `titleSizePreset`
@@ -47,13 +52,13 @@ import {
 
 import { SidebarIcon } from '@icons';
 import { Card, type CardHeaderAction } from '@ui/card';
-import { splitLayoutProps } from '@ui/layout';
 
 import {
   StyledSidebar,
   StyledSidebarContent,
   StyledSidebarSlot,
   StyledSidebarTrack,
+  splitLayoutProps,
   type SidebarStyleProps,
 } from './sidebar.styles';
 
@@ -211,7 +216,7 @@ export function Sidebar({
       >
         <StyledSidebarTrack data-open={isExpanded} onTransitionEnd={handleTransitionEnd}>
           {/*
-            Нижний padding Card = 0: тень контента панели уходит в
+            Нижний отступ Card равен 0: тень контента панели уходит в
             paddingBlockEnd ScrollPort у вызывающего кода.
           */}
           <Card

@@ -10,11 +10,14 @@
  * 3. Связать пропсы с CSS-свойствами через `SPACING_PROPERTIES`
  * 4. Генерировать CSS-правила через `getSpacingStyles` и значения шкалы через `getSpacingValue`
  * 5. Предоставить перечень имён пропсов через `SPACING_PROPERTY_NAMES`
+ * 6. Предоставить перечень имён пропсов отступа содержимого через `PADDING_PROPERTY_NAMES`
  *
  * Потребители:
  *  - `@ui/layout` — включает spacing-пропсы в `LayoutProps` и вызывает `getSpacingStyles`
  *  - `@ui/presets` — читает шкалу через `getSpacingValue` в пресетах размеров
  *  - `@ui/positioning` — преобразует значения `gap` и `inset` через `getSpacingValue`
+ *  - `@ui/scroll-port`, `@ui/sidebar` — фильтруют маршрутизируемые `padding*` через
+ *    `PADDING_PROPERTY_NAMES`
  *  - компоненты со своими наборами размеров, например Tag, Switch и ProgressBar —
  *    получают значения шкалы через `getSpacingValue`
  */
@@ -86,7 +89,8 @@ export function getSpacingValue(value: SpacingValue): string {
  *  - Пропс `margin` → CSS-свойство `margin`
  *  - Пропс `marginBlock` → CSS-свойство `margin-block`
  *
- * Соответствие приватно для модуля, доступ к именам пропсов — только через `SPACING_PROPERTY_NAMES`.
+ * Соответствие приватно для модуля, доступ к именам пропсов — только через
+ * `SPACING_PROPERTY_NAMES` и `PADDING_PROPERTY_NAMES`.
  */
 const SPACING_PROPERTIES = {
   margin: 'margin',
@@ -134,6 +138,15 @@ export type SpacingProps = {
  * например для обёртки Input и самого элемента `<input>`.
  */
 export const SPACING_PROPERTY_NAMES = new Set<string>(Object.keys(SPACING_PROPERTIES));
+
+/**
+ * PADDING_PROPERTY_NAMES — хранит имена пропсов отступа содержимого из `SPACING_PROPERTIES`.
+ * Используется оболочками с зонной маршрутизацией отступов, например ScrollPort и Sidebar:
+ * эти имена не должны попадать в `getLayoutStyles` корня.
+ */
+export const PADDING_PROPERTY_NAMES = new Set<string>(
+  Object.keys(SPACING_PROPERTIES).filter((key) => key.startsWith('padding'))
+);
 
 /**
  * getSpacingStyles — преобразует spacing-пропсы в готовые CSS-правила.

@@ -9,6 +9,7 @@
  *    и `SIDEBAR_PANEL_MAX_BLOCK_SIZE`
  * 3. Предоставить styled-узлы `StyledSidebar`, `StyledSidebarContent`, `StyledSidebarSlot`
  *    и `StyledSidebarTrack`
+ * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/sidebar/index.tsx` — собирает компонент Sidebar
@@ -16,11 +17,20 @@
 
 import styled from 'styled-components';
 
-import { LAYOUT_PROP_NAMES, type LayoutProps } from '@ui/layout';
+import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { MOTION_SHELL_DURATION, getTransitionStyles } from '@ui/motion';
-import { getSpacingValue, type SpacingProps, type SpacingValue } from '@ui/spacing';
+import { POSITIONING_PROPERTY_NAMES } from '@ui/positioning';
+import { SIZING_PROPERTY_NAMES } from '@ui/sizing';
+import {
+  PADDING_PROPERTY_NAMES,
+  getSpacingValue,
+  type SpacingProps,
+  type SpacingValue,
+} from '@ui/spacing';
 import { STACKING_SIDEBAR } from '@ui/stacking';
 import { VIEWPORT_EDGE_INSET } from '@ui/viewport';
+
+export { splitLayoutProps } from '@ui/layout';
 
 /**
  * SIDEBAR_PANEL_WIDTH — задаёт ширину выезжающей панели.
@@ -135,15 +145,35 @@ export const StyledSidebarTrack = styled.div`
 
 /**
  * SidebarStyleProps — представляет пропсы стилизации Sidebar.
- * `padding*` и `gap` раскладываются по зонам в `getSidebarStyles`. Остальные
- * layout-пропсы на корень не пишутся — только маршрутизация оболочки.
  */
 export type SidebarStyleProps = LayoutProps;
 
 /**
- * SIDEBAR_PROP_NAMES — объединяет имена layout-пропсов каркаса Sidebar.
+ * omitSidebarShellLayoutProps — убирает маршрутизируемые `padding*` через
+ * `PADDING_PROPERTY_NAMES`, а также sizing и positioning, включая `gap`: их каркас
+ * Sidebar не применяет на корень по исключению оболочки, `gap` уходит в зоны через
+ * `getSidebarStyles`.
+ *
+ * @param props layout-пропсы Sidebar
+ * @returns layout-пропсы корня для `getLayoutStyles`: внешние отступы
  */
-const SIDEBAR_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
+function omitSidebarShellLayoutProps(props: LayoutProps): LayoutProps {
+  const rootLayoutProps: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(props)) {
+    if (
+      PADDING_PROPERTY_NAMES.has(key) ||
+      POSITIONING_PROPERTY_NAMES.has(key) ||
+      SIZING_PROPERTY_NAMES.has(key)
+    ) {
+      continue;
+    }
+
+    rootLayoutProps[key] = value;
+  }
+
+  return rootLayoutProps as LayoutProps;
+}
 
 /**
  * resolveSidebarPaddingEdge — вычисляет отступ края оболочки с каскадом
@@ -187,25 +217,20 @@ function resolveSidebarPaddingEdge(
 }
 
 /**
- * resolveSidebarGap — вычисляет зазор между контентом и панелью.
- * Дефолт — `VIEWPORT_EDGE_INSET`, симметрично отступам оболочки.
- *
- * @param gap проп `gap` или `undefined`
- * @returns значение шкалы отступов
- */
-function resolveSidebarGap(gap: SpacingValue | undefined): SpacingValue {
-  return gap ?? VIEWPORT_EDGE_INSET;
-}
-
-/**
  * getSidebarStyles — возвращает CSS-правила для корня `StyledSidebar`: отступы зон
  * каркаса, зазор при открытой панели, ширину слота, слой `STACKING_SIDEBAR`
  * на узком экране и поведение выезда.
  *
  * Как работает:
- * 1. Определяет `padding*` и `gap` с дефолтом `VIEWPORT_EDGE_INSET`
+ * 1. Для каждого края оболочки берёт отступ по каскаду сторона → ось → `padding` →
+ *    `VIEWPORT_EDGE_INSET` и переводит метку шкалы в CSS-длину
  * 2. Пишет отступы в `StyledSidebarContent` и `StyledSidebarSlot` по состоянию
- *    панели и ширине вьюпорта: открыта или закрыта
+ *    панели и ширине вьюпорта
+ * 3. На широком экране при открытой панели задаёт зазор между зонами и ширину
+ *    слота как ширину панели плюс отступ inline-end
+ * 4. На узком экране выносит слот из потока к нижнему краю, поднимает слой
+ *    `STACKING_SIDEBAR`, выезжает трек снизу на высоту панели и ограничивает
+ *    потолок содержимого
  *
  * @param props пропсы стилизации Sidebar
  * @returns CSS-правила, каждое с новой строки
@@ -221,62 +246,60 @@ function getSidebarStyles(props: SidebarStyleProps): string {
   const paddingInlineEnd = getSpacingValue(
     resolveSidebarPaddingEdge(props, 'inlineEnd')
   );
-  const gap = getSpacingValue(resolveSidebarGap(props.gap));
 
-  const styles = [
-    `${StyledSidebarContent} {`,
-    `padding-block-start: ${paddingBlockStart};`,
-    `padding-block-end: ${paddingBlockEnd};`,
-    `padding-inline-start: ${paddingInlineStart};`,
-    `}`,
-    `@media (width > ${SIDEBAR_PANEL_BREAKPOINT}) {`,
-    `&:not(:has(${StyledSidebarSlot}[data-open='true'])) ${StyledSidebarContent} {`,
-    `padding-inline-end: ${paddingInlineEnd};`,
-    `}`,
-    `&:has(${StyledSidebarSlot}[data-open='true']) {`,
-    `gap: ${gap};`,
-    `}`,
-    `${StyledSidebarSlot}[data-open='true'][data-expanded='true'] {`,
-    `inline-size: calc(${SIDEBAR_PANEL_WIDTH} + ${paddingInlineEnd});`,
-    `padding-block-start: ${paddingBlockStart};`,
-    `padding-block-end: ${paddingBlockEnd};`,
-    `padding-inline-end: ${paddingInlineEnd};`,
-    `}`,
-    `}`,
-    `@media (width <= ${SIDEBAR_PANEL_BREAKPOINT}) {`,
-    `${StyledSidebarContent} {`,
-    `padding-inline-end: ${paddingInlineEnd};`,
-    `}`,
-    `${StyledSidebarSlot} {`,
-    `position: absolute;`,
-    `inset-block-end: 0;`,
-    `inset-inline: 0;`,
-    `z-index: ${STACKING_SIDEBAR};`,
-    `inline-size: auto;`,
-    `padding-block-start: ${paddingBlockStart};`,
-    `padding-block-end: ${paddingBlockEnd};`,
-    `padding-inline: ${paddingInlineStart} ${paddingInlineEnd};`,
-    `}`,
-    `${StyledSidebarTrack} {`,
-    `inline-size: 100%;`,
-    `block-size: ${SIDEBAR_PANEL_BLOCK_SIZE};`,
-    `transform: translateY(100%);`,
-    `}`,
-    `${StyledSidebarTrack}[data-open='true'] {`,
-    `transform: translateY(0);`,
-    `}`,
-    `${StyledSidebarTrack} > :first-child {`,
-    `max-block-size: ${SIDEBAR_PANEL_MAX_BLOCK_SIZE};`,
-    `}`,
-    `}`,
-  ];
-
-  return styles.join('\n');
+  return `
+    ${StyledSidebarContent} {
+      padding-block-start: ${paddingBlockStart};
+      padding-block-end: ${paddingBlockEnd};
+      padding-inline-start: ${paddingInlineStart};
+    }
+    @media (width > ${SIDEBAR_PANEL_BREAKPOINT}) {
+      &:not(:has(${StyledSidebarSlot}[data-open='true'])) ${StyledSidebarContent} {
+        padding-inline-end: ${paddingInlineEnd};
+      }
+      &:has(${StyledSidebarSlot}[data-open='true']) {
+        gap: ${getSpacingValue(props.gap ?? VIEWPORT_EDGE_INSET)};
+      }
+      ${StyledSidebarSlot}[data-open='true'][data-expanded='true'] {
+        inline-size: calc(${SIDEBAR_PANEL_WIDTH} + ${paddingInlineEnd});
+        padding-block-start: ${paddingBlockStart};
+        padding-block-end: ${paddingBlockEnd};
+        padding-inline-end: ${paddingInlineEnd};
+      }
+    }
+    @media (width <= ${SIDEBAR_PANEL_BREAKPOINT}) {
+      ${StyledSidebarContent} {
+        padding-inline-end: ${paddingInlineEnd};
+      }
+      ${StyledSidebarSlot} {
+        position: absolute;
+        inset-block-end: 0;
+        inset-inline: 0;
+        z-index: ${STACKING_SIDEBAR};
+        inline-size: auto;
+        padding-block-start: ${paddingBlockStart};
+        padding-block-end: ${paddingBlockEnd};
+        padding-inline: ${paddingInlineStart} ${paddingInlineEnd};
+      }
+      ${StyledSidebarTrack} {
+        inline-size: 100%;
+        block-size: ${SIDEBAR_PANEL_BLOCK_SIZE};
+        transform: translateY(100%);
+      }
+      ${StyledSidebarTrack}[data-open='true'] {
+        transform: translateY(0);
+      }
+      ${StyledSidebarTrack} > :first-child {
+        max-block-size: ${SIDEBAR_PANEL_MAX_BLOCK_SIZE};
+      }
+    }
+  `;
 }
 
 /**
  * StyledSidebar — задаёт корневой узел компонента Sidebar.
- * Базируется на `<div>` и поддерживает layout-пропсы из `SidebarStyleProps`.
+ * Базируется на `<div>` и поддерживает layout-пропсы из `SidebarStyleProps`
+ * без маршрутизируемых `padding*`, sizing и positioning.
  *
  * Встроенные стили:
  *  - `display: grid` — каркас из области контента и слота панели
@@ -288,9 +311,10 @@ function getSidebarStyles(props: SidebarStyleProps): string {
  *
  * Генерация стилей:
  *  - `getSidebarStyles` — маршрутизация `padding*` и `gap` по зонам и состояниям
+ *  - `getLayoutStyles` — внешние отступы корня
  */
 export const StyledSidebar = styled.div.withConfig({
-  shouldForwardProp: (prop) => !SIDEBAR_PROP_NAMES.has(prop),
+  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<SidebarStyleProps>`
   position: relative;
   display: grid;
@@ -302,6 +326,7 @@ export const StyledSidebar = styled.div.withConfig({
   overflow: hidden;
 
   ${(props) => getSidebarStyles(props)}
+  ${(props) => getLayoutStyles(omitSidebarShellLayoutProps(props))}
 
   ${`@media (width > ${SIDEBAR_PANEL_BREAKPOINT}) {
     grid-template-columns: 1fr auto;

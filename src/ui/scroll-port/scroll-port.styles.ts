@@ -4,13 +4,11 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `ScrollPortStyleProps`
- * 2. Хранить имена маршрутизируемых во вьюпорт и под трек скроллбара пропсов
- *    отступов в `SCROLL_PORT_ROUTED_PADDING_PROP_NAMES`
- * 3. Предоставить функции `resolveScrollPortPaddingEdge` и
+ * 2. Предоставить функции `resolveScrollPortPaddingEdge` и
  *    `omitScrollPortRoutedPaddingProps`, а также дефолт `DEFAULT_SCROLL_PORT_SHOW_VEIL`
- * 4. Предоставить styled-узлы `StyledScrollPortRoot`, `StyledScrollPortContainer`
+ * 3. Предоставить styled-узлы `StyledScrollPortRoot`, `StyledScrollPortContainer`
  *    и `StyledScrollPortViewport`
- * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/scroll-port/index.tsx` — собирает компонент ScrollPort
@@ -19,7 +17,12 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { getSpacingValue, type SpacingProps, type SpacingValue } from '@ui/spacing';
+import {
+  PADDING_PROPERTY_NAMES,
+  getSpacingValue,
+  type SpacingProps,
+  type SpacingValue,
+} from '@ui/spacing';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -34,20 +37,6 @@ export type ScrollPortStyleProps = LayoutProps & {
   showVeil?: boolean;
   veilInsetInline?: SpacingValue;
 };
-
-/**
- * SCROLL_PORT_ROUTED_PADDING_PROP_NAMES — хранит имена пропсов отступов, которые уходят
- * во вьюпорт и в отступ под трек скроллбара и не должны попадать в `getLayoutStyles` корня.
- */
-const SCROLL_PORT_ROUTED_PADDING_PROP_NAMES = new Set<string>([
-  'padding',
-  'paddingBlock',
-  'paddingBlockEnd',
-  'paddingBlockStart',
-  'paddingInline',
-  'paddingInlineEnd',
-  'paddingInlineStart',
-]);
 
 /**
  * DEFAULT_SCROLL_PORT_PADDING_INLINE_END — задаёт отступ inline-end содержимого и отступ
@@ -126,8 +115,9 @@ export function resolveScrollPortPaddingEdge(
 }
 
 /**
- * omitScrollPortRoutedPaddingProps — убирает пропсы отступов, маршрутизируемые во вьюпорт,
- * чтобы `getLayoutStyles` корня не писал их на корневой узел.
+ * omitScrollPortRoutedPaddingProps — убирает пропсы отступов, маршрутизируемые во вьюпорт
+ * и в отступ под трек скроллбара, через `PADDING_PROPERTY_NAMES`, чтобы `getLayoutStyles`
+ * корня не писал их на корневой узел.
  *
  * @param props layout-пропсы ScrollPort
  * @returns layout без маршрутизируемых пропсов отступов
@@ -136,7 +126,7 @@ export function omitScrollPortRoutedPaddingProps(props: LayoutProps): LayoutProp
   const rootLayoutProps: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(props)) {
-    if (!SCROLL_PORT_ROUTED_PADDING_PROP_NAMES.has(key)) {
+    if (!PADDING_PROPERTY_NAMES.has(key)) {
       rootLayoutProps[key] = value;
     }
   }
