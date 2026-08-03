@@ -267,9 +267,9 @@ export function getIconPositionStyles(): string {
  * @property interactive — включает канал состояний `--icon-state-background`
  *   родителя
  * @property shape — форма окна иконки
- * @property showHover — включает запись канала состояний на hover и focus-visible.
- *   Внутри контрола с собственным hover-слоем выключается, чтобы не было двойной
- *   подсветки
+ * @property showHover — включает запись канала состояний на `:hover` и
+ *   `:focus-visible`. Внутри контрола с собственным слоем наведения выключается,
+ *   чтобы не было двойной подсветки
  * @property sizePreset — размер окна иконки
  */
 export type IconStyleProps = LayoutProps &
@@ -317,7 +317,7 @@ const DEFAULT_ICON_SHOW_BORDER = false;
 const DEFAULT_ICON_INTERACTIVE = false;
 
 /**
- * DEFAULT_ICON_SHOW_HOVER — задаёт запись канала hover по умолчанию.
+ * DEFAULT_ICON_SHOW_HOVER — задаёт запись канала наведения по умолчанию.
  * Используется, когда вызывающий код не передал проп `showHover`.
  */
 const DEFAULT_ICON_SHOW_HOVER = true;
@@ -338,6 +338,8 @@ const DEFAULT_ICON_SHOW_HOVER = true;
  *    `--icon-state-background` с запасным значением на статику
  * 6. При `showHover` на `:not(:disabled):hover` и `:focus-visible` пишет
  *    значение канала через `resolveIconStateBackground`
+ * 7. Для кнопки сброса `[data-slot='clear']` на `:focus-visible` снимает
+ *    глобальный `outline` и ставит ту же заливку, что канал наведения
  *
  * @param props пропсы стилизации Icon и тема
  * @returns CSS-правила, каждое с новой строки
@@ -358,6 +360,7 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
   const size = getSpacingValue(getIconSize(sizePreset));
   const surface = resolveIconSurface(theme, iconTone, iconFill);
   const usesStateChannel = interactive || showHover;
+  const stateBackground = resolveIconStateBackground(theme, iconTone);
 
   const styles = [
     `inline-size: ${size};`,
@@ -380,8 +383,6 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
   }
 
   if (showHover) {
-    const stateBackground = resolveIconStateBackground(theme, iconTone);
-
     styles.push(
       `&:not(:disabled):hover,`,
       `&:focus-visible {`,
@@ -389,6 +390,15 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
       '}'
     );
   }
+
+  const clearFocusBackground = stateBackground ?? theme.colors.veil;
+
+  styles.push(
+    `&[data-slot='clear']:focus-visible {`,
+    'outline: none;',
+    `--icon-state-background: ${clearFocusBackground};`,
+    '}'
+  );
 
   return styles.join('\n');
 }

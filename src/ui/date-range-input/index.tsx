@@ -22,6 +22,9 @@
  *    `aria-label` кнопки сброса, видимым лейблом сегмента не является
  *  - иконка календаря всегда в позиции `start`. Публичного пропа позиции нет
  *  - подпись над рядом через проп `label`
+ *  - черновик диапазона в открытой панели: клики по дням не пишут наружу до
+ *    подтверждения. Enter и `Set` подтверждают и закрывают. `Close`, Escape и клик
+ *    снаружи закрывают без подтверждения. `Reset` чистит черновик без закрытия
  *
  * Основные задачи:
  * 1. Экспортировать компонент DateRangeInput
@@ -34,7 +37,13 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { useId, useRef, useState, type ComponentPropsWithRef } from 'react';
+import {
+  useId,
+  useRef,
+  useState,
+  type ComponentPropsWithRef,
+  type KeyboardEvent,
+} from 'react';
 
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { placeCalendarPanel } from '@hooks/use-anchored-portal-position';
@@ -67,11 +76,6 @@ import {
 } from './date-range-input.styles';
 
 /**
- * ActiveRangeField — представляет активное поле диапазона в открытой панели.
- */
-type ActiveRangeField = 'end' | 'start';
-
-/**
  * DEFAULT_DATE_RANGE_INPUT_DISABLED — задаёт недоступное состояние по умолчанию.
  * Используется, когда вызывающий код не передал проп `disabled`.
  */
@@ -100,6 +104,22 @@ const DEFAULT_DATE_RANGE_INPUT_START_DAY = '';
  * Используется, когда вызывающий код не передал проп `startLabel`.
  */
 const DEFAULT_DATE_RANGE_INPUT_START_LABEL = 'Start date';
+
+/**
+ * PANEL_COMMIT_LABEL — задаёт текст кнопки подтверждения черновика в панели.
+ */
+const PANEL_COMMIT_LABEL = 'Set';
+
+/**
+ * PANEL_RESET_LABEL — задаёт текст кнопки сброса черновика в панели.
+ */
+const PANEL_RESET_LABEL = 'Reset';
+
+/**
+ * PANEL_DISMISS_LABEL — задаёт текст кнопки закрытия панели без подтверждения.
+ * Совпадает по смыслу с Escape.
+ */
+const PANEL_DISMISS_LABEL = 'Close';
 
 /**
  * DateRangeInputProps — представляет пропсы компонента DateRangeInput.
@@ -152,6 +172,72 @@ type DateRangeInputProps = DateRangeInputStyleProps &
  */
 function formatSegmentText(isoDay: string): string {
   return isoDay !== '' ? formatIsoDayCompact(isoDay) : DATE_PLACEHOLDER;
+}
+
+/**
+ * minIsoDay — возвращает более ранний из двух ISO-дней.
+ *
+ * @param left первый день
+ * @param right второй день
+ * @returns более ранний день
+ */
+function minIsoDay(left: string, right: string): string {
+  return isIsoDayAfter(left, right) ? right : left;
+}
+
+/**
+ * maxIsoDay — возвращает более поздний из двух ISO-дней.
+ *
+ * @param left первый день
+ * @param right второй день
+ * @returns более поздний день
+ */
+function maxIsoDay(left: string, right: string): string {
+  return isIsoDayAfter(left, right) ? left : right;
+}
+
+/**
+ * isoDayUtcMs — возвращает UTC-миллисекунды полуночи ISO-дня.
+ *
+ * @param isoDay день в формате ISO
+ * @returns миллисекунды UTC
+ */
+function isoDayUtcMs(isoDay: string): number {
+  return Date.parse(`${isoDay}T00:00:00.000Z`);
+}
+
+/**
+ * moveNearestRangeEdge — сдвигает ближайший край диапазона к кликнутому дню.
+ * При равной дистанции предпочитает начальный край. После сдвига края
+ * упорядочиваются через `min`/`max`.
+ *
+ * @param startDay текущий начальный день
+ * @param endDay текущий конечный день
+ * @param isoDay день клика
+ * @returns новая пара краёв
+ */
+function moveNearestRangeEdge(
+  startDay: string,
+  endDay: string,
+  isoDay: string
+): { end: string; start: string } {
+  const rangeStart = minIsoDay(startDay, endDay);
+  const rangeEnd = maxIsoDay(startDay, endDay);
+  const clickMs = isoDayUtcMs(isoDay);
+  const distStart = Math.abs(clickMs - isoDayUtcMs(rangeStart));
+  const distEnd = Math.abs(clickMs - isoDayUtcMs(rangeEnd));
+
+  if (distStart <= distEnd) {
+    return {
+      end: maxIsoDay(isoDay, rangeEnd),
+      start: minIsoDay(isoDay, rangeEnd),
+    };
+  }
+
+  return {
+    end: maxIsoDay(rangeStart, isoDay),
+    start: minIsoDay(rangeStart, isoDay),
+  };
 }
 
 /**
@@ -210,7 +296,8 @@ export function DateRangeInput({
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const { handleClose, handleOpen, isOpen, panelRef } =
     useAnchoredOpen<HTMLDivElement>();
-  const [activeField, setActiveField] = useState<ActiveRangeField>('start');
+  const [draftStartDay, setDraftStartDay] = useState(startDay);
+  const [draftEndDay, setDraftEndDay] = useState(endDay);
   const [viewMonth, setViewMonth] = useState<MonthView>(() =>
     monthViewFromIsoDayOrToday(startDay, maxDay)
   );
@@ -218,7 +305,7 @@ export function DateRangeInput({
   const triggerRowRef = useRef<HTMLDivElement>(null);
   const startTriggerRef = useRef<HTMLButtonElement>(null);
   const endTriggerRef = useRef<HTMLButtonElement>(null);
-  const returnFocusRef = useRef<HTMLButtonElement>(null);
+  const returnFocusRef = useRef<HTMLElement>(null);
   const labelId = useId();
   const panelId = useId();
   const resolvedShape = shape ?? DEFAULT_DATE_RANGE_INPUT_SHAPE;
@@ -228,53 +315,65 @@ export function DateRangeInput({
   const calendarIcon = <CalendarIcon />;
   const isActive = startDay !== '' || endDay !== '';
   const showClear = isActive && onClear !== undefined && !disabled;
-  const activeDay = activeField === 'start' ? startDay : endDay;
   const textSizePreset = getSegmentButtonTextSize(sizePreset);
 
-  function handleOpenForField(field: ActiveRangeField): void {
+  function handleOpenFromSegment(sourceDay: string): void {
     if (disabled) {
       return;
     }
 
-    const sourceDay = field === 'start' ? startDay : endDay;
-
-    returnFocusRef.current =
-      field === 'start' ? startTriggerRef.current : endTriggerRef.current;
-    setActiveField(field);
+    setDraftStartDay(startDay);
+    setDraftEndDay(endDay);
     setViewMonth(monthViewFromIsoDayOrToday(sourceDay, maxDay));
+    returnFocusRef.current = triggerRowRef.current;
     handleOpen();
   }
 
+  /**
+   * handleSelectDay — пишет черновик диапазона по кликам без фаз start/end.
+   *
+   * Как работает:
+   * 1. Пусто или неполный черновик → оба края на кликнутый день
+   * 2. Однодневный → пара `min`/`max` с кликнутым днём. Тот же день остаётся
+   *    однодневным
+   * 3. Полный диапазон → сдвигает ближайший край к клику наружу и внутрь
+   *
+   * @param isoDay выбранный день в формате ISO
+   */
   function handleSelectDay(isoDay: string): void {
-    if (activeField === 'start') {
-      if (isoDay === startDay && startDay !== '') {
-        onStartDayChange?.('');
-        return;
-      }
-
-      onStartDayChange?.(isoDay);
-
-      if (endDay !== '' && isIsoDayAfter(isoDay, endDay)) {
-        onEndDayChange?.('');
-      }
-
-      setActiveField('end');
-      setViewMonth(monthViewFromIsoDayOrToday(endDay !== '' ? endDay : isoDay, maxDay));
-
+    if (draftStartDay === '' || draftEndDay === '') {
+      setDraftStartDay(isoDay);
+      setDraftEndDay(isoDay);
       return;
     }
 
-    if (isoDay === endDay && endDay !== '') {
-      onEndDayChange?.('');
+    if (draftStartDay === draftEndDay) {
+      setDraftStartDay(minIsoDay(draftStartDay, isoDay));
+      setDraftEndDay(maxIsoDay(draftStartDay, isoDay));
       return;
     }
 
-    if (startDay !== '' && isIsoDayAfter(startDay, isoDay)) {
-      onStartDayChange?.(isoDay);
-      onEndDayChange?.(startDay);
-    } else {
-      onEndDayChange?.(isoDay);
-    }
+    const next = moveNearestRangeEdge(draftStartDay, draftEndDay, isoDay);
+    setDraftStartDay(next.start);
+    setDraftEndDay(next.end);
+  }
+
+  function handleCommit(): void {
+    onStartDayChange?.(draftStartDay);
+    onEndDayChange?.(draftEndDay);
+    returnFocusRef.current = triggerRowRef.current;
+    handleClose();
+  }
+
+  function handlePanelReset(): void {
+    setDraftStartDay('');
+    setDraftEndDay('');
+    setViewMonth(monthViewFromIsoDayOrToday('', maxDay));
+  }
+
+  function handlePanelDismiss(): void {
+    returnFocusRef.current = triggerRowRef.current;
+    handleClose();
   }
 
   function handleClear(event: { stopPropagation: () => void }): void {
@@ -285,22 +384,46 @@ export function DateRangeInput({
     }
 
     onClear?.();
-    setActiveField('start');
+    returnFocusRef.current = triggerRowRef.current;
     handleClose();
   }
 
+  function handlePanelKeyDown(event: KeyboardEvent<HTMLDivElement>): void {
+    if (event.key !== 'Enter') {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (event.target instanceof HTMLElement) {
+      const focusedLabel = event.target.closest('button')?.textContent?.trim();
+
+      if (focusedLabel === PANEL_RESET_LABEL) {
+        handlePanelReset();
+        return;
+      }
+
+      if (focusedLabel === PANEL_DISMISS_LABEL) {
+        handlePanelDismiss();
+        return;
+      }
+    }
+
+    handleCommit();
+  }
+
   function handleOpenStart(): void {
-    handleOpenForField('start');
+    handleOpenFromSegment(startDay);
   }
 
   function handleOpenEnd(): void {
-    handleOpenForField('end');
+    handleOpenFromSegment(endDay);
   }
 
   const leftSegment = {
-    active: isOpen && activeField === 'start',
+    active: isOpen,
     ariaControls: panelId,
-    ariaExpanded: isOpen && activeField === 'start',
+    ariaExpanded: isOpen,
     ariaHaspopup: 'dialog' as const,
     disabled,
     icon: calendarIcon,
@@ -313,9 +436,9 @@ export function DateRangeInput({
   };
 
   const rightSegment = {
-    active: isOpen && activeField === 'end',
+    active: isOpen,
     ariaControls: panelId,
-    ariaExpanded: isOpen && activeField === 'end',
+    ariaExpanded: isOpen,
     ariaHaspopup: 'dialog' as const,
     disabled,
     icon: calendarIcon,
@@ -343,6 +466,7 @@ export function DateRangeInput({
         data-has-clear={showClear ? '' : undefined}
         data-open={isOpen ? 'true' : undefined}
         ref={triggerRowRef}
+        tabIndex={-1}
         {...surfaceProps}
       >
         <SegmentButtonParts
@@ -372,7 +496,7 @@ export function DateRangeInput({
       <AnchoredPortal
         dismissZoneRefs={[rootRef, panelRef]}
         open={isOpen}
-        openFocusDeps={[activeDay, viewMonth]}
+        openFocusDeps={[viewMonth]}
         panelRef={panelRef}
         positionStrategy={{
           anchorRef: triggerRowRef,
@@ -380,7 +504,7 @@ export function DateRangeInput({
           layoutDeps: [viewMonth],
         }}
         returnFocusRef={returnFocusRef}
-        onDismiss={handleClose}
+        onDismiss={handlePanelDismiss}
         onOpenFocus={focusCalendarPanelInitial}
       >
         <StyledDateRangeInputPanel
@@ -389,20 +513,39 @@ export function DateRangeInput({
           id={panelId}
           ref={panelRef}
           role="dialog"
+          onKeyDown={handlePanelKeyDown}
           {...surfaceProps}
         >
           <CalendarPanel
-            activeDay={activeDay}
             dayShape={dayShape}
             maxDay={maxDay}
             minDay={minDay}
-            rangeEnd={endDay}
-            rangeStart={startDay}
+            rangeEnd={draftEndDay}
+            rangeStart={draftStartDay}
             shape={resolvedShape}
             sizePreset={resolvedSizePreset}
             viewMonth={viewMonth}
             onSelectDay={handleSelectDay}
             onViewMonthChange={setViewMonth}
+          />
+          <SegmentButtonParts
+            center={{
+              label: PANEL_RESET_LABEL,
+              textTone: 'danger',
+              onClick: handlePanelReset,
+            }}
+            left={{
+              label: PANEL_COMMIT_LABEL,
+              textTone: 'success',
+              onClick: handleCommit,
+            }}
+            right={{
+              label: PANEL_DISMISS_LABEL,
+              onClick: handlePanelDismiss,
+            }}
+            shape={resolvedShape}
+            sizePreset={resolvedSizePreset}
+            textSize={textSizePreset}
           />
         </StyledDateRangeInputPanel>
       </AnchoredPortal>

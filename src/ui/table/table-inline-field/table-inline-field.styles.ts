@@ -19,8 +19,8 @@ export const TABLE_INLINE_FIELD_PROP_NAMES = TABLE_INLINE_FIELD_AXIS_PROP_NAMES;
 
 /**
  * getTableInlineFieldStyles — возвращает CSS-правила поля compose/edit в ячейке:
- * типографику строки, сброс UA-chrome input и отсутствие кольца поверхности.
- * Focus/invalid-кольца reset снимаются — поле живёт внутри строки таблицы.
+ * типографику строки, сброс UA-chrome input и отсутствие обводки поверхности.
+ * Фокус-контур и invalid-обводка reset снимаются — поле живёт внутри строки таблицы.
  */
 function getTableInlineFieldStyles(
   props: TableInlineFieldStyleProps & { theme: AppTheme }
@@ -51,7 +51,7 @@ function getTableInlineFieldStyles(
   return styles.join('\n');
 }
 
-/** Поле compose/edit в ячейке таблицы: типографика строки, без кольца поверхности. */
+/** Поле compose/edit в ячейке таблицы: типографика строки, без обводки поверхности. */
 export const StyledTableInlineField = styled.input.withConfig({
   shouldForwardProp: (prop) => !TABLE_INLINE_FIELD_AXIS_PROP_NAMES.has(prop),
 })<TableInlineFieldStyleProps>`

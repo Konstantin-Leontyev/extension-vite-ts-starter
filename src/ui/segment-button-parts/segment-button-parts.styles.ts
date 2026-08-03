@@ -16,7 +16,6 @@
 import styled from 'styled-components';
 
 import { resolveIconStateBackground } from '@ui/icon';
-import { OUTLINE_OFFSET, getOutlineStyles } from '@ui/outline';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
@@ -159,11 +158,12 @@ const SEGMENT_BUTTON_PARTS_PART_PROP_NAMES = new Set<string>([
  *    грид с `gap` и `justify-content: center`, без track и seam. Без иконки лейбл
  *    растягивается на сегмент без `justify-items: center`, чтобы `ellipsis` имел
  *    потолок ширины
- * 4. На наведении нейтрали ставит вуаль сегмента. Цветной `tone` дополнительно
- *    отдаёт в `--icon-state-background` цвет из `resolveIconStateBackground` с
- *    политикой `'none'` для нейтрали
- * 5. На `:focus-visible` поднимает сегмент по `z-index` и рисует кольцо фокуса
- *    из `getOutlineStyles` со смещением внутрь на `OUTLINE_OFFSET`
+ * 4. На наведении и `:focus-visible` нейтрали ставит вуаль сегмента. Цветной
+ *    `tone` дополнительно отдаёт в `--icon-state-background` цвет из
+ *    `resolveIconStateBackground` с политикой `'none'` для нейтрали
+ * 5. `outline` на фокусе не рисует: снятие даёт статика `:focus { outline: none }`
+ *    в шаблоне узла. Акцент фокуса совпадает с наведением. Фокус-контур несёт
+ *    оболочка ряда на `:focus-within`, не сегмент
  * 6. Скругляет первый и последний сегмент радиусом из `resolveBlockRadius` по
  *    `shape` и минимальной высоте ряда
  *
@@ -199,10 +199,14 @@ function getSegmentButtonPartsPartStyles(
     styles.push(
       `background-color: ${color};`,
       `color: ${theme.colors.inverse};`,
-      `&:not(:disabled):hover { background-color: ${resolveColorMix(color, theme.colors.shade)}; }`
+      `&:not(:disabled):hover,`,
+      `&:focus-visible { background-color: ${resolveColorMix(color, theme.colors.shade)}; }`
     );
   } else {
-    styles.push(`&:not(:disabled):hover { background-color: ${theme.colors.veil}; }`);
+    styles.push(
+      `&:not(:disabled):hover,`,
+      `&:focus-visible { background-color: ${theme.colors.veil}; }`
+    );
   }
 
   if (hasIcon) {
@@ -214,22 +218,13 @@ function getSegmentButtonPartsPartStyles(
 
     if (hoverStateBackground) {
       styles.push(
-        `&:not(:disabled):hover {`,
+        `&:not(:disabled):hover,`,
+        `&:focus-visible {`,
         `--icon-state-background: ${hoverStateBackground};`,
         '}'
       );
     }
   }
-
-  styles.push(
-    '&:focus-visible {',
-    'position: relative;',
-    'z-index: 1;',
-    getOutlineStyles(theme.colors.focusOutline, {
-      offset: `-${OUTLINE_OFFSET}`,
-    }),
-    '}'
-  );
 
   styles.push(
     `&:first-child {\nborder-start-start-radius: ${radius};\nborder-end-start-radius: ${radius};\n}`
@@ -246,10 +241,11 @@ function getSegmentButtonPartsPartStyles(
  * Базируется на `<button>` и принимает пропсы из `SegmentButtonPartsPartStyleProps`.
  *
  * Встроенные стили:
- *  - `:focus { outline: none }` — кольцо фокуса рисует генератор на `:focus-visible`
+ *  - `:focus { outline: none }` — акцент фокуса совпадает с наведением в генераторе
  *
  * Генерация стилей:
- *  - `getSegmentButtonPartsPartStyles` — заливка, кластер иконки с текстом, hover, focus и радиусы
+ *  - `getSegmentButtonPartsPartStyles` — заливка, кластер иконки с текстом,
+ *    наведение, фокус и радиусы
  */
 export const StyledSegmentButtonPartsPart = styled.button.withConfig({
   shouldForwardProp: (prop) => !SEGMENT_BUTTON_PARTS_PART_PROP_NAMES.has(prop),

@@ -14,8 +14,9 @@
  *    с `aria-invalid="true"` через `getOutlineStyles`
  *  - styles-файлы контролов и панелей, например Switch, Stepper, Table
  *    и AnchoredPortal — подставляют обводку через `getOutlineStyles`
- *  - `src/ui/segment-button-parts/segment-button-parts.styles.ts` — подставляет
- *    обводку через `getOutlineStyles` с инвертированным `OUTLINE_OFFSET`
+ *  - оболочки ряда с `:focus-within` — рисуют фокус-контур через `getOutlineStyles`:
+ *    - `src/ui/segment-button/segment-button.styles.ts`
+ *    - `src/ui/date-range-input/date-range-input.styles.ts`
  *  - `src/ui/viewport.ts` — учитывает `OUTLINE_OVERHANG_PX` в отступе clamp панелей
  */
 
@@ -40,9 +41,7 @@ const OUTLINE_WIDTH = `${OUTLINE_WIDTH_PX}px`;
 
 /**
  * OUTLINE_OFFSET — формирует отступ обводки от края узла из `OUTLINE_OFFSET_PX`.
- * Используется в `getOutlineStyles` как значение по умолчанию и в
- * `src/ui/segment-button-parts/segment-button-parts.styles.ts` для инвертированного
- * отступа.
+ * Используется в `getOutlineStyles` как значение по умолчанию.
  */
 export const OUTLINE_OFFSET = `${OUTLINE_OFFSET_PX}px`;
 
@@ -61,7 +60,7 @@ export const OUTLINE_OVERHANG_PX = OUTLINE_WIDTH_PX + OUTLINE_OFFSET_PX;
  *
  * @param color цвет обводки, обычно `theme.colors.focusOutline` или
  *   `theme.colors.invalidOutline`
- * @param options опциональный `offset`, например инвертированный у SegmentButton
+ * @param options опциональный `offset` обводки
  * @returns CSS-правила, каждое с новой строки
  */
 export function getOutlineStyles(color: string, options?: { offset?: string }): string {

@@ -405,7 +405,7 @@ export const StyledRangeInputCustomSection = styled.div`
  * Встроенные стили:
  *  - `grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)` — две равные колонки полей
  *  - `gap` — зазор между полями
- *  - `outline: none` на валидном `input:focus-visible` — кольцо фокуса несёт панель, как у Combobox
+ *  - `outline: none` на валидном `input:focus-visible` — фокус-контур несёт панель, как у Combobox
  */
 export const StyledRangeInputFields = styled.div`
   display: grid;

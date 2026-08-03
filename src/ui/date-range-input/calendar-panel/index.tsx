@@ -7,7 +7,6 @@
  *  - размерный ряд через проп `sizePreset`
  *  - форму кнопок навигации через проп `shape`
  *  - форму подсветки дня через проп `dayShape`
- *  - активный выбранный день через проп `activeDay`
  *  - верхнюю границу допустимых дней через проп `maxDay`
  *  - нижнюю границу допустимых дней через проп `minDay`
  *  - обработчик выбора дня через проп `onSelectDay`
@@ -61,15 +60,16 @@ import {
   canNavigateYearNext,
   canNavigateYearPrevious,
   formatMonthTitle,
+  isIsoDayAfter,
   isIsoDayBetweenRange,
   isIsoDayInBounds,
+  todayUtc,
   type MonthView,
 } from './day';
 
 /**
  * CalendarPanelProps — представляет пропсы компонента CalendarPanel.
  *
- * @property activeDay — активный выбранный день в формате ISO
  * @property maxDay — верхняя граница допустимых дней в формате ISO
  * @property minDay — нижняя граница допустимых дней в формате ISO
  * @property onSelectDay — обработчик выбора дня
@@ -79,7 +79,6 @@ import {
  * @property viewMonth — отображаемый месяц панели
  */
 type CalendarPanelProps = CalendarPanelStyleProps & {
-  activeDay?: string;
   maxDay?: string;
   minDay?: string;
   onSelectDay: (isoDay: string) => void;
@@ -94,13 +93,6 @@ type CalendarPanelProps = CalendarPanelStyleProps & {
  *
  * @example
  * <CalendarPanel
- *   activeDay={day}
- *   viewMonth={viewMonth}
- *   onSelectDay={setDay}
- *   onViewMonthChange={setViewMonth}
- * />
- * <CalendarPanel
- *   activeDay={endDay}
  *   rangeStart={startDay}
  *   rangeEnd={endDay}
  *   viewMonth={viewMonth}
@@ -109,7 +101,6 @@ type CalendarPanelProps = CalendarPanelStyleProps & {
  * />
  */
 export function CalendarPanel({
-  activeDay,
   dayShape,
   maxDay,
   minDay,
@@ -123,10 +114,6 @@ export function CalendarPanel({
 }: CalendarPanelProps) {
   const cells = buildMonthGrid(viewMonth);
   const selectedDays = new Set<string>();
-
-  if (activeDay != null && activeDay !== '') {
-    selectedDays.add(activeDay);
-  }
 
   if (rangeStart != null && rangeStart !== '') {
     selectedDays.add(rangeStart);
@@ -274,6 +261,10 @@ export function CalendarPanel({
             rangeEnd != null &&
             rangeEnd !== '' &&
             isIsoDayBetweenRange(cell.isoDay, rangeStart, rangeEnd);
+          // Приглушение соседнего месяца — только у прошлого. Будущие дни текущего
+          // и следующего месяца получают двойное приглушение через disabled: muted и opacity.
+          const isAdjacentPast =
+            cell.kind === 'adjacent-month' && !isIsoDayAfter(cell.isoDay, todayUtc());
 
           function handleDayClick(): void {
             onSelectDay(cell.isoDay);
@@ -283,7 +274,7 @@ export function CalendarPanel({
             <StyledCalendarDayButton
               aria-label={cell.isoDay}
               aria-pressed={isSelected ? true : undefined}
-              data-adjacent={cell.kind === 'adjacent-month' ? 'true' : undefined}
+              data-adjacent={isAdjacentPast ? 'true' : undefined}
               data-in-range={isInRange ? 'true' : undefined}
               data-selected={isSelected ? 'true' : undefined}
               dayShape={dayShape}

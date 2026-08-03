@@ -217,7 +217,7 @@ export const StyledCalendarHeader = styled.div`
  *
  * Встроенные стили:
  *  - `grid-column: 3 / span 3` — средние три колонки шапки
- *  - `min-inline-size: 0` — заголовок сжимается. Длинный текст переносится, не ellipsis
+ *  - `min-inline-size: 0` — заголовок сжимается. Длинный текст переносится, без `ellipsis`
  */
 export const StyledCalendarMonthTitle = styled.div`
   grid-column: 3 / span 3;
@@ -278,7 +278,7 @@ function getCalendarNavButtonStyles(
  * Базируется на `<button>` и принимает пропсы из `CalendarNavButtonStyleProps`.
  *
  * Генерация стилей:
- *  - `getCalendarNavButtonStyles` — квадрат по колонке с потолком модуля и hover
+ *  - `getCalendarNavButtonStyles` — квадрат по колонке с потолком модуля и наведение
  */
 export const StyledCalendarNavButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !CALENDAR_NAV_BUTTON_PROP_NAMES.has(prop),
@@ -367,7 +367,8 @@ const CALENDAR_DAY_BUTTON_PROP_NAMES = new Set<string>(['dayShape', 'sizePreset'
 /**
  * getCalendarDayButtonStyles — возвращает CSS-правила для узла
  * `StyledCalendarDayButton`: раскладку ячейки, псевдоэлемент подсветки и состояния
- * выбора, диапазона, соседнего месяца и наведения.
+ * выбора, диапазона, прошлого соседнего месяца и неактивных дней. Недоступные
+ * дни берут `muted` и глобальный `opacity` disabled — двойное приглушение будущего.
  *
  * @param props пропсы стилизации кнопки дня и тема
  * @returns CSS-правила, каждое с новой строки
@@ -411,20 +412,32 @@ function getCalendarDayButtonStyles(
       background-color: ${theme.colors.scrollbarThumb};
       opacity: 1;
     }
-    &[data-in-range='true']:not(:disabled):hover::before {
-      background-color: transparent;
-      border-color: ${theme.colors.primary};
-      opacity: 1;
+    &[data-adjacent='true']:not([data-selected='true']) {
+      color: ${theme.colors.muted};
     }
-    &[data-selected='true'] { color: ${theme.colors.inverse}; }
+    &[data-in-range='true']:not([data-selected='true']) {
+      color: ${theme.colors.default};
+    }
+    &:disabled:not([data-selected='true']) {
+      color: ${theme.colors.muted};
+    }
+    &[data-selected='true'] {
+      color: ${theme.colors.inverse};
+    }
     &[data-selected='true']::before {
       background-color: ${theme.colors.primary};
       opacity: 1;
     }
-    &[data-adjacent='true'] { color: ${theme.colors.muted}; }
-    &[data-in-range='true'] { color: ${theme.colors.default}; }
-    &:not(:disabled):hover::before {
+    &:not(:disabled):hover:not([data-selected='true'])::before {
       background-color: transparent;
+      border-color: ${theme.colors.primary};
+      opacity: 1;
+    }
+    &[data-selected='true']:not(:disabled):hover {
+      color: ${theme.colors.primary};
+    }
+    &[data-selected='true']:not(:disabled):hover::before {
+      background-color: ${theme.colors.inverse};
       border-color: ${theme.colors.primary};
       opacity: 1;
     }

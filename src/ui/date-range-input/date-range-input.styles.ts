@@ -125,7 +125,7 @@ export const StyledDateRangeInputRoot = styled.div.withConfig({
 /**
  * getDateRangeInputTriggerRowStyles — возвращает CSS-правила для узла
  * `StyledDateRangeInputTriggerRow`: габариты, рамку с тенью через `getBorderStyles`,
- * заливку и кольцо фокуса.
+ * заливку и фокус-контур ряда на `:focus-within`.
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -158,7 +158,8 @@ function getDateRangeInputTriggerRowStyles(
  * Базируется на `<div>` и принимает пропсы из `DateRangeInputSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getDateRangeInputTriggerRowStyles` — габариты, рамка с тенью, заливка и кольцо фокуса
+ *  - `getDateRangeInputTriggerRowStyles` — габариты, рамка с тенью, заливка и
+ *    фокус-контур ряда на `:focus-within`
  *
  * При открытой панели ряд скрывается через `visibility: hidden`, чтобы панель
  * наследовала ширину якоря без двойного отображения триггера.
@@ -194,7 +195,8 @@ function getDateRangeInputPanelStyles(
  * Базируется на `<div>` и принимает пропсы из `DateRangeInputSurfaceStyleProps`.
  *
  * Встроенные стили:
- *  - `display: grid` — раскладка содержимого панели
+ *  - `display: grid` — раскладка календаря и ряда действий
+ *  - `gap` — отступ между сеткой дней и SegmentButtonParts действий
  *  - `min-inline-size: 0` — предотвращает переполнение
  *
  * Генерация стилей:
@@ -204,6 +206,7 @@ export const StyledDateRangeInputPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => !DATE_RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
 })<DateRangeInputSurfaceStyleProps>`
   display: grid;
+  gap: ${getSpacingValue(12)};
   min-inline-size: 0;
   ${(props) => getDateRangeInputPanelStyles(props)}
 `;

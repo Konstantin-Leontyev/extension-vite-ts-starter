@@ -17,6 +17,7 @@ import styled from 'styled-components';
 
 import { getBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
+import { getOutlineStyles } from '@ui/outline';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
@@ -84,13 +85,16 @@ const SEGMENT_BUTTON_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
 
 /**
  * getSegmentButtonStyles — возвращает CSS-правила для узла `StyledSegmentButton`:
- * высоту, заливку, рамку с тенью через `getBorderStyles` и радиус по `shape`.
+ * высоту, заливку, рамку с тенью через `getBorderStyles`, радиус по `shape`
+ * и фокус-контур ряда на `:focus-within`.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты `shape` и `sizePreset`
  * 2. Собирает `min-block-size` через `getMinBlockSize`, заливку `surface`,
  *    рамку с тенью через `getBorderStyles` и `border-radius` через
  *    `resolveBlockRadius` по форме и высоте
+ * 3. На `:focus-within` рисует фокус-контур через `getOutlineStyles` — общая
+ *    обводка ряда, пока фокус на сегменте. Сам сегмент контур не рисует
  *
  * @param props пропсы стилизации оболочки и тема
  * @returns CSS-правила, каждое с новой строки
@@ -107,6 +111,9 @@ function getSegmentButtonStyles(
     background-color: ${theme.colors.surface};
     ${getBorderStyles(theme)}
     border-radius: ${resolveBlockRadius(shape, minBlockSize)};
+    &:focus-within {
+      ${getOutlineStyles(theme.colors.focusOutline)}
+    }
   `;
 }
 
@@ -121,8 +128,8 @@ function getSegmentButtonStyles(
  *  - `overflow: hidden` — обрезает сегменты по скруглению оболочки
  *
  * Генерация стилей:
- *  - `getSegmentButtonStyles` — высота, заливка, рамка с тенью через `getBorderStyles`
- *    и радиус
+ *  - `getSegmentButtonStyles` — высота, заливка, рамка с тенью через `getBorderStyles`,
+ *    радиус и фокус-контур `:focus-within`
  */
 export const StyledSegmentButton = styled.div.withConfig({
   shouldForwardProp: (prop) => !SEGMENT_BUTTON_PROP_NAMES.has(prop),

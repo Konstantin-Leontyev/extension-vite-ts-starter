@@ -17,10 +17,10 @@
  */
 
 /**
- * DATE_PLACEHOLDER — задаёт плейсхолдер пустого поля даты в формате ДД.ММ.ГГ.
+ * DATE_PLACEHOLDER — задаёт плейсхолдер пустого поля даты в формате DD.MM.YY.
  * Используется в триггерах DateRangeInput при пустом значении.
  */
-export const DATE_PLACEHOLDER = 'ДД.ММ.ГГ';
+export const DATE_PLACEHOLDER = 'DD.MM.YY';
 
 /**
  * IsoDayParts — представляет разобранный календарный день.
@@ -63,7 +63,7 @@ export function todayUtc(): string {
 }
 
 /**
- * formatIsoDayCompact — преобразует ISO-день в компактную подпись ДД.ММ.ГГ.
+ * formatIsoDayCompact — преобразует ISO-день в компактную подпись DD.MM.YY.
  * При неразбираемой строке возвращает исходное значение без изменений.
  *
  * @param isoDay день в формате ISO
@@ -308,12 +308,12 @@ function weekdayMondayFirst(view: MonthView, day: number): number {
  * formatMonthName — возвращает локализованное имя месяца для шапки панели.
  *
  * @param view вид месяца
- * @returns строка вида «июль» в локали `ru-RU`
+ * @returns строка вида `July` в локали `en-US`
  */
 function formatMonthName(view: MonthView): string {
   const date = new Date(Date.UTC(view.year, view.month - 1, 1));
 
-  return new Intl.DateTimeFormat('ru-RU', {
+  return new Intl.DateTimeFormat('en-US', {
     month: 'long',
     timeZone: 'UTC',
   }).format(date);
@@ -321,28 +321,26 @@ function formatMonthName(view: MonthView): string {
 
 /**
  * formatMonthTitle — возвращает локализованный заголовок месяца и года одной строкой.
- * Год без суффикса «г.»: в `ru-RU` он занимает место в узкой шапке, а из контекста
- * панели и так ясно, что число — год.
  *
  * @param view вид месяца
- * @returns строка вида «июль 2026» в локали `ru-RU`
+ * @returns строка вида `July 2026` в локали `en-US`
  */
 export function formatMonthTitle(view: MonthView): string {
   return `${formatMonthName(view)} ${view.year}`;
 }
 
 /**
- * WEEKDAY_LABELS — задаёт подписи дней недели для шапки сетки.
+ * WEEKDAY_LABELS — задаёт подписи дней недели для шапки сетки в локали `en-US`.
  * Порядок — с понедельника по воскресенье.
  */
 export const WEEKDAY_LABELS = Object.freeze([
-  'Пн',
-  'Вт',
-  'Ср',
-  'Чт',
-  'Пт',
-  'Сб',
-  'Вс',
+  'Mon',
+  'Tue',
+  'Wed',
+  'Thu',
+  'Fri',
+  'Sat',
+  'Sun',
 ] as const);
 
 /**
