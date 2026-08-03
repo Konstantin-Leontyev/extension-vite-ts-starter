@@ -3,15 +3,13 @@
  * Определяет внешний вид компонента CalendarPanel.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `CalendarPanelStyleProps`, `CalendarNavButtonStyleProps`
- *    и `CalendarDayButtonStyleProps`
+ * 1. Типизировать пропсы через `CalendarPanelStyleProps`
  * 2. Хранить минимальные размеры подсветки дня в `calendarDayHighlightMinBlockSize`,
  *    потолок квадрата стрелки в `calendarNavButtonMaxSize` и глиф без паддинга в
  *    `calendarNavGlyphSize`
- * 3. Предоставить функции `getCalendarNavGlyphSize` и `getCalendarPanelTextSize`,
- *    а также дефолт `DEFAULT_CALENDAR_PANEL_SIZE_PRESET`
+ * 3. Предоставить функции `getCalendarNavGlyphSize` и `getCalendarPanelTextSize`
  * 4. Предоставить styled-узлы `StyledCalendarPanelRoot`, `StyledCalendarHeader`,
- *    `StyledCalendarMonthTitle`, `StyledCalendarNavButton`, `StyledCalendarWeekdayRow`,
+ *    `StyledCalendarNavButton`, `StyledCalendarMonthTitle`, `StyledCalendarWeekdayRow`,
  *    `StyledCalendarWeekdayCell`, `StyledCalendarGrid` и `StyledCalendarDayButton`
  *
  * Потребители:
@@ -31,6 +29,7 @@ import {
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
+import { resolveColorMix } from '@ui/tones';
 
 /**
  * CALENDAR_DAY_GRID_GAP — задаёт зазор сетки дней и шапки в rem.
@@ -120,7 +119,7 @@ const calendarNavGlyphSize = {
  * DEFAULT_CALENDAR_PANEL_SIZE_PRESET — задаёт размер CalendarPanel по умолчанию.
  * Используется, когда вызывающий код не передал проп `sizePreset`.
  */
-export const DEFAULT_CALENDAR_PANEL_SIZE_PRESET: SizePreset = DEFAULT_SIZE_PRESET;
+const DEFAULT_CALENDAR_PANEL_SIZE_PRESET: SizePreset = DEFAULT_SIZE_PRESET;
 
 /**
  * getCalendarNavGlyphSize — возвращает CSS-сторону глифа стрелки без паддинга.
@@ -212,19 +211,6 @@ export const StyledCalendarHeader = styled.div`
 `;
 
 /**
- * StyledCalendarMonthTitle — задаёт полосу месяца и года в шапке CalendarPanel.
- * Базируется на `<div>`.
- *
- * Встроенные стили:
- *  - `grid-column: 3 / span 3` — средние три колонки шапки
- *  - `min-inline-size: 0` — заголовок сжимается. Длинный текст переносится, без `ellipsis`
- */
-export const StyledCalendarMonthTitle = styled.div`
-  grid-column: 3 / span 3;
-  min-inline-size: 0;
-`;
-
-/**
  * CalendarNavButtonStyleProps — представляет пропсы стилизации кнопки навигации.
  *
  * @property shape — форма кнопки
@@ -268,7 +254,6 @@ function getCalendarNavButtonStyles(
     color: ${theme.colors.default};
     border-radius: ${resolveBlockRadius(shape, maxSize)};
     &:not(:disabled):hover { background-color: ${theme.colors.veil}; }
-    & > * { max-inline-size: 100%; max-block-size: 100%; }
   `;
 }
 
@@ -284,6 +269,19 @@ export const StyledCalendarNavButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !CALENDAR_NAV_BUTTON_PROP_NAMES.has(prop),
 })<CalendarNavButtonStyleProps>`
   ${(props) => getCalendarNavButtonStyles(props)}
+`;
+
+/**
+ * StyledCalendarMonthTitle — задаёт полосу месяца и года в шапке CalendarPanel.
+ * Базируется на `<div>`.
+ *
+ * Встроенные стили:
+ *  - `grid-column: 3 / span 3` — средние три колонки шапки
+ *  - `min-inline-size: 0` — заголовок сжимается. Длинный текст переносится, без `ellipsis`
+ */
+export const StyledCalendarMonthTitle = styled.div`
+  grid-column: 3 / span 3;
+  min-inline-size: 0;
 `;
 
 /**
@@ -433,12 +431,8 @@ function getCalendarDayButtonStyles(
       border-color: ${theme.colors.primary};
       opacity: 1;
     }
-    &[data-selected='true']:not(:disabled):hover {
-      color: ${theme.colors.primary};
-    }
     &[data-selected='true']:not(:disabled):hover::before {
-      background-color: ${theme.colors.inverse};
-      border-color: ${theme.colors.primary};
+      background-color: ${resolveColorMix(theme.colors.primary, theme.colors.shade)};
       opacity: 1;
     }
   `;
@@ -451,8 +445,9 @@ function getCalendarDayButtonStyles(
  * Генерация стилей:
  *  - `getCalendarDayButtonStyles` — раскладка, подсветка и состояния дня
  *
- * Подсветка рисуется псевдоэлементом `::before`: выбор заливает `primary`, дни
- * внутри диапазона — нейтральный фон, наведение обводит `primary`.
+ * Подсветка рисуется псевдоэлементом `::before`: выбор заливает `primary`, наведение
+ * на выбранный день смешивает заливку с `shade`, дни внутри диапазона — нейтральный
+ * фон, наведение на невыбранный день обводит `primary`.
  */
 export const StyledCalendarDayButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !CALENDAR_DAY_BUTTON_PROP_NAMES.has(prop),

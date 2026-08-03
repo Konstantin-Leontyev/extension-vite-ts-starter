@@ -3,9 +3,8 @@
  * Определяет внешний вид компонента DateRangeInput.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `DateRangeInputStyleProps` и `DateRangeInputSurfaceStyleProps`
- * 2. Предоставить дефолты `DEFAULT_DATE_RANGE_INPUT_SHAPE` и
- *    `DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET`
+ * 1. Типизировать пропсы через `DateRangeInputStyleProps`
+ * 2. Предоставить дефолт формы `DEFAULT_DATE_RANGE_INPUT_SHAPE`
  * 3. Предоставить styled-узлы `StyledDateRangeInputRoot`,
  *    `StyledDateRangeInputTriggerRow` и
  *    `StyledDateRangeInputPanel`
@@ -65,7 +64,7 @@ const DATE_RANGE_INPUT_SURFACE_PROP_NAMES = new Set<string>(['shape', 'sizePrese
  * DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET — задаёт размер DateRangeInput по умолчанию.
  * Используется, когда вызывающий код не передал проп `sizePreset`.
  */
-export const DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET: SizePreset = DEFAULT_SIZE_PRESET;
+const DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET: SizePreset = DEFAULT_SIZE_PRESET;
 
 /**
  * DEFAULT_DATE_RANGE_INPUT_SHAPE — задаёт форму DateRangeInput по умолчанию.

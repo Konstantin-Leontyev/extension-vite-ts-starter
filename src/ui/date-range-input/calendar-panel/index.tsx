@@ -37,7 +37,6 @@ import { Icon } from '@ui/icon';
 import { Text } from '@ui/text';
 
 import {
-  DEFAULT_CALENDAR_PANEL_SIZE_PRESET,
   StyledCalendarDayButton,
   StyledCalendarGrid,
   StyledCalendarHeader,
@@ -127,9 +126,8 @@ export function CalendarPanel({
   const canGoMonthNext = canNavigateMonthNext(viewMonth, maxDay);
   const canGoYearPrevious = canNavigateYearPrevious(viewMonth, minDay);
   const canGoYearNext = canNavigateYearNext(viewMonth, maxDay);
-  const resolvedSizePreset = sizePreset ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET;
-  const textSizePreset = getCalendarPanelTextSize(resolvedSizePreset);
-  const navGlyphSize = getCalendarNavGlyphSize(resolvedSizePreset);
+  const textSizePreset = getCalendarPanelTextSize(sizePreset);
+  const navGlyphSize = getCalendarNavGlyphSize(sizePreset);
 
   function handlePreviousYearClick(): void {
     onViewMonthChange(addYears(viewMonth, -1));
@@ -154,7 +152,7 @@ export function CalendarPanel({
           aria-label="Previous year"
           disabled={!canGoYearPrevious}
           shape={shape}
-          sizePreset={resolvedSizePreset}
+          sizePreset={sizePreset}
           type="button"
           onClick={handlePreviousYearClick}
         >
@@ -163,7 +161,6 @@ export function CalendarPanel({
             inlineSize={navGlyphSize}
             padding={0}
             showHover={false}
-            showShadow={false}
           >
             <ChevronDoubleLeftIcon />
           </Icon>
@@ -172,7 +169,7 @@ export function CalendarPanel({
           aria-label="Previous month"
           disabled={!canGoMonthPrevious}
           shape={shape}
-          sizePreset={resolvedSizePreset}
+          sizePreset={sizePreset}
           type="button"
           onClick={handlePreviousMonthClick}
         >
@@ -181,7 +178,6 @@ export function CalendarPanel({
             inlineSize={navGlyphSize}
             padding={0}
             showHover={false}
-            showShadow={false}
           >
             <ChevronLeftIcon />
           </Icon>
@@ -201,7 +197,7 @@ export function CalendarPanel({
           aria-label="Next month"
           disabled={!canGoMonthNext}
           shape={shape}
-          sizePreset={resolvedSizePreset}
+          sizePreset={sizePreset}
           type="button"
           onClick={handleNextMonthClick}
         >
@@ -210,7 +206,6 @@ export function CalendarPanel({
             inlineSize={navGlyphSize}
             padding={0}
             showHover={false}
-            showShadow={false}
           >
             <ChevronRightIcon />
           </Icon>
@@ -219,7 +214,7 @@ export function CalendarPanel({
           aria-label="Next year"
           disabled={!canGoYearNext}
           shape={shape}
-          sizePreset={resolvedSizePreset}
+          sizePreset={sizePreset}
           type="button"
           onClick={handleNextYearClick}
         >
@@ -228,7 +223,6 @@ export function CalendarPanel({
             inlineSize={navGlyphSize}
             padding={0}
             showHover={false}
-            showShadow={false}
           >
             <ChevronDoubleRightIcon />
           </Icon>
@@ -280,7 +274,7 @@ export function CalendarPanel({
               dayShape={dayShape}
               disabled={!isSelectable}
               key={cell.isoDay}
-              sizePreset={resolvedSizePreset}
+              sizePreset={sizePreset}
               type="button"
               onClick={handleDayClick}
             >

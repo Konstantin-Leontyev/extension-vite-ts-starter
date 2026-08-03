@@ -67,7 +67,6 @@ import {
 } from './calendar-panel';
 import {
   DEFAULT_DATE_RANGE_INPUT_SHAPE,
-  DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET,
   StyledDateRangeInputPanel,
   StyledDateRangeInputRoot,
   StyledDateRangeInputTriggerRow,
@@ -308,9 +307,7 @@ export function DateRangeInput({
   const returnFocusRef = useRef<HTMLElement>(null);
   const labelId = useId();
   const panelId = useId();
-  const resolvedShape = shape ?? DEFAULT_DATE_RANGE_INPUT_SHAPE;
-  const resolvedSizePreset = sizePreset ?? DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET;
-  const dayShape = dayShapeProp ?? resolvedShape;
+  const dayShape = dayShapeProp ?? shape ?? DEFAULT_DATE_RANGE_INPUT_SHAPE;
   const surfaceProps = { shape, sizePreset };
   const calendarIcon = <CalendarIcon />;
   const isActive = startDay !== '' || endDay !== '';
@@ -522,8 +519,8 @@ export function DateRangeInput({
             minDay={minDay}
             rangeEnd={draftEndDay}
             rangeStart={draftStartDay}
-            shape={resolvedShape}
-            sizePreset={resolvedSizePreset}
+            shape={shape}
+            sizePreset={sizePreset}
             viewMonth={viewMonth}
             onSelectDay={handleSelectDay}
             onViewMonthChange={setViewMonth}
@@ -543,8 +540,8 @@ export function DateRangeInput({
               label: PANEL_DISMISS_LABEL,
               onClick: handlePanelDismiss,
             }}
-            shape={resolvedShape}
-            sizePreset={resolvedSizePreset}
+            shape={shape}
+            sizePreset={sizePreset}
             textSize={textSizePreset}
           />
         </StyledDateRangeInputPanel>
