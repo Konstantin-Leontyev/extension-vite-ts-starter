@@ -100,7 +100,7 @@ export type CardWidgetState = {
   showSubtitle: boolean;
   subtitle: string;
   subtitleAlign?: TextAlignPreset;
-  subtitleSizePreset: TextSizePreset;
+  subtitleSizePreset?: TextSizePreset;
   subtitleTone: TextTone;
   title: string;
   titleAlign?: TextAlignPreset;

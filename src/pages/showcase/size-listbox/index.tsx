@@ -51,19 +51,27 @@ function getSizeListboxOptions<Size extends string>(
 }
 
 /**
+ * DEFAULT_SIZE_LISTBOX_VALUE — задаёт размер по умолчанию для отображения в листбоксе.
+ * Проп размера Text без значения подставляет `normal` — то же значение здесь.
+ * Панели передают состояние как есть, не дублируя это умолчание запасными значениями.
+ * Используется, когда вызывающий код не передал проп `value`.
+ */
+const DEFAULT_SIZE_LISTBOX_VALUE = 'normal';
+
+/**
  * SizeListboxProps — представляет пропсы компонента SizeListbox.
  *
  * @property label — текст подписи над листбоксом
  * @property onChange — обработчик изменения выбранного размера
  * @property sizes — перечень допустимых размеров из настраиваемого компонента,
  *   например `SIZE_PRESET_KEYS`, `TAG_SIZE_PRESET_KEYS` или `TEXT_SIZE_PRESET_KEYS`
- * @property value — текущий выбранный размер
+ * @property value — текущий выбранный размер, по умолчанию `normal`
  */
 type SizeListboxProps<Size extends string> = {
   label: string;
   onChange: (size: Size) => void;
   sizes: readonly Size[];
-  value: Size;
+  value?: Size;
 };
 
 /**
@@ -87,7 +95,7 @@ export function SizeListbox<Size extends string = SizePreset>({
   label,
   onChange,
   sizes,
-  value,
+  value = DEFAULT_SIZE_LISTBOX_VALUE as Size,
 }: SizeListboxProps<Size>) {
   return (
     <Listbox

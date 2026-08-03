@@ -5,6 +5,9 @@
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - заливку через проп `background`
+ *  - рамку через проп `showBorder`
+ *  - тень через проп `showShadow`
+ *  - тон рамки через проп `borderTone`
  *  - заголовок через проп `title`
  *  - подзаголовок через проп `subtitle`
  *  - размер заголовка через проп `titleSizePreset`
@@ -50,6 +53,13 @@ const DEFAULT_MODAL_CLOSE_ARIA_LABEL = 'Close';
 const MODAL_CLOSE_ICON_PADDING: SpacingValue = 8;
 
 /**
+ * DEFAULT_MODAL_SHOW_BORDER — задаёт показ рамки Card внутри Modal по умолчанию.
+ * Рамка выключена: на затемнении страницы контур панели даёт заливка Card,
+ * а не обводка `0 0 0 1px`. Светлая рамка на тёмном `overlay` читается плохо.
+ */
+const DEFAULT_MODAL_SHOW_BORDER = false;
+
+/**
  * CardForwardProps — представляет пропсы Card без `children` и `headerActions`.
  */
 type CardForwardProps = Omit<ComponentProps<typeof Card>, 'children' | 'headerActions'>;
@@ -82,6 +92,7 @@ function Modal({
   closeAriaLabel = DEFAULT_MODAL_CLOSE_ARIA_LABEL,
   onClose,
   open,
+  showBorder = DEFAULT_MODAL_SHOW_BORDER,
   title,
   titleId: titleIdProp,
   ...rest
@@ -134,6 +145,7 @@ function Modal({
             onClick: handleCloseClick,
           },
         ]}
+        showBorder={showBorder}
         title={title}
         titleId={titleId}
         {...rest}

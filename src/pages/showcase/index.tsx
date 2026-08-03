@@ -666,14 +666,11 @@ const DEFAULT_TABLE_STATE: TableWidgetState = {
  */
 const DEFAULT_MODAL_STATE: ModalWidgetState = {
   background: 'surface',
-  showSubtitle: false,
+  showSubtitle: true,
   sizePreset: 'normal',
-  subtitle: 'Subtitle text',
-  subtitleAlign: 'start',
-  subtitleSizePreset: 'thin',
+  subtitle: 'Modal subtitle',
   subtitleTone: 'muted',
   title: 'Modal title',
-  titleAlign: 'start',
   titleSizePreset: 'bold',
   titleTone: DEFAULT_TONE,
 };
@@ -697,7 +694,6 @@ const DEFAULT_CARD_STATE: CardWidgetState = {
   title: 'Card title',
   showSubtitle: true,
   subtitle: 'Subtitle text',
-  subtitleSizePreset: 'normal',
   subtitleTone: 'muted',
   titleSizePreset: 'bold',
   titleTone: DEFAULT_TONE,

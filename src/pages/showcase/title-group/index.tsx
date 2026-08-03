@@ -65,7 +65,7 @@ type TitleGroupProps = {
   onSizeChange: (size: TextSizePreset) => void;
   onTitleChange: (title: string) => void;
   onToneChange: (tone: TextTone) => void;
-  size: TextSizePreset;
+  size?: TextSizePreset;
   title: string;
   tone: TextTone;
 };

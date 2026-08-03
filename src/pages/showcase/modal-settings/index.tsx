@@ -2,8 +2,8 @@
  * Файл: `src/pages/showcase/modal-settings/index.tsx`
  * Определяет панель настроек компонента Modal в витрине дизайн-системы.
  * Содержит контролы для изменения размера, фона, заголовка и подзаголовка
- * в реальном времени. Тело модального окна — `children`, панелью не настраивается:
- * превью передаёт витринный плейсхолдер.
+ * в реальном времени. Не настраивает тело модального окна: превью передаёт
+ * витринный плейсхолдер через `children`.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `ModalWidgetState`
@@ -49,11 +49,11 @@ export type ModalWidgetState = {
   showSubtitle: boolean;
   sizePreset: SizePreset;
   subtitle: string;
-  subtitleAlign: TextAlignPreset;
-  subtitleSizePreset: TextSizePreset;
+  subtitleAlign?: TextAlignPreset;
+  subtitleSizePreset?: TextSizePreset;
   subtitleTone: TextTone;
   title: string;
-  titleAlign: TextAlignPreset;
+  titleAlign?: TextAlignPreset;
   titleSizePreset: TextSizePreset;
   titleTone: TextTone;
 };
