@@ -56,9 +56,7 @@ const COLLAPSED_INSET = getSpacingValue(8);
  * @returns CSS-правила, каждое с новой строки
  */
 function getHeaderBarStyles(props: { theme: AppTheme }): string {
-  const styles = [`background-color: ${getTheme(props).colors.background};`];
-
-  return styles.join('\n');
+  return `background-color: ${getTheme(props).colors.background};`;
 }
 
 /**
@@ -100,7 +98,7 @@ const HEADER_PROP_NAMES = new Set<string>(['autoHide']);
  * DEFAULT_HEADER_AUTO_HIDE — задаёт режим скрытия шапки по умолчанию.
  * Используется, когда вызывающий код не передал проп `autoHide`.
  */
-export const DEFAULT_HEADER_AUTO_HIDE = false;
+export const DEFAULT_HEADER_AUTO_HIDE = true;
 
 /**
  * getHeaderStyles — возвращает CSS-правила для корня `StyledHeader`: режим `autoHide`.
@@ -122,28 +120,26 @@ function getHeaderStyles(props: HeaderStyleProps): string {
     return '';
   }
 
-  const styles = [
-    `block-size: ${HEADER_BLOCK_SIZE};`,
-    'overflow: hidden;',
-    getTransitionStyles('block-size', MOTION_SHELL_DURATION),
-    `${StyledHeaderBar} {`,
-    getTransitionStyles('transform', MOTION_SHELL_DURATION),
-    '}',
-    `&:not([data-revealed='true']) {`,
-    `block-size: ${COLLAPSED_INSET};`,
-    '}',
-    `&:not([data-revealed='true']) ${StyledHeaderBar} {`,
-    'transform: translateY(-100%);',
-    '}',
-    `&:focus-within {`,
-    `block-size: ${HEADER_BLOCK_SIZE};`,
-    '}',
-    `&:focus-within ${StyledHeaderBar} {`,
-    'transform: none;',
-    '}',
-  ];
-
-  return styles.join('\n');
+  return `
+    block-size: ${HEADER_BLOCK_SIZE};
+    overflow: hidden;
+    ${getTransitionStyles('block-size', MOTION_SHELL_DURATION)}
+    ${StyledHeaderBar} {
+      ${getTransitionStyles('transform', MOTION_SHELL_DURATION)}
+    }
+    &:not([data-revealed='true']) {
+      block-size: ${COLLAPSED_INSET};
+    }
+    &:not([data-revealed='true']) ${StyledHeaderBar} {
+      transform: translateY(-100%);
+    }
+    &:focus-within {
+      block-size: ${HEADER_BLOCK_SIZE};
+    }
+    &:focus-within ${StyledHeaderBar} {
+      transform: none;
+    }
+  `;
 }
 
 /**

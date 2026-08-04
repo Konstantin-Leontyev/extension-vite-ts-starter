@@ -16,13 +16,13 @@ import { ContrastIcon } from '@icons';
 import { Icon } from '@ui/icon';
 
 /**
- * SWITCH_TO_DARK_ARIA_LABEL — задаёт EN-текст `aria-label` для перехода на тёмную тему.
+ * SWITCH_TO_DARK_ARIA_LABEL — задаёт текст `aria-label` для перехода на тёмную тему.
  * Используется как доступное имя кнопки, когда активна светлая тема.
  */
 const SWITCH_TO_DARK_ARIA_LABEL = 'Switch to dark theme';
 
 /**
- * SWITCH_TO_LIGHT_ARIA_LABEL — задаёт EN-текст `aria-label` для перехода на светлую тему.
+ * SWITCH_TO_LIGHT_ARIA_LABEL — задаёт текст `aria-label` для перехода на светлую тему.
  * Используется как доступное имя кнопки, когда активна тёмная тема.
  */
 const SWITCH_TO_LIGHT_ARIA_LABEL = 'Switch to light theme';

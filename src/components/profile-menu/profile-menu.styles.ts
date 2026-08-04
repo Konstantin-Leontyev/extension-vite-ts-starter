@@ -42,14 +42,12 @@ export const StyledProfileMenu = styled.div.withConfig({
  * Базируется на `<div>`.
  *
  * Встроенные стили:
- *  - `display: grid` и `grid-template-rows: auto auto auto` — шапка, действия и правовые
- *    ссылки друг под другом
+ *  - `display: grid` — шапка, действия и правовые ссылки друг под другом
  *  - `block-size: 100%` — колонка заполняет высоту панели
  *  - `min-block-size: 0` — позволяет колонке сжиматься внутри ограниченной панели
  */
 export const StyledProfileMenuContent = styled.div`
   display: grid;
-  grid-template-rows: auto auto auto;
   block-size: 100%;
   min-block-size: 0;
 `;
@@ -109,10 +107,7 @@ export const StyledProfileMenuLegal = styled.nav`
  * @returns CSS-правила, каждое с новой строки
  */
 function getProfileMenuLegalLinkStyles(props: { theme: AppTheme }): string {
-  const theme = getTheme(props);
-  const styles = [`color: ${theme.colors.muted};`];
-
-  return styles.join('\n');
+  return `color: ${getTheme(props).colors.muted};`;
 }
 
 /**

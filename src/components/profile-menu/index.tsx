@@ -1,6 +1,6 @@
 /**
  * Файл: `src/components/profile-menu/index.tsx`
- * Предоставляет компонент ProfileMenu для меню профиля в шапке.
+ * Предоставляет компонент ProfileMenu для отображения меню профиля в шапке.
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
@@ -35,7 +35,27 @@ import {
   StyledProfileMenuLegalLink,
   type ProfileMenuStyleProps,
 } from './profile-menu.styles';
-import { PROFILE_STUB } from './profile-stub';
+
+/**
+ * PROFILE_STUB — представляет заглушку данных профиля.
+ * Используется в ProfileMenu до возврата данных из входа через Google.
+ */
+const PROFILE_STUB = {
+  displayEmail: 'user@example.com',
+  displayName: 'User',
+} as const;
+
+/**
+ * PROFILE_MENU_CLOSE_ARIA_LABEL — задаёт доступное имя кнопки закрытия панели.
+ * Используется в `headerActions` Card панели ProfileMenu.
+ */
+const PROFILE_MENU_CLOSE_ARIA_LABEL = 'Close profile menu';
+
+/**
+ * PROFILE_MENU_LEGAL_ARIA_LABEL — задаёт доступное имя навигации правовых ссылок.
+ * Используется в `StyledProfileMenuLegal`.
+ */
+const PROFILE_MENU_LEGAL_ARIA_LABEL = 'Legal';
 
 /**
  * PROFILE_MENU_LEGAL_LINKS — задаёт перечень правовых ссылок меню профиля.
@@ -47,17 +67,23 @@ const PROFILE_MENU_LEGAL_LINKS = [
 ] as const;
 
 /**
+ * PROFILE_MENU_PANEL_MIN_INLINE_SIZE_PX — задаёт минимальную ширину панели меню профиля в px.
+ * Используется в `PROFILE_MENU_INLINE_SIZE`.
+ */
+const PROFILE_MENU_PANEL_MIN_INLINE_SIZE_PX = 360;
+
+/**
  * PROFILE_MENU_MAX_INLINE_SIZE — задаёт максимальную ширину панели меню профиля:
  * вьюпорт минус зазор по обеим сторонам.
- * Используется в пределах ширины панели и внутри `PROFILE_MENU_INLINE_SIZE`.
+ * Используется в `maxInlineSize` Card панели ProfileMenu и внутри `PROFILE_MENU_INLINE_SIZE`.
  */
 const PROFILE_MENU_MAX_INLINE_SIZE = 'calc(100vw - 4rem)';
 
 /**
  * PROFILE_MENU_INLINE_SIZE — задаёт минимальную ширину панели меню профиля.
- * Используется в `AnchoredPortal` панели ProfileMenu.
+ * Используется в `minInlineSize` Card панели ProfileMenu.
  */
-const PROFILE_MENU_INLINE_SIZE = `min(360px, ${PROFILE_MENU_MAX_INLINE_SIZE})`;
+const PROFILE_MENU_INLINE_SIZE = `min(${PROFILE_MENU_PANEL_MIN_INLINE_SIZE_PX}px, ${PROFILE_MENU_MAX_INLINE_SIZE})`;
 
 /**
  * PROFILE_MENU_TRIGGER_GAP_PX — задаёт зазор между триггером и панелью в px.
@@ -158,7 +184,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
           aria-modal={true}
           headerActions={[
             {
-              ariaLabel: 'Close profile menu',
+              ariaLabel: PROFILE_MENU_CLOSE_ARIA_LABEL,
               icon: <CloseIcon />,
               iconPadding: 12,
               onClick: handleClose,
@@ -179,13 +205,11 @@ export function ProfileMenu(props: ProfileMenuProps) {
             <StyledProfileMenuHeader>
               <Icon
                 aria-hidden="true"
-                as="button"
                 blockSize={getSpacingValue(80)}
                 inlineSize={getSpacingValue(80)}
                 padding={8}
                 shape="round"
                 showBorder
-                tabIndex={-1}
               >
                 <AvatarIcon />
               </Icon>
@@ -198,8 +222,8 @@ export function ProfileMenu(props: ProfileMenuProps) {
               <SegmentButton
                 left={{
                   icon: <AddCircleIcon />,
-                  iconPosition: 'start',
                   iconFill: 'primary',
+                  iconPosition: 'start',
                   label: 'Profile',
                   onClick: handleClose,
                 }}
@@ -212,7 +236,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
               />
             </StyledProfileMenuActions>
 
-            <StyledProfileMenuLegal aria-label="Legal">
+            <StyledProfileMenuLegal aria-label={PROFILE_MENU_LEGAL_ARIA_LABEL}>
               {PROFILE_MENU_LEGAL_LINKS.map((link, index) => (
                 <Fragment key={link.to}>
                   {index > 0 && (

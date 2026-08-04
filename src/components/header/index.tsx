@@ -22,7 +22,7 @@
  *  - `src/context/toast/toast.styles.ts` — читает `HEADER_BLOCK_SIZE` для высоты стека уведомлений
  */
 
-import { type ReactNode } from 'react';
+import { useLayoutEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ProfileMenu } from '@components/profile-menu';
@@ -41,7 +41,6 @@ import {
   StyledHeaderBrand,
   StyledHeaderProject,
 } from './header.styles';
-import { useHeaderAutoHide } from './use-header-auto-hide';
 
 /**
  * DEFAULT_HEADER_SETTINGS_LABEL — задаёт доступное имя кнопки настроек по умолчанию.
@@ -67,6 +66,53 @@ type HeaderProps = {
   onSettingsClick?: () => void;
   settingsLabel?: string;
 };
+
+/**
+ * useHeaderAutoHide — возвращает состояние и обработчики видимости шапки для режима `autoHide`.
+ *
+ * Как работает:
+ * 1. При смене `autoHide` синхронизирует внутреннее состояние: включение сначала показывает
+ *    шапку, выключение сразу скрывает её
+ * 2. После включения в следующем кадре анимации скрывает шапку через `requestAnimationFrame`
+ * 3. Отдаёт `dataRevealed` и обработчики наведения только когда `autoHide` включён
+ *
+ * @param autoHide включает режим скрытия шапки
+ * @returns объект с `dataRevealed`, `handleMouseEnter` и `handleMouseLeave`
+ */
+function useHeaderAutoHide(autoHide: boolean) {
+  const [prevAutoHide, setPrevAutoHide] = useState(autoHide);
+  const [isRevealed, setIsRevealed] = useState(false);
+
+  if (autoHide !== prevAutoHide) {
+    setPrevAutoHide(autoHide);
+
+    if (autoHide) {
+      setIsRevealed(true);
+    } else {
+      setIsRevealed(false);
+    }
+  }
+
+  useLayoutEffect(() => {
+    if (!autoHide) {
+      return;
+    }
+
+    const frameId = requestAnimationFrame(() => {
+      setIsRevealed(false);
+    });
+
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
+  }, [autoHide]);
+
+  return {
+    dataRevealed: autoHide ? isRevealed : undefined,
+    handleMouseEnter: autoHide ? () => setIsRevealed(true) : undefined,
+    handleMouseLeave: autoHide ? () => setIsRevealed(false) : undefined,
+  };
+}
 
 /**
  * Header — отображает шапку страницы с брендом, центральным слотом и рядом действий.
