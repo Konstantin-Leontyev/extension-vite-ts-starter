@@ -1,4 +1,20 @@
-// TODO: ручное ревью — components/model-download-gate/index.tsx
+/**
+ * Файл: `src/components/model-download-gate/index.tsx`
+ * Предоставляет компонент ModelDownloadGate для отображения гейта загрузки локальной
+ * языковой модели.
+ *
+ * Поддерживает:
+ *  - содержимое приложения через `children`
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент ModelDownloadGate
+ * 2. Типизировать пропсы через `ModelDownloadGateProps`
+ *
+ * Потребители:
+ *  - `src/components/router/router-layout.tsx` — оборачивает каркас приложения гейтом загрузки
+ *    модели
+ */
+
 import { type ReactNode } from 'react';
 
 import { Button } from '@ui/button';
@@ -8,24 +24,41 @@ import { Text } from '@ui/text';
 
 import {
   StyledModelDownloadGate,
-  StyledModelDownloadGateCard,
+  StyledModelDownloadGateContent,
   StyledModelDownloadGateCopy,
 } from './model-download-gate.styles';
 import { useBrowserAiBootstrap } from './use-browser-ai-bootstrap';
 
+/**
+ * GATE_TITLE_ID — задаёт id заголовка карточки гейта для связи с `aria-labelledby`
+ * индикатора прогресса.
+ */
 const GATE_TITLE_ID = 'model-download-gate-title';
 
+/**
+ * CHROME_UPDATE_PAGE_URL — задаёт url страницы обновления Chrome.
+ * Используется в `handleOpenChromeUpdatePage` при недоступности модели.
+ */
 const CHROME_UPDATE_PAGE_URL = 'https://www.google.com/chrome/update/';
 
+/**
+ * ModelDownloadGateProps — представляет пропсы компонента ModelDownloadGate.
+ *
+ * @property children — содержимое приложения за гейтом
+ */
 type ModelDownloadGateProps = {
   children: ReactNode;
 };
 
-function openChromeUpdatePage(): void {
-  void chrome.tabs.create({ url: CHROME_UPDATE_PAGE_URL });
-}
-
-function gateTitle(phase: ReturnType<typeof useBrowserAiBootstrap>['phase']): string {
+/**
+ * resolveGateTitle — возвращает заголовок карточки гейта по текущей фазе подготовки модели.
+ *
+ * @param phase текущая фаза из `useBrowserAiBootstrap`
+ * @returns текст заголовка для пропа `title` у Card
+ */
+function resolveGateTitle(
+  phase: ReturnType<typeof useBrowserAiBootstrap>['phase']
+): string {
   if (phase === 'checking') {
     return 'Checking on-device AI';
   }
@@ -45,8 +78,19 @@ function gateTitle(phase: ReturnType<typeof useBrowserAiBootstrap>['phase']): st
   return 'Could not prepare on-device AI';
 }
 
+/**
+ * ModelDownloadGate — отображает экран подготовки локальной языковой модели или пропускает его
+ * в режиме разработки.
+ *
+ * @example
+ * <ModelDownloadGate>
+ *   <Header autoHide={autoHide} onSettingsClick={handleSettingsClick} />
+ *   <Outlet context={outletContext} />
+ * </ModelDownloadGate>
+ */
 export function ModelDownloadGate({ children }: ModelDownloadGateProps) {
-  /** Dev-only: skip gate so UI/DS work without on-device model; `vite build` keeps prod gate. */
+  // Только в режиме разработки: пропускает гейт, чтобы UI работал без локальной модели.
+  // Сборка vite build оставляет гейт.
   if (import.meta.env.DEV) {
     return children;
   }
@@ -54,6 +98,10 @@ export function ModelDownloadGate({ children }: ModelDownloadGateProps) {
   return <ModelDownloadGateActive>{children}</ModelDownloadGateActive>;
 }
 
+/**
+ * ModelDownloadGateActive — отображает фазы проверки, загрузки и ошибок локальной языковой
+ * модели.
+ */
 function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
   const { error, loadedRatio, phase, retryDownload, startDownload } =
     useBrowserAiBootstrap();
@@ -62,16 +110,27 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
     return children;
   }
 
+  const backgroundTabHint = (
+    <Text as="p" tone="muted">
+      You can switch to other browser tabs while the download continues in the
+      background.
+    </Text>
+  );
+
+  function handleOpenChromeUpdatePage(): void {
+    void chrome.tabs.create({ url: CHROME_UPDATE_PAGE_URL });
+  }
+
   return (
     <StyledModelDownloadGate>
       <Card
         as="section"
         gap={16}
         padding={24}
-        title={gateTitle(phase)}
+        title={resolveGateTitle(phase)}
         titleId={GATE_TITLE_ID}
       >
-        <StyledModelDownloadGateCard>
+        <StyledModelDownloadGateContent>
           <StyledModelDownloadGateCopy>
             {phase === 'checking' && (
               <Text as="p" tone="muted">
@@ -84,10 +143,7 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
                 <Text as="p">
                   This app requires a one-time download of the on-device language model.
                 </Text>
-                <Text as="p" tone="muted">
-                  You can switch to other browser tabs while the download continues in
-                  the background.
-                </Text>
+                {backgroundTabHint}
               </>
             )}
 
@@ -96,10 +152,7 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
                 <Text as="p">
                   Setting up the local language model. This may take several minutes.
                 </Text>
-                <Text as="p" tone="muted">
-                  You can switch to other browser tabs while the download continues in
-                  the background.
-                </Text>
+                {backgroundTabHint}
               </>
             )}
 
@@ -130,11 +183,7 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
           </StyledModelDownloadGateCopy>
 
           {phase === 'downloading' && (
-            <ProgressBar
-              aria-labelledby={GATE_TITLE_ID}
-              showText={true}
-              value={loadedRatio}
-            />
+            <ProgressBar aria-labelledby={GATE_TITLE_ID} value={loadedRatio} />
           )}
 
           {phase === 'download-required' && (
@@ -144,7 +193,7 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
           )}
 
           {phase === 'unavailable' && (
-            <Button tone="primary" onClick={openChromeUpdatePage}>
+            <Button tone="primary" onClick={handleOpenChromeUpdatePage}>
               Update Chrome
             </Button>
           )}
@@ -154,7 +203,7 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
               Try again
             </Button>
           )}
-        </StyledModelDownloadGateCard>
+        </StyledModelDownloadGateContent>
       </Card>
     </StyledModelDownloadGate>
   );

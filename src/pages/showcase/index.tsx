@@ -1735,7 +1735,7 @@ export function ShowcasePage() {
                 </>
               )}
 
-              {/* Только extension: smoke probe для Browser AI, в lite не синхронизируется. */}
+              {/* Только extension: smoke probe Browser AI в витрине. В lite не синхронизируется. */}
               <BrowserAiSmokeProbe />
             </StyledShowcaseWidgets>
           </ScrollPort>

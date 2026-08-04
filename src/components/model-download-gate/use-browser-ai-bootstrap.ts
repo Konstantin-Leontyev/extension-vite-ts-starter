@@ -1,5 +1,16 @@
-// TODO: ручное ревью — components/model-download-gate/use-browser-ai-bootstrap.ts
-import { useCallback, useEffect, useRef, useState } from 'react';
+/**
+ * Файл: `src/components/model-download-gate/use-browser-ai-bootstrap.ts`
+ * Предоставляет хук `useBrowserAiBootstrap` для проверки доступности и загрузки локальной
+ * языковой модели.
+ *
+ * Основные задачи:
+ * 1. Предоставить хук `useBrowserAiBootstrap`
+ *
+ * Потребители:
+ *  - `src/components/model-download-gate/index.tsx` — управляет фазами экрана загрузки модели
+ */
+
+import { useEffect, useRef, useState } from 'react';
 
 import {
   checkBrowserAiAvailability,
@@ -7,7 +18,10 @@ import {
   type BrowserAiSession,
 } from '@services/browser-ai';
 
-export type BrowserAiBootstrapPhase =
+/**
+ * BrowserAiBootstrapPhase — представляет фазу подготовки локальной языковой модели.
+ */
+type BrowserAiBootstrapPhase =
   | 'checking'
   | 'download-required'
   | 'downloading'
@@ -15,6 +29,15 @@ export type BrowserAiBootstrapPhase =
   | 'ready'
   | 'unavailable';
 
+/**
+ * BrowserAiBootstrapState — представляет состояние хука `useBrowserAiBootstrap`.
+ *
+ * @property error — последняя ошибка загрузки или проверки
+ * @property loadedRatio — доля загруженной модели, от 0 до 1
+ * @property phase — текущая фаза подготовки модели
+ * @property retryDownload — обработчик повторной загрузки после ошибки
+ * @property startDownload — обработчик запуска загрузки модели
+ */
 type BrowserAiBootstrapState = {
   error: Error | null;
   loadedRatio: number;
@@ -23,12 +46,30 @@ type BrowserAiBootstrapState = {
   startDownload: () => void;
 };
 
+/**
+ * useBrowserAiBootstrap — возвращает состояние подготовки локальной языковой модели и действия
+ * загрузки.
+ *
+ * Как работает:
+ * 1. При монтировании проверяет доступность через `checkBrowserAiAvailability`
+ * 2. Выставляет фазу `ready`, `unavailable` или `download-required`
+ * 3. По `startDownload` и `retryDownload` создаёт сессию через `createBrowserAiSession`
+ *    и отслеживает прогресс
+ * 4. После успешной загрузки уничтожает сессию-пробник и переводит фазу в `ready`
+ * 5. При размонтировании уничтожает активную сессию
+ *
+ * @returns текущая фаза, прогресс, ошибка и действия загрузки
+ */
 export function useBrowserAiBootstrap(): BrowserAiBootstrapState {
   const [phase, setPhase] = useState<BrowserAiBootstrapPhase>('checking');
   const [loadedRatio, setLoadedRatio] = useState(0);
   const [error, setError] = useState<Error | null>(null);
   const activeSessionRef = useRef<BrowserAiSession | null>(null);
 
+  /**
+   * Проверяет доступность локальной модели при монтировании.
+   * Отмена через флаг `cancelled` игнорирует результат после размонтирования.
+   */
   useEffect(() => {
     let cancelled = false;
 
@@ -74,7 +115,7 @@ export function useBrowserAiBootstrap(): BrowserAiBootstrapState {
     };
   }, []);
 
-  const runDownload = useCallback(async () => {
+  async function runDownload(): Promise<void> {
     activeSessionRef.current?.destroy();
     activeSessionRef.current = null;
 
@@ -104,16 +145,19 @@ export function useBrowserAiBootstrap(): BrowserAiBootstrapState {
 
       setPhase('error');
     }
-  }, []);
+  }
 
-  const startDownload = useCallback(() => {
+  function startDownload(): void {
     void runDownload();
-  }, [runDownload]);
+  }
 
-  const retryDownload = useCallback(() => {
+  function retryDownload(): void {
     void runDownload();
-  }, [runDownload]);
+  }
 
+  /**
+   * Уничтожает активную сессию при размонтировании.
+   */
   useEffect(() => {
     return () => {
       activeSessionRef.current?.destroy();
