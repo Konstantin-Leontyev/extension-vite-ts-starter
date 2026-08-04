@@ -67,7 +67,7 @@ export function RouterLayout() {
     <ModelDownloadGate>
       <Header
         autoHide={autoHide}
-        settingsLabel={isShowcase ? 'Header settings' : 'Showcase'}
+        settingsLabel={isShowcase ? 'Header settings' : undefined}
         onSettingsClick={handleSettingsClick}
       />
       <Outlet context={outletContext} />

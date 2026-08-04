@@ -21,7 +21,7 @@ import { RouterLayout } from './router-layout';
 /**
  * router — задаёт конфигурацию hash-маршрутов приложения.
  * Корневой маршрут рендерит `RouterLayout`, дочерние — страницы.
- * Используется в `RouterProvider` из `src/main.tsx`.
+ * Используется в `src/main.tsx` через `RouterProvider`.
  */
 export const router = createHashRouter([
   {
