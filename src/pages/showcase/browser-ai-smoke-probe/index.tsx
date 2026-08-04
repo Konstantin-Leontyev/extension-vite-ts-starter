@@ -343,7 +343,7 @@ export function BrowserAiSmokeProbe() {
 
       {showUnavailableAction && (
         <Button alignSelf="center" disabled tone="primary">
-          Model Unavailable
+          Model unavailable
         </Button>
       )}
 

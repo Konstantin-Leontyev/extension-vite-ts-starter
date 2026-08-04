@@ -53,11 +53,11 @@ export type BrowserAiSession = {
 };
 
 /**
- * probeBrowserAiAvailability — возвращает состояние доступности локальной модели.
+ * checkBrowserAiAvailability — возвращает состояние доступности локальной модели.
  *
  * @returns состояние из `BrowserAiAvailability`
  */
-async function probeBrowserAiAvailability(): Promise<BrowserAiAvailability> {
+export async function checkBrowserAiAvailability(): Promise<BrowserAiAvailability> {
   if (!hasBrowserAiSupport()) {
     return 'unavailable';
   }
@@ -66,21 +66,12 @@ async function probeBrowserAiAvailability(): Promise<BrowserAiAvailability> {
 }
 
 /**
- * checkBrowserAiAvailability — возвращает состояние доступности локальной модели.
- *
- * @returns состояние из `BrowserAiAvailability`
- */
-export async function checkBrowserAiAvailability(): Promise<BrowserAiAvailability> {
-  return probeBrowserAiAvailability();
-}
-
-/**
  * createBrowserAiSession — создаёт сессию локальной языковой модели Prompt API.
  * При отсутствии поддержки или недоступности модели выбрасывает `BrowserAiUnavailableError`.
  *
  * Как работает:
  * 1. Проверяет наличие `LanguageModel` через `hasBrowserAiSupport`
- * 2. Запрашивает доступность через `probeBrowserAiAvailability`
+ * 2. Запрашивает доступность через `checkBrowserAiAvailability`
  * 3. Создаёт модель через `LanguageModel.create` с текстовыми модальностями и режимом
  *    `most-predictable`. При `systemPrompt` передаёт его первым сообщением `initialPrompts`
  * 4. Подписывает монитор на `downloadprogress`, если передан `onDownloadProgress`
@@ -98,7 +89,7 @@ export async function createBrowserAiSession(
     );
   }
 
-  const availability = await probeBrowserAiAvailability();
+  const availability = await checkBrowserAiAvailability();
 
   if (availability === 'unavailable') {
     throw new BrowserAiUnavailableError(
