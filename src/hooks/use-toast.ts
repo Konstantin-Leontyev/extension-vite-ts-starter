@@ -1,6 +1,6 @@
 /**
  * Файл: `src/hooks/use-toast.ts`
- * Предоставляет хук показа и закрытия уведомлений из `ToastContext`.
+ * Предоставляет показ уведомлений из `ToastContext`.
  *
  * Основные задачи:
  * 1. Предоставить хук `useToast`
@@ -14,7 +14,7 @@ import { useContext } from 'react';
 import { ToastContext, type ToastContextValue } from '@context/toast/context';
 
 /**
- * useToast — возвращает API показа и закрытия уведомлений из `ToastContext`.
+ * useToast — возвращает API показа уведомлений из `ToastContext`.
  * Без `ToastProvider` выбрасывает ошибку.
  *
  * @returns значение контекста уведомлений

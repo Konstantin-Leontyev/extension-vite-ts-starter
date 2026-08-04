@@ -13,6 +13,7 @@
  *  - контролы с custom-позиционированием панели, например Listbox и Combobox —
  *    clamp панели от края вьюпорта
  *  - `src/components/profile-menu/index.tsx` — отступ панели от нижнего края вьюпорта
+ *  - `src/context/toast/toast.styles.ts` — отступ контейнера уведомлений от края вьюпорта
  */
 
 import { OUTLINE_OVERHANG_PX } from '@ui/outline';
@@ -22,7 +23,9 @@ import { type SpacingValue } from '@ui/spacing';
  * VIEWPORT_EDGE_INSET — задаёт отступ от края вьюпорта для оболочки.
  * Ключ шкалы совпадает с px при root 16px — в JS-математике позиционирования
  * используется как число пикселей.
- * Используется в `@ui/sidebar` для зонного отступа края панели и контента.
+ * Используется в `@ui/sidebar` для зонного отступа края панели и контента и в
+ * `src/context/toast/toast.styles.ts` для отступа контейнера уведомлений от края
+ * вьюпорта.
  */
 export const VIEWPORT_EDGE_INSET: SpacingValue = 8;
 

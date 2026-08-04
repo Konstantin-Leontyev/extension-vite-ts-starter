@@ -16,14 +16,7 @@
  *  - `src/main.tsx` — оборачивает приложение провайдером
  */
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
 import { Toast } from '@ui/toast';
@@ -71,7 +64,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
    *
    * @param id идентификатор уведомления
    */
-  const dismiss = useCallback((id: string): void => {
+  function dismiss(id: string): void {
     setToasts((current) => current.filter((toast) => toast.id !== id));
 
     const timer = timersRef.current.get(id);
@@ -80,7 +73,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
       window.clearTimeout(timer);
       timersRef.current.delete(id);
     }
-  }, []);
+  }
 
   /**
    * showToast — добавляет новое уведомление в очередь.
@@ -88,16 +81,13 @@ export function ToastProvider({ children }: ToastProviderProps) {
    *
    * @param input параметры уведомления
    */
-  const showToast = useCallback(
-    (input: ToastInput): void => {
-      const id = crypto.randomUUID();
-      setToasts((current) => [...current, { ...input, id }]);
+  function showToast(input: ToastInput): void {
+    const id = crypto.randomUUID();
+    setToasts((current) => [...current, { ...input, id }]);
 
-      const timer = window.setTimeout(() => dismiss(id), TOAST_DURATION_MS);
-      timersRef.current.set(id, timer);
-    },
-    [dismiss]
-  );
+    const timer = window.setTimeout(() => dismiss(id), TOAST_DURATION_MS);
+    timersRef.current.set(id, timer);
+  }
 
   /**
    * Клавиатурная альтернатива клику: `Escape` закрывает всю стопку.
@@ -126,7 +116,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
     };
   }, []);
 
-  const value = useMemo<ToastContextValue>(() => ({ showToast }), [showToast]);
+  const value: ToastContextValue = { showToast };
 
   return (
     <ToastContext.Provider value={value}>
