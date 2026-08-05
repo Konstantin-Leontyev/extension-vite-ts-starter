@@ -6,16 +6,15 @@
  * 1. Типизировать пропсы через `TableStyleProps` и `TableSizePreset`
  * 2. Хранить габарит бокса Checkbox / Icon `tiny` в `TABLE_HEADER_MARK_BLOCK_SIZE`
  *    для спейсера выравнивания в шапке
- * 3. Предоставить функцию `getTableTextSize`, а также дефолты `DEFAULT_TABLE_SIZE_PRESET`,
- *    `DEFAULT_TABLE_SHOW_BORDER`, `DEFAULT_TABLE_HOVER_HIGHLIGHT`, `DEFAULT_TABLE_STRIPED`
- *    и `DEFAULT_TABLE_NUMBERED`
+ * 3. Предоставить функцию `getTableTextSize`, а также дефолты `DEFAULT_TABLE_SIZE_PRESET`
+ *    и `DEFAULT_TABLE_SHOW_BORDER`
  * 4. Предоставить styled-узлы `StyledTableClip`, `StyledTable`, `StyledTableCol`,
  *    `StyledTableHead`, `StyledTableFoot`, `StyledTableBody`, `StyledTableRow`,
  *    `StyledTableRowPanel`, `StyledTableRowPanelTable`,
  *    `StyledTablePanelErrorCell`, `StyledTableHeaderMarkSpacer`,
  *    `StyledTableHeaderKeywordBar` и `StyledTableCellTrailing`
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
- * 6. Реэкспортировать `computeTableColumnInlineSizes` и тип `TableColumnSizeConfig`
+ * 6. Реэкспортировать `computeTableColumnInlineSizes`
  *
  * Потребители:
  *  - `src/ui/table/index.tsx` — собирает компонент Table и реэкспортирует публичное API
@@ -66,29 +65,23 @@ export const DEFAULT_TABLE_SHOW_BORDER = true;
  * DEFAULT_TABLE_HOVER_HIGHLIGHT — задаёт подсветку строк при наведении по умолчанию.
  * Используется, когда вызывающий код не передал проп `hoverHighlight`.
  */
-export const DEFAULT_TABLE_HOVER_HIGHLIGHT = false;
+const DEFAULT_TABLE_HOVER_HIGHLIGHT = false;
 
 /**
  * DEFAULT_TABLE_STRIPED — задаёт чередование фона строк по умолчанию.
  * Используется, когда вызывающий код не передал проп `striped`.
  */
-export const DEFAULT_TABLE_STRIPED = false;
-
-/**
- * DEFAULT_TABLE_NUMBERED — задаёт показ колонки нумерации по умолчанию.
- * Используется, когда вызывающий код не передал проп `numbered`.
- */
-export const DEFAULT_TABLE_NUMBERED = true;
+const DEFAULT_TABLE_STRIPED = false;
 
 /**
  * getTableTextSize — возвращает размер текста ячеек по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
+ * Подставляет `DEFAULT_TABLE_SIZE_PRESET`, когда размер не задан.
  *
  * @param sizePreset размер Table
  * @returns метка размера текста из `TextSizePreset` для текста ячеек
  */
 export function getTableTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
+  return getTextSize(sizePreset ?? DEFAULT_TABLE_SIZE_PRESET);
 }
 
 /**
@@ -159,7 +152,7 @@ export type TableStyleProps = LayoutProps & {
  */
 function getTableClipStyles(props: { $showBorder?: boolean; theme: AppTheme }): string {
   const theme = getTheme(props);
-  const showBorder = props.$showBorder === true;
+  const showBorder = props.$showBorder ?? DEFAULT_TABLE_SHOW_BORDER;
   const styles = [getBorderStyles(theme, showBorder, false)];
 
   if (showBorder) {
@@ -237,41 +230,75 @@ export const StyledTableCol = styled.col.withConfig({
 `;
 
 /**
+ * getTableHeadStyles — возвращает CSS-правила для узла `StyledTableHead`:
+ * заливку и нижнюю границу `th`, скрытие якоря при `$addHidden`.
+ *
+ * @param props флаг скрытия и тема
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getTableHeadStyles(props: { $addHidden?: boolean; theme: AppTheme }): string {
+  const theme = getTheme(props);
+  const styles = [
+    `& th {
+      background-color: ${resolveTableHeadFill(theme)};
+      border-block-end: ${TABLE_EDGE_BORDER_WIDTH} solid ${theme.colors.border};
+    }`,
+  ];
+
+  if (props.$addHidden) {
+    styles.push('visibility: hidden;');
+  }
+
+  return styles.join('\n');
+}
+
+/**
  * StyledTableHead — задаёт шапку компонента Table.
  * Базируется на `<thead>` и принимает проп `$addHidden`.
  *
- * Встроенные стили:
- *  - заливка и нижняя граница на `th` — контраст с телом на уровне секции, не на каждой ячейке
- *  - `visibility: hidden` при `$addHidden` — скрывает якорь add-панели, оставляя место в потоке
+ * Генерация стилей:
+ *  - `getTableHeadStyles` — заливка и граница `th`, скрытие якоря add-панели
  */
 export const StyledTableHead = styled.thead.withConfig({
   shouldForwardProp: (prop) => prop !== '$addHidden',
 })<{ $addHidden?: boolean }>`
-  & th {
-    background-color: ${(props) => resolveTableHeadFill(getTheme(props))};
-    border-block-end: ${TABLE_EDGE_BORDER_WIDTH} solid
-      ${(props) => getTheme(props).colors.border};
-  }
-  ${(props) => (props.$addHidden ? 'visibility: hidden;' : '')}
+  ${(props) => getTableHeadStyles(props)}
 `;
+
+/**
+ * getTableFootStyles — возвращает CSS-правила для узла `StyledTableFoot`:
+ * заливку и верхнюю границу `td`, скрытие якоря при `$addHidden`.
+ *
+ * @param props флаг скрытия и тема
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getTableFootStyles(props: { $addHidden?: boolean; theme: AppTheme }): string {
+  const theme = getTheme(props);
+  const styles = [
+    `& td {
+      background-color: ${resolveTableHeadFill(theme)};
+      border-block-start: ${TABLE_EDGE_BORDER_WIDTH} solid ${theme.colors.border};
+    }`,
+  ];
+
+  if (props.$addHidden) {
+    styles.push('visibility: hidden;');
+  }
+
+  return styles.join('\n');
+}
 
 /**
  * StyledTableFoot — задаёт подвал компонента Table.
  * Базируется на `<tfoot>` и принимает проп `$addHidden`.
  *
- * Встроенные стили:
- *  - заливка и верхняя граница на `td` — тот же контраст, что у шапки
- *  - `visibility: hidden` при `$addHidden` — скрывает якорь add-панели, оставляя место в потоке
+ * Генерация стилей:
+ *  - `getTableFootStyles` — заливка и граница `td`, скрытие якоря add-панели
  */
 export const StyledTableFoot = styled.tfoot.withConfig({
   shouldForwardProp: (prop) => prop !== '$addHidden',
 })<{ $addHidden?: boolean }>`
-  & td {
-    background-color: ${(props) => resolveTableHeadFill(getTheme(props))};
-    border-block-start: ${TABLE_EDGE_BORDER_WIDTH} solid
-      ${(props) => getTheme(props).colors.border};
-  }
-  ${(props) => (props.$addHidden ? 'visibility: hidden;' : '')}
+  ${(props) => getTableFootStyles(props)}
 `;
 
 /**
@@ -360,42 +387,56 @@ const TABLE_ROW_PROP_NAMES = new Set<string>(['$editHidden', 'sizePreset']);
 export const StyledTableRow = styled.tr.withConfig({
   shouldForwardProp: (prop) => !TABLE_ROW_PROP_NAMES.has(prop),
 })<{ $editHidden?: boolean; sizePreset?: TableSizePreset }>`
-  block-size: ${(props) => getMinBlockSize(props.sizePreset ?? DEFAULT_SIZE_PRESET)};
-  ${(props) => (props.$editHidden ? 'visibility: hidden;' : '')}
+  block-size: ${(props) =>
+    getMinBlockSize(props.sizePreset ?? DEFAULT_TABLE_SIZE_PRESET)};
+  ${(props) => props.$editHidden && 'visibility: hidden;'}
 `;
 
 /**
+ * getTableRowPanelStyles — возвращает CSS-правила для узла `StyledTableRowPanel`:
+ * outline по ошибке, заливку `surface` и рамку с тенью.
+ *
+ * @param props флаг ошибки и тема
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getTableRowPanelStyles(props: {
+  $hasError?: boolean;
+  theme: AppTheme;
+}): string {
+  const theme = getTheme(props);
+
+  return `
+    ${getOutlineStyles(
+      props.$hasError ? theme.colors.invalidOutline : theme.colors.focusOutline
+    )}
+    background-color: ${theme.colors.surface};
+    ${getBorderStyles(theme)}
+  `;
+}
+
+/**
  * StyledTableRowPanel — задаёт панель add- и edit-режима компонента Table.
- * Базируется на `<div>` и принимает пропсы `$hasError` и `sizePreset`.
+ * Базируется на `<div>` и принимает проп `$hasError`.
  *
  * Встроенные стили:
  *  - `position: fixed` и `z-index` — панель в портале над таблицей
  *  - `overflow: hidden` — обрезает по скруглению
- *  - `background-color` — заливка `surface`
  *  - `border-radius` — скругление по канону формы и размера контролов
  *
  * Генерация стилей:
- *  - `getOutlineStyles` — постоянный `outline`: при ошибке — `invalidOutline`, иначе `focusOutline`
- *  - `getBorderStyles` — рамка с тенью
+ *  - `getTableRowPanelStyles` — outline, заливка `surface`, рамка с тенью
  */
 export const StyledTableRowPanel = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== 'sizePreset' && prop !== '$hasError',
-})<{ $hasError?: boolean; sizePreset?: TableSizePreset }>`
+  shouldForwardProp: (prop) => prop !== '$hasError',
+})<{ $hasError?: boolean }>`
   position: fixed;
   z-index: ${STACKING_PORTAL};
   overflow: hidden;
-  ${(props) =>
-    getOutlineStyles(
-      props.$hasError
-        ? getTheme(props).colors.invalidOutline
-        : getTheme(props).colors.focusOutline
-    )}
-  background-color: ${(props) => getTheme(props).colors.surface};
   border-radius: ${resolveBlockRadius(
     DEFAULT_SHAPE_PRESET,
     getMinBlockSize(DEFAULT_SIZE_PRESET)
   )};
-  ${(props) => getBorderStyles(getTheme(props))}
+  ${(props) => getTableRowPanelStyles(props)}
 `;
 
 /**
@@ -466,7 +507,7 @@ export const StyledTablePanelErrorCell = styled.td.withConfig({
 })<{ sizePreset?: TableSizePreset }>`
   padding-block: ${getSpacingValue(8)};
   padding-inline: ${(props) =>
-    getPaddingInline(props.sizePreset ?? DEFAULT_SIZE_PRESET)};
+    getPaddingInline(props.sizePreset ?? DEFAULT_TABLE_SIZE_PRESET)};
   vertical-align: middle;
   text-align: center;
   border-block-end: none;
@@ -554,7 +595,4 @@ export const StyledTableCellTrailing = styled.span`
   ${getTableLeadTrailRowStyles()}
 `;
 
-export {
-  computeTableColumnInlineSizes,
-  type TableColumnSizeConfig,
-} from './column-sizing';
+export { computeTableColumnInlineSizes } from './column-sizing';

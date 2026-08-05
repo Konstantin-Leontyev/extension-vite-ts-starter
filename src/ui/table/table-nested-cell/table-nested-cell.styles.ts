@@ -14,7 +14,7 @@
 import styled from 'styled-components';
 
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
-import { getTheme } from '@ui/theme';
+import { getTheme, type AppTheme } from '@ui/theme';
 
 /**
  * TABLE_NEST_INDENT_BY_DEPTH — хранит отступ member-ячейки для каждого уровня вложенности.
@@ -37,16 +37,29 @@ function resolveTableNestIndent(nestDepth: number): SpacingValue {
 }
 
 /**
+ * getTableMemberPrefixStyles — возвращает CSS-правила для узла `StyledTableMemberPrefix`:
+ * приглушённый цвет глифа.
+ *
+ * @param props объект с темой
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getTableMemberPrefixStyles(props: { theme: AppTheme }): string {
+  return `color: ${getTheme(props).colors.muted};`;
+}
+
+/**
  * StyledTableMemberPrefix — задаёт префикс member-строки компонента TableMemberPrefix.
  * Базируется на `<span>` и принимает нативные атрибуты элемента.
  *
  * Встроенные стили:
  *  - `flex-shrink: 0` — префикс не сжимается при нехватке места
- *  - `color` — приглушённый цвет из темы
+ *
+ * Генерация стилей:
+ *  - `getTableMemberPrefixStyles` — приглушённый цвет из темы
  */
 export const StyledTableMemberPrefix = styled.span`
   flex-shrink: 0;
-  color: ${(props) => getTheme(props).colors.muted};
+  ${(props) => getTableMemberPrefixStyles(props)}
 `;
 
 /**

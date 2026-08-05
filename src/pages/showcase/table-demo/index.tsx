@@ -1,4 +1,17 @@
-// TODO: ручное ревью — pages/showcase/table-demo/index.tsx
+/**
+ * Файл: `src/pages/showcase/table-demo/index.tsx`
+ * Содержит демо-таблицу каталога для виджета Table в витрине дизайн-системы.
+ * Собирает колонки, группы, выбор строк и панели добавления и редактирования
+ * на данных каталога.
+ *
+ * Основные задачи:
+ * 1. Типизировать пропсы через `TableDemoProps`
+ * 2. Экспортировать компонент `TableDemo`
+ *
+ * Потребители:
+ *  - `src/pages/showcase/index.tsx` — рендерит демо в карточке виджета Table
+ */
+
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
 
 import { ChevronDownIcon, ChevronUpIcon } from '@icons';
@@ -29,30 +42,64 @@ import {
 } from './rows';
 import { type TableWidgetState } from '../table-settings';
 
+/**
+ * ROW_ACTION_MIN_INLINE_SIZE — задаёт минимальную ширину кнопок действий строки.
+ * Используется в `Delete` одиночного и группового удаления.
+ */
 const ROW_ACTION_MIN_INLINE_SIZE = '5.5rem';
 
+/**
+ * CatalogColumnInlineSizes — представляет вычисленные `inlineSize` метрических колонок.
+ *
+ * @property indexLabel — ширина колонки нумерации
+ * @property price — ширина колонки Price
+ * @property stock — ширина колонки Stock
+ */
 type CatalogColumnInlineSizes = {
   indexLabel: string;
   price: string;
   stock: string;
 };
 
+/**
+ * CatalogDraft — представляет черновик полей add- и edit-панели демо-таблицы.
+ *
+ * @property price — значение поля Price
+ * @property product — значение поля Product
+ * @property stock — значение поля Stock
+ */
 type CatalogDraft = {
   price: string;
   product: string;
   stock: string;
 };
 
+/**
+ * EMPTY_CATALOG_DRAFT — задаёт пустой черновик полей add- и edit-панели.
+ * Используется при открытии и сбросе панелей добавления и редактирования.
+ */
 const EMPTY_CATALOG_DRAFT: CatalogDraft = {
   price: '',
   product: '',
   stock: '',
 };
 
+/**
+ * TableDemoProps — представляет пропсы компонента TableDemo.
+ *
+ * @property settings — состояние настроек виджета Table из панели витрины
+ */
 type TableDemoProps = {
   settings: TableWidgetState;
 };
 
+/**
+ * buildCatalogColumns — возвращает описание колонок демо-таблицы каталога.
+ *
+ * @param toggleGroup обработчик раскрытия или сворачивания группы
+ * @param metricInlineSizes вычисленные ширины метрических колонок
+ * @returns массив колонок для пропа `columns` Table
+ */
 function buildCatalogColumns(
   toggleGroup: (groupId: string) => void,
   metricInlineSizes: CatalogColumnInlineSizes
@@ -174,6 +221,13 @@ function buildCatalogColumns(
   ];
 }
 
+/**
+ * collectMetricSamples — собирает непустые образцы значений метрической колонки.
+ *
+ * @param sizingRows строки при полном раскрытии групп
+ * @param pick выборка текста колонки из строки
+ * @returns массив образцов для `computeTableColumnInlineSizes`
+ */
 function collectMetricSamples(
   sizingRows: CatalogTableRow[],
   pick: (row: CatalogTableRow) => string
@@ -195,6 +249,12 @@ function collectMetricSamples(
   return samples;
 }
 
+/**
+ * TableDemo — отображает демо-таблицу каталога виджета Table в витрине.
+ *
+ * @example
+ * <TableDemo settings={table} />
+ */
 export function TableDemo({ settings }: TableDemoProps): ReactNode {
   const [products, setProducts] = useState<CatalogProduct[]>(() => [
     ...INITIAL_CATALOG_PRODUCTS,
@@ -388,7 +448,11 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
     setSelectedKeys(new Set());
   }, [isEditRowOpen, editingProductId, resetEditRow, selectedKeys, tableRows]);
 
-  /** Не переносить в продуктовый код: в реальном проекте целевая группа выводится из контекста add-источника. */
+  /**
+   * commitAddRow — добавляет черновик в каталог демо-таблицы.
+   * Не переносить в продуктовый код: в реальном проекте целевая группа выводится
+   * из контекста источника добавления.
+   */
   const commitAddRow = useCallback((): void => {
     const productName = addDraft.product.trim();
 
@@ -630,7 +694,8 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
 
   const tableProps = {
     columns,
-    /* Kit-ось numbered выключена: нумерация — через колонку indexLabel (настройка «Index column»). */
+    // Ось numbered Table выключена: нумерация идёт через колонку indexLabel
+    // по витринному ключу showIndexColumn.
     hoverHighlight: settings.hoverHighlight,
     numbered: false,
     rows: tableRows,

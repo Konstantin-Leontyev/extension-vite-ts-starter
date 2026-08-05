@@ -40,6 +40,7 @@ import { Sidebar } from '@ui/sidebar';
 import { Spinner, getSpinnerTextSize } from '@ui/spinner';
 import { Stepper, getStepperTextSize } from '@ui/stepper';
 import { Switch, getSwitchTextSize } from '@ui/switch';
+import { DEFAULT_TABLE_SHOW_BORDER, DEFAULT_TABLE_SIZE_PRESET } from '@ui/table';
 import { Tag, getTagTextSize } from '@ui/tag';
 import { Text } from '@ui/text';
 import { Toast, getToastTextSize } from '@ui/toast';
@@ -647,10 +648,10 @@ const DEFAULT_TABLE_STATE: TableWidgetState = {
   continuousNumbering: false,
   editable: true,
   hoverHighlight: true,
-  showBorder: true,
-  showIndexColumn: true,
   separateCheckboxColumn: false,
-  sizePreset: 'normal',
+  showBorder: DEFAULT_TABLE_SHOW_BORDER,
+  showIndexColumn: true,
+  sizePreset: DEFAULT_TABLE_SIZE_PRESET,
   striped: true,
 };
 

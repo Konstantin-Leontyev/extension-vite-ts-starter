@@ -33,6 +33,12 @@ export type TableInlineFieldStyleProps = {
 const TABLE_INLINE_FIELD_PROP_NAMES = new Set<string>(['textAlign', 'textSize']);
 
 /**
+ * DEFAULT_TABLE_INLINE_FIELD_TEXT_SIZE — задаёт размер текста поля по умолчанию.
+ * Используется, когда вызывающий код не передал проп `textSize`.
+ */
+const DEFAULT_TABLE_INLINE_FIELD_TEXT_SIZE: TextSizePreset = 'normal';
+
+/**
  * getTableInlineFieldStyles — возвращает CSS-правила для узла `StyledTableInlineField`:
  * типографику строки, сброс оформления `<input>` и снятие обводки фокуса и invalid.
  * Поле живёт внутри строки таблицы и не рисует собственную поверхность.
@@ -43,7 +49,7 @@ const TABLE_INLINE_FIELD_PROP_NAMES = new Set<string>(['textAlign', 'textSize'])
 function getTableInlineFieldStyles(
   props: TableInlineFieldStyleProps & { theme: AppTheme }
 ): string {
-  const { textAlign, textSize = 'normal' } = props;
+  const { textAlign, textSize = DEFAULT_TABLE_INLINE_FIELD_TEXT_SIZE } = props;
   const theme = getTheme(props);
 
   const styles = [

@@ -23,6 +23,12 @@ import { getEllipsisStyles } from '@ui/text';
 export type TableCellAlign = 'center' | 'end' | 'start';
 
 /**
+ * DEFAULT_TABLE_CELL_ALIGN — задаёт горизонтальное выравнивание ячейки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `align`.
+ */
+const DEFAULT_TABLE_CELL_ALIGN: TableCellAlign = 'center';
+
+/**
  * TableCellStyleProps — представляет пропсы стилизации TableCell.
  *
  * @property align — горизонтальное выравнивание содержимого
@@ -65,7 +71,7 @@ function getTableCellStyles(props: TableCellStyleProps): string {
   const styles = [
     `padding-inline: ${getPaddingInline(sizePreset)};`,
     'vertical-align: middle;',
-    `text-align: ${props.align ?? 'center'};`,
+    `text-align: ${props.align ?? DEFAULT_TABLE_CELL_ALIGN};`,
   ];
 
   if (props.ellipsis === true) {

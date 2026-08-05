@@ -48,7 +48,7 @@
  * 2. Типизировать пропсы через `TableProps`
  * 3. Экспортировать типы `TableAlign`, `TableAddRowSource`, `TableCellRenderContext`
  *    и `TableColumn`
- * 4. Реэкспортировать утилиту `computeTableColumnInlineSizes`, дефолты осей и типы стилей
+ * 4. Реэкспортировать утилиту `computeTableColumnInlineSizes` и дефолты осей
  * 5. Реэкспортировать сателлиты `TableCell`, `TableCellAlign`, `TableGroupCell`,
  *    `TableInlineField`, `TableMemberPrefix` и `TableNestedCell`
  *
@@ -77,10 +77,6 @@ import { Text, type TextSizePreset } from '@ui/text';
 
 import { StyledTableCellLead, TableCell, type TableCellAlign } from './table-cell';
 import {
-  DEFAULT_TABLE_HOVER_HIGHLIGHT,
-  DEFAULT_TABLE_NUMBERED,
-  DEFAULT_TABLE_SHOW_BORDER,
-  DEFAULT_TABLE_STRIPED,
   StyledTable,
   StyledTableBody,
   StyledTableCellTrailing,
@@ -191,6 +187,12 @@ const DEFAULT_ADD_HINT =
 const DEFAULT_EDIT_HINT = 'Press Esc to close without saving, or Enter to save changes.';
 
 /**
+ * DEFAULT_TABLE_NUMBERED — задаёт показ колонки нумерации по умолчанию.
+ * Используется, когда вызывающий код не передал проп `numbered`.
+ */
+const DEFAULT_TABLE_NUMBERED = true;
+
+/**
  * TableAddProps — представляет пропсы панели добавления строки Table.
  *
  * @property addError — текст ошибки панели добавления строки
@@ -246,7 +248,7 @@ type TableEditProps<Row> = {
  * TableSelectionProps — представляет пропсы выбора строк Table.
  * Доступны только при `checkable` равном `true`.
  *
- * @property allSelectableKeys — полный набор выбираемых ключей вида, включая скрытые
+ * @property allSelectableKeys — полный набор выбираемых ключей, включая скрытые
  *   в свёрнутых группах. Если задан, «выбрать всё» в шапке и её галка работают над ним,
  *   а не только над видимыми строками: свёрнутые строки тоже выделяются. Иначе выбор
  *   охватывает только видимые строки
@@ -639,10 +641,7 @@ export function Table<Row>(props: TableProps<Row>) {
     ...rest
   } = props;
 
-  const resolvedShowBorder = showBorder ?? DEFAULT_TABLE_SHOW_BORDER;
-  const resolvedHoverHighlight = hoverHighlight ?? DEFAULT_TABLE_HOVER_HIGHLIGHT;
   const resolvedNumbered = numbered ?? DEFAULT_TABLE_NUMBERED;
-  const resolvedStriped = striped ?? DEFAULT_TABLE_STRIPED;
 
   // Проп editable: без него таблица только выводит строки, без добавления,
   // редактирования, порталов и long-press.
@@ -1046,7 +1045,6 @@ export function Table<Row>(props: TableProps<Row>) {
         aria-modal="true"
         ref={panelRef}
         role="dialog"
-        sizePreset={sizePreset}
       >
         <StyledTableRowPanelTable tableLayout={fixed ? 'fixed' : 'auto'}>
           {renderColgroup()}
@@ -1099,7 +1097,6 @@ export function Table<Row>(props: TableProps<Row>) {
           aria-modal="true"
           ref={editPanelRef}
           role="dialog"
-          sizePreset={sizePreset}
         >
           <StyledTableRowPanelTable tableLayout={fixed ? 'fixed' : 'auto'}>
             {renderColgroup()}
@@ -1127,10 +1124,7 @@ export function Table<Row>(props: TableProps<Row>) {
             {renderHeaderCells(true, 'head', true)}
           </StyledTableRow>
         </StyledTableHead>
-        <StyledTableBody
-          $hoverHighlight={resolvedHoverHighlight}
-          $striped={resolvedStriped}
-        >
+        <StyledTableBody $hoverHighlight={hoverHighlight} $striped={striped}>
           {rows.map((row, rowIndex) => {
             const rowKey = checkable ? props.getRowKey(row) : String(rowIndex);
             const isSelected = checkable && selectedKeys.has(rowKey);
@@ -1192,7 +1186,7 @@ export function Table<Row>(props: TableProps<Row>) {
 
   return (
     <ScrollPort ref={scrollViewportRef} {...layoutProps}>
-      <StyledTableClip $showBorder={resolvedShowBorder}>{table}</StyledTableClip>
+      <StyledTableClip $showBorder={showBorder}>{table}</StyledTableClip>
     </ScrollPort>
   );
 }
@@ -1202,17 +1196,9 @@ export type { TableCellAlign } from './table-cell';
 export { TableGroupCell } from './table-group-cell';
 export { TableInlineField } from './table-inline-field';
 export { TableMemberPrefix, TableNestedCell } from './table-nested-cell';
-export type {
-  TableColumnSizeConfig,
-  TableSizePreset,
-  TableStyleProps,
-} from './table.styles';
 /* eslint-disable react-refresh/only-export-components -- реэкспорт утилит sizing и дефолтов осей Table */
 export {
-  DEFAULT_TABLE_HOVER_HIGHLIGHT,
-  DEFAULT_TABLE_NUMBERED,
   DEFAULT_TABLE_SHOW_BORDER,
   DEFAULT_TABLE_SIZE_PRESET,
-  DEFAULT_TABLE_STRIPED,
   computeTableColumnInlineSizes,
 } from './table.styles';

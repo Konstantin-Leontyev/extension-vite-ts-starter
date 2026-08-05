@@ -11,7 +11,7 @@
  *  - `src/pages/showcase/table-demo/index.tsx` — задаёт `inlineSize` колонок демо-таблицы
  */
 
-import { getTextSize, padding, type SizePreset } from '@ui/presets';
+import { DEFAULT_SIZE_PRESET, getTextSize, padding, type SizePreset } from '@ui/presets';
 import { textSizePresets, type TextSizePreset } from '@ui/text';
 
 /**
@@ -130,7 +130,7 @@ function widerText(
  */
 function computeTableColumnInlineSize(
   config: TableColumnSizeConfig,
-  sizePreset: SizePreset = 'normal'
+  sizePreset: SizePreset = DEFAULT_SIZE_PRESET
 ): string {
   const cellPaddingInlinePx = padding[sizePreset].inline;
   const textPreset = textSizePresets[getTextSize(sizePreset)];
@@ -157,7 +157,7 @@ function computeTableColumnInlineSize(
  */
 export function computeTableColumnInlineSizes<Key extends string>(
   configs: Record<Key, TableColumnSizeConfig>,
-  sizePreset: SizePreset = 'normal'
+  sizePreset: SizePreset = DEFAULT_SIZE_PRESET
 ): Record<Key, string> {
   const sizes = {} as Record<Key, string>;
 

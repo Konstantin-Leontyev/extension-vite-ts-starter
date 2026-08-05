@@ -1,6 +1,28 @@
-// TODO: ручное ревью — pages/showcase/table-demo/data.ts
+/**
+ * Файл: `src/pages/showcase/table-demo/data.ts`
+ * Содержит исходные данные каталога для демо-таблицы Table в витрине.
+ *
+ * Основные задачи:
+ * 1. Типизировать сущности каталога через `CatalogBrand`, `CatalogCategoryId`,
+ *    `CatalogSubGroupId` и `CatalogProduct`
+ * 2. Задать порядок и подписи брендов, категорий и подгрупп
+ * 3. Предоставить признак вложенных подгрупп через `catalogCategoryUsesSubGroups`
+ * 4. Задать начальный набор товаров в `INITIAL_CATALOG_PRODUCTS`
+ *
+ * Потребители:
+ *  - `src/pages/showcase/table-demo/rows.ts` — строит строки таблицы из каталога
+ *  - `src/pages/showcase/table-demo/index.tsx` — держит состояние товаров демо-таблицы
+ */
+
+/**
+ * CatalogBrand — представляет бренд товара в каталоге демо-таблицы.
+ */
 export type CatalogBrand = 'Apple' | 'Huawei' | 'Samsung' | 'Xiaomi';
 
+/**
+ * CATALOG_BRAND_ORDER — задаёт порядок брендов в демо-таблице.
+ * Используется при обходе каталога в `buildCatalogTableRows` и картах групп.
+ */
 export const CATALOG_BRAND_ORDER: readonly CatalogBrand[] = [
   'Apple',
   'Samsung',
@@ -8,20 +30,45 @@ export const CATALOG_BRAND_ORDER: readonly CatalogBrand[] = [
   'Xiaomi',
 ];
 
+/**
+ * CatalogCategoryId — представляет идентификатор категории товаров каталога.
+ */
 export type CatalogCategoryId = 'phones' | 'tablets' | 'watches';
 
+/**
+ * CatalogSubGroupId — представляет идентификатор подгруппы внутри категории.
+ */
 export type CatalogSubGroupId = 'iphone-16' | 'iphone-17';
 
+/**
+ * CATALOG_SUB_GROUP_LABELS — связывает идентификатор подгруппы с подписью в таблице.
+ * Ключ — `CatalogSubGroupId`, значение — текст головы подгруппы.
+ */
 export const CATALOG_SUB_GROUP_LABELS: Record<CatalogSubGroupId, string> = {
   'iphone-17': 'iPhone 17',
   'iphone-16': 'iPhone 16',
 };
 
+/**
+ * CATALOG_SUB_GROUP_ORDER — задаёт порядок подгрупп внутри категории с вложением.
+ * Используется при обходе подгрупп Apple Phones.
+ */
 export const CATALOG_SUB_GROUP_ORDER: readonly CatalogSubGroupId[] = [
   'iphone-17',
   'iphone-16',
 ];
 
+/**
+ * CatalogProduct — представляет товар каталога демо-таблицы.
+ *
+ * @property brand — бренд товара
+ * @property categoryId — категория товара
+ * @property id — стабильный идентификатор товара
+ * @property price — цена для колонки Price
+ * @property product — название для колонки Product
+ * @property stock — остаток для колонки Stock
+ * @property subGroupId — подгруппа внутри категории, если категория использует вложение
+ */
 export type CatalogProduct = {
   brand: CatalogBrand;
   categoryId: CatalogCategoryId;
@@ -32,6 +79,14 @@ export type CatalogProduct = {
   subGroupId?: CatalogSubGroupId;
 };
 
+/**
+ * catalogCategoryUsesSubGroups — возвращает признак, что категория бренда рендерит
+ * вложенные подгруппы вместо плоского списка товаров.
+ *
+ * @param brandId бренд товара
+ * @param categoryId категория товара
+ * @returns `true` для Apple Phones, иначе `false`
+ */
 export function catalogCategoryUsesSubGroups(
   brandId: CatalogBrand,
   categoryId: CatalogCategoryId
@@ -39,18 +94,30 @@ export function catalogCategoryUsesSubGroups(
   return brandId === 'Apple' && categoryId === 'phones';
 }
 
+/**
+ * CATALOG_CATEGORY_LABELS — связывает идентификатор категории с подписью в таблице.
+ * Ключ — `CatalogCategoryId`, значение — текст головы группы.
+ */
 export const CATALOG_CATEGORY_LABELS: Record<CatalogCategoryId, string> = {
   phones: 'Phones',
   tablets: 'Tablets',
   watches: 'Smart watches',
 };
 
+/**
+ * CATALOG_CATEGORY_ORDER — задаёт порядок категорий внутри бренда.
+ * Используется при обходе каталога в `buildCatalogTableRows` и картах групп.
+ */
 export const CATALOG_CATEGORY_ORDER: readonly CatalogCategoryId[] = [
   'phones',
   'tablets',
   'watches',
 ];
 
+/**
+ * INITIAL_CATALOG_PRODUCTS — задаёт начальный набор товаров демо-таблицы.
+ * Используется при инициализации состояния `products` в TableDemo.
+ */
 export const INITIAL_CATALOG_PRODUCTS: CatalogProduct[] = [
   {
     brand: 'Apple',
