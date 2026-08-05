@@ -11,6 +11,7 @@
  * 4. Предоставить styled-узлы `StyledCalendarPanelRoot`, `StyledCalendarHeader`,
  *    `StyledCalendarNavButton`, `StyledCalendarMonthTitle`, `StyledCalendarWeekdayRow`,
  *    `StyledCalendarWeekdayCell`, `StyledCalendarGrid` и `StyledCalendarDayButton`
+ * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/date-range-input/calendar-panel/index.tsx` — собирает CalendarPanel
@@ -18,6 +19,7 @@
 
 import styled from 'styled-components';
 
+import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
@@ -30,6 +32,8 @@ import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { resolveColorMix } from '@ui/tones';
+
+export { splitLayoutProps } from '@ui/layout';
 
 /**
  * CALENDAR_DAY_GRID_GAP — задаёт зазор сетки дней и шапки в rem.
@@ -146,17 +150,27 @@ export function getCalendarPanelTextSize(sizePreset?: SizePreset): TextSizePrese
 }
 
 /**
- * CalendarPanelStyleProps — представляет пропсы стилизации CalendarPanel.
+ * CalendarPanelSurfaceStyleProps — представляет пропсы стилизации поверхности CalendarPanel.
  *
  * @property dayShape — форма подсветки дня
  * @property shape — форма кнопок навигации
  * @property sizePreset — размер панели
  */
-export type CalendarPanelStyleProps = {
+type CalendarPanelSurfaceStyleProps = {
   dayShape?: ShapePreset;
   shape?: ShapePreset;
   sizePreset?: SizePreset;
 };
+
+/**
+ * CalendarPanelStyleProps — представляет пропсы стилизации CalendarPanel и layout-пропсы.
+ */
+export type CalendarPanelStyleProps = LayoutProps & CalendarPanelSurfaceStyleProps;
+
+/**
+ * CALENDAR_PANEL_ROOT_PROP_NAMES — хранит имена layout-пропсов корня CalendarPanel.
+ */
+const CALENDAR_PANEL_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
 
 /**
  * DEFAULT_CALENDAR_PANEL_SHAPE — задаёт форму CalendarPanel по умолчанию.
@@ -181,13 +195,17 @@ function getCalendarPanelRootStyles(): string {
 
 /**
  * StyledCalendarPanelRoot — задаёт корневой узел компонента CalendarPanel.
- * Базируется на `<div>`.
+ * Базируется на `<div>` и поддерживает layout-пропсы.
  *
  * Генерация стилей:
  *  - `getCalendarPanelRootStyles` — раскладка, зазор и ширина
+ *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
-export const StyledCalendarPanelRoot = styled.div`
+export const StyledCalendarPanelRoot = styled.div.withConfig({
+  shouldForwardProp: (prop) => !CALENDAR_PANEL_ROOT_PROP_NAMES.has(prop),
+})<LayoutProps>`
   ${getCalendarPanelRootStyles()}
+  ${(props) => getLayoutStyles(props)}
 `;
 
 /**
@@ -253,7 +271,8 @@ function getCalendarNavButtonStyles(
     max-block-size: ${maxSize};
     color: ${theme.colors.default};
     border-radius: ${resolveBlockRadius(shape, maxSize)};
-    &:not(:disabled):hover { background-color: ${theme.colors.veil}; }
+    &:not(:disabled):hover,
+    &:focus-visible { background-color: ${theme.colors.veil}; }
   `;
 }
 
@@ -401,7 +420,6 @@ function getCalendarDayButtonStyles(
       aspect-ratio: 1;
       pointer-events: none;
       content: '';
-      border: 1px solid transparent;
       border-radius: ${highlightRadius};
       opacity: 0;
       translate: -50% -50%;
@@ -426,12 +444,13 @@ function getCalendarDayButtonStyles(
       background-color: ${theme.colors.primary};
       opacity: 1;
     }
-    &:not(:disabled):hover:not([data-selected='true'])::before {
-      background-color: transparent;
-      border-color: ${theme.colors.primary};
+    &:not(:disabled):hover:not([data-selected='true'])::before,
+    &:focus-visible:not([data-selected='true'])::before {
+      background-color: ${theme.colors.veil};
       opacity: 1;
     }
-    &[data-selected='true']:not(:disabled):hover::before {
+    &[data-selected='true']:not(:disabled):hover::before,
+    &[data-selected='true']:focus-visible::before {
       background-color: ${resolveColorMix(theme.colors.primary, theme.colors.shade)};
       opacity: 1;
     }
@@ -446,8 +465,8 @@ function getCalendarDayButtonStyles(
  *  - `getCalendarDayButtonStyles` — раскладка, подсветка и состояния дня
  *
  * Подсветка рисуется псевдоэлементом `::before`: выбор заливает `primary`, наведение
- * на выбранный день смешивает заливку с `shade`, дни внутри диапазона — нейтральный
- * фон, наведение на невыбранный день обводит `primary`.
+ * и `:focus-visible` на выбранный день смешивают заливку с `shade`, дни внутри
+ * диапазона — нейтральный фон, на невыбранный день — вуаль `veil`.
  */
 export const StyledCalendarDayButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !CALENDAR_DAY_BUTTON_PROP_NAMES.has(prop),

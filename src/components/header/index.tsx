@@ -171,4 +171,4 @@ export function Header({
   );
 }
 
-export { HEADER_BLOCK_SIZE };
+export { DEFAULT_HEADER_AUTO_HIDE, HEADER_BLOCK_SIZE };

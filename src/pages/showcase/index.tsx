@@ -26,7 +26,7 @@ import { Icon, getIconPadding } from '@ui/icon';
 import { Input } from '@ui/input';
 import { Listbox } from '@ui/listbox';
 import { Modal } from '@ui/modal';
-import { type SizePreset } from '@ui/presets';
+import { DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
 import { ProgressBar, getProgressBarTextSize } from '@ui/progress-bar';
 import { RadioButton, getRadioButtonTextSize } from '@ui/radio-button';
 import {
@@ -101,6 +101,11 @@ import { ToastSettings, type ToastWidgetState } from './toast-settings';
  * Связывает кнопки настроек карточек с Sidebar через `aria-controls`.
  */
 const SIDEBAR_ID = 'showcase-sidebar';
+
+/**
+ * DEMO_STEPPER_ARIA_LABEL — задаёт запасной `aria-label` превью Stepper без подписи.
+ */
+const DEMO_STEPPER_ARIA_LABEL = 'Demo stepper';
 
 /**
  * INPUT_WIDGET_TITLE_ID — задаёт id заголовка виджета Input в витрине.
@@ -324,7 +329,7 @@ const DEFAULT_INPUT_STATE: InputWidgetState = {
   shape: 'rounded',
   showBorder: true,
   showShadow: true,
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   textAlign: undefined,
   textItalic: false,
   value: '',
@@ -343,7 +348,7 @@ const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
   iconTone: 'neutral',
   label: 'Label:',
   shape: 'rounded',
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Button',
   textItalic: false,
   textSize: getButtonTextSize('normal'),
@@ -367,7 +372,7 @@ const DEFAULT_ICON_STATE: IconWidgetState = {
   showBorder: false,
   showHover: true,
   showShadow: true,
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
 };
 
 /**
@@ -385,7 +390,7 @@ const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
   placeholder: 'Select…',
   shape: 'rounded',
   showClear: false,
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   value: '',
 };
 
@@ -404,7 +409,7 @@ const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
   searchPlaceholder: 'Search…',
   shape: 'rounded',
   showClear: false,
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   value: '',
   withIcon: false,
 };
@@ -415,7 +420,7 @@ const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
  */
 const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   buttonShape: 'rounded',
-  buttonSizePreset: 'normal',
+  buttonSizePreset: DEFAULT_SIZE_PRESET,
   buttonText: 'Apply',
   buttonTextTone: 'neutral',
   buttonTone: 'primary',
@@ -425,11 +430,11 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   iconPosition: 'end',
   iconTone: 'neutral',
   inputShape: 'rounded',
-  inputSizePreset: 'normal',
+  inputSizePreset: DEFAULT_SIZE_PRESET,
   label: 'Label:',
   placeholder: 'Range: any',
   shape: 'rounded',
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   title: 'Custom range:',
   titleAlign: 'center',
   titleSizePreset: 'normal',
@@ -452,7 +457,7 @@ const DEFAULT_DATE_RANGE_INPUT_STATE: DateRangeInputWidgetState = {
   maxDay: todayUtc(),
   minDay: '',
   shape: 'rounded',
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   startDay: '',
   startLabel: 'Start date',
 };
@@ -467,7 +472,7 @@ const DEFAULT_CHECKBOX_STATE: CheckboxWidgetState = {
   disabled: false,
   inverted: false,
   showText: true,
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Example',
   textItalic: false,
   textSize: getCheckboxTextSize('normal'),
@@ -484,7 +489,7 @@ const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
   disabledB: false,
   selected: 'a',
   showText: true,
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   textA: 'Option A',
   textB: 'Option B',
   textItalic: false,
@@ -511,7 +516,7 @@ const DEFAULT_FIELDSET_STATE: FieldsetWidgetState = {
  */
 const DEFAULT_PROGRESS_STATE: ProgressBarWidgetState = {
   showText: true,
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   textItalic: false,
   textSize: getProgressBarTextSize('normal'),
   textTone: 'muted',
@@ -526,7 +531,7 @@ const DEFAULT_PROGRESS_STATE: ProgressBarWidgetState = {
 const DEFAULT_SPINNER_STATE: SpinnerWidgetState = {
   reserveTextSpace: false,
   showText: true,
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Loading…',
   textItalic: false,
   textSize: getSpinnerTextSize('normal'),
@@ -544,7 +549,7 @@ const DEFAULT_STEPPER_STATE: StepperWidgetState = {
   max: undefined,
   min: undefined,
   shape: 'rounded',
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   step: 1,
   suffix: '',
   textAlign: 'center',
@@ -562,7 +567,7 @@ const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
   checked: true,
   disabled: false,
   showText: true,
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Switch',
   textItalic: false,
   textSize: getSwitchTextSize('normal'),
@@ -576,7 +581,7 @@ const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
  */
 const DEFAULT_TOAST_STATE: ToastWidgetState = {
   message: 'Very important message',
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   textItalic: false,
   textSize: getToastTextSize('normal'),
   textTone: 'neutral',
@@ -618,7 +623,7 @@ const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   rightWithIcon: false,
   segmentCount: '2',
   shape: 'rounded',
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   textItalic: false,
   textSize: getSegmentButtonTextSize('normal'),
 };
@@ -667,7 +672,7 @@ const DEFAULT_TABLE_STATE: TableWidgetState = {
 const DEFAULT_MODAL_STATE: ModalWidgetState = {
   background: 'surface',
   showSubtitle: true,
-  sizePreset: 'normal',
+  sizePreset: DEFAULT_SIZE_PRESET,
   subtitle: 'Modal subtitle',
   subtitleTone: 'muted',
   title: 'Modal title',
@@ -1675,7 +1680,7 @@ export function ShowcasePage() {
                   onChange={(value) => updateStepper('value', value)}
                   {...(stepper.label.trim()
                     ? { label: stepper.label }
-                    : { 'aria-label': 'Demo stepper' })}
+                    : { 'aria-label': DEMO_STEPPER_ARIA_LABEL })}
                 />
               )}
 

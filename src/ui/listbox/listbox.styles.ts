@@ -311,15 +311,15 @@ function getListboxOptionButtonStyles(
     grid-template-columns: minmax(0, 1fr) auto;
     padding-inline: ${getPaddingInline(sizePreset)};
     &:focus { outline: none; }
-    &:hover:not(:disabled)::before,
+    &:not(:disabled):hover::before,
     &:focus-visible::before {
       background-color: ${theme.colors.primary};
     }
-    &:hover:not(:disabled),
+    &:not(:disabled):hover,
     &:focus-visible {
       color: ${theme.colors.inverse};
     }
-    &:hover:not(:disabled) [data-slot='check'],
+    &:not(:disabled):hover [data-slot='check'],
     &:focus-visible [data-slot='check'] {
       color: ${theme.colors.inverse};
     }

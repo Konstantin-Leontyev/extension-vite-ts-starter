@@ -35,6 +35,7 @@ import {
   StyledSegmentButtonPartsDivider,
   StyledSegmentButtonPartsPart,
   StyledSegmentButtonPartsRoot,
+  type SegmentButtonPartsStyleProps,
 } from './segment-button-parts.styles';
 
 /**
@@ -104,10 +105,10 @@ type SegmentButtonPartsSegments =
 export type SegmentButtonPartsProps = {
   left: SegmentButtonPartsAction;
   shape?: ShapePreset;
-  sizePreset?: SizePreset;
   textItalic?: boolean;
   textSize: TextSizePreset;
-} & SegmentButtonPartsSegments;
+} & SegmentButtonPartsSegments &
+  Omit<SegmentButtonPartsStyleProps, 'left' | 'right'>;
 
 /**
  * SegmentButtonPartsPart — возвращает кнопку одного сегмента.
@@ -247,6 +248,7 @@ export function SegmentButtonParts({
   sizePreset,
   textItalic,
   textSize,
+  ...rest
 }: SegmentButtonPartsProps) {
   const segmentSlots: Array<{ action: SegmentButtonPartsAction; key: string }> = [
     { action: left, key: 'left' },
@@ -264,6 +266,7 @@ export function SegmentButtonParts({
     <StyledSegmentButtonPartsRoot
       data-segments={segmentSlots.length}
       sizePreset={sizePreset}
+      {...rest}
     >
       {segmentSlots.map((slot, index) => (
         <Fragment key={slot.key}>

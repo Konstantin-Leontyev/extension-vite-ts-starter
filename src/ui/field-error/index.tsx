@@ -28,16 +28,16 @@ import { type CSSProperties, type ComponentProps } from 'react';
 import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
 
 /**
- * FIELD_ERROR_ALIGN — задаёт горизонтальное выравнивание строки.
- * Выравнивание вшито в FieldError, вызывающий код его не переопределяет.
- */
-const FIELD_ERROR_ALIGN: CSSProperties['textAlign'] = 'center';
-
-/**
  * DEFAULT_FIELD_ERROR_RESERVE_ERROR_SPACE — задаёт резерв высоты строки по умолчанию.
  * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
  */
 const DEFAULT_FIELD_ERROR_RESERVE_ERROR_SPACE = false;
+
+/**
+ * FIELD_ERROR_ALIGN — задаёт горизонтальное выравнивание строки.
+ * Выравнивание вшито в FieldError, вызывающий код его не переопределяет.
+ */
+const FIELD_ERROR_ALIGN: CSSProperties['textAlign'] = 'center';
 
 /**
  * FIELD_ERROR_SIZE_PRESET — задаёт типографический пресет строки.

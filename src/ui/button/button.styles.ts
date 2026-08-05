@@ -126,26 +126,6 @@ export type ButtonStyleProps = LayoutProps & {
 };
 
 /**
- * ButtonStyledProps — представляет пропсы стилизации узла `StyledButton`.
- *
- * @property hasIcon — включает split-раскладку с секцией иконки. Выключенный —
- *   узел рисуется solid-заливкой
- */
-type ButtonStyledProps = ButtonStyleProps & { hasIcon: boolean };
-
-/**
- * BUTTON_PROP_NAMES — объединяет имена пропсов стилизации кнопки `StyledButton`.
- */
-const BUTTON_PROP_NAMES = new Set<string>([
-  ...ICON_SETTING_PROP_NAMES,
-  'active',
-  'hasIcon',
-  'shape',
-  'sizePreset',
-  'tone',
-]);
-
-/**
  * StyledButtonRoot — задаёт корневой узел компонента Button.
  * Базируется на `<div>` и поддерживает layout-пропсы.
  *
@@ -167,6 +147,26 @@ export const StyledButtonRoot = styled.div.withConfig({
   min-inline-size: 0;
   ${(props) => getLayoutStyles(props)}
 `;
+
+/**
+ * ButtonStyledProps — представляет пропсы стилизации узла `StyledButton`.
+ *
+ * @property hasIcon — включает split-раскладку с секцией иконки. Выключенный —
+ *   узел рисуется solid-заливкой
+ */
+type ButtonStyledProps = ButtonStyleProps & { hasIcon: boolean };
+
+/**
+ * BUTTON_PROP_NAMES — объединяет имена пропсов стилизации кнопки `StyledButton`.
+ */
+const BUTTON_PROP_NAMES = new Set<string>([
+  ...ICON_SETTING_PROP_NAMES,
+  'active',
+  'hasIcon',
+  'shape',
+  'sizePreset',
+  'tone',
+]);
 
 /**
  * DEFAULT_BUTTON_ACTIVE — задаёт зафиксированное нажатое состояние по умолчанию.

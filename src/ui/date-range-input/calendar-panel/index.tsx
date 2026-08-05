@@ -4,6 +4,7 @@
  * с навигацией и выбором дня.
  *
  * Поддерживает:
+ *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - форму кнопок навигации через проп `shape`
  *  - форму подсветки дня через проп `dayShape`
@@ -47,6 +48,7 @@ import {
   StyledCalendarWeekdayRow,
   getCalendarNavGlyphSize,
   getCalendarPanelTextSize,
+  splitLayoutProps,
   type CalendarPanelStyleProps,
 } from './calendar-panel.styles';
 import {
@@ -65,6 +67,26 @@ import {
   todayUtc,
   type MonthView,
 } from './day';
+
+/**
+ * CALENDAR_NAV_PREVIOUS_YEAR_ARIA_LABEL — задаёт `aria-label` кнопки «год назад».
+ */
+const CALENDAR_NAV_PREVIOUS_YEAR_ARIA_LABEL = 'Previous year';
+
+/**
+ * CALENDAR_NAV_PREVIOUS_MONTH_ARIA_LABEL — задаёт `aria-label` кнопки «месяц назад».
+ */
+const CALENDAR_NAV_PREVIOUS_MONTH_ARIA_LABEL = 'Previous month';
+
+/**
+ * CALENDAR_NAV_NEXT_MONTH_ARIA_LABEL — задаёт `aria-label` кнопки «месяц вперёд».
+ */
+const CALENDAR_NAV_NEXT_MONTH_ARIA_LABEL = 'Next month';
+
+/**
+ * CALENDAR_NAV_NEXT_YEAR_ARIA_LABEL — задаёт `aria-label` кнопки «год вперёд».
+ */
+const CALENDAR_NAV_NEXT_YEAR_ARIA_LABEL = 'Next year';
 
 /**
  * CalendarPanelProps — представляет пропсы компонента CalendarPanel.
@@ -110,7 +132,9 @@ export function CalendarPanel({
   shape,
   sizePreset,
   viewMonth,
+  ...rest
 }: CalendarPanelProps) {
+  const { layoutProps } = splitLayoutProps(rest);
   const cells = buildMonthGrid(viewMonth);
   const selectedDays = new Set<string>();
 
@@ -146,10 +170,10 @@ export function CalendarPanel({
   }
 
   return (
-    <StyledCalendarPanelRoot>
+    <StyledCalendarPanelRoot {...layoutProps}>
       <StyledCalendarHeader>
         <StyledCalendarNavButton
-          aria-label="Previous year"
+          aria-label={CALENDAR_NAV_PREVIOUS_YEAR_ARIA_LABEL}
           disabled={!canGoYearPrevious}
           shape={shape}
           sizePreset={sizePreset}
@@ -166,7 +190,7 @@ export function CalendarPanel({
           </Icon>
         </StyledCalendarNavButton>
         <StyledCalendarNavButton
-          aria-label="Previous month"
+          aria-label={CALENDAR_NAV_PREVIOUS_MONTH_ARIA_LABEL}
           disabled={!canGoMonthPrevious}
           shape={shape}
           sizePreset={sizePreset}
@@ -194,7 +218,7 @@ export function CalendarPanel({
           </Text>
         </StyledCalendarMonthTitle>
         <StyledCalendarNavButton
-          aria-label="Next month"
+          aria-label={CALENDAR_NAV_NEXT_MONTH_ARIA_LABEL}
           disabled={!canGoMonthNext}
           shape={shape}
           sizePreset={sizePreset}
@@ -211,7 +235,7 @@ export function CalendarPanel({
           </Icon>
         </StyledCalendarNavButton>
         <StyledCalendarNavButton
-          aria-label="Next year"
+          aria-label={CALENDAR_NAV_NEXT_YEAR_ARIA_LABEL}
           disabled={!canGoYearNext}
           shape={shape}
           sizePreset={sizePreset}

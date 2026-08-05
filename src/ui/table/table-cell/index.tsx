@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - размерный ряд через проп `sizePreset`
- *  - горизонтальное выравнивание через проп `align`
+ *  - горизонтальное выравнивание через проп `textAlign`
  *  - обрезку с многоточием через проп `ellipsis`
  *  - запрет переноса строк через проп `nowrap`
  *  - ячейку шапки или подвала через проп `head`
@@ -42,7 +42,7 @@ type TableCellProps = TableCellStyleProps & {
  * TableCell — отображает ячейку таблицы.
  *
  * @example
- * <TableCell align="end" sizePreset={sizePreset}>
+ * <TableCell textAlign="end" sizePreset={sizePreset}>
  *   <Text sizePreset={textSize}>{rowIndex + 1}</Text>
  * </TableCell>
  * <TableCell head scope="col" sizePreset={sizePreset}>

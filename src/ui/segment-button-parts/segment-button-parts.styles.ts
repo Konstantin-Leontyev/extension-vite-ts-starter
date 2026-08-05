@@ -16,6 +16,7 @@
 import styled from 'styled-components';
 
 import { resolveIconStateBackground } from '@ui/icon';
+import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
@@ -52,18 +53,23 @@ const segmentButtonPartsDividerMarginBlock = {
 const SEGMENT_BUTTON_PARTS_ICON_LABEL_GAP: SpacingValue = 8;
 
 /**
- * SegmentButtonPartsRootStyleProps — представляет пропсы стилизации корня SegmentButtonParts.
+ * SegmentButtonPartsStyleProps — представляет пропсы стилизации SegmentButtonParts
+ * и layout-пропсы.
  *
  * @property sizePreset — размер ряда сегментов
  */
-type SegmentButtonPartsRootStyleProps = {
+export type SegmentButtonPartsStyleProps = LayoutProps & {
   sizePreset?: SizePreset;
 };
 
 /**
- * SEGMENT_BUTTON_PARTS_ROOT_PROP_NAMES — хранит имена пропсов стилизации корня SegmentButtonParts.
+ * SEGMENT_BUTTON_PARTS_ROOT_PROP_NAMES — объединяет имена layout-пропсов и пропсов
+ * стилизации корня SegmentButtonParts.
  */
-const SEGMENT_BUTTON_PARTS_ROOT_PROP_NAMES = new Set<string>(['sizePreset']);
+const SEGMENT_BUTTON_PARTS_ROOT_PROP_NAMES = new Set<string>([
+  ...LAYOUT_PROP_NAMES,
+  'sizePreset',
+]);
 
 /**
  * getSegmentButtonPartsRootStyles — возвращает CSS-правила для корня
@@ -72,9 +78,7 @@ const SEGMENT_BUTTON_PARTS_ROOT_PROP_NAMES = new Set<string>(['sizePreset']);
  * @param props пропсы стилизации корня
  * @returns CSS-правила, каждое с новой строки
  */
-function getSegmentButtonPartsRootStyles(
-  props: SegmentButtonPartsRootStyleProps
-): string {
+function getSegmentButtonPartsRootStyles(props: SegmentButtonPartsStyleProps): string {
   const { sizePreset = DEFAULT_SIZE_PRESET } = props;
 
   return `min-block-size: ${getMinBlockSize(sizePreset)};`;
@@ -82,7 +86,7 @@ function getSegmentButtonPartsRootStyles(
 
 /**
  * StyledSegmentButtonPartsRoot — задаёт корневой узел компонента SegmentButtonParts.
- * Базируется на `<div>` и принимает пропсы из `SegmentButtonPartsRootStyleProps`.
+ * Базируется на `<div>` и поддерживает пропсы из `SegmentButtonPartsStyleProps`.
  *
  * Встроенные стили:
  *  - `display: inline-grid` — ряд сегментов и разделителей
@@ -95,10 +99,11 @@ function getSegmentButtonPartsRootStyles(
  *
  * Генерация стилей:
  *  - `getSegmentButtonPartsRootStyles` — минимальная высота ряда
+ *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledSegmentButtonPartsRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !SEGMENT_BUTTON_PARTS_ROOT_PROP_NAMES.has(prop),
-})<SegmentButtonPartsRootStyleProps>`
+})<SegmentButtonPartsStyleProps>`
   display: inline-grid;
   flex-shrink: 0;
   inline-size: 100%;
@@ -114,6 +119,7 @@ export const StyledSegmentButtonPartsRoot = styled.div.withConfig({
   }
 
   ${(props) => getSegmentButtonPartsRootStyles(props)}
+  ${(props) => getLayoutStyles(props)}
 `;
 
 /**

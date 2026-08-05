@@ -78,6 +78,29 @@ export type StepperStyleProps = LayoutProps &
   };
 
 /**
+ * StyledStepperFieldRoot — задаёт корневой узел компонента Stepper.
+ * Базируется на `<div>` и поддерживает layout-пропсы.
+ *
+ * Встроенные стили:
+ *  - `display: grid` — вертикальный поток подписи и поля
+ *  - `gap` — отступ между подписью и полем
+ *  - `inline-size: 100%` — занимает ширину родителя
+ *  - `min-inline-size: 0` — предотвращает переполнение
+ *
+ * Генерация стилей:
+ *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ */
+export const StyledStepperFieldRoot = styled.div.withConfig({
+  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
+})<LayoutProps>`
+  display: grid;
+  gap: ${getSpacingValue(8)};
+  inline-size: 100%;
+  min-inline-size: 0;
+  ${(props) => getLayoutStyles(props)}
+`;
+
+/**
  * STEPPER_ROOT_PROP_NAMES — хранит имена пропсов стилизации поля Stepper.
  */
 const STEPPER_ROOT_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
@@ -113,29 +136,6 @@ function getStepperRootStyles(
     }
   `;
 }
-
-/**
- * StyledStepperFieldRoot — задаёт корневой узел компонента Stepper.
- * Базируется на `<div>` и поддерживает layout-пропсы.
- *
- * Встроенные стили:
- *  - `display: grid` — вертикальный поток подписи и поля
- *  - `gap` — отступ между подписью и полем
- *  - `inline-size: 100%` — занимает ширину родителя
- *  - `min-inline-size: 0` — предотвращает переполнение
- *
- * Генерация стилей:
- *  - `getLayoutStyles` — отступы, позиционирование, размеры
- */
-export const StyledStepperFieldRoot = styled.div.withConfig({
-  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
-})<LayoutProps>`
-  display: grid;
-  gap: ${getSpacingValue(8)};
-  inline-size: 100%;
-  min-inline-size: 0;
-  ${(props) => getLayoutStyles(props)}
-`;
 
 /**
  * StyledStepperRoot — задаёт узел поля компонента Stepper.

@@ -14,7 +14,7 @@
 import { useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-import { Header } from '@components/header';
+import { DEFAULT_HEADER_AUTO_HIDE, Header } from '@components/header';
 import { ModelDownloadGate } from '@components/model-download-gate';
 
 import { type ShellOutletContext } from './use-shell-outlet-context';
@@ -26,6 +26,12 @@ import { type ShellOutletContext } from './use-shell-outlet-context';
 const SHOWCASE_PATH = '/showcase';
 
 /**
+ * SHOWCASE_HEADER_SETTINGS_LABEL — задаёт `aria-label` шестерёнки шапки на витрине.
+ * На остальных страницах Header подставляет свой дефолт.
+ */
+const SHOWCASE_HEADER_SETTINGS_LABEL = 'Header settings';
+
+/**
  * RouterLayout — отображает каркас приложения с шапкой и outlet страниц.
  *
  * @example
@@ -34,7 +40,7 @@ const SHOWCASE_PATH = '/showcase';
 export function RouterLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [autoHide, setAutoHide] = useState(true);
+  const [autoHide, setAutoHide] = useState(DEFAULT_HEADER_AUTO_HIDE);
   const [isHeaderSettingsOpen, setIsHeaderSettingsOpen] = useState(false);
 
   const isShowcase = location.pathname === SHOWCASE_PATH;
@@ -67,7 +73,7 @@ export function RouterLayout() {
     <ModelDownloadGate>
       <Header
         autoHide={autoHide}
-        settingsLabel={isShowcase ? 'Header settings' : undefined}
+        settingsLabel={isShowcase ? SHOWCASE_HEADER_SETTINGS_LABEL : undefined}
         onSettingsClick={handleSettingsClick}
       />
       <Outlet context={outletContext} />

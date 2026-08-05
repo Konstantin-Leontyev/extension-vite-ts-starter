@@ -23,34 +23,34 @@ import { getEllipsisStyles } from '@ui/text';
 export type TableCellAlign = 'center' | 'end' | 'start';
 
 /**
- * DEFAULT_TABLE_CELL_ALIGN — задаёт горизонтальное выравнивание ячейки по умолчанию.
- * Используется, когда вызывающий код не передал проп `align`.
+ * DEFAULT_TABLE_CELL_TEXT_ALIGN — задаёт горизонтальное выравнивание ячейки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `textAlign`.
  */
-const DEFAULT_TABLE_CELL_ALIGN: TableCellAlign = 'center';
+const DEFAULT_TABLE_CELL_TEXT_ALIGN: TableCellAlign = 'center';
 
 /**
  * TableCellStyleProps — представляет пропсы стилизации TableCell.
  *
- * @property align — горизонтальное выравнивание содержимого
  * @property ellipsis — включает обрезку с многоточием
  * @property nowrap — включает запрет переноса строк
  * @property sizePreset — размер ячейки
+ * @property textAlign — горизонтальное выравнивание содержимого
  */
 export type TableCellStyleProps = {
-  align?: TableCellAlign;
   ellipsis?: boolean;
   nowrap?: boolean;
   sizePreset?: SizePreset;
+  textAlign?: TableCellAlign;
 };
 
 /**
  * TABLE_CELL_PROP_NAMES — хранит имена пропсов стилизации TableCell.
  */
 const TABLE_CELL_PROP_NAMES = new Set<string>([
-  'align',
   'ellipsis',
   'nowrap',
   'sizePreset',
+  'textAlign',
 ]);
 
 /**
@@ -59,7 +59,7 @@ const TABLE_CELL_PROP_NAMES = new Set<string>([
  *
  * Как работает:
  * 1. Берёт `sizePreset` или `DEFAULT_SIZE_PRESET` и задаёт `padding-inline`
- * 2. Задаёт `vertical-align: middle` и `text-align` по `align`
+ * 2. Задаёт `vertical-align: middle` и `text-align` по `textAlign`
  * 3. При `ellipsis` подставляет `getEllipsisStyles`, при `nowrap` — `white-space: nowrap`,
  *    иначе `overflow-wrap: break-word`
  *
@@ -71,7 +71,7 @@ function getTableCellStyles(props: TableCellStyleProps): string {
   const styles = [
     `padding-inline: ${getPaddingInline(sizePreset)};`,
     'vertical-align: middle;',
-    `text-align: ${props.align ?? DEFAULT_TABLE_CELL_ALIGN};`,
+    `text-align: ${props.textAlign ?? DEFAULT_TABLE_CELL_TEXT_ALIGN};`,
   ];
 
   if (props.ellipsis === true) {

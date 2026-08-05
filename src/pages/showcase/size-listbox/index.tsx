@@ -33,7 +33,7 @@
  */
 
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import { type SizePreset } from '@ui/presets';
+import { DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
 
 /**
  * getSizeListboxOptions — преобразует перечень размеров в опции Listbox.
@@ -56,7 +56,7 @@ function getSizeListboxOptions<Size extends string>(
  * Панели передают состояние как есть, не дублируя это умолчание запасными значениями.
  * Используется, когда вызывающий код не передал проп `value`.
  */
-const DEFAULT_SIZE_LISTBOX_VALUE = 'normal';
+const DEFAULT_SIZE_LISTBOX_VALUE = DEFAULT_SIZE_PRESET;
 
 /**
  * SizeListboxProps — представляет пропсы компонента SizeListbox.

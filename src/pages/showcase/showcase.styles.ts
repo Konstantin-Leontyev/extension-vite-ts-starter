@@ -32,6 +32,18 @@ import { getSpacingValue } from '@ui/spacing';
 const PLAYGROUND_MAX_BLOCK_SIZE = `calc(100dvb - var(--shell-header-block-size, ${HEADER_BLOCK_SIZE}))`;
 
 /**
+ * SHOWCASE_WIDGET_FULL_ROW_BLOCK_SIZE — задаёт фиксированную высоту полноширинного
+ * ряда виджетов (Table и аналоги). Менять вместе с плотностью демо-таблицы.
+ */
+const SHOWCASE_WIDGET_FULL_ROW_BLOCK_SIZE = '22rem';
+
+/**
+ * SHOWCASE_WIDGET_MIN_INLINE_SIZE — задаёт минимальную ширину колонки сетки карточек.
+ * Ниже этого порога `auto-fit` уменьшает число колонок.
+ */
+const SHOWCASE_WIDGET_MIN_INLINE_SIZE = '16.75rem';
+
+/**
  * StyledMain — задаёт корневой landmark витрины дизайн-системы.
  * Базируется на `<main>`.
  *
@@ -58,7 +70,8 @@ export const StyledMain = styled.main`
  *
  * Встроенные стили:
  *  - `grid-column: 1 / -1` — карточка растягивается на все колонки сетки
- *  - `block-size: 22rem` — фиксированная высота ряда для широких виджетов, например Table
+ *  - `block-size` из `SHOWCASE_WIDGET_FULL_ROW_BLOCK_SIZE` — фиксированная высота ряда
+ *    для широких виджетов, например Table
  *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
  */
 export const StyledShowcaseWidgetFullRow = styled.div`
@@ -66,7 +79,7 @@ export const StyledShowcaseWidgetFullRow = styled.div`
   grid-template-rows: minmax(0, 1fr);
   grid-column: 1 / -1;
   min-inline-size: 0;
-  block-size: 22rem;
+  block-size: ${SHOWCASE_WIDGET_FULL_ROW_BLOCK_SIZE};
   min-block-size: 0;
 `;
 
@@ -75,8 +88,7 @@ export const StyledShowcaseWidgetFullRow = styled.div`
  * Базируется на `<div>`.
  *
  * Встроенные стили:
- *  - `grid-template-columns: repeat(auto-fit, minmax(16.75rem, 1fr))` — адаптивное число
- *    колонок
+ *  - `grid-template-columns` с `SHOWCASE_WIDGET_MIN_INLINE_SIZE` — адаптивное число колонок
  *  - `gap` — отступ между карточками
  *  - `align-items: start` — карточки выравниваются по верхнему краю
  *  - `aspect-ratio: 1 / 1` на дочерних узлах, кроме `StyledShowcaseWidgetFullRow` —
@@ -84,7 +96,10 @@ export const StyledShowcaseWidgetFullRow = styled.div`
  */
 export const StyledShowcaseWidgets = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16.75rem, 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(${SHOWCASE_WIDGET_MIN_INLINE_SIZE}, 1fr)
+  );
   gap: ${getSpacingValue(8)};
   align-items: start;
 

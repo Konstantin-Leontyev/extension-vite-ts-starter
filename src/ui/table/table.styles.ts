@@ -52,7 +52,7 @@ export type TableSizePreset = SizePreset;
  * DEFAULT_TABLE_SIZE_PRESET — задаёт размер таблицы по умолчанию.
  * Используется, когда вызывающий код не передал проп `sizePreset`.
  */
-export const DEFAULT_TABLE_SIZE_PRESET: TableSizePreset = 'normal';
+export const DEFAULT_TABLE_SIZE_PRESET: TableSizePreset = DEFAULT_SIZE_PRESET;
 
 /**
  * DEFAULT_TABLE_SHOW_BORDER — задаёт показ рамки таблицы по умолчанию.
@@ -90,6 +90,23 @@ export function getTableTextSize(sizePreset?: SizePreset): TextSizePreset {
 const TABLE_EDGE_BORDER_WIDTH = '2px';
 
 /**
+ * TABLE_HEAD_FILL_MIX_PERCENT — доля цвета рамки в смеси заливки шапки и подвала.
+ * Подбирает приглушённый фон относительно `surface` Card.
+ */
+const TABLE_HEAD_FILL_MIX_PERCENT = 22;
+
+/**
+ * TABLE_STRIPE_FILL_MIX_PERCENT — доля `default` в смеси заливки чётной строки.
+ * Слабый сдвиг, чтобы полосы не спорили с hover.
+ */
+const TABLE_STRIPE_FILL_MIX_PERCENT = 3;
+
+/**
+ * TABLE_ROW_HOVER_FILL_MIX_PERCENT — доля `primary` в смеси заливки строки при наведении.
+ */
+const TABLE_ROW_HOVER_FILL_MIX_PERCENT = 6;
+
+/**
  * resolveTableHeadFill — возвращает приглушённую заливку шапки и подвала.
  * Контрастирует с телом таблицы на поверхности Card.
  *
@@ -97,7 +114,11 @@ const TABLE_EDGE_BORDER_WIDTH = '2px';
  * @returns значение для CSS-свойства `background-color`
  */
 function resolveTableHeadFill(theme: AppTheme): string {
-  return resolveColorMix(theme.colors.border, theme.colors.surface, 22);
+  return resolveColorMix(
+    theme.colors.border,
+    theme.colors.surface,
+    TABLE_HEAD_FILL_MIX_PERCENT
+  );
 }
 
 /**
@@ -107,7 +128,11 @@ function resolveTableHeadFill(theme: AppTheme): string {
  * @returns значение для CSS-свойства `background-color`
  */
 function resolveTableStripeFill(theme: AppTheme): string {
-  return resolveColorMix(theme.colors.default, theme.colors.surface, 3);
+  return resolveColorMix(
+    theme.colors.default,
+    theme.colors.surface,
+    TABLE_STRIPE_FILL_MIX_PERCENT
+  );
 }
 
 /**
@@ -117,7 +142,11 @@ function resolveTableStripeFill(theme: AppTheme): string {
  * @returns значение для CSS-свойства `background-color`
  */
 function resolveTableRowHoverFill(theme: AppTheme): string {
-  return resolveColorMix(theme.colors.primary, theme.colors.surface, 6);
+  return resolveColorMix(
+    theme.colors.primary,
+    theme.colors.surface,
+    TABLE_ROW_HOVER_FILL_MIX_PERCENT
+  );
 }
 
 /**

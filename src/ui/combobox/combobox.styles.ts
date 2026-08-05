@@ -389,17 +389,17 @@ function getComboboxOptionStyles(
     }
     &:focus { outline: none; }
     &[data-active='true']::before,
-    &:hover:not(:disabled)::before,
+    &:not(:disabled):hover::before,
     &:focus-visible::before {
       background-color: ${theme.colors.primary};
     }
     &[data-active='true'],
-    &:hover:not(:disabled),
+    &:not(:disabled):hover,
     &:focus-visible {
       color: ${theme.colors.inverse};
     }
     &[data-active='true'] [data-slot='check'],
-    &:hover:not(:disabled) [data-slot='check'],
+    &:not(:disabled):hover [data-slot='check'],
     &:focus-visible [data-slot='check'] {
       color: inherit;
     }

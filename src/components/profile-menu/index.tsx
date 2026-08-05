@@ -28,7 +28,6 @@ import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 import {
   StyledProfileMenu,
-  StyledProfileMenuActions,
   StyledProfileMenuContent,
   StyledProfileMenuHeader,
   StyledProfileMenuLegal,
@@ -52,6 +51,26 @@ const PROFILE_STUB = {
 const PROFILE_MENU_CLOSE_ARIA_LABEL = 'Close profile menu';
 
 /**
+ * PROFILE_MENU_CLOSE_ICON_PADDING — задаёт отступ окна Icon у кнопки закрытия.
+ */
+const PROFILE_MENU_CLOSE_ICON_PADDING = 12;
+
+/**
+ * PROFILE_MENU_AVATAR_PADDING — задаёт отступ окна Icon аватара в шапке панели.
+ */
+const PROFILE_MENU_AVATAR_PADDING = 8;
+
+/**
+ * PROFILE_MENU_ACTIONS_PADDING_INLINE — задаёт боковой отступ ряда SegmentButton.
+ */
+const PROFILE_MENU_ACTIONS_PADDING_INLINE = 4;
+
+/**
+ * PROFILE_MENU_ACTIONS_MARGIN_BLOCK_START — задаёт отступ ряда действий от шапки.
+ */
+const PROFILE_MENU_ACTIONS_MARGIN_BLOCK_START = 12;
+
+/**
  * PROFILE_MENU_LEGAL_ARIA_LABEL — задаёт доступное имя навигации правовых ссылок.
  * Используется в `StyledProfileMenuLegal`.
  */
@@ -73,11 +92,18 @@ const PROFILE_MENU_LEGAL_LINKS = [
 const PROFILE_MENU_PANEL_MIN_INLINE_SIZE_PX = 360;
 
 /**
+ * PROFILE_MENU_VIEWPORT_INLINE_GUTTER — задаёт суммарный горизонтальный зазор панели
+ * от краёв вьюпорта (по `32` с каждой стороны).
+ * Используется в `PROFILE_MENU_MAX_INLINE_SIZE`.
+ */
+const PROFILE_MENU_VIEWPORT_INLINE_GUTTER = `calc(${getSpacingValue(32)} * 2)`;
+
+/**
  * PROFILE_MENU_MAX_INLINE_SIZE — задаёт максимальную ширину панели меню профиля:
  * вьюпорт минус зазор по обеим сторонам.
  * Используется в `maxInlineSize` Card панели ProfileMenu и внутри `PROFILE_MENU_INLINE_SIZE`.
  */
-const PROFILE_MENU_MAX_INLINE_SIZE = 'calc(100vw - 4rem)';
+const PROFILE_MENU_MAX_INLINE_SIZE = `calc(100vw - ${PROFILE_MENU_VIEWPORT_INLINE_GUTTER})`;
 
 /**
  * PROFILE_MENU_INLINE_SIZE — задаёт минимальную ширину панели меню профиля.
@@ -186,7 +212,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
             {
               ariaLabel: PROFILE_MENU_CLOSE_ARIA_LABEL,
               icon: <CloseIcon />,
-              iconPadding: 12,
+              iconPadding: PROFILE_MENU_CLOSE_ICON_PADDING,
               onClick: handleClose,
             },
           ]}
@@ -207,7 +233,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
                 aria-hidden="true"
                 blockSize={getSpacingValue(80)}
                 inlineSize={getSpacingValue(80)}
-                padding={8}
+                padding={PROFILE_MENU_AVATAR_PADDING}
                 shape="round"
                 showBorder
               >
@@ -218,23 +244,23 @@ export function ProfileMenu(props: ProfileMenuProps) {
               </Text>
             </StyledProfileMenuHeader>
 
-            <StyledProfileMenuActions>
-              <SegmentButton
-                left={{
-                  icon: <AddCircleIcon />,
-                  iconFill: 'primary',
-                  iconPosition: 'start',
-                  label: 'Profile',
-                  onClick: handleClose,
-                }}
-                right={{
-                  icon: <SignOutIcon />,
-                  label: 'Sign out',
-                  onClick: handleClose,
-                }}
-                shape="pill"
-              />
-            </StyledProfileMenuActions>
+            <SegmentButton
+              left={{
+                icon: <AddCircleIcon />,
+                iconFill: 'primary',
+                iconPosition: 'start',
+                label: 'Profile',
+                onClick: handleClose,
+              }}
+              marginBlockStart={PROFILE_MENU_ACTIONS_MARGIN_BLOCK_START}
+              paddingInline={PROFILE_MENU_ACTIONS_PADDING_INLINE}
+              right={{
+                icon: <SignOutIcon />,
+                label: 'Sign out',
+                onClick: handleClose,
+              }}
+              shape="pill"
+            />
 
             <StyledProfileMenuLegal aria-label={PROFILE_MENU_LEGAL_ARIA_LABEL}>
               {PROFILE_MENU_LEGAL_LINKS.map((link, index) => (

@@ -10,7 +10,7 @@
  * 2. Хранить канонические значения в `minBlockSize`, `padding` и `textSize`
  * 3. Задать значения по умолчанию через `DEFAULT_SIZE_PRESET` и `DEFAULT_SHAPE_PRESET`
  * 4. Предоставить перечни `SIZE_PRESET_KEYS` и `SHAPE_PRESET_KEYS`
- * 5. Предоставить геттеры `getMinBlockSize`, `getPadding`, `getPaddingInline` и `getTextSize`
+ * 5. Предоставить геттеры `getMinBlockSize`, `getPadding`, `getPaddingInline`, `getPaddingBlock` и `getTextSize`
  * 6. Предоставить `resolveBlockRadius` для вычисления радиуса по форме
  *
  * Потребители:
@@ -74,7 +74,7 @@ export function getMinBlockSize(sizePreset: SizePreset): string {
  * При переносе строки контент растёт выше `minBlockSize`, и `padding.block`
  * удерживает текст от прилипания к краям.
  * Экспортируется для замера значений в `@ui/table/column-sizing`,
- * чтение отступов — через `getPadding` и `getPaddingInline`.
+ * чтение отступов — через `getPadding`, `getPaddingInline` и `getPaddingBlock`.
  */
 export const padding = Object.freeze({
   small: Object.freeze({ inline: 12, block: 8 } as const),
@@ -117,6 +117,16 @@ export function getPadding(sizePreset: SizePreset): ControlPadding {
  */
 export function getPaddingInline(sizePreset: SizePreset): string {
   return getPadding(sizePreset).inline;
+}
+
+/**
+ * getPaddingBlock — возвращает значение для CSS-свойства `padding-block` по `sizePreset`.
+ *
+ * @param sizePreset размер компонента
+ * @returns значение для CSS-свойства `padding-block`
+ */
+export function getPaddingBlock(sizePreset: SizePreset): string {
+  return getPadding(sizePreset).block;
 }
 
 /**

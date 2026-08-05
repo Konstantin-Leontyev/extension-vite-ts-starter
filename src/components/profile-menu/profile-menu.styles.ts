@@ -5,8 +5,7 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `ProfileMenuStyleProps`
  * 2. Предоставить styled-узлы `StyledProfileMenu`, `StyledProfileMenuContent`,
- *    `StyledProfileMenuHeader`, `StyledProfileMenuActions`, `StyledProfileMenuLegal`
- *    и `StyledProfileMenuLegalLink`
+ *    `StyledProfileMenuHeader`, `StyledProfileMenuLegal` и `StyledProfileMenuLegalLink`
  *
  * Потребители:
  *  - `src/components/profile-menu/index.tsx` — собирает компонент ProfileMenu
@@ -64,19 +63,6 @@ export const StyledProfileMenuHeader = styled.div`
   display: grid;
   gap: ${getSpacingValue(12)};
   place-items: center;
-`;
-
-/**
- * StyledProfileMenuActions — задаёт ряд действий панели компонента ProfileMenu.
- * Базируется на `<div>`.
- *
- * Встроенные стили:
- *  - `padding-inline` — боковые отступы вокруг SegmentButton
- *  - `margin-block-start` — отступ ряда действий от шапки
- */
-export const StyledProfileMenuActions = styled.div`
-  padding-inline: ${getSpacingValue(4)};
-  margin-block-start: ${getSpacingValue(12)};
 `;
 
 /**

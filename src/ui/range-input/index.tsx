@@ -113,6 +113,24 @@ export const DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES = {
 } as const;
 
 /**
+ * DEFAULT_RANGE_INPUT_BUTTON_TONE — задаёт тон кнопки применения по умолчанию.
+ * Используется, когда вызывающий код не передал проп `buttonTone`.
+ */
+const DEFAULT_RANGE_INPUT_BUTTON_TONE: TonePreset = 'primary';
+
+/**
+ * DEFAULT_RANGE_INPUT_DISABLED — задаёт недоступное состояние по умолчанию.
+ * Используется, когда вызывающий код не передал проп `disabled`.
+ */
+const DEFAULT_RANGE_INPUT_DISABLED = false;
+
+/**
+ * DEFAULT_RANGE_INPUT_TITLE_ALIGN — задаёт выравнивание заголовка панели по умолчанию.
+ * Используется, когда вызывающий код не передал проп `titleAlign`.
+ */
+const DEFAULT_RANGE_INPUT_TITLE_ALIGN: TextAlignPreset = 'center';
+
+/**
  * RangeInputValidationMessages — представляет частичные тексты встроенной валидации RangeInput.
  *
  * @property emptyBounds — текст ошибки, когда обе границы пустые при применении
@@ -163,24 +181,6 @@ export type RangePreset = {
  * Используется как начальное значение и результат сброса.
  */
 const EMPTY_RANGE_VALUE: RangeValue = { from: '', to: '' };
-
-/**
- * DEFAULT_RANGE_INPUT_BUTTON_TONE — задаёт тон кнопки применения по умолчанию.
- * Используется, когда вызывающий код не передал проп `buttonTone`.
- */
-const DEFAULT_RANGE_INPUT_BUTTON_TONE: TonePreset = 'primary';
-
-/**
- * DEFAULT_RANGE_INPUT_DISABLED — задаёт недоступное состояние по умолчанию.
- * Используется, когда вызывающий код не передал проп `disabled`.
- */
-const DEFAULT_RANGE_INPUT_DISABLED = false;
-
-/**
- * DEFAULT_RANGE_INPUT_TITLE_ALIGN — задаёт выравнивание заголовка панели по умолчанию.
- * Используется, когда вызывающий код не передал проп `titleAlign`.
- */
-const DEFAULT_RANGE_INPUT_TITLE_ALIGN: TextAlignPreset = 'center';
 
 /**
  * RangeInputButtonProps — представляет пропсы кнопки применения RangeInput.
@@ -402,7 +402,7 @@ export function RangeInput({
   const buttonSizePreset = buttonSizePresetProp ?? resolvedSizePreset;
   const inputShape = inputShapeProp ?? resolvedShape;
   const inputSizePreset = inputSizePresetProp ?? resolvedSizePreset;
-  const { layoutProps } = splitLayoutProps(rest);
+  const { layoutProps, restProps } = splitLayoutProps(rest);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const triggerRowRef = useRef<HTMLDivElement>(null);
@@ -575,6 +575,7 @@ export function RangeInput({
       data-open={isOpen}
       ref={rootRef}
       {...layoutProps}
+      {...restProps}
     >
       <FieldLabel htmlFor={triggerId}>{label}</FieldLabel>
       <StyledRangeInputTriggerRow

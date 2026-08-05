@@ -414,11 +414,9 @@ function applyListboxPanelPosition(
  */
 function handleOpenFocus(panel: HTMLElement): void {
   const selectedOption = panel.querySelector<HTMLElement>(
-    'li[aria-selected="true"] button:not([disabled])'
+    'li[aria-selected="true"] button:not([disabled]), li[aria-selected="true"] input:not([disabled])'
   );
-  const focusTarget =
-    selectedOption ??
-    getFocusables(panel).find((element) => element.tagName === 'BUTTON');
+  const focusTarget = selectedOption ?? getFocusables(panel)[0];
 
   focusTarget?.focus();
 }

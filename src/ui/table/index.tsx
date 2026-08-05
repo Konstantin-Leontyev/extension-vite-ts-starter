@@ -194,6 +194,41 @@ const DEFAULT_EDIT_HINT = 'Press Esc to close without saving, or Enter to save c
 const DEFAULT_TABLE_NUMBERED = true;
 
 /**
+ * TABLE_ADD_ROW_ARIA_LABEL — задаёт `aria-label` кнопки и диалога добавления строки.
+ */
+const TABLE_ADD_ROW_ARIA_LABEL = 'Add row';
+
+/**
+ * TABLE_EDIT_ROW_ARIA_LABEL — задаёт `aria-label` диалога редактирования строки.
+ */
+const TABLE_EDIT_ROW_ARIA_LABEL = 'Edit row';
+
+/**
+ * TABLE_SELECT_COLUMN_LABEL — задаёт visually-hidden подпись отдельной колонки выбора.
+ */
+const TABLE_SELECT_COLUMN_LABEL = 'Select';
+
+/**
+ * TABLE_SELECT_ALL_ARIA_LABEL — задаёт `aria-label` чекбокса выбора всех строк.
+ */
+const TABLE_SELECT_ALL_ARIA_LABEL = 'Select all rows';
+
+/**
+ * TABLE_CLEAR_SELECTION_ARIA_LABEL — задаёт `aria-label` чекбокса сброса выбора всех строк.
+ */
+const TABLE_CLEAR_SELECTION_ARIA_LABEL = 'Clear selection';
+
+/**
+ * TABLE_SELECT_GROUP_ARIA_LABEL — задаёт `aria-label` чекбокса выбора группы.
+ */
+const TABLE_SELECT_GROUP_ARIA_LABEL = 'Select group';
+
+/**
+ * TABLE_CLEAR_GROUP_SELECTION_ARIA_LABEL — задаёт `aria-label` чекбокса сброса выбора группы.
+ */
+const TABLE_CLEAR_GROUP_SELECTION_ARIA_LABEL = 'Clear group selection';
+
+/**
  * TableAddProps — представляет пропсы панели добавления строки Table.
  *
  * @property addError — текст ошибки панели добавления строки
@@ -448,7 +483,11 @@ function TableBodyRow<Row>({
     checkable && !rowSelectable && (groupMemberKeys?.length ?? 0) > 0;
   const groupCheckbox = isGroupSelector ? (
     <TableCheckbox
-      ariaLabel={groupSelected ? 'Clear group selection' : 'Select group'}
+      ariaLabel={
+        groupSelected
+          ? TABLE_CLEAR_GROUP_SELECTION_ARIA_LABEL
+          : TABLE_SELECT_GROUP_ARIA_LABEL
+      }
       checked={groupSelected}
       onToggle={() => {
         toggleGroupKeys(groupMemberKeys ?? []);
@@ -468,7 +507,7 @@ function TableBodyRow<Row>({
       {...(pointerProps ?? {})}
     >
       {separateCheckboxColumn && (
-        <TableCell align="center" sizePreset={sizePreset}>
+        <TableCell sizePreset={sizePreset} textAlign="center">
           {(rowSelectable && (
             <TableCheckbox
               ariaLabel={`Select row ${rowKey}`}
@@ -482,7 +521,7 @@ function TableBodyRow<Row>({
         </TableCell>
       )}
       {resolvedNumbered && (
-        <TableCell align="end" sizePreset={sizePreset}>
+        <TableCell sizePreset={sizePreset} textAlign="end">
           <Text sizePreset={textSize}>{rowIndex + 1}</Text>
         </TableCell>
       )}
@@ -522,11 +561,11 @@ function TableBodyRow<Row>({
 
         return (
           <TableCell
-            align={column.align}
             ellipsis={column.ellipsis && !showRowActionsInColumn}
             key={column.key}
             nowrap={column.nowrap}
             sizePreset={sizePreset}
+            textAlign={column.align}
           >
             {(leadCheckbox && (
               <StyledTableCellLead>
@@ -788,7 +827,11 @@ export function Table<Row>(props: TableProps<Row>) {
       <StyledTableCellLead>
         {interactive ? (
           <TableCheckbox
-            ariaLabel={headerSelectionActive ? 'Clear selection' : 'Select all rows'}
+            ariaLabel={
+              headerSelectionActive
+                ? TABLE_CLEAR_SELECTION_ARIA_LABEL
+                : TABLE_SELECT_ALL_ARIA_LABEL
+            }
             checked={headerSelectionActive}
             onToggle={toggleAllRows}
           />
@@ -797,7 +840,7 @@ export function Table<Row>(props: TableProps<Row>) {
         )}
         {(interactive && editable && (
           <Icon
-            aria-label="Add row"
+            aria-label={TABLE_ADD_ROW_ARIA_LABEL}
             as="button"
             disabled={!onAddRow || addRowActive || editRowActive}
             ref={addSource === 'head' ? headAddButtonRef : footAddButtonRef}
@@ -828,19 +871,19 @@ export function Table<Row>(props: TableProps<Row>) {
     <>
       {separateCheckboxColumn && (
         <TableCell
-          align="center"
           head={head}
           sizePreset={sizePreset}
+          textAlign="center"
           {...(head ? { scope: 'col' as const } : {})}
         >
-          <span className="visually-hidden">Select</span>
+          <span className="visually-hidden">{TABLE_SELECT_COLUMN_LABEL}</span>
         </TableCell>
       )}
       {resolvedNumbered && (
         <TableCell
-          align="end"
           head={head}
           sizePreset={sizePreset}
+          textAlign="end"
           {...(head ? { scope: 'col' as const } : {})}
         >
           <Text sizePreset={textSize}>#</Text>
@@ -848,12 +891,12 @@ export function Table<Row>(props: TableProps<Row>) {
       )}
       {columns.map((column) => (
         <TableCell
-          align={column.headerAlign ?? column.align}
           ellipsis={column.ellipsis}
           head={head}
           key={column.key}
           nowrap={column.nowrap}
           sizePreset={sizePreset}
+          textAlign={column.headerAlign ?? column.align}
           {...(head ? { scope: 'col' as const } : {})}
         >
           {checkable &&
@@ -870,8 +913,10 @@ export function Table<Row>(props: TableProps<Row>) {
 
   const renderAddCells = (): ReactNode => (
     <>
-      {separateCheckboxColumn && <TableCell align="center" sizePreset={sizePreset} />}
-      {resolvedNumbered && <TableCell align="end" sizePreset={sizePreset} />}
+      {separateCheckboxColumn && (
+        <TableCell sizePreset={sizePreset} textAlign="center" />
+      )}
+      {resolvedNumbered && <TableCell sizePreset={sizePreset} textAlign="end" />}
       {columns.map((column) => {
         const addCellContent = renderAddCell?.(column, addCellContext);
         const cellBody =
@@ -887,10 +932,10 @@ export function Table<Row>(props: TableProps<Row>) {
 
         return (
           <TableCell
-            align={column.align}
             key={column.key}
             nowrap={column.nowrap}
             sizePreset={sizePreset}
+            textAlign={column.align}
           >
             {cellBody}
           </TableCell>
@@ -901,8 +946,10 @@ export function Table<Row>(props: TableProps<Row>) {
 
   const renderEditCells = (row: Row): ReactNode => (
     <>
-      {separateCheckboxColumn && <TableCell align="center" sizePreset={sizePreset} />}
-      {resolvedNumbered && <TableCell align="end" sizePreset={sizePreset} />}
+      {separateCheckboxColumn && (
+        <TableCell sizePreset={sizePreset} textAlign="center" />
+      )}
+      {resolvedNumbered && <TableCell sizePreset={sizePreset} textAlign="end" />}
       {columns.map((column) => {
         const editCellContent = renderEditCell?.(column, row, editCellContext);
         const cellBody =
@@ -918,10 +965,10 @@ export function Table<Row>(props: TableProps<Row>) {
 
         return (
           <TableCell
-            align={column.align}
             key={column.key}
             nowrap={column.nowrap}
             sizePreset={sizePreset}
+            textAlign={column.align}
           >
             {cellBody}
           </TableCell>
@@ -1041,8 +1088,8 @@ export function Table<Row>(props: TableProps<Row>) {
     >
       <StyledTableRowPanel
         $hasError={hasAddError}
-        aria-label="Add row"
-        aria-modal="true"
+        aria-label={TABLE_ADD_ROW_ARIA_LABEL}
+        aria-modal={true}
         ref={panelRef}
         role="dialog"
       >
@@ -1093,8 +1140,8 @@ export function Table<Row>(props: TableProps<Row>) {
       >
         <StyledTableRowPanel
           $hasError={hasEditError}
-          aria-label="Edit row"
-          aria-modal="true"
+          aria-label={TABLE_EDIT_ROW_ARIA_LABEL}
+          aria-modal={true}
           ref={editPanelRef}
           role="dialog"
         >

@@ -127,6 +127,12 @@ const PANEL_DISMISS_LABEL = 'Close';
 const CALENDAR_PANEL_ARIA_LABEL = 'Date range calendar';
 
 /**
+ * CLEAR_DATE_RANGE_ARIA_LABEL — задаёт запасной `aria-label` кнопки сброса диапазона.
+ * Передаётся вторым аргументом в `resolveClearAriaLabel`, когда подписи сегментов пусты.
+ */
+const CLEAR_DATE_RANGE_ARIA_LABEL = 'Clear date range';
+
+/**
  * DateRangeInputProps — представляет пропсы компонента DateRangeInput.
  *
  * @property dayShape — форма подсветки дня в панели. Без пропа совпадает с `shape`
@@ -263,10 +269,10 @@ function clearDateRangeButtonAriaLabel(startLabel: string, endLabel: string): st
   const end = endLabel.trim();
 
   if (start !== '' && end !== '') {
-    return resolveClearAriaLabel(`${start} / ${end}`, 'Clear date range');
+    return resolveClearAriaLabel(`${start} / ${end}`, CLEAR_DATE_RANGE_ARIA_LABEL);
   }
 
-  return resolveClearAriaLabel(start || end, 'Clear date range');
+  return resolveClearAriaLabel(start || end, CLEAR_DATE_RANGE_ARIA_LABEL);
 }
 
 /**
