@@ -1,23 +1,59 @@
-// TODO: ручное ревью — ui/table/table-inline-field/index.tsx
-import { type CSSProperties, type ComponentPropsWithRef } from 'react';
+/**
+ * Файл: `src/ui/table/table-inline-field/index.tsx`
+ * Предоставляет компонент TableInlineField для отображения поля ввода в ячейке таблицы.
+ *
+ * Поддерживает:
+ *  - выравнивание текста через проп `textAlign`
+ *  - размер текста через проп `textSizePreset`
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент TableInlineField
+ * 2. Типизировать пропсы через `TableInlineFieldProps`
+ *
+ * Потребители:
+ *  - `src/pages/showcase/table-demo/index.tsx` — рендерит поля compose и edit в демо-таблице
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
+ */
 
-import { type TextSizePreset } from '@ui/text';
+import { type ComponentPropsWithRef } from 'react';
 
 import {
   StyledTableInlineField,
   type TableInlineFieldStyleProps,
 } from './table-inline-field.styles';
 
-export type TableInlineFieldProps = TableInlineFieldStyleProps & {
-  textAlign?: CSSProperties['textAlign'];
-  textSizePreset?: TextSizePreset;
-} & Omit<
+/**
+ * TableInlineFieldProps — представляет пропсы компонента TableInlineField.
+ */
+type TableInlineFieldProps = TableInlineFieldStyleProps &
+  Omit<
     ComponentPropsWithRef<'input'>,
     'className' | 'style' | keyof TableInlineFieldStyleProps
   >;
 
+/**
+ * TableInlineField — отображает поле ввода в ячейке таблицы.
+ *
+ * @example
+ * <TableInlineField
+ *   placeholder="Product"
+ *   textSizePreset={textSizePreset}
+ *   value={composeDraft.product}
+ *   onChange={(event) =>
+ *     setComposeDraft((current) => ({ ...current, product: event.target.value }))
+ *   }
+ * />
+ * <TableInlineField
+ *   inputMode="numeric"
+ *   placeholder="Stock"
+ *   textAlign="end"
+ *   textSizePreset={textSizePreset}
+ *   value={composeDraft.stock}
+ *   onChange={(event) =>
+ *     setComposeDraft((current) => ({ ...current, stock: event.target.value }))
+ *   }
+ * />
+ */
 export function TableInlineField(props: TableInlineFieldProps) {
   return <StyledTableInlineField {...props} />;
 }
-
-export type { TableInlineFieldStyleProps } from './table-inline-field.styles';

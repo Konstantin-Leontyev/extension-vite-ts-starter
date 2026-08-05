@@ -1047,14 +1047,13 @@ export function Table<Row>(props: TableProps<Row>) {
 }
 
 export { TableCell } from './table-cell';
-export type { TableCellAlign, TableCellStyleProps } from './table-cell';
+export type { TableCellAlign } from './table-cell';
 export { TableGroupCell } from './table-group-cell';
 export { TableGroupExpander } from './table-group-expander';
 export { TableInlineField } from './table-inline-field';
-export type { TableInlineFieldProps } from './table-inline-field';
 export { TableMemberPrefix, TableNestedCell } from './table-nested-cell';
 export type {
-  TableColumnSizeSpec,
+  TableColumnSizeConfig,
   TableSizePreset,
   TableStyleProps,
 } from './table.styles';
@@ -1065,6 +1064,5 @@ export {
   DEFAULT_TABLE_SHOW_BORDER,
   DEFAULT_TABLE_SIZE_PRESET,
   DEFAULT_TABLE_STRIPED,
-  computeTableColumnInlineSize,
   computeTableColumnInlineSizes,
 } from './table.styles';

@@ -330,7 +330,6 @@ export const StyledTableCellTrailing = styled.span`
 `;
 
 export {
-  computeTableColumnInlineSize,
   computeTableColumnInlineSizes,
-  type TableColumnSizeSpec,
+  type TableColumnSizeConfig,
 } from './column-sizing';
