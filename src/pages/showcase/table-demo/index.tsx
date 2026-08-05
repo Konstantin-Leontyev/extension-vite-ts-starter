@@ -16,7 +16,8 @@ import { useCallback, useMemo, useState, type ReactNode } from 'react';
 
 import { ChevronDownIcon, ChevronUpIcon } from '@icons';
 import { Button } from '@ui/button';
-import { Icon } from '@ui/icon';
+import { Icon, type IconShapePreset, type IconSizePreset } from '@ui/icon';
+import { type SizePreset } from '@ui/presets';
 import {
   Table,
   TableGroupCell,
@@ -47,6 +48,54 @@ import { type TableWidgetState } from '../table-settings';
  * Используется в `Delete` одиночного и группового удаления.
  */
 const ROW_ACTION_MIN_INLINE_SIZE = '5.5rem';
+
+/**
+ * ROW_ACTION_SIZE_PRESET — задаёт `sizePreset` кнопок Delete в checkable-режиме.
+ * Используется в `Delete` одиночного и группового удаления.
+ */
+const ROW_ACTION_SIZE_PRESET: SizePreset = 'small';
+
+/**
+ * GROUP_EXPANDER_SIZE_PRESET — задаёт `sizePreset` кнопки раскрытия группы.
+ * Используется в expander голов групп демо-таблицы.
+ */
+const GROUP_EXPANDER_SIZE_PRESET: IconSizePreset = 'tiny';
+
+/**
+ * GROUP_EXPANDER_SHAPE — задаёт `shape` кнопки раскрытия группы.
+ * Используется в expander голов групп демо-таблицы.
+ */
+const GROUP_EXPANDER_SHAPE: IconShapePreset = 'rounded';
+
+/**
+ * CATALOG_TABLE_DEMO_ARIA_LABEL — задаёт `aria-label` демо-таблицы каталога.
+ * Используется в корневом Table демо.
+ */
+const CATALOG_TABLE_DEMO_ARIA_LABEL = 'Catalog table demo';
+
+/**
+ * GROUP_EXPAND_ARIA_VERB — задаёт глагол `aria-label` для свёрнутой группы.
+ * Используется в `resolveGroupExpanderAriaLabel`.
+ */
+const GROUP_EXPAND_ARIA_VERB = 'Expand';
+
+/**
+ * GROUP_COLLAPSE_ARIA_VERB — задаёт глагол `aria-label` для раскрытой группы.
+ * Используется в `resolveGroupExpanderAriaLabel`.
+ */
+const GROUP_COLLAPSE_ARIA_VERB = 'Collapse';
+
+/**
+ * resolveGroupExpanderAriaLabel — возвращает `aria-label` кнопки раскрытия группы.
+ *
+ * @param expanded признак раскрытой группы
+ * @param product имя группы в подписи
+ * @returns строка `aria-label`
+ */
+function resolveGroupExpanderAriaLabel(expanded: boolean, product: string): string {
+  const verb = expanded ? GROUP_COLLAPSE_ARIA_VERB : GROUP_EXPAND_ARIA_VERB;
+  return `${verb} ${product}`;
+}
 
 /**
  * CatalogColumnInlineSizes — представляет вычисленные `inlineSize` метрических колонок.
@@ -141,11 +190,11 @@ function buildCatalogColumns(
           const expander = (
             <Icon
               aria-expanded={expanded}
-              aria-label={`${expanded ? 'Collapse' : 'Expand'} ${row.product}`}
+              aria-label={resolveGroupExpanderAriaLabel(expanded, row.product)}
               as="button"
-              shape="rounded"
+              shape={GROUP_EXPANDER_SHAPE}
               showBorder
-              sizePreset="tiny"
+              sizePreset={GROUP_EXPANDER_SIZE_PRESET}
               onClick={() => {
                 toggleGroup(row.groupId);
               }}
@@ -723,12 +772,14 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
       };
 
   if (!settings.checkable) {
-    return <Table aria-label="Catalog table demo" {...tableProps} {...editableProps} />;
+    return (
+      <Table aria-label={CATALOG_TABLE_DEMO_ARIA_LABEL} {...tableProps} {...editableProps} />
+    );
   }
 
   return (
     <Table
-      aria-label="Catalog table demo"
+      aria-label={CATALOG_TABLE_DEMO_ARIA_LABEL}
       {...tableProps}
       {...editableProps}
       allSelectableKeys={allSelectableKeys}
@@ -739,7 +790,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
       renderBulkSelectionActions={() => (
         <Button
           minInlineSize={ROW_ACTION_MIN_INLINE_SIZE}
-          sizePreset="small"
+          sizePreset={ROW_ACTION_SIZE_PRESET}
           tone="danger"
           onClick={handleBulkDelete}
         >
@@ -749,7 +800,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
       renderSelectedRowActions={(row) => (
         <Button
           minInlineSize={ROW_ACTION_MIN_INLINE_SIZE}
-          sizePreset="small"
+          sizePreset={ROW_ACTION_SIZE_PRESET}
           tone="danger"
           onClick={() => {
             handleDeleteRow(row);

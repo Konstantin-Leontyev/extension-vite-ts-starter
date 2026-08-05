@@ -49,6 +49,48 @@ const CARD_DESCRIPTION =
   'Download the model, or run a hello prompt when it is already available.';
 
 /**
+ * CARD_TITLE — задаёт заголовок карточки зонда Prompt API.
+ * Используется в Card зонда.
+ */
+const CARD_TITLE = 'Browser AI test';
+
+/**
+ * CARD_ANSWER_SUBTITLE — задаёт подзаголовок карточки при наличии ответа модели.
+ * Используется в `subtitle` Card, когда есть `promptResponse`.
+ */
+const CARD_ANSWER_SUBTITLE = 'Answer';
+
+/**
+ * THINKING_LABEL — задаёт подпись и `ariaLabel` спиннера во время prompt.
+ * Используется в Spinner фазы `prompting`.
+ */
+const THINKING_LABEL = 'Thinking...';
+
+/**
+ * CARD_PADDING — задаёт `padding` карточки зонда.
+ * Используется в Card зонда.
+ */
+const CARD_PADDING = 16;
+
+/**
+ * AVAILABILITY_CHECK_FAILED_MESSAGE — задаёт запасной текст ошибки проверки доступности.
+ * Используется, когда `Error.message` недоступен.
+ */
+const AVAILABILITY_CHECK_FAILED_MESSAGE = 'Availability check failed.';
+
+/**
+ * DOWNLOAD_FAILED_MESSAGE — задаёт запасной текст ошибки загрузки модели.
+ * Используется, когда `Error.message` недоступен.
+ */
+const DOWNLOAD_FAILED_MESSAGE = 'Download failed.';
+
+/**
+ * PROMPT_FAILED_MESSAGE — задаёт запасной текст ошибки prompt.
+ * Используется, когда `Error.message` недоступен.
+ */
+const PROMPT_FAILED_MESSAGE = 'Prompt failed.';
+
+/**
  * SmokeProbePhase — представляет фазу зонда Prompt API.
  */
 type SmokeProbePhase =
@@ -100,8 +142,9 @@ function needsModelDownload(availability: BrowserAiAvailability): boolean {
 /**
  * BrowserAiSmokeProbe — отображает зонд Prompt API в витрине.
  * До загрузки модели предлагает `Download model`. После — текст промпта и `Run prompt`.
- * Во время запроса подзаголовок скрыт, в теле карточки только Spinner с подписью `Thinking...`.
- * Ответ — подзаголовок `Answer` и текст модели. Системную инструкцию длины ответа в UI не показывает.
+ * Во время запроса подзаголовок скрыт, в теле карточки только Spinner с подписью `THINKING_LABEL`.
+ * Ответ — подзаголовок `CARD_ANSWER_SUBTITLE` и текст модели. Системную инструкцию длины ответа
+ * в UI не показывает.
  *
  * @example
  * <BrowserAiSmokeProbe />
@@ -145,7 +188,9 @@ export function BrowserAiSmokeProbe() {
         setState({
           ...INITIAL_SMOKE_PROBE_STATE,
           errorMessage:
-            error instanceof Error ? error.message : 'Availability check failed.',
+            error instanceof Error
+              ? error.message
+              : AVAILABILITY_CHECK_FAILED_MESSAGE,
           phase: 'error',
         });
       }
@@ -210,7 +255,8 @@ export function BrowserAiSmokeProbe() {
 
       setState((current) => ({
         ...current,
-        errorMessage: error instanceof Error ? error.message : 'Download failed.',
+        errorMessage:
+          error instanceof Error ? error.message : DOWNLOAD_FAILED_MESSAGE,
         phase: 'error',
       }));
     }
@@ -249,7 +295,8 @@ export function BrowserAiSmokeProbe() {
 
       setState((current) => ({
         ...current,
-        errorMessage: error instanceof Error ? error.message : 'Prompt failed.',
+        errorMessage:
+          error instanceof Error ? error.message : PROMPT_FAILED_MESSAGE,
         phase: 'error',
       }));
     }
@@ -278,7 +325,9 @@ export function BrowserAiSmokeProbe() {
       setState({
         ...INITIAL_SMOKE_PROBE_STATE,
         errorMessage:
-          error instanceof Error ? error.message : 'Availability check failed.',
+          error instanceof Error
+            ? error.message
+            : AVAILABILITY_CHECK_FAILED_MESSAGE,
         phase: 'error',
       });
     }
@@ -302,7 +351,7 @@ export function BrowserAiSmokeProbe() {
   const showUnavailableAction = state.availability === 'unavailable' && isIdle;
   const showAnswer = state.promptResponse != null;
   const cardSubtitle = showAnswer
-    ? 'Answer'
+    ? CARD_ANSWER_SUBTITLE
     : state.phase === 'prompting'
       ? undefined
       : CARD_DESCRIPTION;
@@ -310,9 +359,9 @@ export function BrowserAiSmokeProbe() {
   return (
     <Card
       as="section"
-      padding={16}
+      padding={CARD_PADDING}
       subtitle={cardSubtitle}
-      title="Browser AI test"
+      title={CARD_TITLE}
       titleId={SMOKE_PROBE_TITLE_ID}
     >
       {state.phase === 'checking' && <Spinner aria-labelledby={SMOKE_PROBE_TITLE_ID} />}
@@ -366,8 +415,8 @@ export function BrowserAiSmokeProbe() {
       )}
 
       {state.phase === 'prompting' && (
-        <Spinner alignSelf="center" ariaLabel="Thinking...">
-          Thinking...
+        <Spinner alignSelf="center" ariaLabel={THINKING_LABEL}>
+          {THINKING_LABEL}
         </Spinner>
       )}
 

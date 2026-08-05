@@ -26,7 +26,7 @@ import { Icon, getIconPadding } from '@ui/icon';
 import { Input } from '@ui/input';
 import { Listbox } from '@ui/listbox';
 import { Modal } from '@ui/modal';
-import { DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
+import { DEFAULT_SHAPE_PRESET, DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
 import { ProgressBar, getProgressBarTextSize } from '@ui/progress-bar';
 import { RadioButton, getRadioButtonTextSize } from '@ui/radio-button';
 import {
@@ -106,6 +106,36 @@ const SIDEBAR_ID = 'showcase-sidebar';
  * DEMO_STEPPER_ARIA_LABEL — задаёт запасной `aria-label` превью Stepper без подписи.
  */
 const DEMO_STEPPER_ARIA_LABEL = 'Demo stepper';
+
+/**
+ * DEMO_ICON_ARIA_LABEL — задаёт `aria-label` превью Icon как кнопки.
+ * Используется в превью виджета Icon.
+ */
+const DEMO_ICON_ARIA_LABEL = 'Demo icon';
+
+/**
+ * OPEN_WIDGET_SETTINGS_ARIA_LABEL — задаёт `aria-label` кнопки открытия панели настроек карточки.
+ * Используется в `headerActions` карточек виджетов.
+ */
+const OPEN_WIDGET_SETTINGS_ARIA_LABEL = 'Open settings';
+
+/**
+ * CLOSE_WIDGET_SETTINGS_ARIA_LABEL — задаёт `aria-label` кнопки закрытия панели настроек карточки.
+ * Используется в `headerActions` карточек виджетов.
+ */
+const CLOSE_WIDGET_SETTINGS_ARIA_LABEL = 'Close settings';
+
+/**
+ * DEMO_RANGE_FROM_EXCEEDS_TO_ERROR — задаёт текст ошибки демо-валидации RangeInput.
+ * Используется в `validateDemoRange`.
+ */
+const DEMO_RANGE_FROM_EXCEEDS_TO_ERROR = 'From must not exceed To.';
+
+/**
+ * DEMO_MODAL_BODY_TEXT — задаёт текст тела превью Modal.
+ * Используется в теле превью Modal.
+ */
+const DEMO_MODAL_BODY_TEXT = 'Place your content here';
 
 /**
  * INPUT_WIDGET_TITLE_ID — задаёт id заголовка виджета Input в витрине.
@@ -326,7 +356,7 @@ const DEFAULT_INPUT_STATE: InputWidgetState = {
   invalid: false,
   label: 'Label:',
   placeholder: 'e.g. value',
-  shape: 'rounded',
+  shape: DEFAULT_SHAPE_PRESET,
   showBorder: true,
   showShadow: true,
   sizePreset: DEFAULT_SIZE_PRESET,
@@ -347,7 +377,7 @@ const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
   iconPosition: 'end',
   iconTone: 'neutral',
   label: 'Label:',
-  shape: 'rounded',
+  shape: DEFAULT_SHAPE_PRESET,
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Button',
   textItalic: false,
@@ -367,7 +397,7 @@ const DEFAULT_ICON_STATE: IconWidgetState = {
   iconFill: 'neutral',
   iconKey: 'settings',
   iconTone: 'neutral',
-  padding: getIconPadding('normal'),
+  padding: getIconPadding(DEFAULT_SIZE_PRESET),
   shape: 'square',
   showBorder: false,
   showHover: true,
@@ -388,7 +418,7 @@ const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
   label: 'Label:',
   multiple: false,
   placeholder: 'Select…',
-  shape: 'rounded',
+  shape: DEFAULT_SHAPE_PRESET,
   showClear: false,
   sizePreset: DEFAULT_SIZE_PRESET,
   value: '',
@@ -407,7 +437,7 @@ const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
   label: 'Label:',
   placeholder: 'Select…',
   searchPlaceholder: 'Search…',
-  shape: 'rounded',
+  shape: DEFAULT_SHAPE_PRESET,
   showClear: false,
   sizePreset: DEFAULT_SIZE_PRESET,
   value: '',
@@ -419,7 +449,7 @@ const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
-  buttonShape: 'rounded',
+  buttonShape: DEFAULT_SHAPE_PRESET,
   buttonSizePreset: DEFAULT_SIZE_PRESET,
   buttonText: 'Apply',
   buttonTextTone: 'neutral',
@@ -429,11 +459,11 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   iconFill: 'neutral',
   iconPosition: 'end',
   iconTone: 'neutral',
-  inputShape: 'rounded',
+  inputShape: DEFAULT_SHAPE_PRESET,
   inputSizePreset: DEFAULT_SIZE_PRESET,
   label: 'Label:',
   placeholder: 'Range: any',
-  shape: 'rounded',
+  shape: DEFAULT_SHAPE_PRESET,
   sizePreset: DEFAULT_SIZE_PRESET,
   title: 'Custom range:',
   titleAlign: 'center',
@@ -456,7 +486,7 @@ const DEFAULT_DATE_RANGE_INPUT_STATE: DateRangeInputWidgetState = {
   label: 'Label:',
   maxDay: todayUtc(),
   minDay: '',
-  shape: 'rounded',
+  shape: DEFAULT_SHAPE_PRESET,
   sizePreset: DEFAULT_SIZE_PRESET,
   startDay: '',
   startLabel: 'Start date',
@@ -548,7 +578,7 @@ const DEFAULT_STEPPER_STATE: StepperWidgetState = {
   label: 'Label:',
   max: undefined,
   min: undefined,
-  shape: 'rounded',
+  shape: DEFAULT_SHAPE_PRESET,
   sizePreset: DEFAULT_SIZE_PRESET,
   step: 1,
   suffix: '',
@@ -622,7 +652,7 @@ const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   rightTone: 'neutral',
   rightWithIcon: false,
   segmentCount: '2',
-  shape: 'rounded',
+  shape: DEFAULT_SHAPE_PRESET,
   sizePreset: DEFAULT_SIZE_PRESET,
   textItalic: false,
   textSize: getSegmentButtonTextSize(DEFAULT_SIZE_PRESET),
@@ -753,7 +783,7 @@ function validateDemoRange(value: RangeValue): null | string {
   const to = value.to.trim();
 
   if (from !== '' && to !== '' && Number(from) > Number(to)) {
-    return 'From must not exceed To.';
+    return DEMO_RANGE_FROM_EXCEEDS_TO_ERROR;
   }
 
   return null;
@@ -766,7 +796,7 @@ function validateDemoRange(value: RangeValue): null | string {
  * <ShowcasePage />
  */
 export function ShowcasePage() {
-  // autoHide шапки живёт в каркасе. Витрина даёт только переключатель, см. header-settings.
+  // autoHide шапки живёт в каркасе. Витрина даёт только тумблер, см. header-settings.
   const { showToast } = useToast();
   const { autoHide, isHeaderSettingsOpen, setAutoHide, setIsHeaderSettingsOpen } =
     useShellOutletContext();
@@ -1154,7 +1184,9 @@ export function ShowcasePage() {
           {
             ariaControls: SIDEBAR_ID,
             ariaExpanded: open,
-            ariaLabel: open ? 'Close settings' : 'Open settings',
+            ariaLabel: open
+              ? CLOSE_WIDGET_SETTINGS_ARIA_LABEL
+              : OPEN_WIDGET_SETTINGS_ARIA_LABEL,
             icon: <SettingsIcon />,
             onClick: () => toggleSettings(widgetKey),
           },
@@ -1231,7 +1263,7 @@ export function ShowcasePage() {
                     titleTone={modal.titleTone}
                     onClose={() => setIsModalOpen(false)}
                   >
-                    Place your content here
+                    {DEMO_MODAL_BODY_TEXT}
                   </Modal>
                 </>
               )}
@@ -1444,7 +1476,7 @@ export function ShowcasePage() {
                 'icon',
                 ICON_WIDGET_TITLE_ID,
                 <Icon
-                  aria-label="Demo icon"
+                  aria-label={DEMO_ICON_ARIA_LABEL}
                   as="button"
                   borderTone={icon.borderTone}
                   disabled={icon.disabled}

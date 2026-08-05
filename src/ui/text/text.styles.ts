@@ -18,8 +18,8 @@
  *    `getTextProperties`
  *  - `@ui/stepper` — стилизует нативное поле ввода через `getTextProperties`
  *    и `getTextToneColor`
- *  - `@ui/field-error`, `@ui/spinner`, `@ui/table` — резервируют место под
- *    однострочный текст через `getTextLineHeight`
+ *  - `@ui/field-error`, `@ui/spinner` — резервируют место под однострочный текст
+ *    через `getTextLineHeight`
  *  - `@ui/table/table-cell` — обрезает содержимое ячейки через `getEllipsisStyles`
  */
 

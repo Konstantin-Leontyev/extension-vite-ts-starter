@@ -92,7 +92,7 @@ export function getOpenControlTriggerRowStyles(
   const styles = [
     'display: grid;',
     'grid-template-columns: minmax(0, 1fr);',
-    "&[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }",
+    '&[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }',
   ];
 
   if (clearLayout === 'both-branches') {

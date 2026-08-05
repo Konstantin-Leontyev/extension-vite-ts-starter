@@ -3,7 +3,7 @@
  * Определяет внешний вид компонента SegmentButtonParts.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `SegmentButtonPartsRootStyleProps`,
+ * 1. Типизировать пропсы через `SegmentButtonPartsStyleProps`,
  *    `SegmentButtonPartsPartStyleProps` и `SegmentButtonPartsDividerStyleProps`
  * 2. Хранить вертикальный отступ разделителя в `segmentButtonPartsDividerMarginBlock`
  * 3. Предоставить styled-узлы `StyledSegmentButtonPartsRoot`,

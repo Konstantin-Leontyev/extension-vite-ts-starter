@@ -36,10 +36,52 @@ import { useBrowserAiBootstrap } from './use-browser-ai-bootstrap';
 const GATE_TITLE_ID = 'model-download-gate-title';
 
 /**
+ * GATE_CARD_PADDING — задаёт `padding` карточки гейта.
+ * Используется в Card активного гейта.
+ */
+const GATE_CARD_PADDING = 24;
+
+/**
+ * GATE_CARD_GAP — задаёт `gap` между слотами карточки гейта.
+ * Используется в Card активного гейта.
+ */
+const GATE_CARD_GAP = 16;
+
+/**
  * CHROME_UPDATE_PAGE_URL — задаёт url страницы обновления Chrome.
  * Используется в `handleOpenChromeUpdatePage` при недоступности модели.
  */
 const CHROME_UPDATE_PAGE_URL = 'https://www.google.com/chrome/update/';
+
+/**
+ * GATE_TITLE_CHECKING — задаёт заголовок фазы проверки доступности модели.
+ * Используется в `resolveGateTitle`.
+ */
+const GATE_TITLE_CHECKING = 'Checking on-device AI';
+
+/**
+ * GATE_TITLE_DOWNLOAD_REQUIRED — задаёт заголовок фазы запроса загрузки модели.
+ * Используется в `resolveGateTitle`.
+ */
+const GATE_TITLE_DOWNLOAD_REQUIRED = 'On-device AI required';
+
+/**
+ * GATE_TITLE_DOWNLOADING — задаёт заголовок фазы загрузки модели.
+ * Используется в `resolveGateTitle`.
+ */
+const GATE_TITLE_DOWNLOADING = 'Downloading on-device AI';
+
+/**
+ * GATE_TITLE_UNAVAILABLE — задаёт заголовок фазы недоступности модели.
+ * Используется в `resolveGateTitle`.
+ */
+const GATE_TITLE_UNAVAILABLE = 'On-device AI unavailable';
+
+/**
+ * GATE_TITLE_ERROR — задаёт заголовок фазы ошибки подготовки модели.
+ * Используется в `resolveGateTitle`.
+ */
+const GATE_TITLE_ERROR = 'Could not prepare on-device AI';
 
 /**
  * ModelDownloadGateProps — представляет пропсы компонента ModelDownloadGate.
@@ -60,22 +102,22 @@ function resolveGateTitle(
   phase: ReturnType<typeof useBrowserAiBootstrap>['phase']
 ): string {
   if (phase === 'checking') {
-    return 'Checking on-device AI';
+    return GATE_TITLE_CHECKING;
   }
 
   if (phase === 'download-required') {
-    return 'On-device AI required';
+    return GATE_TITLE_DOWNLOAD_REQUIRED;
   }
 
   if (phase === 'downloading') {
-    return 'Downloading on-device AI';
+    return GATE_TITLE_DOWNLOADING;
   }
 
   if (phase === 'unavailable') {
-    return 'On-device AI unavailable';
+    return GATE_TITLE_UNAVAILABLE;
   }
 
-  return 'Could not prepare on-device AI';
+  return GATE_TITLE_ERROR;
 }
 
 /**
@@ -125,8 +167,8 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
     <StyledModelDownloadGate>
       <Card
         as="section"
-        gap={16}
-        padding={24}
+        gap={GATE_CARD_GAP}
+        padding={GATE_CARD_PADDING}
         title={resolveGateTitle(phase)}
         titleId={GATE_TITLE_ID}
       >

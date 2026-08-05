@@ -294,7 +294,7 @@ function getListboxOptionSurfaceBaseStyles(
  * 1. Берёт базовую поверхность через `getListboxOptionSurfaceBaseStyles`: раскладку,
  *    габариты, заливку и подложку наведения через `::before`
  * 2. Задаёт колонки лейбла и галочки, отступы лейбла
- * 3. На `:hover:not(:disabled)` и `:focus-visible` красит подложку и текст в
+ * 3. На `:not(:disabled):hover` и `:focus-visible` красит подложку и текст в
  *    `primary` / `inverse`, включая слот галочки
  *
  * @param props пропсы формы, размера и тема

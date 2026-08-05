@@ -90,19 +90,19 @@ export function getTableTextSize(sizePreset?: SizePreset): TextSizePreset {
 const TABLE_EDGE_BORDER_WIDTH = '2px';
 
 /**
- * TABLE_HEAD_FILL_MIX_PERCENT — доля цвета рамки в смеси заливки шапки и подвала.
+ * TABLE_HEAD_FILL_MIX_PERCENT — задаёт долю цвета рамки в смеси заливки шапки и подвала.
  * Подбирает приглушённый фон относительно `surface` Card.
  */
 const TABLE_HEAD_FILL_MIX_PERCENT = 22;
 
 /**
- * TABLE_STRIPE_FILL_MIX_PERCENT — доля `default` в смеси заливки чётной строки.
- * Слабый сдвиг, чтобы полосы не спорили с hover.
+ * TABLE_STRIPE_FILL_MIX_PERCENT — задаёт долю `default` в смеси заливки чётной строки.
+ * Слабый сдвиг, чтобы полосы не спорили с наведением.
  */
 const TABLE_STRIPE_FILL_MIX_PERCENT = 3;
 
 /**
- * TABLE_ROW_HOVER_FILL_MIX_PERCENT — доля `primary` в смеси заливки строки при наведении.
+ * TABLE_ROW_HOVER_FILL_MIX_PERCENT — задаёт долю `primary` в смеси заливки строки при наведении.
  */
 const TABLE_ROW_HOVER_FILL_MIX_PERCENT = 6;
 

@@ -355,7 +355,7 @@ export const StyledComboboxList = styled.ul.withConfig({
  * 2. Собирает flex-раскладку опции, габариты и заливку `surface`
  * 3. Кладёт абсолютный `::before` с отступом от края, скруглением и переходом
  *    `background-color` — подложку наведения
- * 4. На `data-active`, `:hover:not(:disabled)` и `:focus-visible` красит
+ * 4. На `data-active`, `:not(:disabled):hover` и `:focus-visible` красит
  *    подложку и текст в `primary` / `inverse`, включая слот галочки
  *
  * @param props пропсы формы, размера и тема
