@@ -32,6 +32,7 @@ import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/te
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { ControlGroup } from '../control-group';
+import { FieldErrorGroup } from '../field-error-group';
 import { IconGroup } from '../icon-group';
 import { ShapeListbox } from '../shape-listbox';
 import { StyledSettingsForm } from '../showcase.styles';
@@ -51,6 +52,8 @@ import { ToneListbox } from '../tone-listbox';
  * @property buttonTextTone — тон лейбла кнопки применения
  * @property buttonTone — семантический тон кнопки применения
  * @property disabled — включает недоступное состояние
+ * @property errorPlaceholder — подсказка в зарезервированной полоске панели, пока нет ошибки.
+ *   Задаётся только при включённом `reserveErrorSpace`
  * @property fromPlaceholder — плейсхолдер поля `from`
  * @property iconFill — тон глифа шеврона и кнопки сброса
  * @property iconPosition — позиция шеврона и кнопки сброса относительно значения
@@ -59,7 +62,8 @@ import { ToneListbox } from '../tone-listbox';
  * @property inputSizePreset — размер полей `from` и `to`
  * @property label — подпись над триггером
  * @property placeholder — плейсхолдер неактивного триггера
- * @property reserveErrorSpace — включает резерв высоты под строку ошибки
+ * @property reserveErrorSpace — включает резерв высоты под строку ошибки. Опционален:
+ *   дефолт компонента не хранится в стейте
  * @property shape — форма поверхности
  * @property sizePreset — размер компонента
  * @property title — заголовок панели
@@ -68,7 +72,7 @@ import { ToneListbox } from '../tone-listbox';
  * @property titleTone — тон заголовка панели
  * @property toPlaceholder — плейсхолдер поля `to`
  * @property validationMessages — тексты встроенной валидации
- * @property value — значение диапазона в превью
+ * @property value — буфер выбранного диапазона в превью. В панель не выносится
  * @property withClear — витринный ключ показа сброса. Выключенный — превью без `onClear`
  */
 export type RangeInputWidgetState = {
@@ -78,6 +82,7 @@ export type RangeInputWidgetState = {
   buttonTextTone: TonePreset;
   buttonTone: TonePreset;
   disabled: boolean;
+  errorPlaceholder?: string;
   fromPlaceholder: string;
   iconFill: TonePreset;
   iconPosition: IconPosition;
@@ -86,7 +91,7 @@ export type RangeInputWidgetState = {
   inputSizePreset: SizePreset;
   label: string;
   placeholder: string;
-  reserveErrorSpace: boolean;
+  reserveErrorSpace?: boolean;
   shape: ShapePreset;
   sizePreset: SizePreset;
   title: string;
@@ -169,6 +174,20 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         onToneChange={(tone) => onChange('titleTone', tone)}
       />
 
+      <SizeListbox
+        label="Input size:"
+        sizes={SIZE_PRESET_KEYS}
+        value={state.inputSizePreset}
+        onChange={(size) => onChange('inputSizePreset', size)}
+      />
+
+      <ShapeListbox
+        label="Input shape:"
+        shapes={SHAPE_PRESET_KEYS}
+        value={state.inputShape}
+        onChange={(shape) => onChange('inputShape', shape)}
+      />
+
       <Input
         label="From placeholder:"
         value={state.fromPlaceholder}
@@ -183,20 +202,6 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('toPlaceholder', event.target.value)
         }
-      />
-
-      <SizeListbox
-        label="Input size:"
-        sizes={SIZE_PRESET_KEYS}
-        value={state.inputSizePreset}
-        onChange={(size) => onChange('inputSizePreset', size)}
-      />
-
-      <ShapeListbox
-        label="Input shape:"
-        shapes={SHAPE_PRESET_KEYS}
-        value={state.inputShape}
-        onChange={(shape) => onChange('inputShape', shape)}
       />
 
       <SizeListbox
@@ -248,7 +253,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       />
 
       <Input
-        label="Validation invalid from:"
+        label="From validation error:"
         value={state.validationMessages.invalidFrom}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('validationMessages', {
@@ -259,7 +264,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       />
 
       <Input
-        label="Validation invalid to:"
+        label="To validation error:"
         value={state.validationMessages.invalidTo}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('validationMessages', {
@@ -269,14 +274,16 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         }
       />
 
-      <Checkbox
-        checked={state.reserveErrorSpace}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('reserveErrorSpace', event.target.checked)
+      <FieldErrorGroup
+        errorPlaceholder={state.errorPlaceholder}
+        reserveErrorSpace={state.reserveErrorSpace}
+        onErrorPlaceholderChange={(value) =>
+          onChange('errorPlaceholder', value)
         }
-      >
-        Reserve error space
-      </Checkbox>
+        onReserveErrorSpaceChange={(reserve) =>
+          onChange('reserveErrorSpace', reserve)
+        }
+      />
 
       <Checkbox
         checked={state.disabled}

@@ -348,7 +348,12 @@ export function BrowserAiSmokeProbe() {
       )}
 
       {state.phase === 'error' && (
-        <Button alignSelf="center" disabled={isBusy} tone="primary" onClick={handleRetry}>
+        <Button
+          alignSelf="center"
+          disabled={isBusy}
+          tone="primary"
+          onClick={handleRetry}
+        >
           Try again
         </Button>
       )}

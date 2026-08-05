@@ -16,7 +16,6 @@
  *  - обработчик изменения значения через проп `onChange`
  *  - опции списка через проп `options`
  *  - плейсхолдер неактивного триггера через проп `placeholder`
- *  - резерв высоты под строку ошибки через проп `reserveErrorSpace`
  *  - плейсхолдер поля поиска через проп `searchPlaceholder`
  *  - контролируемое значение через проп `value`
  *  - текстовую метку через проп `aria-label`
@@ -50,7 +49,6 @@ import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { CheckIcon, ChevronDownIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
-import { FieldError } from '@ui/field-error';
 import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Input } from '@ui/input';
@@ -97,12 +95,6 @@ const DEFAULT_COMBOBOX_EMPTY_MESSAGE = 'Nothing found';
 const DEFAULT_COMBOBOX_PLACEHOLDER = 'Select…';
 
 /**
- * DEFAULT_COMBOBOX_RESERVE_ERROR_SPACE — задаёт резерв высоты под строку ошибки по умолчанию.
- * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
- */
-const DEFAULT_COMBOBOX_RESERVE_ERROR_SPACE = false;
-
-/**
  * DEFAULT_COMBOBOX_SEARCH_PLACEHOLDER — задаёт плейсхолдер поля поиска по умолчанию.
  * Используется, когда вызывающий код не передал проп `searchPlaceholder`.
  */
@@ -110,8 +102,7 @@ const DEFAULT_COMBOBOX_SEARCH_PLACEHOLDER = 'Search…';
 
 /**
  * DEFAULT_COMBOBOX_SHOW_CLEAR — задаёт показ кнопки сброса выбора по умолчанию.
- * Используется, когда вызывающий код не передал проп `showClear`. Базовая логика —
- * шеврон. Clear включается явно.
+ * Используется, когда вызывающий код не передал проп `showClear`.
  */
 const DEFAULT_COMBOBOX_SHOW_CLEAR = false;
 
@@ -143,7 +134,6 @@ export type ComboboxOption = {
  * @property onChange — обработчик изменения значения
  * @property options — опции списка
  * @property placeholder — плейсхолдер неактивного триггера
- * @property reserveErrorSpace — включает резерв высоты под строку ошибки
  * @property searchPlaceholder — плейсхолдер поля поиска
  * @property showClear — включает кнопку сброса выбора при выбранном значении
  * @property value — контролируемое значение
@@ -159,7 +149,6 @@ type ComboboxProps = ComboboxStyleProps & {
   onChange?: (value: string) => void;
   options: readonly ComboboxOption[];
   placeholder?: string;
-  reserveErrorSpace?: boolean;
   searchPlaceholder?: string;
   showClear?: boolean;
   value?: string;
@@ -290,7 +279,6 @@ export function Combobox({
   onChange,
   options,
   placeholder = DEFAULT_COMBOBOX_PLACEHOLDER,
-  reserveErrorSpace = DEFAULT_COMBOBOX_RESERVE_ERROR_SPACE,
   searchPlaceholder = DEFAULT_COMBOBOX_SEARCH_PLACEHOLDER,
   shape,
   showClear = DEFAULT_COMBOBOX_SHOW_CLEAR,
@@ -559,8 +547,6 @@ export function Combobox({
         {!isIconStart && clearNode}
       </StyledComboboxTriggerRow>
 
-      <FieldError reserveErrorSpace={reserveErrorSpace} />
-
       <AnchoredPortal
         dismissZoneRefs={[rootRef, panelRef]}
         open={isOpen}
@@ -625,16 +611,16 @@ export function Combobox({
             sizePreset={sizePreset}
           >
             {filtered.length === 0 && (
-              <li role="presentation">
-                <Text
-                  paddingBlock={8}
-                  paddingInline={8}
-                  sizePreset={textSizePreset}
-                  tone="muted"
-                >
-                  {emptyMessage}
-                </Text>
-              </li>
+              <Text
+                as="li"
+                paddingBlock={8}
+                placeSelf="center"
+                role="presentation"
+                sizePreset={textSizePreset}
+                tone="muted"
+              >
+                {emptyMessage}
+              </Text>
             )}
             {filtered.map((option, index) => {
               const isSelected = option.value === selectedValue;

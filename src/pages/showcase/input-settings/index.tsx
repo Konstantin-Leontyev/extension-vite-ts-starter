@@ -22,6 +22,7 @@ import { type TonePreset } from '@ui/tones';
 
 import { BorderGroup } from '../border-group';
 import { ControlGroup } from '../control-group';
+import { FieldErrorGroup } from '../field-error-group';
 import { StyledSettingsForm } from '../showcase.styles';
 import { TextGroup } from '../text-group';
 
@@ -33,12 +34,13 @@ import { TextGroup } from '../text-group';
  * @property borderTone — тон рамки
  * @property disabled — включает недоступное состояние поля
  * @property error — текст ошибки под полем
- * @property errorAlign — горизонтальное выравнивание строки ошибки
- * @property errorItalic — включает курсив строки ошибки
+ * @property errorPlaceholder — подсказка в зарезервированной полоске, пока нет ошибки.
+ *   Задаётся только при включённом `reserveErrorSpace`
  * @property invalid — включает обводку ошибки без текста, если проп `error` не передан
  * @property label — подпись над полем
  * @property placeholder — плейсхолдер значения
- * @property reserveErrorSpace — включает резерв высоты под строку ошибки
+ * @property reserveErrorSpace — включает резерв высоты под строку ошибки. Опционален:
+ *   дефолт компонента не хранится в стейте
  * @property shape — форма строки-поля
  * @property showBorder — включает рамку контрола
  * @property showShadow — включает тень при включённой рамке
@@ -51,12 +53,11 @@ export type InputWidgetState = {
   borderTone: TonePreset;
   disabled: boolean;
   error: string;
-  errorAlign: TextAlignPreset;
-  errorItalic: boolean;
+  errorPlaceholder?: string;
   invalid: boolean;
   label: string;
   placeholder: string;
-  reserveErrorSpace: boolean;
+  reserveErrorSpace?: boolean;
   shape: ShapePreset;
   showBorder: boolean;
   showShadow: boolean;
@@ -130,32 +131,30 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         onItalicChange={(value) => onChange('textItalic', value)}
       />
 
-      <Checkbox
-        checked={state.reserveErrorSpace}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('reserveErrorSpace', event.target.checked)
+      <FieldErrorGroup
+        errorPlaceholder={state.errorPlaceholder}
+        reserveErrorSpace={state.reserveErrorSpace}
+        onErrorPlaceholderChange={(value) =>
+          onChange('errorPlaceholder', value)
         }
-      >
-        Reserve error space
-      </Checkbox>
+        onReserveErrorSpaceChange={(reserve) =>
+          onChange('reserveErrorSpace', reserve)
+        }
+      />
 
       <TextGroup
-        align={state.errorAlign}
         contents={[
           {
             value: state.error,
             onChange: (value) => onChange('error', value),
           },
         ]}
-        italic={state.errorItalic}
         labelPrefix="Error"
         show={{
           checked: state.invalid,
           label: 'Invalid',
           onChange: (checked) => onChange('invalid', checked),
         }}
-        onAlignChange={(align) => onChange('errorAlign', align)}
-        onItalicChange={(value) => onChange('errorItalic', value)}
       />
 
       <Checkbox

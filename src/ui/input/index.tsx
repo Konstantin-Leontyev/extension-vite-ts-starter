@@ -13,8 +13,7 @@
  *  - курсив значения через проп `textItalic`
  *  - подпись над полем через проп `label`
  *  - встроенную строку ошибки через проп `error`
- *  - выравнивание строки ошибки через проп `errorAlign`
- *  - курсив строки ошибки через проп `errorItalic`
+ *  - серую подсказку в полоске ошибки через проп `errorPlaceholder`
  *  - обводку ошибки без текста через проп `invalid`
  *  - резерв высоты под строку ошибки через проп `reserveErrorSpace`
  *
@@ -30,7 +29,7 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { useId, type CSSProperties, type ComponentPropsWithRef } from 'react';
+import { useId, type ComponentPropsWithRef } from 'react';
 
 import { FieldError } from '@ui/field-error';
 import { FieldLabel } from '@ui/field-label';
@@ -49,25 +48,17 @@ import {
 const DEFAULT_INPUT_INVALID = false;
 
 /**
- * DEFAULT_INPUT_RESERVE_ERROR_SPACE — задаёт резерв высоты под строку ошибки по умолчанию.
- * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
- */
-const DEFAULT_INPUT_RESERVE_ERROR_SPACE = false;
-
-/**
  * InputProps — представляет пропсы компонента Input.
  *
  * @property error — текст ошибки под полем
- * @property errorAlign — горизонтальное выравнивание строки ошибки
- * @property errorItalic — включает курсив строки ошибки
+ * @property errorPlaceholder — серая подсказка в полоске ошибки, пока нет ошибки
  * @property invalid — включает обводку ошибки без текста, если проп `error` не передан
  * @property label — подпись над полем
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки, чтобы появление текста не сдвигало соседей
  */
 type InputProps = InputStyleProps & {
   error?: string;
-  errorAlign?: CSSProperties['textAlign'];
-  errorItalic?: boolean;
+  errorPlaceholder?: string;
   invalid?: boolean;
   label?: string;
   reserveErrorSpace?: boolean;
@@ -82,11 +73,10 @@ type InputProps = InputStyleProps & {
  */
 export function Input({
   error,
-  errorAlign,
-  errorItalic,
+  errorPlaceholder,
   invalid = DEFAULT_INPUT_INVALID,
   label,
-  reserveErrorSpace = DEFAULT_INPUT_RESERVE_ERROR_SPACE,
+  reserveErrorSpace,
   ...rest
 }: InputProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
@@ -111,9 +101,8 @@ export function Input({
         id={id}
       />
       <FieldError
-        align={errorAlign}
         id={errorId}
-        italic={errorItalic}
+        placeholder={errorPlaceholder}
         reserveErrorSpace={reserveErrorSpace}
       >
         {error}

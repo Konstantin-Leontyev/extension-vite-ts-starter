@@ -312,12 +312,9 @@ const DEFAULT_INPUT_STATE: InputWidgetState = {
   borderTone: 'neutral',
   disabled: false,
   error: '',
-  errorAlign: 'center',
-  errorItalic: false,
   invalid: false,
   label: 'Label:',
   placeholder: 'e.g. value',
-  reserveErrorSpace: false,
   shape: 'rounded',
   showBorder: true,
   showShadow: true,
@@ -380,7 +377,6 @@ const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
   label: 'Label:',
   multiple: false,
   placeholder: 'Select…',
-  reserveErrorSpace: false,
   shape: 'rounded',
   showClear: false,
   sizePreset: 'normal',
@@ -399,7 +395,6 @@ const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
   iconTone: 'neutral',
   label: 'Label:',
   placeholder: 'Select…',
-  reserveErrorSpace: false,
   searchPlaceholder: 'Search…',
   shape: 'rounded',
   showClear: false,
@@ -427,7 +422,6 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   inputSizePreset: 'normal',
   label: 'Label:',
   placeholder: 'Range: any',
-  reserveErrorSpace: false,
   shape: 'rounded',
   sizePreset: 'normal',
   title: 'Custom range:',
@@ -1285,8 +1279,11 @@ export function ShowcasePage() {
                   borderTone={input.borderTone}
                   disabled={input.disabled}
                   error={input.error || undefined}
-                  errorAlign={input.errorAlign}
-                  errorItalic={input.errorItalic}
+                  errorPlaceholder={
+                    input.reserveErrorSpace
+                      ? input.errorPlaceholder
+                      : undefined
+                  }
                   invalid={input.invalid}
                   label={input.label || undefined}
                   placeholder={input.placeholder}
@@ -1316,7 +1313,6 @@ export function ShowcasePage() {
                   multiple={listbox.multiple}
                   options={LISTBOX_DEMO_OPTIONS}
                   placeholder={listbox.placeholder}
-                  reserveErrorSpace={listbox.reserveErrorSpace}
                   shape={listbox.shape}
                   showClear={listbox.showClear}
                   sizePreset={listbox.sizePreset}
@@ -1338,7 +1334,6 @@ export function ShowcasePage() {
                   label={combobox.label || undefined}
                   options={comboboxDemoOptions}
                   placeholder={combobox.placeholder}
-                  reserveErrorSpace={combobox.reserveErrorSpace}
                   searchPlaceholder={combobox.searchPlaceholder}
                   shape={combobox.shape}
                   showClear={combobox.showClear}
@@ -1359,6 +1354,11 @@ export function ShowcasePage() {
                   buttonTextTone={rangeInput.buttonTextTone}
                   buttonTone={rangeInput.buttonTone}
                   disabled={rangeInput.disabled}
+                  errorPlaceholder={
+                    rangeInput.reserveErrorSpace
+                      ? rangeInput.errorPlaceholder
+                      : undefined
+                  }
                   formatActiveLabel={formatDemoRangeLabel}
                   fromPlaceholder={rangeInput.fromPlaceholder}
                   iconFill={rangeInput.iconFill}

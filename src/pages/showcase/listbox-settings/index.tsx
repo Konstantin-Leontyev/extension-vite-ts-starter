@@ -3,8 +3,7 @@
  * Определяет панель настроек компонента Listbox в витрине дизайн-системы.
  * Содержит контролы для изменения размера, формы, иконки, режима
  * множественного выбора, чекбоксов в строках, сброса выбора, подписи,
- * плейсхолдера, резерва высоты под строку ошибки и состояния `disabled`
- * в реальном времени.
+ * плейсхолдера и состояния `disabled` в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `ListboxWidgetState`
@@ -39,7 +38,6 @@ import { StyledSettingsForm } from '../showcase.styles';
  * @property label — подпись над триггером
  * @property multiple — включает множественный выбор
  * @property placeholder — плейсхолдер неактивного триггера
- * @property reserveErrorSpace — включает резерв высоты под строку ошибки
  * @property shape — форма поверхности
  * @property showClear — включает кнопку сброса выбора при выбранном значении
  * @property sizePreset — размер компонента
@@ -54,7 +52,6 @@ export type ListboxWidgetState = {
   label: string;
   multiple: boolean;
   placeholder: string;
-  reserveErrorSpace: boolean;
   shape: ShapePreset;
   showClear: boolean;
   sizePreset: SizePreset;
@@ -138,15 +135,6 @@ export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
           onChange('placeholder', event.target.value)
         }
       />
-
-      <Checkbox
-        checked={state.reserveErrorSpace}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('reserveErrorSpace', event.target.checked)
-        }
-      >
-        Reserve error space
-      </Checkbox>
 
       <Checkbox
         checked={state.disabled}

@@ -18,7 +18,6 @@
  *  - обработчик изменения значения через проп `onChange`
  *  - опции списка через проп `options`
  *  - плейсхолдер неактивного триггера через проп `placeholder`
- *  - резерв высоты под строку ошибки через проп `reserveErrorSpace`
  *  - контролируемое значение через проп `value`
  *  - опциональный сброс выбора через проп `showClear`. Базовая логика — шеврон.
  *    Clear появляется при выборе, только когда проп включён
@@ -30,8 +29,8 @@
  * 4. Выставлять `role` и `aria`-атрибуты триггера и панели
  *
  * Потребители:
- *  - панели настроек витрины дизайн-системы, например SizeListbox и ToneListbox —
- *    выбирают значения настроек
+ *  - контролы и панели настроек витрины дизайн-системы, например SizeListbox
+ *    и ToneListbox — выбирают значения настроек
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
@@ -51,7 +50,6 @@ import { CheckIcon, ChevronDownIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Checkbox } from '@ui/checkbox';
-import { FieldError } from '@ui/field-error';
 import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { Text } from '@ui/text';
@@ -95,15 +93,8 @@ const DEFAULT_LISTBOX_MULTIPLE = false;
 const DEFAULT_LISTBOX_PLACEHOLDER = 'Select…';
 
 /**
- * DEFAULT_LISTBOX_RESERVE_ERROR_SPACE — задаёт резерв высоты под строку ошибки по умолчанию.
- * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
- */
-const DEFAULT_LISTBOX_RESERVE_ERROR_SPACE = false;
-
-/**
  * DEFAULT_LISTBOX_SHOW_CLEAR — задаёт показ кнопки сброса выбора по умолчанию.
- * Используется, когда вызывающий код не передал проп `showClear`. Базовая логика —
- * шеврон. Clear включается явно.
+ * Используется, когда вызывающий код не передал проп `showClear`.
  */
 const DEFAULT_LISTBOX_SHOW_CLEAR = false;
 
@@ -134,7 +125,6 @@ export type ListboxOption = {
  * @property onChange — обработчик изменения значения
  * @property options — опции списка
  * @property placeholder — плейсхолдер неактивного триггера
- * @property reserveErrorSpace — включает резерв высоты под строку ошибки
  * @property showClear — включает кнопку сброса выбора при выбранном значении
  * @property value — контролируемое значение
  */
@@ -149,7 +139,6 @@ type ListboxProps = ListboxStyleProps & {
   onChange?: (value: string | string[]) => void;
   options: readonly ListboxOption[];
   placeholder?: string;
-  reserveErrorSpace?: boolean;
   showClear?: boolean;
   value?: string | string[];
 } & Omit<
@@ -458,7 +447,6 @@ export function Listbox({
   onChange,
   options,
   placeholder = DEFAULT_LISTBOX_PLACEHOLDER,
-  reserveErrorSpace = DEFAULT_LISTBOX_RESERVE_ERROR_SPACE,
   shape,
   showClear = DEFAULT_LISTBOX_SHOW_CLEAR,
   sizePreset,
@@ -736,8 +724,6 @@ export function Listbox({
 
         {!isIconStart && clearNode}
       </StyledListboxTriggerRow>
-
-      <FieldError reserveErrorSpace={reserveErrorSpace} />
 
       <AnchoredPortal
         dismissZoneRefs={[rootRef, panelRef]}

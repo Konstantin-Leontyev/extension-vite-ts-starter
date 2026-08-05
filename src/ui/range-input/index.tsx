@@ -1,6 +1,6 @@
 /**
  * Файл: `src/ui/range-input/index.tsx`
- * Предоставляет компонент RangeInput для выбора числового диапазона.
+ * Предоставляет компонент RangeInput для отображения выбора числового диапазона.
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
@@ -27,6 +27,7 @@
  *  - обработчик сброса значения через проп `onClear`
  *  - плейсхолдер неактивного триггера через проп `placeholder`
  *  - пресеты диапазона через проп `presets`
+ *  - серую подсказку в полоске ошибки панели через проп `errorPlaceholder`
  *  - резерв высоты под строку ошибки через проп `reserveErrorSpace`
  *  - заголовок панели через проп `title`
  *  - выравнивание заголовка панели через проп `titleAlign`
@@ -176,12 +177,6 @@ const DEFAULT_RANGE_INPUT_BUTTON_TONE: TonePreset = 'primary';
 const DEFAULT_RANGE_INPUT_DISABLED = false;
 
 /**
- * DEFAULT_RANGE_INPUT_RESERVE_ERROR_SPACE — задаёт резерв высоты под строку ошибки по умолчанию.
- * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
- */
-const DEFAULT_RANGE_INPUT_RESERVE_ERROR_SPACE = false;
-
-/**
  * DEFAULT_RANGE_INPUT_TITLE_ALIGN — задаёт выравнивание заголовка панели по умолчанию.
  * Используется, когда вызывающий код не передал проп `titleAlign`.
  */
@@ -237,6 +232,7 @@ type RangeInputTitleProps = {
  *
  * @property defaultValue — начальное значение в неконтролируемом режиме
  * @property disabled — включает недоступное состояние
+ * @property errorPlaceholder — серая подсказка в полоске ошибки панели, пока нет ошибки
  * @property formatActiveLabel — форматёр активного лейбла триггера по выбранному диапазону
  * @property fromPlaceholder — плейсхолдер поля `from`
  * @property iconFill — тон глифа шеврона и кнопки сброса при нейтральном `iconTone`
@@ -259,6 +255,7 @@ type RangeInputProps = RangeInputStyleProps &
   RangeInputTitleProps & {
     defaultValue?: RangeValue;
     disabled?: boolean;
+    errorPlaceholder?: string;
     formatActiveLabel: (value: RangeValue) => ReactNode;
     fromPlaceholder: string;
     iconFill?: TonePreset;
@@ -366,6 +363,7 @@ export function RangeInput({
   buttonTone = DEFAULT_RANGE_INPUT_BUTTON_TONE,
   defaultValue = EMPTY_RANGE_VALUE,
   disabled = DEFAULT_RANGE_INPUT_DISABLED,
+  errorPlaceholder,
   formatActiveLabel,
   fromPlaceholder,
   iconFill,
@@ -378,7 +376,7 @@ export function RangeInput({
   onClear,
   placeholder,
   presets,
-  reserveErrorSpace = DEFAULT_RANGE_INPUT_RESERVE_ERROR_SPACE,
+  reserveErrorSpace,
   shape,
   sizePreset,
   title,
@@ -702,8 +700,12 @@ export function RangeInput({
                 onKeyDown={handleFieldKeyDown}
               />
             </StyledRangeInputFields>
-            <FieldError id={panelErrorId} reserveErrorSpace={reserveErrorSpace}>
-              {panelError}
+            <FieldError
+              id={panelErrorId}
+              placeholder={errorPlaceholder}
+              reserveErrorSpace={reserveErrorSpace}
+            >
+              {panelError ?? undefined}
             </FieldError>
             <StyledRangeInputButtonRow>
               <Button

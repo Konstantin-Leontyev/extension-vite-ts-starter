@@ -2,8 +2,8 @@
  * Файл: `src/pages/showcase/combobox-settings/index.tsx`
  * Определяет панель настроек компонента Combobox в витрине дизайн-системы.
  * Содержит контролы для изменения размера, формы, иконки, сброса выбора, подписи,
- * плейсхолдеров, текста пустого результата, резерва высоты под строку ошибки,
- * демо-иконок опций и состояния `disabled` в реальном времени.
+ * плейсхолдеров, текста пустого результата, демо-иконок опций и состояния
+ * `disabled` в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `ComboboxWidgetState`
@@ -38,7 +38,6 @@ import { StyledSettingsForm } from '../showcase.styles';
  * @property iconTone — тон секции шеврона
  * @property label — подпись над триггером
  * @property placeholder — плейсхолдер неактивного триггера
- * @property reserveErrorSpace — включает резерв высоты под строку ошибки
  * @property searchPlaceholder — плейсхолдер поля поиска
  * @property shape — форма поверхности
  * @property showClear — включает кнопку сброса выбора при выбранном значении
@@ -54,7 +53,6 @@ export type ComboboxWidgetState = {
   iconTone: TonePreset;
   label: string;
   placeholder: string;
-  reserveErrorSpace: boolean;
   searchPlaceholder: string;
   shape: ShapePreset;
   showClear: boolean;
@@ -145,15 +143,6 @@ export function ComboboxSettings({ onChange, state }: ComboboxSettingsProps) {
           onChange('emptyMessage', event.target.value)
         }
       />
-
-      <Checkbox
-        checked={state.reserveErrorSpace}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('reserveErrorSpace', event.target.checked)
-        }
-      >
-        Reserve error space
-      </Checkbox>
 
       <Checkbox
         checked={state.disabled}
