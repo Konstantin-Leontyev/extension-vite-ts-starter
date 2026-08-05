@@ -70,8 +70,8 @@ export function getOpenControlRootStyles(): string {
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты `shape` и `sizePreset`
- * 2. Собирает сетку ряда: колонки под trailing clear и опционально first-child ветку
- *    по `clearLayout`
+ * 2. Собирает сетку ряда: колонки под trailing clear и при `clearLayout`
+ *    `both-branches` докладывает ветку `[data-slot='clear']:first-child`
  * 3. Задаёт габариты, заливку `surface`, скругление через `resolveBorderRadius`,
  *    рамку с тенью через `getBorderStyles` и фокус-контур через `getOutlineStyles`
  * 4. При `data-open='true'` скрывает ряд через `visibility: hidden`, чтобы панель
@@ -89,29 +89,30 @@ export function getOpenControlTriggerRowStyles(
 ): string {
   const theme = getTheme(props);
   const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
-  const clearFirstChildBranch =
-    clearLayout === 'both-branches'
-      ? `
-    &[data-has-clear]:has(> [data-slot='clear']:first-child) {
-      grid-template-columns: auto minmax(0, 1fr);
-    }
-  `
-      : '';
+  const styles = [
+    'display: grid;',
+    'grid-template-columns: minmax(0, 1fr);',
+    "&[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }",
+  ];
 
-  return `
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    &[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }
-    ${clearFirstChildBranch}
-    inline-size: 100%;
-    min-block-size: ${getMinBlockSize(sizePreset)};
-    overflow: hidden;
-    background-color: ${theme.colors.surface};
-    border-radius: ${resolveBorderRadius(shape, sizePreset)};
-    ${getBorderStyles(theme)}
-    &[data-open='true'] { visibility: hidden; }
-    &:focus-within {
+  if (clearLayout === 'both-branches') {
+    styles.push(`&[data-has-clear]:has(> [data-slot='clear']:first-child) {
+      grid-template-columns: auto minmax(0, 1fr);
+    }`);
+  }
+
+  styles.push(
+    'inline-size: 100%;',
+    `min-block-size: ${getMinBlockSize(sizePreset)};`,
+    'overflow: hidden;',
+    `background-color: ${theme.colors.surface};`,
+    `border-radius: ${resolveBorderRadius(shape, sizePreset)};`,
+    getBorderStyles(theme),
+    "&[data-open='true'] { visibility: hidden; }",
+    `&:focus-within {
       ${getOutlineStyles(theme.colors.focusOutline)}
-    }
-  `;
+    }`
+  );
+
+  return styles.join('\n');
 }

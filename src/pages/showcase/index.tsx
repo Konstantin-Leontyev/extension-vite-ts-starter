@@ -351,7 +351,7 @@ const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Button',
   textItalic: false,
-  textSize: getButtonTextSize('normal'),
+  textSize: getButtonTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'neutral',
   tone: 'neutral',
   withIcon: false,
@@ -475,7 +475,7 @@ const DEFAULT_CHECKBOX_STATE: CheckboxWidgetState = {
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Example',
   textItalic: false,
-  textSize: getCheckboxTextSize('normal'),
+  textSize: getCheckboxTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'muted',
   uncheckedMark: 'none',
 };
@@ -493,7 +493,7 @@ const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
   textA: 'Option A',
   textB: 'Option B',
   textItalic: false,
-  textSize: getRadioButtonTextSize('normal'),
+  textSize: getRadioButtonTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'muted',
 };
 
@@ -518,7 +518,7 @@ const DEFAULT_PROGRESS_STATE: ProgressBarWidgetState = {
   showText: true,
   sizePreset: DEFAULT_SIZE_PRESET,
   textItalic: false,
-  textSize: getProgressBarTextSize('normal'),
+  textSize: getProgressBarTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'muted',
   tone: 'primary',
   value: 0.42,
@@ -534,7 +534,7 @@ const DEFAULT_SPINNER_STATE: SpinnerWidgetState = {
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Loading…',
   textItalic: false,
-  textSize: getSpinnerTextSize('normal'),
+  textSize: getSpinnerTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'muted',
   tone: 'primary',
 };
@@ -554,7 +554,7 @@ const DEFAULT_STEPPER_STATE: StepperWidgetState = {
   suffix: '',
   textAlign: 'center',
   textItalic: false,
-  textSize: getStepperTextSize('normal'),
+  textSize: getStepperTextSize(DEFAULT_SIZE_PRESET),
   textTone: undefined,
   value: 10,
 };
@@ -570,7 +570,7 @@ const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Switch',
   textItalic: false,
-  textSize: getSwitchTextSize('normal'),
+  textSize: getSwitchTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'muted',
   tone: 'primary',
 };
@@ -583,7 +583,7 @@ const DEFAULT_TOAST_STATE: ToastWidgetState = {
   message: 'Very important message',
   sizePreset: DEFAULT_SIZE_PRESET,
   textItalic: false,
-  textSize: getToastTextSize('normal'),
+  textSize: getToastTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'neutral',
   tone: 'success',
 };
@@ -625,7 +625,7 @@ const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   shape: 'rounded',
   sizePreset: DEFAULT_SIZE_PRESET,
   textItalic: false,
-  textSize: getSegmentButtonTextSize('normal'),
+  textSize: getSegmentButtonTextSize(DEFAULT_SIZE_PRESET),
 };
 
 /**

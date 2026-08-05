@@ -168,11 +168,6 @@ type CalendarPanelSurfaceStyleProps = {
 export type CalendarPanelStyleProps = LayoutProps & CalendarPanelSurfaceStyleProps;
 
 /**
- * CALENDAR_PANEL_ROOT_PROP_NAMES — хранит имена layout-пропсов корня CalendarPanel.
- */
-const CALENDAR_PANEL_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES]);
-
-/**
  * DEFAULT_CALENDAR_PANEL_SHAPE — задаёт форму CalendarPanel по умолчанию.
  * Используется, когда вызывающий код не передал проп `shape` или `dayShape`.
  */
@@ -202,7 +197,7 @@ function getCalendarPanelRootStyles(): string {
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledCalendarPanelRoot = styled.div.withConfig({
-  shouldForwardProp: (prop) => !CALENDAR_PANEL_ROOT_PROP_NAMES.has(prop),
+  shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
   ${getCalendarPanelRootStyles()}
   ${(props) => getLayoutStyles(props)}
