@@ -6,15 +6,15 @@
  * 1. Типизировать пропсы через `TableStyleProps` и `TableSizePreset`
  * 2. Хранить габарит бокса Checkbox / Icon `tiny` в `TABLE_HEADER_MARK_BLOCK_SIZE`
  *    для спейсера выравнивания в шапке
- * 3. Предоставить функцию `getTableTextSize`, а также дефолты `DEFAULT_TABLE_SIZE_PRESET`
- *    и `DEFAULT_TABLE_SHOW_BORDER`
+ * 3. Предоставить функцию `getTableTextSize`, а также дефолты `DEFAULT_TABLE_SIZE_PRESET`,
+ *    `DEFAULT_TABLE_SHOW_BORDER`, `DEFAULT_TABLE_HOVER_HIGHLIGHT` и `DEFAULT_TABLE_STRIPED`
  * 4. Предоставить styled-узлы `StyledTableClip`, `StyledTable`, `StyledTableCol`,
  *    `StyledTableHead`, `StyledTableFoot`, `StyledTableBody`, `StyledTableRow`,
  *    `StyledTableRowPanel`, `StyledTableRowPanelTable`,
  *    `StyledTablePanelErrorCell`, `StyledTableHeaderMarkSpacer`,
  *    `StyledTableHeaderKeywordBar` и `StyledTableCellTrailing`
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
- * 6. Реэкспортировать `computeTableColumnInlineSizes`
+ * 6. Реэкспортировать `computeTableColumnInlineSizes` и тип `TableColumnSizeConfig`
  *
  * Потребители:
  *  - `src/ui/table/index.tsx` — собирает компонент Table и реэкспортирует публичное API
@@ -22,10 +22,10 @@
 
 import styled from 'styled-components';
 
+import { getPortalPanelStyles } from '@ui/anchored-portal';
 import { getBorderStyles } from '@ui/border';
 import { checkboxSizePresets } from '@ui/checkbox';
 import { type LayoutProps } from '@ui/layout';
-import { getOutlineStyles } from '@ui/outline';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
@@ -36,7 +36,6 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
-import { STACKING_PORTAL } from '@ui/stacking';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { resolveColorMix } from '@ui/tones';
@@ -65,13 +64,13 @@ export const DEFAULT_TABLE_SHOW_BORDER = true;
  * DEFAULT_TABLE_HOVER_HIGHLIGHT — задаёт подсветку строк при наведении по умолчанию.
  * Используется, когда вызывающий код не передал проп `hoverHighlight`.
  */
-const DEFAULT_TABLE_HOVER_HIGHLIGHT = false;
+export const DEFAULT_TABLE_HOVER_HIGHLIGHT = true;
 
 /**
  * DEFAULT_TABLE_STRIPED — задаёт чередование фона строк по умолчанию.
  * Используется, когда вызывающий код не передал проп `striped`.
  */
-const DEFAULT_TABLE_STRIPED = false;
+export const DEFAULT_TABLE_STRIPED = true;
 
 /**
  * getTableTextSize — возвращает размер текста ячеек по `sizePreset`.
@@ -221,12 +220,11 @@ export const StyledTableCol = styled.col.withConfig({
   shouldForwardProp: (prop) => prop !== 'inlineSize',
 })<{ inlineSize?: string }>`
   ${(props) =>
-    props.inlineSize
-      ? `
-          inline-size: ${props.inlineSize};
-          width: ${props.inlineSize};
-        `
-      : ''}
+    props.inlineSize &&
+    `
+      inline-size: ${props.inlineSize};
+      width: ${props.inlineSize};
+    `}
 `;
 
 /**
@@ -393,50 +391,33 @@ export const StyledTableRow = styled.tr.withConfig({
 `;
 
 /**
- * getTableRowPanelStyles — возвращает CSS-правила для узла `StyledTableRowPanel`:
- * outline по ошибке, заливку `surface` и рамку с тенью.
- *
- * @param props флаг ошибки и тема
- * @returns CSS-правила, каждое с новой строки
- */
-function getTableRowPanelStyles(props: {
-  $hasError?: boolean;
-  theme: AppTheme;
-}): string {
-  const theme = getTheme(props);
-
-  return `
-    ${getOutlineStyles(
-      props.$hasError ? theme.colors.invalidOutline : theme.colors.focusOutline
-    )}
-    background-color: ${theme.colors.surface};
-    ${getBorderStyles(theme)}
-  `;
-}
-
-/**
  * StyledTableRowPanel — задаёт панель add- и edit-режима компонента Table.
  * Базируется на `<div>` и принимает проп `$hasError`.
  *
  * Встроенные стили:
- *  - `position: fixed` и `z-index` — панель в портале над таблицей
  *  - `overflow: hidden` — обрезает по скруглению
- *  - `border-radius` — скругление по канону формы и размера контролов
  *
  * Генерация стилей:
- *  - `getTableRowPanelStyles` — outline, заливка `surface`, рамка с тенью
+ *  - `getPortalPanelStyles` — хром портальной панели; `outlineColor` зависит от `$hasError`
  */
 export const StyledTableRowPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== '$hasError',
 })<{ $hasError?: boolean }>`
-  position: fixed;
-  z-index: ${STACKING_PORTAL};
   overflow: hidden;
-  border-radius: ${resolveBlockRadius(
-    DEFAULT_SHAPE_PRESET,
-    getMinBlockSize(DEFAULT_SIZE_PRESET)
-  )};
-  ${(props) => getTableRowPanelStyles(props)}
+  ${(props) => {
+    const theme = getTheme(props);
+
+    return getPortalPanelStyles({
+      borderRadius: resolveBlockRadius(
+        DEFAULT_SHAPE_PRESET,
+        getMinBlockSize(DEFAULT_SIZE_PRESET)
+      ),
+      outlineColor: props.$hasError
+        ? theme.colors.invalidOutline
+        : theme.colors.focusOutline,
+      theme,
+    });
+  }}
 `;
 
 /**
@@ -499,7 +480,7 @@ export const StyledTableRowPanelTable = styled.table.withConfig({
  *
  * Встроенные стили:
  *  - `padding-block` и `padding-inline` — отступы содержимого по размеру таблицы
- *  - `vertical-align: middle` и `text-align: center` — выравнивание текста ошибки
+ *  - `vertical-align: middle` — выравнивание полоски ошибки по вертикали
  *  - `border-block-end: none` — без нижнего шва: строка замыкает панель
  */
 export const StyledTablePanelErrorCell = styled.td.withConfig({
@@ -509,7 +490,6 @@ export const StyledTablePanelErrorCell = styled.td.withConfig({
   padding-inline: ${(props) =>
     getPaddingInline(props.sizePreset ?? DEFAULT_TABLE_SIZE_PRESET)};
   vertical-align: middle;
-  text-align: center;
   border-block-end: none;
 `;
 
@@ -595,4 +575,7 @@ export const StyledTableCellTrailing = styled.span`
   ${getTableLeadTrailRowStyles()}
 `;
 
-export { computeTableColumnInlineSizes } from './column-sizing';
+export {
+  computeTableColumnInlineSizes,
+  type TableColumnSizeConfig,
+} from './column-sizing';

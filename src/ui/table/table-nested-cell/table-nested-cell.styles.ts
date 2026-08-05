@@ -1,20 +1,18 @@
 /**
  * Файл: `src/ui/table/table-nested-cell/table-nested-cell.styles.ts`
- * Определяет внешний вид компонентов TableNestedCell и TableMemberPrefix.
+ * Определяет внешний вид компонента TableNestedCell.
  *
  * Основные задачи:
  * 1. Хранить отступы вложенности в `TABLE_NEST_INDENT_BY_DEPTH`
- * 2. Предоставить styled-узлы `StyledTableMemberPrefix` и `StyledTableNestedCell`
+ * 2. Предоставить styled-узел `StyledTableNestedCell`
  *
  * Потребители:
- *  - `src/ui/table/table-nested-cell/index.tsx` — собирает компоненты TableNestedCell и TableMemberPrefix
- *  - `src/pages/showcase/table-demo/index.tsx` — рендерит вложенные строки в демо-таблице
+ *  - `src/ui/table/table-nested-cell/index.tsx` — собирает компонент TableNestedCell
  */
 
 import styled from 'styled-components';
 
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
-import { getTheme, type AppTheme } from '@ui/theme';
 
 /**
  * TABLE_NEST_INDENT_BY_DEPTH — хранит отступ member-ячейки для каждого уровня вложенности.
@@ -37,32 +35,6 @@ function resolveTableNestIndent(nestDepth: number): SpacingValue {
 }
 
 /**
- * getTableMemberPrefixStyles — возвращает CSS-правила для узла `StyledTableMemberPrefix`:
- * приглушённый цвет глифа.
- *
- * @param props объект с темой
- * @returns CSS-правила, каждое с новой строки
- */
-function getTableMemberPrefixStyles(props: { theme: AppTheme }): string {
-  return `color: ${getTheme(props).colors.muted};`;
-}
-
-/**
- * StyledTableMemberPrefix — задаёт префикс member-строки компонента TableMemberPrefix.
- * Базируется на `<span>` и принимает нативные атрибуты элемента.
- *
- * Встроенные стили:
- *  - `flex-shrink: 0` — префикс не сжимается при нехватке места
- *
- * Генерация стилей:
- *  - `getTableMemberPrefixStyles` — приглушённый цвет из темы
- */
-export const StyledTableMemberPrefix = styled.span`
-  flex-shrink: 0;
-  ${(props) => getTableMemberPrefixStyles(props)}
-`;
-
-/**
  * StyledTableNestedCell — задаёт корневой узел компонента TableNestedCell.
  * Базируется на `<span>`: отступ по `nestDepth`, префикс и контент в одну линию.
  *
@@ -72,6 +44,9 @@ export const StyledTableMemberPrefix = styled.span`
  *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
  *  - `padding-inline-start` — отступ вложенности по `nestDepth` через `resolveTableNestIndent`
  *  - `vertical-align: middle` — выравнивание в строке таблицы
+ *  - `flex-shrink: 0` на прямых детях — префикс и соседние слоты не сжимаются
+ *  - `flex-shrink: 1` и `min-inline-size: 0` на последнем ребёнке — контент
+ *    сжимается и обрезается по ширине ячейки
  */
 export const StyledTableNestedCell = styled.span<{ $nestDepth: number }>`
   display: inline-flex;

@@ -11,6 +11,7 @@
  *  - `src/ui/combobox/combobox.styles.ts` — подставляет хром панели поиска и опций
  *  - `src/ui/range-input/range-input.styles.ts` — подставляет хром панели пресетов и полей
  *  - `src/ui/date-range-input/date-range-input.styles.ts` — подставляет хром панели календаря диапазона
+ *  - `src/ui/table/table.styles.ts` — подставляет хром add- и edit-панели строк
  */
 
 import { getBorderStyles } from '@ui/border';
@@ -21,7 +22,8 @@ import { type AppTheme } from '@ui/theme';
 /**
  * getPortalPanelStyles — возвращает CSS-правила хрома панели портала:
  * fixed-позицию у угла, слой `STACKING_PORTAL`, опциональный отступ через `padding`,
- * поверхность, рамку с тенью, радиус и постоянный `outline`.
+ * опциональный цвет обводки через `outlineColor`, поверхность, рамку с тенью,
+ * радиус и постоянный `outline`.
  * Собственных styled-узлов у AnchoredPortal нет — вызывающий код объявляет
  * панель-узел и подставляет генератор в своём styles-файле.
  *
@@ -29,18 +31,21 @@ import { type AppTheme } from '@ui/theme';
  * 1. Задаёт fixed-позицию у угла и слой `STACKING_PORTAL`
  * 2. Добавляет `padding`, если отступ передан
  * 3. Добавляет поверхность, рамку с тенью через `getBorderStyles`, радиус
- *    и постоянный `outline` через `getOutlineStyles`
+ *    и постоянный `outline` через `getOutlineStyles`. Цвет обводки берёт из
+ *    `outlineColor`, иначе из `theme.colors.focusOutline`
  * 4. Склеивает правила через перенос строки
  *
- * @param options тема, радиус и опциональный отступ
+ * @param options тема, радиус, опциональный отступ и опциональный цвет обводки
  * @returns CSS-правила, каждое с новой строки
  */
 export function getPortalPanelStyles(options: {
   borderRadius: string;
+  outlineColor?: string;
   padding?: string;
   theme: AppTheme;
 }): string {
   const { borderRadius, padding, theme } = options;
+  const outlineColor = options.outlineColor ?? theme.colors.focusOutline;
 
   const styles = [
     'position: fixed;',
@@ -57,7 +62,7 @@ export function getPortalPanelStyles(options: {
     `background-color: ${theme.colors.surface};`,
     getBorderStyles(theme),
     `border-radius: ${borderRadius};`,
-    getOutlineStyles(theme.colors.focusOutline)
+    getOutlineStyles(outlineColor)
   );
 
   return styles.join('\n');

@@ -48,7 +48,8 @@
  * 2. Типизировать пропсы через `TableProps`
  * 3. Экспортировать типы `TableAlign`, `TableAddRowSource`, `TableCellRenderContext`
  *    и `TableColumn`
- * 4. Реэкспортировать утилиту `computeTableColumnInlineSizes` и дефолты осей
+ * 4. Реэкспортировать утилиту `computeTableColumnInlineSizes`, тип `TableColumnSizeConfig`
+ *    и дефолты осей
  * 5. Реэкспортировать сателлиты `TableCell`, `TableCellAlign`, `TableGroupCell`,
  *    `TableInlineField`, `TableMemberPrefix` и `TableNestedCell`
  *
@@ -688,7 +689,6 @@ export function Table<Row>(props: TableProps<Row>) {
     allSelectableKeys.length > 0 &&
     allSelectableKeys.every((key) => selectedKeys.has(key));
   const hasBulkSelection = checkable && selectedKeys.size >= BULK_SELECTION_MIN;
-  const showBulkActions = hasBulkSelection;
   // Галка в шапке и футере стоит, когда доступны групповые действия при двух и более
   // выбранных строках или выбраны все строки таблицы. Случай одной строки: одна из одной
   // считается всеми, поэтому галка ставится и снимается и для единственной строки.
@@ -816,7 +816,7 @@ export function Table<Row>(props: TableProps<Row>) {
           null}
         <Text sizePreset={textSize}>{column.header}</Text>
       </StyledTableCellLead>
-      {interactive && showBulkActions && props.renderBulkSelectionActions?.()}
+      {interactive && hasBulkSelection && props.renderBulkSelectionActions?.()}
     </StyledTableHeaderKeywordBar>
   );
 
@@ -1191,14 +1191,17 @@ export function Table<Row>(props: TableProps<Row>) {
   );
 }
 
-export { TableCell } from './table-cell';
-export type { TableCellAlign } from './table-cell';
+export { TableCell, type TableCellAlign } from './table-cell';
 export { TableGroupCell } from './table-group-cell';
 export { TableInlineField } from './table-inline-field';
-export { TableMemberPrefix, TableNestedCell } from './table-nested-cell';
+export { TableMemberPrefix } from './table-member-prefix';
+export { TableNestedCell } from './table-nested-cell';
 /* eslint-disable react-refresh/only-export-components -- реэкспорт утилит sizing и дефолтов осей Table */
 export {
+  DEFAULT_TABLE_HOVER_HIGHLIGHT,
   DEFAULT_TABLE_SHOW_BORDER,
   DEFAULT_TABLE_SIZE_PRESET,
+  DEFAULT_TABLE_STRIPED,
   computeTableColumnInlineSizes,
+  type TableColumnSizeConfig,
 } from './table.styles';

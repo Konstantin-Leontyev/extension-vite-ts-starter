@@ -40,7 +40,12 @@ import { Sidebar } from '@ui/sidebar';
 import { Spinner, getSpinnerTextSize } from '@ui/spinner';
 import { Stepper, getStepperTextSize } from '@ui/stepper';
 import { Switch, getSwitchTextSize } from '@ui/switch';
-import { DEFAULT_TABLE_SHOW_BORDER, DEFAULT_TABLE_SIZE_PRESET } from '@ui/table';
+import {
+  DEFAULT_TABLE_HOVER_HIGHLIGHT,
+  DEFAULT_TABLE_SHOW_BORDER,
+  DEFAULT_TABLE_SIZE_PRESET,
+  DEFAULT_TABLE_STRIPED,
+} from '@ui/table';
 import { Tag, getTagTextSize } from '@ui/tag';
 import { Text } from '@ui/text';
 import { Toast, getToastTextSize } from '@ui/toast';
@@ -647,12 +652,12 @@ const DEFAULT_TABLE_STATE: TableWidgetState = {
   checkable: true,
   continuousNumbering: false,
   editable: true,
-  hoverHighlight: true,
+  hoverHighlight: DEFAULT_TABLE_HOVER_HIGHLIGHT,
   separateCheckboxColumn: false,
   showBorder: DEFAULT_TABLE_SHOW_BORDER,
   showIndexColumn: true,
   sizePreset: DEFAULT_TABLE_SIZE_PRESET,
-  striped: true,
+  striped: DEFAULT_TABLE_STRIPED,
 };
 
 /**
