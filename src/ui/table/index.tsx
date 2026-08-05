@@ -18,7 +18,6 @@ import { Text, getTextLineHeight, type TextSizePreset } from '@ui/text';
 
 import { StyledTableCellLead, TableCell, type TableCellAlign } from './table-cell';
 import {
-  COMPOSE_PANEL_BORDER_WIDTH_PX,
   DEFAULT_TABLE_HOVER_HIGHLIGHT,
   DEFAULT_TABLE_NUMBERED,
   DEFAULT_TABLE_SHOW_BORDER,
@@ -391,19 +390,18 @@ function applyTableComposePanelPosition(
   const rowHeight = rect.height;
   const errorRow = panel.querySelector('[data-compose-error]');
   const errorRowHeight = errorRow instanceof HTMLElement ? errorRow.offsetHeight : 0;
-  const border = COMPOSE_PANEL_BORDER_WIDTH_PX;
   const contentHeight = rowHeight * 2 + errorRowHeight;
 
-  panel.style.inlineSize = `${rect.width + border * 2}px`;
-  panel.style.insetInlineStart = `${rect.left - border}px`;
-  panel.style.blockSize = `${contentHeight + border * 2}px`;
+  panel.style.inlineSize = `${rect.width}px`;
+  panel.style.insetInlineStart = `${rect.left}px`;
+  panel.style.blockSize = `${contentHeight}px`;
 
   if (composeRowSource === 'head') {
-    panel.style.insetBlockStart = `${rect.top - border}px`;
+    panel.style.insetBlockStart = `${rect.top}px`;
     return;
   }
 
-  panel.style.insetBlockStart = `${rect.top - rowHeight - errorRowHeight - border}px`;
+  panel.style.insetBlockStart = `${rect.top - rowHeight - errorRowHeight}px`;
 }
 
 function applyTableEditPanelPosition(anchor: HTMLElement, panel: HTMLElement): void {
@@ -411,13 +409,12 @@ function applyTableEditPanelPosition(anchor: HTMLElement, panel: HTMLElement): v
   const rowHeight = rect.height;
   const errorRow = panel.querySelector('[data-edit-error]');
   const errorRowHeight = errorRow instanceof HTMLElement ? errorRow.offsetHeight : 0;
-  const border = COMPOSE_PANEL_BORDER_WIDTH_PX;
   const contentHeight = rowHeight + errorRowHeight;
 
-  panel.style.inlineSize = `${rect.width + border * 2}px`;
-  panel.style.insetInlineStart = `${rect.left - border}px`;
-  panel.style.insetBlockStart = `${rect.top - border}px`;
-  panel.style.blockSize = `${contentHeight + border * 2}px`;
+  panel.style.inlineSize = `${rect.width}px`;
+  panel.style.insetInlineStart = `${rect.left}px`;
+  panel.style.insetBlockStart = `${rect.top}px`;
+  panel.style.blockSize = `${contentHeight}px`;
 }
 
 export function Table<Row>(props: TableProps<Row>) {
