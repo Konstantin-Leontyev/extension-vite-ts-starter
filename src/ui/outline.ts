@@ -6,8 +6,7 @@
  *
  * Основные задачи:
  * 1. Предоставить функцию `getOutlineStyles`
- * 2. Экспортировать `OUTLINE_OFFSET` — отступ обводки по умолчанию
- * 3. Экспортировать `OUTLINE_OVERHANG_PX` — вылет обводки для JS-математики
+ * 2. Экспортировать `OUTLINE_OVERHANG_PX` — вылет обводки для JS-математики
  *
  * Потребители:
  *  - `src/ui/reset.ts` — задаёт глобальную обводку `:focus-visible` и полей
@@ -43,7 +42,7 @@ const OUTLINE_WIDTH = `${OUTLINE_WIDTH_PX}px`;
  * OUTLINE_OFFSET — формирует отступ обводки от края узла из `OUTLINE_OFFSET_PX`.
  * Используется в `getOutlineStyles` как значение по умолчанию.
  */
-export const OUTLINE_OFFSET = `${OUTLINE_OFFSET_PX}px`;
+const OUTLINE_OFFSET = `${OUTLINE_OFFSET_PX}px`;
 
 /**
  * OUTLINE_OVERHANG_PX — формирует вылет обводки за `border-box` из `OUTLINE_WIDTH_PX`

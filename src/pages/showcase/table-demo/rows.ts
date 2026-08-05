@@ -7,11 +7,11 @@
  * 2. Предоставить сборку видимых строк через `buildCatalogTableRows`
  * 3. Предоставить выборки `buildCatalogTableSizingRows`, `buildCatalogSelectableKeys`,
  *    `buildCatalogGroupMemberKeyMap` и `buildInitialExpandedGroupIds`
- * 4. Предоставить функции `isCatalogHeaderRowKind`, `catalogTableRowId`,
- *    `catalogCategoryGroupId` и `catalogSubGroupGroupId`
+ * 4. Предоставить функции `isCatalogHeaderRowKind`, `catalogCategoryGroupId`
+ *    и `catalogSubGroupGroupId`
  *
  * Потребители:
- *  - `src/pages/showcase/table-demo/index.tsx` — передаёт строки и карты групп в Table
+ *  - `src/pages/showcase/table-demo/index.tsx` — передаёт строки и соответствия групп в Table
  */
 
 import {
@@ -150,7 +150,7 @@ export function isCatalogHeaderRowKind(rowKind: CatalogTableRowKind): boolean {
  * @param suffix уникальный хвост: id товара, категории или подгруппы
  * @returns строковый ключ строки
  */
-export function catalogTableRowId(
+function catalogTableRowId(
   rowKind: CatalogTableRowKind,
   groupId: string,
   suffix: string
@@ -350,7 +350,7 @@ export function buildCatalogSelectableKeys(
  * всех её product-строк, включая свёрнутые.
  *
  * @param products товары каталога
- * @returns карта `rowId` головы группы → массив `rowId` членов
+ * @returns соответствие `rowId` головы группы → массив `rowId` членов
  */
 export function buildCatalogGroupMemberKeyMap(
   products: readonly CatalogProduct[]

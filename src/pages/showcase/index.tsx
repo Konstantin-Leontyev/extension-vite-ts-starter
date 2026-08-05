@@ -11,7 +11,7 @@
  *  - `src/components/router/router.tsx` — рендерит ShowcasePage как маршрут витрины
  */
 
-import { useMemo, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import { useShellOutletContext } from '@components/router';
 import { useToast } from '@hooks/use-toast';
@@ -905,10 +905,7 @@ export function ShowcasePage() {
     setCombobox((current) => ({ ...current, [key]: value }));
   }
 
-  const comboboxDemoOptions = useMemo(
-    () => (combobox.withIcon ? COMBOBOX_OPTIONS : LIST_OPTIONS),
-    [combobox.withIcon]
-  );
+  const comboboxDemoOptions = combobox.withIcon ? COMBOBOX_OPTIONS : LIST_OPTIONS;
 
   function updateRangeInput<K extends keyof RangeInputWidgetState>(
     key: K,

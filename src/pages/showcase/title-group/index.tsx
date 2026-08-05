@@ -42,6 +42,7 @@ import {
 } from '@ui/text';
 
 import { AlignListbox } from '../align-listbox';
+import { resolveGroupContentLabel, resolveGroupFieldLabel } from '../showcase-labels';
 import { SizeListbox } from '../size-listbox';
 import { ToneListbox } from '../tone-listbox';
 
@@ -100,7 +101,7 @@ export function TitleGroup({
   return (
     <>
       <Input
-        label={`${labelPrefix}:`}
+        label={resolveGroupContentLabel(labelPrefix, 'Title')}
         value={title}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onTitleChange(event.target.value)
@@ -108,7 +109,7 @@ export function TitleGroup({
       />
 
       <SizeListbox
-        label={`${labelPrefix} size:`}
+        label={resolveGroupFieldLabel(labelPrefix, 'size')}
         sizes={TEXT_SIZE_PRESET_KEYS}
         value={size}
         onChange={onSizeChange}
@@ -116,13 +117,13 @@ export function TitleGroup({
 
       <AlignListbox
         aligns={TEXT_ALIGN_PRESET_KEYS}
-        label={`${labelPrefix} align:`}
+        label={resolveGroupFieldLabel(labelPrefix, 'align')}
         value={align}
         onChange={onAlignChange}
       />
 
       <ToneListbox
-        label={`${labelPrefix} tone:`}
+        label={resolveGroupFieldLabel(labelPrefix, 'tone')}
         tones={TEXT_TONE_KEYS}
         value={tone}
         onChange={onToneChange}

@@ -3,12 +3,11 @@
  * Определяет layout страницы и styled-обёртки витрины дизайн-системы.
  *
  * Основные задачи:
- * 1. Предоставить максимальную высоту страницы витрины через `PLAYGROUND_MAX_BLOCK_SIZE`
- * 2. Предоставить styled-узел `StyledMain` для корневого landmark страницы
- * 3. Предоставить styled-узлы `StyledShowcaseWidgets` и `StyledShowcaseWidgetFullRow`
+ * 1. Предоставить styled-узел `StyledMain` для корневого landmark страницы
+ * 2. Предоставить styled-узлы `StyledShowcaseWidgets` и `StyledShowcaseWidgetFullRow`
  *    для сетки виджетов
- * 4. Предоставить styled-узел `StyledSettingsForm` для формы настроек в Sidebar
- * 5. Предоставить styled-узел демо-превью `StyledRadioButtonDemo`
+ * 3. Предоставить styled-узел `StyledSettingsForm` для формы настроек в Sidebar
+ * 4. Предоставить styled-узел демо-превью `StyledRadioButtonDemo`
  *
  * Потребители:
  *  - `src/pages/showcase/index.tsx` — собирает layout витрины и оборачивает карточки
@@ -30,7 +29,7 @@ import { getSpacingValue } from '@ui/spacing';
  * в `@ui/sidebar`.
  * Используется в `StyledMain` как значение `max-block-size`.
  */
-export const PLAYGROUND_MAX_BLOCK_SIZE = `calc(100dvb - var(--shell-header-block-size, ${HEADER_BLOCK_SIZE}))`;
+const PLAYGROUND_MAX_BLOCK_SIZE = `calc(100dvb - var(--shell-header-block-size, ${HEADER_BLOCK_SIZE}))`;
 
 /**
  * StyledMain — задаёт корневой landmark витрины дизайн-системы.

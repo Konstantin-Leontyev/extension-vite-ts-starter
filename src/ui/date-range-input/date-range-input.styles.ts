@@ -17,9 +17,11 @@
 import styled from 'styled-components';
 
 import { getPortalPanelStyles } from '@ui/anchored-portal';
-import { getBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { getOutlineStyles } from '@ui/outline';
+import {
+  getOpenControlRootStyles,
+  getOpenControlTriggerRowStyles,
+} from '@ui/open-control';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
@@ -29,7 +31,6 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
-import { STACKING_OPEN_CONTROL } from '@ui/stacking';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -90,83 +91,37 @@ function resolveDateRangeInputBlockRadius(
 }
 
 /**
- * getDateRangeInputRootStyles — возвращает CSS-правила для корня `StyledDateRangeInputRoot`:
- * раскладку, ширину и подъём слоя при открытой панели.
- *
- * @returns CSS-правила, каждое с новой строки
- */
-function getDateRangeInputRootStyles(): string {
-  return `
-    position: relative;
-    display: grid;
-    gap: ${getSpacingValue(8)};
-    inline-size: 100%;
-    min-inline-size: 0;
-    &[data-open='true'] { z-index: ${STACKING_OPEN_CONTROL}; }
-  `;
-}
-
-/**
  * StyledDateRangeInputRoot — задаёт корневой узел компонента DateRangeInput.
  * Базируется на `<div>` и поддерживает layout-пропсы.
  *
  * Генерация стилей:
- *  - `getDateRangeInputRootStyles` — раскладка, ширина и подъём при открытии
+ *  - `getOpenControlRootStyles` — раскладка, зазор, ширина и подъём при открытии
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledDateRangeInputRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !DATE_RANGE_INPUT_ROOT_PROP_NAMES.has(prop),
 })<LayoutProps>`
-  ${getDateRangeInputRootStyles()}
+  ${getOpenControlRootStyles()}
   ${(props) => getLayoutStyles(props)}
 `;
-
-/**
- * getDateRangeInputTriggerRowStyles — возвращает CSS-правила для узла
- * `StyledDateRangeInputTriggerRow`: габариты, рамку с тенью через `getBorderStyles`,
- * заливку и фокус-контур ряда на `:focus-within`.
- *
- * @param props пропсы поверхности и тема
- * @returns CSS-правила, каждое с новой строки
- */
-function getDateRangeInputTriggerRowStyles(
-  props: DateRangeInputSurfaceStyleProps & { theme: AppTheme }
-): string {
-  const theme = getTheme(props);
-  const sizePreset = props.sizePreset ?? DEFAULT_DATE_RANGE_INPUT_SIZE_PRESET;
-
-  return `
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    &[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }
-    inline-size: 100%;
-    min-block-size: ${getMinBlockSize(sizePreset)};
-    overflow: hidden;
-    background-color: ${theme.colors.surface};
-    border-radius: ${resolveDateRangeInputBlockRadius(props)};
-    ${getBorderStyles(theme)}
-    &[data-open='true'] { visibility: hidden; }
-    &:focus-within {
-      ${getOutlineStyles(theme.colors.focusOutline)}
-    }
-  `;
-}
 
 /**
  * StyledDateRangeInputTriggerRow — задаёт ряд триггера компонента DateRangeInput.
  * Базируется на `<div>` и принимает пропсы из `DateRangeInputSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getDateRangeInputTriggerRowStyles` — габариты, рамка с тенью, заливка и
- *    фокус-контур ряда на `:focus-within`
- *
- * При открытой панели ряд скрывается через `visibility: hidden`, чтобы панель
- * наследовала ширину якоря без двойного отображения триггера.
+ *  - `getOpenControlTriggerRowStyles` — габариты, заливка, рамка с тенью и
+ *    `outline` фокуса
  */
 export const StyledDateRangeInputTriggerRow = styled.div.withConfig({
   shouldForwardProp: (prop) => !DATE_RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
 })<DateRangeInputSurfaceStyleProps>`
-  ${(props) => getDateRangeInputTriggerRowStyles(props)}
+  ${(props) =>
+    getOpenControlTriggerRowStyles(
+      props,
+      (shape, sizePreset) => resolveDateRangeInputBlockRadius({ shape, sizePreset }),
+      'trailing-only'
+    )}
 `;
 
 /**

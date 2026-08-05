@@ -21,7 +21,7 @@ export type CatalogBrand = 'Apple' | 'Huawei' | 'Samsung' | 'Xiaomi';
 
 /**
  * CATALOG_BRAND_ORDER — задаёт порядок брендов в демо-таблице.
- * Используется при обходе каталога в `buildCatalogTableRows` и картах групп.
+ * Используется при обходе каталога в `buildCatalogTableRows` и соответствиях групп.
  */
 export const CATALOG_BRAND_ORDER: readonly CatalogBrand[] = [
   'Apple',
@@ -106,7 +106,7 @@ export const CATALOG_CATEGORY_LABELS: Record<CatalogCategoryId, string> = {
 
 /**
  * CATALOG_CATEGORY_ORDER — задаёт порядок категорий внутри бренда.
- * Используется при обходе каталога в `buildCatalogTableRows` и картах групп.
+ * Используется при обходе каталога в `buildCatalogTableRows` и соответствиях групп.
  */
 export const CATALOG_CATEGORY_ORDER: readonly CatalogCategoryId[] = [
   'phones',

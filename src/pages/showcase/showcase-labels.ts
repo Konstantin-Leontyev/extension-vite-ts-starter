@@ -12,6 +12,8 @@
  *    `resolveGroupFieldLabel`, `resolveGroupContentLabel` и `resolveGroupShowLabel`
  *  - `src/pages/showcase/icon-group/index.tsx` — собирает подписи контролов через
  *    `resolveGroupFieldLabel`, `resolveGroupContentLabel` и `resolveGroupShowLabel`
+ *  - `src/pages/showcase/title-group/index.tsx` — собирает подписи контролов через
+ *    `resolveGroupFieldLabel` и `resolveGroupContentLabel`
  */
 
 /**

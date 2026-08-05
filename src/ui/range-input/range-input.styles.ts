@@ -18,7 +18,6 @@
 import styled from 'styled-components';
 
 import { getPortalPanelStyles } from '@ui/anchored-portal';
-import { getBorderStyles } from '@ui/border';
 import {
   ICON_SETTING_PROP_NAMES,
   getIconPositionStyles,
@@ -26,7 +25,10 @@ import {
 } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { MOTION_CONTROL_DURATION, getTransitionStyles } from '@ui/motion';
-import { getOutlineStyles } from '@ui/outline';
+import {
+  getOpenControlRootStyles,
+  getOpenControlTriggerRowStyles,
+} from '@ui/open-control';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
@@ -38,7 +40,6 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
-import { STACKING_OPEN_CONTROL } from '@ui/stacking';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
@@ -89,34 +90,17 @@ type RangeInputSurfaceStyleProps = {
 export type RangeInputStyleProps = LayoutProps & RangeInputSurfaceStyleProps;
 
 /**
- * getRangeInputRootStyles — возвращает CSS-правила для корня `StyledRangeInputRoot`:
- * раскладку, зазор, ширину и подъём слоя при открытой панели.
- *
- * @returns CSS-правила, каждое с новой строки
- */
-function getRangeInputRootStyles(): string {
-  return `
-    position: relative;
-    display: grid;
-    gap: ${getSpacingValue(8)};
-    inline-size: 100%;
-    min-inline-size: 0;
-    &[data-open='true'] { z-index: ${STACKING_OPEN_CONTROL}; }
-  `;
-}
-
-/**
  * StyledRangeInputRoot — задаёт корневой узел компонента RangeInput.
  * Базируется на `<div>` и поддерживает layout-пропсы.
  *
  * Генерация стилей:
- *  - `getRangeInputRootStyles` — раскладка, зазор, ширина и подъём при открытии
+ *  - `getOpenControlRootStyles` — раскладка, зазор, ширина и подъём при открытии
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledRangeInputRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
-  ${getRangeInputRootStyles()}
+  ${getOpenControlRootStyles()}
   ${(props) => getLayoutStyles(props)}
 `;
 
@@ -131,60 +115,16 @@ const RANGE_INPUT_SURFACE_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * getRangeInputTriggerRowStyles — возвращает CSS-правила для узла
- * `StyledRangeInputTriggerRow`: габариты, заливку, рамку с тенью и `outline` фокуса.
- *
- * Как работает:
- * 1. Берёт тему и подставляет дефолты пропсов
- * 2. Собирает габариты ряда и заливку `surface`, затем рамку с тенью через
- *    `getBorderStyles` без второго аргумента — постоянная рамка
- * 3. Без clear оставляет одну колонку. При `data-has-clear` — две колонки.
- *    Позиция сброса читается из DOM по `[data-slot='clear']:first-child`, не из пропа
- * 4. Акцент фокуса даёт `outline` на ряде при `:focus-within`, потому что
- *    `overflow` обрезает `outline` детей
- * 5. При `data-open='true'` скрывает ряд через `visibility: hidden`, чтобы
- *    панель наследовала ширину якоря без двойного отображения триггера
- *
- * @param props пропсы поверхности и тема
- * @returns CSS-правила, каждое с новой строки
- */
-function getRangeInputTriggerRowStyles(
-  props: RangeInputSurfaceStyleProps & { theme: AppTheme }
-): string {
-  const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
-
-  return `
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    &[data-has-clear] { grid-template-columns: minmax(0, 1fr) auto; }
-    &[data-has-clear]:has(> [data-slot='clear']:first-child) {
-      grid-template-columns: auto minmax(0, 1fr);
-    }
-    inline-size: 100%;
-    min-block-size: ${getMinBlockSize(sizePreset)};
-    overflow: hidden;
-    background-color: ${theme.colors.surface};
-    border-radius: ${resolveRangeInputBlockRadius(shape, sizePreset)};
-    ${getBorderStyles(theme)}
-    &[data-open='true'] { visibility: hidden; }
-    &:focus-within {
-      ${getOutlineStyles(theme.colors.focusOutline)}
-    }
-  `;
-}
-
-/**
  * StyledRangeInputTriggerRow — задаёт ряд триггера компонента RangeInput.
  * Базируется на `<div>` и принимает пропсы из `RangeInputSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getRangeInputTriggerRowStyles` — габариты, заливка, рамка с тенью и `outline` фокуса
+ *  - `getOpenControlTriggerRowStyles` — габариты, заливка, рамка с тенью и `outline` фокуса
  */
 export const StyledRangeInputTriggerRow = styled.div.withConfig({
   shouldForwardProp: (prop) => !RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
 })<RangeInputSurfaceStyleProps>`
-  ${(props) => getRangeInputTriggerRowStyles(props)}
+  ${(props) => getOpenControlTriggerRowStyles(props, resolveRangeInputBlockRadius)}
 `;
 
 /**
