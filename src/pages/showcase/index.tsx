@@ -1279,9 +1279,7 @@ export function ShowcasePage() {
                   borderTone={input.borderTone}
                   disabled={input.disabled}
                   error={input.error || undefined}
-                  errorPlaceholder={
-                    input.reserveErrorSpace ? input.errorPlaceholder : undefined
-                  }
+                  errorPlaceholder={input.errorPlaceholder}
                   invalid={input.invalid}
                   label={input.label || undefined}
                   placeholder={input.placeholder}
@@ -1352,11 +1350,7 @@ export function ShowcasePage() {
                   buttonTextTone={rangeInput.buttonTextTone}
                   buttonTone={rangeInput.buttonTone}
                   disabled={rangeInput.disabled}
-                  errorPlaceholder={
-                    rangeInput.reserveErrorSpace
-                      ? rangeInput.errorPlaceholder
-                      : undefined
-                  }
+                  errorPlaceholder={rangeInput.errorPlaceholder}
                   formatActiveLabel={formatDemoRangeLabel}
                   fromPlaceholder={rangeInput.fromPlaceholder}
                   iconFill={rangeInput.iconFill}

@@ -16,8 +16,13 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { ICON_SHAPE_PRESET_KEYS, getIconPadding, type IconShapePreset } from '@ui/icon';
-import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
+import {
+  ICON_SHAPE_PRESET_KEYS,
+  ICON_SIZE_PRESET_KEYS,
+  getIconPadding,
+  type IconShapePreset,
+  type IconSizePreset,
+} from '@ui/icon';
 import { type SpacingValue } from '@ui/spacing';
 import { type TonePreset } from '@ui/tones';
 
@@ -39,13 +44,15 @@ import { SizeListbox } from '../size-listbox';
  */
 function resolveIconPaddingSizePreset(
   padding: SpacingValue,
-  sizePreset: SizePreset
-): SizePreset {
+  sizePreset: IconSizePreset
+): IconSizePreset {
   if (getIconPadding(sizePreset) === padding) {
     return sizePreset;
   }
 
-  return SIZE_PRESET_KEYS.find((key) => getIconPadding(key) === padding) ?? sizePreset;
+  return (
+    ICON_SIZE_PRESET_KEYS.find((key) => getIconPadding(key) === padding) ?? sizePreset
+  );
 }
 
 /**
@@ -78,7 +85,7 @@ export type IconWidgetState = {
   showBorder: boolean;
   showHover: boolean;
   showShadow: boolean;
-  sizePreset: SizePreset;
+  sizePreset: IconSizePreset;
 };
 
 /**
@@ -103,7 +110,7 @@ export function IconSettings({ onChange, state }: IconSettingsProps) {
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
       <SizeListbox
         label="Size:"
-        sizes={SIZE_PRESET_KEYS}
+        sizes={ICON_SIZE_PRESET_KEYS}
         value={state.sizePreset}
         onChange={(size) => {
           onChange('sizePreset', size);
@@ -131,7 +138,7 @@ export function IconSettings({ onChange, state }: IconSettingsProps) {
 
       <SizeListbox
         label="Padding:"
-        sizes={SIZE_PRESET_KEYS}
+        sizes={ICON_SIZE_PRESET_KEYS}
         value={resolveIconPaddingSizePreset(state.padding, state.sizePreset)}
         onChange={(size) => onChange('padding', getIconPadding(size))}
       />

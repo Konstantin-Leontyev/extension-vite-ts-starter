@@ -21,10 +21,11 @@
  * 1. Экспортировать полиморфный компонент Icon
  * 2. Типизировать пропсы через `IconProps`
  * 3. Реэкспортировать публичное API оси иконки: `IconPosition`,
- *    `IconShapePreset`, `DEFAULT_ICON_POSITION`, `ICON_POSITION_KEYS`,
- *    `ICON_SHAPE_PRESET_KEYS`, `ICON_SETTING_PROP_NAMES`, мосты
- *    `getIconPadding` и `getIconSize`, хелперы секции на родителе:
- *    `getIconPositionStyles`, `resolveIconStateBackground`
+ *    `IconShapePreset`, `IconSizePreset`, `DEFAULT_ICON_POSITION`,
+ *    `ICON_POSITION_KEYS`, `ICON_SHAPE_PRESET_KEYS`, `ICON_SIZE_PRESET_KEYS`,
+ *    `ICON_SETTING_PROP_NAMES`, мосты `getIconPadding` и `getIconSize`,
+ *    хелперы секции на родителе: `getIconPositionStyles`,
+ *    `resolveIconStateBackground`
  *
  * Потребители:
  *  - контролы с иконочными узлами, например Button, Listbox и Stepper —
@@ -44,6 +45,7 @@ import {
   ICON_POSITION_KEYS,
   ICON_SETTING_PROP_NAMES,
   ICON_SHAPE_PRESET_KEYS,
+  ICON_SIZE_PRESET_KEYS,
   StyledIcon,
   getIconPadding,
   getIconPositionStyles,
@@ -51,6 +53,7 @@ import {
   resolveIconStateBackground,
   type IconPosition,
   type IconShapePreset,
+  type IconSizePreset,
   type IconStyleProps,
 } from './icon.styles';
 
@@ -108,16 +111,18 @@ export function Icon<T extends ElementType = 'span'>(props: IconProps<T>) {
   return createElement(StyledIcon, props);
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста и хелперов секции */
+/* eslint-disable react-refresh/only-export-components -- реэкспорт публичных типов, пресетов, мостов и хелперов секции */
 export {
   DEFAULT_ICON_POSITION,
   ICON_POSITION_KEYS,
   ICON_SETTING_PROP_NAMES,
   ICON_SHAPE_PRESET_KEYS,
+  ICON_SIZE_PRESET_KEYS,
   getIconPadding,
   getIconPositionStyles,
   getIconSize,
   resolveIconStateBackground,
   type IconPosition,
   type IconShapePreset,
+  type IconSizePreset,
 };

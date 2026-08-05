@@ -25,7 +25,7 @@
  *  - контролы, например Listbox и Table — рендерят чекбоксы
  *  - панели настроек витрины дизайн-системы, например SwitchSettings и ButtonSettings —
  *    рендерят чекбоксы настроек
- *  - `@ui/table` и `@ui/table/table-group-expander` — читают `checkboxSizePresets`
+ *  - `@ui/table` — читает `checkboxSizePresets`
  *  - страницы и виджеты приложения — рендерят поля множественного выбора
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */

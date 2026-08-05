@@ -25,7 +25,7 @@
  * Потребители:
  *  - контролы, например Combobox, Listbox, DateRangeInput и RangeInput —
  *    рендерят выпадающие панели
- *  - `@ui/table` — рендерит панели compose и другие overlay-панели
+ *  - `@ui/table` — рендерит панели add и другие overlay-панели
  *  - `src/components/profile-menu/index.tsx` — рендерит меню профиля
  */
 

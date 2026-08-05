@@ -3,10 +3,10 @@ import { useCallback, useMemo, useState, type ReactNode } from 'react';
 
 import { ChevronDownIcon, ChevronUpIcon } from '@icons';
 import { Button } from '@ui/button';
+import { Icon } from '@ui/icon';
 import {
   Table,
   TableGroupCell,
-  TableGroupExpander,
   TableInlineField,
   TableMemberPrefix,
   TableNestedCell,
@@ -92,15 +92,19 @@ function buildCatalogColumns(
           const nestDepth = row.nestDepth ?? 0;
 
           const expander = (
-            <TableGroupExpander
+            <Icon
               aria-expanded={expanded}
               aria-label={`${expanded ? 'Collapse' : 'Expand'} ${row.product}`}
+              as="button"
+              shape="rounded"
+              showBorder
+              sizePreset="tiny"
               onClick={() => {
                 toggleGroup(row.groupId);
               }}
             >
               {(expanded && <ChevronUpIcon />) || <ChevronDownIcon />}
-            </TableGroupExpander>
+            </Icon>
           );
 
           const label = (
@@ -199,9 +203,9 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
     buildInitialExpandedGroupIds(INITIAL_CATALOG_PRODUCTS)
   );
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(() => new Set());
-  const [isComposeRowOpen, setIsComposeRowOpen] = useState(false);
-  const [composeRowSource, setComposeRowSource] = useState<TableAddRowSource>('head');
-  const [composeDraft, setComposeDraft] = useState(EMPTY_CATALOG_DRAFT);
+  const [isAddRowOpen, setIsAddRowOpen] = useState(false);
+  const [addRowSource, setAddRowSource] = useState<TableAddRowSource>('head');
+  const [addDraft, setAddDraft] = useState(EMPTY_CATALOG_DRAFT);
   const [isEditRowOpen, setIsEditRowOpen] = useState(false);
   const [editRowId, setEditRowId] = useState<string | undefined>(undefined);
   const [editingProductId, setEditingProductId] = useState<string | undefined>(
@@ -235,17 +239,17 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
     const priceSamples = collectMetricSamples(sizingRows, (row) => row.price);
     const indexSamples = collectMetricSamples(sizingRows, (row) => row.indexLabel);
 
-    if (isComposeRowOpen) {
-      const composeStock = composeDraft.stock.trim();
+    if (isAddRowOpen) {
+      const addStock = addDraft.stock.trim();
 
-      if (composeStock !== '') {
-        stockSamples.push(composeStock);
+      if (addStock !== '') {
+        stockSamples.push(addStock);
       }
 
-      const composePrice = composeDraft.price.trim();
+      const addPrice = addDraft.price.trim();
 
-      if (composePrice !== '') {
-        priceSamples.push(composePrice);
+      if (addPrice !== '') {
+        priceSamples.push(addPrice);
       }
     }
 
@@ -272,9 +276,9 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
       settings.sizePreset
     );
   }, [
-    composeDraft.price,
-    composeDraft.stock,
-    isComposeRowOpen,
+    addDraft.price,
+    addDraft.stock,
+    isAddRowOpen,
     editDraft.price,
     editDraft.stock,
     isEditRowOpen,
@@ -302,10 +306,10 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
     return base;
   }, [metricInlineSizes, settings.showIndexColumn, toggleGroup]);
 
-  const resetComposeRow = useCallback((): void => {
-    setIsComposeRowOpen(false);
-    setComposeRowSource('head');
-    setComposeDraft(EMPTY_CATALOG_DRAFT);
+  const resetAddRow = useCallback((): void => {
+    setIsAddRowOpen(false);
+    setAddRowSource('head');
+    setAddDraft(EMPTY_CATALOG_DRAFT);
   }, []);
 
   const resetEditRow = useCallback((): void => {
@@ -317,21 +321,21 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
 
   const handleAddRowRequest = useCallback(
     (source: TableAddRowSource): void => {
-      if (isComposeRowOpen || isEditRowOpen) {
+      if (isAddRowOpen || isEditRowOpen) {
         return;
       }
 
-      setIsComposeRowOpen(true);
-      setComposeRowSource(source);
-      setComposeDraft(EMPTY_CATALOG_DRAFT);
+      setIsAddRowOpen(true);
+      setAddRowSource(source);
+      setAddDraft(EMPTY_CATALOG_DRAFT);
       setSelectedKeys(new Set());
     },
-    [isComposeRowOpen, isEditRowOpen]
+    [isAddRowOpen, isEditRowOpen]
   );
 
   const handleEditRowRequest = useCallback(
     (row: CatalogTableRow): void => {
-      if (isComposeRowOpen || isEditRowOpen || isCatalogHeaderRowKind(row.rowKind)) {
+      if (isAddRowOpen || isEditRowOpen || isCatalogHeaderRowKind(row.rowKind)) {
         return;
       }
 
@@ -345,7 +349,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
       });
       setSelectedKeys(new Set());
     },
-    [isComposeRowOpen, isEditRowOpen]
+    [isAddRowOpen, isEditRowOpen]
   );
 
   const handleDeleteRow = useCallback(
@@ -384,9 +388,9 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
     setSelectedKeys(new Set());
   }, [isEditRowOpen, editingProductId, resetEditRow, selectedKeys, tableRows]);
 
-  /** Не переносить в продуктовый код: в реальном проекте целевая группа выводится из контекста compose-источника. */
-  const commitComposeRow = useCallback((): void => {
-    const productName = composeDraft.product.trim();
+  /** Не переносить в продуктовый код: в реальном проекте целевая группа выводится из контекста add-источника. */
+  const commitAddRow = useCallback((): void => {
+    const productName = addDraft.product.trim();
 
     if (productName === '') {
       return;
@@ -397,15 +401,15 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
       brand: 'Apple',
       categoryId,
       id: `new-${Date.now()}`,
-      price: composeDraft.price.trim() || '$0',
+      price: addDraft.price.trim() || '$0',
       product: productName,
-      stock: composeDraft.stock.trim() || '0',
+      stock: addDraft.stock.trim() || '0',
     };
 
     setProducts((current) => [...current, nextProduct]);
     setExpandedGroupIds((current) => new Set([...current, `Apple:${categoryId}`]));
-    resetComposeRow();
-  }, [composeDraft, resetComposeRow]);
+    resetAddRow();
+  }, [addDraft, resetAddRow]);
 
   const commitEditRow = useCallback((): void => {
     if (!editingProductId) {
@@ -434,10 +438,10 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
     resetEditRow();
   }, [editDraft, editingProductId, resetEditRow]);
 
-  const renderComposeCell = useCallback(
+  const renderAddCell = useCallback(
     (
       column: TableColumn<CatalogTableRow>,
-      { composeErrorId, textSize }: TableCellRenderContext
+      { addErrorId, textSize }: TableCellRenderContext
     ): ReactNode => {
       if (column.key === 'indexLabel') {
         return null;
@@ -446,12 +450,12 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
       if (column.key === 'product') {
         return (
           <TableInlineField
-            aria-describedby={composeErrorId}
+            aria-describedby={addErrorId}
             placeholder="Product"
             textSize={textSize}
-            value={composeDraft.product}
+            value={addDraft.product}
             onChange={(event) =>
-              setComposeDraft((current) => ({
+              setAddDraft((current) => ({
                 ...current,
                 product: event.target.value,
               }))
@@ -459,12 +463,12 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
                 event.preventDefault();
-                commitComposeRow();
+                commitAddRow();
               }
 
               if (event.key === 'Escape') {
                 event.preventDefault();
-                resetComposeRow();
+                resetAddRow();
               }
             }}
           />
@@ -474,14 +478,14 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
       if (column.key === 'stock') {
         return (
           <TableInlineField
-            aria-describedby={composeErrorId}
+            aria-describedby={addErrorId}
             inputMode="numeric"
             placeholder="Stock"
             textAlign="end"
             textSize={textSize}
-            value={composeDraft.stock}
+            value={addDraft.stock}
             onChange={(event) =>
-              setComposeDraft((current) => ({
+              setAddDraft((current) => ({
                 ...current,
                 stock: event.target.value,
               }))
@@ -489,7 +493,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
                 event.preventDefault();
-                commitComposeRow();
+                commitAddRow();
               }
             }}
           />
@@ -499,13 +503,13 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
       if (column.key === 'price') {
         return (
           <TableInlineField
-            aria-describedby={composeErrorId}
+            aria-describedby={addErrorId}
             placeholder="Price"
             textAlign="end"
             textSize={textSize}
-            value={composeDraft.price}
+            value={addDraft.price}
             onChange={(event) =>
-              setComposeDraft((current) => ({
+              setAddDraft((current) => ({
                 ...current,
                 price: event.target.value,
               }))
@@ -513,7 +517,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
                 event.preventDefault();
-                commitComposeRow();
+                commitAddRow();
               }
             }}
           />
@@ -522,7 +526,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
 
       return null;
     },
-    [commitComposeRow, composeDraft, resetComposeRow]
+    [commitAddRow, addDraft, resetAddRow]
   );
 
   const renderEditCell = useCallback(
@@ -637,16 +641,16 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
 
   const editableProps = settings.editable
     ? {
-        composeRowActive: isComposeRowOpen,
-        composeRowSource,
+        addRowActive: isAddRowOpen,
+        addRowSource,
         editable: true as const,
         editRowActive: isEditRowOpen,
         editRowKey: editRowId,
         onAddRow: handleAddRowRequest,
-        onComposeCancel: resetComposeRow,
+        onAddCancel: resetAddRow,
         onEditCancel: resetEditRow,
         onEditRow: handleEditRowRequest,
-        renderComposeCell,
+        renderAddCell,
         renderEditCell,
       }
     : {

@@ -10,19 +10,19 @@
  *  - рамку вокруг таблицы через проп `showBorder`
  *  - чередование фона строк через проп `striped`
  *  - колонки через проп `columns`
- *  - мастер-переключатель добавления и редактирования строк через проп `editable`.
- *    Без `editable` таблица только выводит строки
+ *  - добавление и редактирование строк через проп `editable`. Без `editable` таблица
+ *    только выводит строки
  *  - колонку нумерации через проп `numbered`
  *  - строки данных через проп `rows`
- *  - текст ошибки панели добавления через проп `composeError`
- *  - подсказку в полоске ошибки панели добавления через проп `composeHint`, пока нет
- *    `composeError`
- *  - режим панели добавления строки через проп `composeRowActive`
- *  - якорь панели добавления через проп `composeRowSource`
+ *  - текст ошибки панели добавления через проп `addError`
+ *  - подсказку в полоске ошибки панели добавления через проп `addHint`, пока нет
+ *    `addError`
+ *  - режим панели добавления строки через проп `addRowActive`
+ *  - якорь панели добавления через проп `addRowSource`
  *  - обработчик запроса на добавление строки через проп `onAddRow`. Без колбэка кнопка
  *    «+» видна, но недоступна
- *  - обработчик отмены добавления строки через проп `onComposeCancel`
- *  - рендер ячеек панели добавления через проп `renderComposeCell`
+ *  - обработчик отмены добавления строки через проп `onAddCancel`
+ *  - рендер ячеек панели добавления через проп `renderAddCell`
  *  - текст ошибки панели редактирования через проп `editError`
  *  - подсказку в полоске ошибки панели редактирования через проп `editHint`, пока нет
  *    `editError`
@@ -48,10 +48,9 @@
  * 2. Типизировать пропсы через `TableProps`
  * 3. Экспортировать типы `TableAlign`, `TableAddRowSource`, `TableCellRenderContext`
  *    и `TableColumn`
- * 4. Реэкспортировать мост размера текста `getTableTextSize`, утилиту
- *    `computeTableColumnInlineSizes`, дефолты осей и типы стилей
+ * 4. Реэкспортировать утилиту `computeTableColumnInlineSizes`, дефолты осей и типы стилей
  * 5. Реэкспортировать сателлиты `TableCell`, `TableCellAlign`, `TableGroupCell`,
- *    `TableGroupExpander`, `TableInlineField`, `TableMemberPrefix` и `TableNestedCell`
+ *    `TableInlineField`, `TableMemberPrefix` и `TableNestedCell`
  *
  * Потребители:
  *  - `src/pages/showcase/table-demo/index.tsx` — собирает демо-таблицу каталога
@@ -68,9 +67,11 @@ import {
 } from 'react';
 
 import { useLongPress } from '@hooks/use-long-press';
+import { PlusIcon } from '@icons';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Checkbox } from '@ui/checkbox';
 import { FieldError } from '@ui/field-error';
+import { Icon } from '@ui/icon';
 import { ScrollPort } from '@ui/scroll-port';
 import { Text, type TextSizePreset } from '@ui/text';
 
@@ -85,15 +86,14 @@ import {
   StyledTableCellTrailing,
   StyledTableClip,
   StyledTableCol,
-  StyledTableComposeErrorCell,
-  StyledTableComposeInnerTable,
-  StyledTableComposePanel,
   StyledTableFoot,
   StyledTableHead,
-  StyledTableHeaderAddButton,
   StyledTableHeaderKeywordBar,
   StyledTableHeaderMarkSpacer,
+  StyledTablePanelErrorCell,
   StyledTableRow,
+  StyledTableRowPanel,
+  StyledTableRowPanelTable,
   getTableTextSize,
   splitLayoutProps,
   type TableStyleProps,
@@ -134,17 +134,17 @@ export type TableAddRowSource = 'foot' | 'head';
 
 /**
  * TableCellRenderContext — представляет контекст рендера ячейки таблицы.
- * Передаётся в `renderCell`, `renderComposeCell` и `renderEditCell`.
+ * Передаётся в `renderCell`, `renderAddCell` и `renderEditCell`.
  *
- * @property composeError — текст ошибки панели добавления для связи с полем
- * @property composeErrorId — id полоски ошибки панели добавления для `aria-describedby`
+ * @property addError — текст ошибки панели добавления для связи с полем
+ * @property addErrorId — id полоски ошибки панели добавления для `aria-describedby`
  * @property editError — текст ошибки панели редактирования для связи с полем
  * @property editErrorId — id полоски ошибки панели редактирования для `aria-describedby`
  * @property textSize — размер текста ячейки по `sizePreset` таблицы
  */
 export type TableCellRenderContext = {
-  composeError?: string;
-  composeErrorId?: string;
+  addError?: string;
+  addErrorId?: string;
   editError?: string;
   editErrorId?: string;
   textSize: TextSizePreset;
@@ -178,10 +178,10 @@ export type TableColumn<Row> = {
 };
 
 /**
- * DEFAULT_COMPOSE_HINT — задаёт подсказку в полоске ошибки панели добавления по умолчанию.
- * Используется, когда вызывающий код не передал проп `composeHint`.
+ * DEFAULT_ADD_HINT — задаёт подсказку в полоске ошибки панели добавления по умолчанию.
+ * Используется, когда вызывающий код не передал проп `addHint`.
  */
-const DEFAULT_COMPOSE_HINT =
+const DEFAULT_ADD_HINT =
   'Press Esc to close without saving, or Enter to add the row. Use Tab to move between fields.';
 
 /**
@@ -191,26 +191,26 @@ const DEFAULT_COMPOSE_HINT =
 const DEFAULT_EDIT_HINT = 'Press Esc to close without saving, or Enter to save changes.';
 
 /**
- * TableComposeProps — представляет пропсы панели добавления строки Table.
+ * TableAddProps — представляет пропсы панели добавления строки Table.
  *
- * @property composeError — текст ошибки панели добавления строки
- * @property composeHint — текст подсказки в полоске ошибки панели добавления, пока нет
- *   `composeError`
- * @property composeRowActive — включает режим панели добавления строки
- * @property composeRowSource — якорь панели: шапка или футер
+ * @property addError — текст ошибки панели добавления строки
+ * @property addHint — текст подсказки в полоске ошибки панели добавления, пока нет
+ *   `addError`
+ * @property addRowActive — включает режим панели добавления строки
+ * @property addRowSource — якорь панели: шапка или футер
+ * @property onAddCancel — обработчик отмены добавления строки
  * @property onAddRow — обработчик запроса на добавление строки из шапки или футера.
  *   Без колбэка кнопка «+» видна, но недоступна. Активна только при `editable`
- * @property onComposeCancel — обработчик отмены добавления строки
- * @property renderComposeCell — рендер содержимого ячейки в панели добавления
+ * @property renderAddCell — рендер содержимого ячейки в панели добавления
  */
-type TableComposeProps<Row> = {
-  composeError?: string;
-  composeHint?: string;
-  composeRowActive?: boolean;
-  composeRowSource?: TableAddRowSource;
+type TableAddProps<Row> = {
+  addError?: string;
+  addHint?: string;
+  addRowActive?: boolean;
+  addRowSource?: TableAddRowSource;
+  onAddCancel?: () => void;
   onAddRow?: (source: TableAddRowSource) => void;
-  onComposeCancel?: () => void;
-  renderComposeCell?: (
+  renderAddCell?: (
     column: TableColumn<Row>,
     context: TableCellRenderContext
   ) => ReactNode;
@@ -293,7 +293,7 @@ type TableProps<Row> = {
   editable?: boolean;
   numbered?: boolean;
   rows: Row[];
-} & TableComposeProps<Row> &
+} & TableAddProps<Row> &
   TableEditProps<Row> &
   TableStyleProps &
   (
@@ -301,7 +301,7 @@ type TableProps<Row> = {
         ComponentPropsWithRef<'table'>,
         | 'className'
         | 'style'
-        | keyof TableComposeProps<Row>
+        | keyof TableAddProps<Row>
         | keyof TableEditProps<Row>
         | keyof TableStyleProps
       >)
@@ -310,7 +310,7 @@ type TableProps<Row> = {
           ComponentPropsWithRef<'table'>,
           | 'className'
           | 'style'
-          | keyof TableComposeProps<Row>
+          | keyof TableAddProps<Row>
           | keyof TableEditProps<Row>
           | keyof TableSelectionProps<Row>
           | keyof TableStyleProps
@@ -540,20 +540,20 @@ function TableBodyRow<Row>({
 }
 
 /**
- * applyTableComposePanelPosition — задаёт геометрию compose-панели относительно якоря.
+ * applyTableAddPanelPosition — задаёт геометрию add-панели относительно якоря.
  *
  * @param anchor элемент-якорь шапки или футера
  * @param panel корневой элемент панели
- * @param composeRowSource сторона якоря: шапка или футер
+ * @param addRowSource сторона якоря: шапка или футер
  */
-function applyTableComposePanelPosition(
+function applyTableAddPanelPosition(
   anchor: HTMLElement,
   panel: HTMLElement,
-  composeRowSource: TableAddRowSource
+  addRowSource: TableAddRowSource
 ): void {
   const rect = anchor.getBoundingClientRect();
   const rowHeight = rect.height;
-  const errorRow = panel.querySelector('[data-compose-error]');
+  const errorRow = panel.querySelector('[data-add-error]');
   const errorRowHeight = errorRow instanceof HTMLElement ? errorRow.offsetHeight : 0;
   const contentHeight = rowHeight * 2 + errorRowHeight;
 
@@ -561,7 +561,7 @@ function applyTableComposePanelPosition(
   panel.style.insetInlineStart = `${rect.left}px`;
   panel.style.blockSize = `${contentHeight}px`;
 
-  if (composeRowSource === 'head') {
+  if (addRowSource === 'head') {
     panel.style.insetBlockStart = `${rect.top}px`;
     return;
   }
@@ -614,11 +614,11 @@ function applyTableEditPanelPosition(anchor: HTMLElement, panel: HTMLElement): v
  */
 export function Table<Row>(props: TableProps<Row>) {
   const {
+    addError,
+    addHint = DEFAULT_ADD_HINT,
+    addRowActive: addRowActiveProp = false,
+    addRowSource,
     columns,
-    composeError,
-    composeHint = DEFAULT_COMPOSE_HINT,
-    composeRowActive: composeRowActiveProp = false,
-    composeRowSource,
     editError,
     editHint = DEFAULT_EDIT_HINT,
     editRowActive: editRowActiveProp = false,
@@ -626,11 +626,11 @@ export function Table<Row>(props: TableProps<Row>) {
     editable = false,
     hoverHighlight,
     numbered,
+    onAddCancel,
     onAddRow: onAddRowProp,
-    onComposeCancel,
     onEditCancel,
     onEditRow: onEditRowProp,
-    renderComposeCell,
+    renderAddCell,
     renderEditCell,
     rows,
     showBorder,
@@ -644,14 +644,14 @@ export function Table<Row>(props: TableProps<Row>) {
   const resolvedNumbered = numbered ?? DEFAULT_TABLE_NUMBERED;
   const resolvedStriped = striped ?? DEFAULT_TABLE_STRIPED;
 
-  // Переключатель editable: без него таблица только выводит строки, без добавления,
+  // Проп editable: без него таблица только выводит строки, без добавления,
   // редактирования, порталов и long-press.
-  const composeRowActive = editable && composeRowActiveProp;
+  const addRowActive = editable && addRowActiveProp;
   const editRowActive = editable && editRowActiveProp;
   const onAddRow = editable ? onAddRowProp : undefined;
   const onEditRow = editable ? onEditRowProp : undefined;
 
-  const composeErrorId = useId();
+  const addErrorId = useId();
   const editErrorId = useId();
 
   const checkable = props.checkable === true;
@@ -695,15 +695,13 @@ export function Table<Row>(props: TableProps<Row>) {
   // считается всеми, поэтому галка ставится и снимается и для единственной строки.
   const headerSelectionActive = hasBulkSelection || allRowsSelected;
   const actionsColumnKey = checkable ? props.selectedRowActionsColumnKey : undefined;
-  const hideHeadAnchor = composeRowActive && composeRowSource === 'head';
-  const hideFootAnchor = composeRowActive && composeRowSource === 'foot';
+  const hideHeadAnchor = addRowActive && addRowSource === 'head';
+  const hideFootAnchor = addRowActive && addRowSource === 'foot';
   const [showFootHeader, setShowFootHeader] = useState(false);
   const showFootHeaderRow =
-    checkable && (showFootHeader || (composeRowActive && composeRowSource === 'foot'));
-  const showComposePanel =
-    composeRowActive &&
-    composeRowSource !== undefined &&
-    renderComposeCell !== undefined;
+    checkable && (showFootHeader || (addRowActive && addRowSource === 'foot'));
+  const showAddPanel =
+    addRowActive && addRowSource !== undefined && renderAddCell !== undefined;
   const editingRow =
     editRowActive && editRowKey !== undefined
       ? rows.find((row, rowIndex) =>
@@ -717,13 +715,13 @@ export function Table<Row>(props: TableProps<Row>) {
     editRowKey !== undefined &&
     editingRow !== undefined &&
     renderEditCell !== undefined;
-  const composeErrorMessage = composeError?.trim() ?? '';
-  const hasComposeError = composeErrorMessage !== '';
+  const addErrorMessage = addError?.trim() ?? '';
+  const hasAddError = addErrorMessage !== '';
   const editErrorMessage = editError?.trim() ?? '';
   const hasEditError = editErrorMessage !== '';
-  const composeCellContext: TableCellRenderContext = {
-    composeError: hasComposeError ? composeErrorMessage : undefined,
-    composeErrorId,
+  const addCellContext: TableCellRenderContext = {
+    addError: hasAddError ? addErrorMessage : undefined,
+    addErrorId,
     textSize,
   };
   const editCellContext: TableCellRenderContext = {
@@ -799,16 +797,21 @@ export function Table<Row>(props: TableProps<Row>) {
           <TableHeaderLeadSpacers reserveCheckbox />
         )}
         {(interactive && editable && (
-          <StyledTableHeaderAddButton
+          <Icon
             aria-label="Add row"
-            disabled={!onAddRow || composeRowActive || editRowActive}
+            as="button"
+            disabled={!onAddRow || addRowActive || editRowActive}
             ref={addSource === 'head' ? headAddButtonRef : footAddButtonRef}
-            tabIndex={onAddRow && !composeRowActive && !editRowActive ? undefined : -1}
-            type="button"
+            shape="rounded"
+            showBorder
+            sizePreset="tiny"
+            tabIndex={onAddRow && !addRowActive && !editRowActive ? undefined : -1}
             onClick={() => {
               onAddRow?.(addSource);
             }}
-          />
+          >
+            <PlusIcon />
+          </Icon>
         )) ||
           (!interactive && <TableHeaderLeadSpacers reserveAddButton />) ||
           null}
@@ -866,22 +869,22 @@ export function Table<Row>(props: TableProps<Row>) {
     </>
   );
 
-  const renderComposeCells = (): ReactNode => (
+  const renderAddCells = (): ReactNode => (
     <>
       {separateCheckboxColumn && <TableCell align="center" sizePreset={sizePreset} />}
       {resolvedNumbered && <TableCell align="end" sizePreset={sizePreset} />}
       {columns.map((column) => {
-        const composeCellContent = renderComposeCell?.(column, composeCellContext);
+        const addCellContent = renderAddCell?.(column, addCellContext);
         const cellBody =
           (checkable &&
             rowCheckboxColumnKey !== undefined &&
             column.key === rowCheckboxColumnKey && (
               <StyledTableCellLead>
                 <TableHeaderLeadSpacers reserveAddButton reserveCheckbox />
-                {composeCellContent}
+                {addCellContent}
               </StyledTableCellLead>
             )) ||
-          composeCellContent;
+          addCellContent;
 
         return (
           <TableCell
@@ -946,29 +949,24 @@ export function Table<Row>(props: TableProps<Row>) {
     );
   };
 
-  const composeColumnCount =
+  const addColumnCount =
     (separateCheckboxColumn ? 1 : 0) + (resolvedNumbered ? 1 : 0) + columns.length;
 
-  const renderErrorRow = (variant: 'compose' | 'edit'): ReactNode => {
-    const isCompose = variant === 'compose';
-    const errorRowProps = isCompose
-      ? { 'data-compose-error': '' }
-      : { 'data-edit-error': '' };
+  const renderErrorRow = (variant: 'add' | 'edit'): ReactNode => {
+    const isAdd = variant === 'add';
+    const errorRowProps = isAdd ? { 'data-add-error': '' } : { 'data-edit-error': '' };
 
     return (
       <StyledTableRow {...errorRowProps} sizePreset={sizePreset}>
-        <StyledTableComposeErrorCell
-          colSpan={composeColumnCount}
-          sizePreset={sizePreset}
-        >
+        <StyledTablePanelErrorCell colSpan={addColumnCount} sizePreset={sizePreset}>
           <FieldError
-            id={isCompose ? composeErrorId : editErrorId}
-            placeholder={isCompose ? composeHint : editHint}
+            id={isAdd ? addErrorId : editErrorId}
+            placeholder={isAdd ? addHint : editHint}
             reserveErrorSpace
           >
-            {isCompose ? composeError : editError}
+            {isAdd ? addError : editError}
           </FieldError>
-        </StyledTableComposeErrorCell>
+        </StyledTablePanelErrorCell>
       </StyledTableRow>
     );
   };
@@ -1020,63 +1018,63 @@ export function Table<Row>(props: TableProps<Row>) {
     };
   }, [checkable, columns.length, rows.length]);
 
-  const composeAnchorRef = composeRowSource === 'head' ? headAnchorRef : footAnchorRef;
+  const addAnchorRef = addRowSource === 'head' ? headAnchorRef : footAnchorRef;
 
-  const composePanel = (
+  const addPanel = (
     <AnchoredPortal
-      dismissActive={showComposePanel && onComposeCancel !== undefined}
+      dismissActive={showAddPanel && onAddCancel !== undefined}
       dismissZoneRefs={[panelRef]}
-      open={showComposePanel}
+      open={showAddPanel}
       panelRef={panelRef}
       positionStrategy={{
-        anchorRef: composeAnchorRef,
+        anchorRef: addAnchorRef,
         apply: (anchor, panel) => {
-          if (composeRowSource === undefined) {
+          if (addRowSource === undefined) {
             return;
           }
 
-          applyTableComposePanelPosition(anchor, panel, composeRowSource);
+          applyTableAddPanelPosition(anchor, panel, addRowSource);
         },
-        layoutDeps: [composeRowSource, hasComposeError, rows.length, columns.length],
+        layoutDeps: [addRowSource, hasAddError, rows.length, columns.length],
       }}
-      returnFocusRef={composeRowSource === 'foot' ? footAddButtonRef : headAddButtonRef}
-      onDismiss={() => onComposeCancel?.()}
+      returnFocusRef={addRowSource === 'foot' ? footAddButtonRef : headAddButtonRef}
+      onDismiss={() => onAddCancel?.()}
     >
-      <StyledTableComposePanel
-        $hasError={hasComposeError}
+      <StyledTableRowPanel
+        $hasError={hasAddError}
         aria-label="Add row"
         aria-modal="true"
         ref={panelRef}
         role="dialog"
         sizePreset={sizePreset}
       >
-        <StyledTableComposeInnerTable tableLayout={fixed ? 'fixed' : 'auto'}>
+        <StyledTableRowPanelTable tableLayout={fixed ? 'fixed' : 'auto'}>
           {renderColgroup()}
           <tbody>
-            {composeRowSource === 'head' ? (
+            {addRowSource === 'head' ? (
               <>
-                <StyledTableRow data-compose-header sizePreset={sizePreset}>
+                <StyledTableRow data-add-header sizePreset={sizePreset}>
                   {renderHeaderCells(true, 'head', false)}
                 </StyledTableRow>
-                <StyledTableRow data-compose-row sizePreset={sizePreset}>
-                  {renderComposeCells()}
+                <StyledTableRow data-add-row sizePreset={sizePreset}>
+                  {renderAddCells()}
                 </StyledTableRow>
-                {renderErrorRow('compose')}
+                {renderErrorRow('add')}
               </>
             ) : (
               <>
-                <StyledTableRow data-compose-row sizePreset={sizePreset}>
-                  {renderComposeCells()}
+                <StyledTableRow data-add-row sizePreset={sizePreset}>
+                  {renderAddCells()}
                 </StyledTableRow>
-                {renderErrorRow('compose')}
-                <StyledTableRow data-compose-footer sizePreset={sizePreset}>
+                {renderErrorRow('add')}
+                <StyledTableRow data-add-footer sizePreset={sizePreset}>
                   {renderHeaderCells(false, 'foot', false)}
                 </StyledTableRow>
               </>
             )}
           </tbody>
-        </StyledTableComposeInnerTable>
-      </StyledTableComposePanel>
+        </StyledTableRowPanelTable>
+      </StyledTableRowPanel>
     </AnchoredPortal>
   );
 
@@ -1095,7 +1093,7 @@ export function Table<Row>(props: TableProps<Row>) {
         returnFocusRef={editRowAnchorRef}
         onDismiss={() => onEditCancel?.()}
       >
-        <StyledTableComposePanel
+        <StyledTableRowPanel
           $hasError={hasEditError}
           aria-label="Edit row"
           aria-modal="true"
@@ -1103,7 +1101,7 @@ export function Table<Row>(props: TableProps<Row>) {
           role="dialog"
           sizePreset={sizePreset}
         >
-          <StyledTableComposeInnerTable tableLayout={fixed ? 'fixed' : 'auto'}>
+          <StyledTableRowPanelTable tableLayout={fixed ? 'fixed' : 'auto'}>
             {renderColgroup()}
             <tbody>
               <StyledTableRow data-edit-row sizePreset={sizePreset}>
@@ -1111,8 +1109,8 @@ export function Table<Row>(props: TableProps<Row>) {
               </StyledTableRow>
               {renderErrorRow('edit')}
             </tbody>
-          </StyledTableComposeInnerTable>
-        </StyledTableComposePanel>
+          </StyledTableRowPanelTable>
+        </StyledTableRowPanel>
       </AnchoredPortal>
     ) : null;
 
@@ -1124,7 +1122,7 @@ export function Table<Row>(props: TableProps<Row>) {
         tableLayout={fixed ? 'fixed' : 'auto'}
       >
         {renderColgroup()}
-        <StyledTableHead $composeHidden={hideHeadAnchor} ref={headAnchorRef}>
+        <StyledTableHead $addHidden={hideHeadAnchor} ref={headAnchorRef}>
           <StyledTableRow sizePreset={sizePreset}>
             {renderHeaderCells(true, 'head', true)}
           </StyledTableRow>
@@ -1180,14 +1178,14 @@ export function Table<Row>(props: TableProps<Row>) {
           })}
         </StyledTableBody>
         {showFootHeaderRow && (
-          <StyledTableFoot $composeHidden={hideFootAnchor} ref={footAnchorRef}>
+          <StyledTableFoot $addHidden={hideFootAnchor} ref={footAnchorRef}>
             <StyledTableRow sizePreset={sizePreset}>
               {renderHeaderCells(false, 'foot', true)}
             </StyledTableRow>
           </StyledTableFoot>
         )}
       </StyledTable>
-      {composePanel}
+      {addPanel}
       {editPanel}
     </>
   );
@@ -1202,7 +1200,6 @@ export function Table<Row>(props: TableProps<Row>) {
 export { TableCell } from './table-cell';
 export type { TableCellAlign } from './table-cell';
 export { TableGroupCell } from './table-group-cell';
-export { TableGroupExpander } from './table-group-expander';
 export { TableInlineField } from './table-inline-field';
 export { TableMemberPrefix, TableNestedCell } from './table-nested-cell';
 export type {
@@ -1210,7 +1207,7 @@ export type {
   TableSizePreset,
   TableStyleProps,
 } from './table.styles';
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста, утилит sizing и дефолтов осей Table */
+/* eslint-disable react-refresh/only-export-components -- реэкспорт утилит sizing и дефолтов осей Table */
 export {
   DEFAULT_TABLE_HOVER_HIGHLIGHT,
   DEFAULT_TABLE_NUMBERED,
@@ -1218,5 +1215,4 @@ export {
   DEFAULT_TABLE_SIZE_PRESET,
   DEFAULT_TABLE_STRIPED,
   computeTableColumnInlineSizes,
-  getTableTextSize,
 } from './table.styles';

@@ -3,12 +3,14 @@
  * Определяет внешний вид компонента Icon.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `IconStyleProps`, `IconPosition` и `IconShapePreset`
- * 2. Хранить локальные ряды габарита в `iconSize` и отступов в `iconPadding`
+ * 1. Типизировать пропсы через `IconStyleProps`, `IconPosition`, `IconShapePreset`
+ *    и `IconSizePreset`
+ * 2. Хранить локальные ряды габарита в `iconSize` и отступов в `iconPadding`;
+ *    радиус `rounded` для `tiny` — в `ICON_TINY_ROUNDED_RADIUS`
  * 3. Предоставить функции `getIconSize` и `getIconPadding`, дефолт
  *    `DEFAULT_ICON_POSITION`, перечни `ICON_POSITION_KEYS`,
- *    `ICON_SHAPE_PRESET_KEYS` и `ICON_SETTING_PROP_NAMES`, а также хелперы
- *    секции на родителе: `getIconPositionStyles` и
+ *    `ICON_SHAPE_PRESET_KEYS`, `ICON_SIZE_PRESET_KEYS` и `ICON_SETTING_PROP_NAMES`,
+ *    а также хелперы секции на родителе: `getIconPositionStyles` и
  *    `resolveIconStateBackground`
  * 4. Предоставить styled-узел `StyledIcon`
  *
@@ -46,12 +48,31 @@ import {
 } from '@ui/tones';
 
 /**
+ * IconSizePreset — представляет размерный ряд окна Icon.
+ * Расширяет канонический `SizePreset` ключом `tiny` под бокс Checkbox размера
+ * `small`, не добавляя его в общий ряд контролов.
+ */
+export type IconSizePreset = 'tiny' | SizePreset;
+
+/**
  * iconSize — хранит габарит окна иконки для каждого размера ряда.
- * Окно повторяет квадрат контрола своего размера из `minBlockSize`.
+ * Ключи канона — квадрат контрола из `minBlockSize`; `tiny` — бокс Checkbox
+ * размера `small`. Используется в иконочных кнопках Table: добавление строки
+ * и шеврон группы.
  */
 const iconSize = {
+  tiny: 12,
   ...minBlockSize,
-} as const satisfies Record<SizePreset, SpacingValue>;
+} as const satisfies Record<IconSizePreset, SpacingValue>;
+
+/**
+ * ICON_SIZE_PRESET_KEYS — формирует перечень размеров окна Icon из ключей `iconSize`.
+ * Используется в панелях настроек витрины дизайн-системы: `SizeListbox`
+ * принимает его пропом `sizes`.
+ */
+export const ICON_SIZE_PRESET_KEYS = Object.freeze(
+  Object.keys(iconSize) as IconSizePreset[]
+);
 
 /**
  * getIconSize — возвращает ключ шкалы габарита окна иконки по `sizePreset`.
@@ -59,21 +80,22 @@ const iconSize = {
  * @param sizePreset размер окна иконки
  * @returns ключ шкалы отступов из `@ui/spacing`
  */
-export function getIconSize(sizePreset: SizePreset): SpacingValue {
+export function getIconSize(sizePreset: IconSizePreset): SpacingValue {
   return iconSize[sizePreset];
 }
 
 /**
  * iconPadding — хранит внутренний отступ окна иконки для каждого размера ряда.
- * Ключ — размер из `SizePreset`, значение — ключ шкалы отступов из `@ui/spacing`.
- * Вместе с квадратом из `iconSize` задаёт окно под svg: 24/28/32
- * для `small`/`normal`/`large` по контракту оси иконки.
+ * Вместе с квадратом из `iconSize` задаёт окно под svg. У `tiny` отступ `0`:
+ * глиф с оптическим внутренним отступом viewBox читается на боксе `tiny`
+ * без дополнительного отступа.
  */
 const iconPadding = {
-  small: 4,
-  normal: 6,
   large: 8,
-} as const satisfies Record<SizePreset, SpacingValue>;
+  normal: 6,
+  small: 4,
+  tiny: 0,
+} as const satisfies Record<IconSizePreset, SpacingValue>;
 
 /**
  * getIconPadding — возвращает ключ шкалы внутреннего отступа окна иконки по `sizePreset`.
@@ -83,9 +105,16 @@ const iconPadding = {
  * @param sizePreset размер окна иконки
  * @returns ключ шкалы отступов из `@ui/spacing`
  */
-export function getIconPadding(sizePreset: SizePreset): SpacingValue {
+export function getIconPadding(sizePreset: IconSizePreset): SpacingValue {
   return iconPadding[sizePreset];
 }
+
+/**
+ * ICON_TINY_ROUNDED_RADIUS — задаёт радиус формы `rounded` для размера `tiny`.
+ * Паритет с боксом Checkbox размера `small`; ключи канона берут радиус из
+ * `resolveBlockRadius`.
+ */
+const ICON_TINY_ROUNDED_RADIUS = 4;
 
 /**
  * IconShapePreset — представляет форму окна иконки.
@@ -105,20 +134,23 @@ export const ICON_SHAPE_PRESET_KEYS = Object.freeze([
 
 /**
  * resolveIconBorderRadius — возвращает значение для CSS-свойства `border-radius`
- * по `shape`.
+ * по `shape` и `sizePreset`.
  *
  * Как работает:
  * 1. Для `square` отдаёт `0`
  * 2. Для `round` отдаёт `50%`: круг при любом габарите, в том числе через layout
  *    `inlineSize`/`blockSize`
- * 3. Для `rounded` отдаёт скругление через `resolveBlockRadius` с формой `rounded`
- *    и габаритом окна
+ * 3. Для `rounded` при `tiny` — `ICON_TINY_ROUNDED_RADIUS`; иначе —
+ *    `resolveBlockRadius` с формой `rounded` и габаритом окна
  *
  * @param shape форма окна иконки
- * @param size габарит окна в CSS
+ * @param sizePreset размер окна иконки
  * @returns значение для CSS-свойства `border-radius`
  */
-function resolveIconBorderRadius(shape: IconShapePreset, size: string): string {
+function resolveIconBorderRadius(
+  shape: IconShapePreset,
+  sizePreset: IconSizePreset
+): string {
   if (shape === 'square') {
     return '0';
   }
@@ -127,7 +159,11 @@ function resolveIconBorderRadius(shape: IconShapePreset, size: string): string {
     return '50%';
   }
 
-  return resolveBlockRadius('rounded', size);
+  if (sizePreset === 'tiny') {
+    return getSpacingValue(ICON_TINY_ROUNDED_RADIUS);
+  }
+
+  return resolveBlockRadius('rounded', getSpacingValue(getIconSize(sizePreset)));
 }
 
 /**
@@ -279,7 +315,7 @@ export type IconStyleProps = LayoutProps &
     interactive?: boolean;
     shape?: IconShapePreset;
     showHover?: boolean;
-    sizePreset?: SizePreset;
+    sizePreset?: IconSizePreset;
   };
 
 /**
@@ -327,10 +363,10 @@ const DEFAULT_ICON_SHOW_HOVER = true;
  * внутренний отступ, форму, рамку, статичную поверхность и канал состояний.
  *
  * Как работает:
- * 1. Собирает квадрат окна через `getIconSize` и `getSpacingValue` и внутренний
- *    отступ через `getIconPadding` и `getSpacingValue` по `sizePreset`
- * 2. Задаёт `border-radius` через `resolveIconBorderRadius` по `shape`. Без
- *    `shape` подставляет `DEFAULT_ICON_SHAPE`
+ * 1. Собирает квадрат окна через `getIconSize` и внутренний отступ через
+ *    `getIconPadding` по `sizePreset`
+ * 2. Задаёт `border-radius` через `resolveIconBorderRadius` по `shape` и
+ *    `sizePreset`. Без `shape` подставляет `DEFAULT_ICON_SHAPE`
  * 3. Кладёт рамку с тенью через `getBorderStyles`. Без `showBorder` рамка
  *    выключена через `DEFAULT_ICON_SHOW_BORDER`
  * 4. Считает статичную заливку и цвет глифа через `resolveIconSurface`
@@ -366,7 +402,7 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
     `inline-size: ${size};`,
     `block-size: ${size};`,
     `padding: ${getSpacingValue(getIconPadding(sizePreset))};`,
-    `border-radius: ${resolveIconBorderRadius(shape, size)};`,
+    `border-radius: ${resolveIconBorderRadius(shape, sizePreset)};`,
     getBorderStyles(theme, showBorder, showShadow, borderTone),
   ];
 

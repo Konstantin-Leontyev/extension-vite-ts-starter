@@ -4,15 +4,16 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `TableStyleProps` и `TableSizePreset`
- * 2. Предоставить дефолты `DEFAULT_TABLE_SIZE_PRESET`, `DEFAULT_TABLE_SHOW_BORDER`,
- *    `DEFAULT_TABLE_HOVER_HIGHLIGHT`, `DEFAULT_TABLE_STRIPED` и `DEFAULT_TABLE_NUMBERED`
- * 3. Предоставить функцию `getTableTextSize`
+ * 2. Хранить габарит бокса Checkbox / Icon `tiny` в `TABLE_HEADER_MARK_BLOCK_SIZE`
+ *    для спейсера выравнивания в шапке
+ * 3. Предоставить функцию `getTableTextSize`, а также дефолты `DEFAULT_TABLE_SIZE_PRESET`,
+ *    `DEFAULT_TABLE_SHOW_BORDER`, `DEFAULT_TABLE_HOVER_HIGHLIGHT`, `DEFAULT_TABLE_STRIPED`
+ *    и `DEFAULT_TABLE_NUMBERED`
  * 4. Предоставить styled-узлы `StyledTableClip`, `StyledTable`, `StyledTableCol`,
  *    `StyledTableHead`, `StyledTableFoot`, `StyledTableBody`, `StyledTableRow`,
- *    `StyledTableComposePanel`, `StyledTableComposeInnerTable`,
- *    `StyledTableComposeErrorCell`, `StyledTableHeaderAddButton`,
- *    `StyledTableHeaderMarkSpacer`, `StyledTableHeaderKeywordBar` и
- *    `StyledTableCellTrailing`
+ *    `StyledTableRowPanel`, `StyledTableRowPanelTable`,
+ *    `StyledTablePanelErrorCell`, `StyledTableHeaderMarkSpacer`,
+ *    `StyledTableHeaderKeywordBar` и `StyledTableCellTrailing`
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  * 6. Реэкспортировать `computeTableColumnInlineSizes` и тип `TableColumnSizeConfig`
  *
@@ -92,9 +93,10 @@ export function getTableTextSize(sizePreset?: SizePreset): TextSizePreset {
 
 /**
  * TABLE_EDGE_BORDER_WIDTH — задаёт толщину рамки шапки и подвала таблицы.
- * Используется в `StyledTableHead`, `StyledTableFoot` и строках compose-панели.
+ * Используется в `StyledTableHead`, `StyledTableFoot` и строках add-панели.
  */
 const TABLE_EDGE_BORDER_WIDTH = '2px';
+
 /**
  * resolveTableHeadFill — возвращает приглушённую заливку шапки и подвала.
  * Контрастирует с телом таблицы на поверхности Card.
@@ -117,7 +119,7 @@ function resolveTableStripeFill(theme: AppTheme): string {
 }
 
 /**
- * resolveTableRowHoverFill — возвращает заливку строки при наведении и кнопки «+» в шапке.
+ * resolveTableRowHoverFill — возвращает заливку строки при наведении.
  *
  * @param theme текущая тема
  * @returns значение для CSS-свойства `background-color`
@@ -236,40 +238,40 @@ export const StyledTableCol = styled.col.withConfig({
 
 /**
  * StyledTableHead — задаёт шапку компонента Table.
- * Базируется на `<thead>` и принимает проп `$composeHidden`.
+ * Базируется на `<thead>` и принимает проп `$addHidden`.
  *
  * Встроенные стили:
  *  - заливка и нижняя граница на `th` — контраст с телом на уровне секции, не на каждой ячейке
- *  - `visibility: hidden` при `$composeHidden` — скрывает якорь compose-панели, оставляя место в потоке
+ *  - `visibility: hidden` при `$addHidden` — скрывает якорь add-панели, оставляя место в потоке
  */
 export const StyledTableHead = styled.thead.withConfig({
-  shouldForwardProp: (prop) => prop !== '$composeHidden',
-})<{ $composeHidden?: boolean }>`
+  shouldForwardProp: (prop) => prop !== '$addHidden',
+})<{ $addHidden?: boolean }>`
   & th {
     background-color: ${(props) => resolveTableHeadFill(getTheme(props))};
     border-block-end: ${TABLE_EDGE_BORDER_WIDTH} solid
       ${(props) => getTheme(props).colors.border};
   }
-  ${(props) => (props.$composeHidden ? 'visibility: hidden;' : '')}
+  ${(props) => (props.$addHidden ? 'visibility: hidden;' : '')}
 `;
 
 /**
  * StyledTableFoot — задаёт подвал компонента Table.
- * Базируется на `<tfoot>` и принимает проп `$composeHidden`.
+ * Базируется на `<tfoot>` и принимает проп `$addHidden`.
  *
  * Встроенные стили:
  *  - заливка и верхняя граница на `td` — тот же контраст, что у шапки
- *  - `visibility: hidden` при `$composeHidden` — скрывает якорь compose-панели, оставляя место в потоке
+ *  - `visibility: hidden` при `$addHidden` — скрывает якорь add-панели, оставляя место в потоке
  */
 export const StyledTableFoot = styled.tfoot.withConfig({
-  shouldForwardProp: (prop) => prop !== '$composeHidden',
-})<{ $composeHidden?: boolean }>`
+  shouldForwardProp: (prop) => prop !== '$addHidden',
+})<{ $addHidden?: boolean }>`
   & td {
     background-color: ${(props) => resolveTableHeadFill(getTheme(props))};
     border-block-start: ${TABLE_EDGE_BORDER_WIDTH} solid
       ${(props) => getTheme(props).colors.border};
   }
-  ${(props) => (props.$composeHidden ? 'visibility: hidden;' : '')}
+  ${(props) => (props.$addHidden ? 'visibility: hidden;' : '')}
 `;
 
 /**
@@ -363,7 +365,7 @@ export const StyledTableRow = styled.tr.withConfig({
 `;
 
 /**
- * StyledTableComposePanel — задаёт панель compose- и edit-режима компонента Table.
+ * StyledTableRowPanel — задаёт панель add- и edit-режима компонента Table.
  * Базируется на `<div>` и принимает пропсы `$hasError` и `sizePreset`.
  *
  * Встроенные стили:
@@ -376,7 +378,7 @@ export const StyledTableRow = styled.tr.withConfig({
  *  - `getOutlineStyles` — постоянный `outline`: при ошибке — `invalidOutline`, иначе `focusOutline`
  *  - `getBorderStyles` — рамка с тенью
  */
-export const StyledTableComposePanel = styled.div.withConfig({
+export const StyledTableRowPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== 'sizePreset' && prop !== '$hasError',
 })<{ $hasError?: boolean; sizePreset?: TableSizePreset }>`
   position: fixed;
@@ -397,28 +399,28 @@ export const StyledTableComposePanel = styled.div.withConfig({
 `;
 
 /**
- * getTableComposeInnerTableStyles — возвращает CSS-правила для узла
- * `StyledTableComposeInnerTable`: заливку и границы строк шапки и подвала панели
+ * getTableRowPanelTableStyles — возвращает CSS-правила для узла
+ * `StyledTableRowPanelTable`: заливку и границы строк шапки и подвала панели
  * по data-маркерам.
  *
  * Как работает:
  * 1. Берёт тему
- * 2. Красит `[data-compose-header] th` заливкой шапки и нижней границей секции
- * 3. Красит `[data-compose-footer] td` той же заливкой и верхней границей
+ * 2. Красит `[data-add-header] th` заливкой шапки и нижней границей секции
+ * 3. Красит `[data-add-footer] td` той же заливкой и верхней границей
  * 4. Отдаёт правила для подстановки в CSS-шаблон
  *
  * @param props объект с темой
  * @returns CSS-правила, каждое с новой строки
  */
-function getTableComposeInnerTableStyles(props: { theme: AppTheme }): string {
+function getTableRowPanelTableStyles(props: { theme: AppTheme }): string {
   const theme = getTheme(props);
 
   return `
-    & [data-compose-header] th {
+    & [data-add-header] th {
       background-color: ${resolveTableHeadFill(theme)};
       border-block-end: ${TABLE_EDGE_BORDER_WIDTH} solid ${theme.colors.border};
     }
-    & [data-compose-footer] td {
+    & [data-add-footer] td {
       background-color: ${resolveTableHeadFill(theme)};
       border-block-start: ${TABLE_EDGE_BORDER_WIDTH} solid ${theme.colors.border};
     }
@@ -426,7 +428,7 @@ function getTableComposeInnerTableStyles(props: { theme: AppTheme }): string {
 }
 
 /**
- * StyledTableComposeInnerTable — задаёт внутреннюю таблицу compose- и edit-панели.
+ * StyledTableRowPanelTable — задаёт внутреннюю таблицу add- и edit-панели.
  * Базируется на `<table>` и принимает проп `tableLayout`.
  *
  * Встроенные стили:
@@ -435,23 +437,23 @@ function getTableComposeInnerTableStyles(props: { theme: AppTheme }): string {
  *  - `border-collapse: collapse` — общие границы ячеек без зазоров
  *
  * Генерация стилей:
- *  - `getTableComposeInnerTableStyles` — заливка и границы шапки и подвала панели
+ *  - `getTableRowPanelTableStyles` — заливка и границы шапки и подвала панели
  *
- * Собственной рамки у таблицы нет: хром несёт `StyledTableComposePanel`.
+ * Собственной рамки у таблицы нет: хром несёт `StyledTableRowPanel`.
  * Секций `thead` и `tfoot` в портале нет — фон и границы шапки и подвала панели
  * задаются по data-маркерам строк.
  */
-export const StyledTableComposeInnerTable = styled.table.withConfig({
+export const StyledTableRowPanelTable = styled.table.withConfig({
   shouldForwardProp: (prop) => prop !== 'tableLayout',
 })<{ tableLayout?: 'auto' | 'fixed' }>`
   inline-size: 100%;
   table-layout: ${(props) => props.tableLayout ?? 'fixed'};
   border-collapse: collapse;
-  ${(props) => getTableComposeInnerTableStyles(props)}
+  ${(props) => getTableRowPanelTableStyles(props)}
 `;
 
 /**
- * StyledTableComposeErrorCell — задаёт ячейку строки ошибки compose- и edit-панели.
+ * StyledTablePanelErrorCell — задаёт ячейку строки ошибки add- и edit-панели.
  * Базируется на `<td>` и принимает проп `sizePreset`.
  *
  * Встроенные стили:
@@ -459,7 +461,7 @@ export const StyledTableComposeInnerTable = styled.table.withConfig({
  *  - `vertical-align: middle` и `text-align: center` — выравнивание текста ошибки
  *  - `border-block-end: none` — без нижнего шва: строка замыкает панель
  */
-export const StyledTableComposeErrorCell = styled.td.withConfig({
+export const StyledTablePanelErrorCell = styled.td.withConfig({
   shouldForwardProp: (prop) => prop !== 'sizePreset',
 })<{ sizePreset?: TableSizePreset }>`
   padding-block: ${getSpacingValue(8)};
@@ -471,80 +473,22 @@ export const StyledTableComposeErrorCell = styled.td.withConfig({
 `;
 
 /**
- * TABLE_HEADER_MARK_BLOCK_SIZE — задаёт габарит метки чекбокса и кнопки «+» в шапке.
- * Совпадает с размером `small` у Checkbox без подписи.
+ * TABLE_HEADER_MARK_BLOCK_SIZE — задаёт габарит спейсера лид-слота шапки.
+ * Совпадает с боксом Checkbox `small` и окном Icon `tiny`.
  */
 const TABLE_HEADER_MARK_BLOCK_SIZE = getSpacingValue(checkboxSizePresets.small.size);
 
-/* TODO: ручное ревью — дубль кодировщика data-URI из `markIcon` в `checkbox.styles.ts`.
-   Там data-URI вынужден: марка рисуется фоном нативного `<input>` (void-элемент,
-   детей не принимает). Здесь марка стоит на `<button>` — ограничения нет; кандидат
-   на вынос общего хелпера или замену иконкой-компонентом. */
 /**
- * headerMarkIcon — возвращает значение для CSS-свойства `background-image`
- * с SVG-маркой плюса.
- *
- * @param pathD путь глифа в `viewBox` 12×12
- * @param strokeColor цвет обводки в hex
- * @returns значение data-URI для CSS-свойства `background-image`
- */
-function headerMarkIcon(pathD: string, strokeColor: string): string {
-  const stroke = strokeColor.replace('#', '%23');
-
-  return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath stroke='${stroke}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='${pathD}'/%3E%3C/svg%3E")`;
-}
-
-/**
- * StyledTableHeaderAddButton — задаёт кнопку «+» в шапке keyword-колонки.
- * Базируется на `<button>`.
+ * StyledTableHeaderMarkSpacer — задаёт спейсер лид-слота шапки компонента Table.
+ * Базируется на `<span>`. Резервирует габарит бокса Checkbox или окна Icon `tiny`
+ * в неинтерактивной копии шапки и в add/edit-ячейках keyword-колонки.
  *
  * Встроенные стили:
- *  - `flex-shrink: 0` — кнопка не сжимается при нехватке места
- *  - `inline-size` и `block-size` — габарит по `TABLE_HEADER_MARK_BLOCK_SIZE`
- *  - `appearance: none` — снимает нативный вид кнопки
- *  - заливка `surface` и марка плюса через `background-image`
- *  - `background-size` — размер глифа марки
- *  - `border-radius` — скругление кнопки
- *  - `:disabled` — курсор по умолчанию для неактивной кнопки
- *  - `:not(:disabled):hover` — заливка через `resolveTableRowHoverFill`
- *
- * Генерация стилей:
- *  - `getBorderStyles` — рамка с тенью
- */
-export const StyledTableHeaderAddButton = styled.button`
-  flex-shrink: 0;
-  inline-size: ${TABLE_HEADER_MARK_BLOCK_SIZE};
-  block-size: ${TABLE_HEADER_MARK_BLOCK_SIZE};
-  appearance: none;
-  background-color: ${(props) => getTheme(props).colors.surface};
-  background-image: ${(props) =>
-    headerMarkIcon('M3 6h6M6 3v6', getTheme(props).colors.default)};
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: ${getSpacingValue(8)} ${getSpacingValue(8)};
-  border-radius: ${getSpacingValue(4)};
-  ${(props) => getBorderStyles(getTheme(props))}
-
-  &:disabled {
-    cursor: default;
-  }
-
-  &:not(:disabled):hover {
-    background-color: ${(props) => resolveTableRowHoverFill(getTheme(props))};
-  }
-`;
-
-/**
- * StyledTableHeaderMarkSpacer — задаёт резерв под метку чекбокса или кнопку «+»
- * в неинтерактивной копии шапки и в compose/edit-ячейках keyword-колонки.
- * Базируется на `<span>`.
- *
- * Встроенные стили:
- *  - `flex-shrink: 0` — резерв не сжимается
+ *  - `flex-shrink: 0` — спейсер не сжимается
  *  - `inline-size` и `block-size` — габарит по `TABLE_HEADER_MARK_BLOCK_SIZE`
  *
  * Элемент `colgroup` выравнивает ширину колонок, но lead внутри keyword-ячейки
- * должен совпадать с интерактивной шапкой; без резерва поля compose съезжают
+ * должен совпадать с интерактивной шапкой; без спейсера поля add съезжают
  * относительно заголовка Keyword.
  */
 export const StyledTableHeaderMarkSpacer = styled.span`

@@ -11,7 +11,7 @@
  * 2. Типизировать пропсы через `TableInlineFieldProps`
  *
  * Потребители:
- *  - `src/pages/showcase/table-demo/index.tsx` — рендерит поля compose и edit в демо-таблице
+ *  - `src/pages/showcase/table-demo/index.tsx` — рендерит поля add и edit в демо-таблице
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
@@ -38,9 +38,9 @@ type TableInlineFieldProps = TableInlineFieldStyleProps &
  * <TableInlineField
  *   placeholder="Product"
  *   textSize={textSize}
- *   value={composeDraft.product}
+ *   value={addDraft.product}
  *   onChange={(event) =>
- *     setComposeDraft((current) => ({ ...current, product: event.target.value }))
+ *     setAddDraft((current) => ({ ...current, product: event.target.value }))
  *   }
  * />
  * <TableInlineField
@@ -48,9 +48,9 @@ type TableInlineFieldProps = TableInlineFieldStyleProps &
  *   placeholder="Stock"
  *   textAlign="end"
  *   textSize={textSize}
- *   value={composeDraft.stock}
+ *   value={addDraft.stock}
  *   onChange={(event) =>
- *     setComposeDraft((current) => ({ ...current, stock: event.target.value }))
+ *     setAddDraft((current) => ({ ...current, stock: event.target.value }))
  *   }
  * />
  */
