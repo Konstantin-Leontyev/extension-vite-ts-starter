@@ -45,7 +45,7 @@ alwaysApply: true
 | `pages/showcase/browser-ai-smoke-probe/**` | Зонд витрины |
 | `background.ts`, `manifest.json` | MV3 |
 
-В `vite-ts-starter-lite` и web-продукты эти пути **не** копируются. Вопрос «почему AI нет в lite» — закрыт.
+В `vite-ts-starter-lite` и web-продукты эти пути **не** копируются. Вопрос «почему AI нет в lite» — закрыт. Продукт может держать **собственную продуктовую копию** такого кода, если реально им пользуется (например, `browser-ai` + gate в seolizer): она живёт вне синка и паритета, дефектом не считается.
 
 ## Что вне allow-list
 
