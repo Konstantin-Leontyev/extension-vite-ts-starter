@@ -6,14 +6,15 @@
  * 1. Типизировать пропсы через `TableStyleProps` и `TableSizePreset`
  * 2. Предоставить дефолты `DEFAULT_TABLE_SIZE_PRESET`, `DEFAULT_TABLE_SHOW_BORDER`,
  *    `DEFAULT_TABLE_HOVER_HIGHLIGHT`, `DEFAULT_TABLE_STRIPED` и `DEFAULT_TABLE_NUMBERED`
- * 3. Предоставить styled-узлы `StyledTableClip`, `StyledTable`, `StyledTableCol`,
+ * 3. Предоставить функцию `getTableTextSize`
+ * 4. Предоставить styled-узлы `StyledTableClip`, `StyledTable`, `StyledTableCol`,
  *    `StyledTableHead`, `StyledTableFoot`, `StyledTableBody`, `StyledTableRow`,
  *    `StyledTableComposePanel`, `StyledTableComposeInnerTable`,
  *    `StyledTableComposeErrorCell`, `StyledTableHeaderAddButton`,
  *    `StyledTableHeaderMarkSpacer`, `StyledTableHeaderKeywordBar` и
  *    `StyledTableCellTrailing`
- * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
- * 5. Реэкспортировать `computeTableColumnInlineSizes` и тип `TableColumnSizeConfig`
+ * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 6. Реэкспортировать `computeTableColumnInlineSizes` и тип `TableColumnSizeConfig`
  *
  * Потребители:
  *  - `src/ui/table/index.tsx` — собирает компонент Table и реэкспортирует публичное API
@@ -30,11 +31,13 @@ import {
   DEFAULT_SIZE_PRESET,
   getMinBlockSize,
   getPaddingInline,
+  getTextSize,
   resolveBlockRadius,
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
 import { STACKING_PORTAL } from '@ui/stacking';
+import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { resolveColorMix } from '@ui/tones';
 
@@ -77,11 +80,21 @@ export const DEFAULT_TABLE_STRIPED = false;
 export const DEFAULT_TABLE_NUMBERED = true;
 
 /**
+ * getTableTextSize — возвращает размер текста ячеек по `sizePreset`.
+ * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
+ *
+ * @param sizePreset размер Table
+ * @returns метка размера текста из `TextSizePreset` для текста ячеек
+ */
+export function getTableTextSize(sizePreset?: SizePreset): TextSizePreset {
+  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
+}
+
+/**
  * TABLE_EDGE_BORDER_WIDTH — задаёт толщину рамки шапки и подвала таблицы.
  * Используется в `StyledTableHead`, `StyledTableFoot` и строках compose-панели.
  */
 const TABLE_EDGE_BORDER_WIDTH = '2px';
-
 /**
  * resolveTableHeadFill — возвращает приглушённую заливку шапки и подвала.
  * Контрастирует с телом таблицы на поверхности Card.

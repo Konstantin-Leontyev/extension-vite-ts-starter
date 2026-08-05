@@ -277,12 +277,8 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       <FieldErrorGroup
         errorPlaceholder={state.errorPlaceholder}
         reserveErrorSpace={state.reserveErrorSpace}
-        onErrorPlaceholderChange={(value) =>
-          onChange('errorPlaceholder', value)
-        }
-        onReserveErrorSpaceChange={(reserve) =>
-          onChange('reserveErrorSpace', reserve)
-        }
+        onErrorPlaceholderChange={(value) => onChange('errorPlaceholder', value)}
+        onReserveErrorSpaceChange={(reserve) => onChange('reserveErrorSpace', reserve)}
       />
 
       <Checkbox

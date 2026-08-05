@@ -1280,9 +1280,7 @@ export function ShowcasePage() {
                   disabled={input.disabled}
                   error={input.error || undefined}
                   errorPlaceholder={
-                    input.reserveErrorSpace
-                      ? input.errorPlaceholder
-                      : undefined
+                    input.reserveErrorSpace ? input.errorPlaceholder : undefined
                   }
                   invalid={input.invalid}
                   label={input.label || undefined}

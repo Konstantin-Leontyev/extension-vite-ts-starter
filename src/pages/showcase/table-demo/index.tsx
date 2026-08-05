@@ -65,12 +65,12 @@ function buildCatalogColumns(
       inlineSize: metricInlineSizes.indexLabel,
       key: 'indexLabel',
       nowrap: true,
-      renderCell: (row, _rowIndex, { textSizePreset }) => {
+      renderCell: (row, _rowIndex, { textSize }) => {
         if (isCatalogHeaderRowKind(row.rowKind)) {
           return null;
         }
 
-        return <Text sizePreset={textSizePreset}>{row.indexLabel}</Text>;
+        return <Text sizePreset={textSize}>{row.indexLabel}</Text>;
       },
     },
     {
@@ -78,10 +78,10 @@ function buildCatalogColumns(
       ellipsis: true,
       header: 'Product',
       key: 'product',
-      renderCell: (row, _rowIndex, { textSizePreset }) => {
+      renderCell: (row, _rowIndex, { textSize }) => {
         if (row.rowKind === 'brand-head') {
           return (
-            <Text ellipsis fontWeight={600} sizePreset={textSizePreset}>
+            <Text ellipsis fontWeight={600} sizePreset={textSize}>
               {row.product}
             </Text>
           );
@@ -104,7 +104,7 @@ function buildCatalogColumns(
           );
 
           const label = (
-            <Text ellipsis fontWeight={600} sizePreset={textSizePreset}>
+            <Text ellipsis fontWeight={600} sizePreset={textSize}>
               {row.product}
             </Text>
           );
@@ -130,7 +130,7 @@ function buildCatalogColumns(
         return (
           <TableNestedCell nestDepth={row.nestDepth ?? 1}>
             <TableMemberPrefix>↳</TableMemberPrefix>
-            <Text ellipsis sizePreset={textSizePreset}>
+            <Text ellipsis sizePreset={textSize}>
               {row.product}
             </Text>
           </TableNestedCell>
@@ -144,12 +144,12 @@ function buildCatalogColumns(
       inlineSize: metricInlineSizes.stock,
       key: 'stock',
       nowrap: true,
-      renderCell: (row, _rowIndex, { textSizePreset }) => {
+      renderCell: (row, _rowIndex, { textSize }) => {
         if (isCatalogHeaderRowKind(row.rowKind)) {
           return null;
         }
 
-        return <Text sizePreset={textSizePreset}>{row.stock}</Text>;
+        return <Text sizePreset={textSize}>{row.stock}</Text>;
       },
     },
     {
@@ -159,12 +159,12 @@ function buildCatalogColumns(
       inlineSize: metricInlineSizes.price,
       key: 'price',
       nowrap: true,
-      renderCell: (row, _rowIndex, { textSizePreset }) => {
+      renderCell: (row, _rowIndex, { textSize }) => {
         if (isCatalogHeaderRowKind(row.rowKind)) {
           return null;
         }
 
-        return <Text sizePreset={textSizePreset}>{row.price}</Text>;
+        return <Text sizePreset={textSize}>{row.price}</Text>;
       },
     },
   ];
@@ -437,7 +437,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
   const renderComposeCell = useCallback(
     (
       column: TableColumn<CatalogTableRow>,
-      { composeErrorId, textSizePreset }: TableCellRenderContext
+      { composeErrorId, textSize }: TableCellRenderContext
     ): ReactNode => {
       if (column.key === 'indexLabel') {
         return null;
@@ -448,7 +448,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
           <TableInlineField
             aria-describedby={composeErrorId}
             placeholder="Product"
-            textSizePreset={textSizePreset}
+            textSize={textSize}
             value={composeDraft.product}
             onChange={(event) =>
               setComposeDraft((current) => ({
@@ -478,7 +478,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
             inputMode="numeric"
             placeholder="Stock"
             textAlign="end"
-            textSizePreset={textSizePreset}
+            textSize={textSize}
             value={composeDraft.stock}
             onChange={(event) =>
               setComposeDraft((current) => ({
@@ -502,7 +502,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
             aria-describedby={composeErrorId}
             placeholder="Price"
             textAlign="end"
-            textSizePreset={textSizePreset}
+            textSize={textSize}
             value={composeDraft.price}
             onChange={(event) =>
               setComposeDraft((current) => ({
@@ -529,10 +529,10 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
     (
       column: TableColumn<CatalogTableRow>,
       row: CatalogTableRow,
-      { editErrorId, textSizePreset }: TableCellRenderContext
+      { editErrorId, textSize }: TableCellRenderContext
     ): ReactNode => {
       if (column.key === 'indexLabel') {
-        return <Text sizePreset={textSizePreset}>{row.indexLabel}</Text>;
+        return <Text sizePreset={textSize}>{row.indexLabel}</Text>;
       }
 
       if (column.key === 'product') {
@@ -540,7 +540,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
           <TableInlineField
             aria-describedby={editErrorId}
             placeholder="Product"
-            textSizePreset={textSizePreset}
+            textSize={textSize}
             value={editDraft.product}
             onChange={(event) =>
               setEditDraft((current) => ({
@@ -577,7 +577,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
             inputMode="numeric"
             placeholder="Stock"
             textAlign="end"
-            textSizePreset={textSizePreset}
+            textSize={textSize}
             value={editDraft.stock}
             onChange={(event) =>
               setEditDraft((current) => ({
@@ -601,7 +601,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
             aria-describedby={editErrorId}
             placeholder="Price"
             textAlign="end"
-            textSizePreset={textSizePreset}
+            textSize={textSize}
             value={editDraft.price}
             onChange={(event) =>
               setEditDraft((current) => ({

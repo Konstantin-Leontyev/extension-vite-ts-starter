@@ -34,19 +34,19 @@ type TableCellProps = TableCellStyleProps & {
   head?: boolean;
   scope?: 'col' | 'colgroup' | 'row' | 'rowgroup';
 } & Omit<
-  ComponentPropsWithRef<'td'>,
-  'className' | 'scope' | 'style' | keyof TableCellStyleProps
->;
+    ComponentPropsWithRef<'td'>,
+    'className' | 'scope' | 'style' | keyof TableCellStyleProps
+  >;
 
 /**
  * TableCell — отображает ячейку таблицы.
  *
  * @example
  * <TableCell align="end" sizePreset={sizePreset}>
- *   <Text sizePreset={textSizePreset}>{rowIndex + 1}</Text>
+ *   <Text sizePreset={textSize}>{rowIndex + 1}</Text>
  * </TableCell>
  * <TableCell head scope="col" sizePreset={sizePreset}>
- *   <Text sizePreset={textSizePreset}>{column.header}</Text>
+ *   <Text sizePreset={textSize}>{column.header}</Text>
  * </TableCell>
  */
 export function TableCell({ head, ...props }: TableCellProps) {

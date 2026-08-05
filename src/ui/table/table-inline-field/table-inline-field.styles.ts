@@ -20,20 +20,17 @@ import { getTheme, type AppTheme } from '@ui/theme';
  * TableInlineFieldStyleProps — представляет пропсы стилизации TableInlineField.
  *
  * @property textAlign — горизонтальное выравнивание текста
- * @property textSizePreset — размер текста поля
+ * @property textSize — размер текста
  */
 export type TableInlineFieldStyleProps = {
   textAlign?: CSSProperties['textAlign'];
-  textSizePreset?: TextSizePreset;
+  textSize?: TextSizePreset;
 };
 
 /**
  * TABLE_INLINE_FIELD_PROP_NAMES — хранит имена пропсов стилизации TableInlineField.
  */
-const TABLE_INLINE_FIELD_PROP_NAMES = new Set<string>([
-  'textAlign',
-  'textSizePreset',
-]);
+const TABLE_INLINE_FIELD_PROP_NAMES = new Set<string>(['textAlign', 'textSize']);
 
 /**
  * getTableInlineFieldStyles — возвращает CSS-правила для узла `StyledTableInlineField`:
@@ -46,11 +43,11 @@ const TABLE_INLINE_FIELD_PROP_NAMES = new Set<string>([
 function getTableInlineFieldStyles(
   props: TableInlineFieldStyleProps & { theme: AppTheme }
 ): string {
-  const { textAlign, textSizePreset = 'normal' } = props;
+  const { textAlign, textSize = 'normal' } = props;
   const theme = getTheme(props);
 
   const styles = [
-    getTextProperties(textSizePreset),
+    getTextProperties(textSize),
     'padding: 0;',
     'appearance: none;',
     'background: transparent;',

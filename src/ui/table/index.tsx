@@ -1,4 +1,62 @@
-// TODO: ручное ревью — ui/table/index.tsx
+/**
+ * Файл: `src/ui/table/index.tsx`
+ * Предоставляет компонент Table для отображения табличных данных со скроллом,
+ * выбором строк и панелями добавления и редактирования.
+ *
+ * Поддерживает:
+ *  - layout-пропсы: отступы, позиционирование, размеры
+ *  - размерный ряд через проп `sizePreset`
+ *  - подсветку строки при наведении через проп `hoverHighlight`
+ *  - рамку вокруг таблицы через проп `showBorder`
+ *  - чередование фона строк через проп `striped`
+ *  - колонки через проп `columns`
+ *  - мастер-переключатель добавления и редактирования строк через проп `editable`.
+ *    Без `editable` таблица только выводит строки
+ *  - колонку нумерации через проп `numbered`
+ *  - строки данных через проп `rows`
+ *  - текст ошибки панели добавления через проп `composeError`
+ *  - подсказку в полоске ошибки панели добавления через проп `composeHint`, пока нет
+ *    `composeError`
+ *  - режим панели добавления строки через проп `composeRowActive`
+ *  - якорь панели добавления через проп `composeRowSource`
+ *  - обработчик запроса на добавление строки через проп `onAddRow`. Без колбэка кнопка
+ *    «+» видна, но недоступна
+ *  - обработчик отмены добавления строки через проп `onComposeCancel`
+ *  - рендер ячеек панели добавления через проп `renderComposeCell`
+ *  - текст ошибки панели редактирования через проп `editError`
+ *  - подсказку в полоске ошибки панели редактирования через проп `editHint`, пока нет
+ *    `editError`
+ *  - режим панели редактирования строки через проп `editRowActive`
+ *  - ключ редактируемой строки через проп `editRowKey`
+ *  - обработчик отмены редактирования через проп `onEditCancel`
+ *  - обработчик запроса на редактирование строки через проп `onEditRow`
+ *  - рендер ячеек панели редактирования через проп `renderEditCell`
+ *  - выбор строк через проп `checkable`
+ *  - полный набор выбираемых ключей через проп `allSelectableKeys`
+ *  - ключи членов группы через проп `getRowGroupMemberKeys`
+ *  - ключ строки через проп `getRowKey`
+ *  - фильтр выбираемых строк через проп `isRowSelectable`
+ *  - обработчик изменения выбранных ключей через проп `onSelectedKeysChange`
+ *  - действия при множественном выборе через проп `renderBulkSelectionActions`
+ *  - действия выбранной строки через проп `renderSelectedRowActions`
+ *  - колонку с чекбоксом строки через проп `rowCheckboxColumnKey`
+ *  - выбранные ключи через проп `selectedKeys`
+ *  - колонку действий выбранной строки через проп `selectedRowActionsColumnKey`
+ *
+ * Основные задачи:
+ * 1. Экспортировать компонент Table
+ * 2. Типизировать пропсы через `TableProps`
+ * 3. Экспортировать типы `TableAlign`, `TableAddRowSource`, `TableCellRenderContext`
+ *    и `TableColumn`
+ * 4. Реэкспортировать мост размера текста `getTableTextSize`, утилиту
+ *    `computeTableColumnInlineSizes`, дефолты осей и типы стилей
+ * 5. Реэкспортировать сателлиты `TableCell`, `TableCellAlign`, `TableGroupCell`,
+ *    `TableGroupExpander`, `TableInlineField`, `TableMemberPrefix` и `TableNestedCell`
+ *
+ * Потребители:
+ *  - `src/pages/showcase/table-demo/index.tsx` — собирает демо-таблицу каталога
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
+ */
 import {
   useId,
   useLayoutEffect,
@@ -12,9 +70,9 @@ import {
 import { useLongPress } from '@hooks/use-long-press';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Checkbox } from '@ui/checkbox';
-import { DEFAULT_SIZE_PRESET, getTextSize as resolveTextSizePreset } from '@ui/presets';
+import { FieldError } from '@ui/field-error';
 import { ScrollPort } from '@ui/scroll-port';
-import { Text, getTextLineHeight, type TextSizePreset } from '@ui/text';
+import { Text, type TextSizePreset } from '@ui/text';
 
 import { StyledTableCellLead, TableCell, type TableCellAlign } from './table-cell';
 import {
@@ -36,44 +94,81 @@ import {
   StyledTableHeaderKeywordBar,
   StyledTableHeaderMarkSpacer,
   StyledTableRow,
+  getTableTextSize,
   splitLayoutProps,
   type TableStyleProps,
 } from './table.styles';
 
-/** Горизонтальное выравнивание ячейки таблицы. */
+/**
+ * TableAlign — представляет горизонтальное выравнивание ячейки таблицы.
+ */
 export type TableAlign = TableCellAlign;
 
-/** Ширина колонки нумерации в fixed-режиме. */
+/**
+ * NUMBER_COLUMN_INLINE_SIZE — задаёт ширину колонки нумерации в режиме `fixed`.
+ */
 const NUMBER_COLUMN_INLINE_SIZE = '3.5rem';
 
-/** Ширина колонки чекбокса в fixed-режиме (отдельная колонка без rowCheckboxColumnKey). */
+/**
+ * CHECKBOX_COLUMN_INLINE_SIZE — задаёт ширину отдельной колонки чекбокса в режиме `fixed`.
+ */
 const CHECKBOX_COLUMN_INLINE_SIZE = '2.75rem';
 
-/** Минимум выбранных строк, при котором есть «группа»: bulk-действия и групповой чекбокс в шапке. */
+/**
+ * BULK_SELECTION_MIN — задаёт минимум выбранных строк для групповых действий
+ * и группового чекбокса в шапке.
+ */
 const BULK_SELECTION_MIN = 2;
 
-/** Субпиксельный допуск при сравнении высоты контента с viewport. */
+/**
+ * SCROLL_OVERFLOW_THRESHOLD_PX — задаёт субпиксельный допуск при сравнении высоты
+ * контента с viewport.
+ */
 const SCROLL_OVERFLOW_THRESHOLD_PX = 1;
 
+/**
+ * TableAddRowSource — представляет сторону якоря панели добавления строки:
+ * шапку или футер.
+ */
 export type TableAddRowSource = 'foot' | 'head';
 
+/**
+ * TableCellRenderContext — представляет контекст рендера ячейки таблицы.
+ * Передаётся в `renderCell`, `renderComposeCell` и `renderEditCell`.
+ *
+ * @property composeError — текст ошибки панели добавления для связи с полем
+ * @property composeErrorId — id полоски ошибки панели добавления для `aria-describedby`
+ * @property editError — текст ошибки панели редактирования для связи с полем
+ * @property editErrorId — id полоски ошибки панели редактирования для `aria-describedby`
+ * @property textSize — размер текста ячейки по `sizePreset` таблицы
+ */
 export type TableCellRenderContext = {
   composeError?: string;
   composeErrorId?: string;
   editError?: string;
   editErrorId?: string;
-  textSizePreset: TextSizePreset;
+  textSize: TextSizePreset;
 };
 
+/**
+ * TableColumn — представляет описание колонки таблицы.
+ *
+ * @property align — горизонтальное выравнивание содержимого ячейки данных
+ * @property ellipsis — включает обрезку содержимого с многоточием
+ * @property header — текст заголовка колонки
+ * @property headerAlign — горизонтальное выравнивание заголовка. Данные выравнивает `align`
+ * @property inlineSize — фиксированная ширина колонки в режиме `fixed`
+ * @property key — ключ поля строки
+ * @property nowrap — включает запрет переноса содержимого ячейки
+ * @property renderCell — кастомный рендер ячейки данных
+ */
 export type TableColumn<Row> = {
   align?: TableAlign;
   ellipsis?: boolean;
   header: string;
-  /** Горизонтальное выравнивание заголовка; данные — через `align`. */
   headerAlign?: TableAlign;
   inlineSize?: string;
   key: Extract<keyof Row, string>;
-  /** Не переносить содержимое ячейки (`white-space: nowrap`). */
   nowrap?: boolean;
   renderCell?: (
     row: Row,
@@ -82,33 +177,37 @@ export type TableColumn<Row> = {
   ) => ReactNode;
 };
 
-/** Подсказка в строке compose-панели, когда ошибки нет и включён резерв высоты. */
+/**
+ * DEFAULT_COMPOSE_HINT — задаёт подсказку в полоске ошибки панели добавления по умолчанию.
+ * Используется, когда вызывающий код не передал проп `composeHint`.
+ */
 const DEFAULT_COMPOSE_HINT =
   'Press Esc to close without saving, or Enter to add the row. Use Tab to move between fields.';
 
-/** Подсказка в строке edit-панели, когда ошибки нет и включён резерв высоты. */
+/**
+ * DEFAULT_EDIT_HINT — задаёт подсказку в полоске ошибки панели редактирования по умолчанию.
+ * Используется, когда вызывающий код не передал проп `editHint`.
+ */
 const DEFAULT_EDIT_HINT = 'Press Esc to close without saving, or Enter to save changes.';
 
+/**
+ * TableComposeProps — представляет пропсы панели добавления строки Table.
+ *
+ * @property composeError — текст ошибки панели добавления строки
+ * @property composeHint — текст подсказки в полоске ошибки панели добавления, пока нет
+ *   `composeError`
+ * @property composeRowActive — включает режим панели добавления строки
+ * @property composeRowSource — якорь панели: шапка или футер
+ * @property onAddRow — обработчик запроса на добавление строки из шапки или футера.
+ *   Без колбэка кнопка «+» видна, но недоступна. Активна только при `editable`
+ * @property onComposeCancel — обработчик отмены добавления строки
+ * @property renderComposeCell — рендер содержимого ячейки в панели добавления
+ */
 type TableComposeProps<Row> = {
-  /** Режим ввода новой строки — панель как у Listbox. */
   composeError?: string;
-  /**
-   * Текст подсказки в зарезервированной строке, пока нет `composeError`.
-   * Используется при `composeReserveErrorSpace`.
-   */
   composeHint?: string;
-  /**
-   * Резерв высоты под строку подсказки/ошибки, чтобы смена текста не сдвигала панель.
-   * Как `reserveErrorSpace` у Input.
-   */
-  composeReserveErrorSpace?: boolean;
   composeRowActive?: boolean;
-  /** Якорь панели: шапка (`head`) или футер (`foot`). */
   composeRowSource?: TableAddRowSource;
-  /**
-   * Запрос на добавление строки по «+» в шапке (`head`) или футере (`foot`).
-   * Без колбэка кнопка «+» видна, но disabled (заглушка). Активна только при `editable`.
-   */
   onAddRow?: (source: TableAddRowSource) => void;
   onComposeCancel?: () => void;
   renderComposeCell?: (
@@ -117,19 +216,21 @@ type TableComposeProps<Row> = {
   ) => ReactNode;
 };
 
+/**
+ * TableEditProps — представляет пропсы панели редактирования строки Table.
+ *
+ * @property editError — текст ошибки панели редактирования строки
+ * @property editHint — текст подсказки в полоске ошибки панели редактирования, пока нет
+ *   `editError`
+ * @property editRowActive — включает режим панели редактирования строки
+ * @property editRowKey — ключ редактируемой строки
+ * @property onEditCancel — обработчик отмены редактирования строки
+ * @property onEditRow — обработчик запроса на редактирование строки
+ * @property renderEditCell — рендер содержимого ячейки в панели редактирования
+ */
 type TableEditProps<Row> = {
   editError?: string;
-  /**
-   * Текст подсказки в зарезервированной строке, пока нет `editError`.
-   * Используется при `editReserveErrorSpace`.
-   */
   editHint?: string;
-  /**
-   * Резерв высоты под строку подсказки/ошибки, чтобы смена текста не сдвигала панель.
-   * Как `reserveErrorSpace` у Input.
-   */
-  editReserveErrorSpace?: boolean;
-  /** Режим редактирования существующей строки — панель поверх якорной строки. */
   editRowActive?: boolean;
   editRowKey?: string;
   onEditCancel?: () => void;
@@ -141,19 +242,32 @@ type TableEditProps<Row> = {
   ) => ReactNode;
 };
 
+/**
+ * TableSelectionProps — представляет пропсы выбора строк Table.
+ * Доступны только при `checkable` равном `true`.
+ *
+ * @property allSelectableKeys — полный набор выбираемых ключей вида, включая скрытые
+ *   в свёрнутых группах. Если задан, «выбрать всё» в шапке и её галка работают над ним,
+ *   а не только над видимыми строками: свёрнутые строки тоже выделяются. Иначе выбор
+ *   охватывает только видимые строки
+ * @property checkable — включает режим выбора строк
+ * @property getRowGroupMemberKeys — ключи строк-членов группы для строки-заголовка.
+ *   Для обычной строки возвращает `undefined`. Непустой набор включает групповой
+ *   чекбокс у заголовка: отмечает и снимает все эти строки, включая свёрнутые;
+ *   галка стоит, когда выбраны все
+ * @property getRowKey — стабильный ключ строки
+ * @property isRowSelectable — признак, можно ли выбрать строку
+ * @property onSelectedKeysChange — обработчик изменения набора выбранных ключей
+ * @property renderBulkSelectionActions — действия шапки при множественном выборе
+ * @property renderSelectedRowActions — действия в ячейке выбранной строки
+ * @property rowCheckboxColumnKey — ключ колонки, в которой рендерится чекбокс строки.
+ *   Без ключа чекбокс выносится в отдельную колонку
+ * @property selectedKeys — выбранные ключи строк
+ * @property selectedRowActionsColumnKey — ключ колонки для действий выбранной строки
+ */
 type TableSelectionProps<Row> = {
-  /**
-   * Полный набор выбираемых ключей вида, ВКЛЮЧАЯ скрытые в свёрнутых группах. Если
-   * задан — «выбрать всё» в шапке и её галка работают над ним (а не только над
-   * видимыми строками): свёрнутые строки тоже выделяются. Иначе — над видимыми.
-   */
   allSelectableKeys?: string[];
   checkable: true;
-  /**
-   * Ключи строк-членов группы для строки-заголовка (или undefined для обычной
-   * строки). Если непустой — у заголовка появляется групповой чекбокс: отмечает/
-   * снимает все эти строки (в т.ч. свёрнутые); галка «стоит», когда выбраны все.
-   */
   getRowGroupMemberKeys?: (row: Row) => string[] | undefined;
   getRowKey: (row: Row) => string;
   isRowSelectable?: (row: Row) => boolean;
@@ -165,9 +279,17 @@ type TableSelectionProps<Row> = {
   selectedRowActionsColumnKey?: Extract<keyof Row, string>;
 };
 
+/**
+ * TableProps — представляет пропсы компонента Table.
+ *
+ * @property columns — описание колонок
+ * @property editable — включает добавление и редактирование строк. Без `editable`
+ *   таблица только выводит строки
+ * @property numbered — включает колонку нумерации
+ * @property rows — строки данных
+ */
 type TableProps<Row> = {
   columns: TableColumn<Row>[];
-  /** Мастер-переключатель работы со строками (add/edit). false → только вывод строк. */
   editable?: boolean;
   numbered?: boolean;
   rows: Row[];
@@ -195,6 +317,9 @@ type TableProps<Row> = {
         >)
   );
 
+/**
+ * TableCheckbox — отображает чекбокс выбора строки или группы в таблице.
+ */
 function TableCheckbox({
   ariaLabel,
   checked,
@@ -214,7 +339,10 @@ function TableCheckbox({
   );
 }
 
-/** Резерв lead-слотов keyword-шапки, когда чекбокс или «+» не рендерятся. */
+/**
+ * TableHeaderLeadSpacers — отображает резервные lead-слоты keyword-шапки, когда
+ * чекбокс или кнопка «+» не рендерятся.
+ */
 function TableHeaderLeadSpacers({
   reserveAddButton = false,
   reserveCheckbox = false,
@@ -230,6 +358,33 @@ function TableHeaderLeadSpacers({
   );
 }
 
+/**
+ * TableBodyRowProps — представляет пропсы внутренней строки тела Table.
+ *
+ * @property actionsColumnKey — ключ колонки действий выбранной строки
+ * @property anchorRef — ref якорной строки панели редактирования
+ * @property checkable — признак режима выбора строк
+ * @property columns — описание колонок
+ * @property editRowActive — признак открытой панели редактирования
+ * @property groupMemberKeys — ключи членов группы для строки-заголовка
+ * @property groupSelected — признак, что все члены группы выбраны
+ * @property isEditAnchor — признак, что строка — якорь панели редактирования
+ * @property isSelected — признак выбранной строки
+ * @property onEditRow — обработчик запроса на редактирование строки
+ * @property renderSelectedRowActions — действия в ячейке выбранной строки
+ * @property resolvedNumbered — признак колонки нумерации
+ * @property row — данные строки
+ * @property rowCheckboxColumnKey — ключ колонки с чекбоксом строки
+ * @property rowIndex — индекс строки в видимом списке
+ * @property rowKey — стабильный ключ строки
+ * @property rowSelectable — признак, можно ли выбрать строку
+ * @property separateCheckboxColumn — признак отдельной колонки чекбокса
+ * @property showRowActions — признак показа действий выбранной строки в ячейке
+ * @property sizePreset — размер таблицы
+ * @property textSize — размер текста ячейки
+ * @property toggleGroupKeys — обработчик выбора или снятия группы ключей
+ * @property toggleRowKey — обработчик переключения выбора одной строки
+ */
 type TableBodyRowProps<Row> = {
   actionsColumnKey: Extract<keyof Row, string> | undefined;
   anchorRef: RefObject<HTMLTableRowElement | null>;
@@ -251,11 +406,14 @@ type TableBodyRowProps<Row> = {
   separateCheckboxColumn: boolean;
   showRowActions: boolean;
   sizePreset: TableStyleProps['sizePreset'];
-  textSizePreset: TextSizePreset;
+  textSize: TextSizePreset;
   toggleGroupKeys: (memberKeys: string[]) => void;
   toggleRowKey: (rowKey: string) => void;
 };
 
+/**
+ * TableBodyRow — отображает одну строку тела таблицы.
+ */
 function TableBodyRow<Row>({
   actionsColumnKey,
   anchorRef,
@@ -277,12 +435,12 @@ function TableBodyRow<Row>({
   separateCheckboxColumn,
   showRowActions,
   sizePreset,
-  textSizePreset,
+  textSize,
   toggleGroupKeys,
   toggleRowKey,
 }: TableBodyRowProps<Row>): ReactNode {
-  // Заголовок группы с непустым набором членов получает групповой чекбокс
-  // (выбрать/снять всю группу, включая свёрнутые строки).
+  // Заголовок группы с непустым набором членов получает групповой чекбокс:
+  // выбрать или снять всю группу, включая свёрнутые строки.
   const isGroupSelector =
     checkable && !rowSelectable && (groupMemberKeys?.length ?? 0) > 0;
   const groupCheckbox = isGroupSelector ? (
@@ -322,14 +480,14 @@ function TableBodyRow<Row>({
       )}
       {resolvedNumbered && (
         <TableCell align="end" sizePreset={sizePreset}>
-          <Text sizePreset={textSizePreset}>{rowIndex + 1}</Text>
+          <Text sizePreset={textSize}>{rowIndex + 1}</Text>
         </TableCell>
       )}
       {columns.map((column) => {
         const cellContent = column.renderCell ? (
-          column.renderCell(row, rowIndex, { textSizePreset })
+          column.renderCell(row, rowIndex, { textSize })
         ) : (
-          <Text sizePreset={textSizePreset}>{String(row[column.key] ?? '')}</Text>
+          <Text sizePreset={textSize}>{String(row[column.key] ?? '')}</Text>
         );
         const isCheckboxColumn =
           checkable &&
@@ -381,6 +539,13 @@ function TableBodyRow<Row>({
   );
 }
 
+/**
+ * applyTableComposePanelPosition — задаёт геометрию compose-панели относительно якоря.
+ *
+ * @param anchor элемент-якорь шапки или футера
+ * @param panel корневой элемент панели
+ * @param composeRowSource сторона якоря: шапка или футер
+ */
 function applyTableComposePanelPosition(
   anchor: HTMLElement,
   panel: HTMLElement,
@@ -404,6 +569,12 @@ function applyTableComposePanelPosition(
   panel.style.insetBlockStart = `${rect.top - rowHeight - errorRowHeight}px`;
 }
 
+/**
+ * applyTableEditPanelPosition — задаёт геометрию edit-панели относительно якорной строки.
+ *
+ * @param anchor элемент якорной строки
+ * @param panel корневой элемент панели
+ */
 function applyTableEditPanelPosition(anchor: HTMLElement, panel: HTMLElement): void {
   const rect = anchor.getBoundingClientRect();
   const rowHeight = rect.height;
@@ -417,17 +588,39 @@ function applyTableEditPanelPosition(anchor: HTMLElement, panel: HTMLElement): v
   panel.style.blockSize = `${contentHeight}px`;
 }
 
+/**
+ * Table — отображает таблицу данных со скроллом, выбором строк и панелями
+ * добавления и редактирования.
+ *
+ * @example
+ * <Table
+ *   aria-label="Catalog table demo"
+ *   columns={columns}
+ *   numbered={false}
+ *   rows={tableRows}
+ *   showBorder
+ *   sizePreset="normal"
+ * />
+ * <Table
+ *   aria-label="Catalog table demo"
+ *   checkable
+ *   columns={columns}
+ *   editable
+ *   getRowKey={(row) => row.rowId}
+ *   rows={tableRows}
+ *   selectedKeys={selectedKeys}
+ *   onSelectedKeysChange={setSelectedKeys}
+ * />
+ */
 export function Table<Row>(props: TableProps<Row>) {
   const {
     columns,
     composeError,
     composeHint = DEFAULT_COMPOSE_HINT,
-    composeReserveErrorSpace = true,
     composeRowActive: composeRowActiveProp = false,
     composeRowSource,
     editError,
     editHint = DEFAULT_EDIT_HINT,
-    editReserveErrorSpace = true,
     editRowActive: editRowActiveProp = false,
     editRowKey,
     editable = false,
@@ -451,7 +644,8 @@ export function Table<Row>(props: TableProps<Row>) {
   const resolvedNumbered = numbered ?? DEFAULT_TABLE_NUMBERED;
   const resolvedStriped = striped ?? DEFAULT_TABLE_STRIPED;
 
-  // Гейт editable: без него таблица — чистый вывод строк (нет add/edit, порталов, long-press).
+  // Переключатель editable: без него таблица только выводит строки, без добавления,
+  // редактирования, порталов и long-press.
   const composeRowActive = editable && composeRowActiveProp;
   const editRowActive = editable && editRowActiveProp;
   const onAddRow = editable ? onAddRowProp : undefined;
@@ -462,7 +656,7 @@ export function Table<Row>(props: TableProps<Row>) {
 
   const checkable = props.checkable === true;
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const textSizePreset = resolveTextSizePreset(sizePreset ?? DEFAULT_SIZE_PRESET);
+  const textSize = getTableTextSize(sizePreset);
   const rowCheckboxColumnKey = checkable ? props.rowCheckboxColumnKey : undefined;
   const separateCheckboxColumn = checkable && rowCheckboxColumnKey === undefined;
   const fixed =
@@ -483,8 +677,8 @@ export function Table<Row>(props: TableProps<Row>) {
     ? (props.isRowSelectable ?? (() => true))
     : () => false;
   const getRowGroupMemberKeys = checkable ? props.getRowGroupMemberKeys : undefined;
-  // Универсум выбора: полный список ключей (вкл. скрытые в свёрнутых группах), если
-  // его передал call site; иначе — только видимые выбираемые строки.
+  // Универсум выбора: полный список ключей, включая скрытые в свёрнутых группах, если
+  // его передал вызывающий код; иначе только видимые выбираемые строки.
   const allSelectableKeys = checkable
     ? (props.allSelectableKeys ??
       rows.filter((row) => isRowSelectable(row)).map((row) => props.getRowKey(row)))
@@ -496,9 +690,9 @@ export function Table<Row>(props: TableProps<Row>) {
     allSelectableKeys.every((key) => selectedKeys.has(key));
   const hasBulkSelection = checkable && selectedKeys.size >= BULK_SELECTION_MIN;
   const showBulkActions = hasBulkSelection;
-  // Галка в шапке/футере «стоит», когда доступны групповые действия (выбрано 2+) ИЛИ
-  // выбраны все строки таблицы. «Все» закрывает случай одной строки: 1 из 1 = все,
-  // поэтому галка корректно ставится и снимается даже когда строка единственная.
+  // Галка в шапке и футере стоит, когда доступны групповые действия при двух и более
+  // выбранных строках или выбраны все строки таблицы. Случай одной строки: одна из одной
+  // считается всеми, поэтому галка ставится и снимается и для единственной строки.
   const headerSelectionActive = hasBulkSelection || allRowsSelected;
   const actionsColumnKey = checkable ? props.selectedRowActionsColumnKey : undefined;
   const hideHeadAnchor = composeRowActive && composeRowSource === 'head';
@@ -530,12 +724,12 @@ export function Table<Row>(props: TableProps<Row>) {
   const composeCellContext: TableCellRenderContext = {
     composeError: hasComposeError ? composeErrorMessage : undefined,
     composeErrorId,
-    textSizePreset,
+    textSize,
   };
   const editCellContext: TableCellRenderContext = {
     editError: hasEditError ? editErrorMessage : undefined,
     editErrorId,
-    textSizePreset,
+    textSize,
   };
 
   const toggleRowKey = (rowKey: string): void => {
@@ -567,8 +761,8 @@ export function Table<Row>(props: TableProps<Row>) {
     props.onSelectedKeysChange(new Set(allSelectableKeys));
   };
 
-  // Групповой тоггл: если все члены группы уже выбраны — снять их, иначе добавить
-  // (свёрнутые члены тоже попадают в выбор, т.к. memberKeys содержит их ключи).
+  // Групповой тоггл: если все члены группы уже выбраны — снять их, иначе добавить.
+  // Свёрнутые члены тоже попадают в выбор, потому что memberKeys содержит их ключи.
   const toggleGroupKeys = (memberKeys: string[]): void => {
     if (!checkable || memberKeys.length === 0) {
       return;
@@ -618,7 +812,7 @@ export function Table<Row>(props: TableProps<Row>) {
         )) ||
           (!interactive && <TableHeaderLeadSpacers reserveAddButton />) ||
           null}
-        <Text sizePreset={textSizePreset}>{column.header}</Text>
+        <Text sizePreset={textSize}>{column.header}</Text>
       </StyledTableCellLead>
       {interactive && showBulkActions && props.renderBulkSelectionActions?.()}
     </StyledTableHeaderKeywordBar>
@@ -647,7 +841,7 @@ export function Table<Row>(props: TableProps<Row>) {
           sizePreset={sizePreset}
           {...(head ? { scope: 'col' as const } : {})}
         >
-          <Text sizePreset={textSizePreset}>#</Text>
+          <Text sizePreset={textSize}>#</Text>
         </TableCell>
       )}
       {columns.map((column) => (
@@ -665,7 +859,7 @@ export function Table<Row>(props: TableProps<Row>) {
           column.key === rowCheckboxColumnKey ? (
             renderKeywordColumnHeader(column, addSource, interactive)
           ) : (
-            <Text sizePreset={textSizePreset}>{column.header}</Text>
+            <Text sizePreset={textSize}>{column.header}</Text>
           )}
         </TableCell>
       ))}
@@ -757,28 +951,6 @@ export function Table<Row>(props: TableProps<Row>) {
 
   const renderErrorRow = (variant: 'compose' | 'edit'): ReactNode => {
     const isCompose = variant === 'compose';
-    const hasError = isCompose ? hasComposeError : hasEditError;
-    const reserveErrorSpace = isCompose
-      ? composeReserveErrorSpace
-      : editReserveErrorSpace;
-
-    if (!hasError && !reserveErrorSpace) {
-      return null;
-    }
-
-    const hintMessage = (isCompose ? composeHint : editHint).trim();
-    const rowMessage = hasError
-      ? isCompose
-        ? composeErrorMessage
-        : editErrorMessage
-      : reserveErrorSpace
-        ? hintMessage
-        : null;
-
-    if (rowMessage === null || rowMessage === '') {
-      return null;
-    }
-
     const errorRowProps = isCompose
       ? { 'data-compose-error': '' }
       : { 'data-edit-error': '' };
@@ -789,25 +961,21 @@ export function Table<Row>(props: TableProps<Row>) {
           colSpan={composeColumnCount}
           sizePreset={sizePreset}
         >
-          <Text
-            align="center"
-            aria-live={hasError ? 'polite' : undefined}
+          <FieldError
             id={isCompose ? composeErrorId : editErrorId}
-            minBlockSize={reserveErrorSpace ? getTextLineHeight('thin') : undefined}
-            sizePreset="thin"
-            tone={hasError ? 'danger' : 'muted'}
+            placeholder={isCompose ? composeHint : editHint}
+            reserveErrorSpace
           >
-            {rowMessage}
-          </Text>
+            {isCompose ? composeError : editError}
+          </FieldError>
         </StyledTableComposeErrorCell>
       </StyledTableRow>
     );
   };
 
-  // Нижняя шапка нужна только при вертикальном overflow viewport. Сравниваем
-  // интринсивную высоту контента (scrollHeight без самого footer) с clientHeight:
-  // вычитание footer обязательно — иначе показанный footer сам поддерживает
-  // overflow и не исчезает (latch).
+  // Нижняя шапка нужна только при вертикальном переполнении viewport. Сравниваем
+  // высоту контента scrollHeight без самого footer с clientHeight: вычитание footer
+  // обязательно, иначе показанный footer сам поддерживает переполнение и не исчезает.
   useLayoutEffect(() => {
     if (!checkable) {
       return;
@@ -869,13 +1037,7 @@ export function Table<Row>(props: TableProps<Row>) {
 
           applyTableComposePanelPosition(anchor, panel, composeRowSource);
         },
-        layoutDeps: [
-          composeReserveErrorSpace,
-          composeRowSource,
-          hasComposeError,
-          rows.length,
-          columns.length,
-        ],
+        layoutDeps: [composeRowSource, hasComposeError, rows.length, columns.length],
       }}
       returnFocusRef={composeRowSource === 'foot' ? footAddButtonRef : headAddButtonRef}
       onDismiss={() => onComposeCancel?.()}
@@ -928,13 +1090,7 @@ export function Table<Row>(props: TableProps<Row>) {
         positionStrategy={{
           anchorRef: editRowAnchorRef,
           apply: applyTableEditPanelPosition,
-          layoutDeps: [
-            editReserveErrorSpace,
-            editRowKey,
-            hasEditError,
-            rows.length,
-            columns.length,
-          ],
+          layoutDeps: [editRowKey, hasEditError, rows.length, columns.length],
         }}
         returnFocusRef={editRowAnchorRef}
         onDismiss={() => onEditCancel?.()}
@@ -1015,7 +1171,7 @@ export function Table<Row>(props: TableProps<Row>) {
                 separateCheckboxColumn={separateCheckboxColumn}
                 showRowActions={Boolean(showRowActions)}
                 sizePreset={sizePreset}
-                textSizePreset={textSizePreset}
+                textSize={textSize}
                 toggleGroupKeys={toggleGroupKeys}
                 toggleRowKey={toggleRowKey}
                 onEditRow={onEditRow}
@@ -1054,7 +1210,7 @@ export type {
   TableSizePreset,
   TableStyleProps,
 } from './table.styles';
-/* eslint-disable react-refresh/only-export-components -- barrel: утилиты sizing и дефолты осей Table. */
+/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста, утилит sizing и дефолтов осей Table */
 export {
   DEFAULT_TABLE_HOVER_HIGHLIGHT,
   DEFAULT_TABLE_NUMBERED,
@@ -1062,4 +1218,5 @@ export {
   DEFAULT_TABLE_SIZE_PRESET,
   DEFAULT_TABLE_STRIPED,
   computeTableColumnInlineSizes,
+  getTableTextSize,
 } from './table.styles';

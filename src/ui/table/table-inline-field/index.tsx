@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - выравнивание текста через проп `textAlign`
- *  - размер текста через проп `textSizePreset`
+ *  - размер текста через проп `textSize`
  *
  * Основные задачи:
  * 1. Экспортировать компонент TableInlineField
@@ -37,7 +37,7 @@ type TableInlineFieldProps = TableInlineFieldStyleProps &
  * @example
  * <TableInlineField
  *   placeholder="Product"
- *   textSizePreset={textSizePreset}
+ *   textSize={textSize}
  *   value={composeDraft.product}
  *   onChange={(event) =>
  *     setComposeDraft((current) => ({ ...current, product: event.target.value }))
@@ -47,7 +47,7 @@ type TableInlineFieldProps = TableInlineFieldStyleProps &
  *   inputMode="numeric"
  *   placeholder="Stock"
  *   textAlign="end"
- *   textSizePreset={textSizePreset}
+ *   textSize={textSize}
  *   value={composeDraft.stock}
  *   onChange={(event) =>
  *     setComposeDraft((current) => ({ ...current, stock: event.target.value }))
