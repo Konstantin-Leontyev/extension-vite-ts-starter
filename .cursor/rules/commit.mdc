@@ -1,0 +1,55 @@
+---
+description: "Правила создания коммитов в монорепо (зонтик, studio, recorder, стартеры)"
+alwaysApply: false
+---
+
+# Правила коммитов
+
+Подтягивается по требованию — читай этот файл перед любым коммитом. В общий чат не грузится.
+
+## Общий протокол
+
+- **Стейдж явными путями.** Не `git add .` всего дерева: в коммит идёт только связанное с задачей. Несвязанные правки — отдельным коммитом.
+- **Не вычищать пояснительные внутристрочные комментарии.** Автор намеренно оставляет разъясняющие построчные комментарии в отдельных местах (эталон — тело `getSpacingStyles` в `spacing.ts`), чтобы один раз показать логику обхода карты «проп → CSS-свойство». Это осознанный обучающий образец, не «пересказ очевидного»: при коммите такие комментарии сохранять, к удалению по правилу `comments.mdc` они не относятся.
+- **Один коммит = один репозиторий.** Правки в нескольких репо — отдельный коммит на каждый.
+- **Сообщение** — по сути изменения (зачем, а не построчный пересказ что). Многострочное — через heredoc.
+- **Не коммитить секреты** (`.env`, ключи, `*.local.*`).
+- **Пуш** — зонтик и `studio` / `recorder`: только по явной команде пользователя. Стартеры (`vite-ts-starter-lite`, `extension-vite-ts-starter`): push только по явной команде или когда пользователь явно попросил «закоммить и запушь» в этом репо.
+
+## UI-коммит (манифест в теле)
+
+Коммит, меняющий нейтральный UI (примитивы стартера), может нести в **теле** манифест — список компонентов и файлов для быстрого ориентира в `git log`. Заголовок — суть:
+
+```
+refactor(ui): FieldError placeholder reserve
+
+Компоненты:
+- ui/field-error
+- pages/showcase/field-error-group
+
+Файлы:
+- src/ui/field-error/{index.tsx,field-error.styles.ts}
+- src/pages/showcase/field-error-group/index.tsx
+```
+
+Источник истины о расхождениях между репо — полный диф по allow-list `kit-hub.mdc`, не текст коммита.
+
+## Remotes (алиас `github.com-konstantin` в `~/.ssh/config`)
+
+| Репозиторий | Роль | Remote |
+|---|---|---|
+| зонтик `algo-trade-platform` | правила, указатели сабмодулей | `git@github.com-konstantin:Konstantin-Leontyev/algo-trade-platform.git` |
+| `studio` (сабмодуль) | продуктовый код | `git@github.com-konstantin:Konstantin-Leontyev/algo-trade-studio.git` |
+| `recorder` (сабмодуль) | запись потоков бирж | `git@github.com-konstantin:Konstantin-Leontyev/algo-trade-recorder.git` |
+| `vite-ts-starter-lite` | SPA-стартер (хаб web) | `git@github.com-konstantin:Konstantin-Leontyev/vite-ts-starter-lite.git` |
+| `extension-vite-ts-starter` | стартер расширения MV3 | `git@github.com-konstantin:Konstantin-Leontyev/extension-vite-ts-starter.git` |
+
+## Зонтик и сабмодули
+
+- Зонтик `algo-trade-platform` — git-репо с сабмодулями `studio` и `recorder`. Правки в `.cursor/` коммитятся здесь.
+- **Push в `studio` и зонтик — никогда по умолчанию**, только по явной отдельной команде.
+- Указатель сабмодуля бампить в зонтике **только для того, в котором реально работали**. `recorder` не бампить, пока в нём не велась работа.
+
+## Локальные файлы (`*.local.*`)
+
+Файлы с реальными адресами и путями (`recorder/REMINDME.local.md`, `studio/backend/README.local.md`) в git не попадают: паттерн `*.local.*` добавлен в `.gitignore` всех трёх репозиториев (зонтик, studio, recorder). В индекс их добавлять по-прежнему запрещено.
