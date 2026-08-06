@@ -773,7 +773,11 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
 
   if (!settings.checkable) {
     return (
-      <Table aria-label={CATALOG_TABLE_DEMO_ARIA_LABEL} {...tableProps} {...editableProps} />
+      <Table
+        aria-label={CATALOG_TABLE_DEMO_ARIA_LABEL}
+        {...tableProps}
+        {...editableProps}
+      />
     );
   }
 

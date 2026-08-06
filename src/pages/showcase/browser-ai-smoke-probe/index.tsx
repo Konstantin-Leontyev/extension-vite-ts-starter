@@ -188,9 +188,7 @@ export function BrowserAiSmokeProbe() {
         setState({
           ...INITIAL_SMOKE_PROBE_STATE,
           errorMessage:
-            error instanceof Error
-              ? error.message
-              : AVAILABILITY_CHECK_FAILED_MESSAGE,
+            error instanceof Error ? error.message : AVAILABILITY_CHECK_FAILED_MESSAGE,
           phase: 'error',
         });
       }
@@ -255,8 +253,7 @@ export function BrowserAiSmokeProbe() {
 
       setState((current) => ({
         ...current,
-        errorMessage:
-          error instanceof Error ? error.message : DOWNLOAD_FAILED_MESSAGE,
+        errorMessage: error instanceof Error ? error.message : DOWNLOAD_FAILED_MESSAGE,
         phase: 'error',
       }));
     }
@@ -295,8 +292,7 @@ export function BrowserAiSmokeProbe() {
 
       setState((current) => ({
         ...current,
-        errorMessage:
-          error instanceof Error ? error.message : PROMPT_FAILED_MESSAGE,
+        errorMessage: error instanceof Error ? error.message : PROMPT_FAILED_MESSAGE,
         phase: 'error',
       }));
     }
@@ -325,9 +321,7 @@ export function BrowserAiSmokeProbe() {
       setState({
         ...INITIAL_SMOKE_PROBE_STATE,
         errorMessage:
-          error instanceof Error
-            ? error.message
-            : AVAILABILITY_CHECK_FAILED_MESSAGE,
+          error instanceof Error ? error.message : AVAILABILITY_CHECK_FAILED_MESSAGE,
         phase: 'error',
       });
     }
