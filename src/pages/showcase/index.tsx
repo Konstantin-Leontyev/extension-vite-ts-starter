@@ -808,7 +808,7 @@ const DEFAULT_TEXT_STATE: TextWidgetState = {
 const DEFAULT_TOOLBAR_STATE: ToolbarWidgetState = {
   background: 'surface',
   borderTone: 'neutral',
-  shape: 'round',
+  shape: DEFAULT_SHAPE_PRESET,
   showBorder: true,
   showShadow: true,
   sizePreset: DEFAULT_SIZE_PRESET,

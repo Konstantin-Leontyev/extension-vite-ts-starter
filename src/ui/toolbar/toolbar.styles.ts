@@ -20,12 +20,13 @@ import {
   getBorderStyles,
   type BorderProps,
 } from '@ui/border';
+import { getIconSize, type IconSizePreset } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
-  getMinBlockSize,
   resolveBlockRadius,
+  type ShapePreset,
 } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import {
@@ -39,10 +40,14 @@ import { getTheme, type AppTheme } from '@ui/theme';
  * ToolbarStyleProps — представляет пропсы стилизации Toolbar и layout-пропсы.
  *
  * @property background — заливка панели инструментов
+ * @property shape — форма панели
+ * @property sizePreset — размер окна действия
  */
 export type ToolbarStyleProps = LayoutProps &
   BorderProps & {
     background?: SurfaceBackground;
+    shape?: ShapePreset;
+    sizePreset?: IconSizePreset;
   };
 
 /**
@@ -52,6 +57,8 @@ const TOOLBAR_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
   ...BORDER_PROP_NAMES,
   'background',
+  'shape',
+  'sizePreset',
 ]);
 
 /**
@@ -60,8 +67,25 @@ const TOOLBAR_PROP_NAMES = new Set<string>([
 const TOOLBAR_PADDING: SpacingValue = 8;
 
 /**
- * getToolbarStyles — возвращает CSS-правила для корня `StyledToolbar`: заливку
- * и рамку с тенью.
+ * resolveToolbarBlockRadius — возвращает скругление поверхности панели по `shape`
+ * и `sizePreset`: высота = размер иконки плюс два `TOOLBAR_PADDING`.
+ *
+ * @param shape форма панели
+ * @param sizePreset размер окна действия
+ * @returns значение для CSS-свойства `border-radius`
+ */
+function resolveToolbarBlockRadius(
+  shape: ShapePreset,
+  sizePreset: IconSizePreset
+): string {
+  const surfaceBlockSize = `calc(${getSpacingValue(getIconSize(sizePreset))} + ${getSpacingValue(TOOLBAR_PADDING)} + ${getSpacingValue(TOOLBAR_PADDING)})`;
+
+  return resolveBlockRadius(shape, surfaceBlockSize);
+}
+
+/**
+ * getToolbarStyles — возвращает CSS-правила для корня `StyledToolbar`: заливку,
+ * рамку с тенью и скругление поверхности.
  *
  * @param props пропсы стилизации Toolbar и тема
  * @returns CSS-правила, каждое с новой строки
@@ -71,13 +95,16 @@ function getToolbarStyles(props: ToolbarStyleProps & { theme: AppTheme }): strin
   const {
     background = DEFAULT_SURFACE_BACKGROUND,
     borderTone,
+    shape = DEFAULT_SHAPE_PRESET,
     showBorder = DEFAULT_SHOW_BORDER,
     showShadow = DEFAULT_SHOW_SHADOW,
+    sizePreset = DEFAULT_SIZE_PRESET,
   } = props;
 
   return `
     background-color: ${getSurfaceBackgroundColor(theme, background)};
     ${getBorderStyles(theme, showBorder, showShadow, borderTone)}
+    border-radius: ${resolveToolbarBlockRadius(shape, sizePreset)};
   `;
 }
 
@@ -90,10 +117,9 @@ function getToolbarStyles(props: ToolbarStyleProps & { theme: AppTheme }): strin
  *  - `min-inline-size: 0` и `min-block-size: 0` — сжимается во flex/grid-родителе
  *  - `padding` — внутренний отступ поверхности
  *  - `overflow: hidden` — обрезает содержимое по скруглению
- *  - `border-radius` — скругление поверхности через `resolveBlockRadius`
  *
  * Генерация стилей:
- *  - `getToolbarStyles` — заливка и рамка с тенью
+ *  - `getToolbarStyles` — заливка, рамка с тенью и скругление поверхности
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledToolbar = styled.div.withConfig({
@@ -104,10 +130,6 @@ export const StyledToolbar = styled.div.withConfig({
   min-block-size: 0;
   padding: ${getSpacingValue(TOOLBAR_PADDING)};
   overflow: hidden;
-  border-radius: ${resolveBlockRadius(
-    DEFAULT_SHAPE_PRESET,
-    getMinBlockSize(DEFAULT_SIZE_PRESET)
-  )};
   ${(props) => getToolbarStyles(props)}
   ${(props) => getLayoutStyles(props)}
 `;

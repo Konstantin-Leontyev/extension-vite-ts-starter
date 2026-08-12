@@ -12,12 +12,8 @@
  *  - `src/pages/showcase/index.tsx` — подключает панель и синхронизирует состояние с превью виджета Toolbar
  */
 
-import {
-  ICON_SHAPE_PRESET_KEYS,
-  ICON_SIZE_PRESET_KEYS,
-  type IconShapePreset,
-  type IconSizePreset,
-} from '@ui/icon';
+import { ICON_SIZE_PRESET_KEYS, type IconSizePreset } from '@ui/icon';
+import { SHAPE_PRESET_KEYS, type ShapePreset } from '@ui/presets';
 import { type SurfaceBackground } from '@ui/surface';
 import { type TonePreset } from '@ui/tones';
 
@@ -34,7 +30,7 @@ import { SizeListbox } from '../size-listbox';
  *
  * @property background — заливка панели инструментов
  * @property borderTone — тон рамки
- * @property shape — форма окна действия
+ * @property shape — форма панели
  * @property showBorder — включает рамку
  * @property showShadow — включает тень при включённой рамке
  * @property sizePreset — размер окна действия
@@ -42,7 +38,7 @@ import { SizeListbox } from '../size-listbox';
 export type ToolbarWidgetState = {
   background: SurfaceBackground;
   borderTone: TonePreset;
-  shape: IconShapePreset;
+  shape: ShapePreset;
   showBorder: boolean;
   showShadow: boolean;
   sizePreset: IconSizePreset;
@@ -80,7 +76,7 @@ export function ToolbarSettings({ onChange, state }: ToolbarSettingsProps) {
 
       <ShapeListbox
         label="Shape:"
-        shapes={ICON_SHAPE_PRESET_KEYS}
+        shapes={SHAPE_PRESET_KEYS}
         value={state.shape}
         onChange={(shape) => onChange('shape', shape)}
       />

@@ -27,8 +27,9 @@
 
 import { type ComponentPropsWithRef } from 'react';
 
-import { type IconShapePreset, type IconSizePreset } from '@ui/icon';
+import { type IconShapePreset } from '@ui/icon';
 import { IconButtonRow, type IconButtonRowAction } from '@ui/icon-button-row';
+import { DEFAULT_SHAPE_PRESET, type ShapePreset } from '@ui/presets';
 
 import { StyledToolbar, type ToolbarStyleProps } from './toolbar.styles';
 
@@ -37,19 +38,27 @@ import { StyledToolbar, type ToolbarStyleProps } from './toolbar.styles';
  *
  * @property actions — ряд действий
  * @property ariaLabel — доступное имя для скринридера
- * @property shape — форма окна действия
- * @property sizePreset — размер окна действия
  */
 type ToolbarProps = {
   actions: IconButtonRowAction[];
   ariaLabel: string;
-  shape?: IconShapePreset;
-  sizePreset?: IconSizePreset;
 } & ToolbarStyleProps &
   Omit<
     ComponentPropsWithRef<'div'>,
     'aria-label' | 'className' | 'role' | 'style' | keyof ToolbarStyleProps
   >;
+
+/**
+ * resolveToolbarActionShape — принимает форму панели и возвращает форму окна действия ряда.
+ *
+ * @param shape форма панели
+ * @returns форма окна действия для `IconButtonRow`
+ */
+function resolveToolbarActionShape(
+  shape: ShapePreset = DEFAULT_SHAPE_PRESET
+): IconShapePreset {
+  return shape === 'pill' ? 'round' : 'rounded';
+}
 
 /**
  * Toolbar — отображает панель инструментов с рядом иконочных действий.
@@ -62,11 +71,17 @@ type ToolbarProps = {
  */
 function Toolbar({ actions, ariaLabel, shape, sizePreset, ...rest }: ToolbarProps) {
   return (
-    <StyledToolbar aria-label={ariaLabel} role="toolbar" {...rest}>
+    <StyledToolbar
+      aria-label={ariaLabel}
+      role="toolbar"
+      shape={shape}
+      sizePreset={sizePreset}
+      {...rest}
+    >
       <IconButtonRow
         actions={actions}
         rovingFocus
-        shape={shape}
+        shape={resolveToolbarActionShape(shape)}
         sizePreset={sizePreset}
       />
     </StyledToolbar>
