@@ -21,11 +21,15 @@ import { type ReactNode } from 'react';
 
 import {
   AddCircleIcon,
+  CaptionIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  ClockIcon,
   CloseIcon,
   CopyIcon,
   DownloadIcon,
+  DualIcon,
+  EarthIcon,
   PlusIcon,
   SearchIcon,
   SettingsIcon,
@@ -40,11 +44,15 @@ import { type ComboboxOption } from '@ui/combobox';
  */
 const ICONS = {
   'add-circle': () => <AddCircleIcon />,
+  caption: () => <CaptionIcon />,
   close: () => <CloseIcon />,
   'chevron-down': () => <ChevronDownIcon />,
   'chevron-up': () => <ChevronUpIcon />,
+  clock: () => <ClockIcon />,
   copy: () => <CopyIcon />,
   download: () => <DownloadIcon />,
+  dual: () => <DualIcon />,
+  earth: () => <EarthIcon />,
   plus: () => <PlusIcon />,
   upload: () => <UploadIcon />,
   search: () => <SearchIcon />,

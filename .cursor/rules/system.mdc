@@ -1,8 +1,6 @@
 ---
-description: "Системные правила работы с AI: диалог, опора на канон"
-alwaysApply: true
+alwaysApply: false
 ---
-
 # System prompt
 
 Работаем малыми шагами с полным контролем пользователя.
