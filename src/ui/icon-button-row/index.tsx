@@ -16,6 +16,7 @@
  * Потребители:
  *  - `@ui/card` — рендерит ряд действий шапки
  *  - `@ui/sidebar` — типизирует действия шапки через `IconButtonRowAction`
+ *  - `@ui/toolbar` — рендерит ряд действий панели инструментов
  */
 
 import { type ComponentPropsWithRef, type MouseEvent, type ReactNode } from 'react';

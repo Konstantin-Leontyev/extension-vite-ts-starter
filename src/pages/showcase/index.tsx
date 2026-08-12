@@ -15,7 +15,7 @@ import { useState, type ReactNode } from 'react';
 
 import { useShellOutletContext } from '@components/router';
 import { useToast } from '@hooks/use-toast';
-import { SettingsIcon } from '@icons';
+import { CopyIcon, DownloadIcon, SearchIcon, SettingsIcon, SignOutIcon } from '@icons';
 import { Button, getButtonTextSize } from '@ui/button';
 import { CARD_HEADER_ACTION_SIZE_PRESET, Card } from '@ui/card';
 import { Checkbox, getCheckboxTextSize } from '@ui/checkbox';
@@ -23,6 +23,7 @@ import { Combobox } from '@ui/combobox';
 import { DateRangeInput, todayUtc } from '@ui/date-range-input';
 import { Fieldset } from '@ui/fieldset';
 import { Icon, getIconPadding } from '@ui/icon';
+import { type IconButtonRowAction } from '@ui/icon-button-row';
 import { Input } from '@ui/input';
 import { Listbox } from '@ui/listbox';
 import { Modal } from '@ui/modal';
@@ -50,6 +51,7 @@ import { Tag, getTagTextSize } from '@ui/tag';
 import { Text } from '@ui/text';
 import { Toast, getToastTextSize } from '@ui/toast';
 import { DEFAULT_TONE } from '@ui/tones';
+import { Toolbar } from '@ui/toolbar';
 
 import { BrowserAiSmokeProbe } from './browser-ai-smoke-probe';
 import { ButtonSettings, type ButtonWidgetState } from './button-settings';
@@ -95,6 +97,7 @@ import { TableSettings, type TableWidgetState } from './table-settings';
 import { TagSettings, type TagWidgetState } from './tag-settings';
 import { TextSettings, type TextWidgetState } from './text-settings';
 import { ToastSettings, type ToastWidgetState } from './toast-settings';
+import { ToolbarSettings, type ToolbarWidgetState } from './toolbar-settings';
 
 /**
  * SIDEBAR_ID — задаёт id боковой панели витрины.
@@ -264,6 +267,50 @@ const CARD_WIDGET_TITLE_ID = 'showcase-card-heading';
 const TEXT_WIDGET_TITLE_ID = 'showcase-text-heading';
 
 /**
+ * TOOLBAR_WIDGET_TITLE_ID — задаёт id заголовка виджета Toolbar в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
+const TOOLBAR_WIDGET_TITLE_ID = 'showcase-toolbar-heading';
+
+/**
+ * TOOLBAR_DEMO_ARIA_LABEL — задаёт `aria-label` превью Toolbar.
+ * Используется в превью виджета Toolbar.
+ */
+const TOOLBAR_DEMO_ARIA_LABEL = 'Toolbar';
+
+/**
+ * TOOLBAR_DEMO_ACTIONS — задаёт фиксированный демо-ряд действий превью Toolbar.
+ * Используется в превью виджета Toolbar.
+ */
+const TOOLBAR_DEMO_ACTIONS: IconButtonRowAction[] = [
+  {
+    ariaLabel: 'Search',
+    icon: <SearchIcon />,
+    onClick: () => undefined,
+  },
+  {
+    ariaLabel: 'Copy',
+    icon: <CopyIcon />,
+    onClick: () => undefined,
+  },
+  {
+    ariaLabel: 'Download',
+    icon: <DownloadIcon />,
+    onClick: () => undefined,
+  },
+  {
+    ariaLabel: 'Settings',
+    icon: <SettingsIcon />,
+    onClick: () => undefined,
+  },
+  {
+    ariaLabel: 'Logout',
+    icon: <SignOutIcon />,
+    onClick: () => undefined,
+  },
+];
+
+/**
  * RADIO_BUTTON_DEMO_NAME — задаёт name группы RadioButton в демо-превью.
  * Связывает варианты A и B одной группой выбора.
  */
@@ -305,7 +352,8 @@ type WidgetSettingsKey =
   | 'table'
   | 'tag'
   | 'text'
-  | 'toast';
+  | 'toast'
+  | 'toolbar';
 
 /**
  * SETTINGS_TITLES — связывает ключ панели настроек с заголовком Sidebar и карточки.
@@ -333,6 +381,7 @@ const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   modal: 'Modal',
   card: 'Card',
   text: 'Text',
+  toolbar: 'Toolbar',
 };
 
 /**
@@ -748,6 +797,19 @@ const DEFAULT_TEXT_STATE: TextWidgetState = {
 };
 
 /**
+ * DEFAULT_TOOLBAR_STATE — задаёт начальное состояние виджета Toolbar в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
+const DEFAULT_TOOLBAR_STATE: ToolbarWidgetState = {
+  background: 'surface',
+  borderTone: 'neutral',
+  shape: 'round',
+  showBorder: true,
+  showShadow: true,
+  sizePreset: DEFAULT_SIZE_PRESET,
+};
+
+/**
  * formatDemoRangeLabel — возвращает подпись активного диапазона для демо RangeInput.
  *
  * @param value текущее значение диапазона
@@ -832,6 +894,7 @@ export function ShowcasePage() {
   const [modal, setModal] = useState<ModalWidgetState>(DEFAULT_MODAL_STATE);
   const [card, setCard] = useState<CardWidgetState>(DEFAULT_CARD_STATE);
   const [text, setText] = useState<TextWidgetState>(DEFAULT_TEXT_STATE);
+  const [toolbar, setToolbar] = useState<ToolbarWidgetState>(DEFAULT_TOOLBAR_STATE);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Настройки шапки приоритетны: при открытии сбрасывают выбранный виджет, чтобы
@@ -1061,6 +1124,13 @@ export function ShowcasePage() {
     setText((current) => ({ ...current, [key]: value }));
   }
 
+  function updateToolbar<K extends keyof ToolbarWidgetState>(
+    key: K,
+    value: ToolbarWidgetState[K]
+  ): void {
+    setToolbar((current) => ({ ...current, [key]: value }));
+  }
+
   function renderSettingsPanel(): ReactNode {
     if (activeSettings === 'input') {
       return <InputSettings state={input} onChange={updateInput} />;
@@ -1148,6 +1218,10 @@ export function ShowcasePage() {
 
     if (activeSettings === 'text') {
       return <TextSettings state={text} onChange={updateText} />;
+    }
+
+    if (activeSettings === 'toolbar') {
+      return <ToolbarSettings state={toolbar} onChange={updateToolbar} />;
     }
 
     return null;
@@ -1309,6 +1383,22 @@ export function ShowcasePage() {
                 >
                   {text.children}
                 </Text>
+              )}
+
+              {renderWidgetCard(
+                'toolbar',
+                TOOLBAR_WIDGET_TITLE_ID,
+                <Toolbar
+                  actions={TOOLBAR_DEMO_ACTIONS}
+                  ariaLabel={TOOLBAR_DEMO_ARIA_LABEL}
+                  background={toolbar.background}
+                  borderTone={toolbar.borderTone}
+                  placeSelf="center"
+                  shape={toolbar.shape}
+                  showBorder={toolbar.showBorder}
+                  showShadow={toolbar.showShadow}
+                  sizePreset={toolbar.sizePreset}
+                />
               )}
 
               {renderWidgetCard(

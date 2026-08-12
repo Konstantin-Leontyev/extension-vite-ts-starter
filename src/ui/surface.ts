@@ -10,20 +10,23 @@
  * 5. Предоставить утилиту `getSurfaceBackgroundColor`
  *
  * Потребители:
- *  - `@ui/card` — читает цвет заливки через `getSurfaceBackgroundColor` и дефолт
- *    `DEFAULT_SURFACE_BACKGROUND`
+ *  - `@ui/card` и `@ui/toolbar` — читают цвет заливки через `getSurfaceBackgroundColor`
+ *    и дефолт `DEFAULT_SURFACE_BACKGROUND`
  *  - `src/pages/showcase/background-listbox/index.tsx` — собирает опции Listbox из
  *    `SURFACE_BACKGROUND_KEYS`
  *  - панели настроек витрины дизайн-системы — типизируют заливку через `SurfaceBackground`:
  *     - `src/pages/showcase/card-settings/index.tsx`
  *     - `src/pages/showcase/modal-settings/index.tsx`
+ *     - `src/pages/showcase/toolbar-settings/index.tsx`
  */
 
 import { type AppTheme, type ThemeColors } from '@ui/theme';
 
 /**
- * SurfaceBackground — представляет заливку поверхности.
- * Используется как тип пропа `background` у Card и в панелях настроек витрины.
+ * SurfaceBackground — представляет заливку поверхности: поверхность, фон страницы
+ * или прозрачную. Рамку и тень включают пропсы `showBorder` и `showShadow`, заливка
+ * их не гасит.
+ * Используется как тип пропа `background` у Card и Toolbar и в панелях настроек витрины.
  */
 export type SurfaceBackground = 'background' | 'surface' | 'transparent';
 
