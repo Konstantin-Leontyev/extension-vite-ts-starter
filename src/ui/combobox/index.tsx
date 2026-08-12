@@ -51,7 +51,7 @@ import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
-import { Input } from '@ui/input';
+import { SearchField } from '@ui/search-field';
 import { Text } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
@@ -61,7 +61,6 @@ import {
   StyledComboboxOption,
   StyledComboboxPanel,
   StyledComboboxRoot,
-  StyledComboboxSearchRow,
   StyledComboboxTrigger,
   StyledComboboxTriggerRow,
   StyledComboboxValue,
@@ -572,37 +571,20 @@ export function Combobox({
           sizePreset={sizePreset}
           onKeyDown={handlePanelKeyDown}
         >
-          <StyledComboboxSearchRow data-has-clear={query.length > 0 ? '' : undefined}>
-            <Input
-              aria-activedescendant={activeOptionId}
-              aria-controls={listId}
-              aria-expanded
-              placeholder={searchPlaceholder}
-              ref={searchInputRef}
-              shape={shape}
-              showBorder={false}
-              sizePreset={sizePreset}
-              type="search"
-              value={query}
-              onChange={handleQueryChange}
-            />
-            {query.length > 0 && (
-              <Icon
-                aria-label="Clear search"
-                as="button"
-                padding={12}
-                shape="round"
-                showHover={false}
-                sizePreset="normal"
-                onClick={() => {
-                  setQuery('');
-                  searchInputRef.current?.focus();
-                }}
-              >
-                <CloseIcon />
-              </Icon>
-            )}
-          </StyledComboboxSearchRow>
+          <SearchField
+            aria-activedescendant={activeOptionId}
+            aria-controls={listId}
+            aria-expanded
+            placeholder={searchPlaceholder}
+            ref={searchInputRef}
+            shape={shape}
+            showBorder={false}
+            showIcon={false}
+            sizePreset={sizePreset}
+            value={query}
+            onChange={handleQueryChange}
+            onClear={() => setQuery('')}
+          />
 
           <StyledComboboxList
             aria-label={label ?? placeholder}

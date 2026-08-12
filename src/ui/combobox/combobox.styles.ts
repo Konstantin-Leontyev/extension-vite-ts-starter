@@ -8,7 +8,7 @@
  * 3. Предоставить функцию `getComboboxTextSize`
  * 4. Предоставить styled-узлы `StyledComboboxRoot`, `StyledComboboxTriggerRow`,
  *    `StyledComboboxTrigger`, `StyledComboboxValue`, `StyledComboboxPanel`,
- *    `StyledComboboxSearchRow`, `StyledComboboxList` и `StyledComboboxOption`
+ *    `StyledComboboxList` и `StyledComboboxOption`
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
@@ -266,35 +266,6 @@ export const StyledComboboxPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => !COMBOBOX_BOX_PROP_NAMES.has(prop),
 })<Pick<ComboboxSurfaceStyleProps, 'shape' | 'sizePreset'>>`
   ${(props) => getComboboxPanelStyles(props)}
-`;
-
-/**
- * StyledComboboxSearchRow — задаёт ряд поля поиска и кнопки сброса в панели Combobox.
- * Базируется на `<div>`.
- *
- * Встроенные стили:
- *  - `display: grid` — поле поиска и кнопка сброса в одной строке
- *  - `grid-template-columns` при `data-has-clear` — вторая колонка под кнопку сброса
- *  - `appearance: none` на `::-webkit-search-cancel-button` и `::-webkit-search-decoration` —
- *    скрывает UA-кнопку сброса у `input[type='search']`, чтобы оставался только Icon
- */
-export const StyledComboboxSearchRow = styled.div`
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: center;
-  min-inline-size: 0;
-
-  &[data-has-clear] {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  & input[type='search']::-webkit-search-cancel-button {
-    appearance: none;
-  }
-
-  & input[type='search']::-webkit-search-decoration {
-    appearance: none;
-  }
 `;
 
 /**

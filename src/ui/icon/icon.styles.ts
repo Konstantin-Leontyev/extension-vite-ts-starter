@@ -360,7 +360,8 @@ const DEFAULT_ICON_SHOW_HOVER = true;
 
 /**
  * getIconStyles — возвращает CSS-правила для корня `StyledIcon`: габарит,
- * внутренний отступ, форму, рамку, статичную поверхность и канал состояний.
+ * внутренний отступ, форму, рамку, статичную поверхность, канал состояний и
+ * фокус кнопки сброса.
  *
  * Как работает:
  * 1. Собирает квадрат окна через `getIconSize` и внутренний отступ через
@@ -375,7 +376,9 @@ const DEFAULT_ICON_SHOW_HOVER = true;
  * 6. При `showHover` на `:not(:disabled):hover` и `:focus-visible` пишет
  *    значение канала через `resolveIconStateBackground`
  * 7. Для кнопки сброса `[data-slot='clear']` на `:focus-visible` снимает
- *    глобальный `outline` и ставит ту же заливку, что канал наведения
+ *    глобальный `outline` и красит `background-color` декларацией тем же
+ *    цветом, что возвращает `resolveIconStateBackground`, не через канал
+ *    `--icon-state-background`
  *
  * @param props пропсы стилизации Icon и тема
  * @returns CSS-правила, каждое с новой строки
@@ -432,7 +435,7 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
   styles.push(
     `&[data-slot='clear']:focus-visible {`,
     'outline: none;',
-    `--icon-state-background: ${clearFocusBackground};`,
+    `background-color: ${clearFocusBackground};`,
     '}'
   );
 
@@ -452,7 +455,7 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
  *
  * Генерация стилей:
  *  - `getIconStyles` — габарит, внутренний отступ, форма, рамка с тенью,
- *    поверхность и канал состояний
+ *    поверхность, канал состояний и фокус кнопки сброса
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *
  * Единственный узел проекта, создающий условия рендера svg: центрирующий бокс.

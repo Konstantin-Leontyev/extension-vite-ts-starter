@@ -36,6 +36,7 @@ import {
   type RangeValue,
 } from '@ui/range-input';
 import { ScrollPort } from '@ui/scroll-port';
+import { SearchField } from '@ui/search-field';
 import { SegmentButton, getSegmentButtonTextSize } from '@ui/segment-button';
 import { Sidebar } from '@ui/sidebar';
 import { Spinner, getSpinnerTextSize } from '@ui/spinner';
@@ -78,6 +79,10 @@ import {
   type RadioButtonWidgetState,
 } from './radio-button-settings';
 import { RangeInputSettings, type RangeInputWidgetState } from './range-input-settings';
+import {
+  SearchFieldSettings,
+  type SearchFieldWidgetState,
+} from './search-field-settings';
 import {
   SegmentButtonSettings,
   type SegmentButtonWidgetState,
@@ -145,6 +150,12 @@ const DEMO_MODAL_BODY_TEXT = 'Place your content here';
  * Используется в `aria-labelledby` карточки и как `titleId` виджета.
  */
 const INPUT_WIDGET_TITLE_ID = 'showcase-input-heading';
+
+/**
+ * SEARCH_FIELD_WIDGET_TITLE_ID — задаёт id заголовка виджета SearchField в витрине.
+ * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ */
+const SEARCH_FIELD_WIDGET_TITLE_ID = 'showcase-search-field-heading';
 
 /**
  * BUTTON_WIDGET_TITLE_ID — задаёт id заголовка виджета Button в витрине.
@@ -350,6 +361,7 @@ type WidgetSettingsKey =
   | 'progress'
   | 'radio-button'
   | 'range-input'
+  | 'search-field'
   | 'segment-button'
   | 'spinner'
   | 'stepper'
@@ -366,6 +378,7 @@ type WidgetSettingsKey =
  */
 const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   input: 'Input',
+  'search-field': 'SearchField',
   listbox: 'Listbox',
   combobox: 'Combobox',
   'range-input': 'Range input',
@@ -412,6 +425,29 @@ const DEFAULT_INPUT_STATE: InputWidgetState = {
   placeholder: 'e.g. value',
   shape: DEFAULT_SHAPE_PRESET,
   showBorder: true,
+  showShadow: true,
+  sizePreset: DEFAULT_SIZE_PRESET,
+  textAlign: undefined,
+  textItalic: false,
+  value: '',
+};
+
+/**
+ * DEFAULT_SEARCH_FIELD_STATE — задаёт начальное состояние виджета SearchField в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
+const DEFAULT_SEARCH_FIELD_STATE: SearchFieldWidgetState = {
+  borderTone: 'neutral',
+  disabled: false,
+  iconFill: 'neutral',
+  iconKey: 'search',
+  iconPosition: 'start',
+  iconTone: 'neutral',
+  label: 'Label:',
+  placeholder: 'Search…',
+  shape: DEFAULT_SHAPE_PRESET,
+  showBorder: true,
+  showIcon: true,
   showShadow: true,
   sizePreset: DEFAULT_SIZE_PRESET,
   textAlign: undefined,
@@ -869,6 +905,9 @@ export function ShowcasePage() {
     useShellOutletContext();
   const [activeSettings, setActiveSettings] = useState<null | WidgetSettingsKey>(null);
   const [input, setInput] = useState<InputWidgetState>(DEFAULT_INPUT_STATE);
+  const [searchField, setSearchField] = useState<SearchFieldWidgetState>(
+    DEFAULT_SEARCH_FIELD_STATE
+  );
   const [button, setButton] = useState<ButtonWidgetState>(DEFAULT_BUTTON_STATE);
   const [icon, setIcon] = useState<IconWidgetState>(DEFAULT_ICON_STATE);
   const [listbox, setListbox] = useState<ListboxWidgetState>(DEFAULT_LISTBOX_STATE);
@@ -948,6 +987,13 @@ export function ShowcasePage() {
     value: InputWidgetState[K]
   ): void {
     setInput((current) => ({ ...current, [key]: value }));
+  }
+
+  function updateSearchField<K extends keyof SearchFieldWidgetState>(
+    key: K,
+    value: SearchFieldWidgetState[K]
+  ): void {
+    setSearchField((current) => ({ ...current, [key]: value }));
   }
 
   function updateButton<K extends keyof ButtonWidgetState>(
@@ -1139,6 +1185,10 @@ export function ShowcasePage() {
   function renderSettingsPanel(): ReactNode {
     if (activeSettings === 'input') {
       return <InputSettings state={input} onChange={updateInput} />;
+    }
+
+    if (activeSettings === 'search-field') {
+      return <SearchFieldSettings state={searchField} onChange={updateSearchField} />;
     }
 
     if (activeSettings === 'listbox') {
@@ -1427,6 +1477,32 @@ export function ShowcasePage() {
                   textItalic={input.textItalic}
                   value={input.value}
                   onChange={(event) => updateInput('value', event.target.value)}
+                />
+              )}
+
+              {renderWidgetCard(
+                'search-field',
+                SEARCH_FIELD_WIDGET_TITLE_ID,
+                <SearchField
+                  alignSelf="center"
+                  borderTone={searchField.borderTone}
+                  disabled={searchField.disabled}
+                  icon={searchField.showIcon ? getIcon(searchField.iconKey) : undefined}
+                  iconFill={searchField.showIcon ? searchField.iconFill : undefined}
+                  iconPosition={searchField.iconPosition}
+                  iconTone={searchField.showIcon ? searchField.iconTone : undefined}
+                  label={searchField.label || undefined}
+                  placeholder={searchField.placeholder}
+                  shape={searchField.shape}
+                  showBorder={searchField.showBorder}
+                  showIcon={searchField.showIcon}
+                  showShadow={searchField.showShadow}
+                  sizePreset={searchField.sizePreset}
+                  textAlign={searchField.textAlign}
+                  textItalic={searchField.textItalic}
+                  value={searchField.value}
+                  onChange={(event) => updateSearchField('value', event.target.value)}
+                  onClear={() => updateSearchField('value', '')}
                 />
               )}
 
