@@ -287,26 +287,31 @@ const TOOLBAR_DEMO_ACTIONS: IconButtonRowAction[] = [
     ariaLabel: 'Search',
     icon: <SearchIcon />,
     onClick: () => undefined,
+    title: 'Search',
   },
   {
     ariaLabel: 'Copy',
     icon: <CopyIcon />,
     onClick: () => undefined,
+    title: 'Copy',
   },
   {
     ariaLabel: 'Download',
     icon: <DownloadIcon />,
     onClick: () => undefined,
+    title: 'Download',
   },
   {
     ariaLabel: 'Settings',
     icon: <SettingsIcon />,
     onClick: () => undefined,
+    title: 'Settings',
   },
   {
     ariaLabel: 'Logout',
     icon: <SignOutIcon />,
     onClick: () => undefined,
+    title: 'Logout',
   },
 ];
 

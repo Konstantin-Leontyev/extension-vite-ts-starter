@@ -17,7 +17,8 @@
  * Основные задачи:
  * 1. Экспортировать компонент Toolbar
  * 2. Типизировать пропсы через `ToolbarProps`
- * 3. Выставлять `role="toolbar"` и `aria-label` из пропа `ariaLabel`
+ * 3. Выставлять `role="toolbar"` и `aria-label` из пропа `ariaLabel` и включать
+ *    roving focus у ряда действий
  *
  * Потребители:
  *  - страницы и виджеты приложения — показывают панель инструментов с рядом действий
@@ -62,7 +63,12 @@ type ToolbarProps = {
 function Toolbar({ actions, ariaLabel, shape, sizePreset, ...rest }: ToolbarProps) {
   return (
     <StyledToolbar aria-label={ariaLabel} role="toolbar" {...rest}>
-      <IconButtonRow actions={actions} shape={shape} sizePreset={sizePreset} />
+      <IconButtonRow
+        actions={actions}
+        rovingFocus
+        shape={shape}
+        sizePreset={sizePreset}
+      />
     </StyledToolbar>
   );
 }
