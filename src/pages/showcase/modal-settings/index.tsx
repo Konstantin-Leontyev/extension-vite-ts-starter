@@ -15,9 +15,9 @@
 
 import { type ChangeEvent } from 'react';
 
-import { type CardBackground } from '@ui/card';
 import { Checkbox } from '@ui/checkbox';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
+import { type SurfaceBackground } from '@ui/surface';
 import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
 
 import { BackgroundListbox } from '../background-listbox';
@@ -32,7 +32,7 @@ import { TitleGroup } from '../title-group';
  * через `inlineSize` в родительской витрине.
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Modal.
  *
- * @property background — заливка карточки
+ * @property background — заливка поверхности
  * @property showSubtitle — витринный ключ показа подзаголовка. Выключенный — в превью остаётся только заголовок
  * @property sizePreset — витринный ключ ширины панели. Витрина переводит его в `inlineSize` для Modal
  * @property subtitle — подзаголовок
@@ -45,7 +45,7 @@ import { TitleGroup } from '../title-group';
  * @property titleTone — тон заголовка
  */
 export type ModalWidgetState = {
-  background: CardBackground;
+  background: SurfaceBackground;
   showSubtitle: boolean;
   sizePreset: SizePreset;
   subtitle: string;

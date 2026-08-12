@@ -15,12 +15,13 @@
 import { Fragment, type ChangeEvent } from 'react';
 
 import { Button } from '@ui/button';
-import { CARD_HEADER_ACTION_SIZE_PRESET, type CardBackground } from '@ui/card';
+import { CARD_HEADER_ACTION_SIZE_PRESET } from '@ui/card';
 import { Checkbox } from '@ui/checkbox';
 import { Combobox } from '@ui/combobox';
 import { getIconPadding } from '@ui/icon';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 import { type SpacingValue } from '@ui/spacing';
+import { type SurfaceBackground } from '@ui/surface';
 import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
@@ -92,7 +93,7 @@ export type CardHeaderActionState = {
  * @property titleTone — тон заголовка
  */
 export type CardWidgetState = {
-  background: CardBackground;
+  background: SurfaceBackground;
   borderTone: TonePreset;
   headerActions: CardHeaderActionState[];
   showBorder: boolean;

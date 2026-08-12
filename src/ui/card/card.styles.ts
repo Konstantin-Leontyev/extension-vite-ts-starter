@@ -3,12 +3,11 @@
  * Определяет внешний вид компонента Card.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `CardStyleProps` и `CardBackground`
+ * 1. Типизировать пропсы через `CardStyleProps`
  * 2. Хранить внутренний отступ поверхности в `CARD_PADDING`
- * 3. Предоставить константу `CARD_HEADER_ACTION_SIZE_PRESET` и перечень
- *    `CARD_BACKGROUND_KEYS`
+ * 3. Предоставить константу `CARD_HEADER_ACTION_SIZE_PRESET`
  * 4. Предоставить styled-узлы `StyledCard`, `StyledCardHeader`,
- *    `StyledCardHeaderActions`, `StyledCardHeaderFirstLine` и `StyledCardBody`
+ *    `StyledCardHeaderFirstLine` и `StyledCardBody`
  *
  * Потребители:
  *  - `src/ui/card/index.tsx` — собирает компонент Card и реэкспортирует публичное API
@@ -33,6 +32,11 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
+import {
+  DEFAULT_SURFACE_BACKGROUND,
+  getSurfaceBackgroundColor,
+  type SurfaceBackground,
+} from '@ui/surface';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 /**
@@ -46,23 +50,6 @@ import { getTheme, type AppTheme } from '@ui/theme';
 export const CARD_HEADER_ACTION_SIZE_PRESET: SizePreset = 'normal';
 
 /**
- * CardBackground — представляет заливку карточки: поверхность, фон страницы
- * или прозрачную. Рамка и тень — через `showBorder` и `showShadow`, не через заливку.
- */
-export type CardBackground = 'background' | 'surface' | 'transparent';
-
-/**
- * CARD_BACKGROUND_KEYS — задаёт перечень фонов карточки.
- * Используется в панелях настроек витрины дизайн-системы: `BackgroundListbox`
- * собирает из него опции для `Listbox`.
- */
-export const CARD_BACKGROUND_KEYS = Object.freeze([
-  'surface',
-  'background',
-  'transparent',
-] as const satisfies readonly CardBackground[]);
-
-/**
  * CardStyleProps — представляет пропсы стилизации Card и layout-пропсы.
  *
  * @property background — заливка карточки
@@ -70,7 +57,7 @@ export const CARD_BACKGROUND_KEYS = Object.freeze([
  */
 export type CardStyleProps = LayoutProps &
   BorderProps & {
-    background?: CardBackground;
+    background?: SurfaceBackground;
     hasHeader: boolean;
   };
 
@@ -85,16 +72,10 @@ const CARD_PROP_NAMES = new Set<string>([
 ]);
 
 /**
- * DEFAULT_CARD_BACKGROUND — задаёт фон карточки по умолчанию.
- * Используется, когда вызывающий код не передал проп `background`.
- */
-const DEFAULT_CARD_BACKGROUND: CardBackground = 'surface';
-
-/**
  * CARD_PADDING — задаёт внутренний отступ поверхности карточки.
  * Тем же значением позиционируется абсолютный ряд действий шапки.
  */
-const CARD_PADDING: SpacingValue = 16;
+export const CARD_PADDING: SpacingValue = 16;
 
 /**
  * getCardStyles — возвращает CSS-правила для корня `StyledCard`: grid-ряды,
@@ -106,23 +87,16 @@ const CARD_PADDING: SpacingValue = 16;
 function getCardStyles(props: CardStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
   const {
-    background = DEFAULT_CARD_BACKGROUND,
+    background = DEFAULT_SURFACE_BACKGROUND,
     borderTone,
     hasHeader,
     showBorder = DEFAULT_SHOW_BORDER,
     showShadow = DEFAULT_SHOW_SHADOW,
   } = props;
 
-  const backgroundColor =
-    background === 'transparent'
-      ? 'transparent'
-      : background === 'background'
-        ? theme.colors.background
-        : theme.colors.surface;
-
   return `
     grid-template-rows: ${hasHeader ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr)'};
-    background-color: ${backgroundColor};
+    background-color: ${getSurfaceBackgroundColor(theme, background)};
     ${getBorderStyles(theme, showBorder, showShadow, borderTone)}
   `;
 }
@@ -174,31 +148,6 @@ export const StyledCardHeader = styled.header`
   display: grid;
   row-gap: ${getSpacingValue(4)};
   margin-block-end: ${getSpacingValue(12)};
-`;
-
-/**
- * StyledCardHeaderActions — задаёт ряд кнопок-действий в правом верхнем углу карточки.
- * Базируется на `<div>`.
- *
- * Встроенные стили:
- *  - `position: absolute` — поверх содержимого без сдвига grid-потока шапки
- *  - `inset-block-start` и `inset-inline-end` — совпадают с `padding` корня, фиксируют
- *    ряд в углу карточки
- *  - `z-index: 1` — ряд поверх содержимого шапки
- *  - `display: grid` — раскладка по дефолту проекта
- *  - `grid-auto-flow: column` — горизонтальный ряд кнопок
- *  - `column-gap` — отступ между кнопками
- *  - `align-items: center` — выравнивание по центру строки действий
- */
-export const StyledCardHeaderActions = styled.div`
-  position: absolute;
-  inset-block-start: ${getSpacingValue(CARD_PADDING)};
-  inset-inline-end: ${getSpacingValue(CARD_PADDING)};
-  z-index: 1;
-  display: grid;
-  grid-auto-flow: column;
-  column-gap: ${getSpacingValue(8)};
-  align-items: center;
 `;
 
 /**
