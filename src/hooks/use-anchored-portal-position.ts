@@ -18,6 +18,7 @@
 
 import { useLayoutEffect, useRef, type RefObject } from 'react';
 
+import { showPopover } from '@ui/popover';
 import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 /**
@@ -184,30 +185,11 @@ function applyPositionStrategy(
 }
 
 /**
- * showPanelPopover — показывает панель через нативный `showPopover`.
- * Пропускает вызов, если узел ещё не в дереве или уже открыт.
- * Перехватывает исключение, если UA отклоняет показ.
- *
- * @param panel DOM-узел панели
- */
-function showPanelPopover(panel: HTMLElement): void {
-  if (!panel.isConnected || panel.matches(':popover-open')) {
-    return;
-  }
-
-  try {
-    panel.showPopover();
-  } catch {
-    return;
-  }
-}
-
-/**
  * useAnchoredPortalPosition — позиционирует панель относительно якоря при открытии и `resize`.
  *
  * Как работает:
  * 1. Зеркалит стратегию в ref, чтобы литерал на каждом рендере не перезапускал эффект
- * 2. При `active` показывает панель через `showPopover` до чтения размеров, затем
+ * 2. При `active` показывает панель через `showPopover` из `@ui/popover` до чтения размеров, затем
  *    при наличии стратегии читает якорь из `anchorRef` и вызывает её `apply`,
  *    повторяет в следующем кадре и слушает `resize`
  * 3. Пересчитывает позицию при смене `layoutDeps` из вызывающего кода
@@ -243,7 +225,7 @@ export function useAnchoredPortalPosition({
         return;
       }
 
-      showPanelPopover(panel);
+      showPopover(panel);
 
       const positionStrategy = strategyRef.current;
 

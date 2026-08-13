@@ -6,7 +6,7 @@
  * 1. Предоставить styled-узел `StyledToastViewport`
  *
  * Потребители:
- *  - `src/context/toast/index.tsx` — рендерит уведомления в портале внутри `StyledToastViewport`
+ *  - `src/context/toast/index.tsx` — рендерит уведомления внутри `StyledToastViewport`
  */
 
 import styled from 'styled-components';
@@ -30,8 +30,9 @@ const TOAST_MAX_INLINE_SIZE = '24rem';
  *  - `gap` — отступ между уведомлениями
  *  - `block-size` из `HEADER_BLOCK_SIZE` — уведомление перекрывает кнопки шапки
  *  - `padding: 0`, `overflow: visible` и `background-color: transparent` —
- *    нейтрализуют дефолты UA `[popover]`, которые не покрывает сброс в
- *    `src/ui/reset.ts`
+ *    модель стека, а не дубль сброса UA `[popover]` из `src/ui/reset.ts`.
+ *    У селектора `[popover]` и класса компонента равная специфичность, и
+ *    перенос этих свойств в общий сброс перекроет модель Card
  *  - `pointer-events: none` — контейнер не перехватывает клики по странице
  *  - `inline-size` дочерних уведомлений ограничена — для комфортного чтения
  *  - `pointer-events: auto` на дочерних — снова включает клики, отключённые

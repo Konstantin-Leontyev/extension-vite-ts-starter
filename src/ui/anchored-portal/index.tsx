@@ -19,8 +19,8 @@
  * 2. Типизировать пропсы через `AnchoredPortalProps`
  * 3. Удерживать обход `Tab` внутри открытой панели — ловушка фокуса встроена
  *    и пропом не управляется
- * 4. Показывать панель через `popover="manual"` и `showPopover` до отрисовки.
- *    Панель остаётся в дереве вызывающего кода
+ * 4. Показывать панель через `POPOVER_MANUAL` и `showPopover` из `@ui/popover`
+ *    до отрисовки. Панель остаётся в дереве вызывающего кода
  * 5. Реэкспортировать `getPortalPanelStyles` — хром панели из
  *    `src/ui/anchored-portal/anchored-portal.styles.ts`
  *
@@ -45,6 +45,7 @@ import {
   type AnchoredPortalPositionStrategy,
 } from '@hooks/use-anchored-portal-position';
 import { useFocus } from '@hooks/use-focus';
+import { POPOVER_MANUAL } from '@ui/popover';
 
 /**
  * DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS — задаёт зависимости перефокуса по умолчанию.
@@ -53,15 +54,10 @@ import { useFocus } from '@hooks/use-focus';
 const DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS: readonly unknown[] = [];
 
 /**
- * ANCHORED_PORTAL_POPOVER — задаёт режим нативного popover панели.
- * Без автозакрытия UA: показ ведёт `showPopover`.
- */
-const ANCHORED_PORTAL_POPOVER = 'manual';
-
-/**
  * AnchoredPortalProps — представляет пропсы компонента AnchoredPortal.
  *
- * @property children — единственный элемент панели
+ * @property children — единственный элемент панели. Допускает проп `popover`
+ *   со значением `POPOVER_MANUAL`
  * @property dismissActive — включает закрытие по клику вне зон. Без значения
  *   совпадает с `open`
  * @property dismissZoneRefs — ссылки на зоны, клик вне которых вызывает `onDismiss`
@@ -74,7 +70,7 @@ const ANCHORED_PORTAL_POPOVER = 'manual';
  * @property returnFocusRef — ссылка на элемент для возврата фокуса при закрытии
  */
 type AnchoredPortalProps = {
-  children: ReactElement<{ popover?: typeof ANCHORED_PORTAL_POPOVER }>;
+  children: ReactElement<{ popover?: typeof POPOVER_MANUAL }>;
   dismissActive?: boolean;
   dismissZoneRefs: RefObject<HTMLElement | null>[];
   onDismiss: () => void;
@@ -176,7 +172,7 @@ export function AnchoredPortal({
   }
 
   return cloneElement(children, {
-    popover: ANCHORED_PORTAL_POPOVER,
+    popover: POPOVER_MANUAL,
   });
 }
 

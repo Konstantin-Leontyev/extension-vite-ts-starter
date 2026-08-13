@@ -45,8 +45,11 @@ const APP_MIN_INLINE_SIZE = '320px';
  *    отступ задаёт компонент при многострочной модели
  *  - сброс дефолтных рамок и фона кнопок
  *  - сброс UA `[popover]` — нейтрализует дефолтные `inset`, `width`, `height`,
- *    `margin`, `border` и `color`. Позицию и хром задают потребители, например
- *    `getPortalPanelStyles` и Card
+ *    `margin`, `border` и `color`. `padding`, `overflow` и `background-color`
+ *    остаются моделью компонента: у селектора `[popover]` и класса компонента
+ *    равная специфичность, и перенос этих свойств в общий сброс перекроет
+ *    модель Card. Позицию и хром задают потребители, например
+ *    `getPortalPanelStyles`, `StyledToastViewport` и Card
  *  - состояния `disabled` — курсор и прозрачность из `DISABLED_OPACITY`.
  *    Три контракта. `:disabled` — сам нативный элемент. `label:has(:disabled)` —
  *    label-обёртка контрола с подписью. `[data-disabled]` — оболочка композитного

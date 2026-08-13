@@ -22,6 +22,10 @@ import { type AppTheme } from '@ui/theme';
  * fixed-позицию у угла, опциональный отступ через `padding`, опциональный цвет
  * обводки через `outlineColor`, заливку `surface` через
  * `getSurfaceBackgroundColor`, рамку с тенью, радиус и постоянный `outline`.
+ * `padding`, `overflow` и `background-color` остаются моделью панели, а не
+ * дублем сброса UA `[popover]` из `src/ui/reset.ts`. У селектора `[popover]` и
+ * класса компонента равная специфичность, и перенос этих свойств в общий сброс
+ * перекроет модель Card.
  * Собственных styled-узлов у AnchoredPortal нет — вызывающий код объявляет
  * панель-узел и подставляет генератор в своём styles-файле.
  *
