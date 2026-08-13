@@ -52,7 +52,7 @@ import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { FieldLabel } from '@ui/field-label';
 import { Icon } from '@ui/icon';
-import { type ShapePreset } from '@ui/presets';
+import { DEFAULT_SHAPE_PRESET, type ShapePreset } from '@ui/presets';
 import { getSegmentButtonTextSize } from '@ui/segment-button';
 import { SegmentButtonParts } from '@ui/segment-button-parts';
 
@@ -66,7 +66,6 @@ import {
   type MonthView,
 } from './calendar-panel';
 import {
-  DEFAULT_DATE_RANGE_INPUT_SHAPE,
   StyledDateRangeInputPanel,
   StyledDateRangeInputRoot,
   StyledDateRangeInputTriggerRow,
@@ -319,7 +318,7 @@ export function DateRangeInput({
   const returnFocusRef = useRef<HTMLElement>(null);
   const labelId = useId();
   const panelId = useId();
-  const dayShape = dayShapeProp ?? shape ?? DEFAULT_DATE_RANGE_INPUT_SHAPE;
+  const dayShape = dayShapeProp ?? shape ?? DEFAULT_SHAPE_PRESET;
   const surfaceProps = { shape, sizePreset };
   const calendarIcon = <CalendarIcon />;
   const isActive = startDay !== '' || endDay !== '';

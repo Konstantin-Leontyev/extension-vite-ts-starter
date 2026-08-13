@@ -9,8 +9,8 @@
  * Потребители:
  *  - `@ui/listbox`, `@ui/combobox`, `@ui/range-input` — собирают `aria-label`
  *    кнопки сброса через `resolveClearAriaLabel`
- *  - `@ui/date-range-input` — собирает `aria-label` кнопки сброса через
- *    `resolveClearAriaLabel` с запасным текстом
+ *  - `@ui/search-field`, `@ui/date-range-input` — собирают `aria-label` кнопки
+ *    сброса через `resolveClearAriaLabel` с запасным текстом
  */
 
 /**
@@ -25,7 +25,7 @@ const DEFAULT_CLEAR_ARIA_LABEL = 'Clear';
  * Как работает:
  * 1. Обрезает краевые пробелы у `label`
  * 2. Без текста возвращает `fallback`
- * 3. Иначе собирает `Clear` и текст без завершающего `:`
+ * 3. Иначе собирает `DEFAULT_CLEAR_ARIA_LABEL` и текст без завершающего `:`
  *
  * @param label подпись контрола или фрагмент для `aria-label`
  * @param fallback запасной текст, когда подпись пустая
@@ -41,5 +41,5 @@ export function resolveClearAriaLabel(
     return fallback;
   }
 
-  return `Clear ${trimmed.replace(/:$/, '')}`;
+  return `${DEFAULT_CLEAR_ARIA_LABEL} ${trimmed.replace(/:$/, '')}`;
 }

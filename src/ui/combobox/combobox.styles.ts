@@ -4,12 +4,11 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `ComboboxStyleProps` и `ComboboxSurfaceStyleProps`
- * 2. Хранить максимум видимых строк опций в `COMBOBOX_PANEL_MAX_OPTION_ROWS`
- * 3. Предоставить функцию `getComboboxTextSize`
- * 4. Предоставить styled-узлы `StyledComboboxRoot`, `StyledComboboxTriggerRow`,
+ * 2. Предоставить функцию `getComboboxTextSize`
+ * 3. Предоставить styled-узлы `StyledComboboxRoot`, `StyledComboboxTriggerRow`,
  *    `StyledComboboxTrigger`, `StyledComboboxValue`, `StyledComboboxPanel`,
  *    `StyledComboboxList` и `StyledComboboxOption`
- * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/combobox/index.tsx` — собирает компонент Combobox
@@ -18,16 +17,18 @@
 import styled from 'styled-components';
 
 import { getPortalPanelStyles } from '@ui/anchored-portal';
-import {
-  ICON_SETTING_PROP_NAMES,
-  getIconPositionStyles,
-  resolveIconStateBackground,
-} from '@ui/icon';
+import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { MOTION_CONTROL_DURATION, getTransitionStyles } from '@ui/motion';
 import {
+  OPEN_CONTROL_PANEL_MAX_OPTION_ROWS,
+  OPEN_CONTROL_ROW_GAP,
+  OPEN_CONTROL_SELECTABLE_INSET,
   getOpenControlRootStyles,
+  getOpenControlSelectableRowSurfaceStyles,
   getOpenControlTriggerRowStyles,
+  getOpenControlTriggerStyles,
+  resolveOpenControlBlockRadius,
+  type OpenControlSurfaceStyleProps,
 } from '@ui/open-control';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -35,14 +36,12 @@ import {
   getMinBlockSize,
   getPaddingInline,
   getTextSize,
-  resolveBlockRadius,
-  type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
+import { type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -58,27 +57,14 @@ export function getComboboxTextSize(sizePreset?: SizePreset): TextSizePreset {
 }
 
 /**
- * resolveComboboxBlockRadius — возвращает скругление поверхности по `shape` и `sizePreset`.
- *
- * @param shape форма поверхности
- * @param sizePreset размер компонента
- * @returns значение для CSS-свойства `border-radius`
- */
-function resolveComboboxBlockRadius(shape: ShapePreset, sizePreset: SizePreset): string {
-  return resolveBlockRadius(shape, getMinBlockSize(sizePreset));
-}
-
-/**
  * ComboboxSurfaceStyleProps — представляет пропсы стилизации поверхности Combobox.
  *
  * @property iconTone — тон секции шеврона
  * @property shape — форма поверхности
  * @property sizePreset — размер компонента
  */
-type ComboboxSurfaceStyleProps = {
+type ComboboxSurfaceStyleProps = OpenControlSurfaceStyleProps & {
   iconTone?: TonePreset;
-  shape?: ShapePreset;
-  sizePreset?: SizePreset;
 };
 
 /**
@@ -121,62 +107,21 @@ const COMBOBOX_SURFACE_PROP_NAMES = new Set<string>([
 export const StyledComboboxTriggerRow = styled.div.withConfig({
   shouldForwardProp: (prop) => !COMBOBOX_SURFACE_PROP_NAMES.has(prop),
 })<ComboboxSurfaceStyleProps>`
-  ${(props) => getOpenControlTriggerRowStyles(props, resolveComboboxBlockRadius)}
+  ${(props) => getOpenControlTriggerRowStyles(props, resolveOpenControlBlockRadius)}
 `;
-
-/**
- * getComboboxTriggerStyles — возвращает CSS-правила для узла `StyledComboboxTrigger`:
- * раскладку значения, шов и канал состояний секции шеврона. Статику секции красит
- * внутренний Icon своими пропсами; собственную запись канала выключает через
- * `showHover={false}`.
- *
- * Как работает:
- * 1. Берёт тему и подставляет дефолты пропсов
- * 2. Собирает сетку триггера: высоту ряда держит `min-block-size` родителя
- * 3. Кладёт раскладку позиции через `getIconPositionStyles`: колонки под позицию
- *    `[data-slot='icon']` и `block-size: 100%` на слоте. Цвет канала состояний — через
- *    `resolveIconStateBackground`
- * 4. На `:not(:disabled):hover` и `:focus-visible` выставляет
- *    `--icon-state-background` — подсвечивается только индикатор, шеврон не
- *    самостоятельное действие
- *
- * @param props пропсы поверхности и тема
- * @returns CSS-правила, каждое с новой строки
- */
-function getComboboxTriggerStyles(
-  props: ComboboxSurfaceStyleProps & { theme: AppTheme }
-): string {
-  const theme = getTheme(props);
-  const { iconTone = DEFAULT_TONE } = props;
-  const stateBackground = resolveIconStateBackground(theme, iconTone);
-
-  return `
-    display: grid;
-    ${getIconPositionStyles()}
-    align-items: center;
-    min-inline-size: 0;
-    text-align: start;
-    &:not(:disabled):hover {
-      --icon-state-background: ${stateBackground};
-    }
-    &:focus-visible {
-      outline: none;
-      --icon-state-background: ${stateBackground};
-    }
-  `;
-}
 
 /**
  * StyledComboboxTrigger — задаёт кнопку-триггер компонента Combobox.
  * Базируется на `<button>` и принимает пропсы из `ComboboxSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getComboboxTriggerStyles` — раскладка значения и секция шеврона
+ *  - `getOpenControlTriggerStyles` — раскладка позиции иконки и канал
+ *    `--icon-state-background`
  */
 export const StyledComboboxTrigger = styled.button.withConfig({
   shouldForwardProp: (prop) => !COMBOBOX_SURFACE_PROP_NAMES.has(prop),
 })<ComboboxSurfaceStyleProps>`
-  ${(props) => getComboboxTriggerStyles(props)}
+  ${(props) => getOpenControlTriggerStyles(props)}
 `;
 
 /**
@@ -230,7 +175,7 @@ export const StyledComboboxValue = styled.span.withConfig({
  * 2. Собирает сетку панели: ряд поиска и список
  * 3. Подставляет хром панели через `getPortalPanelStyles`: fixed-позицию, слой
  *    `STACKING_PORTAL`, заливку `surface`, рамку с тенью через `getBorderStyles`,
- *    радиус через `resolveComboboxBlockRadius` и постоянный `outline` через
+ *    радиус через `resolveOpenControlBlockRadius` и постоянный `outline` через
  *    `getOutlineStyles`
  * 4. Обрезает содержимое через `overflow: hidden`
  *
@@ -249,7 +194,7 @@ function getComboboxPanelStyles(
     overflow: hidden;
     ${getPortalPanelStyles({
       theme,
-      borderRadius: resolveComboboxBlockRadius(shape, sizePreset),
+      borderRadius: resolveOpenControlBlockRadius(shape, sizePreset),
     })}
   `;
 }
@@ -269,19 +214,13 @@ export const StyledComboboxPanel = styled.div.withConfig({
 `;
 
 /**
- * COMBOBOX_PANEL_MAX_OPTION_ROWS — задаёт максимум видимых строк опций в списке панели.
- * Используется в `getComboboxListStyles` для `max-block-size`.
- */
-const COMBOBOX_PANEL_MAX_OPTION_ROWS = 6;
-
-/**
  * getComboboxListStyles — возвращает CSS-правила для узла `StyledComboboxList`:
  * столбик опций, отступы, ограничение высоты и прокрутку по модели Listbox.
  *
  * Как работает:
  * 1. Подставляет дефолт `sizePreset`
  * 2. Собирает столбик опций с отступами
- * 3. Ограничивает высоту через `COMBOBOX_PANEL_MAX_OPTION_ROWS` и включает
+ * 3. Ограничивает высоту через `OPEN_CONTROL_PANEL_MAX_OPTION_ROWS` и включает
  *    прокрутку `overflow: hidden auto`
  *
  * @param props пропсы размера
@@ -295,9 +234,9 @@ function getComboboxListStyles(
   return `
     display: grid;
     min-block-size: 0;
-    padding-block: ${getSpacingValue(4)};
+    padding-block: ${getSpacingValue(OPEN_CONTROL_SELECTABLE_INSET)};
     padding-inline-end: ${getSpacingValue(8)};
-    max-block-size: calc(${getMinBlockSize(sizePreset)} * ${COMBOBOX_PANEL_MAX_OPTION_ROWS});
+    max-block-size: calc(${getMinBlockSize(sizePreset)} * ${OPEN_CONTROL_PANEL_MAX_OPTION_ROWS});
     overflow: hidden auto;
   `;
 }
@@ -322,12 +261,12 @@ export const StyledComboboxList = styled.ul.withConfig({
  * отсутствующие слоты не резервируют трек.
  *
  * Как работает:
- * 1. Берёт тему и подставляет дефолты `shape` и `sizePreset`
- * 2. Собирает flex-раскладку опции, габариты и заливку `surface`
- * 3. Кладёт абсолютный `::before` с отступом от края, скруглением и переходом
- *    `background-color` — подложку наведения
+ * 1. Берёт тему и подставляет дефолт `sizePreset`
+ * 2. Подставляет поверхность через `getOpenControlSelectableRowSurfaceStyles`:
+ *    flex-раскладку, габариты, заливку и подложку наведения через `::before`
+ * 3. Задаёт `padding-inline` по размеру
  * 4. На `data-active`, `:not(:disabled):hover` и `:focus-visible` красит
- *    подложку и текст в `primary` / `inverse`, включая слот галочки
+ *    текст в `inverse`, включая слот галочки
  *
  * @param props пропсы формы, размера и тема
  * @returns CSS-правила, каждое с новой строки
@@ -336,34 +275,18 @@ function getComboboxOptionStyles(
   props: Pick<ComboboxSurfaceStyleProps, 'shape' | 'sizePreset'> & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
 
   return `
-    position: relative;
-    z-index: 0;
-    display: flex;
-    gap: ${getSpacingValue(12)};
-    align-items: center;
-    inline-size: 100%;
-    min-block-size: ${getMinBlockSize(sizePreset)};
-    padding-inline: ${getPaddingInline(sizePreset)};
-    text-align: start;
-    background-color: ${theme.colors.surface};
-    &::before {
-      position: absolute;
-      inset: ${getSpacingValue(4)};
-      z-index: -1;
-      pointer-events: none;
-      content: '';
-      border-radius: calc(${resolveComboboxBlockRadius(shape, sizePreset)} - ${getSpacingValue(4)});
-      ${getTransitionStyles('background-color', MOTION_CONTROL_DURATION)}
-    }
-    &:focus { outline: none; }
-    &[data-active='true']::before,
+    ${getOpenControlSelectableRowSurfaceStyles(props, {
+      display: 'flex',
+      gap: OPEN_CONTROL_ROW_GAP,
+      highlight: 'primary',
+      highlightWhen: `&[data-active='true']::before,
     &:not(:disabled):hover::before,
-    &:focus-visible::before {
-      background-color: ${theme.colors.primary};
-    }
+    &:focus-visible::before`,
+    })}
+    padding-inline: ${getPaddingInline(sizePreset)};
     &[data-active='true'],
     &:not(:disabled):hover,
     &:focus-visible {

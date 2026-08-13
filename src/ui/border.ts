@@ -11,9 +11,9 @@
  *    `DEFAULT_SHOW_BORDER` и `DEFAULT_SHOW_SHADOW`
  *
  * Потребители:
- *  - styles-файлы с рамкой и тенью, например Card, Icon, Input и Tag —
- *    подключают `BorderProps` / `BORDER_PROP_NAMES` и подставляют рамку через
- *    `getBorderStyles`
+ *  - styles-файлы с рамкой и тенью, например Card, Icon, Input, SearchField,
+ *    Tag и Toolbar — подключают `BorderProps` / `BORDER_PROP_NAMES` и подставляют
+ *    рамку через `getBorderStyles`
  *  - styles-файлы с постоянной рамкой без публичных пропсов, например Button,
  *    Listbox, Checkbox, RadioButton, AnchoredPortal, SegmentButton и Toast —
  *    подставляют `getBorderStyles` с дефолтами
@@ -76,10 +76,11 @@ function getBorderColor(theme: AppTheme, borderTone: TonePreset = DEFAULT_TONE):
  * Рамочный и безрамочный режимы дают один `content-box` и одно окно `Icon`,
  * без резерва `border: 1px solid transparent`.
  * Пропсы `showBorder` и `showShadow` подключает потребитель осознанно: эталоны
- * Icon, Card, Input и Tag. Составные триггеры, например Listbox,
- * Combobox, Stepper и RangeInput, пропсы не получают без отдельного кейса и
- * вызывают хелпер с дефолтами. Оболочка композита и поверхность с постоянной
- * рамкой, например Checkbox, RadioButton и Toast, вызывают функцию без флагов.
+ * Icon, Card, Input, SearchField, Tag и Toolbar. Составные триггеры, например
+ * Listbox, Combobox, Stepper и RangeInput, пропсы не получают без отдельного
+ * кейса и вызывают хелпер с дефолтами. Оболочка композита и поверхность с
+ * постоянной рамкой, например Checkbox, RadioButton и Toast, вызывают функцию
+ * без флагов.
  * При `showBorder` — обводка цвета рамки по `borderTone` и при `showShadow` —
  * тень `shadow.surface`. Без рамки — `box-shadow: none`: тени без рамки нет.
  * `border: none` вызывающий код пишет только там, где layout-рамку даёт

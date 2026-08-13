@@ -37,6 +37,7 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
+import { getSurfaceBackgroundColor } from '@ui/surface';
 import { getTextProperties } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
@@ -128,8 +129,8 @@ const SEARCH_FIELD_ROW_PROP_NAMES = new Set<string>([
  *    через `getMinBlockSize`, `overflow: hidden` и `border-radius` через
  *    `resolveBlockRadius`. `padding-block` не пишется: высоту ряда держит
  *    `min-block-size`
- * 3. Красит фон: при рамке — `surface`, без рамки — `transparent`. Кладёт рамку
- *    с тенью через `getBorderStyles`
+ * 3. Красит фон через `getSurfaceBackgroundColor`: при рамке — `surface`, без
+ *    рамки — `transparent`. Кладёт рамку с тенью через `getBorderStyles`
  * 4. При `data-has-clear` и секции иконки переключает колонки на три трека
  *    в двух вариантах по позиции иконки: поле растягивается, секции — `auto`.
  *    Базу без крестика и без иконки оставляет `getIconPositionStyles`.
@@ -167,7 +168,7 @@ function getSearchFieldRowStyles(
     `min-block-size: ${minBlockSize};`,
     'overflow: hidden;',
     `border-radius: ${resolveBlockRadius(shape, minBlockSize)};`,
-    `background-color: ${showBorder ? theme.colors.surface : 'transparent'};`,
+    `background-color: ${getSurfaceBackgroundColor(theme, showBorder ? 'surface' : 'transparent')};`,
     getBorderStyles(theme, showBorder, showShadow, borderTone),
     "&[data-has-clear]:has(> [data-slot='icon']) { grid-template-columns: minmax(0, 1fr) auto auto; }",
     "&[data-has-clear]:has(> [data-slot='icon']:first-child) { grid-template-columns: auto minmax(0, 1fr) auto; }",

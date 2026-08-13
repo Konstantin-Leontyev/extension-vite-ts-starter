@@ -17,8 +17,9 @@
  * Потребители:
  *  - `src/ui/icon/index.tsx` — собирает компонент Icon и реэкспортирует
  *    публичное API
- *  - контролы с секцией иконки, например Button, Listbox, Combobox и RangeInput —
- *    подключают хелперы секции и читают позицию через `@ui/icon`
+ *  - контролы с секцией иконки, например Button, Listbox, Combobox, RangeInput,
+ *    SearchField и SegmentButtonParts — подключают хелперы секции и читают
+ *    позицию через `@ui/icon`
  *  - `src/ui/card/card.styles.ts` — читает `getIconSize` для резерва высоты
  *    ряда действий шапки
  */

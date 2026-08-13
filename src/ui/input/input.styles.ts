@@ -33,6 +33,7 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
+import { getSurfaceBackgroundColor } from '@ui/surface';
 import { getTextProperties } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 
@@ -114,11 +115,11 @@ const INPUT_CONTROL_PROP_NAMES = new Set<string>([
  *    `font-weight` и `line-height` — и `border-radius` через `resolveBlockRadius`.
  *    `padding-block` не пишется: UA-отступ сбросил `GlobalResetStyle`, высоту
  *    держит `min-block-size`
- * 3. Сбрасывает layout-рамку через `border: none` и красит фон: при рамке —
- *    `surface`, без рамки — `transparent`. Кладёт рамку с тенью через
- *    `getBorderStyles`. Без рамки хелпер пишет `box-shadow: none`; на
- *    `:focus-visible` снимает `outline` глобального фокуса из `@ui/reset`. Красит
- *    плейсхолдер тоном `muted`
+ * 3. Сбрасывает layout-рамку через `border: none` и красит фон через
+ *    `getSurfaceBackgroundColor`: при рамке — `surface`, без рамки —
+ *    `transparent`. Кладёт рамку с тенью через `getBorderStyles`. Без рамки
+ *    хелпер пишет `box-shadow: none`; на `:focus-visible` снимает `outline`
+ *    глобального фокуса из `@ui/reset`. Красит плейсхолдер тоном `muted`
  * 4. При переданном `textAlign` добавляет выравнивание значения
  * 5. При `textItalic` добавляет курсив значения
  *
@@ -147,7 +148,7 @@ function getInputControlStyles(
     getTextProperties(getTextSize(sizePreset)),
     `border-radius: ${resolveBlockRadius(shape, minBlockSize)};`,
     'border: none;',
-    `background-color: ${showBorder ? theme.colors.surface : 'transparent'};`,
+    `background-color: ${getSurfaceBackgroundColor(theme, showBorder ? 'surface' : 'transparent')};`,
     getBorderStyles(theme, showBorder, showShadow, borderTone),
     `&::placeholder { color: ${theme.colors.muted}; }`,
   ];

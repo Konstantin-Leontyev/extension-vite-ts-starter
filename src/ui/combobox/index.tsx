@@ -51,6 +51,7 @@ import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
+import { OPEN_CONTROL_PANEL_MIN_OPTION_ROWS } from '@ui/open-control';
 import { SearchField } from '@ui/search-field';
 import { Text } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
@@ -68,12 +69,6 @@ import {
   splitLayoutProps,
   type ComboboxStyleProps,
 } from './combobox.styles';
-
-/**
- * MIN_VISIBLE_OPTION_ROWS — задаёт минимум видимых строк списка в панели.
- * Используется в `applyComboboxPanelPosition` для расчёта минимальной высоты панели.
- */
-const MIN_VISIBLE_OPTION_ROWS = 4;
 
 /**
  * DEFAULT_COMBOBOX_DISABLED — задаёт недоступное состояние по умолчанию.
@@ -213,7 +208,7 @@ function findEnabledIndex(
  * 1. Берёт геометрию триггера и ограничивает `left` вьюпортом с учётом
  *    `PORTAL_VIEWPORT_EDGE_INSET`
  * 2. Считает минимальную высоту панели: высота поиска плюс высота строк —
- *    не меньше одной и не больше `MIN_VISIBLE_OPTION_ROWS`
+ *    не меньше одной и не больше `OPEN_CONTROL_PANEL_MIN_OPTION_ROWS`
  * 3. Поджимает `top`, если панель не влезает снизу, и не даёт уйти выше
  *    отступа вьюпорта
  * 4. Выставляет `left`, `width`, `maxHeight` и `top`
@@ -237,7 +232,10 @@ function applyComboboxPanelPosition(
   );
   const left = Math.min(Math.max(PORTAL_VIEWPORT_EDGE_INSET, triggerRect.left), maxLeft);
   const searchHeight = searchInputHeight ?? rowHeight;
-  const reservedRows = Math.min(MIN_VISIBLE_OPTION_ROWS, Math.max(1, optionCount));
+  const reservedRows = Math.min(
+    OPEN_CONTROL_PANEL_MIN_OPTION_ROWS,
+    Math.max(1, optionCount)
+  );
   const minPanelHeight = searchHeight + reservedRows * rowHeight;
 
   let top = triggerRect.top;

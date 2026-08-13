@@ -18,31 +18,29 @@
 import styled from 'styled-components';
 
 import { getPortalPanelStyles } from '@ui/anchored-portal';
-import {
-  ICON_SETTING_PROP_NAMES,
-  getIconPositionStyles,
-  resolveIconStateBackground,
-} from '@ui/icon';
+import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { MOTION_CONTROL_DURATION, getTransitionStyles } from '@ui/motion';
 import {
+  OPEN_CONTROL_PANEL_PADDING,
+  OPEN_CONTROL_ROW_GAP,
   getOpenControlRootStyles,
+  getOpenControlSelectableRowSurfaceStyles,
   getOpenControlTriggerRowStyles,
+  getOpenControlTriggerStyles,
+  resolveOpenControlBlockRadius,
+  type OpenControlSurfaceStyleProps,
 } from '@ui/open-control';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
-  getMinBlockSize,
   getPaddingInline,
   getTextSize,
-  resolveBlockRadius,
-  type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
+import { type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -58,30 +56,14 @@ export function getRangeInputTextSize(sizePreset?: SizePreset): TextSizePreset {
 }
 
 /**
- * resolveRangeInputBlockRadius — возвращает скругление поверхности по `shape` и `sizePreset`.
- *
- * @param shape форма поверхности
- * @param sizePreset размер компонента
- * @returns значение для CSS-свойства `border-radius`
- */
-function resolveRangeInputBlockRadius(
-  shape: ShapePreset,
-  sizePreset: SizePreset
-): string {
-  return resolveBlockRadius(shape, getMinBlockSize(sizePreset));
-}
-
-/**
  * RangeInputSurfaceStyleProps — представляет пропсы стилизации поверхности RangeInput.
  *
  * @property iconTone — тон секции шеврона и кнопки сброса
  * @property shape — форма поверхности
  * @property sizePreset — размер компонента
  */
-type RangeInputSurfaceStyleProps = {
+type RangeInputSurfaceStyleProps = OpenControlSurfaceStyleProps & {
   iconTone?: TonePreset;
-  shape?: ShapePreset;
-  sizePreset?: SizePreset;
 };
 
 /**
@@ -124,62 +106,21 @@ const RANGE_INPUT_SURFACE_PROP_NAMES = new Set<string>([
 export const StyledRangeInputTriggerRow = styled.div.withConfig({
   shouldForwardProp: (prop) => !RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
 })<RangeInputSurfaceStyleProps>`
-  ${(props) => getOpenControlTriggerRowStyles(props, resolveRangeInputBlockRadius)}
+  ${(props) => getOpenControlTriggerRowStyles(props, resolveOpenControlBlockRadius)}
 `;
-
-/**
- * getRangeInputTriggerStyles — возвращает CSS-правила для узла `StyledRangeInputTrigger`:
- * раскладку значения, шов и канал состояний секции шеврона. Статику секции красит
- * внутренний Icon своими пропсами; собственную запись канала выключает через
- * `showHover={false}`.
- *
- * Как работает:
- * 1. Берёт тему и подставляет дефолты пропсов
- * 2. Собирает сетку триггера: высоту ряда держит `min-block-size` родителя
- * 3. Кладёт раскладку позиции через `getIconPositionStyles`: колонки под позицию
- *    `[data-slot='icon']` и `block-size: 100%` на слоте. Цвет канала состояний — через
- *    `resolveIconStateBackground`
- * 4. На `:not(:disabled):hover` и `:focus-visible` выставляет
- *    `--icon-state-background` — подсвечивается только индикатор, шеврон не
- *    самостоятельное действие
- *
- * @param props пропсы поверхности и тема
- * @returns CSS-правила, каждое с новой строки
- */
-function getRangeInputTriggerStyles(
-  props: RangeInputSurfaceStyleProps & { theme: AppTheme }
-): string {
-  const theme = getTheme(props);
-  const { iconTone = DEFAULT_TONE } = props;
-  const stateBackground = resolveIconStateBackground(theme, iconTone);
-
-  return `
-    display: grid;
-    ${getIconPositionStyles()}
-    align-items: center;
-    min-inline-size: 0;
-    text-align: center;
-    &:not(:disabled):hover {
-      --icon-state-background: ${stateBackground};
-    }
-    &:focus-visible {
-      outline: none;
-      --icon-state-background: ${stateBackground};
-    }
-  `;
-}
 
 /**
  * StyledRangeInputTrigger — задаёт кнопку-триггер компонента RangeInput.
  * Базируется на `<button>` и принимает пропсы из `RangeInputSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getRangeInputTriggerStyles` — раскладка значения и секция шеврона
+ *  - `getOpenControlTriggerStyles` — раскладка позиции иконки и канал
+ *    `--icon-state-background`
  */
 export const StyledRangeInputTrigger = styled.button.withConfig({
   shouldForwardProp: (prop) => !RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
 })<RangeInputSurfaceStyleProps>`
-  ${(props) => getRangeInputTriggerStyles(props)}
+  ${(props) => getOpenControlTriggerStyles(props, 'center')}
 `;
 
 /**
@@ -220,7 +161,7 @@ export const StyledRangeInputValue = styled.span.withConfig({
  * 1. Берёт тему, подставляет дефолты `shape` и `sizePreset`
  * 2. Подставляет хром панели через `getPortalPanelStyles`: fixed-позицию, слой
  *    `STACKING_PORTAL`, заливку `surface`, рамку с тенью через `getBorderStyles`,
- *    радиус через `resolveRangeInputBlockRadius` и постоянный `outline` через
+ *    радиус через `resolveOpenControlBlockRadius` и постоянный `outline` через
  *    `getOutlineStyles`
  * 3. Включает прокрутку `overflow: hidden auto`
  *
@@ -236,7 +177,7 @@ function getRangeInputPanelStyles(
   return `
     ${getPortalPanelStyles({
       theme,
-      borderRadius: resolveRangeInputBlockRadius(shape, sizePreset),
+      borderRadius: resolveOpenControlBlockRadius(shape, sizePreset),
     })}
     overflow: hidden auto;
   `;
@@ -257,8 +198,8 @@ export const StyledRangeInputPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => !RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
 })<RangeInputSurfaceStyleProps>`
   display: grid;
-  gap: ${getSpacingValue(12)};
-  padding: ${getSpacingValue(16)};
+  gap: ${getSpacingValue(OPEN_CONTROL_ROW_GAP)};
+  padding: ${getSpacingValue(OPEN_CONTROL_PANEL_PADDING)};
   ${(props) => getRangeInputPanelStyles(props)}
 `;
 
@@ -274,56 +215,20 @@ export const StyledRangeInputPresetList = styled.ul`
 `;
 
 /**
- * getRangeInputPresetButtonStyles — возвращает CSS-правила для узла
- * `StyledRangeInputPresetButton`: габарит строки и вуаль наведения через `::before`.
- *
- * @param props пропсы поверхности и тема
- * @returns CSS-правила, каждое с новой строки
- */
-function getRangeInputPresetButtonStyles(
-  props: RangeInputSurfaceStyleProps & { theme: AppTheme }
-): string {
-  const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
-  const borderRadius = resolveRangeInputBlockRadius(shape, sizePreset);
-
-  return `
-    position: relative;
-    z-index: 0;
-    display: grid;
-    align-items: center;
-    inline-size: 100%;
-    min-block-size: ${getMinBlockSize(sizePreset)};
-    text-align: start;
-    background-color: ${theme.colors.surface};
-    &::before {
-      position: absolute;
-      inset: ${getSpacingValue(4)};
-      z-index: -1;
-      pointer-events: none;
-      content: '';
-      border-radius: calc(${borderRadius} - ${getSpacingValue(4)});
-      ${getTransitionStyles('background-color', MOTION_CONTROL_DURATION)}
-    }
-    &:focus { outline: none; }
-    &:not(:disabled):hover::before,
-    &:focus-visible::before {
-      background-color: ${theme.colors.veil};
-    }
-  `;
-}
-
-/**
  * StyledRangeInputPresetButton — задаёт кнопку пресета компонента RangeInput.
  * Базируется на `<button>` и принимает пропсы из `RangeInputSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getRangeInputPresetButtonStyles` — габарит строки и вуаль наведения
+ *  - `getOpenControlSelectableRowSurfaceStyles` — габарит строки и вуаль наведения
  */
 export const StyledRangeInputPresetButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
 })<RangeInputSurfaceStyleProps>`
-  ${(props) => getRangeInputPresetButtonStyles(props)}
+  ${(props) =>
+    getOpenControlSelectableRowSurfaceStyles(props, {
+      display: 'grid',
+      highlight: 'veil',
+    })}
 `;
 
 /**
@@ -335,7 +240,7 @@ export const StyledRangeInputPresetButton = styled.button.withConfig({
  */
 export const StyledRangeInputCustomSection = styled.div`
   display: grid;
-  gap: ${getSpacingValue(12)};
+  gap: ${getSpacingValue(OPEN_CONTROL_ROW_GAP)};
 `;
 
 /**
@@ -350,7 +255,7 @@ export const StyledRangeInputCustomSection = styled.div`
 export const StyledRangeInputFields = styled.div`
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: ${getSpacingValue(12)};
+  gap: ${getSpacingValue(OPEN_CONTROL_ROW_GAP)};
 
   & input:focus-visible:not([aria-invalid='true']) {
     outline: none;
