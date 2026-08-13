@@ -205,13 +205,14 @@ function findEnabledIndex(
  * applyComboboxPanelPosition — позиционирует панель относительно триггера.
  *
  * Как работает:
- * 1. Берёт геометрию триггера и ограничивает `left` вьюпортом с учётом
+ * 1. Берёт геометрию триггера и ограничивает горизонталь панели по
  *    `PORTAL_VIEWPORT_EDGE_INSET`
  * 2. Считает минимальную высоту панели: высота поиска плюс высота строк —
  *    не меньше одной и не больше `OPEN_CONTROL_PANEL_MIN_OPTION_ROWS`
- * 3. Поджимает `top`, если панель не влезает снизу, и не даёт уйти выше
- *    отступа вьюпорта
- * 4. Выставляет `left`, `width`, `maxHeight` и `top`
+ * 3. Ставит верх панели по верху триггера и поджимает вверх, если снизу не
+ *    хватает места под минимальную высоту
+ * 4. Пишет `inset-inline-start`, `inline-size`, `max-block-size` и
+ *    `inset-block-start`
  *
  * @param trigger элемент-триггер
  * @param panel элемент панели
@@ -247,10 +248,10 @@ function applyComboboxPanelPosition(
   top = Math.max(PORTAL_VIEWPORT_EDGE_INSET, top);
   const maxBlockSize = window.innerHeight - top - PORTAL_VIEWPORT_EDGE_INSET;
 
-  panel.style.left = `${left}px`;
-  panel.style.width = `${triggerRect.width}px`;
-  panel.style.maxHeight = `${Math.max(rowHeight, maxBlockSize)}px`;
-  panel.style.top = `${top}px`;
+  panel.style.insetInlineStart = `${left}px`;
+  panel.style.inlineSize = `${triggerRect.width}px`;
+  panel.style.maxBlockSize = `${Math.max(rowHeight, maxBlockSize)}px`;
+  panel.style.insetBlockStart = `${top}px`;
 }
 
 /**

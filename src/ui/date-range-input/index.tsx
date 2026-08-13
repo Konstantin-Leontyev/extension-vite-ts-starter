@@ -46,7 +46,10 @@ import {
 } from 'react';
 
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
-import { placeCalendarPanel } from '@hooks/use-anchored-portal-position';
+import {
+  clampPanelToViewport,
+  placeTriggerAlignedPanel,
+} from '@hooks/use-anchored-portal-position';
 import { CalendarIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
@@ -508,7 +511,11 @@ export function DateRangeInput({
         panelRef={panelRef}
         positionStrategy={{
           anchorRef: triggerRowRef,
-          apply: placeCalendarPanel,
+          apply: (anchor, panel) => {
+            const { left, top } = placeTriggerAlignedPanel(anchor, panel);
+
+            clampPanelToViewport(panel, left, top);
+          },
           layoutDeps: [viewMonth],
         }}
         returnFocusRef={returnFocusRef}

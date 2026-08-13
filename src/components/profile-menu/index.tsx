@@ -22,7 +22,6 @@ import { Card } from '@ui/card';
 import { Icon } from '@ui/icon';
 import { SegmentButton } from '@ui/segment-button';
 import { getSpacingValue } from '@ui/spacing';
-import { STACKING_PROFILE_MENU } from '@ui/stacking';
 import { Text } from '@ui/text';
 import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
@@ -93,7 +92,7 @@ const PROFILE_MENU_PANEL_MIN_INLINE_SIZE_PX = 360;
 
 /**
  * PROFILE_MENU_VIEWPORT_INLINE_GUTTER — задаёт суммарный горизонтальный зазор панели
- * от краёв вьюпорта (по `32` с каждой стороны).
+ * от краёв вьюпорта по `32` с каждой стороны.
  * Используется в `PROFILE_MENU_MAX_INLINE_SIZE`.
  */
 const PROFILE_MENU_VIEWPORT_INLINE_GUTTER = `calc(${getSpacingValue(32)} * 2)`;
@@ -225,7 +224,6 @@ export function ProfileMenu(props: ProfileMenuProps) {
           role="dialog"
           subtitle={displayEmail}
           subtitleAlign="center"
-          zIndex={STACKING_PROFILE_MENU}
         >
           <StyledProfileMenuContent>
             <StyledProfileMenuHeader>

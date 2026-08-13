@@ -8,7 +8,7 @@
  *
  * Потребители:
  *  - `@ui/sidebar` — зонный отступ края панели и контента
- *  - `@hooks/use-anchored-portal-position` — clamp в `placeCalendarPanel` и
+ *  - `@hooks/use-anchored-portal-position` — `placeTriggerAlignedPanel` и
  *    `clampPanelToViewport`
  *  - контролы с custom-позиционированием панели, например Listbox и Combobox —
  *    clamp панели от края вьюпорта
@@ -34,7 +34,7 @@ export const VIEWPORT_EDGE_INSET: SpacingValue = 8;
  * вьюпорта из `VIEWPORT_EDGE_INSET` и `OUTLINE_OVERHANG_PX`, чтобы обводка панели
  * оставалась внутри отступа оболочки, а не заходила в него. Число px для
  * JS-математики позиционирования, в CSS-правиле не попадает.
- * Используется в `clampPanelToViewport` и `placeCalendarPanel` из
+ * Используется в `clampPanelToViewport` и `placeTriggerAlignedPanel` из
  * `@hooks/use-anchored-portal-position`, в контролах с custom-позиционированием
  * панели, например Listbox и Combobox, и в `src/components/profile-menu/index.tsx`.
  */

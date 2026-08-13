@@ -375,9 +375,11 @@ function panelOrdersEqual(left: null | PanelOrder, right: PanelOrder): boolean {
  *
  * Как работает:
  * 1. Без раскладки выходит — позиционировать нечего
- * 2. Берёт геометрию триггера: ширина, левый край и высота строки
- * 3. Считает верх панели как верх триггера минус число строк выше выбранной
- * 4. Выставляет `left`, `width`, сбрасывает `scrollTop` и пишет `top`
+ * 2. Берёт геометрию триггера для `inline-size`, `inset-inline-start` и высоты строки
+ * 3. Считает `inset-block-start` панели как верх триггера минус число строк выше
+ *    выбранной
+ * 4. Выставляет `inset-inline-start`, `inline-size`, сбрасывает `scrollTop` и
+ *    пишет `inset-block-start`
  *
  * @param trigger элемент-триггер
  * @param panel элемент панели
@@ -396,10 +398,10 @@ function applyListboxPanelPosition(
   const rowHeight = triggerRect.height;
   const panelTop = triggerRect.top - order.aboveIndices.length * rowHeight;
 
-  panel.style.left = `${triggerRect.left}px`;
-  panel.style.width = `${triggerRect.width}px`;
+  panel.style.insetInlineStart = `${triggerRect.left}px`;
+  panel.style.inlineSize = `${triggerRect.width}px`;
   panel.scrollTop = 0;
-  panel.style.top = `${panelTop}px`;
+  panel.style.insetBlockStart = `${panelTop}px`;
 }
 
 /**

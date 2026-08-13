@@ -10,13 +10,13 @@
  * 3. Предоставлять метод `showToast` через `ToastContext`
  * 4. Автоматически скрывать уведомления через `TOAST_DURATION_MS`
  * 5. Закрывать все уведомления по Escape
- * 6. Рендерить уведомления в портале поверх всех слоёв
+ * 6. Рендерить уведомления в портале через `popover="manual"` и `showPopover`
  *
  * Потребители:
  *  - `src/main.tsx` — оборачивает приложение провайдером
  */
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
 import { Toast } from '@ui/toast';
@@ -29,6 +29,31 @@ import { StyledToastViewport } from './toast.styles';
  * Используется в `showToast` при запуске таймера.
  */
 const TOAST_DURATION_MS = 5000;
+
+/**
+ * TOAST_VIEWPORT_POPOVER — задаёт режим нативного popover стека уведомлений.
+ * Без автозакрытия UA: показ ведёт `showPopover`.
+ */
+const TOAST_VIEWPORT_POPOVER = 'manual';
+
+/**
+ * showToastViewportPopover — показывает стек уведомлений через нативный `showPopover`.
+ * Пропускает вызов, если узел ещё не в дереве или уже открыт.
+ * Перехватывает исключение, если UA отклоняет показ.
+ *
+ * @param viewport DOM-узел стека уведомлений
+ */
+function showToastViewportPopover(viewport: HTMLElement): void {
+  if (!viewport.isConnected || viewport.matches(':popover-open')) {
+    return;
+  }
+
+  try {
+    viewport.showPopover();
+  } catch {
+    return;
+  }
+}
 
 /**
  * ActiveToast — представляет активное уведомление в очереди.
@@ -56,7 +81,9 @@ type ToastProviderProps = {
  */
 export function ToastProvider({ children }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ActiveToast[]>([]);
+  const hasToasts = toasts.length > 0;
   const timersRef = useRef<Map<string, number>>(new Map());
+  const viewportRef = useRef<HTMLDivElement>(null);
 
   /**
    * dismiss — закрывает уведомление по id.
@@ -116,14 +143,32 @@ export function ToastProvider({ children }: ToastProviderProps) {
     };
   }, []);
 
+  /**
+   * Показывает стек уведомлений через `showPopover` до отрисовки кадра.
+   * Нативный `popover="manual"` сам стек не открывает.
+   */
+  useLayoutEffect(() => {
+    if (!hasToasts) {
+      return;
+    }
+
+    const viewport = viewportRef.current;
+
+    if (!viewport) {
+      return;
+    }
+
+    showToastViewportPopover(viewport);
+  }, [hasToasts]);
+
   const value: ToastContextValue = { showToast };
 
   return (
     <ToastContext.Provider value={value}>
       {children}
-      {toasts.length > 0 &&
+      {hasToasts &&
         createPortal(
-          <StyledToastViewport>
+          <StyledToastViewport popover={TOAST_VIEWPORT_POPOVER} ref={viewportRef}>
             {toasts.map((toast) => (
               <Toast
                 key={toast.id}

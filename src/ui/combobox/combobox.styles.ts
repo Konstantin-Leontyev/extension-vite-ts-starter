@@ -74,7 +74,7 @@ export type ComboboxStyleProps = LayoutProps & ComboboxSurfaceStyleProps;
  * Базируется на `<div>` и поддерживает layout-пропсы.
  *
  * Генерация стилей:
- *  - `getOpenControlRootStyles` — раскладка, зазор, ширина и подъём при открытии
+ *  - `getOpenControlRootStyles` — раскладка, зазор и ширина
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledComboboxRoot = styled.div.withConfig({
@@ -170,8 +170,9 @@ export const StyledComboboxValue = styled.span.withConfig({
  *
  * Как работает:
  * 1. Собирает сетку панели: ряд поиска и список
- * 2. Обрезает содержимое через `overflow: hidden`
- * 3. Подставляет хром панели через `getOpenControlPortalPanelStyles`
+ * 2. Подставляет хром панели через `getOpenControlPortalPanelStyles`
+ * 3. Обрезает содержимое через `overflow: hidden` поверх `overflow: visible`
+ *    сброса UA `[popover]`
  *
  * @param props пропсы формы, размера и тема
  * @returns CSS-правила, каждое с новой строки
@@ -182,8 +183,8 @@ function getComboboxPanelStyles(
   return `
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
-    overflow: hidden;
     ${getOpenControlPortalPanelStyles(props)}
+    overflow: hidden;
   `;
 }
 

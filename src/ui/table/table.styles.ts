@@ -424,7 +424,8 @@ export const StyledTableRow = styled.tr.withConfig({
  * Базируется на `<div>` и принимает проп `$hasError`.
  *
  * Встроенные стили:
- *  - `overflow: hidden` — обрезает по скруглению
+ *  - `overflow: hidden` — обрезает по скруглению. Стоит после `getPortalPanelStyles`,
+ *    чтобы перекрыть `overflow: visible` сброса UA `[popover]`
  *
  * Генерация стилей:
  *  - `getPortalPanelStyles` — хром портальной панели; `outlineColor` зависит от `$hasError`
@@ -432,7 +433,6 @@ export const StyledTableRow = styled.tr.withConfig({
 export const StyledTableRowPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== '$hasError',
 })<{ $hasError?: boolean }>`
-  overflow: hidden;
   ${(props) => {
     const theme = getTheme(props);
 
@@ -447,6 +447,7 @@ export const StyledTableRowPanel = styled.div.withConfig({
       theme,
     });
   }}
+  overflow: hidden;
 `;
 
 /**

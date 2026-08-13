@@ -17,14 +17,11 @@ import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
-  OPEN_CONTROL_PANEL_PADDING,
-  OPEN_CONTROL_ROW_GAP,
-  getOpenControlPortalPanelStyles,
   getOpenControlRootStyles,
+  getOpenControlStackedPortalPanelStyles,
   getOpenControlTriggerRowStyles,
   type OpenControlSurfaceStyleProps,
 } from '@ui/open-control';
-import { getSpacingValue } from '@ui/spacing';
 import { type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -75,8 +72,8 @@ export const StyledDateRangeInputTriggerRow = styled.div.withConfig({
 
 /**
  * getDateRangeInputPanelStyles — возвращает CSS-правила для узла
- * `StyledDateRangeInputPanel`: хром portal-панели через
- * `getOpenControlPortalPanelStyles` с отступом `OPEN_CONTROL_PANEL_PADDING`.
+ * `StyledDateRangeInputPanel`: стековый хром portal-панели через
+ * `getOpenControlStackedPortalPanelStyles` и `min-inline-size: 0`.
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -84,30 +81,22 @@ export const StyledDateRangeInputTriggerRow = styled.div.withConfig({
 function getDateRangeInputPanelStyles(
   props: OpenControlSurfaceStyleProps & { theme: AppTheme }
 ): string {
-  return getOpenControlPortalPanelStyles(
-    props,
-    getSpacingValue(OPEN_CONTROL_PANEL_PADDING)
-  );
+  return `
+    ${getOpenControlStackedPortalPanelStyles(props)}
+    min-inline-size: 0;
+  `;
 }
 
 /**
  * StyledDateRangeInputPanel — задаёт портальную панель календаря компонента DateRangeInput.
  * Базируется на `<div>` и принимает пропсы из `OpenControlSurfaceStyleProps`.
  *
- * Встроенные стили:
- *  - `display: grid` — раскладка календаря и ряда действий
- *  - `gap` — отступ между сеткой дней и SegmentButtonParts действий
- *  - `min-inline-size: 0` — предотвращает переполнение
- *
  * Генерация стилей:
- *  - `getDateRangeInputPanelStyles` — хром portal-панели через
- *    `getOpenControlPortalPanelStyles`
+ *  - `getDateRangeInputPanelStyles` — стековый хром portal-панели через
+ *    `getOpenControlStackedPortalPanelStyles` и `min-inline-size: 0`
  */
 export const StyledDateRangeInputPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => !DATE_RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
 })<OpenControlSurfaceStyleProps>`
-  display: grid;
-  gap: ${getSpacingValue(OPEN_CONTROL_ROW_GAP)};
-  min-inline-size: 0;
   ${(props) => getDateRangeInputPanelStyles(props)}
 `;

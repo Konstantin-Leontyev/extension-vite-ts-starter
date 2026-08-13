@@ -1,6 +1,6 @@
 /**
  * Файл: `src/ui/anchored-portal/index.tsx`
- * Предоставляет компонент AnchoredPortal для отображения привязанной панели через портал.
+ * Предоставляет компонент AnchoredPortal для отображения привязанной панели через нативный popover.
  *
  * Поддерживает:
  *  - открытие и закрытие панели через проп `open`
@@ -19,7 +19,9 @@
  * 2. Типизировать пропсы через `AnchoredPortalProps`
  * 3. Удерживать обход `Tab` внутри открытой панели — ловушка фокуса встроена
  *    и пропом не управляется
- * 4. Реэкспортировать `getPortalPanelStyles` — хром панели из
+ * 4. Показывать панель через `popover="manual"` и `showPopover` до отрисовки.
+ *    Панель остаётся в дереве вызывающего кода
+ * 5. Реэкспортировать `getPortalPanelStyles` — хром панели из
  *    `src/ui/anchored-portal/anchored-portal.styles.ts`
  *
  * Потребители:
@@ -29,8 +31,13 @@
  *  - `src/components/profile-menu/index.tsx` — рендерит меню профиля
  */
 
-import { useEffectEvent, useLayoutEffect, type ReactNode, type RefObject } from 'react';
-import { createPortal } from 'react-dom';
+import {
+  cloneElement,
+  useEffectEvent,
+  useLayoutEffect,
+  type ReactElement,
+  type RefObject,
+} from 'react';
 
 import { useAnchoredDismiss } from '@hooks/use-anchored-dismiss';
 import {
@@ -46,9 +53,15 @@ import { useFocus } from '@hooks/use-focus';
 const DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS: readonly unknown[] = [];
 
 /**
+ * ANCHORED_PORTAL_POPOVER — задаёт режим нативного popover панели.
+ * Без автозакрытия UA: показ ведёт `showPopover`.
+ */
+const ANCHORED_PORTAL_POPOVER = 'manual';
+
+/**
  * AnchoredPortalProps — представляет пропсы компонента AnchoredPortal.
  *
- * @property children — содержимое панели
+ * @property children — единственный элемент панели
  * @property dismissActive — включает закрытие по клику вне зон. Без значения
  *   совпадает с `open`
  * @property dismissZoneRefs — ссылки на зоны, клик вне которых вызывает `onDismiss`
@@ -61,7 +74,7 @@ const DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS: readonly unknown[] = [];
  * @property returnFocusRef — ссылка на элемент для возврата фокуса при закрытии
  */
 type AnchoredPortalProps = {
-  children: ReactNode;
+  children: ReactElement<{ popover?: typeof ANCHORED_PORTAL_POPOVER }>;
   dismissActive?: boolean;
   dismissZoneRefs: RefObject<HTMLElement | null>[];
   onDismiss: () => void;
@@ -74,7 +87,7 @@ type AnchoredPortalProps = {
 };
 
 /**
- * AnchoredPortal — отображает привязанную панель через портал в `document.body`.
+ * AnchoredPortal — отображает привязанную панель.
  *
  * @example
  * <AnchoredPortal
@@ -162,7 +175,9 @@ export function AnchoredPortal({
     return null;
   }
 
-  return createPortal(children, document.body);
+  return cloneElement(children, {
+    popover: ANCHORED_PORTAL_POPOVER,
+  });
 }
 
 /* eslint-disable react-refresh/only-export-components -- реэкспорт генератора хрома панели */

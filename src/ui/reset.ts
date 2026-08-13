@@ -44,6 +44,9 @@ const APP_MIN_INLINE_SIZE = '320px';
  *    высоту однострочного контрола держит `min-block-size`, вертикальный
  *    отступ задаёт компонент при многострочной модели
  *  - сброс дефолтных рамок и фона кнопок
+ *  - сброс UA `[popover]` — нейтрализует дефолтные `inset`, `width`, `height`,
+ *    `margin`, `border` и `color`. Позицию и хром задают потребители, например
+ *    `getPortalPanelStyles` и Card
  *  - состояния `disabled` — курсор и прозрачность из `DISABLED_OPACITY`.
  *    Три контракта. `:disabled` — сам нативный элемент. `label:has(:disabled)` —
  *    label-обёртка контрола с подписью. `[data-disabled]` — оболочка композитного
@@ -136,6 +139,15 @@ export const GlobalResetStyle = createGlobalStyle`
     padding: 0;
     cursor: pointer;
     background: transparent;
+    border: none;
+  }
+
+  [popover] {
+    inset: auto;
+    width: auto;
+    height: auto;
+    margin: 0;
+    color: inherit;
     border: none;
   }
 

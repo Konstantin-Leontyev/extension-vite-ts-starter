@@ -20,11 +20,10 @@ import styled from 'styled-components';
 import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
-  OPEN_CONTROL_PANEL_PADDING,
   OPEN_CONTROL_ROW_GAP,
-  getOpenControlPortalPanelStyles,
   getOpenControlRootStyles,
   getOpenControlSelectableRowSurfaceStyles,
+  getOpenControlStackedPortalPanelStyles,
   getOpenControlTriggerRowStyles,
   getOpenControlTriggerStyles,
   type OpenControlSurfaceStyleProps,
@@ -153,10 +152,10 @@ export const StyledRangeInputValue = styled.span.withConfig({
 
 /**
  * getRangeInputPanelStyles — возвращает CSS-правила для узла `StyledRangeInputPanel`:
- * хром портала через `getOpenControlPortalPanelStyles` и прокрутку.
+ * стековый хром портала через `getOpenControlStackedPortalPanelStyles` и прокрутку.
  *
  * Как работает:
- * 1. Подставляет хром панели через `getOpenControlPortalPanelStyles`
+ * 1. Подставляет стековый хром панели через `getOpenControlStackedPortalPanelStyles`
  * 2. Включает прокрутку `overflow: hidden auto`
  *
  * @param props пропсы поверхности и тема
@@ -166,7 +165,7 @@ function getRangeInputPanelStyles(
   props: RangeInputSurfaceStyleProps & { theme: AppTheme }
 ): string {
   return `
-    ${getOpenControlPortalPanelStyles(props)}
+    ${getOpenControlStackedPortalPanelStyles(props)}
     overflow: hidden auto;
   `;
 }
@@ -175,20 +174,13 @@ function getRangeInputPanelStyles(
  * StyledRangeInputPanel — задаёт панель выбора диапазона компонента RangeInput.
  * Базируется на `<div>` и принимает пропсы из `RangeInputSurfaceStyleProps`.
  *
- * Встроенные стили:
- *  - `display: grid` и `gap` — вертикальный стек пресетов и кастомной секции
- *  - `padding` — внутренний отступ панели
- *
  * Генерация стилей:
- *  - `getRangeInputPanelStyles` — хром портала через `getOpenControlPortalPanelStyles`
- *    и прокрутка
+ *  - `getRangeInputPanelStyles` — стековый хром портала через
+ *    `getOpenControlStackedPortalPanelStyles` и прокрутка
  */
 export const StyledRangeInputPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => !RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
 })<RangeInputSurfaceStyleProps>`
-  display: grid;
-  gap: ${getSpacingValue(OPEN_CONTROL_ROW_GAP)};
-  padding: ${getSpacingValue(OPEN_CONTROL_PANEL_PADDING)};
   ${(props) => getRangeInputPanelStyles(props)}
 `;
 
