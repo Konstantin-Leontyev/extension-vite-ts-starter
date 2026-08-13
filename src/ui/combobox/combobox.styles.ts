@@ -16,24 +16,21 @@
 
 import styled from 'styled-components';
 
-import { getPortalPanelStyles } from '@ui/anchored-portal';
 import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
-  OPEN_CONTROL_PANEL_MAX_OPTION_ROWS,
   OPEN_CONTROL_ROW_GAP,
   OPEN_CONTROL_SELECTABLE_INSET,
+  getOpenControlOptionsListScrollStyles,
+  getOpenControlPortalPanelStyles,
   getOpenControlRootStyles,
   getOpenControlSelectableRowSurfaceStyles,
   getOpenControlTriggerRowStyles,
   getOpenControlTriggerStyles,
-  resolveOpenControlBlockRadius,
   type OpenControlSurfaceStyleProps,
 } from '@ui/open-control';
 import {
-  DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
-  getMinBlockSize,
   getPaddingInline,
   getTextSize,
   type SizePreset,
@@ -107,7 +104,7 @@ const COMBOBOX_SURFACE_PROP_NAMES = new Set<string>([
 export const StyledComboboxTriggerRow = styled.div.withConfig({
   shouldForwardProp: (prop) => !COMBOBOX_SURFACE_PROP_NAMES.has(prop),
 })<ComboboxSurfaceStyleProps>`
-  ${(props) => getOpenControlTriggerRowStyles(props, resolveOpenControlBlockRadius)}
+  ${(props) => getOpenControlTriggerRowStyles(props)}
 `;
 
 /**
@@ -168,16 +165,13 @@ export const StyledComboboxValue = styled.span.withConfig({
 
 /**
  * getComboboxPanelStyles — возвращает CSS-правила для узла `StyledComboboxPanel`:
- * сетку поиска и списка, обрезку и хром портала через `getPortalPanelStyles`.
+ * сетку поиска и списка, обрезку и хром портала через
+ * `getOpenControlPortalPanelStyles`.
  *
  * Как работает:
- * 1. Берёт тему, подставляет дефолты `shape` и `sizePreset`
- * 2. Собирает сетку панели: ряд поиска и список
- * 3. Подставляет хром панели через `getPortalPanelStyles`: fixed-позицию, слой
- *    `STACKING_PORTAL`, заливку `surface`, рамку с тенью через `getBorderStyles`,
- *    радиус через `resolveOpenControlBlockRadius` и постоянный `outline` через
- *    `getOutlineStyles`
- * 4. Обрезает содержимое через `overflow: hidden`
+ * 1. Собирает сетку панели: ряд поиска и список
+ * 2. Обрезает содержимое через `overflow: hidden`
+ * 3. Подставляет хром панели через `getOpenControlPortalPanelStyles`
  *
  * @param props пропсы формы, размера и тема
  * @returns CSS-правила, каждое с новой строки
@@ -185,17 +179,11 @@ export const StyledComboboxValue = styled.span.withConfig({
 function getComboboxPanelStyles(
   props: Pick<ComboboxSurfaceStyleProps, 'shape' | 'sizePreset'> & { theme: AppTheme }
 ): string {
-  const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
-
   return `
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
     overflow: hidden;
-    ${getPortalPanelStyles({
-      theme,
-      borderRadius: resolveOpenControlBlockRadius(shape, sizePreset),
-    })}
+    ${getOpenControlPortalPanelStyles(props)}
   `;
 }
 
@@ -205,7 +193,7 @@ function getComboboxPanelStyles(
  *
  * Генерация стилей:
  *  - `getComboboxPanelStyles` — сетка поиска и списка, хром портала через
- *    `getPortalPanelStyles`
+ *    `getOpenControlPortalPanelStyles`
  */
 export const StyledComboboxPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => !COMBOBOX_BOX_PROP_NAMES.has(prop),
@@ -220,8 +208,8 @@ export const StyledComboboxPanel = styled.div.withConfig({
  * Как работает:
  * 1. Подставляет дефолт `sizePreset`
  * 2. Собирает столбик опций с отступами
- * 3. Ограничивает высоту через `OPEN_CONTROL_PANEL_MAX_OPTION_ROWS` и включает
- *    прокрутку `overflow: hidden auto`
+ * 3. Ограничивает высоту и включает прокрутку через
+ *    `getOpenControlOptionsListScrollStyles`
  *
  * @param props пропсы размера
  * @returns CSS-правила, каждое с новой строки
@@ -236,8 +224,7 @@ function getComboboxListStyles(
     min-block-size: 0;
     padding-block: ${getSpacingValue(OPEN_CONTROL_SELECTABLE_INSET)};
     padding-inline-end: ${getSpacingValue(8)};
-    max-block-size: calc(${getMinBlockSize(sizePreset)} * ${OPEN_CONTROL_PANEL_MAX_OPTION_ROWS});
-    overflow: hidden auto;
+    ${getOpenControlOptionsListScrollStyles(sizePreset)}
   `;
 }
 

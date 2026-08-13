@@ -17,21 +17,19 @@
 
 import styled from 'styled-components';
 
-import { getPortalPanelStyles } from '@ui/anchored-portal';
 import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   OPEN_CONTROL_PANEL_PADDING,
   OPEN_CONTROL_ROW_GAP,
+  getOpenControlPortalPanelStyles,
   getOpenControlRootStyles,
   getOpenControlSelectableRowSurfaceStyles,
   getOpenControlTriggerRowStyles,
   getOpenControlTriggerStyles,
-  resolveOpenControlBlockRadius,
   type OpenControlSurfaceStyleProps,
 } from '@ui/open-control';
 import {
-  DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
   getPaddingInline,
   getTextSize,
@@ -39,7 +37,7 @@ import {
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
-import { getTheme, type AppTheme } from '@ui/theme';
+import { type AppTheme } from '@ui/theme';
 import { type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -106,7 +104,7 @@ const RANGE_INPUT_SURFACE_PROP_NAMES = new Set<string>([
 export const StyledRangeInputTriggerRow = styled.div.withConfig({
   shouldForwardProp: (prop) => !RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
 })<RangeInputSurfaceStyleProps>`
-  ${(props) => getOpenControlTriggerRowStyles(props, resolveOpenControlBlockRadius)}
+  ${(props) => getOpenControlTriggerRowStyles(props)}
 `;
 
 /**
@@ -155,15 +153,11 @@ export const StyledRangeInputValue = styled.span.withConfig({
 
 /**
  * getRangeInputPanelStyles — возвращает CSS-правила для узла `StyledRangeInputPanel`:
- * хром портала через `getPortalPanelStyles` и прокрутку.
+ * хром портала через `getOpenControlPortalPanelStyles` и прокрутку.
  *
  * Как работает:
- * 1. Берёт тему, подставляет дефолты `shape` и `sizePreset`
- * 2. Подставляет хром панели через `getPortalPanelStyles`: fixed-позицию, слой
- *    `STACKING_PORTAL`, заливку `surface`, рамку с тенью через `getBorderStyles`,
- *    радиус через `resolveOpenControlBlockRadius` и постоянный `outline` через
- *    `getOutlineStyles`
- * 3. Включает прокрутку `overflow: hidden auto`
+ * 1. Подставляет хром панели через `getOpenControlPortalPanelStyles`
+ * 2. Включает прокрутку `overflow: hidden auto`
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -171,14 +165,8 @@ export const StyledRangeInputValue = styled.span.withConfig({
 function getRangeInputPanelStyles(
   props: RangeInputSurfaceStyleProps & { theme: AppTheme }
 ): string {
-  const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
-
   return `
-    ${getPortalPanelStyles({
-      theme,
-      borderRadius: resolveOpenControlBlockRadius(shape, sizePreset),
-    })}
+    ${getOpenControlPortalPanelStyles(props)}
     overflow: hidden auto;
   `;
 }
@@ -192,7 +180,8 @@ function getRangeInputPanelStyles(
  *  - `padding` — внутренний отступ панели
  *
  * Генерация стилей:
- *  - `getRangeInputPanelStyles` — хром портала через `getPortalPanelStyles` и прокрутка
+ *  - `getRangeInputPanelStyles` — хром портала через `getOpenControlPortalPanelStyles`
+ *    и прокрутка
  */
 export const StyledRangeInputPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => !RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),

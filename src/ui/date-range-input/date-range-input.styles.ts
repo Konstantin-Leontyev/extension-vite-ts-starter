@@ -15,19 +15,17 @@
 
 import styled from 'styled-components';
 
-import { getPortalPanelStyles } from '@ui/anchored-portal';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   OPEN_CONTROL_PANEL_PADDING,
   OPEN_CONTROL_ROW_GAP,
+  getOpenControlPortalPanelStyles,
   getOpenControlRootStyles,
   getOpenControlTriggerRowStyles,
-  resolveOpenControlBlockRadius,
   type OpenControlSurfaceStyleProps,
 } from '@ui/open-control';
-import { DEFAULT_SHAPE_PRESET, DEFAULT_SIZE_PRESET } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
-import { getTheme, type AppTheme } from '@ui/theme';
+import { type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -72,18 +70,13 @@ export const StyledDateRangeInputRoot = styled.div.withConfig({
 export const StyledDateRangeInputTriggerRow = styled.div.withConfig({
   shouldForwardProp: (prop) => !DATE_RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
 })<OpenControlSurfaceStyleProps>`
-  ${(props) =>
-    getOpenControlTriggerRowStyles(
-      props,
-      resolveOpenControlBlockRadius,
-      'trailing-only'
-    )}
+  ${(props) => getOpenControlTriggerRowStyles(props, 'trailing-only')}
 `;
 
 /**
  * getDateRangeInputPanelStyles — возвращает CSS-правила для узла
- * `StyledDateRangeInputPanel`: хром портальной панели через `getPortalPanelStyles` —
- * fixed-позицию, слой, отступ, поверхность, рамку с тенью, радиус и `outline`.
+ * `StyledDateRangeInputPanel`: хром portal-панели через
+ * `getOpenControlPortalPanelStyles` с отступом `OPEN_CONTROL_PANEL_PADDING`.
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -91,14 +84,10 @@ export const StyledDateRangeInputTriggerRow = styled.div.withConfig({
 function getDateRangeInputPanelStyles(
   props: OpenControlSurfaceStyleProps & { theme: AppTheme }
 ): string {
-  const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
-
-  return getPortalPanelStyles({
-    theme,
-    borderRadius: resolveOpenControlBlockRadius(shape, sizePreset),
-    padding: getSpacingValue(OPEN_CONTROL_PANEL_PADDING),
-  });
+  return getOpenControlPortalPanelStyles(
+    props,
+    getSpacingValue(OPEN_CONTROL_PANEL_PADDING)
+  );
 }
 
 /**
@@ -111,7 +100,8 @@ function getDateRangeInputPanelStyles(
  *  - `min-inline-size: 0` — предотвращает переполнение
  *
  * Генерация стилей:
- *  - `getDateRangeInputPanelStyles` — хром портальной панели через `getPortalPanelStyles`
+ *  - `getDateRangeInputPanelStyles` — хром portal-панели через
+ *    `getOpenControlPortalPanelStyles`
  */
 export const StyledDateRangeInputPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => !DATE_RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),

@@ -1,29 +1,32 @@
 /**
  * Файл: `src/ui/open-control.ts`
  * Содержит общий хром open-контролов: корень с подъёмом слоя при открытии,
- * ряд-триггер, кнопку-триггер с каналом шеврона, поверхность выбираемой строки
- * и именованные константы панели.
+ * ряд-триггер, кнопку-триггер с каналом шеврона, поверхность выбираемой строки,
+ * обвязку portal-панели, скролл списка опций и именованные константы панели.
  *
  * Основные задачи:
  * 1. Типизировать пропсы поверхности через `OpenControlSurfaceStyleProps`
  *    и вариант clear через `OpenControlTriggerRowClearLayout`
- * 2. Задать константы панели и шкалы: `OPEN_CONTROL_PANEL_MAX_OPTION_ROWS`,
- *    `OPEN_CONTROL_PANEL_MIN_OPTION_ROWS`, `OPEN_CONTROL_SELECTABLE_INSET`,
- *    `OPEN_CONTROL_ROW_GAP`, `OPEN_CONTROL_PANEL_PADDING`
- * 3. Предоставить `resolveOpenControlBlockRadius`, `getOpenControlRootStyles`,
- *    `getOpenControlTriggerRowStyles`, `getOpenControlTriggerStyles` и
- *    `getOpenControlSelectableRowSurfaceStyles`
+ * 2. Задать константы панели и шкалы: `OPEN_CONTROL_PANEL_MIN_OPTION_ROWS`,
+ *    `OPEN_CONTROL_SELECTABLE_INSET`, `OPEN_CONTROL_ROW_GAP`,
+ *    `OPEN_CONTROL_PANEL_PADDING`
+ * 3. Предоставить `getOpenControlRootStyles`,
+ *    `getOpenControlTriggerRowStyles`, `getOpenControlTriggerStyles`,
+ *    `getOpenControlSelectableRowSurfaceStyles`, `getOpenControlPortalPanelStyles`
+ *    и `getOpenControlOptionsListScrollStyles`
  *
  * Потребители:
- *  - styles-файлы open-контролов — подставляют генераторы корня, ряда-триггера,
- *    кнопки-триггера и поверхности строки:
- *     - `src/ui/listbox/listbox.styles.ts`
- *     - `src/ui/combobox/combobox.styles.ts`
- *     - `src/ui/range-input/range-input.styles.ts`
- *     - `src/ui/date-range-input/date-range-input.styles.ts`
+ *  - `src/ui/listbox/listbox.styles.ts` и `src/ui/combobox/combobox.styles.ts` —
+ *    подставляют корень, ряд и кнопку-триггер, portal-панель, скролл списка
+ *    и поверхность опции
+ *  - `src/ui/range-input/range-input.styles.ts` — подставляет корень, ряд и
+ *    кнопку-триггер, portal-панель и поверхность пресета
+ *  - `src/ui/date-range-input/date-range-input.styles.ts` — подставляет корень,
+ *    ряд-триггер и portal-панель
  *  - `src/ui/combobox/index.tsx` — читает `OPEN_CONTROL_PANEL_MIN_OPTION_ROWS`
  */
 
+import { getPortalPanelStyles } from '@ui/anchored-portal';
 import { getBorderStyles } from '@ui/border';
 import { getIconPositionStyles, resolveIconStateBackground } from '@ui/icon';
 import { MOTION_CONTROL_DURATION, getTransitionStyles } from '@ui/motion';
@@ -85,10 +88,9 @@ type OpenControlSelectableRowSurfaceOptions = {
 
 /**
  * OPEN_CONTROL_PANEL_MAX_OPTION_ROWS — задаёт максимум видимых строк опций в панели.
- * Используется в `getListboxPanelStyles` и `getComboboxListStyles` для
- * `max-block-size`.
+ * Используется в `getOpenControlOptionsListScrollStyles` для `max-block-size`.
  */
-export const OPEN_CONTROL_PANEL_MAX_OPTION_ROWS = 6;
+const OPEN_CONTROL_PANEL_MAX_OPTION_ROWS = 6;
 
 /**
  * OPEN_CONTROL_PANEL_MIN_OPTION_ROWS — задаёт минимум резервируемых строк опций в панели.
@@ -126,12 +128,14 @@ const DEFAULT_SELECTABLE_HIGHLIGHT_WHEN = `&:not(:disabled):hover::before,
 /**
  * resolveOpenControlBlockRadius — возвращает значение для CSS-свойства
  * `border-radius` поверхности open-control по `shape` и `sizePreset`.
+ * Используется в `getOpenControlTriggerRowStyles`,
+ * `getOpenControlSelectableRowSurfaceStyles` и `getOpenControlPortalPanelStyles`.
  *
  * @param shape форма поверхности
  * @param sizePreset размер компонента
  * @returns значение для CSS-свойства `border-radius`
  */
-export function resolveOpenControlBlockRadius(
+function resolveOpenControlBlockRadius(
   shape: ShapePreset,
   sizePreset: SizePreset
 ): string {
@@ -164,19 +168,17 @@ export function getOpenControlRootStyles(): string {
  * 2. Собирает сетку ряда: колонки под trailing clear и при `clearLayout`
  *    `both-branches` докладывает ветку `[data-slot='clear']:first-child`
  * 3. Задаёт габариты, заливку `surface` через `getSurfaceBackgroundColor`,
- *    скругление через `resolveBorderRadius`, рамку с тенью через
+ *    скругление через `resolveOpenControlBlockRadius`, рамку с тенью через
  *    `getBorderStyles` и фокус-контур через `getOutlineStyles`
  * 4. При `data-open='true'` скрывает ряд через `visibility: hidden`, чтобы панель
  *    наследовала ширину якоря без двойного отображения триггера
  *
  * @param props пропсы поверхности и тема
- * @param resolveBorderRadius функция скругления по `shape` и `sizePreset`
  * @param clearLayout вариант колонок clear, по умолчанию `both-branches`
  * @returns CSS-правила, каждое с новой строки
  */
 export function getOpenControlTriggerRowStyles(
   props: OpenControlSurfaceStyleProps & { theme: AppTheme },
-  resolveBorderRadius: (shape: ShapePreset, sizePreset: SizePreset) => string,
   clearLayout: OpenControlTriggerRowClearLayout = 'both-branches'
 ): string {
   const theme = getTheme(props);
@@ -198,7 +200,7 @@ export function getOpenControlTriggerRowStyles(
     `min-block-size: ${getMinBlockSize(sizePreset)};`,
     'overflow: hidden;',
     `background-color: ${getSurfaceBackgroundColor(theme, 'surface')};`,
-    `border-radius: ${resolveBorderRadius(shape, sizePreset)};`,
+    `border-radius: ${resolveOpenControlBlockRadius(shape, sizePreset)};`,
     getBorderStyles(theme),
     "&[data-open='true'] { visibility: hidden; }",
     `&:focus-within {
@@ -306,4 +308,46 @@ export function getOpenControlSelectableRowSurfaceStyles(
   );
 
   return styles.join('\n');
+}
+
+/**
+ * getOpenControlPortalPanelStyles — возвращает CSS-правила хрома portal-панели
+ * open-control: позицию, слой, заливку, рамку с тенью, скругление и `outline`.
+ *
+ * Как работает:
+ * 1. Берёт тему и подставляет дефолты `shape` и `sizePreset`
+ * 2. Считает скругление через `resolveOpenControlBlockRadius`
+ * 3. Подставляет хром панели через `getPortalPanelStyles` с опциональным `padding`
+ *
+ * @param props пропсы поверхности и тема
+ * @param padding внутренний отступ панели
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getOpenControlPortalPanelStyles(
+  props: OpenControlSurfaceStyleProps & { theme: AppTheme },
+  padding?: string
+): string {
+  const theme = getTheme(props);
+  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
+
+  return getPortalPanelStyles({
+    borderRadius: resolveOpenControlBlockRadius(shape, sizePreset),
+    padding,
+    theme,
+  });
+}
+
+/**
+ * getOpenControlOptionsListScrollStyles — возвращает CSS-правила скролла списка
+ * опций open-control: ограничение высоты по `OPEN_CONTROL_PANEL_MAX_OPTION_ROWS`
+ * и `overflow: hidden auto`.
+ *
+ * @param sizePreset размер компонента
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getOpenControlOptionsListScrollStyles(sizePreset: SizePreset): string {
+  return `
+    max-block-size: calc(${getMinBlockSize(sizePreset)} * ${OPEN_CONTROL_PANEL_MAX_OPTION_ROWS});
+    overflow: hidden auto;
+  `;
 }

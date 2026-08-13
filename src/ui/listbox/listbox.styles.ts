@@ -16,23 +16,20 @@
 
 import styled from 'styled-components';
 
-import { getPortalPanelStyles } from '@ui/anchored-portal';
 import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
-  OPEN_CONTROL_PANEL_MAX_OPTION_ROWS,
   OPEN_CONTROL_ROW_GAP,
+  getOpenControlOptionsListScrollStyles,
+  getOpenControlPortalPanelStyles,
   getOpenControlRootStyles,
   getOpenControlSelectableRowSurfaceStyles,
   getOpenControlTriggerRowStyles,
   getOpenControlTriggerStyles,
-  resolveOpenControlBlockRadius,
   type OpenControlSurfaceStyleProps,
 } from '@ui/open-control';
 import {
-  DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
-  getMinBlockSize,
   getPaddingInline,
   getTextSize,
   type SizePreset,
@@ -105,7 +102,7 @@ const LISTBOX_SURFACE_PROP_NAMES = new Set<string>([
 export const StyledListboxTriggerRow = styled.div.withConfig({
   shouldForwardProp: (prop) => !LISTBOX_SURFACE_PROP_NAMES.has(prop),
 })<ListboxSurfaceStyleProps>`
-  ${(props) => getOpenControlTriggerRowStyles(props, resolveOpenControlBlockRadius)}
+  ${(props) => getOpenControlTriggerRowStyles(props)}
 `;
 
 /**
@@ -155,17 +152,14 @@ const LISTBOX_BOX_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
 
 /**
  * getListboxPanelStyles — возвращает CSS-правила для узла `StyledListboxPanel`:
- * хром портала через `getPortalPanelStyles`, ограничение высоты через
- * `OPEN_CONTROL_PANEL_MAX_OPTION_ROWS` и прокрутку.
+ * хром портала через `getOpenControlPortalPanelStyles` и прокрутку списка через
+ * `getOpenControlOptionsListScrollStyles`.
  *
  * Как работает:
- * 1. Берёт тему, подставляет дефолты `shape` и `sizePreset`
- * 2. Подставляет хром панели через `getPortalPanelStyles`: fixed-позицию, слой
- *    `STACKING_PORTAL`, заливку `surface`, рамку с тенью через `getBorderStyles`,
- *    радиус через `resolveOpenControlBlockRadius` и постоянный `outline` через
- *    `getOutlineStyles`
- * 3. Ограничивает высоту через `OPEN_CONTROL_PANEL_MAX_OPTION_ROWS` и включает
- *    прокрутку `overflow: hidden auto`
+ * 1. Подставляет дефолт `sizePreset`
+ * 2. Подставляет хром панели через `getOpenControlPortalPanelStyles`
+ * 3. Ограничивает высоту и включает прокрутку через
+ *    `getOpenControlOptionsListScrollStyles`
  *
  * @param props пропсы формы, размера и тема
  * @returns CSS-правила, каждое с новой строки
@@ -173,16 +167,11 @@ const LISTBOX_BOX_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
 function getListboxPanelStyles(
   props: Pick<ListboxSurfaceStyleProps, 'shape' | 'sizePreset'> & { theme: AppTheme }
 ): string {
-  const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
 
   return `
-    ${getPortalPanelStyles({
-      theme,
-      borderRadius: resolveOpenControlBlockRadius(shape, sizePreset),
-    })}
-    max-block-size: calc(${getMinBlockSize(sizePreset)} * ${OPEN_CONTROL_PANEL_MAX_OPTION_ROWS});
-    overflow: hidden auto;
+    ${getOpenControlPortalPanelStyles(props)}
+    ${getOpenControlOptionsListScrollStyles(sizePreset)}
   `;
 }
 
@@ -191,8 +180,8 @@ function getListboxPanelStyles(
  * Базируется на `<ul>` и принимает пропсы `shape` и `sizePreset`.
  *
  * Генерация стилей:
- *  - `getListboxPanelStyles` — хром портала через `getPortalPanelStyles`, высота
- *    и прокрутка
+ *  - `getListboxPanelStyles` — хром портала через `getOpenControlPortalPanelStyles`,
+ *    высота и прокрутка
  */
 export const StyledListboxPanel = styled.ul.withConfig({
   shouldForwardProp: (prop) => !LISTBOX_BOX_PROP_NAMES.has(prop),
