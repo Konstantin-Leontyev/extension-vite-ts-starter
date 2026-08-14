@@ -169,7 +169,7 @@ const SEGMENT_BUTTON_PARTS_PART_PROP_NAMES = new Set<string>([
  *    `resolveIconStateBackground` с политикой `'none'` для нейтрали
  * 5. `outline` на фокусе не рисует: снятие даёт статика `:focus { outline: none }`
  *    в шаблоне узла. Акцент фокуса совпадает с наведением. Фокус-контур несёт
- *    оболочка ряда на `:focus-within`, не сегмент
+ *    оболочка ряда на `&:has(:focus-visible)`, не сегмент
  * 6. Скругляет первый и последний сегмент радиусом из `resolveBlockRadius` по
  *    `shape` и минимальной высоте ряда
  *

@@ -22,7 +22,7 @@ import { Checkbox, getCheckboxTextSize } from '@ui/checkbox';
 import { Combobox } from '@ui/combobox';
 import { DateRangeInput, todayUtc } from '@ui/date-range-input';
 import { Fieldset } from '@ui/fieldset';
-import { Icon, getIconPadding } from '@ui/icon';
+import { Icon, getIconPadding, resolveIconShape } from '@ui/icon';
 import { type IconButtonRowAction } from '@ui/icon-button-row';
 import { Input } from '@ui/input';
 import { Listbox } from '@ui/listbox';
@@ -438,6 +438,7 @@ const DEFAULT_INPUT_STATE: InputWidgetState = {
  */
 const DEFAULT_SEARCH_FIELD_STATE: SearchFieldWidgetState = {
   borderTone: 'neutral',
+  clearShape: resolveIconShape(DEFAULT_SHAPE_PRESET),
   disabled: false,
   iconFill: 'neutral',
   iconKey: 'search',
@@ -533,6 +534,16 @@ const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
   value: '',
   withIcon: false,
 };
+
+/**
+ * COMBOBOX_DEMO_DISABLED_OPTION — задаёт недоступную опцию Combobox в демо витрины.
+ * Используется в превью Combobox витрины дизайн-системы.
+ */
+const COMBOBOX_DEMO_DISABLED_OPTION = {
+  disabled: true,
+  label: 'Unavailable',
+  value: 'unavailable',
+} as const;
 
 /**
  * DEFAULT_RANGE_INPUT_STATE — задаёт начальное состояние виджета RangeInput в витрине.
@@ -1054,7 +1065,10 @@ export function ShowcasePage() {
     setCombobox((current) => ({ ...current, [key]: value }));
   }
 
-  const comboboxDemoOptions = combobox.withIcon ? COMBOBOX_OPTIONS : LIST_OPTIONS;
+  const comboboxDemoOptions = [
+    ...(combobox.withIcon ? COMBOBOX_OPTIONS : LIST_OPTIONS),
+    COMBOBOX_DEMO_DISABLED_OPTION,
+  ];
 
   function updateRangeInput<K extends keyof RangeInputWidgetState>(
     key: K,
@@ -1486,6 +1500,7 @@ export function ShowcasePage() {
                 <SearchField
                   alignSelf="center"
                   borderTone={searchField.borderTone}
+                  clearShape={searchField.clearShape}
                   disabled={searchField.disabled}
                   icon={searchField.showIcon ? getIcon(searchField.iconKey) : undefined}
                   iconFill={searchField.showIcon ? searchField.iconFill : undefined}

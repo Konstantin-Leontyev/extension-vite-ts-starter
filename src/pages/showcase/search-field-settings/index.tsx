@@ -1,7 +1,7 @@
 /**
  * Файл: `src/pages/showcase/search-field-settings/index.tsx`
  * Определяет панель настроек компонента SearchField в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, рамки, иконки, подписи,
+ * Содержит контролы для изменения размера, формы, формы сброса, рамки, иконки, подписи,
  * плейсхолдера, значения, выравнивания, курсива и состояния `disabled` в реальном времени.
  *
  * Основные задачи:
@@ -15,7 +15,12 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { type IconPosition } from '@ui/icon';
+import {
+  ICON_SHAPE_PRESET_KEYS,
+  resolveIconShape,
+  type IconPosition,
+  type IconShapePreset,
+} from '@ui/icon';
 import { Input } from '@ui/input';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { type TextAlignPreset } from '@ui/text';
@@ -24,6 +29,7 @@ import { type TonePreset } from '@ui/tones';
 import { BorderGroup } from '../border-group';
 import { ControlGroup } from '../control-group';
 import { IconGroup } from '../icon-group';
+import { ShapeListbox } from '../shape-listbox';
 import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
 import { StyledSettingsForm } from '../showcase.styles';
 import { TextGroup } from '../text-group';
@@ -35,6 +41,7 @@ import { TextGroup } from '../text-group';
  * Используется для синхронизации значений между панелью управления и демонстрационным SearchField.
  *
  * @property borderTone — тон рамки
+ * @property clearShape — форма кнопки сброса
  * @property disabled — включает недоступное состояние поля
  * @property iconFill — тон глифа иконки
  * @property iconKey — витринный ключ выбора глифа иконки для превью
@@ -53,6 +60,7 @@ import { TextGroup } from '../text-group';
  */
 export type SearchFieldWidgetState = {
   borderTone: TonePreset;
+  clearShape: IconShapePreset;
   disabled: boolean;
   iconFill: TonePreset;
   iconKey: IconKey;
@@ -98,8 +106,18 @@ export function SearchFieldSettings({ onChange, state }: SearchFieldSettingsProp
         shape={state.shape}
         sizePreset={state.sizePreset}
         onLabelChange={(label) => onChange('label', label)}
-        onShapeChange={(shape) => onChange('shape', shape)}
+        onShapeChange={(shape) => {
+          onChange('shape', shape);
+          onChange('clearShape', resolveIconShape(shape));
+        }}
         onSizeChange={(size) => onChange('sizePreset', size)}
+      />
+
+      <ShapeListbox
+        label="Clear shape:"
+        shapes={ICON_SHAPE_PRESET_KEYS}
+        value={state.clearShape}
+        onChange={(shape) => onChange('clearShape', shape)}
       />
 
       <BorderGroup

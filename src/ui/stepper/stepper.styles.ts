@@ -113,7 +113,7 @@ const STEPPER_ROOT_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
  * 1. Берёт тему и подставляет дефолты `shape` и `sizePreset`
  * 2. Собирает `min-block-size`, `border-radius` через `resolveBlockRadius`,
  *    заливку `surface` и рамку с тенью через `getBorderStyles`
- * 3. Акцент фокуса даёт `outline` на узле при `:focus-within`
+ * 3. Акцент фокуса даёт `outline` на узле при `&:has(:focus-visible)`
  *
  * @param props пропсы стилизации поля и тема
  * @returns CSS-правила, каждое с новой строки
@@ -131,7 +131,7 @@ function getStepperRootStyles(
     background-color: ${theme.colors.surface};
     ${getBorderStyles(theme)}
 
-    &:focus-within {
+    &:has(:focus-visible) {
       ${getOutlineStyles(theme.colors.focusOutline)}
     }
   `;
@@ -309,7 +309,7 @@ function getStepperInputStyles(
  *    суффикс в ячейке встаёт вплотную к значению
  *  - `min-inline-size: 0` — при нехватке места в ячейке сжимается поле, не суффикс
  *  - `background-color: transparent` и `border: none` — рамку и `outline` фокуса несёт корень
- *  - `outline: none` на `:focus-visible` — `outline` фокуса показывает корень через `:focus-within`
+ *  - `outline: none` на `:focus-visible` — `outline` фокуса показывает корень через `&:has(:focus-visible)`
  *
  * Генерация стилей:
  *  - `getStepperInputStyles` — типографика, курсив и тон значения
@@ -447,7 +447,7 @@ function getStepperButtonStyles(
  *  - `grid-template: 100% / 100%` — definite-ячейка под Icon-заполнитель: половинка
  *    не квадратная, в авто-строке процент высоты Icon цикличен и отбрасывается —
  *    svg надувает строку по ширине
- *  - `outline: none` на `:focus-visible` — `outline` фокуса показывает корень через `:focus-within`
+ *  - `outline: none` на `:focus-visible` — `outline` фокуса показывает корень через `&:has(:focus-visible)`
  *
  * Генерация стилей:
  *  - `getStepperButtonStyles` — габарит половинки, цвет, разделитель между половинками

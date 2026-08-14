@@ -409,7 +409,7 @@ export function RangeInput({
   const triggerId = useId();
   const titleId = useId();
   const panelErrorId = useId();
-  const fromInputId = useId();
+  const fromInputRef = useRef<HTMLInputElement>(null);
   const { handleClose, handleOpen, isOpen, panelRef } =
     useAnchoredOpen<HTMLDivElement>();
   const [draftFrom, setDraftFrom] = useState('');
@@ -452,7 +452,7 @@ export function RangeInput({
   }
 
   function focusRangeInputFromField(): void {
-    document.getElementById(fromInputId)?.focus();
+    fromInputRef.current?.focus();
   }
 
   function commitValue(next: RangeValue): void {
@@ -571,7 +571,6 @@ export function RangeInput({
   return (
     <StyledRangeInputRoot
       data-disabled={disabled ? '' : undefined}
-      data-open={isOpen}
       ref={rootRef}
       {...layoutProps}
       {...restProps}
@@ -579,7 +578,7 @@ export function RangeInput({
       <FieldLabel htmlFor={triggerId}>{label}</FieldLabel>
       <StyledRangeInputTriggerRow
         data-has-clear={showClear ? '' : undefined}
-        data-open={isOpen}
+        data-open={isOpen ? 'true' : undefined}
         ref={triggerRowRef}
         {...surfaceProps}
       >
@@ -617,7 +616,6 @@ export function RangeInput({
         anchorRef={triggerRowRef}
         dismissZoneRefs={[rootRef, panelRef]}
         open={isOpen}
-        openFocusDeps={[fromInputId]}
         panelRef={panelRef}
         returnFocusRef={triggerRef}
         onDismiss={handleClose}
@@ -667,10 +665,10 @@ export function RangeInput({
             <StyledRangeInputFields aria-labelledby={titleId} role="group">
               <Input
                 aria-describedby={hasPanelError ? panelErrorId : undefined}
-                id={fromInputId}
                 inputMode="numeric"
                 invalid={hasPanelError}
                 placeholder={fromPlaceholder}
+                ref={fromInputRef}
                 shape={inputShape}
                 sizePreset={inputSizePreset}
                 value={draftFrom}

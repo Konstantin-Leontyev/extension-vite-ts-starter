@@ -417,7 +417,6 @@ export function Combobox({
   return (
     <StyledComboboxRoot
       data-disabled={disabled ? '' : undefined}
-      data-open={isOpen}
       ref={rootRef}
       {...layoutProps}
       {...restProps}
@@ -425,7 +424,7 @@ export function Combobox({
       <FieldLabel htmlFor={triggerId}>{label}</FieldLabel>
       <StyledComboboxTriggerRow
         data-has-clear={isClearVisible ? '' : undefined}
-        data-open={isOpen}
+        data-open={isOpen ? 'true' : undefined}
         ref={triggerRowRef}
         {...surfaceProps}
       >

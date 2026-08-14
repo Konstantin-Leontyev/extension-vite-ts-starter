@@ -7,6 +7,8 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - форму строки-поля через проп `shape`
+ *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
+ *    выводится из `shape`
  *  - рамку контрола через проп `showBorder`
  *  - тень через проп `showShadow`
  *  - тон рамки через проп `borderTone`
@@ -40,13 +42,13 @@ import {
   type ChangeEventHandler,
   type ComponentPropsWithRef,
   type ReactNode,
-  type Ref,
 } from 'react';
 
 import { CloseIcon, SearchIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { FieldLabel } from '@ui/field-label';
-import { Icon, type IconPosition } from '@ui/icon';
+import { Icon, resolveIconShape, type IconPosition, type IconShapePreset } from '@ui/icon';
+import { assignRef } from '@ui/ref';
 import { type TonePreset } from '@ui/tones';
 
 import {
@@ -92,6 +94,7 @@ const SEARCH_FIELD_CLEAR_PADDING = 12;
 /**
  * SearchFieldProps — представляет пропсы компонента SearchField.
  *
+ * @property clearShape — форма кнопки сброса
  * @property icon — svg секции иконки
  * @property iconFill — тон глифа иконки при нейтральном `iconTone`
  * @property iconPosition — позиция иконки относительно поля
@@ -103,6 +106,7 @@ const SEARCH_FIELD_CLEAR_PADDING = 12;
  * @property value — контролируемое значение
  */
 type SearchFieldProps = {
+  clearShape?: IconShapePreset;
   icon?: ReactNode;
   iconFill?: TonePreset;
   iconPosition?: IconPosition;
@@ -117,23 +121,6 @@ type SearchFieldProps = {
     ComponentPropsWithRef<'input'>,
     'className' | 'onChange' | 'style' | 'type' | 'value' | keyof SearchFieldStyleProps
   >;
-
-/**
- * assignRef — записывает значение в callback-ref или object-ref.
- *
- * @param ref ссылка вызывающего кода
- * @param node DOM-узел или `null`
- */
-function assignRef<T>(ref: Ref<T> | undefined, node: null | T): void {
-  if (typeof ref === 'function') {
-    ref(node);
-    return;
-  }
-
-  if (ref != null) {
-    ref.current = node;
-  }
-}
 
 /**
  * SearchField — отображает управляемое поле поиска с секцией иконки и кнопкой сброса.
@@ -155,6 +142,7 @@ function assignRef<T>(ref: Ref<T> | undefined, node: null | T): void {
  */
 export function SearchField({
   borderTone,
+  clearShape: clearShapeProp,
   icon = DEFAULT_SEARCH_FIELD_ICON,
   iconFill,
   iconPosition = DEFAULT_SEARCH_FIELD_ICON_POSITION,
@@ -172,6 +160,7 @@ export function SearchField({
   value,
   ...rest
 }: SearchFieldProps) {
+  const clearShape = clearShapeProp ?? resolveIconShape(shape);
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const { disabled, id: idProp, ref, ...inputProps } = restProps;
   const fallbackId = useId();
@@ -209,7 +198,7 @@ export function SearchField({
       iconFill={iconFill}
       iconTone={iconTone}
       padding={SEARCH_FIELD_CLEAR_PADDING}
-      shape="round"
+      shape={clearShape}
       showBorder={false}
       showHover={false}
       showShadow={false}

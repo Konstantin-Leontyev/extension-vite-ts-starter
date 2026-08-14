@@ -9,7 +9,8 @@
  * 1. Экспортировать компонент ProfileMenu
  * 2. Типизировать пропсы через `ProfileMenuProps`
  * 3. Выставлять `role` и `aria`-атрибуты панели и триггера.
- *    Фокус панели — на первом действии
+ *    Фокус при открытии — на сегмент Profile: первое содержательное действие
+ *    текущей разметки
  *
  * Потребители:
  *  - `src/components/header/index.tsx` — рендерит меню профиля в шапке
@@ -17,7 +18,6 @@
 
 import { Fragment, useId, useRef, useState, type ComponentPropsWithRef } from 'react';
 
-import { getFocusables } from '@hooks/use-focus';
 import { AddCircleIcon, AvatarIcon, CloseIcon, SignOutIcon } from '@icons';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Icon } from '@ui/icon';
@@ -132,6 +132,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
   const titleId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const profileActionRef = useRef<HTMLButtonElement>(null);
   const { displayEmail, displayName } = PROFILE_STUB;
 
   function handleClose(): void {
@@ -142,8 +143,8 @@ export function ProfileMenu(props: ProfileMenuProps) {
     setIsOpen((current) => !current);
   }
 
-  function handleOpenFocus(panel: HTMLElement): void {
-    getFocusables(panel)[0]?.focus();
+  function handleOpenFocus(): void {
+    profileActionRef.current?.focus();
   }
 
   return (
@@ -215,6 +216,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
                 iconFill: 'primary',
                 iconPosition: 'start',
                 label: 'Profile',
+                ref: profileActionRef,
                 onClick: handleClose,
               }}
               marginBlockStart={PROFILE_MENU_ACTIONS_MARGIN_BLOCK_START}

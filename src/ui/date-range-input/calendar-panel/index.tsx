@@ -38,6 +38,7 @@ import {
   ChevronRightIcon,
 } from '@icons';
 import { Icon } from '@ui/icon';
+import { assignRef } from '@ui/ref';
 import { Text } from '@ui/text';
 
 import {
@@ -115,26 +116,6 @@ type CalendarPanelProps = CalendarPanelStyleProps & {
   selectedDayRef?: Ref<HTMLButtonElement | null>;
   viewMonth: MonthView;
 };
-
-/**
- * assignRef — записывает DOM-узел кнопки дня в `ref`.
- *
- * @param ref ссылка на кнопку дня
- * @param node DOM-узел кнопки или `null`
- */
-function assignRef(
-  ref: Ref<HTMLButtonElement | null> | undefined,
-  node: HTMLButtonElement | null
-): void {
-  if (typeof ref === 'function') {
-    ref(node);
-    return;
-  }
-
-  if (ref != null) {
-    ref.current = node;
-  }
-}
 
 /**
  * CalendarPanel — отображает сетку месяца с навигацией и выбором дня.

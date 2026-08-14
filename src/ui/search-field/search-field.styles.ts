@@ -139,7 +139,7 @@ const SEARCH_FIELD_ROW_PROP_NAMES = new Set<string>([
  * 5. На `:hover` ряда при отсутствии `data-disabled` на корне объявляет
  *    `--icon-state-background` через `resolveIconStateBackground` по
  *    `iconTone`. До Icon значение доходит наследованием
- * 6. При рамке на `:focus-within` кладёт `outline` через `getOutlineStyles`
+ * 6. При рамке на `&:has(:focus-visible)` кладёт `outline` через `getOutlineStyles`
  *
  * @param props пропсы стилизации ряда и тема
  * @returns CSS-правила, каждое с новой строки
@@ -176,7 +176,7 @@ function getSearchFieldRowStyles(
   ];
 
   if (showBorder) {
-    styles.push(`&:focus-within { ${getOutlineStyles(theme.colors.focusOutline)} }`);
+    styles.push(`&:has(:focus-visible) { ${getOutlineStyles(theme.colors.focusOutline)} }`);
   }
 
   return styles.join('\n');
@@ -224,7 +224,8 @@ const SEARCH_FIELD_CONTROL_PROP_NAMES = new Set<string>([
  *    через `getPaddingInline` и типографику через `getTextProperties(getTextSize(…))`.
  *    `padding-block` не пишется: высоту держит ряд через `min-block-size`
  * 3. Сбрасывает рамку и фон: `border: none`, `background-color: transparent`.
- *    Гасит `outline` на `:focus-visible` — при рамке контур композита рисует ряд.
+ *    Гасит `outline` на `:focus-visible`: при рамке контур композита рисует ряд,
+ *    без рамки контура нет.
  *    Красит плейсхолдер тоном `muted`. Скрывает нативную кнопку очистки WebKit
  * 4. При переданном `textAlign` добавляет выравнивание значения
  * 5. При `textItalic` добавляет курсив значения

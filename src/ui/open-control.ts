@@ -184,7 +184,6 @@ function resolveOpenControlBlockRadius(
  */
 export function getOpenControlRootStyles(): string {
   return `
-    position: relative;
     display: grid;
     gap: ${getSpacingValue(8)};
     inline-size: 100%;
@@ -202,7 +201,8 @@ export function getOpenControlRootStyles(): string {
  *    `both-branches` докладывает ветку `[data-slot='clear']:first-child`
  * 3. Задаёт габариты, заливку `surface` через `getSurfaceBackgroundColor`,
  *    скругление через `resolveOpenControlBlockRadius`, рамку с тенью через
- *    `getBorderStyles` и фокус-контур через `getOutlineStyles`
+ *    `getBorderStyles` и фокус-контур на `&:has(:focus-visible)` через
+ *    `getOutlineStyles`
  * 4. При `data-open='true'` скрывает ряд через `visibility: hidden`, чтобы панель
  *    наследовала ширину якоря без двойного отображения триггера
  *
@@ -236,7 +236,7 @@ export function getOpenControlTriggerRowStyles(
     `border-radius: ${resolveOpenControlBlockRadius(shape, sizePreset)};`,
     getBorderStyles(theme),
     "&[data-open='true'] { visibility: hidden; }",
-    `&:focus-within {
+    `&:has(:focus-visible) {
       ${getOutlineStyles(theme.colors.focusOutline)}
     }`
   );

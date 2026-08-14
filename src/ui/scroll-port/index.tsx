@@ -25,8 +25,9 @@ import {
   useRef,
   type ComponentPropsWithRef,
   type ReactNode,
-  type Ref,
 } from 'react';
+
+import { assignRef } from '@ui/ref';
 
 import {
   DEFAULT_SCROLL_PORT_SHOW_VEIL,
@@ -57,23 +58,6 @@ type ScrollPortProps = ScrollPortStyleProps &
   > & {
     children: ReactNode;
   };
-
-/**
- * assignRef — записывает значение в callback-ref или object-ref.
- *
- * @param ref ссылка вызывающего кода
- * @param value DOM-узел или `null`
- */
-function assignRef<T>(ref: Ref<T> | undefined, value: null | T): void {
-  if (typeof ref === 'function') {
-    ref(value);
-    return;
-  }
-
-  if (ref) {
-    ref.current = value;
-  }
-}
 
 /**
  * resolveScrollPortVeilEdges — вычисляет видимость вуалей по позиции скролла.

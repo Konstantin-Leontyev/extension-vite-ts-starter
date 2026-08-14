@@ -21,4 +21,5 @@ export const LISTBOX_DEMO_OPTIONS = Object.freeze([
   { label: 'success', value: 'success' },
   { label: 'warning', value: 'warning' },
   { label: 'danger', value: 'danger' },
+  { disabled: true, label: 'unavailable', value: 'unavailable' },
 ] as const satisfies readonly ListboxOption[]);

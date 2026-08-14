@@ -105,8 +105,8 @@ const INPUT_CONTROL_PROP_NAMES = new Set<string>([
 
 /**
  * getInputControlStyles — возвращает CSS-правила для узла `StyledInputControl`:
- * стандартный бокс однострочного контрола, рамку с тенью, фон, плейсхолдер
- * и условное выравнивание и курсив значения.
+ * стандартный бокс однострочного контрола, рамку с тенью, фон, плейсхолдер,
+ * гашение контура без рамки и условное выравнивание и курсив значения.
  *
  * Как работает:
  * 1. Подставляет дефолты `shape`, `showBorder`, `showShadow` и `sizePreset`
@@ -118,10 +118,10 @@ const INPUT_CONTROL_PROP_NAMES = new Set<string>([
  * 3. Сбрасывает layout-рамку через `border: none` и красит фон через
  *    `getSurfaceBackgroundColor`: при рамке — `surface`, без рамки —
  *    `transparent`. Кладёт рамку с тенью через `getBorderStyles`. Без рамки
- *    хелпер пишет `box-shadow: none`; на `:focus-visible` снимает `outline`
- *    глобального фокуса из `@ui/reset`. Красит плейсхолдер тоном `muted`
- * 4. При переданном `textAlign` добавляет выравнивание значения
- * 5. При `textItalic` добавляет курсив значения
+ *    хелпер пишет `box-shadow: none`. Красит плейсхолдер тоном `muted`
+ * 4. Без рамки гасит `outline` на `:focus-visible`: нет рамки — нет контура
+ * 5. При переданном `textAlign` добавляет выравнивание значения
+ * 6. При `textItalic` добавляет курсив значения
  *
  * @param props пропсы стилизации нативного поля ввода и тема
  * @returns CSS-правила, каждое с новой строки
@@ -177,7 +177,8 @@ function getInputControlStyles(
  *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
  *
  * Генерация стилей:
- *  - `getInputControlStyles` — бокс, рамка с тенью, фон, плейсхолдер, выравнивание, курсив
+ *  - `getInputControlStyles` — бокс, рамка с тенью, фон, плейсхолдер, гашение
+ *    контура без рамки, выравнивание, курсив
  */
 export const StyledInputControl = styled.input.withConfig({
   shouldForwardProp: (prop) => !INPUT_CONTROL_PROP_NAMES.has(prop),

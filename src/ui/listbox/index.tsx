@@ -257,7 +257,7 @@ function resolveDrumLineIndex(
     return selectedIndex;
   }
 
-  const firstAvailableIndex = options.findIndex((option) => !option.disabled);
+  const firstAvailableIndex = resolveEnabledOpenControlIndex(options, 0, 1);
 
   return firstAvailableIndex >= 0 ? firstAvailableIndex : 0;
 }
@@ -432,7 +432,7 @@ function resolveInitialActiveIndex(
     return selectedIndex;
   }
 
-  return options.findIndex((option) => !option.disabled);
+  return resolveEnabledOpenControlIndex(options, 0, 1);
 }
 
 /**
@@ -871,7 +871,6 @@ export function Listbox({
   return (
     <StyledListboxRoot
       data-disabled={disabled ? '' : undefined}
-      data-open={isOpen}
       ref={rootRef}
       {...layoutProps}
       {...restProps}
@@ -879,7 +878,7 @@ export function Listbox({
       <FieldLabel htmlFor={triggerId}>{label}</FieldLabel>
       <StyledListboxTriggerRow
         data-has-clear={isClearVisible ? '' : undefined}
-        data-open={isOpen}
+        data-open={isOpen ? 'true' : undefined}
         ref={triggerRowRef}
         {...surfaceProps}
       >

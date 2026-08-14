@@ -25,7 +25,7 @@
  *    `ICON_POSITION_KEYS`, `ICON_SHAPE_PRESET_KEYS`, `ICON_SIZE_PRESET_KEYS`,
  *    `ICON_SETTING_PROP_NAMES`, мосты `getIconPadding` и `getIconSize`,
  *    хелперы секции на родителе: `getIconPositionStyles`,
- *    `resolveIconStateBackground`
+ *    `resolveIconShape`, `resolveIconStateBackground`
  *
  * Потребители:
  *  - контролы с иконочными узлами, например Button, Listbox и Stepper —
@@ -34,8 +34,9 @@
  *    показывают иконочные действия через `as="button"`
  *  - контролы с секцией иконки, например Button, Listbox, Combobox и RangeInput —
  *    подключают хелперы секции и читают позицию через `@ui/icon`
- *  - `src/pages/showcase` — читает `getIconPadding` и демонстрирует состояния
- *    в витрине
+ *  - `@ui/toolbar` — читает `resolveIconShape` для формы действий
+ *  - `src/pages/showcase` — читает `getIconPadding` и `resolveIconShape` и
+ *    демонстрирует состояния в витрине
  */
 
 import { createElement, type ComponentPropsWithRef, type ElementType } from 'react';
@@ -50,6 +51,7 @@ import {
   getIconPadding,
   getIconPositionStyles,
   getIconSize,
+  resolveIconShape,
   resolveIconStateBackground,
   type IconPosition,
   type IconShapePreset,
@@ -121,6 +123,7 @@ export {
   getIconPadding,
   getIconPositionStyles,
   getIconSize,
+  resolveIconShape,
   resolveIconStateBackground,
   type IconPosition,
   type IconShapePreset,

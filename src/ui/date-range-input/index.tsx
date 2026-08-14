@@ -484,7 +484,6 @@ export function DateRangeInput({
   return (
     <StyledDateRangeInputRoot
       aria-labelledby={labelledBy}
-      data-open={isOpen ? 'true' : undefined}
       ref={rootRef}
       role={labelledBy ? 'group' : undefined}
       {...layoutProps}

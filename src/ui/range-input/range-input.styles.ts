@@ -74,7 +74,7 @@ export type RangeInputStyleProps = LayoutProps & RangeInputSurfaceStyleProps;
  * Базируется на `<div>` и поддерживает layout-пропсы.
  *
  * Генерация стилей:
- *  - `getOpenControlRootStyles` — раскладка, зазор, ширина и подъём при открытии
+ *  - `getOpenControlRootStyles` — раскладка, зазор и ширина
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledRangeInputRoot = styled.div.withConfig({
@@ -236,16 +236,11 @@ export const StyledRangeInputCustomSection = styled.div`
  * Встроенные стили:
  *  - `grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)` — две равные колонки полей
  *  - `gap` — зазор между полями
- *  - `outline: none` на валидном `input:focus-visible` — фокус-контур несёт панель, как у Combobox
  */
 export const StyledRangeInputFields = styled.div`
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: ${getSpacingValue(OPEN_CONTROL_ROW_GAP)};
-
-  & input:focus-visible:not([aria-invalid='true']) {
-    outline: none;
-  }
 `;
 
 /**

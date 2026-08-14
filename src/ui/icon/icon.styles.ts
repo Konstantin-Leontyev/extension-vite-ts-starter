@@ -10,8 +10,8 @@
  * 3. Предоставить функции `getIconSize` и `getIconPadding`, дефолт
  *    `DEFAULT_ICON_POSITION`, перечни `ICON_POSITION_KEYS`,
  *    `ICON_SHAPE_PRESET_KEYS`, `ICON_SIZE_PRESET_KEYS` и `ICON_SETTING_PROP_NAMES`,
- *    а также хелперы секции на родителе: `getIconPositionStyles` и
- *    `resolveIconStateBackground`
+ *    а также хелперы секции на родителе: `getIconPositionStyles`,
+ *    `resolveIconShape` и `resolveIconStateBackground`
  * 4. Предоставить styled-узел `StyledIcon`
  *
  * Потребители:
@@ -20,6 +20,7 @@
  *  - контролы с секцией иконки, например Button, Listbox, Combobox, RangeInput,
  *    SearchField и SegmentButtonParts — подключают хелперы секции и читают
  *    позицию через `@ui/icon`
+ *  - `@ui/toolbar` — читает `resolveIconShape` для формы действий
  *  - `src/ui/card/card.styles.ts` — читает `getIconSize` для резерва высоты
  *    ряда действий шапки
  */
@@ -34,9 +35,11 @@ import {
 } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
+  DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
   minBlockSize,
   resolveBlockRadius,
+  type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
@@ -132,6 +135,19 @@ export const ICON_SHAPE_PRESET_KEYS = Object.freeze([
   'rounded',
   'round',
 ] as const satisfies readonly IconShapePreset[]);
+
+/**
+ * resolveIconShape — принимает форму контрола и возвращает форму окна иконки.
+ * `pill` даёт `round`, иначе `rounded`.
+ *
+ * @param shape форма контрола
+ * @returns форма окна иконки
+ */
+export function resolveIconShape(
+  shape: ShapePreset = DEFAULT_SHAPE_PRESET
+): IconShapePreset {
+  return shape === 'pill' ? 'round' : 'rounded';
+}
 
 /**
  * resolveIconBorderRadius — возвращает значение для CSS-свойства `border-radius`

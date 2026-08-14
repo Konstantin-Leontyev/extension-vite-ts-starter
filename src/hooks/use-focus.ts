@@ -1,15 +1,12 @@
 /**
  * Файл: `src/hooks/use-focus.ts`
- * Предоставляет удержание фокуса клавишей `Tab` внутри контейнера и выбор фокусируемых узлов.
+ * Предоставляет удержание фокуса клавишей `Tab` внутри контейнера.
  *
  * Основные задачи:
- * 1. Предоставить функцию `getFocusables`
- * 2. Предоставить хук `useFocus`
+ * 1. Предоставить хук `useFocus`
  *
  * Потребители:
  *  - `@ui/anchored-portal` — удерживает фокус внутри открытой панели через `useFocus`
- *  - `src/components/profile-menu` — переводит фокус на первое действие панели
- *    через `getFocusables`
  */
 
 import { useEffect, useRef, type RefObject } from 'react';
@@ -27,7 +24,7 @@ const FOCUSABLE_SELECTOR =
  * @param container корневой DOM-узел поиска
  * @returns перечень фокусируемых элементов в порядке обхода DOM
  */
-export function getFocusables(container: HTMLElement): HTMLElement[] {
+function getFocusables(container: HTMLElement): HTMLElement[] {
   return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
 }
 

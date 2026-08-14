@@ -40,8 +40,9 @@ const DEFAULT_TABLE_INLINE_FIELD_TEXT_SIZE: TextSizePreset = 'normal';
 
 /**
  * getTableInlineFieldStyles — возвращает CSS-правила для узла `StyledTableInlineField`:
- * типографику строки, сброс оформления `<input>` и снятие обводки фокуса и invalid.
+ * типографику строки и сброс оформления `<input>`.
  * Поле живёт внутри строки таблицы и не рисует собственную поверхность.
+ * Гасит `outline` на фокусе и `aria-invalid`: нет рамки — нет контура.
  *
  * @param props пропсы стилизации поля и тема styled-components
  * @returns CSS-правила, каждое с новой строки
