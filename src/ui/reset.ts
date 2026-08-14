@@ -45,11 +45,13 @@ const APP_MIN_INLINE_SIZE = '320px';
  *    отступ задаёт компонент при многострочной модели
  *  - сброс дефолтных рамок и фона кнопок
  *  - сброс UA `[popover]` — нейтрализует дефолтные `inset`, `width`, `height`,
- *    `margin`, `border` и `color`. `padding`, `overflow` и `background-color`
- *    остаются моделью компонента: у селектора `[popover]` и класса компонента
- *    равная специфичность, и перенос этих свойств в общий сброс перекроет
- *    модель Card. Позицию и хром задают потребители, например
- *    `getPortalPanelStyles`, `StyledToastViewport` и Card
+ *    `margin`, `border` и `color`. Блок объявлен в слое каскада `ua-reset`:
+ *    у селектора `[popover]` та же специфичность, что у класса компонента, и без
+ *    слоя побеждал бы сброс — он идёт в таблице стилей ниже и обнулял отступы
+ *    панелей с CSS-привязкой к якорю. Слой проигрывает правилам компонентов вне
+ *    слоёв и по-прежнему выигрывает у стилей браузера. `padding`, `overflow` и
+ *    `background-color` остаются моделью компонента. Позицию и хром задают
+ *    потребители, например `getPortalPanelStyles`, `StyledToastViewport` и Card
  *  - состояния `disabled` — курсор и прозрачность из `DISABLED_OPACITY`.
  *    Три контракта. `:disabled` — сам нативный элемент. `label:has(:disabled)` —
  *    label-обёртка контрола с подписью. `[data-disabled]` — оболочка композитного
@@ -145,13 +147,15 @@ export const GlobalResetStyle = createGlobalStyle`
     border: none;
   }
 
-  [popover] {
-    inset: auto;
-    width: auto;
-    height: auto;
-    margin: 0;
-    color: inherit;
-    border: none;
+  @layer ua-reset {
+    [popover] {
+      inset: auto;
+      width: auto;
+      height: auto;
+      margin: 0;
+      color: inherit;
+      border: none;
+    }
   }
 
   button:disabled,

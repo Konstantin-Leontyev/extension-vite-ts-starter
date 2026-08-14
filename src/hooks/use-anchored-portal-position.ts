@@ -1,25 +1,18 @@
 /**
  * Файл: `src/hooks/use-anchored-portal-position.ts`
- * Предоставляет позиционирование панели AnchoredPortal относительно якоря
- * и готовые хелперы размещения.
+ * Предоставляет позиционирование панели AnchoredPortal относительно якоря.
  *
  * Основные задачи:
  * 1. Типизировать стратегию позиционирования через `AnchoredPortalPositionStrategy`
- * 2. Предоставить хелперы `placeTriggerAlignedPanel`, `clampPanelToViewport` и
- *    `matchTriggerRect`
- * 3. Предоставить хук `useAnchoredPortalPosition`
+ * 2. Предоставить хук `useAnchoredPortalPosition`
  *
  * Потребители:
- *  - `@ui/anchored-portal` — ставит панель у якоря при открытии и при `resize`
- *  - `@ui/date-range-input` — собирает `placeTriggerAlignedPanel` и
- *    `clampPanelToViewport`
- *  - `@ui/range-input` — передаёт `matchTriggerRect`
+ *  - `@ui/anchored-portal` — ставит панель у якоря: CSS-привязкой или JS-стратегией
  */
 
 import { useLayoutEffect, useRef, type RefObject } from 'react';
 
 import { showPopover } from '@ui/popover';
-import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 /**
  * AnchoredPortalPositionStrategy — представляет стратегию позиционирования панели
@@ -39,11 +32,13 @@ export type AnchoredPortalPositionStrategy = {
  * UseAnchoredPortalPositionOptions — представляет опции хука `useAnchoredPortalPosition`.
  *
  * @property active — включает позиционирование открытой панели
+ * @property anchorRef — ссылка на DOM-узел якоря для неявной CSS-привязки
  * @property panelRef — ссылка на DOM-узел панели
  * @property strategy — стратегия позиционирования относительно якоря
  */
 type UseAnchoredPortalPositionOptions = {
   active: boolean;
+  anchorRef?: RefObject<HTMLElement | null>;
   panelRef: RefObject<HTMLElement | null>;
   strategy: AnchoredPortalPositionStrategy | undefined;
 };
@@ -53,117 +48,6 @@ type UseAnchoredPortalPositionOptions = {
  * Используется, когда стратегия не передала `layoutDeps`.
  */
 const EMPTY_LAYOUT_DEPS: readonly unknown[] = [];
-
-/**
- * clampPanelToViewport — прижимает `inset-inline-start` и `inset-block-start` панели
- * к краям вьюпорта с `PORTAL_VIEWPORT_EDGE_INSET` и при переполнении по высоте задаёт
- * `max-block-size` с `overflow-y: auto`.
- * Используется в `@ui/date-range-input` после `placeTriggerAlignedPanel`.
- *
- * @param panel DOM-узел панели
- * @param left предпочтительный `inset-inline-start` в px
- * @param top предпочтительный `inset-block-start` в px
- */
-export function clampPanelToViewport(
-  panel: HTMLElement,
-  left: number,
-  top: number
-): void {
-  const panelHeight = panel.offsetHeight;
-  const maxLeft = Math.max(
-    PORTAL_VIEWPORT_EDGE_INSET,
-    window.innerWidth - panel.offsetWidth - PORTAL_VIEWPORT_EDGE_INSET
-  );
-  const clampedLeft = Math.min(Math.max(PORTAL_VIEWPORT_EDGE_INSET, left), maxLeft);
-  let clampedTop = Math.max(PORTAL_VIEWPORT_EDGE_INSET, top);
-  const availableBelow = window.innerHeight - clampedTop - PORTAL_VIEWPORT_EDGE_INSET;
-
-  panel.style.insetInlineStart = `${clampedLeft}px`;
-  panel.style.insetBlockStart = `${clampedTop}px`;
-
-  if (panelHeight <= availableBelow) {
-    panel.style.maxBlockSize = '';
-    panel.style.overflowY = '';
-
-    return;
-  }
-
-  const maxTop = Math.max(
-    PORTAL_VIEWPORT_EDGE_INSET,
-    window.innerHeight - panelHeight - PORTAL_VIEWPORT_EDGE_INSET
-  );
-
-  clampedTop = Math.min(clampedTop, maxTop);
-  clampedTop = Math.max(PORTAL_VIEWPORT_EDGE_INSET, clampedTop);
-  panel.style.insetBlockStart = `${clampedTop}px`;
-
-  const available = window.innerHeight - clampedTop - PORTAL_VIEWPORT_EDGE_INSET;
-
-  if (panelHeight > available) {
-    panel.style.maxBlockSize = `${Math.max(0, available)}px`;
-    panel.style.overflowY = 'auto';
-
-    return;
-  }
-
-  panel.style.maxBlockSize = '';
-  panel.style.overflowY = '';
-}
-
-/**
- * placeTriggerAlignedPanel — ставит панель по ширине триггера относительно якоря
- * и возвращает предпочтительные `left` и `top` до `clampPanelToViewport`.
- *
- * Как работает:
- * 1. Задаёт `inline-size` и `max-inline-size` панели равными ширине триггера
- * 2. Выбирает `top` по `offsetHeight` панели: совпадая с верхом триггера, если
- *    панель помещается вниз от него, над триггером, если помещается вверх от
- *    него, иначе у верхнего края с `PORTAL_VIEWPORT_EDGE_INSET`
- *
- * @param trigger DOM-узел якоря-триггера
- * @param panel DOM-узел панели
- * @returns предпочтительные `left` и `top` до `clampPanelToViewport`
- */
-export function placeTriggerAlignedPanel(
-  trigger: HTMLElement,
-  panel: HTMLElement
-): { left: number; top: number } {
-  const triggerRect = trigger.getBoundingClientRect();
-  const panelWidth = triggerRect.width;
-
-  panel.style.inlineSize = `${panelWidth}px`;
-  panel.style.maxInlineSize = `${panelWidth}px`;
-
-  const panelHeight = panel.offsetHeight;
-  const spaceBelow = window.innerHeight - triggerRect.top - PORTAL_VIEWPORT_EDGE_INSET;
-  const spaceAbove = triggerRect.top - PORTAL_VIEWPORT_EDGE_INSET;
-
-  let top: number;
-
-  if (panelHeight <= spaceBelow) {
-    top = triggerRect.top;
-  } else if (panelHeight <= spaceAbove) {
-    top = triggerRect.top - panelHeight;
-  } else {
-    top = PORTAL_VIEWPORT_EDGE_INSET;
-  }
-
-  return { left: triggerRect.left, top };
-}
-
-/**
- * matchTriggerRect — ставит панель в позицию и ширину триггера.
- *
- * @param trigger DOM-узел якоря-триггера
- * @param panel DOM-узел панели
- */
-export function matchTriggerRect(trigger: HTMLElement, panel: HTMLElement): void {
-  const rect = trigger.getBoundingClientRect();
-
-  panel.style.insetBlockStart = `${rect.top}px`;
-  panel.style.insetInlineStart = `${rect.left}px`;
-  panel.style.inlineSize = `${rect.width}px`;
-}
 
 /**
  * applyPositionStrategy — вызывает `apply` стратегии для якоря и панели.
@@ -185,19 +69,21 @@ function applyPositionStrategy(
 }
 
 /**
- * useAnchoredPortalPosition — позиционирует панель относительно якоря при открытии и `resize`.
+ * useAnchoredPortalPosition — позиционирует панель относительно якоря при открытии.
  *
  * Как работает:
  * 1. Зеркалит стратегию в ref, чтобы литерал на каждом рендере не перезапускал эффект
- * 2. При `active` показывает панель через `showPopover` из `@ui/popover` до чтения размеров, затем
- *    при наличии стратегии читает якорь из `anchorRef` и вызывает её `apply`,
- *    повторяет в следующем кадре и слушает `resize`
+ * 2. При `active` показывает панель через `showPopover` из `@ui/popover`.
+ *    Без стратегии передаёт `anchorRef` как `source` неявного якоря и не считает
+ *    позицию в JS. При наличии стратегии показывает без `source`, вызывает `apply`
+ *    стратегии, повторяет в следующем кадре и слушает `resize`
  * 3. Пересчитывает позицию при смене `layoutDeps` из вызывающего кода
  *
- * @param options опции активации, ссылки на панель и стратегии позиционирования
+ * @param options опции активации, якоря, панели и стратегии позиционирования
  */
 export function useAnchoredPortalPosition({
   active,
+  anchorRef,
   panelRef,
   strategy,
 }: UseAnchoredPortalPositionOptions): void {
@@ -225,9 +111,10 @@ export function useAnchoredPortalPosition({
         return;
       }
 
-      showPopover(panel);
-
       const positionStrategy = strategyRef.current;
+      const source = positionStrategy ? undefined : (anchorRef?.current ?? undefined);
+
+      showPopover(panel, source);
 
       if (!positionStrategy) {
         return;
@@ -250,7 +137,7 @@ export function useAnchoredPortalPosition({
       window.cancelAnimationFrame(frameId);
       window.removeEventListener('resize', updatePosition);
     };
-    // layoutDeps — пересчёт при смене содержимого панели, например месяца календаря.
+    // layoutDeps — пересчёт при смене содержимого панели, например длины списка Combobox.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- layoutDeps задаёт вызывающий код
-  }, [active, hasStrategy, panelRef, ...layoutDeps]);
+  }, [active, anchorRef, hasStrategy, panelRef, ...layoutDeps]);
 }

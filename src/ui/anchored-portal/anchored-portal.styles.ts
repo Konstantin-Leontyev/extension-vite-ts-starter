@@ -1,15 +1,18 @@
 /**
  * Файл: `src/ui/anchored-portal/anchored-portal.styles.ts`
- * Содержит генератор хрома панели AnchoredPortal.
+ * Содержит генераторы хрома панели AnchoredPortal и CSS-привязки к неявному якорю.
  *
  * Основные задачи:
- * 1. Предоставить функцию `getPortalPanelStyles`
+ * 1. Предоставить функции `getCssAnchorBindingStyles` и `getPortalPanelStyles`
  *
  * Потребители:
- *  - `src/ui/anchored-portal/index.tsx` — реэкспортирует `getPortalPanelStyles` в публичное API
+ *  - `src/ui/anchored-portal/index.tsx` — реэкспортирует `getCssAnchorBindingStyles`
+ *    и `getPortalPanelStyles` в публичное API
  *  - `src/ui/open-control.ts` — собирает хром portal-панели open-контролов через
  *    `getOpenControlPortalPanelStyles`
  *  - `src/ui/table/table.styles.ts` — подставляет хром add- и edit-панели строк
+ *  - `@ui/range-input`, `@ui/date-range-input` и `src/components/profile-menu` —
+ *    подставляют `getCssAnchorBindingStyles`
  */
 
 import { getBorderStyles } from '@ui/border';
@@ -18,19 +21,37 @@ import { getSurfaceBackgroundColor } from '@ui/surface';
 import { type AppTheme } from '@ui/theme';
 
 /**
+ * getCssAnchorBindingStyles — возвращает CSS-правила привязки панели к неявному якорю
+ * из `source` показа `showPopover`.
+ * `position-anchor: auto` объявляет связь с неявным якорем. Без него действует
+ * начальное `normal`, которое без `position-area` ведёт себя как `none`: панель
+ * не связана с якорем, и `anchor()` с `anchor-size()` недействительны.
+ * `position-visibility: always` оставляет панель видимой, когда триггер скрыт
+ * через `visibility: hidden`. Начальное `anchors-visible` прячет панель вместе
+ * с триггером.
+ * Используется в `@ui/range-input`, `@ui/date-range-input` и
+ * `src/components/profile-menu`.
+ *
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getCssAnchorBindingStyles(): string {
+  return `
+    position-anchor: auto;
+    position-visibility: always;
+  `;
+}
+
+/**
  * getPortalPanelStyles — возвращает CSS-правила хрома панели портала:
- * fixed-позицию у угла, опциональный отступ через `padding`, опциональный цвет
+ * `position: fixed`, опциональный отступ через `padding`, опциональный цвет
  * обводки через `outlineColor`, заливку `surface` через
  * `getSurfaceBackgroundColor`, рамку с тенью, радиус и постоянный `outline`.
- * `padding`, `overflow` и `background-color` остаются моделью панели, а не
- * дублем сброса UA `[popover]` из `src/ui/reset.ts`. У селектора `[popover]` и
- * класса компонента равная специфичность, и перенос этих свойств в общий сброс
- * перекроет модель Card.
+ * `padding`, `overflow` и `background-color` остаются моделью панели.
  * Собственных styled-узлов у AnchoredPortal нет — вызывающий код объявляет
  * панель-узел и подставляет генератор в своём styles-файле.
  *
  * Как работает:
- * 1. Задаёт fixed-позицию у угла
+ * 1. Задаёт `position: fixed`
  * 2. Добавляет `padding`, если отступ передан, иначе `0` против UA, и
  *    `overflow: visible`
  * 3. Добавляет заливку `surface` через `getSurfaceBackgroundColor`, рамку с тенью
@@ -51,8 +72,6 @@ export function getPortalPanelStyles(options: {
 
   return `
     position: fixed;
-    inset-block-start: 0;
-    inset-inline-start: 0;
     padding: ${padding ?? '0'};
     overflow: visible;
     background-color: ${getSurfaceBackgroundColor(theme, 'surface')};

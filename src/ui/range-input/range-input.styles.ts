@@ -17,6 +17,7 @@
 
 import styled from 'styled-components';
 
+import { getCssAnchorBindingStyles } from '@ui/anchored-portal';
 import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
@@ -152,11 +153,14 @@ export const StyledRangeInputValue = styled.span.withConfig({
 
 /**
  * getRangeInputPanelStyles — возвращает CSS-правила для узла `StyledRangeInputPanel`:
- * стековый хром портала через `getOpenControlStackedPortalPanelStyles` и прокрутку.
+ * стековый хром портала через `getOpenControlStackedPortalPanelStyles`, CSS-привязку
+ * к триггеру и прокрутку.
  *
  * Как работает:
  * 1. Подставляет стековый хром панели через `getOpenControlStackedPortalPanelStyles`
- * 2. Включает прокрутку `overflow: hidden auto`
+ * 2. Привязывает панель к триггеру через `getCssAnchorBindingStyles`, `anchor(start)`
+ *    и `anchor-size(width)`
+ * 3. Включает прокрутку `overflow: hidden auto`
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
@@ -166,6 +170,10 @@ function getRangeInputPanelStyles(
 ): string {
   return `
     ${getOpenControlStackedPortalPanelStyles(props)}
+    ${getCssAnchorBindingStyles()}
+    inset-block-start: anchor(start);
+    inset-inline-start: anchor(start);
+    inline-size: anchor-size(width);
     overflow: hidden auto;
   `;
 }
@@ -175,8 +183,8 @@ function getRangeInputPanelStyles(
  * Базируется на `<div>` и принимает пропсы из `RangeInputSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getRangeInputPanelStyles` — стековый хром портала через
- *    `getOpenControlStackedPortalPanelStyles` и прокрутка
+ *  - `getRangeInputPanelStyles` — стековый хром портала, CSS-привязка к триггеру
+ *    и прокрутка
  */
 export const StyledRangeInputPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => !RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),

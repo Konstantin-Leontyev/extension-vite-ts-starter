@@ -18,12 +18,10 @@ import { Fragment, useId, useRef, useState, type ComponentPropsWithRef } from 'r
 
 import { AddCircleIcon, AvatarIcon, CloseIcon, SignOutIcon } from '@icons';
 import { AnchoredPortal } from '@ui/anchored-portal';
-import { Card } from '@ui/card';
 import { Icon } from '@ui/icon';
 import { SegmentButton } from '@ui/segment-button';
 import { getSpacingValue } from '@ui/spacing';
 import { Text } from '@ui/text';
-import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 import {
   StyledProfileMenu,
@@ -31,6 +29,7 @@ import {
   StyledProfileMenuHeader,
   StyledProfileMenuLegal,
   StyledProfileMenuLegalLink,
+  StyledProfileMenuPanel,
   type ProfileMenuStyleProps,
 } from './profile-menu.styles';
 
@@ -111,42 +110,6 @@ const PROFILE_MENU_MAX_INLINE_SIZE = `calc(100vw - ${PROFILE_MENU_VIEWPORT_INLIN
 const PROFILE_MENU_INLINE_SIZE = `min(${PROFILE_MENU_PANEL_MIN_INLINE_SIZE_PX}px, ${PROFILE_MENU_MAX_INLINE_SIZE})`;
 
 /**
- * PROFILE_MENU_TRIGGER_GAP_PX — задаёт зазор между триггером и панелью в px.
- * Совпадает с ключом шкалы отступов `12` из `@ui/spacing`.
- * Используется в `applyProfileMenuPanelPosition`.
- */
-const PROFILE_MENU_TRIGGER_GAP_PX = 12;
-
-/**
- * applyProfileMenuPanelPosition — позиционирует панель меню относительно триггера.
- *
- * Как работает:
- * 1. Берёт прямоугольник триггера через `getBoundingClientRect`
- * 2. Ставит верх панели ниже триггера на `PROFILE_MENU_TRIGGER_GAP_PX`
- * 3. Выравнивает правый край панели с правым краем триггера
- * 4. Считает доступную высоту до нижнего края вьюпорта с учётом
- *    `PORTAL_VIEWPORT_EDGE_INSET`
- * 5. Задаёт панели `max-block-size` и включает вертикальный скролл
- *
- * @param anchor элемент-триггер меню
- * @param panel элемент панели меню
- */
-function applyProfileMenuPanelPosition(anchor: HTMLElement, panel: HTMLElement): void {
-  const triggerRect = anchor.getBoundingClientRect();
-  const top = triggerRect.bottom + PROFILE_MENU_TRIGGER_GAP_PX;
-  const maxBlockSize = Math.max(
-    0,
-    window.innerHeight - top - PORTAL_VIEWPORT_EDGE_INSET
-  );
-
-  panel.style.insetBlockStart = `${top}px`;
-  panel.style.insetInlineEnd = `${window.innerWidth - triggerRect.right}px`;
-  panel.style.insetInlineStart = 'auto';
-  panel.style.maxBlockSize = `${maxBlockSize}px`;
-  panel.style.overflowY = 'auto';
-}
-
-/**
  * ProfileMenuProps — представляет пропсы компонента ProfileMenu.
  */
 type ProfileMenuProps = ProfileMenuStyleProps &
@@ -194,17 +157,14 @@ export function ProfileMenu(props: ProfileMenuProps) {
       </Icon>
 
       <AnchoredPortal
+        anchorRef={triggerRef}
         dismissZoneRefs={[triggerRef, panelRef]}
         open={isOpen}
         panelRef={panelRef}
-        positionStrategy={{
-          anchorRef: triggerRef,
-          apply: applyProfileMenuPanelPosition,
-        }}
         returnFocusRef={triggerRef}
         onDismiss={handleClose}
       >
-        <Card
+        <StyledProfileMenuPanel
           aria-labelledby={titleId}
           aria-modal={true}
           headerActions={[
@@ -277,7 +237,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
               ))}
             </StyledProfileMenuLegal>
           </StyledProfileMenuContent>
-        </Card>
+        </StyledProfileMenuPanel>
       </AnchoredPortal>
     </StyledProfileMenu>
   );

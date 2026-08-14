@@ -5,6 +5,7 @@
  * Поддерживает:
  *  - открытие и закрытие панели через проп `open`
  *  - содержимое панели через проп `children`
+ *  - якорь CSS-привязки через проп `anchorRef`
  *  - позиционирование относительно якоря через проп `positionStrategy`
  *  - зоны, клик вне которых закрывает панель, через проп `dismissZoneRefs`
  *  - обработчик закрытия панели через проп `onDismiss`
@@ -21,7 +22,7 @@
  *    и пропом не управляется
  * 4. Показывать панель через `POPOVER_MANUAL` и `showPopover` из `@ui/popover`
  *    до отрисовки. Панель остаётся в дереве вызывающего кода
- * 5. Реэкспортировать `getPortalPanelStyles` — хром панели из
+ * 5. Реэкспортировать `getCssAnchorBindingStyles` и `getPortalPanelStyles` из
  *    `src/ui/anchored-portal/anchored-portal.styles.ts`
  *
  * Потребители:
@@ -56,6 +57,8 @@ const DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS: readonly unknown[] = [];
 /**
  * AnchoredPortalProps — представляет пропсы компонента AnchoredPortal.
  *
+ * @property anchorRef — ссылка на DOM-узел якоря для неявной CSS-привязки.
+ *   При переданном `positionStrategy` не используется
  * @property children — единственный элемент панели. Допускает проп `popover`
  *   со значением `POPOVER_MANUAL`
  * @property dismissActive — включает закрытие по клику вне зон. Без значения
@@ -70,6 +73,7 @@ const DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS: readonly unknown[] = [];
  * @property returnFocusRef — ссылка на элемент для возврата фокуса при закрытии
  */
 type AnchoredPortalProps = {
+  anchorRef?: RefObject<HTMLElement | null>;
   children: ReactElement<{ popover?: typeof POPOVER_MANUAL }>;
   dismissActive?: boolean;
   dismissZoneRefs: RefObject<HTMLElement | null>[];
@@ -87,13 +91,10 @@ type AnchoredPortalProps = {
  *
  * @example
  * <AnchoredPortal
+ *   anchorRef={triggerRef}
  *   dismissZoneRefs={[triggerRef, panelRef]}
  *   open={open}
  *   panelRef={panelRef}
- *   positionStrategy={{
- *     anchorRef: triggerRef,
- *     apply: matchTriggerRect,
- *   }}
  *   returnFocusRef={triggerRef}
  *   onDismiss={close}
  * >
@@ -101,6 +102,7 @@ type AnchoredPortalProps = {
  * </AnchoredPortal>
  */
 export function AnchoredPortal({
+  anchorRef,
   children,
   dismissActive,
   dismissZoneRefs,
@@ -128,6 +130,7 @@ export function AnchoredPortal({
 
   useAnchoredPortalPosition({
     active: open,
+    anchorRef,
     panelRef,
     strategy: positionStrategy,
   });
@@ -176,5 +179,8 @@ export function AnchoredPortal({
   });
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт генератора хрома панели */
-export { getPortalPanelStyles } from './anchored-portal.styles';
+/* eslint-disable react-refresh/only-export-components -- реэкспорт генераторов стилей панели */
+export {
+  getCssAnchorBindingStyles,
+  getPortalPanelStyles,
+} from './anchored-portal.styles';

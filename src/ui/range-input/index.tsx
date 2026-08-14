@@ -60,7 +60,6 @@ import {
 } from 'react';
 
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
-import { matchTriggerRect } from '@hooks/use-anchored-portal-position';
 import { ChevronDownIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
@@ -616,15 +615,11 @@ export function RangeInput({
       </StyledRangeInputTriggerRow>
 
       <AnchoredPortal
+        anchorRef={triggerRowRef}
         dismissZoneRefs={[rootRef, panelRef]}
         open={isOpen}
         openFocusDeps={[fromInputId]}
         panelRef={panelRef}
-        positionStrategy={{
-          anchorRef: triggerRowRef,
-          apply: matchTriggerRect,
-          layoutDeps: [presets?.length],
-        }}
         returnFocusRef={triggerRef}
         onDismiss={handleClose}
         onOpenFocus={focusRangeInputFromField}

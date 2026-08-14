@@ -29,14 +29,19 @@ export const POPOVER_MANUAL = 'manual';
  * `src/context/toast/index.tsx`.
  *
  * @param element DOM-узел с атрибутом `popover`
+ * @param source DOM-узел якоря. Задаёт неявный якорь CSS Anchor Positioning
  */
-export function showPopover(element: HTMLElement): void {
+export function showPopover(element: HTMLElement, source?: HTMLElement | null): void {
   if (!element.isConnected || element.matches(':popover-open')) {
     return;
   }
 
   try {
-    element.showPopover();
+    if (source) {
+      element.showPopover({ source });
+    } else {
+      element.showPopover();
+    }
   } catch {
     return;
   }

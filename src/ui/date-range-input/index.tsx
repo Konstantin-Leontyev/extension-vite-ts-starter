@@ -46,10 +46,6 @@ import {
 } from 'react';
 
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
-import {
-  clampPanelToViewport,
-  placeTriggerAlignedPanel,
-} from '@hooks/use-anchored-portal-position';
 import { CalendarIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
@@ -69,6 +65,7 @@ import {
   type MonthView,
 } from './calendar-panel';
 import {
+  DateRangeInputPositionTryStyle,
   StyledDateRangeInputPanel,
   StyledDateRangeInputRoot,
   StyledDateRangeInputTriggerRow,
@@ -472,6 +469,7 @@ export function DateRangeInput({
       {...layoutProps}
       {...restProps}
     >
+      <DateRangeInputPositionTryStyle />
       <FieldLabel id={labelId}>{label}</FieldLabel>
       <StyledDateRangeInputTriggerRow
         data-has-clear={showClear ? '' : undefined}
@@ -505,19 +503,11 @@ export function DateRangeInput({
       </StyledDateRangeInputTriggerRow>
 
       <AnchoredPortal
+        anchorRef={triggerRowRef}
         dismissZoneRefs={[rootRef, panelRef]}
         open={isOpen}
         openFocusDeps={[viewMonth]}
         panelRef={panelRef}
-        positionStrategy={{
-          anchorRef: triggerRowRef,
-          apply: (anchor, panel) => {
-            const { left, top } = placeTriggerAlignedPanel(anchor, panel);
-
-            clampPanelToViewport(panel, left, top);
-          },
-          layoutDeps: [viewMonth],
-        }}
         returnFocusRef={returnFocusRef}
         onDismiss={handlePanelDismiss}
         onOpenFocus={focusCalendarPanelInitial}
