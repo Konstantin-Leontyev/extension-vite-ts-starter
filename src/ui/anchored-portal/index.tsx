@@ -23,15 +23,15 @@
  *    до отрисовки. Панель остаётся в дереве вызывающего кода
  * 5. Реэкспортировать `getCssAnchorBindingStyles`, `getCssAnchorPlacementStyles`
  *    и `getPortalPanelStyles` из `src/ui/anchored-portal/anchored-portal.styles.ts`
- *    и имена запасных `@position-try` позиций из
+ *    и `AnchoredPortalPositionTryStyle` из
  *    `src/ui/anchored-portal/position-try.ts`
- * 6. Подключать `AnchoredPortalPositionTryStyle` при открытой панели
  *
  * Потребители:
  *  - контролы, например Combobox, DateRangeInput, Listbox и RangeInput —
  *    рендерят выпадающие панели с CSS-привязкой
  *  - `@ui/table` — рендерит панели add и edit с CSS-привязкой
  *  - `src/components/profile-menu/index.tsx` — рендерит меню профиля
+ *  - `src/context/theme/index.tsx` — подключает `AnchoredPortalPositionTryStyle`
  */
 
 import {
@@ -51,11 +51,7 @@ import {
   getCssAnchorPlacementStyles,
   getPortalPanelStyles,
 } from './anchored-portal.styles';
-import {
-  ANCHORED_PORTAL_POSITION_TRY_ABOVE,
-  ANCHORED_PORTAL_POSITION_TRY_VIEWPORT,
-  AnchoredPortalPositionTryStyle,
-} from './position-try';
+import { AnchoredPortalPositionTryStyle } from './position-try';
 
 /**
  * DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS — задаёт зависимости перефокуса по умолчанию.
@@ -190,20 +186,14 @@ export function AnchoredPortal({
     return null;
   }
 
-  return (
-    <>
-      <AnchoredPortalPositionTryStyle />
-      {cloneElement(children, {
-        popover: POPOVER_MANUAL,
-      })}
-    </>
-  );
+  return cloneElement(children, {
+    popover: POPOVER_MANUAL,
+  });
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт генераторов стилей панели и имён запасных position-try позиций */
+/* eslint-disable react-refresh/only-export-components -- реэкспорт генераторов стилей панели и AnchoredPortalPositionTryStyle */
 export {
-  ANCHORED_PORTAL_POSITION_TRY_ABOVE,
-  ANCHORED_PORTAL_POSITION_TRY_VIEWPORT,
+  AnchoredPortalPositionTryStyle,
   getCssAnchorBindingStyles,
   getCssAnchorPlacementStyles,
   getPortalPanelStyles,

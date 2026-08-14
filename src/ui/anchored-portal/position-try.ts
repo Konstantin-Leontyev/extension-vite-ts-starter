@@ -8,8 +8,9 @@
  * 2. Предоставить `AnchoredPortalPositionTryStyle`
  *
  * Потребители:
- *  - `src/ui/anchored-portal/index.tsx` — подключает `AnchoredPortalPositionTryStyle`
- *    при открытой панели и реэкспортирует имена позиций
+ *  - `src/context/theme/index.tsx` — подключает `AnchoredPortalPositionTryStyle`
+ *  - `src/ui/anchored-portal/index.tsx` — реэкспортирует `AnchoredPortalPositionTryStyle`
+ *  - `src/ui/anchored-portal/anchored-portal.styles.ts` — читает имена запасных позиций
  */
 
 import { createGlobalStyle } from 'styled-components';
@@ -19,24 +20,23 @@ import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 /**
  * ANCHORED_PORTAL_POSITION_TRY_ABOVE — задаёт имя запасной `@position-try` позиции
  * перевёрнутой панели, накрывающей якорь.
- * Используется в `AnchoredPortalPositionTryStyle` и в `position-try-fallbacks`
- * панелей Combobox, DateRangeInput и RangeInput.
+ * Используется в `AnchoredPortalPositionTryStyle` и в `getCssAnchorPlacementStyles`.
  */
 export const ANCHORED_PORTAL_POSITION_TRY_ABOVE = '--anchored-portal-above';
 
 /**
  * ANCHORED_PORTAL_POSITION_TRY_VIEWPORT — задаёт имя запасной `@position-try` позиции
  * у верхнего края вьюпорта.
- * Используется в `AnchoredPortalPositionTryStyle` и в `position-try-fallbacks`
- * панелей Combobox, DateRangeInput и RangeInput.
+ * Используется в `AnchoredPortalPositionTryStyle` и в `getCssAnchorPlacementStyles`.
  */
 export const ANCHORED_PORTAL_POSITION_TRY_VIEWPORT = '--anchored-portal-viewport';
 
 /**
  * AnchoredPortalPositionTryStyle — задаёт запасные `@position-try` позиции
  * панелей с CSS-привязкой к якорю.
- * Подключается в `AnchoredPortal` из `src/ui/anchored-portal/index.tsx` при
- * открытой панели.
+ * Подключается в `ThemeProvider` из `src/context/theme/index.tsx`:
+ * сначала `GlobalResetStyle`, затем `GlobalThemeStyle`,
+ * затем `AnchoredPortalPositionTryStyle`.
  *
  * Устанавливает:
  *  - `--anchored-portal-above` — перевёрнутая панель накрывает якорь:

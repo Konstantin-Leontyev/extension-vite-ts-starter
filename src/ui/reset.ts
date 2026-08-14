@@ -28,7 +28,8 @@ const APP_MIN_INLINE_SIZE = '320px';
  * `${normalize}` вставляет базовый сброс из styled-normalize.
  * Последующие правила переопределяют и дополняют его.
  * Подключается в `ThemeProvider` из `src/context/theme/index.tsx`:
- * сначала `GlobalResetStyle`, затем `GlobalThemeStyle`.
+ * сначала `GlobalResetStyle`, затем `GlobalThemeStyle`,
+ * затем `AnchoredPortalPositionTryStyle`.
  *
  * Устанавливает:
  *  - `box-sizing: border-box` для всех элементов

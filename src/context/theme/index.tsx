@@ -7,7 +7,8 @@
  * 1. Экспортировать компонент ThemeProvider
  * 2. Типизировать пропсы через `ThemeProviderProps`
  * 3. Сохранять выбор темы в `localStorage`, чтобы он переживал перезагрузку
- * 4. Подключать глобальные стили: сначала `GlobalResetStyle`, затем `GlobalThemeStyle`
+ * 4. Подключать глобальные стили: сначала `GlobalResetStyle`, затем
+ *    `GlobalThemeStyle`, затем `AnchoredPortalPositionTryStyle`
  * 5. Предоставить API чтения и переключения темы через `ThemeContext`
  *
  * Потребители:
@@ -17,6 +18,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 
+import { AnchoredPortalPositionTryStyle } from '@ui/anchored-portal';
 import { GlobalResetStyle } from '@ui/reset';
 import { GlobalThemeStyle, styledDarkTheme, styledLightTheme } from '@ui/theme';
 
@@ -90,6 +92,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       <StyledThemeProvider theme={mode === 'light' ? styledLightTheme : styledDarkTheme}>
         <GlobalResetStyle />
         <GlobalThemeStyle />
+        <AnchoredPortalPositionTryStyle />
         {children}
       </StyledThemeProvider>
     </ThemeContext.Provider>

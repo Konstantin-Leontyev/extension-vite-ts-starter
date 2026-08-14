@@ -183,7 +183,8 @@ export function getTheme(props: { theme: AppTheme }): AppTheme {
 /**
  * GlobalThemeStyle — задаёт глобальные стили, зависящие от темы.
  * Подключается в `ThemeProvider` из `src/context/theme/index.tsx`:
- * сначала `GlobalResetStyle` из `@ui/reset`, затем `GlobalThemeStyle`.
+ * сначала `GlobalResetStyle`, затем `GlobalThemeStyle`,
+ * затем `AnchoredPortalPositionTryStyle`.
  *
  * Устанавливает:
  *  - `color-scheme` — для нативной части браузера: скроллбар, выделение
