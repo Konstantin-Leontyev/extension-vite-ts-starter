@@ -8,7 +8,8 @@
  *
  * Потребители:
  *  - `@ui/anchored-portal` — удерживает фокус внутри открытой панели через `useFocus`
- *  - `@ui/listbox` — находит фокусируемые кнопки в панели через `getFocusables`
+ *  - `src/components/profile-menu` — переводит фокус на первое действие панели
+ *    через `getFocusables`
  */
 
 import { useEffect, useRef, type RefObject } from 'react';

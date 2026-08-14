@@ -23,14 +23,16 @@
  *  - иконка календаря всегда в позиции `start`. Публичного пропа позиции нет
  *  - подпись над рядом через проп `label`
  *  - черновик диапазона в открытой панели: клики по дням не пишут наружу до
- *    подтверждения. Enter и `Set` подтверждают и закрывают. `Close`, Escape и клик
- *    снаружи закрывают без подтверждения. `Reset` чистит черновик без закрытия
+ *    подтверждения. `Set` и Enter вне `Reset` и `Close` подтверждают и закрывают.
+ *    Enter на `Close`, Escape и клик снаружи закрывают без подтверждения.
+ *    `Reset` и Enter на нём чистят черновик без закрытия
  *
  * Основные задачи:
  * 1. Экспортировать компонент DateRangeInput
  * 2. Типизировать пропсы через `DateRangeInputProps`
  * 3. Выставлять `role="group"` и `aria-labelledby` при передаче `label`, а также
- *    `aria`-атрибуты сегментов и панели календаря
+ *    `aria`-атрибуты сегментов и панели календаря.
+ *    Фокус панели — на выбранном дне, иначе на первом доступном
  * 4. Реэкспортировать `todayUtc` из `src/ui/date-range-input/calendar-panel`
  *
  * Потребители:
@@ -58,7 +60,6 @@ import { SegmentButtonParts } from '@ui/segment-button-parts';
 import {
   CalendarPanel,
   DATE_PLACEHOLDER,
-  focusCalendarPanelInitial,
   formatIsoDayCompact,
   isIsoDayAfter,
   monthViewFromIsoDayOrToday,
@@ -108,15 +109,30 @@ const DEFAULT_DATE_RANGE_INPUT_START_LABEL = 'Start date';
 const PANEL_COMMIT_LABEL = 'Set';
 
 /**
+ * PANEL_COMMIT_ACTION — задаёт `data-action` кнопки подтверждения черновика.
+ */
+const PANEL_COMMIT_ACTION = 'commit';
+
+/**
  * PANEL_RESET_LABEL — задаёт текст кнопки сброса черновика в панели.
  */
 const PANEL_RESET_LABEL = 'Reset';
+
+/**
+ * PANEL_RESET_ACTION — задаёт `data-action` кнопки сброса черновика.
+ */
+const PANEL_RESET_ACTION = 'reset';
 
 /**
  * PANEL_DISMISS_LABEL — задаёт текст кнопки закрытия панели без подтверждения.
  * Совпадает по смыслу с Escape.
  */
 const PANEL_DISMISS_LABEL = 'Close';
+
+/**
+ * PANEL_DISMISS_ACTION — задаёт `data-action` кнопки закрытия панели.
+ */
+const PANEL_DISMISS_ACTION = 'dismiss';
 
 /**
  * CALENDAR_PANEL_ARIA_LABEL — задаёт текст `aria-label` диалога панели календаря.
@@ -315,6 +331,8 @@ export function DateRangeInput({
   const startTriggerRef = useRef<HTMLButtonElement>(null);
   const endTriggerRef = useRef<HTMLButtonElement>(null);
   const returnFocusRef = useRef<HTMLElement>(null);
+  const selectedDayRef = useRef<HTMLButtonElement>(null);
+  const firstAvailableDayRef = useRef<HTMLButtonElement>(null);
   const labelId = useId();
   const panelId = useId();
   const dayShape = dayShapeProp ?? shape ?? DEFAULT_SHAPE_PRESET;
@@ -403,20 +421,24 @@ export function DateRangeInput({
     event.preventDefault();
 
     if (event.target instanceof HTMLElement) {
-      const focusedLabel = event.target.closest('button')?.textContent?.trim();
+      const focusedAction = event.target.closest('button')?.dataset.action;
 
-      if (focusedLabel === PANEL_RESET_LABEL) {
+      if (focusedAction === PANEL_RESET_ACTION) {
         handlePanelReset();
         return;
       }
 
-      if (focusedLabel === PANEL_DISMISS_LABEL) {
+      if (focusedAction === PANEL_DISMISS_ACTION) {
         handlePanelDismiss();
         return;
       }
     }
 
     handleCommit();
+  }
+
+  function handleOpenFocus(): void {
+    (selectedDayRef.current ?? firstAvailableDayRef.current)?.focus();
   }
 
   function handleOpenStart(): void {
@@ -508,7 +530,7 @@ export function DateRangeInput({
         panelRef={panelRef}
         returnFocusRef={returnFocusRef}
         onDismiss={handlePanelDismiss}
-        onOpenFocus={focusCalendarPanelInitial}
+        onOpenFocus={handleOpenFocus}
       >
         <StyledDateRangeInputPanel
           aria-label={CALENDAR_PANEL_ARIA_LABEL}
@@ -521,10 +543,12 @@ export function DateRangeInput({
         >
           <CalendarPanel
             dayShape={dayShape}
+            firstAvailableDayRef={firstAvailableDayRef}
             maxDay={maxDay}
             minDay={minDay}
             rangeEnd={draftEndDay}
             rangeStart={draftStartDay}
+            selectedDayRef={selectedDayRef}
             shape={shape}
             sizePreset={sizePreset}
             viewMonth={viewMonth}
@@ -533,16 +557,19 @@ export function DateRangeInput({
           />
           <SegmentButtonParts
             center={{
+              dataAction: PANEL_RESET_ACTION,
               label: PANEL_RESET_LABEL,
               textTone: 'danger',
               onClick: handlePanelReset,
             }}
             left={{
+              dataAction: PANEL_COMMIT_ACTION,
               label: PANEL_COMMIT_LABEL,
               textTone: 'success',
               onClick: handleCommit,
             }}
             right={{
+              dataAction: PANEL_DISMISS_ACTION,
               label: PANEL_DISMISS_LABEL,
               onClick: handlePanelDismiss,
             }}

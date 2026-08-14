@@ -11,15 +11,18 @@
  *    `OPEN_CONTROL_SELECTABLE_INSET` и `OPEN_CONTROL_ROW_GAP`
  * 3. Предоставить `getOpenControlRootStyles`,
  *    `getOpenControlTriggerRowStyles`, `getOpenControlTriggerStyles`,
- *    `getOpenControlSelectableRowSurfaceStyles`, `getOpenControlPortalPanelStyles`,
- *    `getOpenControlStackedPortalPanelStyles` и
- *    `getOpenControlOptionsListScrollStyles`
+ *    `getOpenControlSelectableRowSurfaceStyles`,
+ *    `getOpenControlActiveRowHighlightStyles`, `getOpenControlPortalPanelStyles`,
+ *    `getOpenControlStackedPortalPanelStyles`,
+ *    `getOpenControlOptionsListScrollStyles`, `getOpenControlTextSize` и
+ *    `resolveEnabledOpenControlIndex`
  *
  * Потребители:
  *  - `src/ui/listbox/listbox.styles.ts` и `src/ui/combobox/combobox.styles.ts` —
- *    подставляют корень, ряд и кнопку-триггер, portal-панель, скролл списка
- *    и поверхность опции
- *  - `src/ui/listbox/index.tsx` — берёт потолок видимых строк барабана
+ *    подставляют корень, ряд и кнопку-триггер, portal-панель, скролл списка,
+ *    поверхность опции и подсветку активной строки
+ *  - `src/ui/listbox/index.tsx` и `src/ui/combobox/index.tsx` — берут потолок
+ *    видимых строк барабана, размер текста и поиск ближайшей доступной строки
  *  - `src/ui/range-input/range-input.styles.ts` — подставляет корень, ряд и
  *    кнопку-триггер, стековую portal-панель и поверхность пресета
  *  - `src/ui/date-range-input/date-range-input.styles.ts` — подставляет корень,
@@ -35,12 +38,14 @@ import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
   getMinBlockSize,
+  getTextSize,
   resolveBlockRadius,
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { getSurfaceBackgroundColor } from '@ui/surface';
+import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
 
@@ -118,6 +123,40 @@ const OPEN_CONTROL_PANEL_PADDING: SpacingValue = 16;
  */
 const DEFAULT_SELECTABLE_HIGHLIGHT_WHEN = `&:not(:disabled):hover::before,
     &:focus-visible::before`;
+
+/**
+ * getOpenControlTextSize — возвращает размер текста триггера и опций по `sizePreset`.
+ * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
+ *
+ * @param sizePreset размер компонента
+ * @returns метка размера текста из `TextSizePreset` для текста триггера и опций
+ */
+export function getOpenControlTextSize(sizePreset?: SizePreset): TextSizePreset {
+  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
+}
+
+/**
+ * resolveEnabledOpenControlIndex — возвращает индекс ближайшей доступной строки
+ * от позиции `from` в направлении `step`.
+ *
+ * @param items перечень строк с опциональным `disabled`
+ * @param from индекс, с которого начинается поиск
+ * @param step направление обхода
+ * @returns индекс доступной строки или `-1`, если доступной строки нет
+ */
+export function resolveEnabledOpenControlIndex<T extends { disabled?: boolean }>(
+  items: readonly T[],
+  from: number,
+  step: -1 | 1
+): number {
+  for (let cursor = from; cursor >= 0 && cursor < items.length; cursor += step) {
+    if (!items[cursor]?.disabled) {
+      return cursor;
+    }
+  }
+
+  return -1;
+}
 
 /**
  * resolveOpenControlBlockRadius — возвращает значение для CSS-свойства
@@ -302,6 +341,24 @@ export function getOpenControlSelectableRowSurfaceStyles(
   );
 
   return styles.join('\n');
+}
+
+/**
+ * getOpenControlActiveRowHighlightStyles — возвращает CSS-правила подсветки
+ * активной строки open-control: цвет текста и слота галочки на `[data-active='true']`.
+ *
+ * @param theme текущая тема
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getOpenControlActiveRowHighlightStyles(theme: AppTheme): string {
+  return `
+    &[data-active='true'] {
+      color: ${theme.colors.inverse};
+    }
+    &[data-active='true'] [data-slot='check'] {
+      color: ${theme.colors.inverse};
+    }
+  `;
 }
 
 /**

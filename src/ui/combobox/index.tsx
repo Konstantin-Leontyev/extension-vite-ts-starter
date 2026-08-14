@@ -26,7 +26,9 @@
  * 1. Экспортировать компонент Combobox
  * 2. Типизировать пропсы через `ComboboxProps`
  * 3. Экспортировать тип `ComboboxOption`
- * 4. Выставлять `role` и `aria`-атрибуты триггера и панели
+ * 4. Выставлять `role` и `aria`-атрибуты триггера, поля поиска и панели.
+ *    Поле поиска — `role="combobox"` и `aria-autocomplete="list"`.
+ *    Фокус панели — на поле поиска
  *
  * Потребители:
  *  - `src/pages/showcase/icon-group/index.tsx` — выбирает глиф иконки
@@ -51,6 +53,10 @@ import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
+import {
+  getOpenControlTextSize,
+  resolveEnabledOpenControlIndex,
+} from '@ui/open-control';
 import { SearchField } from '@ui/search-field';
 import { Text } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
@@ -63,7 +69,6 @@ import {
   StyledComboboxTrigger,
   StyledComboboxTriggerRow,
   StyledComboboxValue,
-  getComboboxTextSize,
   splitLayoutProps,
   type ComboboxStyleProps,
 } from './combobox.styles';
@@ -174,32 +179,6 @@ function filterComboboxOptions(
 }
 
 /**
- * findEnabledIndex — возвращает индекс ближайшей доступной опции по шагу.
- *
- * Как работает:
- * 1. Идёт от `from` шагом `step` в пределах списка
- * 2. Возвращает первый индекс без `disabled` или `-1`
- *
- * @param options опции списка
- * @param from индекс старта обхода
- * @param step направление обхода
- * @returns индекс доступной опции или `-1`
- */
-function findEnabledIndex(
-  options: readonly ComboboxOption[],
-  from: number,
-  step: -1 | 1
-): number {
-  for (let cursor = from; cursor >= 0 && cursor < options.length; cursor += step) {
-    if (!options[cursor].disabled) {
-      return cursor;
-    }
-  }
-
-  return -1;
-}
-
-/**
  * Combobox — отображает выбор значения из списка с поиском в панели.
  *
  * @example
@@ -231,12 +210,13 @@ export function Combobox({
 }: ComboboxProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const surfaceProps = { iconTone, shape, sizePreset };
-  const textSizePreset = getComboboxTextSize(sizePreset);
+  const textSizePreset = getOpenControlTextSize(sizePreset);
   const isIconStart = iconPosition === 'start';
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const triggerRowRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const listId = useId();
   const triggerId = useId();
   const { handleClose, handleOpen, isOpen, panelRef } =
@@ -285,14 +265,12 @@ export function Combobox({
   const normalizedQuery = query.trim().toLowerCase();
   const filtered = filterComboboxOptions(options, normalizedQuery);
 
-  function focusComboboxSearch(panel: HTMLElement): void {
-    const searchInput = panel.querySelector<HTMLInputElement>('input[type="search"]');
-
-    searchInput?.focus();
+  function handleOpenFocus(): void {
+    searchInputRef.current?.focus();
   }
 
   /**
-   * Прокручивает активную опцию в видимую область списка при открытой панели.
+   * Прокручивает активную опцию в видимую область списка по ссылке на узел.
    * Срабатывает при смене `activeIndex` и открытии панели.
    */
   useEffect(() => {
@@ -300,12 +278,8 @@ export function Combobox({
       return;
     }
 
-    const activeOption = panelRef.current?.querySelector<HTMLElement>(
-      `[data-index="${activeIndex}"]`
-    );
-
-    activeOption?.scrollIntoView({ block: 'nearest' });
-  }, [isOpen, activeIndex, panelRef]);
+    optionRefs.current[activeIndex]?.scrollIntoView({ block: 'nearest' });
+  }, [isOpen, activeIndex]);
 
   function initialActiveIndex(
     list: readonly ComboboxOption[],
@@ -317,7 +291,7 @@ export function Combobox({
 
     return selectedFilteredIndex >= 0
       ? selectedFilteredIndex
-      : Math.max(0, findEnabledIndex(list, 0, 1));
+      : Math.max(0, resolveEnabledOpenControlIndex(list, 0, 1));
   }
 
   function openPanel(): void {
@@ -335,7 +309,7 @@ export function Combobox({
     const nextFiltered = filterComboboxOptions(options, nextQuery.trim().toLowerCase());
 
     setQuery(nextQuery);
-    setActiveIndex(Math.max(0, findEnabledIndex(nextFiltered, 0, 1)));
+    setActiveIndex(Math.max(0, resolveEnabledOpenControlIndex(nextFiltered, 0, 1)));
   }
 
   function commitSelected(option: ComboboxOption): void {
@@ -370,7 +344,7 @@ export function Combobox({
 
   function moveActive(step: -1 | 1): void {
     setActiveIndex((current) => {
-      const next = findEnabledIndex(filtered, current + step, step);
+      const next = resolveEnabledOpenControlIndex(filtered, current + step, step);
 
       return next >= 0 ? next : current;
     });
@@ -393,14 +367,16 @@ export function Combobox({
 
     if (event.key === 'Home') {
       event.preventDefault();
-      setActiveIndex(Math.max(0, findEnabledIndex(filtered, 0, 1)));
+      setActiveIndex(Math.max(0, resolveEnabledOpenControlIndex(filtered, 0, 1)));
 
       return;
     }
 
     if (event.key === 'End') {
       event.preventDefault();
-      setActiveIndex(Math.max(0, findEnabledIndex(filtered, filtered.length - 1, -1)));
+      setActiveIndex(
+        Math.max(0, resolveEnabledOpenControlIndex(filtered, filtered.length - 1, -1))
+      );
 
       return;
     }
@@ -497,7 +473,7 @@ export function Combobox({
         panelRef={panelRef}
         returnFocusRef={triggerRef}
         onDismiss={handleClose}
-        onOpenFocus={focusComboboxSearch}
+        onOpenFocus={handleOpenFocus}
       >
         <StyledComboboxPanel
           ref={panelRef}
@@ -507,10 +483,12 @@ export function Combobox({
         >
           <SearchField
             aria-activedescendant={activeOptionId}
+            aria-autocomplete="list"
             aria-controls={listId}
             aria-expanded
             placeholder={searchPlaceholder}
             ref={searchInputRef}
+            role="combobox"
             shape={shape}
             showBorder={false}
             showIcon={false}
@@ -545,16 +523,26 @@ export function Combobox({
                 <li key={option.value} role="presentation">
                   <StyledComboboxOption
                     aria-selected={isSelected}
-                    data-active={index === activeIndex}
-                    data-index={index}
+                    data-active={
+                      index === activeIndex && !option.disabled ? true : undefined
+                    }
                     disabled={disabled || option.disabled}
                     id={`${listId}-${option.value}`}
+                    ref={(node) => {
+                      optionRefs.current[index] = node;
+                    }}
                     role="option"
                     shape={shape}
                     sizePreset={sizePreset}
                     type="button"
                     onClick={() => commitSelected(option)}
-                    onMouseMove={() => setActiveIndex(index)}
+                    onMouseMove={() => {
+                      if (disabled || option.disabled) {
+                        return;
+                      }
+
+                      setActiveIndex(index);
+                    }}
                   >
                     {Boolean(option.icon) && (
                       <Icon showHover={false} sizePreset={sizePreset}>

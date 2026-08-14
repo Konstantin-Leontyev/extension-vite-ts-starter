@@ -8,7 +8,8 @@
  * Основные задачи:
  * 1. Экспортировать компонент ProfileMenu
  * 2. Типизировать пропсы через `ProfileMenuProps`
- * 3. Выставлять `role` и `aria`-атрибуты панели и триггера
+ * 3. Выставлять `role` и `aria`-атрибуты панели и триггера.
+ *    Фокус панели — на первом действии
  *
  * Потребители:
  *  - `src/components/header/index.tsx` — рендерит меню профиля в шапке
@@ -16,6 +17,7 @@
 
 import { Fragment, useId, useRef, useState, type ComponentPropsWithRef } from 'react';
 
+import { getFocusables } from '@hooks/use-focus';
 import { AddCircleIcon, AvatarIcon, CloseIcon, SignOutIcon } from '@icons';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Icon } from '@ui/icon';
@@ -140,6 +142,10 @@ export function ProfileMenu(props: ProfileMenuProps) {
     setIsOpen((current) => !current);
   }
 
+  function handleOpenFocus(panel: HTMLElement): void {
+    getFocusables(panel)[0]?.focus();
+  }
+
   return (
     <StyledProfileMenu {...props}>
       <Icon
@@ -163,6 +169,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
         panelRef={panelRef}
         returnFocusRef={triggerRef}
         onDismiss={handleClose}
+        onOpenFocus={handleOpenFocus}
       >
         <StyledProfileMenuPanel
           aria-labelledby={titleId}

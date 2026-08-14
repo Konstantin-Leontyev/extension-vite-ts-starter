@@ -4,11 +4,10 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `ComboboxStyleProps` и `ComboboxSurfaceStyleProps`
- * 2. Предоставить функцию `getComboboxTextSize`
- * 3. Предоставить styled-узлы `StyledComboboxRoot`, `StyledComboboxTriggerRow`,
+ * 2. Предоставить styled-узлы `StyledComboboxRoot`, `StyledComboboxTriggerRow`,
  *    `StyledComboboxTrigger`, `StyledComboboxValue`, `StyledComboboxPanel`,
  *    `StyledComboboxList` и `StyledComboboxOption`
- * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 3. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/combobox/index.tsx` — собирает компонент Combobox
@@ -22,6 +21,7 @@ import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout
 import {
   OPEN_CONTROL_ROW_GAP,
   OPEN_CONTROL_SELECTABLE_INSET,
+  getOpenControlActiveRowHighlightStyles,
   getOpenControlOptionsListScrollStyles,
   getOpenControlPortalPanelStyles,
   getOpenControlRootStyles,
@@ -30,29 +30,12 @@ import {
   getOpenControlTriggerStyles,
   type OpenControlSurfaceStyleProps,
 } from '@ui/open-control';
-import {
-  DEFAULT_SIZE_PRESET,
-  getPaddingInline,
-  getTextSize,
-  type SizePreset,
-} from '@ui/presets';
+import { DEFAULT_SIZE_PRESET, getPaddingInline } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
-
-/**
- * getComboboxTextSize — возвращает размер текста триггера и опций по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер Combobox
- * @returns метка размера текста из `TextSizePreset` для текста триггера и опций
- */
-export function getComboboxTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
-}
 
 /**
  * ComboboxSurfaceStyleProps — представляет пропсы стилизации поверхности Combobox.
@@ -250,17 +233,17 @@ export const StyledComboboxList = styled.ul.withConfig({
 
 /**
  * getComboboxOptionStyles — возвращает CSS-правила для узла `StyledComboboxOption`:
- * поверхность опции, отступы и синюю подсветку наведения. `display: flex` —
+ * поверхность опции, отступы и синюю подсветку активной строки. `display: flex` —
  * оправданное исключение: иконка опции, текст и check в одном потоке с `gap`,
  * отсутствующие слоты не резервируют трек.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолт `sizePreset`
  * 2. Подставляет поверхность через `getOpenControlSelectableRowSurfaceStyles`:
- *    flex-раскладку, габариты, заливку и подложку наведения через `::before`
+ *    flex-раскладку, габариты, заливку и подложку активной строки через `::before`
  * 3. Задаёт `padding-inline` по размеру
- * 4. На `data-active`, `:not(:disabled):hover` и `:focus-visible` красит
- *    текст в `inverse`, включая слот галочки
+ * 4. На `data-active` красит текст в `inverse` через
+ *    `getOpenControlActiveRowHighlightStyles`
  *
  * @param props пропсы формы, размера и тема
  * @returns CSS-правила, каждое с новой строки
@@ -276,21 +259,10 @@ function getComboboxOptionStyles(
       display: 'flex',
       gap: OPEN_CONTROL_ROW_GAP,
       highlight: 'primary',
-      highlightWhen: `&[data-active='true']::before,
-    &:not(:disabled):hover::before,
-    &:focus-visible::before`,
+      highlightWhen: `&[data-active='true']::before`,
     })}
     padding-inline: ${getPaddingInline(sizePreset)};
-    &[data-active='true'],
-    &:not(:disabled):hover,
-    &:focus-visible {
-      color: ${theme.colors.inverse};
-    }
-    &[data-active='true'] [data-slot='check'],
-    &:not(:disabled):hover [data-slot='check'],
-    &:focus-visible [data-slot='check'] {
-      color: inherit;
-    }
+    ${getOpenControlActiveRowHighlightStyles(theme)}
   `;
 }
 

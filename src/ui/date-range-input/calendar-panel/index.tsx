@@ -15,18 +15,21 @@
  *  - конечный день диапазона через проп `rangeEnd`
  *  - начальный день диапазона через проп `rangeStart`
  *  - отображаемый месяц через проп `viewMonth`
+ *  - ссылку на первый доступный день через проп `firstAvailableDayRef`
+ *  - ссылку на выбранный доступный день через проп `selectedDayRef`
  *
  * Основные задачи:
  * 1. Экспортировать компонент CalendarPanel
  * 2. Типизировать пропсы через `CalendarPanelProps`
- * 3. Предоставить `focusCalendarPanelInitial`
- * 4. Реэкспортировать утилиты дат и тип `MonthView` из
+ * 3. Реэкспортировать утилиты дат и тип `MonthView` из
  *    `src/ui/date-range-input/calendar-panel/day.ts`
- * 5. Выставлять `aria`-атрибуты навигации и кнопок дней
+ * 4. Выставлять `aria`-атрибуты навигации и кнопок дней
  *
  * Потребители:
  *  - `src/ui/date-range-input/index.tsx` — рендерит панель выбора диапазона дат
  */
+
+import { type Ref } from 'react';
 
 import {
   ChevronDoubleLeftIcon,
@@ -91,23 +94,47 @@ const CALENDAR_NAV_NEXT_YEAR_ARIA_LABEL = 'Next year';
 /**
  * CalendarPanelProps — представляет пропсы компонента CalendarPanel.
  *
+ * @property firstAvailableDayRef — ссылка на первый доступный день
  * @property maxDay — верхняя граница допустимых дней в формате ISO
  * @property minDay — нижняя граница допустимых дней в формате ISO
  * @property onSelectDay — обработчик выбора дня
  * @property onViewMonthChange — обработчик смены отображаемого месяца
  * @property rangeEnd — конечный день диапазона в формате ISO
  * @property rangeStart — начальный день диапазона в формате ISO
+ * @property selectedDayRef — ссылка на выбранный доступный день
  * @property viewMonth — отображаемый месяц панели
  */
 type CalendarPanelProps = CalendarPanelStyleProps & {
+  firstAvailableDayRef?: Ref<HTMLButtonElement | null>;
   maxDay?: string;
   minDay?: string;
   onSelectDay: (isoDay: string) => void;
   onViewMonthChange: (viewMonth: MonthView) => void;
   rangeEnd?: string;
   rangeStart?: string;
+  selectedDayRef?: Ref<HTMLButtonElement | null>;
   viewMonth: MonthView;
 };
+
+/**
+ * assignRef — записывает DOM-узел кнопки дня в `ref`.
+ *
+ * @param ref ссылка на кнопку дня
+ * @param node DOM-узел кнопки или `null`
+ */
+function assignRef(
+  ref: Ref<HTMLButtonElement | null> | undefined,
+  node: HTMLButtonElement | null
+): void {
+  if (typeof ref === 'function') {
+    ref(node);
+    return;
+  }
+
+  if (ref != null) {
+    ref.current = node;
+  }
+}
 
 /**
  * CalendarPanel — отображает сетку месяца с навигацией и выбором дня.
@@ -123,12 +150,14 @@ type CalendarPanelProps = CalendarPanelStyleProps & {
  */
 export function CalendarPanel({
   dayShape,
+  firstAvailableDayRef,
   maxDay,
   minDay,
   onSelectDay,
   onViewMonthChange,
   rangeEnd,
   rangeStart,
+  selectedDayRef,
   shape,
   sizePreset,
   viewMonth,
@@ -144,6 +173,21 @@ export function CalendarPanel({
 
   if (rangeEnd != null && rangeEnd !== '') {
     selectedDays.add(rangeEnd);
+  }
+
+  const selectedFocusIso = cells.find(
+    (cell) => selectedDays.has(cell.isoDay) && isIsoDayInBounds(cell.isoDay, minDay, maxDay)
+  )?.isoDay;
+  const firstAvailableIso = cells.find((cell) =>
+    isIsoDayInBounds(cell.isoDay, minDay, maxDay)
+  )?.isoDay;
+
+  if (selectedFocusIso === undefined) {
+    assignRef(selectedDayRef, null);
+  }
+
+  if (firstAvailableIso === undefined) {
+    assignRef(firstAvailableDayRef, null);
   }
 
   const canGoMonthPrevious = canNavigateMonthPrevious(viewMonth, minDay);
@@ -298,6 +342,15 @@ export function CalendarPanel({
               dayShape={dayShape}
               disabled={!isSelectable}
               key={cell.isoDay}
+              ref={(node) => {
+                if (cell.isoDay === selectedFocusIso) {
+                  assignRef(selectedDayRef, node);
+                }
+
+                if (cell.isoDay === firstAvailableIso) {
+                  assignRef(firstAvailableDayRef, node);
+                }
+              }}
               sizePreset={sizePreset}
               type="button"
               onClick={handleDayClick}
@@ -314,25 +367,6 @@ export function CalendarPanel({
 }
 
 /* eslint-disable react-refresh/only-export-components -- публичные утилиты calendar-panel */
-
-/**
- * focusCalendarPanelInitial — переводит фокус на выбранный или первый доступный день.
- * Сначала ищет кнопку с `aria-pressed="true"`, иначе — первую не `disabled`.
- *
- * @param panel корневой элемент открытой панели календаря
- */
-export function focusCalendarPanelInitial(panel: HTMLElement): void {
-  const selectedDay = panel.querySelector<HTMLElement>(
-    'button[aria-pressed="true"]:not([disabled])'
-  );
-
-  if (selectedDay) {
-    selectedDay.focus();
-    return;
-  }
-
-  panel.querySelector<HTMLElement>('button:not([disabled])')?.focus();
-}
 
 export {
   DATE_PLACEHOLDER,

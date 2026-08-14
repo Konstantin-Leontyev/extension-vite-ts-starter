@@ -26,7 +26,10 @@
  * 1. Экспортировать компонент Listbox
  * 2. Типизировать пропсы через `ListboxProps`
  * 3. Экспортировать тип `ListboxOption`
- * 4. Выставлять `role` и `aria`-атрибуты триггера и панели
+ * 4. Выставлять `role` и `aria`-атрибуты триггера, панели и строк опций.
+ *    Фокус панели — на строке. Чекбокс в строке — презентационный
+ * 5. Вести клавиатуру панели: стрелки, `Home` и `End` по видимому порядку барабана
+ *    без смены выбора
  *
  * Потребители:
  *  - контролы и панели настроек витрины дизайн-системы, например SizeListbox
@@ -45,26 +48,27 @@ import {
 } from 'react';
 
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
-import { getFocusables } from '@hooks/use-focus';
 import { CheckIcon, ChevronDownIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Checkbox } from '@ui/checkbox';
 import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
-import { OPEN_CONTROL_PANEL_MAX_OPTION_ROWS } from '@ui/open-control';
+import {
+  OPEN_CONTROL_PANEL_MAX_OPTION_ROWS,
+  getOpenControlTextSize,
+  resolveEnabledOpenControlIndex,
+} from '@ui/open-control';
 import { Text } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 import {
-  StyledListboxOptionButton,
-  StyledListboxOptionRow,
+  StyledListboxOption,
   StyledListboxPanel,
   StyledListboxRoot,
   StyledListboxTrigger,
   StyledListboxTriggerRow,
-  getListboxTextSize,
   splitLayoutProps,
   type ListboxStyleProps,
 } from './listbox.styles';
@@ -413,22 +417,22 @@ function panelOrdersEqual(left: null | PanelOrder, right: PanelOrder): boolean {
 }
 
 /**
- * handleOpenFocus — переводит фокус на выбранную или первую доступную опцию.
+ * resolveInitialActiveIndex — возвращает индекс выбранной доступной опции,
+ * иначе первой доступной.
  *
- * Как работает:
- * 1. Ищет кнопку или input выбранной опции без `disabled`
- * 2. Иначе берёт первый фокусируемый элемент панели через `getFocusables`
- * 3. Переводит фокус на найденную цель
- *
- * @param panel элемент панели
+ * @param options опции списка
+ * @param selectedIndex индекс выбранной опции
+ * @returns индекс опции для начального фокуса или `-1`
  */
-function handleOpenFocus(panel: HTMLElement): void {
-  const selectedOption = panel.querySelector<HTMLElement>(
-    'li[aria-selected="true"] button:not([disabled]), li[aria-selected="true"] input:not([disabled])'
-  );
-  const focusTarget = selectedOption ?? getFocusables(panel)[0];
+function resolveInitialActiveIndex(
+  options: readonly ListboxOption[],
+  selectedIndex: number
+): number {
+  if (selectedIndex >= 0 && !options[selectedIndex]?.disabled) {
+    return selectedIndex;
+  }
 
-  focusTarget?.focus();
+  return options.findIndex((option) => !option.disabled);
 }
 
 /**
@@ -463,16 +467,20 @@ export function Listbox({
 }: ListboxProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const surfaceProps = { iconTone, shape, sizePreset };
-  const textSizePreset = getListboxTextSize(sizePreset);
+  const textSizePreset = getOpenControlTextSize(sizePreset);
   const isIconStart = iconPosition === 'start';
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const triggerRowRef = useRef<HTMLDivElement>(null);
   const listId = useId();
   const triggerId = useId();
-  const { handleClose, handleToggle, isOpen, panelRef } =
+  const { handleClose, handleOpen, isOpen, panelRef } =
     useAnchoredOpen<HTMLUListElement>();
   const [panelOrder, setPanelOrder] = useState<null | PanelOrder>(null);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const [isKeyboardNavigating, setIsKeyboardNavigating] = useState(false);
+  const [tabStopIndex, setTabStopIndex] = useState(-1);
+  const optionRefs = useRef<Array<HTMLLIElement | null>>([]);
   const [internalSelected, setInternalSelected] = useState<string[]>(() =>
     toSelectedValues(defaultValue, multiple)
   );
@@ -566,6 +574,18 @@ export function Listbox({
     }
   }, [isOpen, panelRef]);
 
+  /**
+   * Прокручивает активную опцию в видимую область списка по ссылке на узел.
+   * Срабатывает при смене `activeIndex` и открытии панели.
+   */
+  useLayoutEffect(() => {
+    if (!isOpen || activeIndex < 0) {
+      return;
+    }
+
+    optionRefs.current[activeIndex]?.scrollIntoView({ block: 'nearest' });
+  }, [isOpen, activeIndex]);
+
   function commitSelected(next: string[]): void {
     if (!isControlled) {
       setInternalSelected(next);
@@ -603,6 +623,28 @@ export function Listbox({
     handleClose();
   }
 
+  function openPanel(): void {
+    if (disabled) {
+      return;
+    }
+
+    const initialIndex = resolveInitialActiveIndex(options, selectedIndex);
+
+    setActiveIndex(initialIndex);
+    setTabStopIndex(initialIndex);
+    handleOpen();
+  }
+
+  function handleTriggerToggle(): void {
+    if (isOpen) {
+      handleClose();
+
+      return;
+    }
+
+    openPanel();
+  }
+
   function handleTriggerKeyDown(event: KeyboardEvent<HTMLButtonElement>): void {
     if (event.key === 'Escape') {
       handleClose();
@@ -610,11 +652,23 @@ export function Listbox({
 
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-
-      if (!disabled) {
-        handleToggle();
-      }
+      handleTriggerToggle();
     }
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      openPanel();
+      setIsKeyboardNavigating(true);
+    }
+  }
+
+  function handleOpenFocus(): void {
+    const targetIndex =
+      tabStopIndex >= 0 && !options[tabStopIndex]?.disabled
+        ? tabStopIndex
+        : resolveInitialActiveIndex(options, selectedIndex);
+
+    optionRefs.current[targetIndex]?.focus();
   }
 
   const selectedOption = options.find((option) => option.value === selected[0]);
@@ -639,70 +693,180 @@ export function Listbox({
     );
   const drumShift = currentPanelOrder?.drumShift ?? LISTBOX_DRUM_SHIFT_NONE;
   const { aboveIndices, belowIndices } = displayOrder;
+  const lineOption = options[lineIndex];
+  const visualOrder =
+    lineOption === undefined
+      ? []
+      : [...aboveIndices, lineIndex, ...belowIndices];
+  const visualOptions = visualOrder.map((optionIndex) => options[optionIndex]);
 
-  function renderOption(option: ListboxOption): ReactNode {
-    const isSelected = selected.includes(option.value);
+  if (!isOpen && isKeyboardNavigating) {
+    setIsKeyboardNavigating(false);
+  }
 
-    if (showCheckbox) {
-      return (
-        <li aria-selected={isSelected} key={option.value} role="option">
-          <StyledListboxOptionRow shape={shape} sizePreset={sizePreset}>
-            <Checkbox
-              checked={isSelected}
-              disabled={disabled || option.disabled}
-              inverted
-              sizePreset={sizePreset}
-              onChange={() => {
-                handleOptionToggle(option);
-                (document.activeElement as HTMLElement | null)?.blur();
-              }}
-            />
-            <Text data-slot="label" ellipsis sizePreset={textSizePreset}>
-              {option.label}
-            </Text>
-          </StyledListboxOptionRow>
-        </li>
-      );
+  function moveActive(step: -1 | 1): void {
+    const currentVisualIndex = visualOrder.indexOf(activeIndex);
+    const from =
+      currentVisualIndex >= 0
+        ? currentVisualIndex + step
+        : step === 1
+          ? 0
+          : visualOrder.length - 1;
+    const nextVisual = resolveEnabledOpenControlIndex(visualOptions, from, step);
+
+    if (nextVisual < 0) {
+      return;
     }
 
+    const nextIndex = visualOrder[nextVisual];
+
+    setActiveIndex(nextIndex);
+    optionRefs.current[nextIndex]?.focus();
+  }
+
+  function handlePanelKeyDown(event: KeyboardEvent<HTMLUListElement>): void {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setIsKeyboardNavigating(true);
+      moveActive(1);
+
+      return;
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setIsKeyboardNavigating(true);
+      moveActive(-1);
+
+      return;
+    }
+
+    if (event.key === 'Home') {
+      event.preventDefault();
+      setIsKeyboardNavigating(true);
+      const nextVisual = resolveEnabledOpenControlIndex(visualOptions, 0, 1);
+
+      if (nextVisual >= 0) {
+        const nextIndex = visualOrder[nextVisual];
+
+        setActiveIndex(nextIndex);
+        optionRefs.current[nextIndex]?.focus();
+      }
+
+      return;
+    }
+
+    if (event.key === 'End') {
+      event.preventDefault();
+      setIsKeyboardNavigating(true);
+      const nextVisual = resolveEnabledOpenControlIndex(
+        visualOptions,
+        visualOrder.length - 1,
+        -1
+      );
+
+      if (nextVisual >= 0) {
+        const nextIndex = visualOrder[nextVisual];
+
+        setActiveIndex(nextIndex);
+        optionRefs.current[nextIndex]?.focus();
+      }
+    }
+  }
+
+  function handlePanelMouseMove(): void {
+    if (isKeyboardNavigating) {
+      setIsKeyboardNavigating(false);
+    }
+  }
+
+  function renderOption(option: ListboxOption, optionIndex: number): ReactNode {
+    const isSelected = selected.includes(option.value);
+    const isOptionDisabled = Boolean(disabled || option.disabled);
+    const isActive = optionIndex === activeIndex && !isOptionDisabled;
+    const isTabStop = optionIndex === tabStopIndex && !isOptionDisabled;
+
     return (
-      <li aria-selected={isSelected} key={option.value} role="option">
-        <StyledListboxOptionButton
-          disabled={disabled || option.disabled}
-          shape={shape}
-          sizePreset={sizePreset}
-          type="button"
-          onClick={() => handleOptionToggle(option)}
-        >
-          <Text data-slot="label" ellipsis sizePreset={textSizePreset}>
-            {option.label}
-          </Text>
-          {isSelected && (
-            <Icon
-              data-slot="check"
-              iconFill="primary"
-              position="relative"
-              showHover={false}
-              sizePreset={sizePreset}
-              zIndex={1}
-            >
-              <CheckIcon />
-            </Icon>
-          )}
-        </StyledListboxOptionButton>
-      </li>
+      <StyledListboxOption
+        aria-disabled={isOptionDisabled ? true : undefined}
+        aria-selected={isSelected}
+        data-active={isActive ? true : undefined}
+        data-checkbox={showCheckbox ? '' : undefined}
+        key={option.value}
+        ref={(node) => {
+          optionRefs.current[optionIndex] = node;
+        }}
+        role="option"
+        shape={shape}
+        sizePreset={sizePreset}
+        tabIndex={isTabStop ? 0 : -1}
+        onClick={() => {
+          if (isOptionDisabled) {
+            return;
+          }
+
+          setActiveIndex(optionIndex);
+          optionRefs.current[optionIndex]?.focus();
+          handleOptionToggle(option);
+        }}
+        onFocus={() => {
+          if (!isOptionDisabled) {
+            setTabStopIndex(optionIndex);
+          }
+        }}
+        onKeyDown={(event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') {
+            return;
+          }
+
+          event.preventDefault();
+
+          if (isOptionDisabled) {
+            return;
+          }
+
+          handleOptionToggle(option);
+        }}
+        onMouseMove={() => {
+          if (isOptionDisabled) {
+            return;
+          }
+
+          setActiveIndex(optionIndex);
+        }}
+      >
+        {showCheckbox && (
+          <Checkbox
+            aria-hidden
+            checked={isSelected}
+            inverted
+            readOnly
+            sizePreset={sizePreset}
+            tabIndex={-1}
+          />
+        )}
+        <Text data-slot="label" ellipsis sizePreset={textSizePreset}>
+          {option.label}
+        </Text>
+        {!showCheckbox && isSelected && (
+          <Icon
+            data-slot="check"
+            iconFill="primary"
+            position="relative"
+            showHover={false}
+            sizePreset={sizePreset}
+            zIndex={1}
+          >
+            <CheckIcon />
+          </Icon>
+        )}
+      </StyledListboxOption>
     );
   }
 
-  const lineOption = options[lineIndex];
-  const panelOptions =
-    lineOption === undefined
-      ? []
-      : [
-          ...aboveIndices.map((index) => renderOption(options[index])),
-          renderOption(lineOption),
-          ...belowIndices.map((index) => renderOption(options[index])),
-        ];
+  const panelOptions = visualOrder.map((optionIndex) =>
+    renderOption(options[optionIndex], optionIndex)
+  );
 
   return (
     <StyledListboxRoot
@@ -730,7 +894,7 @@ export function Listbox({
           ref={triggerRef}
           type="button"
           {...surfaceProps}
-          onClick={handleToggle}
+          onClick={handleTriggerToggle}
           onKeyDown={handleTriggerKeyDown}
         >
           {iconPosition === 'start' && iconNode}
@@ -752,7 +916,6 @@ export function Listbox({
         anchorRef={triggerRowRef}
         dismissZoneRefs={[rootRef, panelRef]}
         open={isOpen}
-        openFocusDeps={[panelOrder, selectedIndex]}
         panelRef={panelRef}
         returnFocusRef={triggerRef}
         onDismiss={handleClose}
@@ -761,11 +924,14 @@ export function Listbox({
         <StyledListboxPanel
           $drumShift={drumShift}
           aria-multiselectable={multiple || undefined}
+          data-keyboard-navigating={isKeyboardNavigating ? true : undefined}
           id={listId}
           ref={panelRef}
           role="listbox"
           shape={shape}
           sizePreset={sizePreset}
+          onKeyDown={handlePanelKeyDown}
+          onMouseMove={handlePanelMouseMove}
         >
           {panelOptions}
         </StyledListboxPanel>

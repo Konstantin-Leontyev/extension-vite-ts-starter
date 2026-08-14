@@ -53,6 +53,7 @@ const SEGMENT_BUTTON_PARTS_ACTIVE_TEXT_TONE: TextTone = 'primary';
  * @property ariaControls — id панели, которой управляет сегмент
  * @property ariaExpanded — включает раскрытое состояние связанной панели
  * @property ariaHaspopup — тип всплывающей панели сегмента
+ * @property dataAction — значение `data-action` на кнопке сегмента
  * @property disabled — включает недоступное состояние
  * @property icon — svg иконки сегмента
  * @property iconFill — тон глифа иконки
@@ -71,6 +72,7 @@ type SegmentButtonPartsAction = {
   ariaControls?: string;
   ariaExpanded?: boolean;
   ariaHaspopup?: 'dialog' | 'listbox';
+  dataAction?: string;
   disabled?: boolean;
   icon?: ReactNode;
   iconFill?: TonePreset;
@@ -148,6 +150,7 @@ function SegmentButtonPartsPart({
     ariaControls,
     ariaExpanded,
     ariaHaspopup,
+    dataAction,
     disabled,
     icon,
     iconFill,
@@ -201,6 +204,7 @@ function SegmentButtonPartsPart({
       aria-current={active ? 'true' : undefined}
       aria-expanded={ariaExpanded}
       aria-haspopup={ariaHaspopup}
+      data-action={dataAction}
       disabled={disabled}
       hasIcon={hasIcon}
       ref={ref}

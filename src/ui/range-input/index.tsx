@@ -578,7 +578,6 @@ export function RangeInput({
     >
       <FieldLabel htmlFor={triggerId}>{label}</FieldLabel>
       <StyledRangeInputTriggerRow
-        data-active={isActive}
         data-has-clear={showClear ? '' : undefined}
         data-open={isOpen}
         ref={triggerRowRef}
