@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 
+import { getCssAnchorBindingStyles } from '@ui/anchored-portal';
 import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
@@ -146,46 +147,79 @@ export const StyledListboxTrigger = styled.button.withConfig({
 `;
 
 /**
- * LISTBOX_BOX_PROP_NAMES — хранит имена пропсов стилизации строки и панели Listbox.
+ * LISTBOX_BOX_PROP_NAMES — хранит имена пропсов стилизации строки опции Listbox.
  */
 const LISTBOX_BOX_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
 
 /**
+ * ListboxPanelStyleProps — представляет пропсы стилизации выпадающей панели опций Listbox.
+ *
+ * @property $drumShift — сдвиг барабана относительно якоря
+ */
+type ListboxPanelStyleProps = Pick<
+  ListboxSurfaceStyleProps,
+  'shape' | 'sizePreset'
+> & {
+  $drumShift: string;
+};
+
+/**
+ * LISTBOX_PANEL_PROP_NAMES — хранит имена пропсов стилизации панели Listbox.
+ */
+const LISTBOX_PANEL_PROP_NAMES = new Set<string>([
+  '$drumShift',
+  ...LISTBOX_BOX_PROP_NAMES,
+]);
+
+/**
+ * LISTBOX_DRUM_SHIFT_CUSTOM_PROPERTY — задаёт имя CSS-свойства сдвига барабана.
+ * Используется в `getListboxPanelStyles` для смещения панели относительно якоря.
+ */
+const LISTBOX_DRUM_SHIFT_CUSTOM_PROPERTY = '--listbox-drum-shift';
+
+/**
  * getListboxPanelStyles — возвращает CSS-правила для узла `StyledListboxPanel`:
- * хром портала через `getOpenControlPortalPanelStyles` и прокрутку списка через
- * `getOpenControlOptionsListScrollStyles`.
+ * хром портала через `getOpenControlPortalPanelStyles`, CSS-привязку к якорю,
+ * сдвиг барабана и прокрутку списка через `getOpenControlOptionsListScrollStyles`.
  *
  * Как работает:
  * 1. Подставляет дефолт `sizePreset`
  * 2. Подставляет хром панели через `getOpenControlPortalPanelStyles`
- * 3. Ограничивает высоту и включает прокрутку через
+ * 3. Привязывает панель к триггеру через `getCssAnchorBindingStyles`,
+ *    `anchor(start)`, `anchor-size(width)` и сдвиг `--listbox-drum-shift`
+ * 4. Ограничивает высоту и включает прокрутку через
  *    `getOpenControlOptionsListScrollStyles`
  *
- * @param props пропсы формы, размера и тема
+ * @param props пропсы формы, размера, сдвига барабана и тема
  * @returns CSS-правила, каждое с новой строки
  */
 function getListboxPanelStyles(
-  props: Pick<ListboxSurfaceStyleProps, 'shape' | 'sizePreset'> & { theme: AppTheme }
+  props: ListboxPanelStyleProps & { theme: AppTheme }
 ): string {
-  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const { $drumShift, sizePreset = DEFAULT_SIZE_PRESET } = props;
 
   return `
     ${getOpenControlPortalPanelStyles(props)}
+    ${getCssAnchorBindingStyles()}
+    ${LISTBOX_DRUM_SHIFT_CUSTOM_PROPERTY}: ${$drumShift};
+    inset-block-start: calc(anchor(start) + var(${LISTBOX_DRUM_SHIFT_CUSTOM_PROPERTY}));
+    inset-inline-start: anchor(start);
+    inline-size: anchor-size(width);
     ${getOpenControlOptionsListScrollStyles(sizePreset)}
   `;
 }
 
 /**
  * StyledListboxPanel — задаёт выпадающую панель опций компонента Listbox.
- * Базируется на `<ul>` и принимает пропсы `shape` и `sizePreset`.
+ * Базируется на `<ul>` и принимает пропсы `$drumShift`, `shape` и `sizePreset`.
  *
  * Генерация стилей:
  *  - `getListboxPanelStyles` — хром портала через `getOpenControlPortalPanelStyles`,
- *    высота и прокрутка
+ *    CSS-привязка к якорю, сдвиг барабана, высота и прокрутка
  */
 export const StyledListboxPanel = styled.ul.withConfig({
-  shouldForwardProp: (prop) => !LISTBOX_BOX_PROP_NAMES.has(prop),
-})<Pick<ListboxSurfaceStyleProps, 'shape' | 'sizePreset'>>`
+  shouldForwardProp: (prop) => !LISTBOX_PANEL_PROP_NAMES.has(prop),
+})<ListboxPanelStyleProps>`
   ${(props) => getListboxPanelStyles(props)}
 `;
 

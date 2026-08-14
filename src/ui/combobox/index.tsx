@@ -51,11 +51,9 @@ import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
-import { OPEN_CONTROL_PANEL_MIN_OPTION_ROWS } from '@ui/open-control';
 import { SearchField } from '@ui/search-field';
 import { Text } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
-import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 import {
   StyledComboboxList,
@@ -199,59 +197,6 @@ function findEnabledIndex(
   }
 
   return -1;
-}
-
-/**
- * applyComboboxPanelPosition — позиционирует панель относительно триггера.
- *
- * Как работает:
- * 1. Берёт геометрию триггера и ограничивает горизонталь панели по
- *    `PORTAL_VIEWPORT_EDGE_INSET`
- * 2. Считает минимальную высоту панели: высота поиска плюс высота строк —
- *    не меньше одной и не больше `OPEN_CONTROL_PANEL_MIN_OPTION_ROWS`
- * 3. Ставит верх панели по верху триггера и поджимает вверх, если снизу не
- *    хватает места под минимальную высоту
- * 4. Пишет `inset-inline-start`, `inline-size`, `max-block-size` и
- *    `inset-block-start`
- *
- * @param trigger элемент-триггер
- * @param panel элемент панели
- * @param optionCount число опций в списке
- * @param searchInputHeight высота поля поиска
- */
-function applyComboboxPanelPosition(
-  trigger: HTMLElement,
-  panel: HTMLElement,
-  optionCount: number,
-  searchInputHeight: number | undefined
-): void {
-  const triggerRect = trigger.getBoundingClientRect();
-  const rowHeight = triggerRect.height;
-  const maxLeft = Math.max(
-    PORTAL_VIEWPORT_EDGE_INSET,
-    window.innerWidth - triggerRect.width - PORTAL_VIEWPORT_EDGE_INSET
-  );
-  const left = Math.min(Math.max(PORTAL_VIEWPORT_EDGE_INSET, triggerRect.left), maxLeft);
-  const searchHeight = searchInputHeight ?? rowHeight;
-  const reservedRows = Math.min(
-    OPEN_CONTROL_PANEL_MIN_OPTION_ROWS,
-    Math.max(1, optionCount)
-  );
-  const minPanelHeight = searchHeight + reservedRows * rowHeight;
-
-  let top = triggerRect.top;
-
-  if (top + minPanelHeight > window.innerHeight - PORTAL_VIEWPORT_EDGE_INSET) {
-    top = window.innerHeight - PORTAL_VIEWPORT_EDGE_INSET - minPanelHeight;
-  }
-
-  top = Math.max(PORTAL_VIEWPORT_EDGE_INSET, top);
-  const maxBlockSize = window.innerHeight - top - PORTAL_VIEWPORT_EDGE_INSET;
-
-  panel.style.insetInlineStart = `${left}px`;
-  panel.style.inlineSize = `${triggerRect.width}px`;
-  panel.style.maxBlockSize = `${Math.max(rowHeight, maxBlockSize)}px`;
-  panel.style.insetBlockStart = `${top}px`;
 }
 
 /**
@@ -546,20 +491,10 @@ export function Combobox({
       </StyledComboboxTriggerRow>
 
       <AnchoredPortal
+        anchorRef={triggerRowRef}
         dismissZoneRefs={[rootRef, panelRef]}
         open={isOpen}
         panelRef={panelRef}
-        positionStrategy={{
-          anchorRef: triggerRowRef,
-          apply: (anchor, panel) =>
-            applyComboboxPanelPosition(
-              anchor,
-              panel,
-              Math.max(filtered.length, 1),
-              searchInputRef.current?.offsetHeight
-            ),
-          layoutDeps: [filtered.length],
-        }}
         returnFocusRef={triggerRef}
         onDismiss={handleClose}
         onOpenFocus={focusComboboxSearch}

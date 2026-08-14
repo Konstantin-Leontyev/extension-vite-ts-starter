@@ -10,7 +10,7 @@
  * Потребители:
  *  - `@ui/anchored-portal` и `src/context/toast/index.tsx` — ставят
  *    `POPOVER_MANUAL` атрибутом `popover`
- *  - `@hooks/use-anchored-portal-position` и `src/context/toast/index.tsx` —
+ *  - `@ui/anchored-portal` и `src/context/toast/index.tsx` —
  *    показывают элемент через `showPopover`
  */
 
@@ -25,8 +25,7 @@ export const POPOVER_MANUAL = 'manual';
  * showPopover — показывает элемент через нативный `showPopover`.
  * Пропускает вызов, если узел ещё не в дереве или уже открыт.
  * Перехватывает исключение, если UA отклоняет показ.
- * Используется в `@hooks/use-anchored-portal-position` и
- * `src/context/toast/index.tsx`.
+ * Используется в `@ui/anchored-portal` и `src/context/toast/index.tsx`.
  *
  * @param element DOM-узел с атрибутом `popover`
  * @param source DOM-узел якоря. Задаёт неявный якорь CSS Anchor Positioning

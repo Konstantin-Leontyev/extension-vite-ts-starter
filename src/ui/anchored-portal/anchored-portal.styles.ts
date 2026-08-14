@@ -3,22 +3,32 @@
  * Содержит генераторы хрома панели AnchoredPortal и CSS-привязки к неявному якорю.
  *
  * Основные задачи:
- * 1. Предоставить функции `getCssAnchorBindingStyles` и `getPortalPanelStyles`
+ * 1. Предоставить функции `getCssAnchorBindingStyles`,
+ *    `getCssAnchorPlacementStyles` и `getPortalPanelStyles`
  *
  * Потребители:
- *  - `src/ui/anchored-portal/index.tsx` — реэкспортирует `getCssAnchorBindingStyles`
- *    и `getPortalPanelStyles` в публичное API
+ *  - `src/ui/anchored-portal/index.tsx` — реэкспортирует `getCssAnchorBindingStyles`,
+ *    `getCssAnchorPlacementStyles` и `getPortalPanelStyles` в публичное API
  *  - `src/ui/open-control.ts` — собирает хром portal-панели open-контролов через
  *    `getOpenControlPortalPanelStyles`
  *  - `src/ui/table/table.styles.ts` — подставляет хром add- и edit-панели строк
- *  - `@ui/range-input`, `@ui/date-range-input` и `src/components/profile-menu` —
- *    подставляют `getCssAnchorBindingStyles`
+ *    и `getCssAnchorBindingStyles`
+ *  - `@ui/combobox`, `@ui/date-range-input` и `@ui/range-input` — подставляют
+ *    `getCssAnchorPlacementStyles`
+ *  - `@ui/listbox` и `src/components/profile-menu` — подставляют
+ *    `getCssAnchorBindingStyles`
  */
 
 import { getBorderStyles } from '@ui/border';
 import { getOutlineStyles } from '@ui/outline';
 import { getSurfaceBackgroundColor } from '@ui/surface';
 import { type AppTheme } from '@ui/theme';
+import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
+
+import {
+  ANCHORED_PORTAL_POSITION_TRY_ABOVE,
+  ANCHORED_PORTAL_POSITION_TRY_VIEWPORT,
+} from './position-try';
 
 /**
  * getCssAnchorBindingStyles — возвращает CSS-правила привязки панели к неявному якорю
@@ -29,7 +39,7 @@ import { type AppTheme } from '@ui/theme';
  * `position-visibility: always` оставляет панель видимой, когда триггер скрыт
  * через `visibility: hidden`. Начальное `anchors-visible` прячет панель вместе
  * с триггером.
- * Используется в `@ui/range-input`, `@ui/date-range-input` и
+ * Используется в `getCssAnchorPlacementStyles`, `@ui/listbox`, `@ui/table` и
  * `src/components/profile-menu`.
  *
  * @returns CSS-правила, каждое с новой строки
@@ -38,6 +48,40 @@ export function getCssAnchorBindingStyles(): string {
   return `
     position-anchor: auto;
     position-visibility: always;
+  `;
+}
+
+/**
+ * getCssAnchorPlacementStyles — возвращает CSS-правила размещения панели:
+ * привязку к неявному якорю, верх, ширину, `margin-block-end` и запасные
+ * позиции `@position-try`.
+ * `viewport-edge` ограничивает `inset-inline-start` через `clamp`, чтобы
+ * панель не выходила за отступ края вьюпорта. `trigger-start` ставит
+ * `inset-inline-start: anchor(start)`.
+ * Используется в `@ui/combobox` и `@ui/date-range-input` с `viewport-edge`,
+ * в `@ui/range-input` с `trigger-start`.
+ *
+ * @param inlinePlacement режим горизонтального размещения панели
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getCssAnchorPlacementStyles(
+  inlinePlacement: 'trigger-start' | 'viewport-edge'
+): string {
+  return `
+    ${getCssAnchorBindingStyles()}
+    inset-block-start: anchor(start);
+    inset-inline-start: ${
+      inlinePlacement === 'viewport-edge'
+        ? `clamp(
+      ${PORTAL_VIEWPORT_EDGE_INSET}px,
+      anchor(start),
+      calc(100% - ${PORTAL_VIEWPORT_EDGE_INSET}px - anchor-size(width))
+    )`
+        : 'anchor(start)'
+    };
+    inline-size: anchor-size(width);
+    margin-block-end: ${PORTAL_VIEWPORT_EDGE_INSET}px;
+    position-try-fallbacks: ${ANCHORED_PORTAL_POSITION_TRY_ABOVE}, ${ANCHORED_PORTAL_POSITION_TRY_VIEWPORT};
   `;
 }
 

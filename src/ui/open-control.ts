@@ -7,7 +7,7 @@
  * Основные задачи:
  * 1. Типизировать пропсы поверхности через `OpenControlSurfaceStyleProps`
  *    и вариант clear через `OpenControlTriggerRowClearLayout`
- * 2. Задать константы панели и шкалы: `OPEN_CONTROL_PANEL_MIN_OPTION_ROWS`,
+ * 2. Задать константы панели и шкалы: `OPEN_CONTROL_PANEL_MAX_OPTION_ROWS`,
  *    `OPEN_CONTROL_SELECTABLE_INSET` и `OPEN_CONTROL_ROW_GAP`
  * 3. Предоставить `getOpenControlRootStyles`,
  *    `getOpenControlTriggerRowStyles`, `getOpenControlTriggerStyles`,
@@ -19,11 +19,11 @@
  *  - `src/ui/listbox/listbox.styles.ts` и `src/ui/combobox/combobox.styles.ts` —
  *    подставляют корень, ряд и кнопку-триггер, portal-панель, скролл списка
  *    и поверхность опции
+ *  - `src/ui/listbox/index.tsx` — берёт потолок видимых строк барабана
  *  - `src/ui/range-input/range-input.styles.ts` — подставляет корень, ряд и
  *    кнопку-триггер, стековую portal-панель и поверхность пресета
  *  - `src/ui/date-range-input/date-range-input.styles.ts` — подставляет корень,
  *    ряд-триггер и стековую portal-панель
- *  - `src/ui/combobox/index.tsx` — читает `OPEN_CONTROL_PANEL_MIN_OPTION_ROWS`
  */
 
 import { getPortalPanelStyles } from '@ui/anchored-portal';
@@ -87,16 +87,10 @@ type OpenControlSelectableRowSurfaceOptions = {
 
 /**
  * OPEN_CONTROL_PANEL_MAX_OPTION_ROWS — задаёт максимум видимых строк опций в панели.
- * Используется в `getOpenControlOptionsListScrollStyles` для `max-block-size`.
+ * Используется в `getOpenControlOptionsListScrollStyles` для `max-block-size`
+ * и в `src/ui/listbox/index.tsx` как потолок видимой высоты барабана.
  */
-const OPEN_CONTROL_PANEL_MAX_OPTION_ROWS = 6;
-
-/**
- * OPEN_CONTROL_PANEL_MIN_OPTION_ROWS — задаёт минимум резервируемых строк опций в панели.
- * Используется в `applyComboboxPanelPosition` из `src/ui/combobox/index.tsx`
- * при расчёте минимальной высоты.
- */
-export const OPEN_CONTROL_PANEL_MIN_OPTION_ROWS = 4;
+export const OPEN_CONTROL_PANEL_MAX_OPTION_ROWS = 6;
 
 /**
  * OPEN_CONTROL_SELECTABLE_INSET — задаёт отступ подложки выбираемой строки от края.

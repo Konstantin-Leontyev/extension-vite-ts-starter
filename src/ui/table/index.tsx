@@ -582,55 +582,6 @@ function TableBodyRow<Row>({
 }
 
 /**
- * applyTableAddPanelPosition — задаёт геометрию add-панели относительно якоря.
- *
- * @param anchor элемент-якорь шапки или футера
- * @param panel корневой элемент панели
- * @param addRowSource сторона якоря: шапка или футер
- */
-function applyTableAddPanelPosition(
-  anchor: HTMLElement,
-  panel: HTMLElement,
-  addRowSource: TableAddRowSource
-): void {
-  const rect = anchor.getBoundingClientRect();
-  const rowHeight = rect.height;
-  const errorRow = panel.querySelector('[data-add-error]');
-  const errorRowHeight = errorRow instanceof HTMLElement ? errorRow.offsetHeight : 0;
-  const contentHeight = rowHeight * 2 + errorRowHeight;
-
-  panel.style.inlineSize = `${rect.width}px`;
-  panel.style.insetInlineStart = `${rect.left}px`;
-  panel.style.blockSize = `${contentHeight}px`;
-
-  if (addRowSource === 'head') {
-    panel.style.insetBlockStart = `${rect.top}px`;
-    return;
-  }
-
-  panel.style.insetBlockStart = `${rect.top - rowHeight - errorRowHeight}px`;
-}
-
-/**
- * applyTableEditPanelPosition — задаёт геометрию edit-панели относительно якорной строки.
- *
- * @param anchor элемент якорной строки
- * @param panel корневой элемент панели
- */
-function applyTableEditPanelPosition(anchor: HTMLElement, panel: HTMLElement): void {
-  const rect = anchor.getBoundingClientRect();
-  const rowHeight = rect.height;
-  const errorRow = panel.querySelector('[data-edit-error]');
-  const errorRowHeight = errorRow instanceof HTMLElement ? errorRow.offsetHeight : 0;
-  const contentHeight = rowHeight + errorRowHeight;
-
-  panel.style.inlineSize = `${rect.width}px`;
-  panel.style.insetInlineStart = `${rect.left}px`;
-  panel.style.insetBlockStart = `${rect.top}px`;
-  panel.style.blockSize = `${contentHeight}px`;
-}
-
-/**
  * Table — отображает таблицу данных со скроллом, выбором строк и панелями
  * добавления и редактирования.
  *
@@ -1068,25 +1019,16 @@ export function Table<Row>(props: TableProps<Row>) {
 
   const addPanel = (
     <AnchoredPortal
+      anchorRef={addAnchorRef}
       dismissActive={showAddPanel && onAddCancel !== undefined}
       dismissZoneRefs={[panelRef]}
       open={showAddPanel}
       panelRef={panelRef}
-      positionStrategy={{
-        anchorRef: addAnchorRef,
-        apply: (anchor, panel) => {
-          if (addRowSource === undefined) {
-            return;
-          }
-
-          applyTableAddPanelPosition(anchor, panel, addRowSource);
-        },
-        layoutDeps: [addRowSource, hasAddError, rows.length, columns.length],
-      }}
       returnFocusRef={addRowSource === 'foot' ? footAddButtonRef : headAddButtonRef}
       onDismiss={() => onAddCancel?.()}
     >
       <StyledTableRowPanel
+        $anchorBlockEnd={addRowSource === 'foot'}
         $hasError={hasAddError}
         aria-label={TABLE_ADD_ROW_ARIA_LABEL}
         aria-modal={true}
@@ -1126,15 +1068,11 @@ export function Table<Row>(props: TableProps<Row>) {
   const editPanel =
     showEditPanel && editingRow !== undefined ? (
       <AnchoredPortal
+        anchorRef={editRowAnchorRef}
         dismissActive={showEditPanel && onEditCancel !== undefined}
         dismissZoneRefs={[editPanelRef]}
         open={showEditPanel}
         panelRef={editPanelRef}
-        positionStrategy={{
-          anchorRef: editRowAnchorRef,
-          apply: applyTableEditPanelPosition,
-          layoutDeps: [editRowKey, hasEditError, rows.length, columns.length],
-        }}
         returnFocusRef={editRowAnchorRef}
         onDismiss={() => onEditCancel?.()}
       >

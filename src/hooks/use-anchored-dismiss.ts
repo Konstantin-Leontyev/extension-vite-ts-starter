@@ -1,6 +1,7 @@
 /**
  * Файл: `src/hooks/use-anchored-dismiss.ts`
- * Предоставляет закрытие раскрытого слоя по `Escape`, клику вне зон и прокрутке.
+ * Предоставляет закрытие раскрытого слоя по `Escape`, клику вне зон и уходу
+ * якоря из полной видимости.
  *
  * Основные задачи:
  * 1. Предоставить хук `useAnchoredDismiss`
@@ -15,11 +16,14 @@ import { useEffect, useEffectEvent, useRef, type RefObject } from 'react';
  * UseAnchoredDismissOptions — представляет опции хука `useAnchoredDismiss`.
  *
  * @property active — включает слушатели закрытия
+ * @property anchorRef — ссылка на DOM-узел якоря. Уход якоря из полной
+ *   видимости вызывает `onDismiss`
  * @property onDismiss — обработчик закрытия слоя
- * @property zoneRefs — ссылки на DOM-узлы, клик и прокрутка внутри которых не закрывают слой
+ * @property zoneRefs — ссылки на DOM-узлы, клик внутри которых не закрывает слой
  */
 type UseAnchoredDismissOptions = {
   active: boolean;
+  anchorRef: RefObject<HTMLElement | null>;
   onDismiss: () => void;
   zoneRefs: readonly RefObject<HTMLElement | null>[];
 };
@@ -39,13 +43,19 @@ function isNodeInZones(
 }
 
 /**
- * useAnchoredDismiss — закрывает раскрытый слой по `Escape`, клику вне зон и прокрутке.
- * Прокрутка слушается в capture, чтобы закрыть слой до перепозиционирования панели.
+ * useAnchoredDismiss — закрывает раскрытый слой по `Escape`, клику вне зон
+ * и уходу якоря из полной видимости.
+ * `IntersectionObserver` с `threshold: 1` считает якорь полностью видимым
+ * только при `entry.intersectionRatio === 1`, а не при `isIntersecting`.
+ * После первого полного пересечения хук вооружает закрытие и вызывает
+ * `onDismiss`, когда доля пересечения падает. `root` не задан: пересечение
+ * считается относительно вьюпорта.
  *
- * @param options опции активации, обработчика и зон
+ * @param options опции активации, якоря, обработчика и зон
  */
 export function useAnchoredDismiss({
   active,
+  anchorRef,
   onDismiss,
   zoneRefs,
 }: UseAnchoredDismissOptions): void {
@@ -78,30 +88,41 @@ export function useAnchoredDismiss({
       }
     }
 
-    function handleScroll(event: Event): void {
-      const activeElement = document.activeElement;
+    const anchor = anchorRef.current;
+    let intersectionObserver: IntersectionObserver | undefined;
 
-      if (activeElement instanceof Node && isInside(activeElement)) {
-        return;
-      }
+    if (anchor !== null) {
+      let isArmed = false;
 
-      const target = event.target;
+      intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          const [entry] = entries;
 
-      if (target instanceof Node && isInside(target)) {
-        return;
-      }
+          if (entry === undefined) {
+            return;
+          }
 
-      onDismissEvent();
+          if (entry.intersectionRatio === 1) {
+            isArmed = true;
+            return;
+          }
+
+          if (isArmed) {
+            onDismissEvent();
+          }
+        },
+        { threshold: 1 }
+      );
+      intersectionObserver.observe(anchor);
     }
 
     window.addEventListener('pointerdown', handlePointerDown);
     window.addEventListener('keydown', handleEscape);
-    window.addEventListener('scroll', handleScroll, { capture: true, passive: true });
 
     return () => {
+      intersectionObserver?.disconnect();
       window.removeEventListener('pointerdown', handlePointerDown);
       window.removeEventListener('keydown', handleEscape);
-      window.removeEventListener('scroll', handleScroll, { capture: true });
     };
-  }, [active]);
+  }, [active, anchorRef]);
 }

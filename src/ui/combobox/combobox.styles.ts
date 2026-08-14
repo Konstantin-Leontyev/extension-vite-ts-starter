@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 
+import { getCssAnchorPlacementStyles } from '@ui/anchored-portal';
 import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
@@ -165,13 +166,16 @@ export const StyledComboboxValue = styled.span.withConfig({
 
 /**
  * getComboboxPanelStyles — возвращает CSS-правила для узла `StyledComboboxPanel`:
- * сетку поиска и списка, обрезку и хром портала через
- * `getOpenControlPortalPanelStyles`.
+ * сетку поиска и списка, обрезку, хром портала через
+ * `getOpenControlPortalPanelStyles`, CSS-привязку к триггеру,
+ * ограничение у края вьюпорта и запасные позиции `@position-try`.
  *
  * Как работает:
  * 1. Собирает сетку панели: ряд поиска и список
  * 2. Подставляет хром панели через `getOpenControlPortalPanelStyles`
- * 3. Обрезает содержимое через `overflow: hidden` поверх `overflow: visible`
+ * 3. Привязывает панель к триггеру через `getCssAnchorPlacementStyles` с
+ *    `viewport-edge`
+ * 4. Обрезает содержимое через `overflow: hidden` поверх `overflow: visible`
  *    сброса UA `[popover]`
  *
  * @param props пропсы формы, размера и тема
@@ -184,6 +188,7 @@ function getComboboxPanelStyles(
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
     ${getOpenControlPortalPanelStyles(props)}
+    ${getCssAnchorPlacementStyles('viewport-edge')}
     overflow: hidden;
   `;
 }
@@ -194,7 +199,8 @@ function getComboboxPanelStyles(
  *
  * Генерация стилей:
  *  - `getComboboxPanelStyles` — сетка поиска и списка, хром портала через
- *    `getOpenControlPortalPanelStyles`
+ *    `getOpenControlPortalPanelStyles`, CSS-привязка к триггеру,
+ *    ограничение у края вьюпорта и запасные позиции `@position-try`
  */
 export const StyledComboboxPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => !COMBOBOX_BOX_PROP_NAMES.has(prop),

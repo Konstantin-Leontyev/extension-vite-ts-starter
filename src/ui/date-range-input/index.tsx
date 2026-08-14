@@ -65,7 +65,6 @@ import {
   type MonthView,
 } from './calendar-panel';
 import {
-  DateRangeInputPositionTryStyle,
   StyledDateRangeInputPanel,
   StyledDateRangeInputRoot,
   StyledDateRangeInputTriggerRow,
@@ -469,7 +468,6 @@ export function DateRangeInput({
       {...layoutProps}
       {...restProps}
     >
-      <DateRangeInputPositionTryStyle />
       <FieldLabel id={labelId}>{label}</FieldLabel>
       <StyledDateRangeInputTriggerRow
         data-has-clear={showClear ? '' : undefined}

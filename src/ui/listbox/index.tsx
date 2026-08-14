@@ -52,6 +52,7 @@ import { AnchoredPortal } from '@ui/anchored-portal';
 import { Checkbox } from '@ui/checkbox';
 import { FieldLabel } from '@ui/field-label';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
+import { OPEN_CONTROL_PANEL_MAX_OPTION_ROWS } from '@ui/open-control';
 import { Text } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
@@ -97,6 +98,12 @@ const DEFAULT_LISTBOX_PLACEHOLDER = 'Select…';
  * Используется, когда вызывающий код не передал проп `showClear`.
  */
 const DEFAULT_LISTBOX_SHOW_CLEAR = false;
+
+/**
+ * LISTBOX_DRUM_SHIFT_NONE — задаёт нулевой сдвиг барабана.
+ * Используется, когда текущей раскладки панели нет.
+ */
+const LISTBOX_DRUM_SHIFT_NONE = '0px';
 
 /**
  * ListboxOption — представляет опцию списка Listbox.
@@ -209,68 +216,93 @@ function formatMultipleTriggerLabel(
 }
 
 /**
- * resolveCircularAfterIndices — возвращает круговую очередь индексов после выбранного.
- * Порядок: next..end, затем 0..prev.
+ * resolveCircularAfterIndices — возвращает круговую очередь индексов после строки
+ * на линии триггера. Порядок: next..end, затем 0..prev.
  *
  * Как работает:
  * 1. Идёт шагами от 1 до `optionCount - 1`
- * 2. На каждом шаге кладёт индекс `(selectedIndex + step) % optionCount`
+ * 2. На каждом шаге кладёт индекс `(lineIndex + step) % optionCount`
  *
- * @param selectedIndex индекс выбранной опции
+ * @param lineIndex индекс строки на линии триггера
  * @param optionCount число опций
- * @returns индексы опций после выбранной по кругу
+ * @returns индексы опций после строки на линии триггера по кругу
  */
-function resolveCircularAfterIndices(
-  selectedIndex: number,
-  optionCount: number
-): number[] {
+function resolveCircularAfterIndices(lineIndex: number, optionCount: number): number[] {
   const afterIndices: number[] = [];
 
   for (let step = 1; step < optionCount; step += 1) {
-    afterIndices.push((selectedIndex + step) % optionCount);
+    afterIndices.push((lineIndex + step) % optionCount);
   }
 
   return afterIndices;
 }
 
 /**
- * splitPanelOptionIndices — делит опции вокруг выбранной строки на линии триггера.
- * Заполняет вниз сколько влезает, остаток уходит вверх, затем поджимает,
- * пока вся панель не уместится во вьюпорт.
+ * resolveDrumLineIndex — вычисляет индекс строки на линии триггера.
+ * Берёт выбранную опцию, иначе первую доступную.
+ *
+ * @param options опции списка
+ * @param selectedIndex индекс выбранной опции
+ * @returns индекс строки на линии триггера
+ */
+function resolveDrumLineIndex(
+  options: readonly ListboxOption[],
+  selectedIndex: number
+): number {
+  if (selectedIndex >= 0) {
+    return selectedIndex;
+  }
+
+  const firstAvailableIndex = options.findIndex((option) => !option.disabled);
+
+  return firstAvailableIndex >= 0 ? firstAvailableIndex : 0;
+}
+
+/**
+ * splitPanelOptionIndices — делит опции вокруг строки на линии триггера.
+ * Заполняет вниз сколько влезает в потолок, остаток видимого окна уходит вверх,
+ * хвост сверх потолка — ниже строки на линии; затем поджимает, пока видимая панель
+ * не уместится во вьюпорт.
  *
  * Как работает:
- * 1. Строит круговую очередь индексов после выбранной через `resolveCircularAfterIndices`
- * 2. Берёт вниз столько строк, сколько влезает по `rowsFitBelow`
- * 3. При известных `triggerTop` и `rowHeight` уменьшает число строк вниз, пока
- *    панель с учётом `PORTAL_VIEWPORT_EDGE_INSET` не поместится во вьюпорт
- * 4. Отдаёт индексы выше и ниже выбранной
+ * 1. Строит круговую очередь индексов после строки на линии через
+ *    `resolveCircularAfterIndices`
+ * 2. Ограничивает видимую высоту панели `OPEN_CONTROL_PANEL_MAX_OPTION_ROWS`
+ * 3. Берёт вниз столько строк, сколько влезает по `rowsFitBelow` и потолку
+ * 4. При известных `triggerTop` и `rowHeight` уменьшает число строк вниз, пока
+ *    видимая панель с учётом `PORTAL_VIEWPORT_EDGE_INSET` не поместится во вьюпорт
+ * 5. Строки выше — последние из остатка в пределах потолка; остальное уходит
+ *    в хвост ниже строки на линии
  *
- * @param selectedIndex индекс выбранной опции
+ * @param lineIndex индекс строки на линии триггера
  * @param optionCount число опций
  * @param rowsFitBelow сколько строк опций влезает ниже триггера
  * @param triggerTop верх триггера во вьюпорте
  * @param rowHeight высота строки опции
- * @returns индексы опций выше и ниже выбранной
+ * @returns индексы опций выше и ниже строки на линии триггера
  */
 function splitPanelOptionIndices(
-  selectedIndex: number,
+  lineIndex: number,
   optionCount: number,
   rowsFitBelow: number,
   triggerTop?: number,
   rowHeight?: number
 ): { aboveIndices: number[]; belowIndices: number[] } {
-  if (selectedIndex < 0 || optionCount === 0) {
+  if (lineIndex < 0 || optionCount === 0) {
     return { aboveIndices: [], belowIndices: [] };
   }
 
-  const circularAfter = resolveCircularAfterIndices(selectedIndex, optionCount);
-  let belowCount = Math.min(circularAfter.length, Math.max(0, rowsFitBelow));
+  const circularAfter = resolveCircularAfterIndices(lineIndex, optionCount);
+  const visibleRowCount = Math.min(optionCount, OPEN_CONTROL_PANEL_MAX_OPTION_ROWS);
+  const maxOtherRows = Math.max(0, visibleRowCount - 1);
+  let belowCount = Math.min(circularAfter.length, Math.max(0, rowsFitBelow), maxOtherRows);
 
   if (triggerTop !== undefined && rowHeight !== undefined && rowHeight > 0) {
     while (belowCount >= 0) {
-      const aboveCount = circularAfter.length - belowCount;
+      const remaining = circularAfter.length - belowCount;
+      const aboveCount = Math.min(remaining, maxOtherRows - belowCount);
       const panelTop = triggerTop - aboveCount * rowHeight;
-      const panelHeight = optionCount * rowHeight;
+      const panelHeight = visibleRowCount * rowHeight;
       const panelBottom = panelTop + panelHeight;
 
       if (
@@ -286,9 +318,16 @@ function splitPanelOptionIndices(
     belowCount = Math.max(0, belowCount);
   }
 
+  const remainingAfterBelow = circularAfter.slice(belowCount);
+  const aboveCount = Math.min(remainingAfterBelow.length, maxOtherRows - belowCount);
+  const overflowIndices = remainingAfterBelow.slice(
+    0,
+    remainingAfterBelow.length - aboveCount
+  );
+
   return {
-    aboveIndices: circularAfter.slice(belowCount),
-    belowIndices: circularAfter.slice(0, belowCount),
+    aboveIndices: remainingAfterBelow.slice(remainingAfterBelow.length - aboveCount),
+    belowIndices: [...circularAfter.slice(0, belowCount), ...overflowIndices],
   };
 }
 
@@ -296,13 +335,13 @@ function splitPanelOptionIndices(
  * countRowsFitBelow — возвращает число строк опций, влезающих ниже триггера.
  *
  * Как работает:
- * 1. Считает свободное место ниже выбранной строки с учётом
+ * 1. Считает свободное место ниже триггера с учётом
  *    `PORTAL_VIEWPORT_EDGE_INSET`
  * 2. Делит его на высоту строки и отдаёт целое число строк
  *
  * @param triggerTop верх триггера во вьюпорте
  * @param rowHeight высота строки опции
- * @returns целое число строк ниже выбранной
+ * @returns целое число строк ниже триггера
  */
 function countRowsFitBelow(triggerTop: number, rowHeight: number): number {
   const spaceBelowSelected = Math.max(
@@ -314,18 +353,20 @@ function countRowsFitBelow(triggerTop: number, rowHeight: number): number {
 }
 
 /**
- * PanelOrder — представляет раскладку индексов опций вокруг выбранной строки.
+ * PanelOrder — представляет раскладку индексов опций вокруг строки на линии триггера.
  *
- * @property aboveIndices — индексы опций выше выбранной
- * @property belowIndices — индексы опций ниже выбранной
+ * @property aboveIndices — индексы опций выше строки на линии триггера
+ * @property belowIndices — индексы опций ниже строки на линии триггера
+ * @property drumShift — сдвиг барабана относительно якоря
+ * @property lineIndex — индекс строки на линии триггера
  * @property optionCount — число опций на момент расчёта
- * @property selectedIndex — индекс выбранной опции
  */
 type PanelOrder = {
   aboveIndices: number[];
   belowIndices: number[];
+  drumShift: string;
+  lineIndex: number;
   optionCount: number;
-  selectedIndex: number;
 };
 
 /**
@@ -333,13 +374,13 @@ type PanelOrder = {
  *
  * Как работает:
  * 1. При `left === null` возвращает `false`
- * 2. Сравнивает `selectedIndex` и `optionCount`
+ * 2. Сравнивает `drumShift`, `lineIndex` и `optionCount`
  * 3. Сравнивает длины массивов индексов выше и ниже
  * 4. Поэлементно сравнивает оба массива индексов
  *
  * @param left предыдущая раскладка или `null`
  * @param right новая раскладка
- * @returns `true`, когда индексы и счётчики совпадают
+ * @returns `true`, когда индексы, сдвиг и счётчики совпадают
  */
 function panelOrdersEqual(left: null | PanelOrder, right: PanelOrder): boolean {
   if (left === null) {
@@ -347,7 +388,8 @@ function panelOrdersEqual(left: null | PanelOrder, right: PanelOrder): boolean {
   }
 
   if (
-    left.selectedIndex !== right.selectedIndex ||
+    left.drumShift !== right.drumShift ||
+    left.lineIndex !== right.lineIndex ||
     left.optionCount !== right.optionCount
   ) {
     return false;
@@ -368,40 +410,6 @@ function panelOrdersEqual(left: null | PanelOrder, right: PanelOrder): boolean {
       (optionIndex, position) => optionIndex === right.belowIndices[position]
     )
   );
-}
-
-/**
- * applyListboxPanelPosition — позиционирует панель относительно триггера по раскладке.
- *
- * Как работает:
- * 1. Без раскладки выходит — позиционировать нечего
- * 2. Берёт геометрию триггера для `inline-size`, `inset-inline-start` и высоты строки
- * 3. Считает `inset-block-start` панели как верх триггера минус число строк выше
- *    выбранной
- * 4. Выставляет `inset-inline-start`, `inline-size`, сбрасывает `scrollTop` и
- *    пишет `inset-block-start`
- *
- * @param trigger элемент-триггер
- * @param panel элемент панели
- * @param order текущая раскладка опций или `null`
- */
-function applyListboxPanelPosition(
-  trigger: HTMLElement,
-  panel: HTMLElement,
-  order: null | PanelOrder
-): void {
-  if (!order) {
-    return;
-  }
-
-  const triggerRect = trigger.getBoundingClientRect();
-  const rowHeight = triggerRect.height;
-  const panelTop = triggerRect.top - order.aboveIndices.length * rowHeight;
-
-  panel.style.insetInlineStart = `${triggerRect.left}px`;
-  panel.style.inlineSize = `${triggerRect.width}px`;
-  panel.scrollTop = 0;
-  panel.style.insetBlockStart = `${panelTop}px`;
 }
 
 /**
@@ -460,7 +468,6 @@ export function Listbox({
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const triggerRowRef = useRef<HTMLDivElement>(null);
-  const panelOrderRef = useRef<null | PanelOrder>(null);
   const listId = useId();
   const triggerId = useId();
   const { handleClose, handleToggle, isOpen, panelRef } =
@@ -474,6 +481,7 @@ export function Listbox({
   const selected = isControlled ? toSelectedValues(value, multiple) : internalSelected;
   const selectedValue = selected[0];
   const selectedIndex = options.findIndex((option) => option.value === selectedValue);
+  const lineIndex = resolveDrumLineIndex(options, selectedIndex);
   const optionsKey = options.map((option) => option.value).join('\0');
   const isClearVisible = showClear && selected.length > 0 && !disabled;
   const showChevron = !isClearVisible;
@@ -509,12 +517,10 @@ export function Listbox({
   );
 
   /**
-   * Пересчитывает порядок строк панели при открытии и смене выбора или опций.
+   * Пересчитывает порядок строк и сдвиг барабана при открытии и смене выбора или опций.
    */
   useLayoutEffect(() => {
     if (!isOpen) {
-      panelOrderRef.current = null;
-
       return;
     }
 
@@ -526,27 +532,39 @@ export function Listbox({
 
     const triggerRect = triggerElement.getBoundingClientRect();
     const rowHeight = triggerRect.height;
-    const rowsFitBelow =
-      selectedIndex >= 0
-        ? countRowsFitBelow(triggerRect.top, rowHeight)
-        : options.length;
+    const split = splitPanelOptionIndices(
+      lineIndex,
+      options.length,
+      countRowsFitBelow(triggerRect.top, rowHeight),
+      triggerRect.top,
+      rowHeight
+    );
     const nextOrder: PanelOrder = {
-      ...splitPanelOptionIndices(
-        selectedIndex,
-        options.length,
-        rowsFitBelow,
-        triggerRect.top,
-        rowHeight
-      ),
+      ...split,
+      drumShift: `${-split.aboveIndices.length * rowHeight}px`,
+      lineIndex,
       optionCount: options.length,
-      selectedIndex,
     };
 
-    panelOrderRef.current = nextOrder;
     setPanelOrder((current) =>
       panelOrdersEqual(current, nextOrder) ? current : nextOrder
     );
-  }, [isOpen, options.length, optionsKey, selectedIndex]);
+  }, [isOpen, lineIndex, options.length, optionsKey]);
+
+  /**
+   * Сбрасывает `scrollTop` панели при открытии, чтобы барабан стартовал с верха.
+   */
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const panel = panelRef.current;
+
+    if (panel !== null) {
+      panel.scrollTop = 0;
+    }
+  }, [isOpen, panelRef]);
 
   function commitSelected(next: string[]): void {
     if (!isControlled) {
@@ -605,17 +623,21 @@ export function Listbox({
     : (selectedOption?.label ?? null);
 
   const showCheckbox = multiple && inlineCheckbox;
-  const displayOrder =
+  const currentPanelOrder =
     isOpen &&
     panelOrder !== null &&
-    panelOrder.selectedIndex === selectedIndex &&
+    panelOrder.lineIndex === lineIndex &&
     panelOrder.optionCount === options.length
       ? panelOrder
-      : splitPanelOptionIndices(
-          selectedIndex,
-          options.length,
-          Math.max(0, options.length - 1)
-        );
+      : null;
+  const displayOrder =
+    currentPanelOrder ??
+    splitPanelOptionIndices(
+      lineIndex,
+      options.length,
+      Math.max(0, options.length - 1)
+    );
+  const drumShift = currentPanelOrder?.drumShift ?? LISTBOX_DRUM_SHIFT_NONE;
   const { aboveIndices, belowIndices } = displayOrder;
 
   function renderOption(option: ListboxOption): ReactNode {
@@ -672,14 +694,15 @@ export function Listbox({
     );
   }
 
+  const lineOption = options[lineIndex];
   const panelOptions =
-    selectedIndex >= 0
-      ? [
+    lineOption === undefined
+      ? []
+      : [
           ...aboveIndices.map((index) => renderOption(options[index])),
-          renderOption(options[selectedIndex]),
+          renderOption(lineOption),
           ...belowIndices.map((index) => renderOption(options[index])),
-        ]
-      : options.map((option) => renderOption(option));
+        ];
 
   return (
     <StyledListboxRoot
@@ -726,21 +749,17 @@ export function Listbox({
       </StyledListboxTriggerRow>
 
       <AnchoredPortal
+        anchorRef={triggerRowRef}
         dismissZoneRefs={[rootRef, panelRef]}
         open={isOpen}
         openFocusDeps={[panelOrder, selectedIndex]}
         panelRef={panelRef}
-        positionStrategy={{
-          anchorRef: triggerRowRef,
-          apply: (anchor, panel) =>
-            applyListboxPanelPosition(anchor, panel, panelOrderRef.current),
-          layoutDeps: [panelOrder],
-        }}
         returnFocusRef={triggerRef}
         onDismiss={handleClose}
         onOpenFocus={handleOpenFocus}
       >
         <StyledListboxPanel
+          $drumShift={drumShift}
           aria-multiselectable={multiple || undefined}
           id={listId}
           ref={panelRef}

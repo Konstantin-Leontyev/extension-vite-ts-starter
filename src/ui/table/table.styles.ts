@@ -22,7 +22,7 @@
 
 import styled from 'styled-components';
 
-import { getPortalPanelStyles } from '@ui/anchored-portal';
+import { getCssAnchorBindingStyles, getPortalPanelStyles } from '@ui/anchored-portal';
 import { getBorderStyles } from '@ui/border';
 import { checkboxSizePresets } from '@ui/checkbox';
 import { type LayoutProps } from '@ui/layout';
@@ -420,23 +420,37 @@ export const StyledTableRow = styled.tr.withConfig({
 `;
 
 /**
- * StyledTableRowPanel — задаёт панель add- и edit-режима компонента Table.
- * Базируется на `<div>` и принимает проп `$hasError`.
- *
- * Встроенные стили:
- *  - `overflow: hidden` — обрезает по скруглению. Стоит после `getPortalPanelStyles`,
- *    чтобы перекрыть `overflow: visible` сброса UA `[popover]`
- *
- * Генерация стилей:
- *  - `getPortalPanelStyles` — хром портальной панели; `outlineColor` зависит от `$hasError`
+ * TABLE_ROW_PANEL_PROP_NAMES — хранит имена пропсов стилизации панели строки таблицы.
  */
-export const StyledTableRowPanel = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== '$hasError',
-})<{ $hasError?: boolean }>`
-  ${(props) => {
-    const theme = getTheme(props);
+const TABLE_ROW_PANEL_PROP_NAMES = new Set<string>(['$anchorBlockEnd', '$hasError']);
 
-    return getPortalPanelStyles({
+/**
+ * getTableRowPanelStyles — возвращает CSS-правила для узла `StyledTableRowPanel`:
+ * хром портала через `getPortalPanelStyles`, CSS-привязку к якорю и смещение
+ * по блочной оси.
+ *
+ * Как работает:
+ * 1. Берёт тему и считает цвет обводки: при `$hasError` — `invalidOutline`,
+ *    иначе `focusOutline`
+ * 2. Подставляет хром панели через `getPortalPanelStyles`
+ * 3. Привязывает панель к якорю через `getCssAnchorBindingStyles`,
+ *    `anchor(start)` по строчной оси и `anchor-size(width)`
+ * 4. При `$anchorBlockEnd` ставит `inset-block-end: anchor(end)`, чтобы панель
+ *    футера росла вверх от нижнего края якоря. Иначе ставит
+ *    `inset-block-start: anchor(start)` и накладывает панель на верхний край
+ *    якоря шапки или скрытой строки редактора
+ *
+ * @param props флаги якоря, ошибки и тема
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getTableRowPanelStyles(props: {
+  $anchorBlockEnd?: boolean;
+  $hasError?: boolean;
+  theme: AppTheme;
+}): string {
+  const theme = getTheme(props);
+  const styles = [
+    getPortalPanelStyles({
       borderRadius: resolveBlockRadius(
         DEFAULT_SHAPE_PRESET,
         getMinBlockSize(DEFAULT_SIZE_PRESET)
@@ -445,8 +459,37 @@ export const StyledTableRowPanel = styled.div.withConfig({
         ? theme.colors.invalidOutline
         : theme.colors.focusOutline,
       theme,
-    });
-  }}
+    }),
+    getCssAnchorBindingStyles(),
+    'inset-inline-start: anchor(start);',
+    'inline-size: anchor-size(width);',
+  ];
+
+  if (props.$anchorBlockEnd) {
+    styles.push('inset-block-end: anchor(end);');
+  } else {
+    styles.push('inset-block-start: anchor(start);');
+  }
+
+  return styles.join('\n');
+}
+
+/**
+ * StyledTableRowPanel — задаёт панель add- и edit-режима компонента Table.
+ * Базируется на `<div>` и принимает пропы `$anchorBlockEnd` и `$hasError`.
+ *
+ * Встроенные стили:
+ *  - `overflow: hidden` — обрезает по скруглению. Стоит после `getTableRowPanelStyles`,
+ *    чтобы перекрыть `overflow: visible` сброса UA `[popover]`
+ *
+ * Генерация стилей:
+ *  - `getTableRowPanelStyles` — хром портальной панели, CSS-привязка к якорю
+ *    и цвет обводки по `$hasError`
+ */
+export const StyledTableRowPanel = styled.div.withConfig({
+  shouldForwardProp: (prop) => !TABLE_ROW_PANEL_PROP_NAMES.has(prop),
+})<{ $anchorBlockEnd?: boolean; $hasError?: boolean }>`
+  ${(props) => getTableRowPanelStyles(props)}
   overflow: hidden;
 `;
 
