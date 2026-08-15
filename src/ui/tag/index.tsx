@@ -21,7 +21,8 @@
  * Основные задачи:
  * 1. Экспортировать компонент Tag
  * 2. Типизировать пропсы через `TagProps`
- * 3. Реэкспортировать публичное API стилей: `TAG_SIZE_PRESET_KEYS`, `getTagTextSize`
+ * 3. Экспортировать тип `TagShowDotProps`
+ * 4. Реэкспортировать публичное API стилей: `TAG_SIZE_PRESET_KEYS`, `getTagTextSize`
  *    и тип `TagSizePreset`
  *
  * Потребители:
@@ -29,9 +30,9 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { type ComponentPropsWithRef } from 'react';
 
-import { Text, type TextSizePreset, type TextTone } from '@ui/text';
+import { Text, type ChildrenTextProps } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import {
@@ -44,24 +45,32 @@ import {
 } from './tag.styles';
 
 /**
- * TagProps — представляет пропсы компонента Tag.
+ * TagShowDotProps — представляет пропсы точки Tag.
+ * Поле `dotTone` допустимо, пока `showDot` не выключен: дефолт флага — точка есть.
  *
- * @property children — содержимое метки
  * @property dotTone — тон точки
  * @property showDot — включает точку-индикатор
- * @property textItalic — включает курсив текста
- * @property textSize — размер текста
- * @property textTone — тон текста
  */
-type TagProps = {
-  children?: ReactNode;
-  dotTone?: TonePreset;
-  showDot?: boolean;
-  textItalic?: boolean;
-  textSize?: TextSizePreset;
-  textTone?: TextTone;
-} & TagStyleProps &
-  Omit<ComponentPropsWithRef<'span'>, 'className' | 'style' | keyof TagStyleProps>;
+type TagShowDotProps =
+  | {
+      dotTone?: never;
+      showDot: false;
+    }
+  | {
+      dotTone?: TonePreset;
+      showDot?: true;
+    };
+
+/**
+ * TagProps — представляет пропсы компонента Tag.
+ */
+type TagProps = TagShowDotProps &
+  ChildrenTextProps &
+  TagStyleProps &
+  Omit<
+    ComponentPropsWithRef<'span'>,
+    'children' | 'className' | 'style' | keyof TagStyleProps
+  >;
 
 /**
  * DEFAULT_TAG_SHOW_DOT — задаёт показ точки-индикатора по умолчанию.
@@ -106,4 +115,9 @@ export function Tag({
 }
 
 /* eslint-disable react-refresh/only-export-components -- публичные типы, пресеты и мост размера текста */
-export { TAG_SIZE_PRESET_KEYS, getTagTextSize, type TagSizePreset };
+export {
+  TAG_SIZE_PRESET_KEYS,
+  getTagTextSize,
+  type TagShowDotProps,
+  type TagSizePreset,
+};

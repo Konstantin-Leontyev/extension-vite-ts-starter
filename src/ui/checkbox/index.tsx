@@ -30,9 +30,9 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { type ComponentPropsWithRef } from 'react';
 
-import { Text, type TextSizePreset, type TextTone } from '@ui/text';
+import { Text, type ChildrenTextProps, type TextTone } from '@ui/text';
 
 import {
   CHECKBOX_CHECKED_MARK_KEYS,
@@ -55,18 +55,10 @@ const DEFAULT_CHECKBOX_TEXT_TONE: TextTone = 'muted';
 
 /**
  * CheckboxProps — представляет пропсы компонента Checkbox.
- *
- * @property children — подпись справа от бокса
- * @property textItalic — включает курсив подписи
- * @property textSize — размер подписи
- * @property textTone — тон подписи
  */
-type CheckboxProps = CheckboxStyleProps & {
-  children?: ReactNode;
-  textItalic?: boolean;
-  textSize?: TextSizePreset;
-  textTone?: TextTone;
-} & Omit<
+type CheckboxProps = CheckboxStyleProps &
+  ChildrenTextProps &
+  Omit<
     ComponentPropsWithRef<'input'>,
     'children' | 'className' | 'style' | 'type' | keyof CheckboxStyleProps
   >;
@@ -122,7 +114,7 @@ function Checkbox({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт пресетов, перечней марок и моста размера текста */
+/* eslint-disable react-refresh/only-export-components -- реэкспорт пресетов, перечней марок, моста размера текста и публичного типа */
 export {
   CHECKBOX_CHECKED_MARK_KEYS,
   CHECKBOX_UNCHECKED_MARK_KEYS,

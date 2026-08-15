@@ -22,9 +22,9 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { type ComponentPropsWithRef } from 'react';
 
-import { Text, type TextSizePreset, type TextTone } from '@ui/text';
+import { Text, type ChildrenTextProps, type TextTone } from '@ui/text';
 
 import {
   StyledRadioButtonControl,
@@ -42,18 +42,10 @@ const DEFAULT_RADIO_BUTTON_TEXT_TONE: TextTone = 'muted';
 
 /**
  * RadioButtonProps — представляет пропсы компонента RadioButton.
- *
- * @property children — подпись справа от кружка
- * @property textItalic — включает курсив подписи
- * @property textSize — размер подписи
- * @property textTone — тон подписи
  */
-type RadioButtonProps = RadioButtonStyleProps & {
-  children?: ReactNode;
-  textItalic?: boolean;
-  textSize?: TextSizePreset;
-  textTone?: TextTone;
-} & Omit<
+type RadioButtonProps = RadioButtonStyleProps &
+  ChildrenTextProps &
+  Omit<
     ComponentPropsWithRef<'input'>,
     'children' | 'className' | 'style' | 'type' | keyof RadioButtonStyleProps
   >;

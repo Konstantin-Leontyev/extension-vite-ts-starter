@@ -25,9 +25,12 @@ import {
   TableMemberPrefix,
   TableNestedCell,
   computeTableColumnInlineSizes,
+  type TableAddRowActiveProps,
   type TableAddRowSource,
   type TableCellRenderContext,
   type TableColumn,
+  type TableEditRowActiveProps,
+  type TableEditableProps,
 } from '@ui/table';
 import { Text } from '@ui/text';
 
@@ -743,7 +746,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
 
   const tableProps = {
     columns,
-    // Ось numbered Table выключена: нумерация идёт через колонку indexLabel
+    // Проп numbered Table выключен: нумерация идёт через колонку indexLabel
     // по витринному ключу showIndexColumn.
     hoverHighlight: settings.hoverHighlight,
     numbered: false,
@@ -753,22 +756,32 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
     striped: settings.striped,
   };
 
-  const editableProps = settings.editable
+  const addRowActiveProps: TableAddRowActiveProps<CatalogTableRow> = isAddRowOpen
     ? {
-        addRowActive: isAddRowOpen,
+        addRowActive: true,
         addRowSource,
-        editable: true as const,
-        editRowActive: isEditRowOpen,
+        renderAddCell,
+      }
+    : {};
+  const editRowActiveProps: TableEditRowActiveProps = isEditRowOpen
+    ? {
+        editRowActive: true,
         editRowKey: editRowId,
-        onAddRow: handleAddRowRequest,
+      }
+    : {};
+  const editableProps: TableEditableProps<CatalogTableRow> = settings.editable
+    ? {
+        editable: true,
         onAddCancel: resetAddRow,
+        onAddRow: handleAddRowRequest,
         onEditCancel: resetEditRow,
         onEditRow: handleEditRowRequest,
-        renderAddCell,
         renderEditCell,
+        ...addRowActiveProps,
+        ...editRowActiveProps,
       }
     : {
-        editable: false as const,
+        editable: false,
       };
 
   if (!settings.checkable) {

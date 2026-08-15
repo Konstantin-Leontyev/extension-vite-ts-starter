@@ -28,6 +28,7 @@ import {
 } from 'react';
 
 import { assignRef } from '@ui/ref';
+import { type SpacingValue } from '@ui/spacing';
 
 import {
   DEFAULT_SCROLL_PORT_SHOW_VEIL,
@@ -47,11 +48,29 @@ import {
 const SCROLL_PORT_VEIL_EDGE_THRESHOLD_PX = 1;
 
 /**
+ * ScrollPortShowVeilProps — представляет пропсы вуали ScrollPort.
+ * Поле `veilInsetInline` допустимо, пока `showVeil` не выключен: дефолт флага — вуаль есть.
+ *
+ * @property showVeil — включает градиентные вуали на краях при прокрутке
+ * @property veilInsetInline — выступ вуали за inline-край
+ */
+type ScrollPortShowVeilProps =
+  | {
+      showVeil: false;
+      veilInsetInline?: never;
+    }
+  | {
+      showVeil?: true;
+      veilInsetInline?: SpacingValue;
+    };
+
+/**
  * ScrollPortProps — представляет пропсы компонента ScrollPort.
  *
  * @property children — прокручиваемое содержимое
  */
-type ScrollPortProps = ScrollPortStyleProps &
+type ScrollPortProps = Omit<ScrollPortStyleProps, 'showVeil' | 'veilInsetInline'> &
+  ScrollPortShowVeilProps &
   Omit<
     ComponentPropsWithRef<'div'>,
     'children' | 'className' | 'style' | keyof ScrollPortStyleProps

@@ -46,8 +46,9 @@
  * Основные задачи:
  * 1. Экспортировать компонент Table
  * 2. Типизировать пропсы через `TableProps`
- * 3. Экспортировать типы `TableAlign`, `TableAddRowSource`, `TableCellRenderContext`
- *    и `TableColumn`
+ * 3. Экспортировать типы `TableAlign`, `TableAddRowSource`, `TableAddRowActiveProps`,
+ *    `TableCellRenderContext`, `TableColumn`, `TableEditRowActiveProps` и
+ *    `TableEditableProps`
  * 4. Реэкспортировать утилиту `computeTableColumnInlineSizes`, тип `TableColumnSizeConfig`
  *    и дефолты осей
  * 5. Реэкспортировать сателлиты `TableCell`, `TableCellAlign`, `TableGroupCell`,
@@ -76,7 +77,12 @@ import { Icon } from '@ui/icon';
 import { ScrollPort } from '@ui/scroll-port';
 import { Text, type TextSizePreset } from '@ui/text';
 
-import { StyledTableCellLead, TableCell, type TableCellAlign } from './table-cell';
+import {
+  StyledTableCellLead,
+  TableCell,
+  type TableCellAlign,
+  type TableCellHeadProps,
+} from './table-cell';
 import {
   StyledTable,
   StyledTableBody,
@@ -204,7 +210,7 @@ const TABLE_ADD_ROW_ARIA_LABEL = 'Add row';
 const TABLE_EDIT_ROW_ARIA_LABEL = 'Edit row';
 
 /**
- * TABLE_SELECT_COLUMN_LABEL — задаёт visually-hidden подпись отдельной колонки выбора.
+ * TABLE_SELECT_COLUMN_LABEL — задаёт подпись отдельной колонки выбора для `.visually-hidden`.
  */
 const TABLE_SELECT_COLUMN_LABEL = 'Select';
 
@@ -229,56 +235,98 @@ const TABLE_SELECT_GROUP_ARIA_LABEL = 'Select group';
 const TABLE_CLEAR_GROUP_SELECTION_ARIA_LABEL = 'Clear group selection';
 
 /**
- * TableAddProps — представляет пропсы панели добавления строки Table.
+ * TableAddRowActiveProps — представляет пропсы активной панели добавления строки Table.
+ * Поля `addRowSource` и `renderAddCell` допустимы только вместе с `addRowActive`.
+ *
+ * @property addRowActive — включает режим панели добавления строки
+ * @property addRowSource — якорь панели: шапка или футер
+ * @property renderAddCell — рендер содержимого ячейки в панели добавления
+ */
+export type TableAddRowActiveProps<Row> =
+  | {
+      addRowActive: true;
+      addRowSource?: TableAddRowSource;
+      renderAddCell?: (
+        column: TableColumn<Row>,
+        context: TableCellRenderContext
+      ) => ReactNode;
+    }
+  | {
+      addRowActive?: false;
+      addRowSource?: never;
+      renderAddCell?: never;
+    };
+
+/**
+ * TableEditRowActiveProps — представляет пропсы активной панели правки строки Table.
+ * Поле `editRowKey` допустимо только вместе с `editRowActive`.
+ *
+ * @property editRowActive — включает режим панели редактирования строки
+ * @property editRowKey — ключ редактируемой строки
+ */
+export type TableEditRowActiveProps =
+  | {
+      editRowActive: true;
+      editRowKey?: string;
+    }
+  | {
+      editRowActive?: false;
+      editRowKey?: never;
+    };
+
+/**
+ * TableEditableProps — представляет пропсы режима редактирования Table.
+ * Поля панелей добавления и правки допустимы только вместе с `editable`.
  *
  * @property addError — текст ошибки панели добавления строки
  * @property addHint — текст подсказки в полоске ошибки панели добавления, пока нет
  *   `addError`
- * @property addRowActive — включает режим панели добавления строки
- * @property addRowSource — якорь панели: шапка или футер
- * @property onAddCancel — обработчик отмены добавления строки
- * @property onAddRow — обработчик запроса на добавление строки из шапки или футера.
- *   Без колбэка кнопка «+» видна, но недоступна. Активна только при `editable`
- * @property renderAddCell — рендер содержимого ячейки в панели добавления
- */
-type TableAddProps<Row> = {
-  addError?: string;
-  addHint?: string;
-  addRowActive?: boolean;
-  addRowSource?: TableAddRowSource;
-  onAddCancel?: () => void;
-  onAddRow?: (source: TableAddRowSource) => void;
-  renderAddCell?: (
-    column: TableColumn<Row>,
-    context: TableCellRenderContext
-  ) => ReactNode;
-};
-
-/**
- * TableEditProps — представляет пропсы панели редактирования строки Table.
- *
+ * @property editable — включает добавление и редактирование строк
  * @property editError — текст ошибки панели редактирования строки
  * @property editHint — текст подсказки в полоске ошибки панели редактирования, пока нет
  *   `editError`
- * @property editRowActive — включает режим панели редактирования строки
- * @property editRowKey — ключ редактируемой строки
+ * @property onAddCancel — обработчик отмены добавления строки
+ * @property onAddRow — обработчик запроса на добавление строки из шапки или футера.
+ *   Без колбэка кнопка «+» видна, но недоступна
  * @property onEditCancel — обработчик отмены редактирования строки
  * @property onEditRow — обработчик запроса на редактирование строки
  * @property renderEditCell — рендер содержимого ячейки в панели редактирования
  */
-type TableEditProps<Row> = {
-  editError?: string;
-  editHint?: string;
-  editRowActive?: boolean;
-  editRowKey?: string;
-  onEditCancel?: () => void;
-  onEditRow?: (row: Row) => void;
-  renderEditCell?: (
-    column: TableColumn<Row>,
-    row: Row,
-    context: TableCellRenderContext
-  ) => ReactNode;
-};
+export type TableEditableProps<Row> =
+  | {
+      addError?: never;
+      addHint?: never;
+      addRowActive?: never;
+      addRowSource?: never;
+      editable?: false;
+      editError?: never;
+      editHint?: never;
+      editRowActive?: never;
+      editRowKey?: never;
+      onAddCancel?: never;
+      onAddRow?: never;
+      onEditCancel?: never;
+      onEditRow?: never;
+      renderAddCell?: never;
+      renderEditCell?: never;
+    }
+  | ({
+      addError?: string;
+      addHint?: string;
+      editable: true;
+      editError?: string;
+      editHint?: string;
+      onAddCancel?: () => void;
+      onAddRow?: (source: TableAddRowSource) => void;
+      onEditCancel?: () => void;
+      onEditRow?: (row: Row) => void;
+      renderEditCell?: (
+        column: TableColumn<Row>,
+        row: Row,
+        context: TableCellRenderContext
+      ) => ReactNode;
+    } & TableAddRowActiveProps<Row> &
+      TableEditRowActiveProps);
 
 /**
  * TableSelectionProps — представляет пропсы выбора строк Table.
@@ -291,8 +339,8 @@ type TableEditProps<Row> = {
  * @property checkable — включает режим выбора строк
  * @property getRowGroupMemberKeys — ключи строк-членов группы для строки-заголовка.
  *   Для обычной строки возвращает `undefined`. Непустой набор включает групповой
- *   чекбокс у заголовка: отмечает и снимает все эти строки, включая свёрнутые;
- *   галка стоит, когда выбраны все
+ *   чекбокс у заголовка: отмечает и снимает все эти строки, включая свёрнутые.
+ *   Галка стоит, когда выбраны все
  * @property getRowKey — стабильный ключ строки
  * @property isRowSelectable — признак, можно ли выбрать строку
  * @property onSelectedKeysChange — обработчик изменения набора выбранных ключей
@@ -321,35 +369,26 @@ type TableSelectionProps<Row> = {
  * TableProps — представляет пропсы компонента Table.
  *
  * @property columns — описание колонок
- * @property editable — включает добавление и редактирование строк. Без `editable`
- *   таблица только выводит строки
  * @property numbered — включает колонку нумерации
  * @property rows — строки данных
  */
 type TableProps<Row> = {
   columns: TableColumn<Row>[];
-  editable?: boolean;
   numbered?: boolean;
   rows: Row[];
-} & TableAddProps<Row> &
-  TableEditProps<Row> &
+} & TableEditableProps<Row> &
   TableStyleProps &
   (
     | ({ checkable?: false } & Omit<
         ComponentPropsWithRef<'table'>,
-        | 'className'
-        | 'style'
-        | keyof TableAddProps<Row>
-        | keyof TableEditProps<Row>
-        | keyof TableStyleProps
+        'className' | 'style' | keyof TableEditableProps<Row> | keyof TableStyleProps
       >)
     | (TableSelectionProps<Row> &
         Omit<
           ComponentPropsWithRef<'table'>,
           | 'className'
           | 'style'
-          | keyof TableAddProps<Row>
-          | keyof TableEditProps<Row>
+          | keyof TableEditableProps<Row>
           | keyof TableSelectionProps<Row>
           | keyof TableStyleProps
         >)
@@ -668,7 +707,7 @@ export function Table<Row>(props: TableProps<Row>) {
     : () => false;
   const getRowGroupMemberKeys = checkable ? props.getRowGroupMemberKeys : undefined;
   // Универсум выбора: полный список ключей, включая скрытые в свёрнутых группах, если
-  // его передал вызывающий код; иначе только видимые выбираемые строки.
+  // его передал вызывающий код. Иначе только видимые выбираемые строки.
   const allSelectableKeys = checkable
     ? (props.allSelectableKeys ??
       rows.filter((row) => isRowSelectable(row)).map((row) => props.getRowKey(row)))
@@ -818,49 +857,42 @@ export function Table<Row>(props: TableProps<Row>) {
     head: boolean,
     addSource: TableAddRowSource,
     interactive: boolean
-  ): ReactNode => (
-    <>
-      {separateCheckboxColumn && (
-        <TableCell
-          head={head}
-          sizePreset={sizePreset}
-          textAlign="center"
-          {...(head ? { scope: 'col' as const } : {})}
-        >
-          <span className="visually-hidden">{TABLE_SELECT_COLUMN_LABEL}</span>
-        </TableCell>
-      )}
-      {resolvedNumbered && (
-        <TableCell
-          head={head}
-          sizePreset={sizePreset}
-          textAlign="end"
-          {...(head ? { scope: 'col' as const } : {})}
-        >
-          <Text sizePreset={textSize}>#</Text>
-        </TableCell>
-      )}
-      {columns.map((column) => (
-        <TableCell
-          ellipsis={column.ellipsis}
-          head={head}
-          key={column.key}
-          nowrap={column.nowrap}
-          sizePreset={sizePreset}
-          textAlign={column.headerAlign ?? column.align}
-          {...(head ? { scope: 'col' as const } : {})}
-        >
-          {checkable &&
-          rowCheckboxColumnKey !== undefined &&
-          column.key === rowCheckboxColumnKey ? (
-            renderKeywordColumnHeader(column, addSource, interactive)
-          ) : (
-            <Text sizePreset={textSize}>{column.header}</Text>
-          )}
-        </TableCell>
-      ))}
-    </>
-  );
+  ): ReactNode => {
+    const headProps: TableCellHeadProps = head ? { head: true, scope: 'col' } : {};
+
+    return (
+      <>
+        {separateCheckboxColumn && (
+          <TableCell sizePreset={sizePreset} textAlign="center" {...headProps}>
+            <span className="visually-hidden">{TABLE_SELECT_COLUMN_LABEL}</span>
+          </TableCell>
+        )}
+        {resolvedNumbered && (
+          <TableCell sizePreset={sizePreset} textAlign="end" {...headProps}>
+            <Text sizePreset={textSize}>#</Text>
+          </TableCell>
+        )}
+        {columns.map((column) => (
+          <TableCell
+            ellipsis={column.ellipsis}
+            key={column.key}
+            nowrap={column.nowrap}
+            sizePreset={sizePreset}
+            textAlign={column.headerAlign ?? column.align}
+            {...headProps}
+          >
+            {checkable &&
+            rowCheckboxColumnKey !== undefined &&
+            column.key === rowCheckboxColumnKey ? (
+              renderKeywordColumnHeader(column, addSource, interactive)
+            ) : (
+              <Text sizePreset={textSize}>{column.header}</Text>
+            )}
+          </TableCell>
+        ))}
+      </>
+    );
+  };
 
   const renderAddCells = (): ReactNode => (
     <>

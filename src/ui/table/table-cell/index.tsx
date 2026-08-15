@@ -13,7 +13,8 @@
  * Основные задачи:
  * 1. Экспортировать компонент TableCell
  * 2. Типизировать пропсы через `TableCellProps`
- * 3. Реэкспортировать `StyledTableCellLead` и тип `TableCellAlign`
+ * 3. Экспортировать тип `TableCellHeadProps`
+ * 4. Реэкспортировать `StyledTableCellLead` и тип `TableCellAlign`
  *
  * Потребители:
  *  - `src/ui/table/index.tsx` — рендерит ячейки Table
@@ -25,15 +26,28 @@ import { type ComponentPropsWithRef } from 'react';
 import { StyledTableCell, type TableCellStyleProps } from './table-cell.styles';
 
 /**
- * TableCellProps — представляет пропсы компонента TableCell.
+ * TableCellHeadProps — представляет пропсы заголовочной ячейки TableCell.
+ * Поле `scope` допустимо только вместе с `head`.
  *
  * @property head — включает ячейку шапки или подвала: корневой тег становится `<th>`
  * @property scope — область заголовка для ячейки шапки
  */
-type TableCellProps = TableCellStyleProps & {
-  head?: boolean;
-  scope?: 'col' | 'colgroup' | 'row' | 'rowgroup';
-} & Omit<
+type TableCellHeadProps =
+  | {
+      head: true;
+      scope?: 'col' | 'colgroup' | 'row' | 'rowgroup';
+    }
+  | {
+      head?: false;
+      scope?: never;
+    };
+
+/**
+ * TableCellProps — представляет пропсы компонента TableCell.
+ */
+type TableCellProps = TableCellStyleProps &
+  TableCellHeadProps &
+  Omit<
     ComponentPropsWithRef<'td'>,
     'className' | 'scope' | 'style' | keyof TableCellStyleProps
   >;
@@ -54,3 +68,4 @@ export function TableCell({ head, ...props }: TableCellProps) {
 }
 
 export { StyledTableCellLead, type TableCellAlign } from './table-cell.styles';
+export type { TableCellHeadProps };

@@ -32,7 +32,11 @@ import { Input } from '@ui/input';
 import { Listbox, type ListboxMultipleProps } from '@ui/listbox';
 import { Modal } from '@ui/modal';
 import { DEFAULT_SHAPE_PRESET, DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
-import { ProgressBar, getProgressBarTextSize } from '@ui/progress-bar';
+import {
+  ProgressBar,
+  getProgressBarTextSize,
+  type ProgressBarShowTextProps,
+} from '@ui/progress-bar';
 import { RadioButton, getRadioButtonTextSize } from '@ui/radio-button';
 import {
   DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
@@ -53,8 +57,8 @@ import {
   DEFAULT_TABLE_SIZE_PRESET,
   DEFAULT_TABLE_STRIPED,
 } from '@ui/table';
-import { Tag, getTagTextSize } from '@ui/tag';
-import { Text } from '@ui/text';
+import { Tag, getTagTextSize, type TagShowDotProps } from '@ui/tag';
+import { Text, type ChildrenTextProps } from '@ui/text';
 import { Toast, getToastTextSize } from '@ui/toast';
 import { DEFAULT_TONE } from '@ui/tones';
 import { Toolbar } from '@ui/toolbar';
@@ -1435,6 +1439,60 @@ export function ShowcasePage() {
           iconPosition: segmentButton.rightIconPosition,
         }
       : {};
+  const tagShowDotProps: TagShowDotProps = tag.showDot
+    ? {
+        showDot: true,
+        dotTone: tag.dotTone,
+      }
+    : { showDot: false };
+  const tagTextProps: ChildrenTextProps = tag.showText
+    ? {
+        children: tag.text,
+        textItalic: tag.textItalic,
+        textSize: tag.textSize,
+        textTone: tag.textTone,
+      }
+    : {};
+  const checkboxTextProps: ChildrenTextProps = checkbox.showText
+    ? {
+        children: checkbox.text,
+        textItalic: checkbox.textItalic,
+        textSize: checkbox.textSize,
+        textTone: checkbox.textTone,
+      }
+    : {};
+  const radioButtonATextProps: ChildrenTextProps = radioButton.showText
+    ? {
+        children: radioButton.textA,
+        textItalic: radioButton.textItalic,
+        textSize: radioButton.textSize,
+        textTone: radioButton.textTone,
+      }
+    : {};
+  const radioButtonBTextProps: ChildrenTextProps = radioButton.showText
+    ? {
+        children: radioButton.textB,
+        textItalic: radioButton.textItalic,
+        textSize: radioButton.textSize,
+        textTone: radioButton.textTone,
+      }
+    : {};
+  const progressBarShowTextProps: ProgressBarShowTextProps = progress.showText
+    ? {
+        showText: true,
+        textItalic: progress.textItalic,
+        textSize: progress.textSize,
+        textTone: progress.textTone,
+      }
+    : { showText: false };
+  const switchTextProps: ChildrenTextProps = switchState.showText
+    ? {
+        children: switchState.text,
+        textItalic: switchState.textItalic,
+        textSize: switchState.textSize,
+        textTone: switchState.textTone,
+      }
+    : {};
 
   return (
     <StyledMain>
@@ -1571,8 +1629,8 @@ export function ShowcasePage() {
                   borderTone={searchField.borderTone}
                   clearShape={searchField.clearShape}
                   disabled={searchField.disabled}
-                  iconFill={searchField.showIcon ? searchField.iconFill : undefined}
-                  iconTone={searchField.showIcon ? searchField.iconTone : undefined}
+                  iconFill={searchField.iconFill}
+                  iconTone={searchField.iconTone}
                   label={searchField.label || undefined}
                   placeholder={searchField.placeholder}
                   shape={searchField.shape}
@@ -1788,21 +1846,16 @@ export function ShowcasePage() {
                 TAG_WIDGET_TITLE_ID,
                 <Tag
                   borderTone={tag.borderTone}
-                  dotTone={tag.dotTone}
                   placeSelf="center"
                   shape={tag.shape}
                   showBorder={tag.showBorder}
-                  showDot={tag.showDot}
                   showShadow={tag.showShadow}
                   sizePreset={tag.sizePreset}
-                  textItalic={tag.textItalic}
-                  textSize={tag.textSize}
-                  textTone={tag.textTone}
                   tinted={tag.tinted}
                   tone={tag.tone}
-                >
-                  {tag.showText && tag.text}
-                </Tag>
+                  {...tagShowDotProps}
+                  {...tagTextProps}
+                />
               )}
 
               {renderWidgetCard(
@@ -1815,14 +1868,10 @@ export function ShowcasePage() {
                   inverted={checkbox.inverted}
                   placeSelf="center"
                   sizePreset={checkbox.sizePreset}
-                  textItalic={checkbox.textItalic}
-                  textSize={checkbox.textSize}
-                  textTone={checkbox.textTone}
                   uncheckedMark={checkbox.uncheckedMark}
                   onChange={(event) => updateCheckbox('checked', event.target.checked)}
-                >
-                  {checkbox.showText && checkbox.text}
-                </Checkbox>
+                  {...checkboxTextProps}
+                />
               )}
 
               {renderWidgetCard(
@@ -1834,27 +1883,19 @@ export function ShowcasePage() {
                     disabled={radioButton.disabledA}
                     name={RADIO_BUTTON_DEMO_NAME}
                     sizePreset={radioButton.sizePreset}
-                    textItalic={radioButton.textItalic}
-                    textSize={radioButton.textSize}
-                    textTone={radioButton.textTone}
                     value="a"
                     onChange={() => updateRadioButton('selected', 'a')}
-                  >
-                    {radioButton.showText && radioButton.textA}
-                  </RadioButton>
+                    {...radioButtonATextProps}
+                  />
                   <RadioButton
                     checked={radioButton.selected === 'b'}
                     disabled={radioButton.disabledB}
                     name={RADIO_BUTTON_DEMO_NAME}
                     sizePreset={radioButton.sizePreset}
-                    textItalic={radioButton.textItalic}
-                    textSize={radioButton.textSize}
-                    textTone={radioButton.textTone}
                     value="b"
                     onChange={() => updateRadioButton('selected', 'b')}
-                  >
-                    {radioButton.showText && radioButton.textB}
-                  </RadioButton>
+                    {...radioButtonBTextProps}
+                  />
                 </StyledRadioButtonDemo>
               )}
 
@@ -1895,13 +1936,10 @@ export function ShowcasePage() {
                 PROGRESS_WIDGET_TITLE_ID,
                 <ProgressBar
                   aria-labelledby={PROGRESS_WIDGET_TITLE_ID}
-                  showText={progress.showText}
                   sizePreset={progress.sizePreset}
-                  textItalic={progress.textItalic}
-                  textSize={progress.textSize}
-                  textTone={progress.textTone}
                   tone={progress.tone}
                   value={progress.value}
+                  {...progressBarShowTextProps}
                 />
               )}
 
@@ -1954,14 +1992,10 @@ export function ShowcasePage() {
                   disabled={switchState.disabled}
                   placeSelf="center"
                   sizePreset={switchState.sizePreset}
-                  textItalic={switchState.textItalic}
-                  textSize={switchState.textSize}
-                  textTone={switchState.textTone}
                   tone={switchState.tone}
                   onChange={(event) => updateSwitch('checked', event.target.checked)}
-                >
-                  {switchState.showText && switchState.text}
-                </Switch>
+                  {...switchTextProps}
+                />
               )}
 
               {renderWidgetCard(

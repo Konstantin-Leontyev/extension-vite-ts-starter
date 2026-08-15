@@ -19,7 +19,8 @@
  * Основные задачи:
  * 1. Экспортировать полиморфный компонент Text
  * 2. Типизировать пропсы через `TextProps`
- * 3. Реэкспортировать публичное API стилей: `TEXT_ALIGN_PRESET_KEYS`, `TEXT_SIZE_PRESET_KEYS`,
+ * 3. Экспортировать тип `ChildrenTextProps`
+ * 4. Реэкспортировать публичное API стилей: `TEXT_ALIGN_PRESET_KEYS`, `TEXT_SIZE_PRESET_KEYS`,
  *    `TEXT_TONE_KEYS`, `textSizePresets`, `getEllipsisStyles`, `getTextLineHeight`,
  *    `getTextProperties`, `getTextToneColor` и типы
  *
@@ -30,7 +31,12 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { createElement, type ComponentPropsWithRef, type ElementType } from 'react';
+import {
+  createElement,
+  type ComponentPropsWithRef,
+  type ElementType,
+  type ReactNode,
+} from 'react';
 
 import {
   StyledText,
@@ -47,6 +53,31 @@ import {
   type TextStyleProps,
   type TextTone,
 } from './text.styles';
+
+/**
+ * ChildrenTextProps — представляет пропсы содержимого и текста.
+ * Поля текста допустимы только вместе с `children`.
+ * Подключается локально через `& ChildrenTextProps` у потребителей
+ * с опциональным содержимым.
+ *
+ * @property children — содержимое
+ * @property textItalic — включает курсив текста
+ * @property textSize — размер текста
+ * @property textTone — тон текста
+ */
+type ChildrenTextProps =
+  | {
+      children: ReactNode;
+      textItalic?: boolean;
+      textSize?: TextSizePreset;
+      textTone?: TextTone;
+    }
+  | {
+      children?: never;
+      textItalic?: never;
+      textSize?: never;
+      textTone?: never;
+    };
 
 /**
  * TextProps — представляет пропсы компонента Text.
@@ -85,6 +116,7 @@ export {
   getTextProperties,
   getTextToneColor,
   textSizePresets,
+  type ChildrenTextProps,
   type TextAlignPreset,
   type TextSizePreset,
   type TextTone,

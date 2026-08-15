@@ -16,8 +16,9 @@
  * Основные задачи:
  * 1. Экспортировать компонент ProgressBar
  * 2. Типизировать пропсы через `ProgressBarProps`
- * 3. Выставлять `role="progressbar"` и `aria-valuenow` для скринридеров
- * 4. Реэкспортировать мост размера текста `getProgressBarTextSize`
+ * 3. Экспортировать тип `ProgressBarShowTextProps`
+ * 4. Выставлять `role="progressbar"` и `aria-valuenow` для скринридеров
+ * 5. Реэкспортировать мост размера текста `getProgressBarTextSize`
  *
  * Потребители:
  *  - страницы и виджеты приложения — показывают ход выполнения операций
@@ -50,19 +51,34 @@ const DEFAULT_PROGRESS_BAR_SHOW_TEXT = true;
 const DEFAULT_PROGRESS_BAR_TEXT_TONE: TextTone = 'muted';
 
 /**
- * ProgressBarProps — представляет пропсы компонента ProgressBar.
+ * ProgressBarShowTextProps — представляет пропсы подписи ProgressBar.
+ * Поля подписи допустимы, пока `showText` не выключен: дефолт флага — подпись есть.
  *
  * @property showText — включает подпись с процентом выполнения рядом с полосой
  * @property textItalic — включает курсив подписи
  * @property textSize — размер подписи
  * @property textTone — тон подписи
  */
-type ProgressBarProps = ProgressBarStyleProps & {
-  showText?: boolean;
-  textItalic?: boolean;
-  textSize?: TextSizePreset;
-  textTone?: TextTone;
-} & Omit<
+type ProgressBarShowTextProps =
+  | {
+      showText: false;
+      textItalic?: never;
+      textSize?: never;
+      textTone?: never;
+    }
+  | {
+      showText?: true;
+      textItalic?: boolean;
+      textSize?: TextSizePreset;
+      textTone?: TextTone;
+    };
+
+/**
+ * ProgressBarProps — представляет пропсы компонента ProgressBar.
+ */
+type ProgressBarProps = ProgressBarStyleProps &
+  ProgressBarShowTextProps &
+  Omit<
     ComponentPropsWithRef<'div'>,
     'className' | 'style' | keyof ProgressBarStyleProps
   >;
@@ -117,5 +133,5 @@ function ProgressBar({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
-export { ProgressBar, getProgressBarTextSize };
+/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста и публичного типа */
+export { ProgressBar, getProgressBarTextSize, type ProgressBarShowTextProps };

@@ -23,9 +23,9 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { type ComponentPropsWithRef } from 'react';
 
-import { Text, type TextSizePreset, type TextTone } from '@ui/text';
+import { Text, type ChildrenTextProps, type TextTone } from '@ui/text';
 
 import {
   StyledSwitchRoot,
@@ -43,18 +43,10 @@ const DEFAULT_SWITCH_TEXT_TONE: TextTone = 'muted';
 
 /**
  * SwitchProps — представляет пропсы компонента Switch.
- *
- * @property children — подпись справа от дорожки
- * @property textItalic — включает курсив подписи
- * @property textSize — размер подписи
- * @property textTone — тон подписи
  */
-type SwitchProps = SwitchStyleProps & {
-  children?: ReactNode;
-  textItalic?: boolean;
-  textSize?: TextSizePreset;
-  textTone?: TextTone;
-} & Omit<
+type SwitchProps = SwitchStyleProps &
+  ChildrenTextProps &
+  Omit<
     ComponentPropsWithRef<'input'>,
     'children' | 'className' | 'style' | 'type' | keyof SwitchStyleProps
   >;
