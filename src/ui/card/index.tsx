@@ -27,15 +27,19 @@
  * 1. Экспортировать полиморфный компонент Card
  * 2. Типизировать пропсы через `CardProps`
  * 3. Реэкспортировать публичное API стилей: `CARD_HEADER_ACTION_SIZE_PRESET`
+ * 4. Экспортировать типы `CardTitleProps` и `CardSubtitleProps`
  *
  * Потребители:
- *  - страницы и виджеты приложения — показывают карточки с шапкой и действиями
+ *  - `src/ui/modal/index.tsx` — собирает модальный диалог на Card
+ *  - `src/ui/sidebar/index.tsx` — собирает выезжающую панель на Card
+ *  - страницы и виджеты приложения, например ProfileMenu — показывают карточки с шапкой и действиями
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import {
   createElement,
   type CSSProperties,
+  type ComponentProps,
   type ComponentPropsWithRef,
   type ReactNode,
 } from 'react';
@@ -78,6 +82,55 @@ const DEFAULT_CARD_SUBTITLE_TONE: TextTone = 'muted';
 const DEFAULT_CARD_HEADER_ACTIONS: IconButtonRowAction[] = [];
 
 /**
+ * CardTitleProps — представляет пропсы заголовка Card.
+ * Поля заголовка допустимы только вместе с `title`.
+ *
+ * @property title — заголовок
+ * @property titleAlign — выравнивание заголовка
+ * @property titleId — id заголовка для `aria-labelledby`
+ * @property titleSizePreset — размер заголовка
+ * @property titleTone — тон заголовка
+ */
+type CardTitleProps =
+  | {
+      title: string;
+      titleAlign?: CSSProperties['textAlign'];
+      titleId?: string;
+      titleSizePreset?: TextSizePreset;
+      titleTone?: TextTone;
+    }
+  | {
+      title?: never;
+      titleAlign?: never;
+      titleId?: never;
+      titleSizePreset?: never;
+      titleTone?: never;
+    };
+
+/**
+ * CardSubtitleProps — представляет пропсы подзаголовка Card.
+ * Поля подзаголовка допустимы только вместе с `subtitle`.
+ *
+ * @property subtitle — подзаголовок под заголовком
+ * @property subtitleAlign — выравнивание подзаголовка
+ * @property subtitleSizePreset — размер подзаголовка
+ * @property subtitleTone — тон подзаголовка
+ */
+type CardSubtitleProps =
+  | {
+      subtitle: string;
+      subtitleAlign?: CSSProperties['textAlign'];
+      subtitleSizePreset?: TextSizePreset;
+      subtitleTone?: TextTone;
+    }
+  | {
+      subtitle?: never;
+      subtitleAlign?: never;
+      subtitleSizePreset?: never;
+      subtitleTone?: never;
+    };
+
+/**
  * CardProps — представляет пропсы компонента Card.
  *
  * @template T тип корневого элемента, по умолчанию `div`
@@ -86,31 +139,15 @@ const DEFAULT_CARD_HEADER_ACTIONS: IconButtonRowAction[] = [];
  * @property as — переопределяет корневой HTML-тег, например `<article>`, `<section>`
  * @property children — содержимое тела карточки
  * @property headerActions — ряд действий в правом верхнем углу
- * @property subtitle — подзаголовок под заголовком
- * @property subtitleAlign — выравнивание подзаголовка
- * @property subtitleSizePreset — размер подзаголовка
- * @property subtitleTone — тон подзаголовка
- * @property title — заголовок
- * @property titleAlign — выравнивание заголовка
- * @property titleId — id заголовка для `aria-labelledby`
- * @property titleSizePreset — размер заголовка
- * @property titleTone — тон заголовка
  */
 type CardProps<T extends CardHtmlTag = 'div'> = {
   actionShape?: IconShapePreset;
   as?: T;
   children?: ReactNode;
   headerActions?: IconButtonRowAction[];
-  subtitle?: string;
-  subtitleAlign?: CSSProperties['textAlign'];
-  subtitleSizePreset?: TextSizePreset;
-  subtitleTone?: TextTone;
-  title?: string;
-  titleAlign?: CSSProperties['textAlign'];
-  titleId?: string;
-  titleSizePreset?: TextSizePreset;
-  titleTone?: TextTone;
-} & Omit<CardStyleProps, 'hasHeader'> &
+} & CardTitleProps &
+  CardSubtitleProps &
+  Omit<CardStyleProps, 'hasHeader'> &
   Omit<ComponentPropsWithRef<T>, 'className' | 'style' | 'title' | keyof CardStyleProps>;
 
 /**
@@ -172,7 +209,7 @@ function Card<T extends CardHtmlTag = 'div'>({
 
   return createElement(
     StyledCard,
-    { as, hasHeader, ...rest },
+    { as, hasHeader, ...rest } as ComponentProps<typeof StyledCard>,
     <IconButtonRow
       actions={headerActions}
       insetBlockStart={CARD_PADDING}
@@ -187,4 +224,9 @@ function Card<T extends CardHtmlTag = 'div'>({
   );
 }
 
-export { CARD_HEADER_ACTION_SIZE_PRESET, Card };
+export {
+  CARD_HEADER_ACTION_SIZE_PRESET,
+  Card,
+  type CardSubtitleProps,
+  type CardTitleProps,
+};

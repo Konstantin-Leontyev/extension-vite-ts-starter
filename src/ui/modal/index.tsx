@@ -21,6 +21,8 @@
  *  - видимость через проп `open`
  *  - закрытие через проп `onClose`
  *  - доступное имя кнопки закрытия через проп `closeAriaLabel`
+ *  - форму окна действия шапки через проп `actionShape`. Без `actionShape`
+ *    форма остаётся дефолтом ряда
  *  - переопределение корневого элемента Card через проп `as`
  *
  * Основные задачи:
@@ -35,7 +37,7 @@
 import { useEffect, useId, useRef, type ComponentProps, type ReactNode } from 'react';
 
 import { CloseIcon } from '@icons';
-import { Card } from '@ui/card';
+import { Card, type CardSubtitleProps, type CardTitleProps } from '@ui/card';
 import { type SpacingValue } from '@ui/spacing';
 
 import { StyledModalDialog } from './modal.styles';
@@ -62,7 +64,12 @@ const DEFAULT_MODAL_SHOW_BORDER = false;
 /**
  * CardForwardProps — представляет пропсы Card без `children` и `headerActions`.
  */
-type CardForwardProps = Omit<ComponentProps<typeof Card>, 'children' | 'headerActions'>;
+type CardForwardProps = Omit<
+  ComponentProps<typeof Card>,
+  'children' | 'headerActions' | keyof CardSubtitleProps | keyof CardTitleProps
+> &
+  CardSubtitleProps &
+  CardTitleProps;
 
 /**
  * ModalProps — представляет пропсы компонента Modal.
@@ -93,13 +100,12 @@ function Modal({
   onClose,
   open,
   showBorder = DEFAULT_MODAL_SHOW_BORDER,
-  title,
-  titleId: titleIdProp,
-  ...rest
+  ...cardForward
 }: ModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const generatedTitleId = useId();
-  const titleId = title ? (titleIdProp ?? generatedTitleId) : undefined;
+  const cardProps = cardForward as CardForwardProps;
+  const titleId = cardProps.title ? (cardProps.titleId ?? generatedTitleId) : undefined;
 
   /**
    * Синхронизирует видимость с пропом `open` через `showModal` и `close`.
@@ -134,24 +140,31 @@ function Modal({
     dialogRef.current?.close();
   }
 
+  const headerActions = [
+    {
+      ariaLabel: closeAriaLabel,
+      icon: <CloseIcon />,
+      iconPadding: MODAL_CLOSE_ICON_PADDING,
+      onClick: handleCloseClick,
+    },
+  ];
+
   return (
     <StyledModalDialog aria-labelledby={titleId} ref={dialogRef} onClose={onClose}>
-      <Card
-        headerActions={[
-          {
-            ariaLabel: closeAriaLabel,
-            icon: <CloseIcon />,
-            iconPadding: MODAL_CLOSE_ICON_PADDING,
-            onClick: handleCloseClick,
-          },
-        ]}
-        showBorder={showBorder}
-        title={title}
-        titleId={titleId}
-        {...rest}
-      >
-        {children}
-      </Card>
+      {(cardProps.title && (
+        <Card
+          headerActions={headerActions}
+          showBorder={showBorder}
+          {...cardProps}
+          titleId={titleId}
+        >
+          {children}
+        </Card>
+      )) || (
+        <Card headerActions={headerActions} showBorder={showBorder} {...cardProps}>
+          {children}
+        </Card>
+      )}
     </StyledModalDialog>
   );
 }

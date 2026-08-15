@@ -17,7 +17,12 @@ import { useShellOutletContext } from '@components/router';
 import { useToast } from '@hooks/use-toast';
 import { SettingsIcon } from '@icons';
 import { Button, getButtonTextSize } from '@ui/button';
-import { CARD_HEADER_ACTION_SIZE_PRESET, Card } from '@ui/card';
+import {
+  CARD_HEADER_ACTION_SIZE_PRESET,
+  Card,
+  type CardSubtitleProps,
+  type CardTitleProps,
+} from '@ui/card';
 import { Checkbox, getCheckboxTextSize } from '@ui/checkbox';
 import { Combobox } from '@ui/combobox';
 import { DateRangeInput, todayUtc } from '@ui/date-range-input';
@@ -1349,6 +1354,40 @@ export function ShowcasePage() {
     return card;
   }
 
+  const modalTitleProps: CardTitleProps = modal.showTitle
+    ? {
+        title: modal.title,
+        titleAlign: modal.titleAlign,
+        titleSizePreset: modal.titleSizePreset,
+        titleTone: modal.titleTone,
+      }
+    : {};
+  const modalSubtitleProps: CardSubtitleProps = modal.showSubtitle
+    ? {
+        subtitle: modal.subtitle,
+        subtitleAlign: modal.subtitleAlign,
+        subtitleSizePreset: modal.subtitleSizePreset,
+        subtitleTone: modal.subtitleTone,
+      }
+    : {};
+  const cardTitleProps: CardTitleProps = card.showTitle
+    ? {
+        title: card.title,
+        titleAlign: card.titleAlign,
+        titleSizePreset: card.titleSizePreset,
+        titleTone: card.titleTone,
+      }
+    : {};
+  const cardSubtitleProps: CardSubtitleProps = card.showSubtitle
+    ? {
+        subtitle: card.subtitle,
+        subtitleAlign: card.subtitleAlign,
+        subtitleSizePreset: card.subtitleSizePreset,
+        subtitleTone: card.subtitleTone,
+      }
+    : {};
+  const sidebarTitleProps: CardTitleProps = panelTitle ? { title: panelTitle } : {};
+
   return (
     <StyledMain>
       <Sidebar
@@ -1362,8 +1401,8 @@ export function ShowcasePage() {
               renderSettingsPanel()}
           </ScrollPort>
         }
-        title={panelTitle}
         onClose={closePanel}
+        {...sidebarTitleProps}
       >
         {/* Высота 100% от зоны контента Sidebar: definite-высота от max-block-size
             StyledMain. Скролл остаётся внутри ScrollPort карточки, а не на зоне.
@@ -1394,15 +1433,9 @@ export function ShowcasePage() {
                     background={modal.background}
                     inlineSize={MODAL_INLINE_SIZE[modal.sizePreset]}
                     open={isModalOpen}
-                    subtitle={modal.showSubtitle ? modal.subtitle : undefined}
-                    subtitleAlign={modal.subtitleAlign}
-                    subtitleSizePreset={modal.subtitleSizePreset}
-                    subtitleTone={modal.subtitleTone}
-                    title={modal.showTitle ? modal.title : undefined}
-                    titleAlign={modal.titleAlign}
-                    titleSizePreset={modal.titleSizePreset}
-                    titleTone={modal.titleTone}
                     onClose={() => setIsModalOpen(false)}
+                    {...modalTitleProps}
+                    {...modalSubtitleProps}
                   >
                     {DEMO_MODAL_BODY_TEXT}
                   </Modal>
@@ -1419,14 +1452,8 @@ export function ShowcasePage() {
                   headerActions={card.headerActions.map(resolveIconButtonRowAction)}
                   showBorder={card.showBorder}
                   showShadow={card.showShadow}
-                  subtitle={card.showSubtitle ? card.subtitle : undefined}
-                  subtitleAlign={card.subtitleAlign}
-                  subtitleSizePreset={card.subtitleSizePreset}
-                  subtitleTone={card.subtitleTone}
-                  title={card.showTitle ? card.title : undefined}
-                  titleAlign={card.titleAlign}
-                  titleSizePreset={card.titleSizePreset}
-                  titleTone={card.titleTone}
+                  {...cardTitleProps}
+                  {...cardSubtitleProps}
                 />
               )}
 
