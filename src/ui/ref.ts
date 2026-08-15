@@ -10,6 +10,7 @@
  *    и первый доступный день
  *  - `src/ui/search-field/index.tsx` — пишет проп `ref` вызывающего кода на поле ввода
  *  - `src/ui/scroll-port/index.tsx` — пишет проп `ref` вызывающего кода на вьюпорт прокрутки
+ *  - `src/ui/stepper/index.tsx` — пишет проп `ref` вызывающего кода на поле ввода
  */
 
 import { type Ref } from 'react';

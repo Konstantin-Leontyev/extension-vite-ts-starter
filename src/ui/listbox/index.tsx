@@ -53,7 +53,12 @@ import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { Checkbox } from '@ui/checkbox';
 import { FieldLabel } from '@ui/field-label';
-import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
+import {
+  DEFAULT_ICON_POSITION,
+  Icon,
+  resolveIconShape,
+  type IconPosition,
+} from '@ui/icon';
 import {
   OPEN_CONTROL_PANEL_MAX_OPTION_ROWS,
   getOpenControlTextSize,
@@ -299,7 +304,11 @@ function splitPanelOptionIndices(
   const circularAfter = resolveCircularAfterIndices(lineIndex, optionCount);
   const visibleRowCount = Math.min(optionCount, OPEN_CONTROL_PANEL_MAX_OPTION_ROWS);
   const maxOtherRows = Math.max(0, visibleRowCount - 1);
-  let belowCount = Math.min(circularAfter.length, Math.max(0, rowsFitBelow), maxOtherRows);
+  let belowCount = Math.min(
+    circularAfter.length,
+    Math.max(0, rowsFitBelow),
+    maxOtherRows
+  );
 
   if (triggerTop !== undefined && rowHeight !== undefined && rowHeight > 0) {
     while (belowCount >= 0) {
@@ -467,6 +476,7 @@ export function Listbox({
 }: ListboxProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const surfaceProps = { iconTone, shape, sizePreset };
+  const iconShape = resolveIconShape(shape);
   const textSizePreset = getOpenControlTextSize(sizePreset);
   const isIconStart = iconPosition === 'start';
   const rootRef = useRef<HTMLDivElement>(null);
@@ -499,6 +509,7 @@ export function Listbox({
       iconFill={iconFill}
       iconTone={iconTone}
       interactive
+      shape={iconShape}
       showBorder
       showHover={false}
       showShadow={false}
@@ -515,6 +526,7 @@ export function Listbox({
       disabled={disabled}
       iconFill={iconFill}
       iconTone={iconTone}
+      shape={iconShape}
       showBorder
       showShadow={false}
       sizePreset={sizePreset}
@@ -686,18 +698,12 @@ export function Listbox({
       : null;
   const displayOrder =
     currentPanelOrder ??
-    splitPanelOptionIndices(
-      lineIndex,
-      options.length,
-      Math.max(0, options.length - 1)
-    );
+    splitPanelOptionIndices(lineIndex, options.length, Math.max(0, options.length - 1));
   const drumShift = currentPanelOrder?.drumShift ?? LISTBOX_DRUM_SHIFT_NONE;
   const { aboveIndices, belowIndices } = displayOrder;
   const lineOption = options[lineIndex];
   const visualOrder =
-    lineOption === undefined
-      ? []
-      : [...aboveIndices, lineIndex, ...belowIndices];
+    lineOption === undefined ? [] : [...aboveIndices, lineIndex, ...belowIndices];
   const visualOptions = visualOrder.map((optionIndex) => options[optionIndex]);
 
   if (!isOpen && isKeyboardNavigating) {

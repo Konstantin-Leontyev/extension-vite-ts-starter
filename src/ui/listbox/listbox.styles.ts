@@ -138,10 +138,7 @@ const LISTBOX_BOX_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
  *
  * @property $drumShift — сдвиг барабана относительно якоря
  */
-type ListboxPanelStyleProps = Pick<
-  ListboxSurfaceStyleProps,
-  'shape' | 'sizePreset'
-> & {
+type ListboxPanelStyleProps = Pick<ListboxSurfaceStyleProps, 'shape' | 'sizePreset'> & {
   $drumShift: string;
 };
 

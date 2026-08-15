@@ -45,6 +45,7 @@ import {
 import { ChevronDownIcon, ChevronUpIcon } from '@icons';
 import { FieldLabel } from '@ui/field-label';
 import { Icon } from '@ui/icon';
+import { assignRef } from '@ui/ref';
 import { type SpacingValue } from '@ui/spacing';
 import { Text, type TextTone } from '@ui/text';
 
@@ -184,6 +185,8 @@ export function Stepper({
   ...rest
 }: StepperProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
+  const { ref, ...inputProps } = restProps;
+  const inputRef = useRef<HTMLInputElement>(null);
   const labelId = useId();
   const resolvedLabelledBy = label ? labelId : ariaLabelledBy;
 
@@ -334,6 +337,15 @@ export function Stepper({
 
   useEffect(() => stopHold, [stopHold]);
 
+  // Клик по ячейке значения ставит фокус в поле, иначе суффикс перехватывает клик
+  const handleValueClick = (): void => {
+    if (disabled) {
+      return;
+    }
+
+    inputRef.current?.focus();
+  };
+
   return (
     <StyledStepperFieldRoot {...layoutProps}>
       <FieldLabel id={labelId}>{label}</FieldLabel>
@@ -342,19 +354,27 @@ export function Stepper({
         shape={shape}
         sizePreset={sizePreset}
       >
-        <StyledStepperValue sizePreset={sizePreset} textAlign={textAlign}>
+        <StyledStepperValue
+          sizePreset={sizePreset}
+          textAlign={textAlign}
+          onClick={handleValueClick}
+        >
           <StyledStepperInput
             inputMode="numeric"
             textItalic={textItalic}
             textSize={resolvedTextSize}
             textTone={textTone}
-            {...restProps}
+            {...inputProps}
             aria-label={ariaLabel}
             aria-labelledby={resolvedLabelledBy}
             aria-valuemax={max}
             aria-valuemin={min}
             aria-valuenow={value}
             disabled={disabled}
+            ref={(node) => {
+              inputRef.current = node;
+              assignRef(ref, node);
+            }}
             role="spinbutton"
             type="text"
             value={draft ?? String(value)}

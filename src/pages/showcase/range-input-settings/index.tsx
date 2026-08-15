@@ -46,8 +46,8 @@ import { ToneListbox } from '../tone-listbox';
  * управляет передачей `onClear` в превью.
  * Используется для синхронизации значений между панелью управления и демонстрационным RangeInput.
  *
- * @property buttonShape — форма кнопки применения
- * @property buttonSizePreset — размер кнопки применения
+ * @property buttonShape — форма кнопки применения. Без значения выводится из контрола
+ * @property buttonSizePreset — размер кнопки применения. Без значения выводится из контрола
  * @property buttonText — текст кнопки применения
  * @property buttonTextTone — тон лейбла кнопки применения
  * @property buttonTone — семантический тон кнопки применения
@@ -58,8 +58,8 @@ import { ToneListbox } from '../tone-listbox';
  * @property iconFill — тон глифа шеврона и кнопки сброса
  * @property iconPosition — позиция шеврона и кнопки сброса относительно значения
  * @property iconTone — тон секции шеврона и кнопки сброса
- * @property inputShape — форма полей `from` и `to`
- * @property inputSizePreset — размер полей `from` и `to`
+ * @property inputShape — форма полей `from` и `to`. Без значения выводится из контрола
+ * @property inputSizePreset — размер полей `from` и `to`. Без значения выводится из контрола
  * @property label — подпись над триггером
  * @property placeholder — плейсхолдер неактивного триггера
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки. Опционален:
@@ -76,8 +76,8 @@ import { ToneListbox } from '../tone-listbox';
  * @property withClear — витринный ключ показа сброса. Выключенный — превью без `onClear`
  */
 export type RangeInputWidgetState = {
-  buttonShape: ShapePreset;
-  buttonSizePreset: SizePreset;
+  buttonShape?: ShapePreset;
+  buttonSizePreset?: SizePreset;
   buttonText: string;
   buttonTextTone: TonePreset;
   buttonTone: TonePreset;
@@ -87,8 +87,8 @@ export type RangeInputWidgetState = {
   iconFill: TonePreset;
   iconPosition: IconPosition;
   iconTone: TonePreset;
-  inputShape: ShapePreset;
-  inputSizePreset: SizePreset;
+  inputShape?: ShapePreset;
+  inputSizePreset?: SizePreset;
   label: string;
   placeholder: string;
   reserveErrorSpace?: boolean;
@@ -175,6 +175,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       />
 
       <SizeListbox
+        allowInherit
         label="Input size:"
         sizes={SIZE_PRESET_KEYS}
         value={state.inputSizePreset}
@@ -182,6 +183,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       />
 
       <ShapeListbox
+        allowInherit
         label="Input shape:"
         shapes={SHAPE_PRESET_KEYS}
         value={state.inputShape}
@@ -205,6 +207,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       />
 
       <SizeListbox
+        allowInherit
         label="Button size:"
         sizes={SIZE_PRESET_KEYS}
         value={state.buttonSizePreset}
@@ -212,6 +215,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       />
 
       <ShapeListbox
+        allowInherit
         label="Button shape:"
         shapes={SHAPE_PRESET_KEYS}
         value={state.buttonShape}

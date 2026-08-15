@@ -1,7 +1,7 @@
 /**
  * Файл: `src/pages/showcase/toolbar-settings/index.tsx`
  * Определяет панель настроек компонента Toolbar в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, рамки, тени и заливки
+ * Содержит контролы для изменения размера, формы, формы действия, рамки, тени и заливки
  * в реальном времени.
  *
  * Основные задачи:
@@ -12,7 +12,12 @@
  *  - `src/pages/showcase/index.tsx` — подключает панель и синхронизирует состояние с превью виджета Toolbar
  */
 
-import { ICON_SIZE_PRESET_KEYS, type IconSizePreset } from '@ui/icon';
+import {
+  ICON_SHAPE_PRESET_KEYS,
+  ICON_SIZE_PRESET_KEYS,
+  type IconShapePreset,
+  type IconSizePreset,
+} from '@ui/icon';
 import { SHAPE_PRESET_KEYS, type ShapePreset } from '@ui/presets';
 import { type SurfaceBackground } from '@ui/surface';
 import { type TonePreset } from '@ui/tones';
@@ -28,6 +33,7 @@ import { SizeListbox } from '../size-listbox';
  * Ключи совпадают с именами пропов компонента Toolbar.
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Toolbar.
  *
+ * @property actionShape — форма окна действия. Без значения выводится из `shape`
  * @property background — заливка панели инструментов
  * @property borderTone — тон рамки
  * @property shape — форма панели
@@ -36,6 +42,7 @@ import { SizeListbox } from '../size-listbox';
  * @property sizePreset — размер окна действия
  */
 export type ToolbarWidgetState = {
+  actionShape?: IconShapePreset;
   background: SurfaceBackground;
   borderTone: TonePreset;
   shape: ShapePreset;
@@ -79,6 +86,14 @@ export function ToolbarSettings({ onChange, state }: ToolbarSettingsProps) {
         shapes={SHAPE_PRESET_KEYS}
         value={state.shape}
         onChange={(shape) => onChange('shape', shape)}
+      />
+
+      <ShapeListbox
+        allowInherit
+        label="Action shape:"
+        shapes={ICON_SHAPE_PRESET_KEYS}
+        value={state.actionShape}
+        onChange={(shape) => onChange('actionShape', shape)}
       />
 
       <BorderGroup

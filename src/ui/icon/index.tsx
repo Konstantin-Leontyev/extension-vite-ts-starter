@@ -35,6 +35,10 @@
  *  - контролы с секцией иконки, например Button, Listbox, Combobox и RangeInput —
  *    подключают хелперы секции и читают позицию через `@ui/icon`
  *  - `@ui/toolbar` — читает `resolveIconShape` для формы действий
+ *  - `@ui/search-field` — читает `resolveIconShape` для формы сброса
+ *  - `@ui/listbox`, `@ui/combobox` и `@ui/range-input` —
+ *    читают `resolveIconShape` для формы окна сброса и шеврона
+ *  - `@ui/date-range-input` — читает `resolveIconShape` для формы сброса
  *  - `src/pages/showcase` — читает `getIconPadding` и `resolveIconShape` и
  *    демонстрирует состояния в витрине
  */

@@ -66,7 +66,12 @@ import { AnchoredPortal } from '@ui/anchored-portal';
 import { Button } from '@ui/button';
 import { FieldError } from '@ui/field-error';
 import { FieldLabel } from '@ui/field-label';
-import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
+import {
+  DEFAULT_ICON_POSITION,
+  Icon,
+  resolveIconShape,
+  type IconPosition,
+} from '@ui/icon';
 import { Input } from '@ui/input';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -428,6 +433,7 @@ export function RangeInput({
   const textSizePreset = getRangeInputTextSize(sizePreset);
   const hasPanelError = Boolean(panelError?.trim());
   const surfaceProps = { iconTone, shape, sizePreset };
+  const iconShape = resolveIconShape(shape);
   const isIconStart = iconPosition === 'start';
   const iconNode = showChevron && (
     <Icon
@@ -435,6 +441,7 @@ export function RangeInput({
       iconFill={iconFill}
       iconTone={iconTone}
       interactive
+      shape={iconShape}
       showBorder
       showHover={false}
       showShadow={false}
@@ -559,6 +566,7 @@ export function RangeInput({
       disabled={disabled}
       iconFill={iconFill}
       iconTone={iconTone}
+      shape={iconShape}
       showBorder
       showShadow={false}
       sizePreset={sizePreset}

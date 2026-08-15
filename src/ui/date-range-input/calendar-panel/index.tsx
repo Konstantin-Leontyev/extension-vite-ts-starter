@@ -157,7 +157,8 @@ export function CalendarPanel({
   }
 
   const selectedFocusIso = cells.find(
-    (cell) => selectedDays.has(cell.isoDay) && isIsoDayInBounds(cell.isoDay, minDay, maxDay)
+    (cell) =>
+      selectedDays.has(cell.isoDay) && isIsoDayInBounds(cell.isoDay, minDay, maxDay)
   )?.isoDay;
   const firstAvailableIso = cells.find((cell) =>
     isIsoDayInBounds(cell.isoDay, minDay, maxDay)

@@ -176,7 +176,9 @@ function getSearchFieldRowStyles(
   ];
 
   if (showBorder) {
-    styles.push(`&:has(:focus-visible) { ${getOutlineStyles(theme.colors.focusOutline)} }`);
+    styles.push(
+      `&:has(:focus-visible) { ${getOutlineStyles(theme.colors.focusOutline)} }`
+    );
   }
 
   return styles.join('\n');

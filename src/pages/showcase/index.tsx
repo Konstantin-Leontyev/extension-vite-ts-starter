@@ -550,8 +550,6 @@ const COMBOBOX_DEMO_DISABLED_OPTION = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
-  buttonShape: DEFAULT_SHAPE_PRESET,
-  buttonSizePreset: DEFAULT_SIZE_PRESET,
   buttonText: 'Apply',
   buttonTextTone: 'neutral',
   buttonTone: 'primary',
@@ -560,8 +558,6 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   iconFill: 'neutral',
   iconPosition: 'end',
   iconTone: 'neutral',
-  inputShape: DEFAULT_SHAPE_PRESET,
-  inputSizePreset: DEFAULT_SIZE_PRESET,
   label: 'Label:',
   placeholder: 'Range: any',
   shape: DEFAULT_SHAPE_PRESET,
@@ -1458,6 +1454,7 @@ export function ShowcasePage() {
                 'toolbar',
                 TOOLBAR_WIDGET_TITLE_ID,
                 <Toolbar
+                  actionShape={toolbar.actionShape}
                   actions={TOOLBAR_DEMO_ACTIONS}
                   ariaLabel={TOOLBAR_DEMO_ARIA_LABEL}
                   background={toolbar.background}

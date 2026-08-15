@@ -52,7 +52,12 @@ import { CheckIcon, ChevronDownIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { FieldLabel } from '@ui/field-label';
-import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
+import {
+  DEFAULT_ICON_POSITION,
+  Icon,
+  resolveIconShape,
+  type IconPosition,
+} from '@ui/icon';
 import {
   getOpenControlTextSize,
   resolveEnabledOpenControlIndex,
@@ -210,6 +215,7 @@ export function Combobox({
 }: ComboboxProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const surfaceProps = { iconTone, shape, sizePreset };
+  const iconShape = resolveIconShape(shape);
   const textSizePreset = getOpenControlTextSize(sizePreset);
   const isIconStart = iconPosition === 'start';
   const rootRef = useRef<HTMLDivElement>(null);
@@ -238,6 +244,7 @@ export function Combobox({
       iconFill={iconFill}
       iconTone={iconTone}
       interactive
+      shape={iconShape}
       showBorder
       showHover={false}
       showShadow={false}
@@ -254,6 +261,7 @@ export function Combobox({
       disabled={disabled}
       iconFill={iconFill}
       iconTone={iconTone}
+      shape={iconShape}
       showBorder
       showShadow={false}
       sizePreset={sizePreset}

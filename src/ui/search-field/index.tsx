@@ -47,7 +47,12 @@ import {
 import { CloseIcon, SearchIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { FieldLabel } from '@ui/field-label';
-import { Icon, resolveIconShape, type IconPosition, type IconShapePreset } from '@ui/icon';
+import {
+  Icon,
+  resolveIconShape,
+  type IconPosition,
+  type IconShapePreset,
+} from '@ui/icon';
 import { assignRef } from '@ui/ref';
 import { type TonePreset } from '@ui/tones';
 
