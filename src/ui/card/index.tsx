@@ -19,6 +19,8 @@
  *  - тон подзаголовка через проп `subtitleTone`
  *  - id заголовка для `aria-labelledby` через проп `titleId`
  *  - ряд действий в шапке через проп `headerActions`
+ *  - форму окна действия шапки через проп `actionShape`. Без `actionShape`
+ *    форма остаётся дефолтом ряда
  *  - переопределение корневого элемента через проп `as`
  *
  * Основные задачи:
@@ -38,6 +40,7 @@ import {
   type ReactNode,
 } from 'react';
 
+import { type IconShapePreset } from '@ui/icon';
 import { IconButtonRow, type IconButtonRowAction } from '@ui/icon-button-row';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 
@@ -79,6 +82,7 @@ const DEFAULT_CARD_HEADER_ACTIONS: IconButtonRowAction[] = [];
  *
  * @template T тип корневого элемента, по умолчанию `div`
  *
+ * @property actionShape — форма окна действия шапки. Без пропа остаётся дефолтом ряда
  * @property as — переопределяет корневой HTML-тег, например `<article>`, `<section>`
  * @property children — содержимое тела карточки
  * @property headerActions — ряд действий в правом верхнем углу
@@ -93,6 +97,7 @@ const DEFAULT_CARD_HEADER_ACTIONS: IconButtonRowAction[] = [];
  * @property titleTone — тон заголовка
  */
 type CardProps<T extends CardHtmlTag = 'div'> = {
+  actionShape?: IconShapePreset;
   as?: T;
   children?: ReactNode;
   headerActions?: IconButtonRowAction[];
@@ -117,6 +122,7 @@ type CardProps<T extends CardHtmlTag = 'div'> = {
  * </Card>
  */
 function Card<T extends CardHtmlTag = 'div'>({
+  actionShape,
   as,
   children,
   headerActions = DEFAULT_CARD_HEADER_ACTIONS,
@@ -172,6 +178,7 @@ function Card<T extends CardHtmlTag = 'div'>({
       insetBlockStart={CARD_PADDING}
       insetInlineEnd={CARD_PADDING}
       position="absolute"
+      shape={actionShape}
       sizePreset={CARD_HEADER_ACTION_SIZE_PRESET}
       zIndex={1}
     />,

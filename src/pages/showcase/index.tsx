@@ -15,7 +15,7 @@ import { useState, type ReactNode } from 'react';
 
 import { useShellOutletContext } from '@components/router';
 import { useToast } from '@hooks/use-toast';
-import { CopyIcon, DownloadIcon, SearchIcon, SettingsIcon, SignOutIcon } from '@icons';
+import { SettingsIcon } from '@icons';
 import { Button, getButtonTextSize } from '@ui/button';
 import { CARD_HEADER_ACTION_SIZE_PRESET, Card } from '@ui/card';
 import { Checkbox, getCheckboxTextSize } from '@ui/checkbox';
@@ -23,7 +23,6 @@ import { Combobox } from '@ui/combobox';
 import { DateRangeInput, todayUtc } from '@ui/date-range-input';
 import { Fieldset } from '@ui/fieldset';
 import { Icon, getIconPadding, resolveIconShape } from '@ui/icon';
-import { type IconButtonRowAction } from '@ui/icon-button-row';
 import { Input } from '@ui/input';
 import { Listbox } from '@ui/listbox';
 import { Modal } from '@ui/modal';
@@ -288,43 +287,6 @@ const TOOLBAR_WIDGET_TITLE_ID = 'showcase-toolbar-heading';
  * Используется в превью виджета Toolbar.
  */
 const TOOLBAR_DEMO_ARIA_LABEL = 'Toolbar';
-
-/**
- * TOOLBAR_DEMO_ACTIONS — задаёт фиксированный демо-ряд действий превью Toolbar.
- * Используется в превью виджета Toolbar.
- */
-const TOOLBAR_DEMO_ACTIONS: IconButtonRowAction[] = [
-  {
-    ariaLabel: 'Search',
-    icon: <SearchIcon />,
-    onClick: () => undefined,
-    title: 'Search',
-  },
-  {
-    ariaLabel: 'Copy',
-    icon: <CopyIcon />,
-    onClick: () => undefined,
-    title: 'Copy',
-  },
-  {
-    ariaLabel: 'Download',
-    icon: <DownloadIcon />,
-    onClick: () => undefined,
-    title: 'Download',
-  },
-  {
-    ariaLabel: 'Settings',
-    icon: <SettingsIcon />,
-    onClick: () => undefined,
-    title: 'Settings',
-  },
-  {
-    ariaLabel: 'Logout',
-    icon: <SignOutIcon />,
-    onClick: () => undefined,
-    title: 'Logout',
-  },
-];
 
 /**
  * RADIO_BUTTON_DEMO_NAME — задаёт name группы RadioButton в демо-превью.
@@ -807,6 +769,7 @@ const DEFAULT_TABLE_STATE: TableWidgetState = {
 const DEFAULT_MODAL_STATE: ModalWidgetState = {
   background: 'surface',
   showSubtitle: true,
+  showTitle: true,
   sizePreset: DEFAULT_SIZE_PRESET,
   subtitle: 'Modal subtitle',
   subtitleTone: 'muted',
@@ -820,21 +783,23 @@ const DEFAULT_MODAL_STATE: ModalWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_CARD_STATE: CardWidgetState = {
+  actionShape: 'round',
   background: 'surface',
   borderTone: 'neutral',
   headerActions: [
     {
       disabled: false,
-      iconKey: 'copy',
+      iconKey: 'close',
       iconPadding: getIconPadding(CARD_HEADER_ACTION_SIZE_PRESET),
     },
   ],
   showBorder: true,
   showShadow: true,
-  title: 'Card title',
   showSubtitle: true,
+  showTitle: true,
   subtitle: 'Subtitle text',
   subtitleTone: 'muted',
+  title: 'Card title',
   titleSizePreset: 'bold',
   titleTone: DEFAULT_TONE,
 };
@@ -858,6 +823,33 @@ const DEFAULT_TEXT_STATE: TextWidgetState = {
  */
 const DEFAULT_TOOLBAR_STATE: ToolbarWidgetState = {
   actionShape: resolveIconShape(DEFAULT_SHAPE_PRESET),
+  actions: [
+    {
+      disabled: false,
+      iconKey: 'search',
+      iconPadding: getIconPadding(DEFAULT_SIZE_PRESET),
+    },
+    {
+      disabled: false,
+      iconKey: 'copy',
+      iconPadding: getIconPadding(DEFAULT_SIZE_PRESET),
+    },
+    {
+      disabled: false,
+      iconKey: 'download',
+      iconPadding: getIconPadding(DEFAULT_SIZE_PRESET),
+    },
+    {
+      disabled: false,
+      iconKey: 'settings',
+      iconPadding: getIconPadding(DEFAULT_SIZE_PRESET),
+    },
+    {
+      disabled: false,
+      iconKey: 'sign-out',
+      iconPadding: getIconPadding(DEFAULT_SIZE_PRESET),
+    },
+  ],
   background: 'surface',
   borderTone: 'neutral',
   shape: DEFAULT_SHAPE_PRESET,
@@ -1405,7 +1397,7 @@ export function ShowcasePage() {
                     subtitleAlign={modal.subtitleAlign}
                     subtitleSizePreset={modal.subtitleSizePreset}
                     subtitleTone={modal.subtitleTone}
-                    title={modal.title}
+                    title={modal.showTitle ? modal.title : undefined}
                     titleAlign={modal.titleAlign}
                     titleSizePreset={modal.titleSizePreset}
                     titleTone={modal.titleTone}
@@ -1420,6 +1412,7 @@ export function ShowcasePage() {
                 'card',
                 CARD_WIDGET_TITLE_ID,
                 <Card
+                  actionShape={card.actionShape}
                   background={card.background}
                   borderTone={card.borderTone}
                   headerActions={card.headerActions.map((action) => ({
@@ -1435,7 +1428,7 @@ export function ShowcasePage() {
                   subtitleAlign={card.subtitleAlign}
                   subtitleSizePreset={card.subtitleSizePreset}
                   subtitleTone={card.subtitleTone}
-                  title={card.title}
+                  title={card.showTitle ? card.title : undefined}
                   titleAlign={card.titleAlign}
                   titleSizePreset={card.titleSizePreset}
                   titleTone={card.titleTone}
@@ -1464,7 +1457,13 @@ export function ShowcasePage() {
                 TOOLBAR_WIDGET_TITLE_ID,
                 <Toolbar
                   actionShape={toolbar.actionShape}
-                  actions={TOOLBAR_DEMO_ACTIONS}
+                  actions={toolbar.actions.map((action) => ({
+                    ariaLabel: action.iconKey,
+                    disabled: action.disabled,
+                    icon: getIcon(action.iconKey),
+                    iconPadding: action.iconPadding,
+                    onClick: () => undefined,
+                  }))}
                   ariaLabel={TOOLBAR_DEMO_ARIA_LABEL}
                   background={toolbar.background}
                   borderTone={toolbar.borderTone}

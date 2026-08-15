@@ -1,8 +1,8 @@
 /**
  * Файл: `src/pages/showcase/toolbar-settings/index.tsx`
  * Определяет панель настроек компонента Toolbar в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, формы действия, рамки, тени и заливки
- * в реальном времени.
+ * Содержит контролы для изменения размера, формы, рамки, тени, заливки,
+ * формы действия и набора действий в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `ToolbarWidgetState`
@@ -15,6 +15,7 @@
 import {
   ICON_SHAPE_PRESET_KEYS,
   ICON_SIZE_PRESET_KEYS,
+  getIconPadding,
   resolveIconShape,
   type IconShapePreset,
   type IconSizePreset,
@@ -25,6 +26,7 @@ import { type TonePreset } from '@ui/tones';
 
 import { BackgroundListbox } from '../background-listbox';
 import { BorderGroup } from '../border-group';
+import { IconRowGroup, type IconRowGroupAction } from '../icon-row-group';
 import { ShapeListbox } from '../shape-listbox';
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
@@ -32,8 +34,11 @@ import { SizeListbox } from '../size-listbox';
 /**
  * ToolbarWidgetState — представляет состояние настроек компонента Toolbar в витрине дизайн-системы.
  * Ключи совпадают с именами пропов компонента Toolbar.
+ * `actions` хранит демо-ряд с ключом иконки, отступом окна Icon и флагом `disabled`
+ * вместо `ReactNode` и обработчика.
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Toolbar.
  *
+ * @property actions — демо-ряд действий
  * @property actionShape — форма окна действия. Стартует с вывода из `shape`
  * @property background — заливка панели инструментов
  * @property borderTone — тон рамки
@@ -43,6 +48,7 @@ import { SizeListbox } from '../size-listbox';
  * @property sizePreset — размер окна действия
  */
 export type ToolbarWidgetState = {
+  actions: IconRowGroupAction[];
   actionShape: IconShapePreset;
   background: SurfaceBackground;
   borderTone: TonePreset;
@@ -92,13 +98,6 @@ export function ToolbarSettings({ onChange, state }: ToolbarSettingsProps) {
         }}
       />
 
-      <ShapeListbox
-        label="Action shape:"
-        shapes={ICON_SHAPE_PRESET_KEYS}
-        value={state.actionShape}
-        onChange={(shape) => onChange('actionShape', shape)}
-      />
-
       <BorderGroup
         borderTone={state.borderTone}
         showBorder={state.showBorder}
@@ -112,6 +111,19 @@ export function ToolbarSettings({ onChange, state }: ToolbarSettingsProps) {
         label="Background:"
         value={state.background}
         onChange={(background) => onChange('background', background)}
+      />
+
+      <ShapeListbox
+        label="Action shape:"
+        shapes={ICON_SHAPE_PRESET_KEYS}
+        value={state.actionShape}
+        onChange={(shape) => onChange('actionShape', shape)}
+      />
+
+      <IconRowGroup
+        actions={state.actions}
+        defaultIconPadding={getIconPadding(state.sizePreset)}
+        onActionsChange={(actions) => onChange('actions', actions)}
       />
     </StyledSettingsForm>
   );

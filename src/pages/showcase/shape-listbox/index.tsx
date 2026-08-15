@@ -16,6 +16,7 @@
  * Потребители:
  *  - `src/pages/showcase/icon-group/index.tsx` — выбирает форму окна иконки
  *  - панели настроек витрины — выбирают форму:
+ *     - `src/pages/showcase/card-settings/index.tsx`
  *     - `src/pages/showcase/control-group/index.tsx`
  *     - `src/pages/showcase/date-range-input-settings/index.tsx`
  *     - `src/pages/showcase/icon-settings/index.tsx`

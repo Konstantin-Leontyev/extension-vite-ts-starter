@@ -12,7 +12,7 @@
  *  - `src/pages/showcase/button-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
  *  - `src/pages/showcase/icon-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
  *  - `src/pages/showcase/segment-button-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
- *  - `src/pages/showcase/card-settings/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
+ *  - `src/pages/showcase/icon-row-group/index.tsx` — выбирает иконку через `COMBOBOX_OPTIONS`
  *  - `src/pages/showcase/index.tsx` — подставляет глифы через `getIcon`, опции превью Combobox
  *    через `LIST_OPTIONS` и `COMBOBOX_OPTIONS`
  */
@@ -98,8 +98,8 @@ export const LIST_OPTIONS: readonly ComboboxOption[] = Object.freeze(
 
 /**
  * COMBOBOX_OPTIONS — формирует опции Combobox с иконкой и подписью из ключей `ICONS`.
- * Используется в выборе иконки в настройках Button, Icon, SegmentButton и Card
- * и в превью Combobox с иконками.
+ * Используется в выборе иконки в настройках Button, Icon, SegmentButton
+ * и IconRowGroup и в превью Combobox с иконками.
  */
 export const COMBOBOX_OPTIONS: readonly ComboboxOption[] = Object.freeze(
   Object.keys(ICONS).map((key) => ({

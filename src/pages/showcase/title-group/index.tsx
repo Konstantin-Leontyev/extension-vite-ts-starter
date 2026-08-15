@@ -11,6 +11,8 @@
  *  - обработчик изменения размера через проп `onSizeChange`
  *  - обработчик изменения содержимого через проп `onTitleChange`
  *  - обработчик изменения тона через проп `onToneChange`
+ *  - показ заголовка через проп `show`. Без `show` текст неотключаем и группа
+ *    рендерится всегда. Пустое поле содержимого выключает флаг по уходу фокуса
  *  - размер заголовка через проп `size`
  *  - содержимое заголовка через проп `title`
  *  - тон заголовка через проп `tone`
@@ -18,7 +20,7 @@
  * Основные задачи:
  * 1. Экспортировать компонент TitleGroup
  * 2. Типизировать пропсы через `TitleGroupProps`
- * 3. Рендерить единый блок настроек заголовка: содержимое, размер,
+ * 3. Рендерить единый блок настроек заголовка: показ, содержимое, размер,
  *    выравнивание и тон
  * 4. Строить подписи контролов из префикса `labelPrefix`
  *
@@ -29,8 +31,9 @@
  *     - `src/pages/showcase/range-input-settings/index.tsx`
  */
 
-import { type ChangeEvent } from 'react';
+import { type ChangeEvent, type FocusEvent } from 'react';
 
+import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import {
   TEXT_ALIGN_PRESET_KEYS,
@@ -42,7 +45,11 @@ import {
 } from '@ui/text';
 
 import { AlignListbox } from '../align-listbox';
-import { resolveGroupContentLabel, resolveGroupFieldLabel } from '../showcase-labels';
+import {
+  resolveGroupContentLabel,
+  resolveGroupFieldLabel,
+  resolveGroupShowLabel,
+} from '../showcase-labels';
 import { SizeListbox } from '../size-listbox';
 import { ToneListbox } from '../tone-listbox';
 
@@ -55,6 +62,9 @@ import { ToneListbox } from '../tone-listbox';
  * @property onSizeChange — обработчик изменения размера
  * @property onTitleChange — обработчик изменения содержимого заголовка
  * @property onToneChange — обработчик изменения тона
+ * @property show — контрол показа заголовка. Без него текст неотключаем
+ *   и группа рендерится всегда. Поле `label` задаёт подпись чекбокса. Без него
+ *   подпись собирается из `labelPrefix`
  * @property size — текущий размер заголовка
  * @property title — текущее содержимое заголовка
  * @property tone — текущий тон заголовка
@@ -66,6 +76,11 @@ type TitleGroupProps = {
   onSizeChange: (size: TextSizePreset) => void;
   onTitleChange: (title: string) => void;
   onToneChange: (tone: TextTone) => void;
+  show?: {
+    checked: boolean;
+    label?: string;
+    onChange: (checked: boolean) => void;
+  };
   size?: TextSizePreset;
   title: string;
   tone: TextTone;
@@ -78,6 +93,7 @@ type TitleGroupProps = {
  * <TitleGroup
  *   align={state.titleAlign}
  *   labelPrefix="Title"
+ *   show={{ checked: state.showTitle, onChange: (checked) => onChange('showTitle', checked) }}
  *   size={state.titleSizePreset}
  *   title={state.title}
  *   tone={state.titleTone}
@@ -94,40 +110,63 @@ export function TitleGroup({
   onSizeChange,
   onTitleChange,
   onToneChange,
+  show,
   size,
   title,
   tone,
 }: TitleGroupProps) {
+  const isExpanded = !show || show.checked;
+
   return (
     <>
-      <Input
-        label={resolveGroupContentLabel(labelPrefix, 'Title')}
-        value={title}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onTitleChange(event.target.value)
-        }
-      />
+      {show && (
+        <Checkbox
+          checked={show.checked}
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            show.onChange(event.target.checked)
+          }
+        >
+          {show.label ?? resolveGroupShowLabel(labelPrefix, 'Title')}
+        </Checkbox>
+      )}
 
-      <SizeListbox
-        label={resolveGroupFieldLabel(labelPrefix, 'size')}
-        sizes={TEXT_SIZE_PRESET_KEYS}
-        value={size}
-        onChange={onSizeChange}
-      />
+      {isExpanded && (
+        <>
+          <Input
+            label={resolveGroupContentLabel(labelPrefix, 'Title')}
+            value={title}
+            onBlur={(event: FocusEvent<HTMLInputElement>) => {
+              if (show && event.target.value.trim() === '') {
+                show.onChange(false);
+              }
+            }}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              onTitleChange(event.target.value)
+            }
+          />
 
-      <AlignListbox
-        aligns={TEXT_ALIGN_PRESET_KEYS}
-        label={resolveGroupFieldLabel(labelPrefix, 'align')}
-        value={align}
-        onChange={onAlignChange}
-      />
+          <SizeListbox
+            label={resolveGroupFieldLabel(labelPrefix, 'size')}
+            sizes={TEXT_SIZE_PRESET_KEYS}
+            value={size}
+            onChange={onSizeChange}
+          />
 
-      <ToneListbox
-        label={resolveGroupFieldLabel(labelPrefix, 'tone')}
-        tones={TEXT_TONE_KEYS}
-        value={tone}
-        onChange={onToneChange}
-      />
+          <AlignListbox
+            aligns={TEXT_ALIGN_PRESET_KEYS}
+            label={resolveGroupFieldLabel(labelPrefix, 'align')}
+            value={align}
+            onChange={onAlignChange}
+          />
+
+          <ToneListbox
+            label={resolveGroupFieldLabel(labelPrefix, 'tone')}
+            tones={TEXT_TONE_KEYS}
+            value={tone}
+            onChange={onToneChange}
+          />
+        </>
+      )}
     </>
   );
 }

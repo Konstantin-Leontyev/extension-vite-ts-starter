@@ -15,9 +15,9 @@
  *
  * Потребители:
  *  - панели настроек витрины — выбирают размер:
- *     - `src/pages/showcase/card-settings/index.tsx`
  *     - `src/pages/showcase/checkbox-settings/index.tsx`
  *     - `src/pages/showcase/control-group/index.tsx`
+ *     - `src/pages/showcase/icon-row-group/index.tsx`
  *     - `src/pages/showcase/icon-settings/index.tsx`
  *     - `src/pages/showcase/modal-settings/index.tsx`
  *     - `src/pages/showcase/progress-bar-settings/index.tsx`

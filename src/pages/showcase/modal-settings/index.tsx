@@ -13,9 +13,6 @@
  *  - `src/pages/showcase/index.tsx` — подключает панель и синхронизирует состояние с превью виджета Modal
  */
 
-import { type ChangeEvent } from 'react';
-
-import { Checkbox } from '@ui/checkbox';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 import { type SurfaceBackground } from '@ui/surface';
 import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
@@ -28,12 +25,13 @@ import { TitleGroup } from '../title-group';
 /**
  * ModalWidgetState — представляет состояние настроек компонента Modal в витрине дизайн-системы.
  * Ключи совпадают с именами пропов компонента Modal, кроме витринных ключей:
- * `showSubtitle` управляет передачей подзаголовка в превью, `sizePreset` задаёт ширину
- * через `inlineSize` в родительской витрине.
+ * `showTitle` и `showSubtitle` управляют передачей заголовка и подзаголовка в превью,
+ * `sizePreset` задаёт ширину через `inlineSize` в родительской витрине.
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Modal.
  *
  * @property background — заливка поверхности
- * @property showSubtitle — витринный ключ показа подзаголовка. Выключенный — в превью остаётся только заголовок
+ * @property showSubtitle — витринный ключ показа подзаголовка. Выключенный — превью без подзаголовка
+ * @property showTitle — витринный ключ показа заголовка. Выключенный — превью без заголовка
  * @property sizePreset — витринный ключ ширины панели. Витрина переводит его в `inlineSize` для Modal
  * @property subtitle — подзаголовок
  * @property subtitleAlign — выравнивание подзаголовка
@@ -47,6 +45,7 @@ import { TitleGroup } from '../title-group';
 export type ModalWidgetState = {
   background: SurfaceBackground;
   showSubtitle: boolean;
+  showTitle: boolean;
   sizePreset: SizePreset;
   subtitle: string;
   subtitleAlign?: TextAlignPreset;
@@ -97,6 +96,10 @@ export function ModalSettings({ onChange, state }: ModalSettingsProps) {
       <TitleGroup
         align={state.titleAlign}
         labelPrefix="Title"
+        show={{
+          checked: state.showTitle,
+          onChange: (checked) => onChange('showTitle', checked),
+        }}
         size={state.titleSizePreset}
         title={state.title}
         tone={state.titleTone}
@@ -106,28 +109,21 @@ export function ModalSettings({ onChange, state }: ModalSettingsProps) {
         onToneChange={(tone) => onChange('titleTone', tone)}
       />
 
-      <Checkbox
-        checked={state.showSubtitle}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('showSubtitle', event.target.checked)
-        }
-      >
-        Show subtitle
-      </Checkbox>
-
-      {state.showSubtitle && (
-        <TitleGroup
-          align={state.subtitleAlign}
-          labelPrefix="Subtitle"
-          size={state.subtitleSizePreset}
-          title={state.subtitle}
-          tone={state.subtitleTone}
-          onAlignChange={(align) => onChange('subtitleAlign', align)}
-          onSizeChange={(size) => onChange('subtitleSizePreset', size)}
-          onTitleChange={(title) => onChange('subtitle', title)}
-          onToneChange={(tone) => onChange('subtitleTone', tone)}
-        />
-      )}
+      <TitleGroup
+        align={state.subtitleAlign}
+        labelPrefix="Subtitle"
+        show={{
+          checked: state.showSubtitle,
+          onChange: (checked) => onChange('showSubtitle', checked),
+        }}
+        size={state.subtitleSizePreset}
+        title={state.subtitle}
+        tone={state.subtitleTone}
+        onAlignChange={(align) => onChange('subtitleAlign', align)}
+        onSizeChange={(size) => onChange('subtitleSizePreset', size)}
+        onTitleChange={(title) => onChange('subtitle', title)}
+        onToneChange={(tone) => onChange('subtitleTone', tone)}
+      />
     </StyledSettingsForm>
   );
 }
