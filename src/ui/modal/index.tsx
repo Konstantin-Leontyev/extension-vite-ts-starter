@@ -10,12 +10,14 @@
  *  - тон рамки через проп `borderTone`
  *  - заголовок через проп `title`
  *  - подзаголовок через проп `subtitle`
- *  - размер заголовка через проп `titleSizePreset`
- *  - выравнивание заголовка через проп `titleAlign`
  *  - тон заголовка через проп `titleTone`
- *  - размер подзаголовка через проп `subtitleSizePreset`
- *  - выравнивание подзаголовка через проп `subtitleAlign`
+ *  - размер заголовка через проп `titleSizePreset`
+ *  - курсив заголовка через проп `titleItalic`
+ *  - выравнивание заголовка через проп `titleAlign`
  *  - тон подзаголовка через проп `subtitleTone`
+ *  - размер подзаголовка через проп `subtitleSizePreset`
+ *  - курсив подзаголовка через проп `subtitleItalic`
+ *  - выравнивание подзаголовка через проп `subtitleAlign`
  *  - id заголовка для `aria-labelledby` через проп `titleId`
  *  - тело через `children`
  *  - видимость через проп `open`
@@ -37,6 +39,7 @@
 import { useEffect, useId, useRef, type ComponentProps, type ReactNode } from 'react';
 
 import { CloseIcon } from '@icons';
+import { resolveBorderProps, type ShowBorderProps } from '@ui/border';
 import { Card, type CardSubtitleProps, type CardTitleProps } from '@ui/card';
 import { type SpacingValue } from '@ui/spacing';
 
@@ -66,10 +69,15 @@ const DEFAULT_MODAL_SHOW_BORDER = false;
  */
 type CardForwardProps = Omit<
   ComponentProps<typeof Card>,
-  'children' | 'headerActions' | keyof CardSubtitleProps | keyof CardTitleProps
+  | 'children'
+  | 'headerActions'
+  | keyof CardSubtitleProps
+  | keyof CardTitleProps
+  | keyof ShowBorderProps
 > &
   CardSubtitleProps &
-  CardTitleProps;
+  CardTitleProps &
+  ShowBorderProps;
 
 /**
  * ModalProps — представляет пропсы компонента Modal.
@@ -99,13 +107,17 @@ function Modal({
   closeAriaLabel = DEFAULT_MODAL_CLOSE_ARIA_LABEL,
   onClose,
   open,
-  showBorder = DEFAULT_MODAL_SHOW_BORDER,
   ...cardForward
 }: ModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const generatedTitleId = useId();
   const cardProps = cardForward as CardForwardProps;
   const titleId = cardProps.title ? (cardProps.titleId ?? generatedTitleId) : undefined;
+  const cardBorderProps = resolveBorderProps(
+    cardProps.showBorder ?? DEFAULT_MODAL_SHOW_BORDER,
+    cardProps.borderTone,
+    cardProps.showShadow
+  );
 
   /**
    * Синхронизирует видимость с пропом `open` через `showModal` и `close`.
@@ -154,14 +166,14 @@ function Modal({
       {(cardProps.title && (
         <Card
           headerActions={headerActions}
-          showBorder={showBorder}
           {...cardProps}
+          {...cardBorderProps}
           titleId={titleId}
         >
           {children}
         </Card>
       )) || (
-        <Card headerActions={headerActions} showBorder={showBorder} {...cardProps}>
+        <Card headerActions={headerActions} {...cardProps} {...cardBorderProps}>
           {children}
         </Card>
       )}

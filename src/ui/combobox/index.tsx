@@ -6,6 +6,9 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - форму через проп `shape`
+ *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
+ *    выводится из `shape`
+ *  - тон рамки через проп `borderTone`
  *  - тон глифа шеврона через проп `iconFill`
  *  - позицию шеврона через проп `iconPosition`
  *  - тон секции шеврона через проп `iconTone`
@@ -57,6 +60,7 @@ import {
   Icon,
   resolveIconShape,
   type IconPosition,
+  type IconShapePreset,
 } from '@ui/icon';
 import {
   getOpenControlTextSize,
@@ -127,6 +131,7 @@ export type ComboboxOption = {
  * ComboboxProps — представляет пропсы компонента Combobox.
  *
  * @property aria-label — текстовая метка триггера
+ * @property clearShape — форма кнопки сброса
  * @property defaultValue — начальное значение в неконтролируемом режиме
  * @property disabled — включает недоступное состояние
  * @property emptyMessage — текст при пустом результате поиска
@@ -142,6 +147,7 @@ export type ComboboxOption = {
  */
 type ComboboxProps = ComboboxStyleProps & {
   'aria-label'?: string;
+  clearShape?: IconShapePreset;
   defaultValue?: string;
   disabled?: boolean;
   emptyMessage?: string;
@@ -196,6 +202,8 @@ function filterComboboxOptions(
  */
 export function Combobox({
   'aria-label': ariaLabel,
+  borderTone,
+  clearShape: clearShapeProp,
   defaultValue,
   disabled = DEFAULT_COMBOBOX_DISABLED,
   emptyMessage = DEFAULT_COMBOBOX_EMPTY_MESSAGE,
@@ -214,8 +222,9 @@ export function Combobox({
   ...rest
 }: ComboboxProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const surfaceProps = { iconTone, shape, sizePreset };
+  const surfaceProps = { borderTone, iconTone, shape, sizePreset };
   const iconShape = resolveIconShape(shape);
+  const clearShape = clearShapeProp ?? iconShape;
   const textSizePreset = getOpenControlTextSize(sizePreset);
   const isIconStart = iconPosition === 'start';
   const rootRef = useRef<HTMLDivElement>(null);
@@ -261,7 +270,7 @@ export function Combobox({
       disabled={disabled}
       iconFill={iconFill}
       iconTone={iconTone}
-      shape={iconShape}
+      shape={clearShape}
       showBorder
       showShadow={false}
       sizePreset={sizePreset}

@@ -168,6 +168,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('placeholder', event.target.value)
         }
+        onClear={() => onChange('placeholder', '')}
       />
 
       <TitleGroup
@@ -202,6 +203,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('fromPlaceholder', event.target.value)
         }
+        onClear={() => onChange('fromPlaceholder', '')}
       />
 
       <Input
@@ -210,6 +212,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('toPlaceholder', event.target.value)
         }
+        onClear={() => onChange('toPlaceholder', '')}
       />
 
       <SizeListbox
@@ -239,6 +242,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('buttonText', event.target.value)
         }
+        onClear={() => onChange('buttonText', '')}
       />
 
       <ToneListbox
@@ -258,6 +262,12 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
             emptyBounds: event.target.value,
           })
         }
+        onClear={() =>
+          onChange('validationMessages', {
+            ...state.validationMessages,
+            emptyBounds: '',
+          })
+        }
       />
 
       <Input
@@ -269,6 +279,12 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
             invalidFrom: event.target.value,
           })
         }
+        onClear={() =>
+          onChange('validationMessages', {
+            ...state.validationMessages,
+            invalidFrom: '',
+          })
+        }
       />
 
       <Input
@@ -278,6 +294,12 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
           onChange('validationMessages', {
             ...state.validationMessages,
             invalidTo: event.target.value,
+          })
+        }
+        onClear={() =>
+          onChange('validationMessages', {
+            ...state.validationMessages,
+            invalidTo: '',
           })
         }
       />

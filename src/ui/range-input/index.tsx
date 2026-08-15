@@ -6,6 +6,9 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - форму через проп `shape`
+ *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
+ *    выводится из `shape`
+ *  - тон рамки через проп `borderTone`
  *  - тон глифа шеврона и кнопки сброса через проп `iconFill`
  *  - позицию шеврона и кнопки сброса через проп `iconPosition`
  *  - тон секции шеврона и кнопки сброса через проп `iconTone`
@@ -30,9 +33,10 @@
  *  - серую подсказку в полоске ошибки панели через проп `errorPlaceholder`
  *  - резерв высоты под строку ошибки через проп `reserveErrorSpace`
  *  - заголовок панели через проп `title`
- *  - выравнивание заголовка панели через проп `titleAlign`
- *  - размер заголовка панели через проп `titleSizePreset`
  *  - тон заголовка панели через проп `titleTone`
+ *  - размер заголовка панели через проп `titleSizePreset`
+ *  - курсив заголовка панели через проп `titleItalic`
+ *  - выравнивание заголовка панели через проп `titleAlign`
  *  - плейсхолдер поля `to` через проп `toPlaceholder`
  *  - обработчик пользовательской валидации через проп `validate`
  *  - тексты встроенной валидации через проп `validationMessages`
@@ -71,6 +75,7 @@ import {
   Icon,
   resolveIconShape,
   type IconPosition,
+  type IconShapePreset,
 } from '@ui/icon';
 import { Input } from '@ui/input';
 import {
@@ -133,6 +138,24 @@ const DEFAULT_RANGE_INPUT_DISABLED = false;
  * Используется, когда вызывающий код не передал проп `titleAlign`.
  */
 const DEFAULT_RANGE_INPUT_TITLE_ALIGN: TextAlignPreset = 'center';
+
+/**
+ * DEFAULT_RANGE_INPUT_PLACEHOLDER — задаёт плейсхолдер неактивного триггера по умолчанию.
+ * Используется, когда вызывающий код не передал проп `placeholder`.
+ */
+const DEFAULT_RANGE_INPUT_PLACEHOLDER = 'Select range';
+
+/**
+ * DEFAULT_RANGE_INPUT_FROM_PLACEHOLDER — задаёт плейсхолдер поля `from` по умолчанию.
+ * Используется, когда вызывающий код не передал проп `fromPlaceholder`.
+ */
+const DEFAULT_RANGE_INPUT_FROM_PLACEHOLDER = 'From';
+
+/**
+ * DEFAULT_RANGE_INPUT_TO_PLACEHOLDER — задаёт плейсхолдер поля `to` по умолчанию.
+ * Используется, когда вызывающий код не передал проп `toPlaceholder`.
+ */
+const DEFAULT_RANGE_INPUT_TO_PLACEHOLDER = 'To';
 
 /**
  * RangeInputValidationMessages — представляет частичные тексты встроенной валидации RangeInput.
@@ -219,14 +242,24 @@ type RangeInputInputProps = {
 };
 
 /**
+ * DEFAULT_RANGE_INPUT_TITLE — задаёт заголовок панели по умолчанию.
+ * Используется, когда вызывающий код не передал проп `title`.
+ */
+const DEFAULT_RANGE_INPUT_TITLE = 'Custom range';
+
+/**
  * RangeInputTitleProps — представляет пропсы заголовка панели RangeInput.
  *
+ * @property title — заголовок панели
  * @property titleAlign — выравнивание заголовка панели
+ * @property titleItalic — включает курсив заголовка панели
  * @property titleSizePreset — размер заголовка панели
  * @property titleTone — тон заголовка панели
  */
 type RangeInputTitleProps = {
+  title?: string;
   titleAlign?: TextAlignPreset;
+  titleItalic?: boolean;
   titleSizePreset?: TextSizePreset;
   titleTone?: TextTone;
 };
@@ -234,6 +267,7 @@ type RangeInputTitleProps = {
 /**
  * RangeInputProps — представляет пропсы компонента RangeInput.
  *
+ * @property clearShape — форма кнопки сброса
  * @property defaultValue — начальное значение в неконтролируемом режиме
  * @property disabled — включает недоступное состояние
  * @property errorPlaceholder — серая подсказка в полоске ошибки панели, пока нет ошибки
@@ -247,7 +281,6 @@ type RangeInputTitleProps = {
  * @property placeholder — плейсхолдер неактивного триггера
  * @property presets — пресеты диапазона в панели
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки
- * @property title — заголовок панели
  * @property toPlaceholder — плейсхолдер поля `to`
  * @property validate — обработчик пользовательской валидации диапазона
  * @property validationMessages — тексты встроенной валидации
@@ -257,21 +290,21 @@ type RangeInputProps = RangeInputStyleProps &
   RangeInputButtonProps &
   RangeInputInputProps &
   RangeInputTitleProps & {
+    clearShape?: IconShapePreset;
     defaultValue?: RangeValue;
     disabled?: boolean;
     errorPlaceholder?: string;
     formatActiveLabel: (value: RangeValue) => ReactNode;
-    fromPlaceholder: string;
+    fromPlaceholder?: string;
     iconFill?: TonePreset;
     iconPosition?: IconPosition;
     label?: string;
     onChange: (value: RangeValue) => void;
     onClear?: () => void;
-    placeholder: string;
+    placeholder?: string;
     presets?: RangePreset[];
     reserveErrorSpace?: boolean;
-    title: string;
-    toPlaceholder: string;
+    toPlaceholder?: string;
     validate?: (value: RangeValue) => null | string;
     validationMessages?: RangeInputValidationMessages;
     value?: RangeValue;
@@ -301,6 +334,19 @@ function normalizeRangeValue(value: RangeValue): RangeValue {
 }
 
 /**
+ * RangePanelError — представляет ошибку встроенной валидации панели RangeInput.
+ *
+ * @property invalidFrom — включает обводку ошибки поля `from`
+ * @property invalidTo — включает обводку ошибки поля `to`
+ * @property message — текст ошибки
+ */
+type RangePanelError = {
+  invalidFrom: boolean;
+  invalidTo: boolean;
+  message: string;
+};
+
+/**
  * validateNumericRangeValue — возвращает текст ошибки встроенной числовой валидации.
  * Проверяет целые числа не меньше нуля. Значение `inputMode` `numeric` не блокирует
  * буквы на десктопе.
@@ -312,16 +358,24 @@ function normalizeRangeValue(value: RangeValue): RangeValue {
 function validateNumericRangeValue(
   value: RangeValue,
   messages: ResolvedRangeInputValidationMessages
-): null | string {
+): null | RangePanelError {
   const from = value.from.trim();
   const to = value.to.trim();
 
   if (from !== '' && !/^\d+$/.test(from.replace(/,/g, ''))) {
-    return messages.invalidFrom;
+    return {
+      invalidFrom: true,
+      invalidTo: false,
+      message: messages.invalidFrom,
+    };
   }
 
   if (to !== '' && !/^\d+$/.test(to.replace(/,/g, ''))) {
-    return messages.invalidTo;
+    return {
+      invalidFrom: false,
+      invalidTo: true,
+      message: messages.invalidTo,
+    };
   }
 
   return null;
@@ -358,6 +412,7 @@ function presetListKey(preset: RangePreset): string {
  * />
  */
 export function RangeInput({
+  borderTone,
   buttonInlineSize,
   buttonPaddingInline,
   buttonShape: buttonShapeProp,
@@ -365,11 +420,12 @@ export function RangeInput({
   buttonText,
   buttonTextTone,
   buttonTone = DEFAULT_RANGE_INPUT_BUTTON_TONE,
+  clearShape: clearShapeProp,
   defaultValue = EMPTY_RANGE_VALUE,
   disabled = DEFAULT_RANGE_INPUT_DISABLED,
   errorPlaceholder,
   formatActiveLabel,
-  fromPlaceholder,
+  fromPlaceholder = DEFAULT_RANGE_INPUT_FROM_PLACEHOLDER,
   iconFill,
   iconPosition = DEFAULT_ICON_POSITION,
   iconTone,
@@ -378,16 +434,17 @@ export function RangeInput({
   label,
   onChange,
   onClear,
-  placeholder,
+  placeholder = DEFAULT_RANGE_INPUT_PLACEHOLDER,
   presets,
   reserveErrorSpace,
   shape,
   sizePreset,
-  title,
+  title = DEFAULT_RANGE_INPUT_TITLE,
   titleAlign = DEFAULT_RANGE_INPUT_TITLE_ALIGN,
+  titleItalic,
   titleSizePreset,
   titleTone,
-  toPlaceholder,
+  toPlaceholder = DEFAULT_RANGE_INPUT_TO_PLACEHOLDER,
   validate,
   validationMessages: validationMessagesProp,
   value,
@@ -419,7 +476,7 @@ export function RangeInput({
     useAnchoredOpen<HTMLDivElement>();
   const [draftFrom, setDraftFrom] = useState('');
   const [draftTo, setDraftTo] = useState('');
-  const [panelError, setPanelError] = useState<null | string>(null);
+  const [panelError, setPanelError] = useState<null | RangePanelError>(null);
   const [internalValue, setInternalValue] = useState<RangeValue>(() =>
     normalizeRangeValue(defaultValue)
   );
@@ -431,9 +488,10 @@ export function RangeInput({
   const showChevron = !showClear;
   const triggerLabel = isActive ? formatActiveLabel(committed) : placeholder;
   const textSizePreset = getRangeInputTextSize(sizePreset);
-  const hasPanelError = Boolean(panelError?.trim());
-  const surfaceProps = { iconTone, shape, sizePreset };
+  const hasPanelError = Boolean(panelError?.message.trim());
+  const surfaceProps = { borderTone, iconTone, shape, sizePreset };
   const iconShape = resolveIconShape(shape);
+  const clearShape = clearShapeProp ?? iconShape;
   const isIconStart = iconPosition === 'start';
   const iconNode = showChevron && (
     <Icon
@@ -478,16 +536,31 @@ export function RangeInput({
     const draft = normalizeRangeValue({ from: draftFrom, to: draftTo });
 
     if (isEmptyRangeValue(draft)) {
-      setPanelError(validationMessages.emptyBounds);
+      setPanelError({
+        invalidFrom: false,
+        invalidTo: false,
+        message: validationMessages.emptyBounds,
+      });
 
       return;
     }
 
-    const validationMessage =
-      validateNumericRangeValue(draft, validationMessages) ?? validate?.(draft) ?? null;
+    const numericError = validateNumericRangeValue(draft, validationMessages);
 
-    if (validationMessage?.trim()) {
-      setPanelError(validationMessage.trim());
+    if (numericError) {
+      setPanelError(numericError);
+
+      return;
+    }
+
+    const customMessage = validate?.(draft)?.trim() ?? '';
+
+    if (customMessage) {
+      setPanelError({
+        invalidFrom: false,
+        invalidTo: false,
+        message: customMessage,
+      });
 
       return;
     }
@@ -501,13 +574,22 @@ export function RangeInput({
     }
 
     const normalized = normalizeRangeValue(preset.value);
-    const validationMessage =
-      validateNumericRangeValue(normalized, validationMessages) ??
-      validate?.(normalized) ??
-      null;
+    const numericError = validateNumericRangeValue(normalized, validationMessages);
 
-    if (validationMessage?.trim()) {
-      setPanelError(validationMessage.trim());
+    if (numericError) {
+      setPanelError(numericError);
+
+      return;
+    }
+
+    const customMessage = validate?.(normalized)?.trim() ?? '';
+
+    if (customMessage) {
+      setPanelError({
+        invalidFrom: false,
+        invalidTo: false,
+        message: customMessage,
+      });
 
       return;
     }
@@ -566,7 +648,7 @@ export function RangeInput({
       disabled={disabled}
       iconFill={iconFill}
       iconTone={iconTone}
-      shape={iconShape}
+      shape={clearShape}
       showBorder
       showShadow={false}
       sizePreset={sizePreset}
@@ -665,6 +747,7 @@ export function RangeInput({
               align={titleAlign}
               as="h2"
               id={titleId}
+              italic={titleItalic}
               sizePreset={titleSizePreset}
               tone={titleTone}
             >
@@ -674,7 +757,7 @@ export function RangeInput({
               <Input
                 aria-describedby={hasPanelError ? panelErrorId : undefined}
                 inputMode="numeric"
-                invalid={hasPanelError}
+                invalid={panelError?.invalidFrom === true}
                 placeholder={fromPlaceholder}
                 ref={fromInputRef}
                 shape={inputShape}
@@ -684,18 +767,26 @@ export function RangeInput({
                   setDraftFrom(event.currentTarget.value);
                   setPanelError(null);
                 }}
+                onClear={() => {
+                  setDraftFrom('');
+                  setPanelError(null);
+                }}
                 onKeyDown={handleFieldKeyDown}
               />
               <Input
                 aria-describedby={hasPanelError ? panelErrorId : undefined}
                 inputMode="numeric"
-                invalid={hasPanelError}
+                invalid={panelError?.invalidTo === true}
                 placeholder={toPlaceholder}
                 shape={inputShape}
                 sizePreset={inputSizePreset}
                 value={draftTo}
                 onChange={(event) => {
                   setDraftTo(event.currentTarget.value);
+                  setPanelError(null);
+                }}
+                onClear={() => {
+                  setDraftTo('');
                   setPanelError(null);
                 }}
                 onKeyDown={handleFieldKeyDown}
@@ -706,7 +797,7 @@ export function RangeInput({
               placeholder={errorPlaceholder}
               reserveErrorSpace={reserveErrorSpace}
             >
-              {panelError ?? undefined}
+              {panelError?.message}
             </FieldError>
             <StyledRangeInputButtonRow>
               <Button

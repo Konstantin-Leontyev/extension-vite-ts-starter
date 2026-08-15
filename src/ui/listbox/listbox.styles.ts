@@ -71,6 +71,7 @@ export const StyledListboxRoot = styled.div.withConfig({
  */
 const LISTBOX_SURFACE_PROP_NAMES = new Set<string>([
   ...ICON_SETTING_PROP_NAMES,
+  'borderTone',
   'shape',
   'sizePreset',
 ]);

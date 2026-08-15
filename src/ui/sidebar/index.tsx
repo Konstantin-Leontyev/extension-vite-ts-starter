@@ -22,12 +22,14 @@
  *  - тон рамки панели через проп `borderTone`
  *  - заголовок панели через проп `title`
  *  - подзаголовок панели через проп `subtitle`
- *  - размер заголовка через проп `titleSizePreset`
- *  - выравнивание заголовка через проп `titleAlign`
  *  - тон заголовка через проп `titleTone`
- *  - размер подзаголовка через проп `subtitleSizePreset`
- *  - выравнивание подзаголовка через проп `subtitleAlign`
+ *  - размер заголовка через проп `titleSizePreset`
+ *  - курсив заголовка через проп `titleItalic`
+ *  - выравнивание заголовка через проп `titleAlign`
  *  - тон подзаголовка через проп `subtitleTone`
+ *  - размер подзаголовка через проп `subtitleSizePreset`
+ *  - курсив подзаголовка через проп `subtitleItalic`
+ *  - выравнивание подзаголовка через проп `subtitleAlign`
  *  - форму окна действия шапки через проп `actionShape`. Без `actionShape`
  *    форма остаётся дефолтом ряда
  *  - переопределение корневого элемента панели через проп `as`
@@ -53,6 +55,7 @@ import {
 } from 'react';
 
 import { SidebarIcon } from '@icons';
+import { type BorderProps } from '@ui/border';
 import { Card, type CardSubtitleProps, type CardTitleProps } from '@ui/card';
 import { type IconButtonRowAction } from '@ui/icon-button-row';
 
@@ -101,10 +104,12 @@ type CardForwardProps = Omit<
   | 'children'
   | 'headerActions'
   | 'id'
+  | keyof BorderProps
   | keyof CardSubtitleProps
   | keyof CardTitleProps
   | keyof SidebarStyleProps
 > &
+  BorderProps &
   CardSubtitleProps &
   SidebarCardTitleProps;
 

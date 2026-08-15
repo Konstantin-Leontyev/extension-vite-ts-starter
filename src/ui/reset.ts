@@ -44,6 +44,7 @@ const APP_MIN_INLINE_SIZE = '320px';
  *  - сброс UA `padding-block` у `input`, `textarea` и `select` —
  *    высоту однострочного контрола держит `min-block-size`, вертикальный
  *    отступ задаёт компонент при многострочной модели
+ *  - цвет `::placeholder` — `muted` из темы
  *  - сброс дефолтных рамок и фона кнопок
  *  - сброс UA `[popover]` — нейтрализует дефолтные `inset`, `width`, `height`,
  *    `margin`, `border` и `color`. Блок объявлен в слое каскада `ua-reset`:
@@ -139,6 +140,10 @@ export const GlobalResetStyle = createGlobalStyle`
   textarea,
   select {
     padding-block: 0;
+  }
+
+  ::placeholder {
+    color: ${(props) => getTheme(props).colors.muted};
   }
 
   button {

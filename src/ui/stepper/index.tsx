@@ -6,6 +6,7 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - форму поля через проп `shape`
+ *  - тон рамки через проп `borderTone`
  *  - числовое значение через проп `value`
  *  - обработчик изменения значения через проп `onChange`
  *  - обработчик фиксации значения через проп `onCommit`
@@ -167,6 +168,7 @@ type StepperProps = StepperStyleProps &
 export function Stepper({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
+  borderTone,
   disabled,
   label,
   max,
@@ -350,6 +352,7 @@ export function Stepper({
     <StyledStepperFieldRoot {...layoutProps}>
       <FieldLabel id={labelId}>{label}</FieldLabel>
       <StyledStepperRoot
+        borderTone={borderTone}
         data-disabled={disabled ? '' : undefined}
         shape={shape}
         sizePreset={sizePreset}

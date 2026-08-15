@@ -3,12 +3,15 @@
  * Предоставляет компонент TableInlineField для отображения поля ввода в ячейке таблицы.
  *
  * Поддерживает:
- *  - выравнивание текста через проп `textAlign`
- *  - размер текста через проп `textSize`
+ *  - тон значения через проп `textTone`
+ *  - размер значения через проп `textSize`
+ *  - курсив значения через проп `textItalic`
+ *  - горизонтальное выравнивание значения через проп `textAlign`
  *
  * Основные задачи:
  * 1. Экспортировать компонент TableInlineField
  * 2. Типизировать пропсы через `TableInlineFieldProps`
+ * 3. Реэкспортировать мост размера текста `getTableInlineFieldTextSize`
  *
  * Потребители:
  *  - `src/pages/showcase/table-demo/index.tsx` — рендерит поля add и edit в демо-таблице
@@ -19,6 +22,7 @@ import { type ComponentPropsWithRef } from 'react';
 
 import {
   StyledTableInlineField,
+  getTableInlineFieldTextSize,
   type TableInlineFieldStyleProps,
 } from './table-inline-field.styles';
 
@@ -57,3 +61,6 @@ type TableInlineFieldProps = TableInlineFieldStyleProps &
 export function TableInlineField(props: TableInlineFieldProps) {
   return <StyledTableInlineField {...props} />;
 }
+
+/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
+export { getTableInlineFieldTextSize };

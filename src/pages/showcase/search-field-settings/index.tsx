@@ -154,6 +154,7 @@ export function SearchFieldSettings({ onChange, state }: SearchFieldSettingsProp
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('placeholder', event.target.value)
         }
+        onClear={() => onChange('placeholder', '')}
       />
 
       <TextGroup

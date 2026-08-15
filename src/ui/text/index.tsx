@@ -21,8 +21,8 @@
  * 2. Типизировать пропсы через `TextProps`
  * 3. Экспортировать тип `ChildrenTextProps`
  * 4. Реэкспортировать публичное API стилей: `TEXT_ALIGN_PRESET_KEYS`, `TEXT_SIZE_PRESET_KEYS`,
- *    `TEXT_TONE_KEYS`, `textSizePresets`, `getEllipsisStyles`, `getTextLineHeight`,
- *    `getTextProperties`, `getTextToneColor` и типы
+ *    `TEXT_TONE_KEYS`, `textSizePresets`, `getEllipsisStyles`, `getNativeFieldTextStyles`,
+ *    `getTextLineHeight`, `getTextProperties`, `getTextToneColor` и типы
  *
  * Потребители:
  *  - контролы, например Button, Tag и Listbox — рендерят текст внутри себя
@@ -44,6 +44,7 @@ import {
   TEXT_SIZE_PRESET_KEYS,
   TEXT_TONE_KEYS,
   getEllipsisStyles,
+  getNativeFieldTextStyles,
   getTextLineHeight,
   getTextProperties,
   getTextToneColor,
@@ -112,6 +113,7 @@ export {
   TEXT_SIZE_PRESET_KEYS,
   TEXT_TONE_KEYS,
   getEllipsisStyles,
+  getNativeFieldTextStyles,
   getTextLineHeight,
   getTextProperties,
   getTextToneColor,

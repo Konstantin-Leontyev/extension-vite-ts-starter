@@ -14,8 +14,10 @@
  *  - рамку контрола через проп `showBorder`
  *  - тень через проп `showShadow`
  *  - тон рамки через проп `borderTone`
- *  - горизонтальное выравнивание значения через проп `textAlign`
+ *  - тон значения через проп `textTone`
+ *  - размер значения через проп `textSize`
  *  - курсив значения через проп `textItalic`
+ *  - горизонтальное выравнивание значения через проп `textAlign`
  *  - иконку через проп `icon`
  *  - позицию иконки через проп `iconPosition`
  *  - тон секции иконки через проп `iconTone`
@@ -30,8 +32,9 @@
  * 1. Экспортировать компонент SearchField
  * 2. Типизировать пропсы через `SearchFieldProps`
  * 3. Экспортировать тип `SearchFieldShowIconProps`
- * 4. Связывать подпись и поле для доступности
- * 5. Выставлять `aria-label` кнопки сброса через `resolveClearAriaLabel`
+ * 4. Реэкспортировать мост размера текста `getSearchFieldTextSize`
+ * 5. Связывать подпись и поле для доступности
+ * 6. Выставлять `aria-label` кнопки сброса через `resolveClearAriaLabel`
  *
  * Потребители:
  *  - `@ui/combobox` — рендерит поле поиска в панели
@@ -47,8 +50,9 @@ import {
   type ReactNode,
 } from 'react';
 
-import { CloseIcon, SearchIcon } from '@icons';
+import { SearchIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
+import { FieldClear } from '@ui/field-clear';
 import { FieldLabel } from '@ui/field-label';
 import {
   Icon,
@@ -63,6 +67,7 @@ import {
   StyledSearchFieldControl,
   StyledSearchFieldRoot,
   StyledSearchFieldRow,
+  getSearchFieldTextSize,
   splitLayoutProps,
   type SearchFieldStyleProps,
 } from './search-field.styles';
@@ -90,14 +95,6 @@ const DEFAULT_SEARCH_FIELD_SHOW_ICON = true;
  * Передаётся вторым аргументом в `resolveClearAriaLabel`, когда подпись пуста.
  */
 const CLEAR_SEARCH_ARIA_LABEL = 'Clear search';
-
-/**
- * SEARCH_FIELD_CLEAR_PADDING — задаёт фиксированный отступ кнопки сброса.
- * Значение `12` осознанно перенесено из Combobox до врезки SearchField и не
- * берётся из таблицы отступов по `sizePreset`. Используется как значение пропа
- * `padding` у Icon кнопки сброса.
- */
-const SEARCH_FIELD_CLEAR_PADDING = 12;
 
 /**
  * SearchFieldShowIconProps — представляет пропсы секции иконки SearchField.
@@ -184,6 +181,8 @@ function SearchField({
   sizePreset,
   textAlign,
   textItalic,
+  textSize,
+  textTone,
   value,
   ...rest
 }: SearchFieldProps) {
@@ -212,7 +211,6 @@ function SearchField({
       shape={iconShape}
       showBorder={false}
       showHover={false}
-      showShadow={false}
       sizePreset={sizePreset}
     >
       {icon}
@@ -220,23 +218,15 @@ function SearchField({
   );
 
   const clearNode = hasClear && (
-    <Icon
-      aria-label={resolveClearAriaLabel(label, CLEAR_SEARCH_ARIA_LABEL)}
-      as="button"
-      data-slot="clear"
+    <FieldClear
+      ariaLabel={resolveClearAriaLabel(label, CLEAR_SEARCH_ARIA_LABEL)}
       disabled={disabled}
       iconFill={iconFill}
       iconTone={iconTone}
-      padding={SEARCH_FIELD_CLEAR_PADDING}
       shape={clearShape}
-      showBorder={false}
-      showHover={false}
-      showShadow={false}
       sizePreset={sizePreset}
       onClick={handleClear}
-    >
-      <CloseIcon />
-    </Icon>
+    />
   );
 
   return (
@@ -263,6 +253,8 @@ function SearchField({
           sizePreset={sizePreset}
           textAlign={textAlign}
           textItalic={textItalic}
+          textSize={textSize}
+          textTone={textTone}
           type="search"
           value={value}
           onChange={onChange}
@@ -274,4 +266,5 @@ function SearchField({
   );
 }
 
-export { SearchField, type SearchFieldShowIconProps };
+/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста и публичного типа */
+export { SearchField, getSearchFieldTextSize, type SearchFieldShowIconProps };

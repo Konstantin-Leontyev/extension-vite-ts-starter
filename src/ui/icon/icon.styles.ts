@@ -36,7 +36,7 @@ import {
   BORDER_PROP_NAMES,
   DEFAULT_SHOW_SHADOW,
   getBorderStyles,
-  type BorderProps,
+  type ShowBorderProps,
 } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
@@ -332,7 +332,7 @@ export function getIconPositionStyles(): string {
  * @property sizePreset — размер окна иконки
  */
 export type IconStyleProps = LayoutProps &
-  BorderProps & {
+  ShowBorderProps & {
     iconFill?: TonePreset;
     iconTone?: TonePreset;
     interactive?: boolean;

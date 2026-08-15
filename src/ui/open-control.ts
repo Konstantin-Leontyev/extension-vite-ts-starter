@@ -59,10 +59,12 @@ export type OpenControlTriggerRowClearLayout = 'both-branches' | 'trailing-only'
 /**
  * OpenControlSurfaceStyleProps — представляет пропсы стилизации поверхности open-control.
  *
+ * @property borderTone — тон рамки ряда-триггера
  * @property shape — форма поверхности
  * @property sizePreset — размер компонента
  */
 export type OpenControlSurfaceStyleProps = {
+  borderTone?: TonePreset;
   shape?: ShapePreset;
   sizePreset?: SizePreset;
 };
@@ -215,7 +217,11 @@ export function getOpenControlTriggerRowStyles(
   clearLayout: OpenControlTriggerRowClearLayout = 'both-branches'
 ): string {
   const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const {
+    borderTone,
+    shape = DEFAULT_SHAPE_PRESET,
+    sizePreset = DEFAULT_SIZE_PRESET,
+  } = props;
   const styles = [
     'display: grid;',
     'grid-template-columns: minmax(0, 1fr);',
@@ -234,7 +240,7 @@ export function getOpenControlTriggerRowStyles(
     'overflow: hidden;',
     `background-color: ${getSurfaceBackgroundColor(theme, 'surface')};`,
     `border-radius: ${resolveOpenControlBlockRadius(shape, sizePreset)};`,
-    getBorderStyles(theme),
+    getBorderStyles(theme, undefined, undefined, borderTone),
     "&[data-open='true'] { visibility: hidden; }",
     `&:has(:focus-visible) {
       ${getOutlineStyles(theme.colors.focusOutline)}

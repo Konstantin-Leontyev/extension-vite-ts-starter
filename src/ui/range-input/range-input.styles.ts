@@ -90,6 +90,7 @@ export const StyledRangeInputRoot = styled.div.withConfig({
  */
 const RANGE_INPUT_SURFACE_PROP_NAMES = new Set<string>([
   ...ICON_SETTING_PROP_NAMES,
+  'borderTone',
   'shape',
   'sizePreset',
 ]);

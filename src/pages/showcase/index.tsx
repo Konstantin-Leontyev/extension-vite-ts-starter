@@ -16,6 +16,7 @@ import { useState, type ReactNode } from 'react';
 import { useShellOutletContext } from '@components/router';
 import { useToast } from '@hooks/use-toast';
 import { SettingsIcon } from '@icons';
+import { resolveBorderProps, type BorderProps, type ShowBorderProps } from '@ui/border';
 import { Button, getButtonTextSize, type ButtonIconProps } from '@ui/button';
 import {
   CARD_HEADER_ACTION_SIZE_PRESET,
@@ -1392,6 +1393,36 @@ export function ShowcasePage() {
       }
     : {};
   const sidebarTitleProps: CardTitleProps = panelTitle ? { title: panelTitle } : {};
+  const cardBorderProps: BorderProps = resolveBorderProps(
+    card.showBorder,
+    card.borderTone,
+    card.showShadow
+  );
+  const toolbarBorderProps: BorderProps = resolveBorderProps(
+    toolbar.showBorder,
+    toolbar.borderTone,
+    toolbar.showShadow
+  );
+  const inputBorderProps: BorderProps = resolveBorderProps(
+    input.showBorder,
+    input.borderTone,
+    input.showShadow
+  );
+  const searchFieldBorderProps: BorderProps = resolveBorderProps(
+    searchField.showBorder,
+    searchField.borderTone,
+    searchField.showShadow
+  );
+  const iconBorderProps: ShowBorderProps = resolveBorderProps(
+    icon.showBorder,
+    icon.borderTone,
+    icon.showShadow
+  );
+  const tagBorderProps: BorderProps = resolveBorderProps(
+    tag.showBorder,
+    tag.borderTone,
+    tag.showShadow
+  );
   const searchFieldShowIconProps: SearchFieldShowIconProps = searchField.showIcon
     ? {
         showIcon: true,
@@ -1554,10 +1585,8 @@ export function ShowcasePage() {
                 <Card
                   actionShape={card.actionShape}
                   background={card.background}
-                  borderTone={card.borderTone}
                   headerActions={card.headerActions.map(resolveIconButtonRowAction)}
-                  showBorder={card.showBorder}
-                  showShadow={card.showShadow}
+                  {...cardBorderProps}
                   {...cardTitleProps}
                   {...cardSubtitleProps}
                 />
@@ -1588,12 +1617,10 @@ export function ShowcasePage() {
                   actions={toolbar.actions.map(resolveIconButtonRowAction)}
                   ariaLabel={TOOLBAR_DEMO_ARIA_LABEL}
                   background={toolbar.background}
-                  borderTone={toolbar.borderTone}
                   placeSelf="center"
                   shape={toolbar.shape}
-                  showBorder={toolbar.showBorder}
-                  showShadow={toolbar.showShadow}
                   sizePreset={toolbar.sizePreset}
+                  {...toolbarBorderProps}
                 />
               )}
 
@@ -1602,7 +1629,6 @@ export function ShowcasePage() {
                 INPUT_WIDGET_TITLE_ID,
                 <Input
                   alignSelf="center"
-                  borderTone={input.borderTone}
                   disabled={input.disabled}
                   error={input.error || undefined}
                   errorPlaceholder={input.errorPlaceholder}
@@ -1611,13 +1637,13 @@ export function ShowcasePage() {
                   placeholder={input.placeholder}
                   reserveErrorSpace={input.reserveErrorSpace}
                   shape={input.shape}
-                  showBorder={input.showBorder}
-                  showShadow={input.showShadow}
                   sizePreset={input.sizePreset}
                   textAlign={input.textAlign}
                   textItalic={input.textItalic}
                   value={input.value}
                   onChange={(event) => updateInput('value', event.target.value)}
+                  onClear={() => updateInput('value', '')}
+                  {...inputBorderProps}
                 />
               )}
 
@@ -1626,7 +1652,6 @@ export function ShowcasePage() {
                 SEARCH_FIELD_WIDGET_TITLE_ID,
                 <SearchField
                   alignSelf="center"
-                  borderTone={searchField.borderTone}
                   clearShape={searchField.clearShape}
                   disabled={searchField.disabled}
                   iconFill={searchField.iconFill}
@@ -1634,14 +1659,13 @@ export function ShowcasePage() {
                   label={searchField.label || undefined}
                   placeholder={searchField.placeholder}
                   shape={searchField.shape}
-                  showBorder={searchField.showBorder}
-                  showShadow={searchField.showShadow}
                   sizePreset={searchField.sizePreset}
                   textAlign={searchField.textAlign}
                   textItalic={searchField.textItalic}
                   value={searchField.value}
                   onChange={(event) => updateSearchField('value', event.target.value)}
                   onClear={() => updateSearchField('value', '')}
+                  {...searchFieldBorderProps}
                   {...searchFieldShowIconProps}
                 />
               )}
@@ -1784,17 +1808,15 @@ export function ShowcasePage() {
                 <Icon
                   aria-label={DEMO_ICON_ARIA_LABEL}
                   as="button"
-                  borderTone={icon.borderTone}
                   disabled={icon.disabled}
                   iconFill={icon.iconFill}
                   iconTone={icon.iconTone}
                   padding={icon.padding}
                   placeSelf="center"
                   shape={icon.shape}
-                  showBorder={icon.showBorder}
                   showHover={icon.showHover}
-                  showShadow={icon.showShadow}
                   sizePreset={icon.sizePreset}
+                  {...iconBorderProps}
                 >
                   {getIcon(icon.iconKey)}
                 </Icon>
@@ -1845,14 +1867,12 @@ export function ShowcasePage() {
                 'tag',
                 TAG_WIDGET_TITLE_ID,
                 <Tag
-                  borderTone={tag.borderTone}
                   placeSelf="center"
                   shape={tag.shape}
-                  showBorder={tag.showBorder}
-                  showShadow={tag.showShadow}
                   sizePreset={tag.sizePreset}
                   tinted={tag.tinted}
                   tone={tag.tone}
+                  {...tagBorderProps}
                   {...tagShowDotProps}
                   {...tagTextProps}
                 />

@@ -118,6 +118,7 @@ export function ProgressBarSettings({ onChange, state }: ProgressBarSettingsProp
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('value', parseValueFromPercent(event.target.value))
         }
+        onClear={() => onChange('value', parseValueFromPercent(''))}
       />
 
       <TextGroup

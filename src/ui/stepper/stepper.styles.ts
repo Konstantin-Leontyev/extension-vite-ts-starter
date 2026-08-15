@@ -36,6 +36,7 @@ import {
   type TextTone,
 } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
+import { type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -53,10 +54,12 @@ export function getStepperTextSize(sizePreset?: SizePreset): TextSizePreset {
 /**
  * StepperRootStyleProps — представляет пропсы стилизации корневого поля Stepper.
  *
+ * @property borderTone — тон рамки
  * @property shape — форма поля
  * @property sizePreset — размер компонента
  */
 type StepperRootStyleProps = {
+  borderTone?: TonePreset;
   shape?: ShapePreset;
   sizePreset?: SizePreset;
 };
@@ -103,7 +106,7 @@ export const StyledStepperFieldRoot = styled.div.withConfig({
 /**
  * STEPPER_ROOT_PROP_NAMES — хранит имена пропсов стилизации поля Stepper.
  */
-const STEPPER_ROOT_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
+const STEPPER_ROOT_PROP_NAMES = new Set<string>(['borderTone', 'shape', 'sizePreset']);
 
 /**
  * getStepperRootStyles — возвращает CSS-правила для узла `StyledStepperRoot`: габариты,
@@ -122,14 +125,18 @@ function getStepperRootStyles(
   props: StepperRootStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const {
+    borderTone,
+    shape = DEFAULT_SHAPE_PRESET,
+    sizePreset = DEFAULT_SIZE_PRESET,
+  } = props;
   const minBlockSize = getMinBlockSize(sizePreset);
 
   return `
     min-block-size: ${minBlockSize};
     border-radius: ${resolveBlockRadius(shape, minBlockSize)};
     background-color: ${theme.colors.surface};
-    ${getBorderStyles(theme)}
+    ${getBorderStyles(theme, undefined, undefined, borderTone)}
 
     &:has(:focus-visible) {
       ${getOutlineStyles(theme.colors.focusOutline)}

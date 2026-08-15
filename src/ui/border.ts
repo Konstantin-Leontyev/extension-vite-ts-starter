@@ -1,19 +1,26 @@
 /**
  * Файл: `src/ui/border.ts`
  * Содержит управляемую рамку и тень вне layout-box: обводка `0 0 0 1px` и
- * опционально `shadow.surface` одним `box-shadow`, плюс пакет пропсов
- * `BorderProps` для локального opt-in у потребителей.
+ * опционально `shadow.surface` одним `box-shadow`, плюс два пакета пропсов
+ * для локального opt-in у потребителей. `BorderProps` — когда дефолт
+ * потребителя «рамка есть»; `ShowBorderProps` — когда дефолт «рамки нет».
  *
  * Основные задачи:
- * 1. Типизировать пропсы рамки через `BorderProps` и перечень `BORDER_PROP_NAMES`
+ * 1. Типизировать пропсы рамки через `BorderProps`, `ShowBorderProps`
+ *    и перечень `BORDER_PROP_NAMES`
  * 2. Предоставить функцию `getBorderStyles` — рамка и тень вне layout-box
- * 3. Задать дефолты пропов `showBorder` и `showShadow` через
+ * 3. Предоставить функцию `resolveBorderProps` — пакет рамки по флагу показа
+ * 4. Задать дефолты пропов `showBorder` и `showShadow` через
  *    `DEFAULT_SHOW_BORDER` и `DEFAULT_SHOW_SHADOW`
  *
  * Потребители:
- *  - styles-файлы с рамкой и тенью, например Card, Icon, Input, SearchField,
- *    Tag и Toolbar — подключают `BorderProps` / `BORDER_PROP_NAMES` и подставляют
- *    рамку через `getBorderStyles`
+ *  - styles-файлы с рамкой и тенью и дефолтом «рамка есть», например Card,
+ *    Input, SearchField, Tag и Toolbar — подключают `BorderProps` /
+ *    `BORDER_PROP_NAMES` и подставляют рамку через `getBorderStyles`
+ *  - styles-файлы и оболочки с дефолтом «рамки нет», например Icon и Modal —
+ *    подключают `ShowBorderProps` / `BORDER_PROP_NAMES`
+ *  - `src/pages/showcase` и `@ui/modal` — собирают пакет рамки через
+ *    `resolveBorderProps`
  *  - styles-файлы с постоянной рамкой без публичных пропсов, например Button,
  *    Listbox, Checkbox, RadioButton, AnchoredPortal, SegmentButton и Toast —
  *    подставляют `getBorderStyles` с дефолтами
@@ -38,25 +45,85 @@ export const DEFAULT_SHOW_SHADOW = true;
 
 /**
  * BorderProps — представляет пропсы управления рамкой и тенью.
+ * Поля тона и тени допустимы, пока `showBorder` не выключен: дефолт флага — рамка есть.
+ * Для потребителя с дефолтом «рамки нет» берётся `ShowBorderProps`.
  * Подключается локально через `& BorderProps` и `...BORDER_PROP_NAMES`
- * у потребителей, которым нужна ось управления; в `LayoutProps` не входит.
+ * у потребителей, которым нужна рамка; в `LayoutProps` не входит.
  *
  * @property borderTone — тон цвета рамки при включённом `showBorder`
  * @property showBorder — включает рамку
  * @property showShadow — включает тень при включённой рамке
  */
-export type BorderProps = {
-  borderTone?: TonePreset;
-  showBorder?: boolean;
-  showShadow?: boolean;
-};
+export type BorderProps =
+  | {
+      borderTone?: never;
+      showBorder: false;
+      showShadow?: never;
+    }
+  | {
+      borderTone?: TonePreset;
+      showBorder?: true;
+      showShadow?: boolean;
+    };
 
 /**
- * BORDER_PROP_NAMES — хранит имена пропсов пакета `BorderProps`.
+ * ShowBorderProps — представляет пропсы управления рамкой и тенью.
+ * Поля тона и тени допустимы только при явном `showBorder: true`: дефолт флага — рамки нет.
+ * Для потребителя с дефолтом «рамка есть» берётся `BorderProps`.
+ * Подключается локально через `& ShowBorderProps` и `...BORDER_PROP_NAMES`
+ * у потребителей, которым нужна рамка; в `LayoutProps` не входит.
+ *
+ * @property borderTone — тон цвета рамки при включённом `showBorder`
+ * @property showBorder — включает рамку
+ * @property showShadow — включает тень при включённой рамке
+ */
+export type ShowBorderProps =
+  | {
+      borderTone?: never;
+      showBorder?: false;
+      showShadow?: never;
+    }
+  | {
+      borderTone?: TonePreset;
+      showBorder: true;
+      showShadow?: boolean;
+    };
+
+/**
+ * BORDER_PROP_NAMES — хранит имена пропсов пакетов `BorderProps` и `ShowBorderProps`.
  * Компоненты подключают набор спредом в свой `*_PROP_NAMES` вместе с
  * layout-пропами и остальными пропами стилизации.
  */
 export const BORDER_PROP_NAMES = new Set(['borderTone', 'showBorder', 'showShadow']);
+
+/**
+ * resolveBorderProps — возвращает пакет пропсов рамки по флагу показа.
+ * При включённой рамке отдаёт `showBorder` вместе с тоном и тенью, иначе гасит
+ * зависимые поля. Результат подходит и к `BorderProps`, и к `ShowBorderProps`.
+ * Используется в `src/pages/showcase` и `@ui/modal`.
+ *
+ * @param showBorder включает рамку
+ * @param borderTone тон цвета рамки при включённой рамке
+ * @param showShadow включает тень при включённой рамке
+ * @returns пакет пропсов рамки для передачи в потребитель
+ */
+export function resolveBorderProps(
+  showBorder: boolean,
+  borderTone?: TonePreset,
+  showShadow?: boolean
+):
+  | {
+      borderTone?: TonePreset;
+      showBorder: true;
+      showShadow?: boolean;
+    }
+  | {
+      showBorder: false;
+    } {
+  return showBorder
+    ? { borderTone, showBorder: true, showShadow }
+    : { showBorder: false };
+}
 
 /**
  * getBorderColor — возвращает цвет рамки по `borderTone`.

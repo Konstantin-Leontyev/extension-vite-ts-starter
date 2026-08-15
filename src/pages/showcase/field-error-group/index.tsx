@@ -83,6 +83,7 @@ export function FieldErrorGroup({
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             onErrorPlaceholderChange(event.target.value || undefined)
           }
+          onClear={() => onErrorPlaceholderChange(undefined)}
         />
       )}
     </>

@@ -107,6 +107,7 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
             onChange('min', parsed);
           }
         }}
+        onClear={() => onChange('min', undefined)}
       />
 
       <Input
@@ -122,6 +123,7 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
             onChange('max', parsed);
           }
         }}
+        onClear={() => onChange('max', undefined)}
       />
 
       <Stepper
@@ -137,6 +139,7 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('suffix', event.target.value)
         }
+        onClear={() => onChange('suffix', '')}
       />
 
       <TextGroup

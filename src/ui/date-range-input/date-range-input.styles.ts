@@ -40,7 +40,11 @@ const DATE_RANGE_INPUT_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES])
 /**
  * DATE_RANGE_INPUT_SURFACE_PROP_NAMES — хранит имена пропсов стилизации поверхности DateRangeInput.
  */
-const DATE_RANGE_INPUT_SURFACE_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
+const DATE_RANGE_INPUT_SURFACE_PROP_NAMES = new Set<string>([
+  'borderTone',
+  'shape',
+  'sizePreset',
+]);
 
 /**
  * StyledDateRangeInputRoot — задаёт корневой узел компонента DateRangeInput.

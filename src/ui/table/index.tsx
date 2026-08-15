@@ -52,7 +52,8 @@
  * 4. Реэкспортировать утилиту `computeTableColumnInlineSizes`, тип `TableColumnSizeConfig`
  *    и дефолты осей
  * 5. Реэкспортировать сателлиты `TableCell`, `TableCellAlign`, `TableGroupCell`,
- *    `TableInlineField`, `TableMemberPrefix` и `TableNestedCell`
+ *    `TableInlineField`, `TableMemberPrefix` и `TableNestedCell`, а также мост
+ *    размера текста `getTableInlineFieldTextSize`
  *
  * Потребители:
  *  - `src/pages/showcase/table-demo/index.tsx` — собирает демо-таблицу каталога
@@ -1210,7 +1211,8 @@ export function Table<Row>(props: TableProps<Row>) {
 
 export { TableCell, type TableCellAlign } from './table-cell';
 export { TableGroupCell } from './table-group-cell';
-export { TableInlineField } from './table-inline-field';
+/* eslint-disable react-refresh/only-export-components -- мост размера текста инлайн-поля */
+export { TableInlineField, getTableInlineFieldTextSize } from './table-inline-field';
 export { TableMemberPrefix } from './table-member-prefix';
 export { TableNestedCell } from './table-nested-cell';
 /* eslint-disable react-refresh/only-export-components -- реэкспорт утилит sizing и дефолтов осей Table */

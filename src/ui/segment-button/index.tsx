@@ -6,6 +6,7 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - форму оболочки через проп `shape`
+ *  - тон рамки через проп `borderTone`
  *  - левый сегмент через проп `left`
  *  - средний сегмент через проп `center`. Без `center` ряд из двух сегментов
  *  - правый сегмент через проп `right`
@@ -77,6 +78,7 @@ type SegmentButtonProps = {
  * />
  */
 export function SegmentButton({
+  borderTone,
   center,
   label,
   left,
@@ -112,7 +114,7 @@ export function SegmentButton({
       {...restProps}
     >
       <FieldLabel id={labelId}>{label}</FieldLabel>
-      <StyledSegmentButton shape={shape} sizePreset={sizePreset}>
+      <StyledSegmentButton borderTone={borderTone} shape={shape} sizePreset={sizePreset}>
         <SegmentButtonParts {...partsProps} />
       </StyledSegmentButton>
     </StyledSegmentButtonRoot>

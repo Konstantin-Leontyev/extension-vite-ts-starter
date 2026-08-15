@@ -30,6 +30,7 @@ import {
 import { getSpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
+import { type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -47,10 +48,12 @@ export function getSegmentButtonTextSize(sizePreset?: SizePreset): TextSizePrese
 /**
  * SegmentButtonStyleProps — представляет пропсы стилизации SegmentButton и layout-пропсы.
  *
+ * @property borderTone — тон рамки
  * @property shape — форма оболочки ряда
  * @property sizePreset — размер компонента
  */
 export type SegmentButtonStyleProps = LayoutProps & {
+  borderTone?: TonePreset;
   shape?: ShapePreset;
   sizePreset?: SizePreset;
 };
@@ -81,7 +84,7 @@ export const StyledSegmentButtonRoot = styled.div.withConfig({
 /**
  * SEGMENT_BUTTON_PROP_NAMES — хранит имена пропсов стилизации оболочки ряда.
  */
-const SEGMENT_BUTTON_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
+const SEGMENT_BUTTON_PROP_NAMES = new Set<string>(['borderTone', 'shape', 'sizePreset']);
 
 /**
  * getSegmentButtonStyles — возвращает CSS-правила для узла `StyledSegmentButton`:
@@ -100,16 +103,22 @@ const SEGMENT_BUTTON_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
  * @returns CSS-правила, каждое с новой строки
  */
 function getSegmentButtonStyles(
-  props: Pick<SegmentButtonStyleProps, 'shape' | 'sizePreset'> & { theme: AppTheme }
+  props: Pick<SegmentButtonStyleProps, 'borderTone' | 'shape' | 'sizePreset'> & {
+    theme: AppTheme;
+  }
 ): string {
   const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const {
+    borderTone,
+    shape = DEFAULT_SHAPE_PRESET,
+    sizePreset = DEFAULT_SIZE_PRESET,
+  } = props;
   const minBlockSize = getMinBlockSize(sizePreset);
 
   return `
     min-block-size: ${minBlockSize};
     background-color: ${theme.colors.surface};
-    ${getBorderStyles(theme)}
+    ${getBorderStyles(theme, undefined, undefined, borderTone)}
     border-radius: ${resolveBlockRadius(shape, minBlockSize)};
     &:has(:focus-visible) {
       ${getOutlineStyles(theme.colors.focusOutline)}
@@ -119,7 +128,7 @@ function getSegmentButtonStyles(
 
 /**
  * StyledSegmentButton — задаёт оболочку ряда сегментов компонента SegmentButton.
- * Базируется на `<div>` и принимает пропсы `shape` и `sizePreset`.
+ * Базируется на `<div>` и принимает пропсы `borderTone`, `shape` и `sizePreset`.
  *
  * Встроенные стили:
  *  - `display: grid` — оболочка над рядом сегментов
@@ -133,7 +142,7 @@ function getSegmentButtonStyles(
  */
 export const StyledSegmentButton = styled.div.withConfig({
   shouldForwardProp: (prop) => !SEGMENT_BUTTON_PROP_NAMES.has(prop),
-})<Pick<SegmentButtonStyleProps, 'shape' | 'sizePreset'>>`
+})<Pick<SegmentButtonStyleProps, 'borderTone' | 'shape' | 'sizePreset'>>`
   display: grid;
   inline-size: 100%;
   min-inline-size: 0;

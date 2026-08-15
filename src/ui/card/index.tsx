@@ -11,12 +11,14 @@
  *  - тело карточки через `children`
  *  - заголовок через проп `title`
  *  - подзаголовок через проп `subtitle`
- *  - размер заголовка через проп `titleSizePreset`
- *  - выравнивание заголовка через проп `titleAlign`
  *  - тон заголовка через проп `titleTone`
- *  - размер подзаголовка через проп `subtitleSizePreset`
- *  - выравнивание подзаголовка через проп `subtitleAlign`
+ *  - размер заголовка через проп `titleSizePreset`
+ *  - курсив заголовка через проп `titleItalic`
+ *  - выравнивание заголовка через проп `titleAlign`
  *  - тон подзаголовка через проп `subtitleTone`
+ *  - размер подзаголовка через проп `subtitleSizePreset`
+ *  - курсив подзаголовка через проп `subtitleItalic`
+ *  - выравнивание подзаголовка через проп `subtitleAlign`
  *  - id заголовка для `aria-labelledby` через проп `titleId`
  *  - ряд действий в шапке через проп `headerActions`
  *  - форму окна действия шапки через проп `actionShape`. Без `actionShape`
@@ -88,6 +90,7 @@ const DEFAULT_CARD_HEADER_ACTIONS: IconButtonRowAction[] = [];
  * @property title — заголовок
  * @property titleAlign — выравнивание заголовка
  * @property titleId — id заголовка для `aria-labelledby`
+ * @property titleItalic — включает курсив заголовка
  * @property titleSizePreset — размер заголовка
  * @property titleTone — тон заголовка
  */
@@ -96,6 +99,7 @@ type CardTitleProps =
       title: string;
       titleAlign?: CSSProperties['textAlign'];
       titleId?: string;
+      titleItalic?: boolean;
       titleSizePreset?: TextSizePreset;
       titleTone?: TextTone;
     }
@@ -103,6 +107,7 @@ type CardTitleProps =
       title?: never;
       titleAlign?: never;
       titleId?: never;
+      titleItalic?: never;
       titleSizePreset?: never;
       titleTone?: never;
     };
@@ -113,6 +118,7 @@ type CardTitleProps =
  *
  * @property subtitle — подзаголовок под заголовком
  * @property subtitleAlign — выравнивание подзаголовка
+ * @property subtitleItalic — включает курсив подзаголовка
  * @property subtitleSizePreset — размер подзаголовка
  * @property subtitleTone — тон подзаголовка
  */
@@ -120,12 +126,14 @@ type CardSubtitleProps =
   | {
       subtitle: string;
       subtitleAlign?: CSSProperties['textAlign'];
+      subtitleItalic?: boolean;
       subtitleSizePreset?: TextSizePreset;
       subtitleTone?: TextTone;
     }
   | {
       subtitle?: never;
       subtitleAlign?: never;
+      subtitleItalic?: never;
       subtitleSizePreset?: never;
       subtitleTone?: never;
     };
@@ -165,11 +173,13 @@ function Card<T extends CardHtmlTag = 'div'>({
   headerActions = DEFAULT_CARD_HEADER_ACTIONS,
   subtitle,
   subtitleAlign,
+  subtitleItalic,
   subtitleSizePreset,
   subtitleTone = DEFAULT_CARD_SUBTITLE_TONE,
   title,
   titleAlign,
   titleId,
+  titleItalic,
   titleSizePreset = DEFAULT_CARD_TITLE_SIZE_PRESET,
   titleTone,
   ...rest
@@ -180,6 +190,7 @@ function Card<T extends CardHtmlTag = 'div'>({
     <Text
       align={subtitleAlign}
       as="p"
+      italic={subtitleItalic}
       sizePreset={subtitleSizePreset}
       tone={subtitleTone}
     >
@@ -195,6 +206,7 @@ function Card<T extends CardHtmlTag = 'div'>({
             align={titleAlign}
             as="h2"
             id={titleId}
+            italic={titleItalic}
             sizePreset={titleSizePreset}
             tone={titleTone}
           >

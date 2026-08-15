@@ -134,6 +134,7 @@ export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('placeholder', event.target.value)
         }
+        onClear={() => onChange('placeholder', '')}
       />
 
       <Checkbox

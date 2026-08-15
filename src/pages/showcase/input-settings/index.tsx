@@ -114,6 +114,7 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('placeholder', event.target.value)
         }
+        onClear={() => onChange('placeholder', '')}
       />
 
       <TextGroup

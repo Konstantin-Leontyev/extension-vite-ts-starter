@@ -6,6 +6,9 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - форму через проп `shape`
+ *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
+ *    выводится из `shape`
+ *  - тон рамки через проп `borderTone`
  *  - тон глифа шеврона через проп `iconFill`
  *  - позицию шеврона через проп `iconPosition`
  *  - тон секции шеврона через проп `iconTone`
@@ -58,6 +61,7 @@ import {
   Icon,
   resolveIconShape,
   type IconPosition,
+  type IconShapePreset,
 } from '@ui/icon';
 import {
   OPEN_CONTROL_PANEL_MAX_OPTION_ROWS,
@@ -147,6 +151,7 @@ export type ListboxMultipleProps =
 /**
  * ListboxProps — представляет пропсы компонента Listbox.
  *
+ * @property clearShape — форма кнопки сброса
  * @property defaultValue — начальное значение в неконтролируемом режиме
  * @property disabled — включает недоступное состояние
  * @property iconFill — тон глифа шеврона при нейтральном `iconTone`
@@ -160,6 +165,7 @@ export type ListboxMultipleProps =
  */
 type ListboxProps = ListboxStyleProps &
   ListboxMultipleProps & {
+    clearShape?: IconShapePreset;
     defaultValue?: string | string[];
     disabled?: boolean;
     iconFill?: TonePreset;
@@ -470,6 +476,8 @@ function resolveInitialActiveIndex(
  * <Listbox multiple inlineCheckbox options={options} value={selected} onChange={setSelected} />
  */
 export function Listbox({
+  borderTone,
+  clearShape: clearShapeProp,
   defaultValue,
   disabled = DEFAULT_LISTBOX_DISABLED,
   iconFill,
@@ -488,8 +496,9 @@ export function Listbox({
   ...rest
 }: ListboxProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const surfaceProps = { iconTone, shape, sizePreset };
+  const surfaceProps = { borderTone, iconTone, shape, sizePreset };
   const iconShape = resolveIconShape(shape);
+  const clearShape = clearShapeProp ?? iconShape;
   const textSizePreset = getOpenControlTextSize(sizePreset);
   const isIconStart = iconPosition === 'start';
   const rootRef = useRef<HTMLDivElement>(null);
@@ -539,7 +548,7 @@ export function Listbox({
       disabled={disabled}
       iconFill={iconFill}
       iconTone={iconTone}
-      shape={iconShape}
+      shape={clearShape}
       showBorder
       showShadow={false}
       sizePreset={sizePreset}

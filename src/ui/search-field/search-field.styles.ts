@@ -5,9 +5,10 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `SearchFieldStyleProps`, `SearchFieldRowStyleProps`
  *    и `SearchFieldControlStyleProps`
- * 2. Предоставить styled-узлы `StyledSearchFieldRoot`, `StyledSearchFieldRow`
+ * 2. Предоставить функцию `getSearchFieldTextSize`
+ * 3. Предоставить styled-узлы `StyledSearchFieldRoot`, `StyledSearchFieldRow`
  *    и `StyledSearchFieldControl`
- * 3. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/search-field/index.tsx` — собирает компонент SearchField
@@ -38,11 +39,22 @@ import {
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
 import { getSurfaceBackgroundColor } from '@ui/surface';
-import { getTextProperties } from '@ui/text';
+import { getNativeFieldTextStyles, type TextSizePreset, type TextTone } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
+
+/**
+ * getSearchFieldTextSize — возвращает размер значения по `sizePreset`.
+ * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
+ *
+ * @param sizePreset размер поля поиска
+ * @returns метка размера текста из `TextSizePreset` для значения
+ */
+export function getSearchFieldTextSize(sizePreset?: SizePreset): TextSizePreset {
+  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
+}
 
 /**
  * SearchFieldStyleProps — представляет пропсы стилизации SearchField и layout-пропсы.
@@ -51,6 +63,8 @@ export { splitLayoutProps } from '@ui/layout';
  * @property sizePreset — размер контрола
  * @property textAlign — горизонтальное выравнивание значения
  * @property textItalic — включает курсив значения
+ * @property textSize — размер значения
+ * @property textTone — тон значения
  */
 export type SearchFieldStyleProps = LayoutProps &
   BorderProps & {
@@ -58,6 +72,8 @@ export type SearchFieldStyleProps = LayoutProps &
     sizePreset?: SizePreset;
     textAlign?: CSSProperties['textAlign'];
     textItalic?: boolean;
+    textSize?: TextSizePreset;
+    textTone?: TextTone;
   };
 
 /**
@@ -203,7 +219,7 @@ export const StyledSearchFieldRow = styled.div.withConfig({
  */
 type SearchFieldControlStyleProps = Pick<
   SearchFieldStyleProps,
-  'sizePreset' | 'textAlign' | 'textItalic'
+  'sizePreset' | 'textAlign' | 'textItalic' | 'textSize' | 'textTone'
 >;
 
 /**
@@ -213,24 +229,23 @@ const SEARCH_FIELD_CONTROL_PROP_NAMES = new Set<string>([
   'sizePreset',
   'textAlign',
   'textItalic',
+  'textSize',
+  'textTone',
 ]);
 
 /**
  * getSearchFieldControlStyles — возвращает CSS-правила для узла `StyledSearchFieldControl`:
- * заполнение ряда, горизонтальный отступ, типографику, плейсхолдер, гашение
- * UA-крестика WebKit и условное выравнивание и курсив значения.
+ * заполнение ряда, горизонтальный отступ, текстовый блок нативного поля,
+ * гашение UA-крестика WebKit.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолт `sizePreset`
  * 2. Собирает поле: ширину, `block-size: 100%` по высоте ряда, `padding-inline`
- *    через `getPaddingInline` и типографику через `getTextProperties(getTextSize(…))`.
+ *    через `getPaddingInline` и текстовый блок через `getNativeFieldTextStyles`.
  *    `padding-block` не пишется: высоту держит ряд через `min-block-size`
  * 3. Сбрасывает рамку и фон: `border: none`, `background-color: transparent`.
  *    Гасит `outline` на `:focus-visible`: при рамке контур композита рисует ряд,
- *    без рамки контура нет.
- *    Красит плейсхолдер тоном `muted`. Скрывает нативную кнопку очистки WebKit
- * 4. При переданном `textAlign` добавляет выравнивание значения
- * 5. При `textItalic` добавляет курсив значения
+ *    без рамки контура нет. Скрывает нативную кнопку очистки WebKit
  *
  * @param props пропсы стилизации нативного поля ввода и тема
  * @returns CSS-правила, каждое с новой строки
@@ -239,32 +254,33 @@ function getSearchFieldControlStyles(
   props: SearchFieldControlStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { sizePreset = DEFAULT_SIZE_PRESET, textAlign, textItalic } = props;
+  const {
+    sizePreset = DEFAULT_SIZE_PRESET,
+    textAlign,
+    textItalic,
+    textSize,
+    textTone,
+  } = props;
 
-  const styles = [
-    'inline-size: 100%;',
-    'min-inline-size: 0;',
-    'block-size: 100%;',
-    'min-block-size: 0;',
-    `padding-inline: ${getPaddingInline(sizePreset)};`,
-    getTextProperties(getTextSize(sizePreset)),
-    'border: none;',
-    'background-color: transparent;',
-    '&:focus-visible { outline: none; }',
-    `&::placeholder { color: ${theme.colors.muted}; }`,
-    '&::-webkit-search-cancel-button { appearance: none; }',
-    '&::-webkit-search-decoration { appearance: none; }',
-  ];
-
-  if (textAlign !== undefined) {
-    styles.push(`text-align: ${textAlign};`);
-  }
-
-  if (textItalic === true) {
-    styles.push('font-style: italic;');
-  }
-
-  return styles.join('\n');
+  return `
+    inline-size: 100%;
+    min-inline-size: 0;
+    block-size: 100%;
+    min-block-size: 0;
+    padding-inline: ${getPaddingInline(sizePreset)};
+    ${getNativeFieldTextStyles({
+      textAlign,
+      textItalic,
+      textSize: textSize ?? getSearchFieldTextSize(sizePreset),
+      textTone,
+      theme,
+    })}
+    border: none;
+    background-color: transparent;
+    &:focus-visible { outline: none; }
+    &::-webkit-search-cancel-button { appearance: none; }
+    &::-webkit-search-decoration { appearance: none; }
+  `;
 }
 
 /**
@@ -272,8 +288,8 @@ function getSearchFieldControlStyles(
  * Базируется на `<input>` и поддерживает пропсы из `SearchFieldControlStyleProps`.
  *
  * Генерация стилей:
- *  - `getSearchFieldControlStyles` — заполнение ряда, отступ, типографика,
- *    плейсхолдер, гашение UA-крестика WebKit, выравнивание, курсив
+ *  - `getSearchFieldControlStyles` — заполнение ряда, отступ, текстовый блок
+ *    нативного поля, гашение UA-крестика WebKit
  */
 export const StyledSearchFieldControl = styled.input.withConfig({
   shouldForwardProp: (prop) => !SEARCH_FIELD_CONTROL_PROP_NAMES.has(prop),

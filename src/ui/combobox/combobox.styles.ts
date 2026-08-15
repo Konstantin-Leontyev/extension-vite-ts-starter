@@ -74,6 +74,7 @@ export const StyledComboboxRoot = styled.div.withConfig({
  */
 const COMBOBOX_SURFACE_PROP_NAMES = new Set<string>([
   ...ICON_SETTING_PROP_NAMES,
+  'borderTone',
   'shape',
   'sizePreset',
 ]);

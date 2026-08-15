@@ -126,6 +126,7 @@ export function ComboboxSettings({ onChange, state }: ComboboxSettingsProps) {
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('placeholder', event.target.value)
         }
+        onClear={() => onChange('placeholder', '')}
       />
 
       <Input
@@ -134,6 +135,7 @@ export function ComboboxSettings({ onChange, state }: ComboboxSettingsProps) {
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('searchPlaceholder', event.target.value)
         }
+        onClear={() => onChange('searchPlaceholder', '')}
       />
 
       <Input
@@ -142,6 +144,7 @@ export function ComboboxSettings({ onChange, state }: ComboboxSettingsProps) {
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('emptyMessage', event.target.value)
         }
+        onClear={() => onChange('emptyMessage', '')}
       />
 
       <Checkbox

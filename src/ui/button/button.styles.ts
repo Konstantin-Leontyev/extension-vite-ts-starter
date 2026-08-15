@@ -112,6 +112,7 @@ function resolveButtonSurface(theme: AppTheme, tone: TonePreset): ButtonSurface 
  * ButtonStyleProps — представляет пропсы стилизации Button и layout-пропсы.
  *
  * @property active — включает зафиксированное нажатое состояние
+ * @property borderTone — тон рамки
  * @property iconTone — тон секции иконки
  * @property shape — форма кнопки
  * @property sizePreset — размер компонента
@@ -119,6 +120,7 @@ function resolveButtonSurface(theme: AppTheme, tone: TonePreset): ButtonSurface 
  */
 export type ButtonStyleProps = LayoutProps & {
   active?: boolean;
+  borderTone?: TonePreset;
   iconTone?: TonePreset;
   shape?: ShapePreset;
   sizePreset?: SizePreset;
@@ -162,6 +164,7 @@ type ButtonStyledProps = ButtonStyleProps & { hasIcon: boolean };
 const BUTTON_PROP_NAMES = new Set<string>([
   ...ICON_SETTING_PROP_NAMES,
   'active',
+  'borderTone',
   'hasIcon',
   'shape',
   'sizePreset',
@@ -257,6 +260,7 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
   const theme = getTheme(props);
   const {
     active = DEFAULT_BUTTON_ACTIVE,
+    borderTone,
     hasIcon,
     shape = DEFAULT_SHAPE_PRESET,
     sizePreset = DEFAULT_SIZE_PRESET,
@@ -270,7 +274,7 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
     `border-radius: ${resolveBlockRadius(shape, minBlockSize)};`,
     `color: ${surface.color};`,
     `background-color: ${surface.backgroundColor};`,
-    getBorderStyles(theme),
+    getBorderStyles(theme, undefined, undefined, borderTone),
   ];
 
   if (!hasIcon) {

@@ -101,6 +101,7 @@ export function DateRangeInputSettings({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           onChange('startLabel', event.target.value);
         }}
+        onClear={() => onChange('startLabel', '')}
       />
 
       <Input
@@ -109,6 +110,7 @@ export function DateRangeInputSettings({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           onChange('endLabel', event.target.value);
         }}
+        onClear={() => onChange('endLabel', '')}
       />
 
       <Input
@@ -117,6 +119,7 @@ export function DateRangeInputSettings({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           onChange('startDay', event.target.value);
         }}
+        onClear={() => onChange('startDay', '')}
       />
 
       <Input
@@ -125,6 +128,7 @@ export function DateRangeInputSettings({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           onChange('endDay', event.target.value);
         }}
+        onClear={() => onChange('endDay', '')}
       />
 
       <Input
@@ -133,6 +137,7 @@ export function DateRangeInputSettings({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           onChange('minDay', event.target.value);
         }}
+        onClear={() => onChange('minDay', '')}
       />
 
       <Input
@@ -141,6 +146,7 @@ export function DateRangeInputSettings({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           onChange('maxDay', event.target.value);
         }}
+        onClear={() => onChange('maxDay', '')}
       />
 
       <ShapeListbox

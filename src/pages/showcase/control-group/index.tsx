@@ -92,6 +92,7 @@ export function ControlGroup({
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onLabelChange(event.target.value)
         }
+        onClear={() => onLabelChange('')}
       />
 
       <SizeListbox

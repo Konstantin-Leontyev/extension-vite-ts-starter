@@ -4,7 +4,8 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `TableInlineFieldStyleProps`
- * 2. Предоставить styled-узел `StyledTableInlineField`
+ * 2. Предоставить функцию `getTableInlineFieldTextSize`
+ * 3. Предоставить styled-узел `StyledTableInlineField`
  *
  * Потребители:
  *  - `src/ui/table/table-inline-field/index.tsx` — собирает компонент TableInlineField
@@ -13,67 +14,81 @@
 import { type CSSProperties } from 'react';
 import styled from 'styled-components';
 
-import { getTextProperties, type TextSizePreset } from '@ui/text';
+import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
+import { getNativeFieldTextStyles, type TextSizePreset, type TextTone } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
+
+/**
+ * getTableInlineFieldTextSize — возвращает размер значения по `sizePreset`.
+ * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
+ *
+ * @param sizePreset размер поля
+ * @returns метка размера текста из `TextSizePreset` для значения
+ */
+export function getTableInlineFieldTextSize(sizePreset?: SizePreset): TextSizePreset {
+  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
+}
 
 /**
  * TableInlineFieldStyleProps — представляет пропсы стилизации TableInlineField.
  *
- * @property textAlign — горизонтальное выравнивание текста
- * @property textSize — размер текста
+ * @property textAlign — горизонтальное выравнивание значения
+ * @property textItalic — включает курсив значения
+ * @property textSize — размер значения
+ * @property textTone — тон значения
  */
 export type TableInlineFieldStyleProps = {
   textAlign?: CSSProperties['textAlign'];
+  textItalic?: boolean;
   textSize?: TextSizePreset;
+  textTone?: TextTone;
 };
 
 /**
  * TABLE_INLINE_FIELD_PROP_NAMES — хранит имена пропсов стилизации TableInlineField.
  */
-const TABLE_INLINE_FIELD_PROP_NAMES = new Set<string>(['textAlign', 'textSize']);
-
-/**
- * DEFAULT_TABLE_INLINE_FIELD_TEXT_SIZE — задаёт размер текста поля по умолчанию.
- * Используется, когда вызывающий код не передал проп `textSize`.
- */
-const DEFAULT_TABLE_INLINE_FIELD_TEXT_SIZE: TextSizePreset = 'normal';
+const TABLE_INLINE_FIELD_PROP_NAMES = new Set<string>([
+  'textAlign',
+  'textItalic',
+  'textSize',
+  'textTone',
+]);
 
 /**
  * getTableInlineFieldStyles — возвращает CSS-правила для узла `StyledTableInlineField`:
- * типографику строки и сброс оформления `<input>`.
+ * текстовый блок нативного поля и сброс оформления `<input>`.
  * Поле живёт внутри строки таблицы и не рисует собственную поверхность.
  * Гасит `outline` на фокусе и `aria-invalid`: нет рамки — нет контура.
  *
- * @param props пропсы стилизации поля и тема styled-components
+ * @param props пропсы стилизации поля и тема
  * @returns CSS-правила, каждое с новой строки
  */
 function getTableInlineFieldStyles(
   props: TableInlineFieldStyleProps & { theme: AppTheme }
 ): string {
-  const { textAlign, textSize = DEFAULT_TABLE_INLINE_FIELD_TEXT_SIZE } = props;
+  const { textAlign, textItalic, textSize, textTone } = props;
   const theme = getTheme(props);
 
-  const styles = [
-    getTextProperties(textSize),
-    'padding: 0;',
-    'appearance: none;',
-    'background: transparent;',
-    'border: none;',
-    `&:focus,`,
-    `&:focus-visible,`,
-    `&[aria-invalid='true'],`,
-    `&[aria-invalid='true']:focus,`,
-    `&[aria-invalid='true']:focus-visible {`,
-    'outline: none;',
-    '}',
-    `&::placeholder { color: ${theme.colors.muted}; }`,
-  ];
-
-  if (textAlign !== undefined) {
-    styles.push(`text-align: ${textAlign};`);
-  }
-
-  return styles.join('\n');
+  return `
+    ${getNativeFieldTextStyles({
+      textAlign,
+      textItalic,
+      textSize: textSize ?? getTableInlineFieldTextSize(),
+      textTone,
+      theme,
+    })}
+    padding: 0;
+    appearance: none;
+    background: transparent;
+    border: none;
+    &:focus,
+    &:focus-visible,
+    &[aria-invalid='true'],
+    &[aria-invalid='true']:focus,
+    &[aria-invalid='true']:focus-visible {
+      outline: none;
+    }
+  `;
 }
 
 /**
@@ -86,7 +101,7 @@ function getTableInlineFieldStyles(
  *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
  *
  * Генерация стилей:
- *  - `getTableInlineFieldStyles` — типографика, сброс оформления, выравнивание текста
+ *  - `getTableInlineFieldStyles` — текстовый блок нативного поля, сброс оформления
  */
 export const StyledTableInlineField = styled.input.withConfig({
   shouldForwardProp: (prop) => !TABLE_INLINE_FIELD_PROP_NAMES.has(prop),

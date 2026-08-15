@@ -148,6 +148,7 @@ export function TitleGroup({
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               onTitleChange(event.target.value)
             }
+            onClear={() => onTitleChange('')}
           />
 
           <SizeListbox

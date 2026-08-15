@@ -233,6 +233,7 @@ export function TextGroup({
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   content.onChange(event.target.value)
                 }
+                onClear={() => content.onChange('')}
               />
             );
           })}
