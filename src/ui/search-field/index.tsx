@@ -29,8 +29,9 @@
  * Основные задачи:
  * 1. Экспортировать компонент SearchField
  * 2. Типизировать пропсы через `SearchFieldProps`
- * 3. Связывать подпись и поле для доступности
- * 4. Выставлять `aria-label` кнопки сброса через `resolveClearAriaLabel`
+ * 3. Экспортировать тип `SearchFieldShowIconProps`
+ * 4. Связывать подпись и поле для доступности
+ * 5. Выставлять `aria-label` кнопки сброса через `resolveClearAriaLabel`
  *
  * Потребители:
  *  - `@ui/combobox` — рендерит поле поиска в панели
@@ -99,33 +100,49 @@ const CLEAR_SEARCH_ARIA_LABEL = 'Clear search';
 const SEARCH_FIELD_CLEAR_PADDING = 12;
 
 /**
+ * SearchFieldShowIconProps — представляет пропсы секции иконки SearchField.
+ * Поля секции допустимы, пока `showIcon` не выключен: дефолт флага — иконка есть.
+ *
+ * @property icon — svg секции иконки
+ * @property iconPosition — позиция иконки относительно поля
+ * @property iconShape — форма секции иконки
+ * @property showIcon — включает секцию иконки
+ */
+type SearchFieldShowIconProps =
+  | {
+      icon?: never;
+      iconPosition?: never;
+      iconShape?: never;
+      showIcon: false;
+    }
+  | {
+      icon?: ReactNode;
+      iconPosition?: IconPosition;
+      iconShape?: IconShapePreset;
+      showIcon?: true;
+    };
+
+/**
  * SearchFieldProps — представляет пропсы компонента SearchField.
  *
  * @property clearShape — форма кнопки сброса
- * @property icon — svg секции иконки
  * @property iconFill — тон глифа иконки при нейтральном `iconTone`
- * @property iconPosition — позиция иконки относительно поля
- * @property iconShape — форма секции иконки
  * @property iconTone — тон секции иконки
  * @property label — подпись над полем
  * @property onChange — обработчик изменения значения
  * @property onClear — обработчик сброса значения
- * @property showIcon — включает секцию иконки
  * @property value — контролируемое значение
  */
 type SearchFieldProps = {
   clearShape?: IconShapePreset;
-  icon?: ReactNode;
   iconFill?: TonePreset;
-  iconPosition?: IconPosition;
-  iconShape?: IconShapePreset;
   iconTone?: TonePreset;
   label?: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
   onClear: () => void;
-  showIcon?: boolean;
   value: string;
-} & SearchFieldStyleProps &
+} & SearchFieldShowIconProps &
+  SearchFieldStyleProps &
   Omit<
     ComponentPropsWithRef<'input'>,
     'className' | 'onChange' | 'style' | 'type' | 'value' | keyof SearchFieldStyleProps
@@ -149,7 +166,7 @@ type SearchFieldProps = {
  *   onClear={() => setQuery('')}
  * />
  */
-export function SearchField({
+function SearchField({
   borderTone,
   clearShape: clearShapeProp,
   icon = DEFAULT_SEARCH_FIELD_ICON,
@@ -256,3 +273,5 @@ export function SearchField({
     </StyledSearchFieldRoot>
   );
 }
+
+export { SearchField, type SearchFieldShowIconProps };

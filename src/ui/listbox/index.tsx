@@ -25,7 +25,7 @@
  * Основные задачи:
  * 1. Экспортировать компонент Listbox
  * 2. Типизировать пропсы через `ListboxProps`
- * 3. Экспортировать тип `ListboxOption`
+ * 3. Экспортировать типы `ListboxOption` и `ListboxMultipleProps`
  * 4. Выставлять `role` и `aria`-атрибуты триггера, панели и строк опций.
  *    Фокус панели — на строке. Чекбокс в строке — презентационный
  * 5. Вести клавиатуру панели: стрелки, `Home` и `End` по видимому порядку барабана
@@ -128,36 +128,49 @@ export type ListboxOption = {
 };
 
 /**
+ * ListboxMultipleProps — представляет пропсы множественного выбора Listbox.
+ * Поле `inlineCheckbox` допустимо только вместе с `multiple`. Дефолт флага — выбор одиночный.
+ *
+ * @property inlineCheckbox — включает чекбоксы в строках опций
+ * @property multiple — включает множественный выбор
+ */
+export type ListboxMultipleProps =
+  | {
+      inlineCheckbox?: boolean;
+      multiple: true;
+    }
+  | {
+      inlineCheckbox?: never;
+      multiple?: false;
+    };
+
+/**
  * ListboxProps — представляет пропсы компонента Listbox.
  *
  * @property defaultValue — начальное значение в неконтролируемом режиме
  * @property disabled — включает недоступное состояние
  * @property iconFill — тон глифа шеврона при нейтральном `iconTone`
  * @property iconPosition — позиция шеврона относительно значения
- * @property inlineCheckbox — включает чекбоксы в строках опций. Без `multiple`
- *   чекбоксы не показываются
  * @property label — подпись над триггером
- * @property multiple — включает множественный выбор
  * @property onChange — обработчик изменения значения
  * @property options — опции списка
  * @property placeholder — плейсхолдер неактивного триггера
  * @property showClear — включает кнопку сброса выбора при выбранном значении
  * @property value — контролируемое значение
  */
-type ListboxProps = ListboxStyleProps & {
-  defaultValue?: string | string[];
-  disabled?: boolean;
-  iconFill?: TonePreset;
-  iconPosition?: IconPosition;
-  inlineCheckbox?: boolean;
-  label?: string;
-  multiple?: boolean;
-  onChange?: (value: string | string[]) => void;
-  options: readonly ListboxOption[];
-  placeholder?: string;
-  showClear?: boolean;
-  value?: string | string[];
-} & Omit<
+type ListboxProps = ListboxStyleProps &
+  ListboxMultipleProps & {
+    defaultValue?: string | string[];
+    disabled?: boolean;
+    iconFill?: TonePreset;
+    iconPosition?: IconPosition;
+    label?: string;
+    onChange?: (value: string | string[]) => void;
+    options: readonly ListboxOption[];
+    placeholder?: string;
+    showClear?: boolean;
+    value?: string | string[];
+  } & Omit<
     ComponentPropsWithRef<'div'>,
     'className' | 'onChange' | 'style' | keyof ListboxStyleProps
   >;

@@ -19,11 +19,13 @@
  * 1. Экспортировать компонент SegmentButtonParts
  * 2. Типизировать пропсы через `SegmentButtonPartsProps`
  * 3. Реэкспортировать `SegmentButtonPartsDivider` и `SEGMENT_BUTTON_PARTS_FLUSH_SHAPE`
+ * 4. Экспортировать тип `SegmentButtonPartsActionIconProps`
  *
  * Потребители:
  *  - `@ui/segment-button` — собирает SegmentButton поверх ряда
  *  - `@ui/date-range-input` — рендерит сегменты выбора дат без оболочки SegmentButton
  *    и ставит разделитель перед кнопкой сброса в ряду-триггере
+ *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import { Fragment, type ReactNode, type RefObject } from 'react';
@@ -50,6 +52,26 @@ import {
 const SEGMENT_BUTTON_PARTS_ACTIVE_TEXT_TONE: TextTone = 'primary';
 
 /**
+ * SegmentButtonPartsActionIconProps — представляет пропсы иконки действия сегмента.
+ * Поля иконки допустимы только вместе с `icon`.
+ *
+ * @property icon — svg иконки сегмента
+ * @property iconFill — тон глифа иконки
+ * @property iconPosition — позиция иконки относительно текста
+ */
+export type SegmentButtonPartsActionIconProps =
+  | {
+      icon: ReactNode;
+      iconFill?: TonePreset;
+      iconPosition?: IconPosition;
+    }
+  | {
+      icon?: never;
+      iconFill?: never;
+      iconPosition?: never;
+    };
+
+/**
  * SegmentButtonPartsAction — представляет действие одного сегмента ряда.
  *
  * @property active — включает активное состояние сегмента
@@ -58,9 +80,6 @@ const SEGMENT_BUTTON_PARTS_ACTIVE_TEXT_TONE: TextTone = 'primary';
  * @property ariaHaspopup — тип всплывающей панели сегмента
  * @property dataAction — значение `data-action` на кнопке сегмента
  * @property disabled — включает недоступное состояние
- * @property icon — svg иконки сегмента
- * @property iconFill — тон глифа иконки
- * @property iconPosition — позиция иконки относительно текста
  * @property label — текст сегмента
  * @property onClick — обработчик клика по сегменту
  * @property onDoubleClick — обработчик двойного клика по сегменту
@@ -77,9 +96,6 @@ type SegmentButtonPartsAction = {
   ariaHaspopup?: 'dialog' | 'listbox';
   dataAction?: string;
   disabled?: boolean;
-  icon?: ReactNode;
-  iconFill?: TonePreset;
-  iconPosition?: IconPosition;
   label: string;
   onClick?: () => void;
   onDoubleClick?: () => void;
@@ -88,11 +104,14 @@ type SegmentButtonPartsAction = {
   textTone?: TextTone;
   title?: string;
   tone?: TonePreset;
-};
+} & SegmentButtonPartsActionIconProps;
 
 /**
  * SegmentButtonPartsSegments — представляет варианты среднего и правого сегментов.
  * Ряд требует минимум два сегмента: `left` всегда есть, `center` опционален.
+ *
+ * @property center — средний сегмент ряда
+ * @property right — правый сегмент ряда
  */
 type SegmentButtonPartsSegments =
   | { center: SegmentButtonPartsAction; right: SegmentButtonPartsAction }

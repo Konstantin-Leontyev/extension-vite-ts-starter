@@ -209,7 +209,11 @@ function Card<T extends CardHtmlTag = 'div'>({
 
   return createElement(
     StyledCard,
-    { as, hasHeader, ...rest } as ComponentProps<typeof StyledCard>,
+    {
+      as,
+      hasHeader,
+      ...(rest as Omit<ComponentProps<typeof StyledCard>, 'as' | 'hasHeader'>),
+    },
     <IconButtonRow
       actions={headerActions}
       insetBlockStart={CARD_PADDING}

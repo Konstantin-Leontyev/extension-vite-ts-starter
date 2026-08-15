@@ -24,6 +24,7 @@
  * 1. Экспортировать компонент Button
  * 2. Типизировать пропсы через `ButtonProps`
  * 3. Реэкспортировать мост размера текста `getButtonTextSize`
+ * 4. Экспортировать тип `ButtonIconProps`
  *
  * Потребители:
  *  - контролы, например RangeInput — рендерят кнопки действий внутри себя
@@ -59,13 +60,35 @@ import {
 const DEFAULT_BUTTON_TYPE = 'button';
 
 /**
- * ButtonProps — представляет пропсы компонента Button.
+ * ButtonIconProps — представляет пропсы иконки Button.
+ * Поля иконки допустимы только вместе с `icon`.
  *
- * @property children — содержимое лейбла
  * @property icon — svg иконки действия
  * @property iconFill — тон глифа иконки при нейтральном `iconTone`
  * @property iconPosition — позиция иконки относительно лейбла
  * @property iconShape — форма секции иконки
+ * @property iconTone — тон секции иконки
+ */
+type ButtonIconProps =
+  | {
+      icon: ReactNode;
+      iconFill?: TonePreset;
+      iconPosition?: IconPosition;
+      iconShape?: IconShapePreset;
+      iconTone?: TonePreset;
+    }
+  | {
+      icon?: never;
+      iconFill?: never;
+      iconPosition?: never;
+      iconShape?: never;
+      iconTone?: never;
+    };
+
+/**
+ * ButtonProps — представляет пропсы компонента Button.
+ *
+ * @property children — содержимое лейбла
  * @property label — подпись над кнопкой
  * @property textItalic — включает курсив лейбла
  * @property textSize — размер лейбла
@@ -73,15 +96,12 @@ const DEFAULT_BUTTON_TYPE = 'button';
  */
 type ButtonProps = {
   children: ReactNode;
-  icon?: ReactNode;
-  iconFill?: TonePreset;
-  iconPosition?: IconPosition;
-  iconShape?: IconShapePreset;
   label?: string;
   textItalic?: boolean;
   textSize?: TextSizePreset;
   textTone?: TextTone;
-} & ButtonStyleProps &
+} & ButtonIconProps &
+  Omit<ButtonStyleProps, 'iconTone'> &
   Omit<ComponentPropsWithRef<'button'>, 'className' | 'style' | keyof ButtonStyleProps>;
 
 /**
@@ -171,5 +191,5 @@ export function Button({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
-export { getButtonTextSize };
+/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста и публичного типа */
+export { getButtonTextSize, type ButtonIconProps };

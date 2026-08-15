@@ -16,7 +16,7 @@ import { useState, type ReactNode } from 'react';
 import { useShellOutletContext } from '@components/router';
 import { useToast } from '@hooks/use-toast';
 import { SettingsIcon } from '@icons';
-import { Button, getButtonTextSize } from '@ui/button';
+import { Button, getButtonTextSize, type ButtonIconProps } from '@ui/button';
 import {
   CARD_HEADER_ACTION_SIZE_PRESET,
   Card,
@@ -29,7 +29,7 @@ import { DateRangeInput, todayUtc } from '@ui/date-range-input';
 import { Fieldset } from '@ui/fieldset';
 import { Icon, getIconPadding, resolveIconShape } from '@ui/icon';
 import { Input } from '@ui/input';
-import { Listbox } from '@ui/listbox';
+import { Listbox, type ListboxMultipleProps } from '@ui/listbox';
 import { Modal } from '@ui/modal';
 import { DEFAULT_SHAPE_PRESET, DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
 import { ProgressBar, getProgressBarTextSize } from '@ui/progress-bar';
@@ -40,8 +40,9 @@ import {
   type RangeValue,
 } from '@ui/range-input';
 import { ScrollPort } from '@ui/scroll-port';
-import { SearchField } from '@ui/search-field';
+import { SearchField, type SearchFieldShowIconProps } from '@ui/search-field';
 import { SegmentButton, getSegmentButtonTextSize } from '@ui/segment-button';
+import { type SegmentButtonPartsActionIconProps } from '@ui/segment-button-parts';
 import { Sidebar } from '@ui/sidebar';
 import { Spinner, getSpinnerTextSize } from '@ui/spinner';
 import { Stepper, getStepperTextSize } from '@ui/stepper';
@@ -1387,6 +1388,53 @@ export function ShowcasePage() {
       }
     : {};
   const sidebarTitleProps: CardTitleProps = panelTitle ? { title: panelTitle } : {};
+  const searchFieldShowIconProps: SearchFieldShowIconProps = searchField.showIcon
+    ? {
+        showIcon: true,
+        icon: getIcon(searchField.iconKey),
+        iconPosition: searchField.iconPosition,
+        iconShape: searchField.iconShape,
+      }
+    : { showIcon: false };
+  const listboxMultipleProps: ListboxMultipleProps = listbox.multiple
+    ? {
+        multiple: true,
+        inlineCheckbox: listbox.inlineCheckbox,
+      }
+    : {};
+  const buttonIconProps: ButtonIconProps = button.withIcon
+    ? {
+        icon: getIcon(button.iconKey),
+        iconFill: button.iconFill,
+        iconPosition: button.iconPosition,
+        iconShape: button.iconShape,
+        iconTone: button.iconTone,
+      }
+    : {};
+  const segmentButtonCenterIconProps: SegmentButtonPartsActionIconProps =
+    segmentButton.centerWithIcon
+      ? {
+          icon: getIcon(segmentButton.centerIconKey),
+          iconFill: segmentButton.centerIconFill,
+          iconPosition: segmentButton.centerIconPosition,
+        }
+      : {};
+  const segmentButtonLeftIconProps: SegmentButtonPartsActionIconProps =
+    segmentButton.leftWithIcon
+      ? {
+          icon: getIcon(segmentButton.leftIconKey),
+          iconFill: segmentButton.leftIconFill,
+          iconPosition: segmentButton.leftIconPosition,
+        }
+      : {};
+  const segmentButtonRightIconProps: SegmentButtonPartsActionIconProps =
+    segmentButton.rightWithIcon
+      ? {
+          icon: getIcon(segmentButton.rightIconKey),
+          iconFill: segmentButton.rightIconFill,
+          iconPosition: segmentButton.rightIconPosition,
+        }
+      : {};
 
   return (
     <StyledMain>
@@ -1523,16 +1571,12 @@ export function ShowcasePage() {
                   borderTone={searchField.borderTone}
                   clearShape={searchField.clearShape}
                   disabled={searchField.disabled}
-                  icon={searchField.showIcon ? getIcon(searchField.iconKey) : undefined}
                   iconFill={searchField.showIcon ? searchField.iconFill : undefined}
-                  iconPosition={searchField.iconPosition}
-                  iconShape={searchField.iconShape}
                   iconTone={searchField.showIcon ? searchField.iconTone : undefined}
                   label={searchField.label || undefined}
                   placeholder={searchField.placeholder}
                   shape={searchField.shape}
                   showBorder={searchField.showBorder}
-                  showIcon={searchField.showIcon}
                   showShadow={searchField.showShadow}
                   sizePreset={searchField.sizePreset}
                   textAlign={searchField.textAlign}
@@ -1540,6 +1584,7 @@ export function ShowcasePage() {
                   value={searchField.value}
                   onChange={(event) => updateSearchField('value', event.target.value)}
                   onClear={() => updateSearchField('value', '')}
+                  {...searchFieldShowIconProps}
                 />
               )}
 
@@ -1552,9 +1597,7 @@ export function ShowcasePage() {
                   iconFill={listbox.iconFill}
                   iconPosition={listbox.iconPosition}
                   iconTone={listbox.iconTone}
-                  inlineCheckbox={listbox.inlineCheckbox}
                   label={listbox.label || undefined}
-                  multiple={listbox.multiple}
                   options={LISTBOX_DEMO_OPTIONS}
                   placeholder={listbox.placeholder}
                   shape={listbox.shape}
@@ -1562,6 +1605,7 @@ export function ShowcasePage() {
                   sizePreset={listbox.sizePreset}
                   value={listbox.value}
                   onChange={(value) => updateListbox('value', value)}
+                  {...listboxMultipleProps}
                 />
               )}
 
@@ -1663,11 +1707,6 @@ export function ShowcasePage() {
                   active={button.active}
                   alignSelf="center"
                   disabled={button.disabled}
-                  icon={button.withIcon ? getIcon(button.iconKey) : undefined}
-                  iconFill={button.withIcon ? button.iconFill : undefined}
-                  iconPosition={button.iconPosition}
-                  iconShape={button.iconShape}
-                  iconTone={button.withIcon ? button.iconTone : undefined}
                   label={button.label || undefined}
                   shape={button.shape}
                   sizePreset={button.sizePreset}
@@ -1675,6 +1714,7 @@ export function ShowcasePage() {
                   textSize={button.textSize}
                   textTone={button.textTone}
                   tone={button.tone}
+                  {...buttonIconProps}
                 >
                   {button.text}
                 </Button>
@@ -1712,16 +1752,10 @@ export function ShowcasePage() {
                       ? {
                           active: segmentButton.centerActive,
                           disabled: segmentButton.centerDisabled,
-                          icon: segmentButton.centerWithIcon
-                            ? getIcon(segmentButton.centerIconKey)
-                            : undefined,
-                          iconFill: segmentButton.centerWithIcon
-                            ? segmentButton.centerIconFill
-                            : undefined,
-                          iconPosition: segmentButton.centerIconPosition,
                           label: segmentButton.centerLabel,
                           textTone: segmentButton.centerTextTone,
                           tone: segmentButton.centerTone,
+                          ...segmentButtonCenterIconProps,
                         }
                       : undefined
                   }
@@ -1729,30 +1763,18 @@ export function ShowcasePage() {
                   left={{
                     active: segmentButton.leftActive,
                     disabled: segmentButton.leftDisabled,
-                    icon: segmentButton.leftWithIcon
-                      ? getIcon(segmentButton.leftIconKey)
-                      : undefined,
-                    iconFill: segmentButton.leftWithIcon
-                      ? segmentButton.leftIconFill
-                      : undefined,
-                    iconPosition: segmentButton.leftIconPosition,
                     label: segmentButton.leftLabel,
                     textTone: segmentButton.leftTextTone,
                     tone: segmentButton.leftTone,
+                    ...segmentButtonLeftIconProps,
                   }}
                   right={{
                     active: segmentButton.rightActive,
                     disabled: segmentButton.rightDisabled,
-                    icon: segmentButton.rightWithIcon
-                      ? getIcon(segmentButton.rightIconKey)
-                      : undefined,
-                    iconFill: segmentButton.rightWithIcon
-                      ? segmentButton.rightIconFill
-                      : undefined,
-                    iconPosition: segmentButton.rightIconPosition,
                     label: segmentButton.rightLabel,
                     textTone: segmentButton.rightTextTone,
                     tone: segmentButton.rightTone,
+                    ...segmentButtonRightIconProps,
                   }}
                   shape={segmentButton.shape}
                   sizePreset={segmentButton.sizePreset}
