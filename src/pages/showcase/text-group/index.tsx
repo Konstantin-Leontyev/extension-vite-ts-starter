@@ -30,7 +30,7 @@
  * 3. Рендерить единый блок текстовых настроек в порядке: показ, содержимое, размер,
  *    выравнивание, тон, обрезание и курсив
  * 4. Собирать подписи контролов через `resolveGroupFieldLabel`,
- *    `resolveGroupContentLabel` и `resolveGroupShowLabel` из
+ *    `resolveGroupContentLabel` и `resolveGroupFlagLabel` из
  *    `src/pages/showcase/showcase-labels.ts`
  *
  * Потребители:
@@ -47,6 +47,7 @@
  *     - `src/pages/showcase/fieldset-settings/index.tsx`
  *     - `src/pages/showcase/stepper-settings/index.tsx`
  *     - `src/pages/showcase/input-settings/index.tsx`
+ *     - `src/pages/showcase/search-field-settings/index.tsx`
  *     - `src/pages/showcase/segment-button-settings/index.tsx`
  */
 
@@ -67,7 +68,7 @@ import { AlignListbox } from '../align-listbox';
 import {
   resolveGroupContentLabel,
   resolveGroupFieldLabel,
-  resolveGroupShowLabel,
+  resolveGroupFlagLabel,
 } from '../showcase-labels';
 import { SizeListbox } from '../size-listbox';
 import { ToneListbox } from '../tone-listbox';
@@ -128,11 +129,11 @@ const DEFAULT_TEXT_GROUP_SHOW_OPTIONS_WITH_EMPTY_CONTENT = false;
  * @property ellipsis — контрол обрезания с многоточием. Без него флаг `Show ellipsis`
  *   не рендерится — проп `ellipsis` есть только у Text
  * @property italic — текущее значение курсива. Без пары `italic` / `onItalicChange`
- *   флаг не рендерится — у компонента нет оси курсива
+ *   флаг не рендерится — у компонента нет пропа `italic`
  * @property labelPrefix — префикс подписей контролов, например `Legend`.
  *   Пустая строка даёт подписи без префикса
  * @property onAlignChange — обработчик изменения выравнивания текста.
- *   Без него контрол выравнивания не рендерится — у компонента нет текстовой оси выравнивания
+ *   Без него контрол выравнивания не рендерится — у компонента нет пропа `align`
  * @property onItalicChange — обработчик изменения курсива
  * @property onSizeChange — обработчик изменения размера текста.
  *   Без пары `size` / `onSizeChange` листбокс размера не рендерится
@@ -214,7 +215,7 @@ export function TextGroup({
             show.onChange(event.target.checked)
           }
         >
-          {show.label ?? resolveGroupShowLabel(labelPrefix, 'Text')}
+          {show.label ?? resolveGroupFlagLabel(labelPrefix, 'Text', 'Show')}
         </Checkbox>
       )}
 

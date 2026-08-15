@@ -31,7 +31,7 @@
  * 3. Рендерить единый блок настроек иконки в порядке: показ, глиф, форма окна,
  *    тон секции, тон глифа и позиция
  * 4. Собирать подписи контролов через `resolveGroupFieldLabel`,
- *    `resolveGroupContentLabel` и `resolveGroupShowLabel` из
+ *    `resolveGroupContentLabel` и `resolveGroupFlagLabel` из
  *    `src/pages/showcase/showcase-labels.ts`
  *
  * Потребители:
@@ -62,7 +62,7 @@ import { ShapeListbox } from '../shape-listbox';
 import {
   resolveGroupContentLabel,
   resolveGroupFieldLabel,
-  resolveGroupShowLabel,
+  resolveGroupFlagLabel,
 } from '../showcase-labels';
 import { ToneListbox } from '../tone-listbox';
 
@@ -182,7 +182,7 @@ export function IconGroup({
             onShowChange(event.target.checked)
           }
         >
-          {resolveGroupShowLabel(labelPrefix, 'Icon')}
+          {resolveGroupFlagLabel(labelPrefix, 'Icon', 'Show')}
         </Checkbox>
       )}
 

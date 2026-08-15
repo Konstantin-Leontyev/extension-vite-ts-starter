@@ -22,7 +22,9 @@
  * 2. Типизировать пропсы через `TitleGroupProps`
  * 3. Рендерить единый блок настроек заголовка: показ, содержимое, размер,
  *    выравнивание и тон
- * 4. Строить подписи контролов из префикса `labelPrefix`
+ * 4. Собирать подписи контролов через `resolveGroupFieldLabel`,
+ *    `resolveGroupContentLabel` и `resolveGroupFlagLabel` из
+ *    `src/pages/showcase/showcase-labels.ts`
  *
  * Потребители:
  *  - панели настроек витрины — настраивают заголовок и подзаголовок:
@@ -31,7 +33,7 @@
  *     - `src/pages/showcase/range-input-settings/index.tsx`
  */
 
-import { type ChangeEvent, type FocusEvent } from 'react';
+import { useRef, type ChangeEvent, type FocusEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
@@ -48,7 +50,7 @@ import { AlignListbox } from '../align-listbox';
 import {
   resolveGroupContentLabel,
   resolveGroupFieldLabel,
-  resolveGroupShowLabel,
+  resolveGroupFlagLabel,
 } from '../showcase-labels';
 import { SizeListbox } from '../size-listbox';
 import { ToneListbox } from '../tone-listbox';
@@ -116,17 +118,19 @@ export function TitleGroup({
   tone,
 }: TitleGroupProps) {
   const isExpanded = !show || show.checked;
+  const showCheckboxRef = useRef<HTMLInputElement>(null);
 
   return (
     <>
       {show && (
         <Checkbox
           checked={show.checked}
+          ref={showCheckboxRef}
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             show.onChange(event.target.checked)
           }
         >
-          {show.label ?? resolveGroupShowLabel(labelPrefix, 'Title')}
+          {show.label ?? resolveGroupFlagLabel(labelPrefix, 'Title', 'Show')}
         </Checkbox>
       )}
 
@@ -138,6 +142,7 @@ export function TitleGroup({
             onBlur={(event: FocusEvent<HTMLInputElement>) => {
               if (show && event.target.value.trim() === '') {
                 show.onChange(false);
+                showCheckboxRef.current?.focus();
               }
             }}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>

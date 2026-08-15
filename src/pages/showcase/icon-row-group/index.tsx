@@ -11,10 +11,14 @@
  *
  * Основные задачи:
  * 1. Экспортировать компонент IconRowGroup
- * 2. Типизировать пропсы через `IconRowGroupProps` и действие через `IconRowGroupAction`
- * 3. Рендерить блок каждого действия в порядке: глиф, отступ окна, отключение,
+ * 2. Типизировать пропсы через `IconRowGroupProps`
+ * 3. Реэкспортировать тип `IconRowGroupAction`
+ * 4. Рендерить блок каждого действия в порядке: глиф, отступ окна, отключение,
  *    удаление, затем кнопку добавления
- * 4. Добавлять, удалять и обновлять поле действия внутри сателлита
+ * 5. Добавлять, удалять и обновлять поле действия внутри сателлита
+ * 6. Собирать подписи контролов через `resolveGroupFieldLabel`,
+ *    `resolveGroupContentLabel` и `resolveGroupFlagLabel` из
+ *    `src/pages/showcase/showcase-labels.ts`
  *
  * Потребители:
  *  - панели настроек витрины — настраивают действия ряда:
@@ -30,48 +34,33 @@ import { Combobox } from '@ui/combobox';
 import { ICON_SIZE_PRESET_KEYS, getIconPadding, type IconSizePreset } from '@ui/icon';
 import { type SpacingValue } from '@ui/spacing';
 
-import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
+import {
+  COMBOBOX_OPTIONS,
+  resolveIconPaddingSizePreset,
+  type IconKey,
+} from '../showcase-icon-options';
+import {
+  resolveGroupContentLabel,
+  resolveGroupFieldLabel,
+  resolveGroupFlagLabel,
+} from '../showcase-labels';
 import { SizeListbox } from '../size-listbox';
+import { type IconRowGroupAction } from './icon-row-group';
+
+export type { IconRowGroupAction };
 
 /**
- * DEFAULT_ICON_ROW_GROUP_ICON_KEY — задаёт ключ глифа нового действия по умолчанию.
+ * ICON_ROW_GROUP_ICON_KEY — задаёт ключ глифа нового действия.
  * Используется при добавлении действия.
  */
-const DEFAULT_ICON_ROW_GROUP_ICON_KEY: IconKey = 'settings';
+const ICON_ROW_GROUP_ICON_KEY: IconKey = 'settings';
 
 /**
- * DEFAULT_ICON_ROW_GROUP_ICON_PADDING_SIZE — задаёт ключ ряда для контрола отступа
- * окна по умолчанию.
+ * ICON_ROW_GROUP_ICON_PADDING_SIZE — задаёт запасной ключ ряда для контрола отступа
+ * окна.
  * Используется, когда текущий отступ не совпадает ни с одним пресетом.
  */
-const DEFAULT_ICON_ROW_GROUP_ICON_PADDING_SIZE: IconSizePreset = 'normal';
-
-/**
- * IconRowGroupAction — представляет одно действие ряда в состоянии витрины.
- *
- * @property disabled — включает недоступное состояние
- * @property iconKey — ключ глифа из витринного набора
- * @property iconPadding — отступ окна Icon
- */
-export type IconRowGroupAction = {
-  disabled: boolean;
-  iconKey: IconKey;
-  iconPadding: SpacingValue;
-};
-
-/**
- * resolveIconPaddingSizePreset — возвращает ключ размерного ряда под текущий
- * `iconPadding`.
- *
- * @param iconPadding текущий отступ окна Icon
- * @returns ключ ряда для контрола отступа окна Icon
- */
-function resolveIconPaddingSizePreset(iconPadding: SpacingValue): IconSizePreset {
-  return (
-    ICON_SIZE_PRESET_KEYS.find((key) => getIconPadding(key) === iconPadding) ??
-    DEFAULT_ICON_ROW_GROUP_ICON_PADDING_SIZE
-  );
-}
+const ICON_ROW_GROUP_ICON_PADDING_SIZE: IconSizePreset = 'normal';
 
 /**
  * IconRowGroupProps — представляет пропсы компонента IconRowGroup.
@@ -115,7 +104,7 @@ export function IconRowGroup({
       ...actions,
       {
         disabled: false,
-        iconKey: DEFAULT_ICON_ROW_GROUP_ICON_KEY,
+        iconKey: ICON_ROW_GROUP_ICON_KEY,
         iconPadding: defaultIconPadding,
       },
     ]);
@@ -127,43 +116,50 @@ export function IconRowGroup({
 
   return (
     <>
-      {actions.map((action, index) => (
-        <Fragment key={index}>
-          <Combobox
-            label={`Action ${index + 1} icon:`}
-            options={COMBOBOX_OPTIONS}
-            value={action.iconKey}
-            onChange={(value) => updateAction(index, { iconKey: value as IconKey })}
-          />
+      {actions.map((action, index) => {
+        const actionPrefix = `Action ${index + 1}`;
 
-          <SizeListbox
-            label={`Action ${index + 1} icon padding:`}
-            sizes={ICON_SIZE_PRESET_KEYS}
-            value={resolveIconPaddingSizePreset(action.iconPadding)}
-            onChange={(size) =>
-              updateAction(index, { iconPadding: getIconPadding(size) })
-            }
-          />
+        return (
+          <Fragment key={index}>
+            <Combobox
+              label={resolveGroupContentLabel(actionPrefix, 'Icon')}
+              options={COMBOBOX_OPTIONS}
+              value={action.iconKey}
+              onChange={(value) => updateAction(index, { iconKey: value as IconKey })}
+            />
 
-          <Checkbox
-            checked={action.disabled}
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              updateAction(index, { disabled: event.target.checked })
-            }
-          >
-            {`Disable action ${index + 1}`}
-          </Checkbox>
+            <SizeListbox
+              label={resolveGroupFieldLabel(actionPrefix, 'padding')}
+              sizes={ICON_SIZE_PRESET_KEYS}
+              value={resolveIconPaddingSizePreset(
+                action.iconPadding,
+                ICON_ROW_GROUP_ICON_PADDING_SIZE
+              )}
+              onChange={(size) =>
+                updateAction(index, { iconPadding: getIconPadding(size) })
+              }
+            />
 
-          <Button
-            tone="danger"
-            onClick={() => {
-              handleRemoveAction(index);
-            }}
-          >
-            Remove action
-          </Button>
-        </Fragment>
-      ))}
+            <Checkbox
+              checked={action.disabled}
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                updateAction(index, { disabled: event.target.checked })
+              }
+            >
+              {resolveGroupFlagLabel(actionPrefix, 'Action', 'Disable')}
+            </Checkbox>
+
+            <Button
+              tone="danger"
+              onClick={() => {
+                handleRemoveAction(index);
+              }}
+            >
+              Remove action
+            </Button>
+          </Fragment>
+        );
+      })}
 
       <Button tone="primary" onClick={handleAddAction}>
         Add action

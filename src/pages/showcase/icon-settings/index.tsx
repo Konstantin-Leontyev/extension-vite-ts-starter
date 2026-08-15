@@ -29,31 +29,13 @@ import { type TonePreset } from '@ui/tones';
 import { BorderGroup } from '../border-group';
 import { IconGroup } from '../icon-group';
 import { ShapeListbox } from '../shape-listbox';
-import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
+import {
+  COMBOBOX_OPTIONS,
+  resolveIconPaddingSizePreset,
+  type IconKey,
+} from '../showcase-icon-options';
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
-
-/**
- * resolveIconPaddingSizePreset — возвращает ключ размерного ряда под текущий `padding`.
- * Если отступ совпадает с мостом от `sizePreset` — возвращает его.
- * Иначе берёт первый ключ ряда, у которого `getIconPadding` даёт то же значение.
- *
- * @param padding текущий отступ окна Icon
- * @param sizePreset размер окна Icon
- * @returns ключ ряда для контрола отступа окна Icon
- */
-function resolveIconPaddingSizePreset(
-  padding: SpacingValue,
-  sizePreset: IconSizePreset
-): IconSizePreset {
-  if (getIconPadding(sizePreset) === padding) {
-    return sizePreset;
-  }
-
-  return (
-    ICON_SIZE_PRESET_KEYS.find((key) => getIconPadding(key) === padding) ?? sizePreset
-  );
-}
 
 /**
  * IconWidgetState — представляет состояние настроек компонента Icon в витрине дизайн-системы.

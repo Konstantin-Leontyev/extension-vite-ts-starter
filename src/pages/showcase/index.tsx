@@ -64,6 +64,7 @@ import {
 } from './date-range-input-settings';
 import { FieldsetSettings, type FieldsetWidgetState } from './fieldset-settings';
 import { HeaderSettings } from './header-settings';
+import { resolveIconButtonRowAction } from './icon-row-group/icon-row-group';
 import { IconSettings, type IconWidgetState } from './icon-settings';
 import { InputSettings, type InputWidgetState } from './input-settings';
 import { ListboxSettings, type ListboxWidgetState } from './listbox-settings';
@@ -907,7 +908,7 @@ function validateDemoRange(value: RangeValue): null | string {
  * <ShowcasePage />
  */
 export function ShowcasePage() {
-  // autoHide шапки живёт в каркасе. Витрина даёт только тумблер, см. header-settings.
+  // autoHide шапки живёт в каркасе. Витрина даёт только тумблер, см. src/pages/showcase/header-settings/index.tsx.
   const { showToast } = useToast();
   const { autoHide, isHeaderSettingsOpen, setAutoHide, setIsHeaderSettingsOpen } =
     useShellOutletContext();
@@ -1415,13 +1416,7 @@ export function ShowcasePage() {
                   actionShape={card.actionShape}
                   background={card.background}
                   borderTone={card.borderTone}
-                  headerActions={card.headerActions.map((action) => ({
-                    ariaLabel: action.iconKey,
-                    disabled: action.disabled,
-                    icon: getIcon(action.iconKey),
-                    iconPadding: action.iconPadding,
-                    onClick: () => undefined,
-                  }))}
+                  headerActions={card.headerActions.map(resolveIconButtonRowAction)}
                   showBorder={card.showBorder}
                   showShadow={card.showShadow}
                   subtitle={card.showSubtitle ? card.subtitle : undefined}
@@ -1457,13 +1452,7 @@ export function ShowcasePage() {
                 TOOLBAR_WIDGET_TITLE_ID,
                 <Toolbar
                   actionShape={toolbar.actionShape}
-                  actions={toolbar.actions.map((action) => ({
-                    ariaLabel: action.iconKey,
-                    disabled: action.disabled,
-                    icon: getIcon(action.iconKey),
-                    iconPadding: action.iconPadding,
-                    onClick: () => undefined,
-                  }))}
+                  actions={toolbar.actions.map(resolveIconButtonRowAction)}
                   ariaLabel={TOOLBAR_DEMO_ARIA_LABEL}
                   background={toolbar.background}
                   borderTone={toolbar.borderTone}

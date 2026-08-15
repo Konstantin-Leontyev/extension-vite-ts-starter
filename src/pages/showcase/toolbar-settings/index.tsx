@@ -34,12 +34,12 @@ import { SizeListbox } from '../size-listbox';
 /**
  * ToolbarWidgetState — представляет состояние настроек компонента Toolbar в витрине дизайн-системы.
  * Ключи совпадают с именами пропов компонента Toolbar.
- * `actions` хранит демо-ряд с ключом иконки, отступом окна Icon и флагом `disabled`
- * вместо `ReactNode` и обработчика.
+ * `actions` хранит демо-ряд действий с ключом иконки, отступом окна Icon и флагом
+ * `disabled` вместо `ReactNode` и обработчика.
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Toolbar.
  *
  * @property actions — демо-ряд действий
- * @property actionShape — форма окна действия. Стартует с вывода из `shape`
+ * @property actionShape — форма окна действия
  * @property background — заливка панели инструментов
  * @property borderTone — тон рамки
  * @property shape — форма панели
@@ -85,7 +85,16 @@ export function ToolbarSettings({ onChange, state }: ToolbarSettingsProps) {
         label="Size:"
         sizes={ICON_SIZE_PRESET_KEYS}
         value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
+        onChange={(size) => {
+          onChange('sizePreset', size);
+          onChange(
+            'actions',
+            state.actions.map((action) => ({
+              ...action,
+              iconPadding: getIconPadding(size),
+            }))
+          );
+        }}
       />
 
       <ShapeListbox

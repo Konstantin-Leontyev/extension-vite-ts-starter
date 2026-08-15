@@ -5,15 +5,15 @@
  *
  * Основные задачи:
  * 1. Предоставить функции `resolveGroupFieldLabel`, `resolveGroupContentLabel`
- *    и `resolveGroupShowLabel`
+ *    и `resolveGroupFlagLabel`
  *
  * Потребители:
- *  - `src/pages/showcase/text-group/index.tsx` — собирает подписи контролов через
- *    `resolveGroupFieldLabel`, `resolveGroupContentLabel` и `resolveGroupShowLabel`
- *  - `src/pages/showcase/icon-group/index.tsx` — собирает подписи контролов через
- *    `resolveGroupFieldLabel`, `resolveGroupContentLabel` и `resolveGroupShowLabel`
- *  - `src/pages/showcase/title-group/index.tsx` — собирает подписи контролов через
- *    `resolveGroupFieldLabel`, `resolveGroupContentLabel` и `resolveGroupShowLabel`
+ *  - сателлиты-группы витрины — собирают подписи контролов через
+ *    `resolveGroupFieldLabel`, `resolveGroupContentLabel` и `resolveGroupFlagLabel`:
+ *     - `src/pages/showcase/text-group/index.tsx`
+ *     - `src/pages/showcase/icon-group/index.tsx`
+ *     - `src/pages/showcase/title-group/index.tsx`
+ *     - `src/pages/showcase/icon-row-group/index.tsx`
  */
 
 /**
@@ -50,18 +50,25 @@ export function resolveGroupContentLabel(labelPrefix: string, entity: string): s
 }
 
 /**
- * resolveGroupShowLabel — возвращает подпись чекбокса показа из префикса и сущности.
- * С пустым префиксом — `Show text`, `Show icon`. С префиксом — `Show` и префикс
- * с пониженной только первой буквой — `Show legend`, `Show icon A`.
+ * resolveGroupFlagLabel — возвращает подпись чекбокса флага из глагола, префикса
+ * и сущности.
+ * С пустым префиксом — `{verb} {entity}`, например `Show text`, `Disable action`.
+ * С префиксом — глагол и префикс с пониженной только первой буквой — `Show legend`,
+ * `Disable action 1`.
  *
  * @param labelPrefix префикс подписей контролов
  * @param entity имя сущности с заглавной буквы, например `Text` или `Icon`
- * @returns подпись чекбокса показа
+ * @param verb глагол флага: показ или отключение
+ * @returns подпись чекбокса флага
  */
-export function resolveGroupShowLabel(labelPrefix: string, entity: string): string {
+export function resolveGroupFlagLabel(
+  labelPrefix: string,
+  entity: string,
+  verb: 'Disable' | 'Show'
+): string {
   if (labelPrefix === '') {
-    return `Show ${entity.toLowerCase()}`;
+    return `${verb} ${entity.toLowerCase()}`;
   }
 
-  return `Show ${labelPrefix.charAt(0).toLowerCase()}${labelPrefix.slice(1)}`;
+  return `${verb} ${labelPrefix.charAt(0).toLowerCase()}${labelPrefix.slice(1)}`;
 }
