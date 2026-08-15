@@ -9,6 +9,8 @@
  *  - форму строки-поля через проп `shape`
  *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
  *    выводится из `shape`
+ *  - форму секции иконки через проп `iconShape`. Без `iconShape` форма
+ *    выводится из `shape`
  *  - рамку контрола через проп `showBorder`
  *  - тень через проп `showShadow`
  *  - тон рамки через проп `borderTone`
@@ -103,6 +105,7 @@ const SEARCH_FIELD_CLEAR_PADDING = 12;
  * @property icon — svg секции иконки
  * @property iconFill — тон глифа иконки при нейтральном `iconTone`
  * @property iconPosition — позиция иконки относительно поля
+ * @property iconShape — форма секции иконки
  * @property iconTone — тон секции иконки
  * @property label — подпись над полем
  * @property onChange — обработчик изменения значения
@@ -115,6 +118,7 @@ type SearchFieldProps = {
   icon?: ReactNode;
   iconFill?: TonePreset;
   iconPosition?: IconPosition;
+  iconShape?: IconShapePreset;
   iconTone?: TonePreset;
   label?: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
@@ -151,6 +155,7 @@ export function SearchField({
   icon = DEFAULT_SEARCH_FIELD_ICON,
   iconFill,
   iconPosition = DEFAULT_SEARCH_FIELD_ICON_POSITION,
+  iconShape: iconShapeProp,
   iconTone,
   label,
   onChange,
@@ -165,7 +170,9 @@ export function SearchField({
   value,
   ...rest
 }: SearchFieldProps) {
-  const clearShape = clearShapeProp ?? resolveIconShape(shape);
+  const resolvedIconShape = resolveIconShape(shape);
+  const clearShape = clearShapeProp ?? resolvedIconShape;
+  const iconShape = iconShapeProp ?? resolvedIconShape;
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const { disabled, id: idProp, ref, ...inputProps } = restProps;
   const fallbackId = useId();
@@ -185,6 +192,7 @@ export function SearchField({
       iconFill={iconFill}
       iconTone={iconTone}
       interactive
+      shape={iconShape}
       showBorder={false}
       showHover={false}
       showShadow={false}

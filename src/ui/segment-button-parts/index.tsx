@@ -18,17 +18,19 @@
  * Основные задачи:
  * 1. Экспортировать компонент SegmentButtonParts
  * 2. Типизировать пропсы через `SegmentButtonPartsProps`
+ * 3. Реэкспортировать `SegmentButtonPartsDivider` и `SEGMENT_BUTTON_PARTS_FLUSH_SHAPE`
  *
  * Потребители:
  *  - `@ui/segment-button` — собирает SegmentButton поверх ряда
  *  - `@ui/date-range-input` — рендерит сегменты выбора дат без оболочки SegmentButton
+ *    и ставит разделитель перед кнопкой сброса в ряду-триггере
  */
 
 import { Fragment, type ReactNode, type RefObject } from 'react';
 
 import { useLongPress } from '@hooks/use-long-press';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
-import { type ShapePreset, type SizePreset } from '@ui/presets';
+import { type SizePreset } from '@ui/presets';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 import { DEFAULT_TONE, getToneColorKey, type TonePreset } from '@ui/tones';
 
@@ -36,6 +38,7 @@ import {
   StyledSegmentButtonPartsDivider,
   StyledSegmentButtonPartsPart,
   StyledSegmentButtonPartsRoot,
+  type SegmentButtonPartsShape,
   type SegmentButtonPartsStyleProps,
 } from './segment-button-parts.styles';
 
@@ -106,7 +109,7 @@ type SegmentButtonPartsSegments =
  */
 export type SegmentButtonPartsProps = {
   left: SegmentButtonPartsAction;
-  shape?: ShapePreset;
+  shape?: SegmentButtonPartsShape;
   textItalic?: boolean;
   textSize: TextSizePreset;
 } & SegmentButtonPartsSegments &
@@ -140,7 +143,7 @@ function SegmentButtonPartsPart({
   textSize,
 }: {
   action: SegmentButtonPartsAction;
-  shape?: ShapePreset;
+  shape?: SegmentButtonPartsShape;
   sizePreset?: SizePreset;
   textItalic?: boolean;
   textSize: TextSizePreset;
@@ -187,7 +190,6 @@ function SegmentButtonPartsPart({
   const hasIcon = Boolean(icon);
   const iconNode = hasIcon && (
     <Icon
-      data-slot="icon"
       iconFill={iconFill}
       iconTone={tone}
       interactive
@@ -220,7 +222,6 @@ function SegmentButtonPartsPart({
       {iconPosition === 'start' && iconNode}
       <Text
         align={hasIcon ? undefined : 'center'}
-        data-slot="label"
         ellipsis
         italic={textItalic}
         minInlineSize="0"
@@ -292,3 +293,8 @@ export function SegmentButtonParts({
     </StyledSegmentButtonPartsRoot>
   );
 }
+
+export {
+  SEGMENT_BUTTON_PARTS_FLUSH_SHAPE,
+  StyledSegmentButtonPartsDivider as SegmentButtonPartsDivider,
+} from './segment-button-parts.styles';

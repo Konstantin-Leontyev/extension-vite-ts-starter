@@ -61,6 +61,11 @@ export const StyledDateRangeInputRoot = styled.div.withConfig({
  * StyledDateRangeInputTriggerRow — задаёт ряд триггера компонента DateRangeInput.
  * Базируется на `<div>` и принимает пропсы из `OpenControlSurfaceStyleProps`.
  *
+ * Встроенные стили:
+ *  - `grid-template-columns: minmax(0, 1fr) auto auto` при `[data-has-clear]` —
+ *    сегменты, разделитель и сброс. Хелпер ряда даёт две колонки; третья
+ *    пишется здесь, чтобы не усложнять общий хром open-control
+ *
  * Генерация стилей:
  *  - `getOpenControlTriggerRowStyles` — габариты, заливка, рамка с тенью и
  *    `outline` фокуса
@@ -69,6 +74,10 @@ export const StyledDateRangeInputTriggerRow = styled.div.withConfig({
   shouldForwardProp: (prop) => !DATE_RANGE_INPUT_SURFACE_PROP_NAMES.has(prop),
 })<OpenControlSurfaceStyleProps>`
   ${(props) => getOpenControlTriggerRowStyles(props, 'trailing-only')}
+
+  &[data-has-clear] {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
 `;
 
 /**

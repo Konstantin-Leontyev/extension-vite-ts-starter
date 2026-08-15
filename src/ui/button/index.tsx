@@ -16,6 +16,8 @@
  *  - позицию иконки через проп `iconPosition`
  *  - тон секции иконки через проп `iconTone`
  *  - тон глифа иконки через проп `iconFill`
+ *  - форму секции иконки через проп `iconShape`. Без `iconShape` форма
+ *    выводится из `shape`
  *  - зафиксированное нажатое состояние через проп `active`
  *
  * Основные задачи:
@@ -32,7 +34,13 @@
 import { useId, type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { FieldLabel } from '@ui/field-label';
-import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
+import {
+  DEFAULT_ICON_POSITION,
+  Icon,
+  resolveIconShape,
+  type IconPosition,
+  type IconShapePreset,
+} from '@ui/icon';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
@@ -57,6 +65,7 @@ const DEFAULT_BUTTON_TYPE = 'button';
  * @property icon — svg иконки действия
  * @property iconFill — тон глифа иконки при нейтральном `iconTone`
  * @property iconPosition — позиция иконки относительно лейбла
+ * @property iconShape — форма секции иконки
  * @property label — подпись над кнопкой
  * @property textItalic — включает курсив лейбла
  * @property textSize — размер лейбла
@@ -67,6 +76,7 @@ type ButtonProps = {
   icon?: ReactNode;
   iconFill?: TonePreset;
   iconPosition?: IconPosition;
+  iconShape?: IconShapePreset;
   label?: string;
   textItalic?: boolean;
   textSize?: TextSizePreset;
@@ -96,9 +106,11 @@ export function Button({
   icon,
   iconFill,
   iconPosition = DEFAULT_ICON_POSITION,
+  iconShape: iconShapeProp,
   iconTone,
   id,
   label,
+  shape,
   sizePreset,
   textItalic,
   textSize,
@@ -111,6 +123,7 @@ export function Button({
   const fallbackId = useId();
   const buttonId = id ?? fallbackId;
   const hasIcon = Boolean(icon);
+  const iconShape = iconShapeProp ?? resolveIconShape(shape);
 
   const iconNode = hasIcon && (
     <Icon
@@ -118,6 +131,7 @@ export function Button({
       iconFill={iconFill}
       iconTone={iconTone}
       interactive
+      shape={iconShape}
       showBorder
       showHover={false}
       showShadow={false}
@@ -134,6 +148,7 @@ export function Button({
         hasIcon={hasIcon}
         iconTone={iconTone}
         id={buttonId}
+        shape={shape}
         sizePreset={sizePreset}
         tone={tone}
         type={type}

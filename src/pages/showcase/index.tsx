@@ -443,6 +443,7 @@ const DEFAULT_SEARCH_FIELD_STATE: SearchFieldWidgetState = {
   iconFill: 'neutral',
   iconKey: 'search',
   iconPosition: 'start',
+  iconShape: resolveIconShape(DEFAULT_SHAPE_PRESET),
   iconTone: 'neutral',
   label: 'Label:',
   placeholder: 'Search…',
@@ -466,6 +467,7 @@ const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
   iconFill: 'neutral',
   iconKey: 'search',
   iconPosition: 'end',
+  iconShape: resolveIconShape(DEFAULT_SHAPE_PRESET),
   iconTone: 'neutral',
   label: 'Label:',
   shape: DEFAULT_SHAPE_PRESET,
@@ -550,6 +552,8 @@ const COMBOBOX_DEMO_DISABLED_OPTION = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
+  buttonShape: DEFAULT_SHAPE_PRESET,
+  buttonSizePreset: DEFAULT_SIZE_PRESET,
   buttonText: 'Apply',
   buttonTextTone: 'neutral',
   buttonTone: 'primary',
@@ -558,6 +562,8 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   iconFill: 'neutral',
   iconPosition: 'end',
   iconTone: 'neutral',
+  inputShape: DEFAULT_SHAPE_PRESET,
+  inputSizePreset: DEFAULT_SIZE_PRESET,
   label: 'Label:',
   placeholder: 'Range: any',
   shape: DEFAULT_SHAPE_PRESET,
@@ -577,6 +583,8 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_DATE_RANGE_INPUT_STATE: DateRangeInputWidgetState = {
+  buttonShape: DEFAULT_SHAPE_PRESET,
+  dayShape: DEFAULT_SHAPE_PRESET,
   disabled: false,
   endDay: '',
   endLabel: 'End date',
@@ -849,6 +857,7 @@ const DEFAULT_TEXT_STATE: TextWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_TOOLBAR_STATE: ToolbarWidgetState = {
+  actionShape: resolveIconShape(DEFAULT_SHAPE_PRESET),
   background: 'surface',
   borderTone: 'neutral',
   shape: DEFAULT_SHAPE_PRESET,
@@ -1502,6 +1511,7 @@ export function ShowcasePage() {
                   icon={searchField.showIcon ? getIcon(searchField.iconKey) : undefined}
                   iconFill={searchField.showIcon ? searchField.iconFill : undefined}
                   iconPosition={searchField.iconPosition}
+                  iconShape={searchField.iconShape}
                   iconTone={searchField.showIcon ? searchField.iconTone : undefined}
                   label={searchField.label || undefined}
                   placeholder={searchField.placeholder}
@@ -1610,6 +1620,8 @@ export function ShowcasePage() {
                 DATE_RANGE_INPUT_WIDGET_TITLE_ID,
                 <DateRangeInput
                   alignSelf="center"
+                  buttonShape={dateRangeInput.buttonShape}
+                  dayShape={dateRangeInput.dayShape}
                   disabled={dateRangeInput.disabled}
                   endDay={dateRangeInput.endDay}
                   endLabel={dateRangeInput.endLabel}
@@ -1620,9 +1632,6 @@ export function ShowcasePage() {
                   sizePreset={dateRangeInput.sizePreset}
                   startDay={dateRangeInput.startDay}
                   startLabel={dateRangeInput.startLabel}
-                  {...(dateRangeInput.dayShape != null
-                    ? { dayShape: dateRangeInput.dayShape }
-                    : {})}
                   onClear={() => {
                     updateDateRangeInput('startDay', '');
                     updateDateRangeInput('endDay', '');
@@ -1642,6 +1651,7 @@ export function ShowcasePage() {
                   icon={button.withIcon ? getIcon(button.iconKey) : undefined}
                   iconFill={button.withIcon ? button.iconFill : undefined}
                   iconPosition={button.iconPosition}
+                  iconShape={button.iconShape}
                   iconTone={button.withIcon ? button.iconTone : undefined}
                   label={button.label || undefined}
                   shape={button.shape}

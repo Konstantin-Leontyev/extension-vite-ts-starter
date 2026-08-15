@@ -184,9 +184,9 @@ const DEFAULT_BUTTON_ACTIVE = false;
  * 1. Кладёт раскладку позиции через `getIconPositionStyles`: колонки под
  *    позицию `[data-slot='icon']` и `block-size: 100%` на слоте
  * 2. Переносит `padding-inline` с узла на слот лейбла — секция иконки прижата к краю
- * 3. При цветном `iconTone` на наведении и `:focus-visible` выставляет
- *    `--icon-state-background` сдвигом тона к `shade`. Нейтральная секция
- *    подсвечивается заливкой узла
+ * 3. На наведении и `:focus-visible` выставляет `--icon-state-background`
+ *    через `resolveIconStateBackground`: цветной тон — сдвиг к `shade`,
+ *    нейтральный — вуаль. Тело на этих состояниях заливку не меняет
  * 4. При `active` фиксирует значение канала: для цветной секции — сдвигом
  *    тона к `shade`, для нейтральной — смесь `primary` с `surface` через
  *    `VARIANT_SURFACE_MIX_PERCENT`
@@ -202,25 +202,20 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
     sizePreset = DEFAULT_SIZE_PRESET,
   } = props;
   const iconColorKey = getToneColorKey(iconTone);
-  const hoverStateBackground = resolveIconStateBackground(theme, iconTone, 'none');
+  const hoverStateBackground = resolveIconStateBackground(theme, iconTone);
 
   const styles = [
     getIconPositionStyles(),
     `[data-slot='label'] {`,
     `padding-inline: ${getPaddingInline(sizePreset)};`,
     `}`,
+    `&:not(:disabled):hover {`,
+    `--icon-state-background: ${hoverStateBackground};`,
+    `}`,
+    `&:focus-visible {`,
+    `--icon-state-background: ${hoverStateBackground};`,
+    `}`,
   ];
-
-  if (hoverStateBackground) {
-    styles.push(
-      `&:not(:disabled):hover {`,
-      `--icon-state-background: ${hoverStateBackground};`,
-      `}`,
-      `&:focus-visible {`,
-      `--icon-state-background: ${hoverStateBackground};`,
-      `}`
-    );
-  }
 
   if (active) {
     styles.push(
@@ -248,8 +243,9 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
  *
  * Как работает:
  * 1. Собирает общие правила узла: размер, рамку с тенью через `getBorderStyles`,
- *    радиус, цвет и заливка — фон лейбла всегда фон узла, наведение и
- *    `active` меняют его целиком
+ *    радиус, цвет и заливка. Без иконки наведение красит тело целиком.
+ *    С иконкой тело на `:hover` и `:focus-visible` заливку не меняет —
+ *    подсветку несёт канал секции. `active` красит тело в обеих ветках
  * 2. При `hasIcon` делегирует раскладку позиции, отступ лейбла и канал
  *    секции иконки в `getButtonSplitStyles`
  * 3. Без иконки кладёт `padding-inline` на узел
@@ -275,8 +271,11 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
     `color: ${surface.color};`,
     `background-color: ${surface.backgroundColor};`,
     getBorderStyles(theme),
-    `&:not(:disabled):hover { background: ${surface.hoverBackground}; }`,
   ];
+
+  if (!hasIcon) {
+    styles.push(`&:not(:disabled):hover { background: ${surface.hoverBackground}; }`);
+  }
 
   if (active) {
     styles.push(`&:not(:disabled) { background: ${surface.activeBackground}; }`);

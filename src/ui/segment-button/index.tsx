@@ -29,6 +29,7 @@ import { useId, type ComponentPropsWithRef } from 'react';
 
 import { FieldLabel } from '@ui/field-label';
 import {
+  SEGMENT_BUTTON_PARTS_FLUSH_SHAPE,
   SegmentButtonParts,
   type SegmentButtonPartsProps,
 } from '@ui/segment-button-parts';
@@ -94,7 +95,8 @@ export function SegmentButton({
 
   const partsProps = {
     left,
-    shape,
+    // Прямые углы: скругление даёт обрезка оболочки SegmentButton, не сегменты.
+    shape: SEGMENT_BUTTON_PARTS_FLUSH_SHAPE,
     sizePreset,
     textItalic,
     textSize: resolvedTextSize,

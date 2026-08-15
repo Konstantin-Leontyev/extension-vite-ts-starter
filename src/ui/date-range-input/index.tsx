@@ -6,6 +6,8 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `sizePreset`
  *  - форму через проп `shape`
+ *  - форму кнопок подвала через проп `buttonShape`. Без `buttonShape` совпадает
+ *    с `shape`
  *  - форму подсветки дня через проп `dayShape`. Без `dayShape` совпадает с `shape`
  *  - недоступное состояние через проп `disabled`
  *  - конечный день диапазона через проп `endDay`
@@ -23,9 +25,9 @@
  *  - иконка календаря всегда в позиции `start`. Публичного пропа позиции нет
  *  - подпись над рядом через проп `label`
  *  - черновик диапазона в открытой панели: клики по дням не пишут наружу до
- *    подтверждения. `Set` и Enter вне `Reset` и `Close` подтверждают и закрывают.
- *    Enter на `Close`, Escape и клик снаружи закрывают без подтверждения.
- *    `Reset` и Enter на нём чистят черновик без закрытия
+ *    подтверждения. `Set` и `Enter` вне `Reset` и `Close` подтверждают и закрывают.
+ *    `Enter` на `Close`, `Escape` и клик снаружи закрывают без подтверждения.
+ *    `Reset` и `Enter` на нём чистят черновик без закрытия
  *
  * Основные задачи:
  * 1. Экспортировать компонент DateRangeInput
@@ -36,6 +38,7 @@
  * 4. Реэкспортировать `todayUtc` из `src/ui/date-range-input/calendar-panel`
  *
  * Потребители:
+ *  - страницы и виджеты приложения — выбирают диапазон дат
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
@@ -52,10 +55,14 @@ import { CalendarIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPortal } from '@ui/anchored-portal';
 import { FieldLabel } from '@ui/field-label';
-import { Icon, resolveIconShape } from '@ui/icon';
+import { Icon } from '@ui/icon';
 import { DEFAULT_SHAPE_PRESET, type ShapePreset } from '@ui/presets';
 import { getSegmentButtonTextSize } from '@ui/segment-button';
-import { SegmentButtonParts } from '@ui/segment-button-parts';
+import {
+  SEGMENT_BUTTON_PARTS_FLUSH_SHAPE,
+  SegmentButtonParts,
+  SegmentButtonPartsDivider,
+} from '@ui/segment-button-parts';
 
 import {
   CalendarPanel,
@@ -149,6 +156,7 @@ const CLEAR_DATE_RANGE_ARIA_LABEL = 'Clear date range';
 /**
  * DateRangeInputProps — представляет пропсы компонента DateRangeInput.
  *
+ * @property buttonShape — форма кнопок подвала панели. Без пропа совпадает с `shape`
  * @property dayShape — форма подсветки дня в панели. Без пропа совпадает с `shape`
  * @property disabled — включает недоступное состояние
  * @property endDay — конечный день диапазона в формате ISO
@@ -175,6 +183,7 @@ type DateRangeInputProps = DateRangeInputStyleProps &
     | 'style'
     | keyof DateRangeInputStyleProps
   > & {
+    buttonShape?: ShapePreset;
     dayShape?: ShapePreset;
     disabled?: boolean;
     endDay?: string;
@@ -302,6 +311,7 @@ function clearDateRangeButtonAriaLabel(startLabel: string, endLabel: string): st
  * />
  */
 export function DateRangeInput({
+  buttonShape: buttonShapeProp,
   dayShape: dayShapeProp,
   disabled = DEFAULT_DATE_RANGE_INPUT_DISABLED,
   endDay = DEFAULT_DATE_RANGE_INPUT_END_DAY,
@@ -335,8 +345,8 @@ export function DateRangeInput({
   const firstAvailableDayRef = useRef<HTMLButtonElement>(null);
   const labelId = useId();
   const panelId = useId();
+  const buttonShape = buttonShapeProp ?? shape ?? DEFAULT_SHAPE_PRESET;
   const dayShape = dayShapeProp ?? shape ?? DEFAULT_SHAPE_PRESET;
-  const iconShape = resolveIconShape(shape);
   const surfaceProps = { shape, sizePreset };
   const calendarIcon = <CalendarIcon />;
   const isActive = startDay !== '' || endDay !== '';
@@ -501,25 +511,28 @@ export function DateRangeInput({
         <SegmentButtonParts
           left={leftSegment}
           right={rightSegment}
-          shape={shape}
+          // Прямые углы: скругление даёт обрезка ряда-триггера, не сегменты.
+          shape={SEGMENT_BUTTON_PARTS_FLUSH_SHAPE}
           sizePreset={sizePreset}
           textSize={textSizePreset}
         />
 
         {showClear && (
-          <Icon
-            aria-label={clearDateRangeButtonAriaLabel(startLabel, endLabel)}
-            as="button"
-            data-slot="clear"
-            disabled={disabled}
-            shape={iconShape}
-            showBorder
-            showShadow={false}
-            sizePreset={sizePreset}
-            onClick={handleClear}
-          >
-            <CloseIcon />
-          </Icon>
+          <>
+            <SegmentButtonPartsDivider aria-hidden="true" sizePreset={sizePreset} />
+            <Icon
+              aria-label={clearDateRangeButtonAriaLabel(startLabel, endLabel)}
+              as="button"
+              data-slot="clear"
+              disabled={disabled}
+              showBorder={false}
+              showShadow={false}
+              sizePreset={sizePreset}
+              onClick={handleClear}
+            >
+              <CloseIcon />
+            </Icon>
+          </>
         )}
       </StyledDateRangeInputTriggerRow>
 
@@ -574,7 +587,7 @@ export function DateRangeInput({
               label: PANEL_DISMISS_LABEL,
               onClick: handlePanelDismiss,
             }}
-            shape={shape}
+            shape={buttonShape}
             sizePreset={sizePreset}
             textSize={textSizePreset}
           />

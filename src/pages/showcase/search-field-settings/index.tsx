@@ -1,7 +1,7 @@
 /**
  * Файл: `src/pages/showcase/search-field-settings/index.tsx`
  * Определяет панель настроек компонента SearchField в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, формы сброса, рамки, иконки, подписи,
+ * Содержит контролы для изменения размера, формы, формы сброса, формы секции иконки, рамки, иконки, подписи,
  * плейсхолдера, значения, выравнивания, курсива и состояния `disabled` в реальном времени.
  *
  * Основные задачи:
@@ -41,11 +41,12 @@ import { TextGroup } from '../text-group';
  * Используется для синхронизации значений между панелью управления и демонстрационным SearchField.
  *
  * @property borderTone — тон рамки
- * @property clearShape — форма кнопки сброса
+ * @property clearShape — форма кнопки сброса. Стартует с вывода из `shape`
  * @property disabled — включает недоступное состояние поля
  * @property iconFill — тон глифа иконки
  * @property iconKey — витринный ключ выбора глифа иконки для превью
  * @property iconPosition — позиция иконки относительно поля
+ * @property iconShape — форма секции иконки. Стартует с вывода из `shape`
  * @property iconTone — тон секции иконки
  * @property label — подпись над полем
  * @property placeholder — плейсхолдер значения
@@ -65,6 +66,7 @@ export type SearchFieldWidgetState = {
   iconFill: TonePreset;
   iconKey: IconKey;
   iconPosition: IconPosition;
+  iconShape: IconShapePreset;
   iconTone: TonePreset;
   label: string;
   placeholder: string;
@@ -109,6 +111,7 @@ export function SearchFieldSettings({ onChange, state }: SearchFieldSettingsProp
         onShapeChange={(shape) => {
           onChange('shape', shape);
           onChange('clearShape', resolveIconShape(shape));
+          onChange('iconShape', resolveIconShape(shape));
         }}
         onSizeChange={(size) => onChange('sizePreset', size)}
       />
@@ -134,11 +137,13 @@ export function SearchFieldSettings({ onChange, state }: SearchFieldSettingsProp
         iconOptions={COMBOBOX_OPTIONS}
         iconValue={state.iconKey}
         position={state.iconPosition}
+        shape={state.iconShape}
         show={state.showIcon}
         tone={state.iconTone}
         onFillChange={(tone) => onChange('iconFill', tone)}
         onIconChange={(value) => onChange('iconKey', value as IconKey)}
         onPositionChange={(position) => onChange('iconPosition', position)}
+        onShapeChange={(shape) => onChange('iconShape', shape)}
         onShowChange={(checked) => onChange('showIcon', checked)}
         onToneChange={(tone) => onChange('iconTone', tone)}
       />

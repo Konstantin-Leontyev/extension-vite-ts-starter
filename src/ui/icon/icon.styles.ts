@@ -21,10 +21,10 @@
  *    SearchField и SegmentButtonParts — подключают хелперы секции и читают
  *    позицию через `@ui/icon`
  *  - `@ui/toolbar` — читает `resolveIconShape` для формы действий
- *  - `@ui/search-field` — читает `resolveIconShape` для формы сброса
+ *  - `@ui/button` и `@ui/search-field` — читают `resolveIconShape` для формы
+ *    секции иконки; SearchField — также для формы сброса
  *  - `@ui/listbox`, `@ui/combobox` и `@ui/range-input` —
  *    читают `resolveIconShape` для формы окна сброса и шеврона
- *  - `@ui/date-range-input` — читает `resolveIconShape` для формы сброса
  *  - `src/pages/showcase` — читает `getIconPadding` и `resolveIconShape`
  *  - `src/ui/card/card.styles.ts` — читает `getIconSize` для резерва высоты
  *    ряда действий шапки
@@ -250,7 +250,8 @@ type IconSectionNeutralChannelPolicy = 'none' | 'veil';
 /**
  * resolveIconStateBackground — возвращает значение канала `--icon-state-background`
  * для секции иконки на родителе. Цветной `iconTone` — сдвиг к `shade`. Нейтральный —
- * вуаль или `undefined` по `neutralPolicy`. Button не ставит канал на нейтрали.
+ * вуаль или `undefined` по `neutralPolicy`. Политика `'none'` оставляет канал
+ * пустым, когда подсветку нейтрали несёт заливка узла.
  *
  * @param theme текущая тема
  * @param iconTone тон секции иконки

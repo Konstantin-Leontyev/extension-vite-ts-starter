@@ -15,6 +15,7 @@
 import {
   ICON_SHAPE_PRESET_KEYS,
   ICON_SIZE_PRESET_KEYS,
+  resolveIconShape,
   type IconShapePreset,
   type IconSizePreset,
 } from '@ui/icon';
@@ -33,7 +34,7 @@ import { SizeListbox } from '../size-listbox';
  * Ключи совпадают с именами пропов компонента Toolbar.
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Toolbar.
  *
- * @property actionShape — форма окна действия. Без значения выводится из `shape`
+ * @property actionShape — форма окна действия. Стартует с вывода из `shape`
  * @property background — заливка панели инструментов
  * @property borderTone — тон рамки
  * @property shape — форма панели
@@ -42,7 +43,7 @@ import { SizeListbox } from '../size-listbox';
  * @property sizePreset — размер окна действия
  */
 export type ToolbarWidgetState = {
-  actionShape?: IconShapePreset;
+  actionShape: IconShapePreset;
   background: SurfaceBackground;
   borderTone: TonePreset;
   shape: ShapePreset;
@@ -85,11 +86,13 @@ export function ToolbarSettings({ onChange, state }: ToolbarSettingsProps) {
         label="Shape:"
         shapes={SHAPE_PRESET_KEYS}
         value={state.shape}
-        onChange={(shape) => onChange('shape', shape)}
+        onChange={(shape) => {
+          onChange('shape', shape);
+          onChange('actionShape', resolveIconShape(shape));
+        }}
       />
 
       <ShapeListbox
-        allowInherit
         label="Action shape:"
         shapes={ICON_SHAPE_PRESET_KEYS}
         value={state.actionShape}

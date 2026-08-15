@@ -4,8 +4,11 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `SegmentButtonPartsStyleProps`,
- *    `SegmentButtonPartsPartStyleProps` и `SegmentButtonPartsDividerStyleProps`
- * 2. Хранить вертикальный отступ разделителя в `segmentButtonPartsDividerMarginBlock`
+ *    `SegmentButtonPartsPartStyleProps`, `SegmentButtonPartsDividerStyleProps`
+ *    и `SegmentButtonPartsShape`
+ * 2. Хранить вертикальный отступ разделителя в `segmentButtonPartsDividerMarginBlock`,
+ *    зазор иконки с текстом в `SEGMENT_BUTTON_PARTS_ICON_LABEL_GAP`
+ *    и форму без радиуса в `SEGMENT_BUTTON_PARTS_FLUSH_SHAPE`
  * 3. Предоставить styled-узлы `StyledSegmentButtonPartsRoot`,
  *    `StyledSegmentButtonPartsPart` и `StyledSegmentButtonPartsDivider`
  *
@@ -51,6 +54,41 @@ const segmentButtonPartsDividerMarginBlock = {
  * Кластер контента, не краевая секция: `gap` вместо отступа лейбла у track-модели.
  */
 const SEGMENT_BUTTON_PARTS_ICON_LABEL_GAP: SpacingValue = 8;
+
+/**
+ * SEGMENT_BUTTON_PARTS_FLUSH_SHAPE — задаёт форму сегмента без радиуса.
+ * Крайние сегменты не пишут `border-radius`: начальное значение уже `0`.
+ * Нужна под обрезающей оболочкой, где скругление даёт обрезка ряда.
+ */
+export const SEGMENT_BUTTON_PARTS_FLUSH_SHAPE = 'square' as const;
+
+/**
+ * SegmentButtonPartsShape — представляет форму ряда сегментов.
+ * Канонические `rounded` / `pill` скругляют крайние сегменты;
+ * `square` оставляет прямые углы под обрезкой оболочки.
+ */
+export type SegmentButtonPartsShape =
+  | ShapePreset
+  | typeof SEGMENT_BUTTON_PARTS_FLUSH_SHAPE;
+
+/**
+ * resolveSegmentButtonPartsRadius — возвращает радиус крайних сегментов
+ * по форме ряда. Для `square` радиус не пишется: начальное значение уже `0`.
+ *
+ * @param shape форма ряда
+ * @param minBlockSize минимальная высота сегмента
+ * @returns значение `border-radius` или `undefined` при прямой форме
+ */
+function resolveSegmentButtonPartsRadius(
+  shape: SegmentButtonPartsShape,
+  minBlockSize: string
+): string | undefined {
+  if (shape === SEGMENT_BUTTON_PARTS_FLUSH_SHAPE) {
+    return undefined;
+  }
+
+  return resolveBlockRadius(shape, minBlockSize);
+}
 
 /**
  * SegmentButtonPartsStyleProps — представляет пропсы стилизации SegmentButtonParts
@@ -134,7 +172,7 @@ export const StyledSegmentButtonPartsRoot = styled.div.withConfig({
  */
 type SegmentButtonPartsPartStyleProps = {
   hasIcon: boolean;
-  shape?: ShapePreset;
+  shape?: SegmentButtonPartsShape;
   sizePreset?: SizePreset;
   tone?: TonePreset;
 };
@@ -170,8 +208,9 @@ const SEGMENT_BUTTON_PARTS_PART_PROP_NAMES = new Set<string>([
  * 5. `outline` на фокусе не рисует: снятие даёт статика `:focus { outline: none }`
  *    в шаблоне узла. Акцент фокуса совпадает с наведением. Фокус-контур несёт
  *    оболочка ряда на `&:has(:focus-visible)`, не сегмент
- * 6. Скругляет первый и последний сегмент радиусом из `resolveBlockRadius` по
- *    `shape` и минимальной высоте ряда
+ * 6. Скругляет первый и последний сегмент радиусом из
+ *    `resolveSegmentButtonPartsRadius` по `shape` и минимальной высоте ряда.
+ *    Форма `square` радиус не пишет: углы прямые, скругление даёт обрезка ряда
  *
  * @param props пропсы стилизации сегмента и тема
  * @returns CSS-правила, каждое с новой строки
@@ -187,7 +226,7 @@ function getSegmentButtonPartsPartStyles(
     tone = DEFAULT_TONE,
   } = props;
   const minBlockSize = getMinBlockSize(sizePreset);
-  const radius = resolveBlockRadius(shape, minBlockSize);
+  const radius = resolveSegmentButtonPartsRadius(shape, minBlockSize);
   const colorKey = getToneColorKey(tone);
   const hoverStateBackground = resolveIconStateBackground(theme, tone, 'none');
 
@@ -232,12 +271,18 @@ function getSegmentButtonPartsPartStyles(
     }
   }
 
-  styles.push(
-    `&:first-child {\nborder-start-start-radius: ${radius};\nborder-end-start-radius: ${radius};\n}`
-  );
-  styles.push(
-    `&:last-child {\nborder-start-end-radius: ${radius};\nborder-end-end-radius: ${radius};\n}`
-  );
+  if (radius) {
+    styles.push(
+      `&:first-child {`,
+      `border-start-start-radius: ${radius};`,
+      `border-end-start-radius: ${radius};`,
+      '}',
+      `&:last-child {`,
+      `border-start-end-radius: ${radius};`,
+      `border-end-end-radius: ${radius};`,
+      '}'
+    );
+  }
 
   return styles.join('\n');
 }

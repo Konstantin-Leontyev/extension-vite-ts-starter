@@ -8,7 +8,6 @@
  *  - обработчик изменения выбранного размера через проп `onChange`
  *  - перечень размеров через проп `sizes`
  *  - выбранный размер через проп `value`
- *  - состояние «от контрола» через проп `allowInherit`
  *
  * Основные задачи:
  * 1. Экспортировать компонент SizeListbox
@@ -53,50 +52,28 @@ function getSizeListboxOptions<Size extends string>(
 }
 
 /**
- * DEFAULT_SIZE_LISTBOX_VALUE — задаёт размер по умолчанию для отображения в листбоксе.
+ * DEFAULT_SIZE_LISTBOX_VALUE — задаёт размер для отображения в листбоксе по умолчанию.
  * Проп размера Text без значения подставляет `normal` — то же значение здесь.
  * Панели передают состояние как есть, не дублируя это умолчание запасными значениями.
- * Используется, когда вызывающий код не передал проп `value` и не включил `allowInherit`.
+ * Используется, когда вызывающий код не передал проп `value`.
  */
 const DEFAULT_SIZE_LISTBOX_VALUE = DEFAULT_SIZE_PRESET;
 
 /**
- * FROM_CONTROL_OPTION_LABEL — задаёт подпись опции «от контрола».
- */
-const FROM_CONTROL_OPTION_LABEL = 'From control';
-
-/**
- * FROM_CONTROL_OPTION_VALUE — задаёт ключ опции «от контрола».
- * Не совпадает с ключами размерных рядов витрины.
- */
-const FROM_CONTROL_OPTION_VALUE = 'from-control';
-
-/**
- * SizeListboxBaseProps — представляет общие пропсы SizeListbox.
+ * SizeListboxProps — представляет пропсы компонента SizeListbox.
  *
  * @property label — текст подписи над листбоксом
+ * @property onChange — обработчик изменения выбранного размера
  * @property sizes — перечень допустимых размеров из настраиваемого компонента,
  *   например `SIZE_PRESET_KEYS`, `TAG_SIZE_PRESET_KEYS` или `TEXT_SIZE_PRESET_KEYS`
- * @property value — текущий выбранный размер. Без значения размер
- *   выводится из контрола
+ * @property value — текущий выбранный размер
  */
-type SizeListboxBaseProps<Size extends string> = {
+type SizeListboxProps<Size extends string> = {
   label: string;
+  onChange: (size: Size) => void;
   sizes: readonly Size[];
   value?: Size;
 };
-
-/**
- * SizeListboxProps — представляет пропсы компонента SizeListbox.
- *
- * @property allowInherit — включает опцию «от контрола»
- * @property onChange — обработчик изменения выбранного размера
- */
-type SizeListboxProps<Size extends string> = SizeListboxBaseProps<Size> &
-  (
-    | { allowInherit: true; onChange: (size?: Size) => void }
-    | { allowInherit?: false; onChange: (size: Size) => void }
-  );
 
 /**
  * SizeListbox — отображает листбокс выбора размера в витрине дизайн-системы.
@@ -115,39 +92,18 @@ type SizeListboxProps<Size extends string> = SizeListboxBaseProps<Size> &
  *   onChange={setSizePreset}
  * />
  */
-export function SizeListbox<Size extends string = SizePreset>(
-  props: SizeListboxProps<Size>
-) {
-  const { allowInherit, label, onChange, sizes, value } = props;
-  const options = getSizeListboxOptions(sizes);
-  const listboxOptions =
-    allowInherit === true
-      ? [
-          { label: FROM_CONTROL_OPTION_LABEL, value: FROM_CONTROL_OPTION_VALUE },
-          ...options,
-        ]
-      : options;
-  const listboxValue =
-    allowInherit === true
-      ? (value ?? FROM_CONTROL_OPTION_VALUE)
-      : (value ?? (DEFAULT_SIZE_LISTBOX_VALUE as Size));
-
+export function SizeListbox<Size extends string = SizePreset>({
+  label,
+  onChange,
+  sizes,
+  value = DEFAULT_SIZE_LISTBOX_VALUE as Size,
+}: SizeListboxProps<Size>) {
   return (
     <Listbox
       label={label}
-      options={listboxOptions}
-      value={listboxValue}
-      onChange={(nextSize) => {
-        if (nextSize === FROM_CONTROL_OPTION_VALUE) {
-          if (allowInherit === true) {
-            onChange(undefined);
-          }
-
-          return;
-        }
-
-        onChange(nextSize as Size);
-      }}
+      options={getSizeListboxOptions(sizes)}
+      value={value}
+      onChange={(nextSize) => onChange(nextSize as Size)}
     />
   );
 }

@@ -2,8 +2,8 @@
  * Файл: `src/pages/showcase/date-range-input-settings/index.tsx`
  * Определяет панель настроек компонента DateRangeInput в витрине дизайн-системы.
  * Содержит контролы для изменения подписи, размера, формы, текстов `title` сегментов,
- * границ диапазона, границ дней, формы подсветки дня и состояния `disabled`
- * в реальном времени.
+ * границ диапазона, границ дней, формы подсветки дня, формы кнопок подвала
+ * и состояния `disabled` в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `DateRangeInputWidgetState`
@@ -28,7 +28,8 @@ import { StyledSettingsForm } from '../showcase.styles';
  * Ключи совпадают с именами пропов компонента DateRangeInput.
  * Используется для синхронизации значений между панелью управления и демонстрационным DateRangeInput.
  *
- * @property dayShape — форма подсветки дня в панели. Без значения превью берёт `shape`
+ * @property buttonShape — форма кнопок подвала панели. Стартует с формы контрола
+ * @property dayShape — форма подсветки дня в панели. Стартует с формы контрола
  * @property disabled — включает недоступное состояние
  * @property endDay — конечный день диапазона в превью в формате ISO
  * @property endLabel — текст `title` конечного сегмента и фрагмент `aria-label` сброса
@@ -41,7 +42,8 @@ import { StyledSettingsForm } from '../showcase.styles';
  * @property startLabel — текст `title` начального сегмента и фрагмент `aria-label` сброса
  */
 export type DateRangeInputWidgetState = {
-  dayShape?: ShapePreset;
+  buttonShape: ShapePreset;
+  dayShape: ShapePreset;
   disabled: boolean;
   endDay: string;
   endLabel: string;
@@ -85,7 +87,11 @@ export function DateRangeInputSettings({
         shape={state.shape}
         sizePreset={state.sizePreset}
         onLabelChange={(label) => onChange('label', label)}
-        onShapeChange={(shape) => onChange('shape', shape)}
+        onShapeChange={(shape) => {
+          onChange('shape', shape);
+          onChange('dayShape', shape);
+          onChange('buttonShape', shape);
+        }}
         onSizeChange={(size) => onChange('sizePreset', size)}
       />
 
@@ -140,8 +146,15 @@ export function DateRangeInputSettings({
       <ShapeListbox
         label="Day shape:"
         shapes={SHAPE_PRESET_KEYS}
-        value={state.dayShape ?? state.shape}
+        value={state.dayShape}
         onChange={(shape) => onChange('dayShape', shape)}
+      />
+
+      <ShapeListbox
+        label="Button shape:"
+        shapes={SHAPE_PRESET_KEYS}
+        value={state.buttonShape}
+        onChange={(shape) => onChange('buttonShape', shape)}
       />
 
       <Checkbox
