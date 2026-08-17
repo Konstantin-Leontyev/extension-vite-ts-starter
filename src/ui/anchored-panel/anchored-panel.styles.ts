@@ -1,16 +1,16 @@
 /**
- * Файл: `src/ui/anchored-portal/anchored-portal.styles.ts`
- * Содержит генераторы хрома панели AnchoredPortal и CSS-привязки к неявному якорю.
+ * Файл: `src/ui/anchored-panel/anchored-panel.styles.ts`
+ * Содержит генераторы хрома панели AnchoredPanel и CSS-привязки к неявному якорю.
  *
  * Основные задачи:
  * 1. Предоставить функции `getCssAnchorBindingStyles`,
- *    `getCssAnchorPlacementStyles` и `getPortalPanelStyles`
+ *    `getCssAnchorPlacementStyles` и `getAnchoredPanelStyles`
  *
  * Потребители:
- *  - `src/ui/anchored-portal/index.tsx` — реэкспортирует `getCssAnchorBindingStyles`,
- *    `getCssAnchorPlacementStyles` и `getPortalPanelStyles` в публичное API
- *  - `src/ui/open-control.ts` — собирает хром portal-панели open-контролов через
- *    `getOpenControlPortalPanelStyles`
+ *  - `src/ui/anchored-panel/index.tsx` — реэкспортирует `getCssAnchorBindingStyles`,
+ *    `getCssAnchorPlacementStyles` и `getAnchoredPanelStyles` в публичное API
+ *  - `src/ui/open-control.ts` — собирает хром панели open-контролов через
+ *    `getOpenControlPanelStyles`
  *  - `src/ui/table/table.styles.ts` — подставляет хром add- и edit-панели строк
  *    и `getCssAnchorBindingStyles`
  *  - `@ui/combobox`, `@ui/date-range-input` и `@ui/range-input` — подставляют
@@ -23,11 +23,11 @@ import { getBorderStyles } from '@ui/border';
 import { getOutlineStyles } from '@ui/outline';
 import { getSurfaceBackgroundColor } from '@ui/surface';
 import { type AppTheme } from '@ui/theme';
-import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
+import { PANEL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 import {
-  ANCHORED_PORTAL_POSITION_TRY_ABOVE,
-  ANCHORED_PORTAL_POSITION_TRY_VIEWPORT,
+  ANCHORED_PANEL_POSITION_TRY_ABOVE,
+  ANCHORED_PANEL_POSITION_TRY_VIEWPORT,
 } from './position-try';
 
 /**
@@ -73,25 +73,25 @@ export function getCssAnchorPlacementStyles(
     inset-inline-start: ${
       inlinePlacement === 'viewport-edge'
         ? `clamp(
-      ${PORTAL_VIEWPORT_EDGE_INSET}px,
+      ${PANEL_VIEWPORT_EDGE_INSET}px,
       anchor(start),
-      calc(100% - ${PORTAL_VIEWPORT_EDGE_INSET}px - anchor-size(width))
+      calc(100% - ${PANEL_VIEWPORT_EDGE_INSET}px - anchor-size(width))
     )`
         : 'anchor(start)'
     };
     inline-size: anchor-size(width);
-    margin-block-end: ${PORTAL_VIEWPORT_EDGE_INSET}px;
-    position-try-fallbacks: ${ANCHORED_PORTAL_POSITION_TRY_ABOVE}, ${ANCHORED_PORTAL_POSITION_TRY_VIEWPORT};
+    margin-block-end: ${PANEL_VIEWPORT_EDGE_INSET}px;
+    position-try-fallbacks: ${ANCHORED_PANEL_POSITION_TRY_ABOVE}, ${ANCHORED_PANEL_POSITION_TRY_VIEWPORT};
   `;
 }
 
 /**
- * getPortalPanelStyles — возвращает CSS-правила хрома панели портала:
+ * getAnchoredPanelStyles — возвращает CSS-правила хрома привязанной панели:
  * `position: fixed`, опциональный отступ через `padding`, опциональный цвет
  * обводки через `outlineColor`, заливку `surface` через
  * `getSurfaceBackgroundColor`, рамку с тенью, радиус и постоянный `outline`.
  * `padding`, `overflow` и `background-color` остаются моделью панели.
- * Собственных styled-узлов у AnchoredPortal нет — вызывающий код объявляет
+ * Собственных styled-узлов у AnchoredPanel нет — вызывающий код объявляет
  * панель-узел и подставляет генератор в своём styles-файле.
  *
  * Как работает:
@@ -105,7 +105,7 @@ export function getCssAnchorPlacementStyles(
  * @param options тема, радиус, опциональный отступ и опциональный цвет обводки
  * @returns CSS-правила, каждое с новой строки
  */
-export function getPortalPanelStyles(options: {
+export function getAnchoredPanelStyles(options: {
   borderRadius: string;
   outlineColor?: string;
   padding?: string;

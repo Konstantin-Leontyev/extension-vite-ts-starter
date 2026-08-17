@@ -19,7 +19,7 @@
 import { Fragment, useId, useRef, useState, type ComponentPropsWithRef } from 'react';
 
 import { AddCircleIcon, AvatarIcon, CloseIcon, SignOutIcon } from '@icons';
-import { AnchoredPortal } from '@ui/anchored-portal';
+import { AnchoredPanel } from '@ui/anchored-panel';
 import { Icon } from '@ui/icon';
 import { SegmentButton } from '@ui/segment-button';
 import { getSpacingValue } from '@ui/spacing';
@@ -163,7 +163,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
         <AvatarIcon />
       </Icon>
 
-      <AnchoredPortal
+      <AnchoredPanel
         anchorRef={triggerRef}
         dismissZoneRefs={[triggerRef, panelRef]}
         open={isOpen}
@@ -247,7 +247,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
             </StyledProfileMenuLegal>
           </StyledProfileMenuContent>
         </StyledProfileMenuPanel>
-      </AnchoredPortal>
+      </AnchoredPanel>
     </StyledProfileMenu>
   );
 }

@@ -1,7 +1,7 @@
 /**
  * Файл: `src/ui/open-control.ts`
  * Содержит общий хром open-контролов: корень, ряд-триггер, кнопку-триггер
- * с каналом шеврона, поверхность выбираемой строки, обвязку portal-панели,
+ * с каналом шеврона, поверхность выбираемой строки, обвязку панели,
  * скролл списка опций и именованные константы панели.
  *
  * Основные задачи:
@@ -12,24 +12,24 @@
  * 3. Предоставить `getOpenControlRootStyles`,
  *    `getOpenControlTriggerRowStyles`, `getOpenControlTriggerStyles`,
  *    `getOpenControlSelectableRowSurfaceStyles`,
- *    `getOpenControlActiveRowHighlightStyles`, `getOpenControlPortalPanelStyles`,
- *    `getOpenControlStackedPortalPanelStyles`,
+ *    `getOpenControlActiveRowHighlightStyles`, `getOpenControlPanelStyles`,
+ *    `getOpenControlStackedPanelStyles`,
  *    `getOpenControlOptionsListScrollStyles`, `getOpenControlTextSize` и
  *    `resolveEnabledOpenControlIndex`
  *
  * Потребители:
  *  - `src/ui/listbox/listbox.styles.ts` и `src/ui/combobox/combobox.styles.ts` —
- *    подставляют корень, ряд и кнопку-триггер, portal-панель, скролл списка,
+ *    подставляют корень, ряд и кнопку-триггер, панель, скролл списка,
  *    поверхность опции и подсветку активной строки
  *  - `src/ui/listbox/index.tsx` и `src/ui/combobox/index.tsx` — берут потолок
  *    видимых строк барабана, размер текста и поиск ближайшей доступной строки
  *  - `src/ui/range-input/range-input.styles.ts` — подставляет корень, ряд и
- *    кнопку-триггер, стековую portal-панель и поверхность пресета
+ *    кнопку-триггер, стековую панель и поверхность пресета
  *  - `src/ui/date-range-input/date-range-input.styles.ts` — подставляет корень,
- *    ряд-триггер и стековую portal-панель
+ *    ряд-триггер и стековую панель
  */
 
-import { getPortalPanelStyles } from '@ui/anchored-portal';
+import { getAnchoredPanelStyles } from '@ui/anchored-panel';
 import { getBorderStyles } from '@ui/border';
 import { getIconPositionStyles, resolveIconStateBackground } from '@ui/icon';
 import { MOTION_CONTROL_DURATION, getTransitionStyles } from '@ui/motion';
@@ -108,14 +108,14 @@ export const OPEN_CONTROL_SELECTABLE_INSET: SpacingValue = 4;
 
 /**
  * OPEN_CONTROL_ROW_GAP — задаёт зазор между элементами ряда open-control.
- * Используется в `getOpenControlStackedPortalPanelStyles`, стилях опций Listbox и
+ * Используется в `getOpenControlStackedPanelStyles`, стилях опций Listbox и
  * Combobox и секциях панели RangeInput.
  */
 export const OPEN_CONTROL_ROW_GAP: SpacingValue = 12;
 
 /**
  * OPEN_CONTROL_PANEL_PADDING — задаёт внутренний отступ стековой панели open-control.
- * Используется в `getOpenControlStackedPortalPanelStyles`.
+ * Используется в `getOpenControlStackedPanelStyles`.
  */
 const OPEN_CONTROL_PANEL_PADDING: SpacingValue = 16;
 
@@ -164,8 +164,8 @@ export function resolveEnabledOpenControlIndex<T extends { disabled?: boolean }>
  * resolveOpenControlBlockRadius — возвращает значение для CSS-свойства
  * `border-radius` поверхности open-control по `shape` и `sizePreset`.
  * Используется в `getOpenControlTriggerRowStyles`,
- * `getOpenControlSelectableRowSurfaceStyles`, `getOpenControlPortalPanelStyles` и
- * `getOpenControlStackedPortalPanelStyles`.
+ * `getOpenControlSelectableRowSurfaceStyles`, `getOpenControlPanelStyles` и
+ * `getOpenControlStackedPanelStyles`.
  *
  * @param shape форма поверхности
  * @param sizePreset размер компонента
@@ -368,39 +368,39 @@ export function getOpenControlActiveRowHighlightStyles(theme: AppTheme): string 
 }
 
 /**
- * getOpenControlPortalPanelStyles — возвращает CSS-правила хрома portal-панели
+ * getOpenControlPanelStyles — возвращает CSS-правила хрома панели
  * open-control: позицию, сброс UA-стилей `[popover]`, заливку, рамку с тенью,
  * скругление и `outline`.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты `shape` и `sizePreset`
  * 2. Считает скругление через `resolveOpenControlBlockRadius`
- * 3. Подставляет хром панели через `getPortalPanelStyles`
+ * 3. Подставляет хром панели через `getAnchoredPanelStyles`
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
  */
-export function getOpenControlPortalPanelStyles(
+export function getOpenControlPanelStyles(
   props: OpenControlSurfaceStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
   const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
 
-  return getPortalPanelStyles({
+  return getAnchoredPanelStyles({
     borderRadius: resolveOpenControlBlockRadius(shape, sizePreset),
     theme,
   });
 }
 
 /**
- * getOpenControlStackedPortalPanelStyles — возвращает CSS-правила стековой
- * portal-панели open-control: сетку, зазор ряда, хром портала и отступ
+ * getOpenControlStackedPanelStyles — возвращает CSS-правила стековой
+ * панели open-control: сетку, зазор ряда, хром панели и отступ
  * `OPEN_CONTROL_PANEL_PADDING`.
  *
  * @param props пропсы поверхности и тема
  * @returns CSS-правила, каждое с новой строки
  */
-export function getOpenControlStackedPortalPanelStyles(
+export function getOpenControlStackedPanelStyles(
   props: OpenControlSurfaceStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
@@ -409,7 +409,7 @@ export function getOpenControlStackedPortalPanelStyles(
   return `
     display: grid;
     gap: ${getSpacingValue(OPEN_CONTROL_ROW_GAP)};
-    ${getPortalPanelStyles({
+    ${getAnchoredPanelStyles({
       borderRadius: resolveOpenControlBlockRadius(shape, sizePreset),
       padding: getSpacingValue(OPEN_CONTROL_PANEL_PADDING),
       theme,

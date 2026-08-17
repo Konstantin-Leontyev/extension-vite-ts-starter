@@ -53,7 +53,7 @@ import {
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { CheckIcon, ChevronDownIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
-import { AnchoredPortal } from '@ui/anchored-portal';
+import { AnchoredPanel } from '@ui/anchored-panel';
 import { FieldLabel } from '@ui/field-label';
 import {
   DEFAULT_ICON_POSITION,
@@ -482,7 +482,7 @@ export function Combobox({
         {!isIconStart && clearNode}
       </StyledComboboxTriggerRow>
 
-      <AnchoredPortal
+      <AnchoredPanel
         anchorRef={triggerRowRef}
         dismissZoneRefs={[rootRef, panelRef]}
         open={isOpen}
@@ -592,7 +592,7 @@ export function Combobox({
             })}
           </StyledComboboxList>
         </StyledComboboxPanel>
-      </AnchoredPortal>
+      </AnchoredPanel>
     </StyledComboboxRoot>
   );
 }

@@ -213,7 +213,7 @@ export const StyledCalendarPanelRoot = styled.div.withConfig({
  *    заголовок месяца на колонки 3–5
  *  - `gap` — тот же `CALENDAR_DAY_GRID_GAP`, что у дней
  *  - `align-items: center` — вертикальное выравнивание ряда
- *  - `min-inline-size: 0` — шапка не раздувает портал шире якоря
+ *  - `min-inline-size: 0` — шапка не раздувает панель шире якоря
  */
 export const StyledCalendarHeader = styled.div`
   display: grid;

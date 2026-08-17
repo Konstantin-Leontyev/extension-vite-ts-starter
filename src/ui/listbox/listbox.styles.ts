@@ -14,14 +14,14 @@
 
 import styled from 'styled-components';
 
-import { getCssAnchorBindingStyles } from '@ui/anchored-portal';
+import { getCssAnchorBindingStyles } from '@ui/anchored-panel';
 import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   OPEN_CONTROL_ROW_GAP,
   getOpenControlActiveRowHighlightStyles,
   getOpenControlOptionsListScrollStyles,
-  getOpenControlPortalPanelStyles,
+  getOpenControlPanelStyles,
   getOpenControlRootStyles,
   getOpenControlSelectableRowSurfaceStyles,
   getOpenControlTriggerRowStyles,
@@ -159,12 +159,12 @@ const LISTBOX_DRUM_SHIFT_CUSTOM_PROPERTY = '--listbox-drum-shift';
 
 /**
  * getListboxPanelStyles — возвращает CSS-правила для узла `StyledListboxPanel`:
- * хром портала через `getOpenControlPortalPanelStyles`, CSS-привязку к якорю,
+ * хром панели через `getOpenControlPanelStyles`, CSS-привязку к якорю,
  * сдвиг барабана и прокрутку списка через `getOpenControlOptionsListScrollStyles`.
  *
  * Как работает:
  * 1. Подставляет дефолт `sizePreset`
- * 2. Подставляет хром панели через `getOpenControlPortalPanelStyles`
+ * 2. Подставляет хром панели через `getOpenControlPanelStyles`
  * 3. Привязывает панель к триггеру через `getCssAnchorBindingStyles`,
  *    `anchor(start)`, `anchor-size(width)` и сдвиг `--listbox-drum-shift`
  * 4. Ограничивает высоту и включает прокрутку через
@@ -180,7 +180,7 @@ function getListboxPanelStyles(
   const { $drumShift, sizePreset = DEFAULT_SIZE_PRESET } = props;
 
   return `
-    ${getOpenControlPortalPanelStyles(props)}
+    ${getOpenControlPanelStyles(props)}
     ${getCssAnchorBindingStyles()}
     ${LISTBOX_DRUM_SHIFT_CUSTOM_PROPERTY}: ${$drumShift};
     inset-block-start: calc(anchor(start) + var(${LISTBOX_DRUM_SHIFT_CUSTOM_PROPERTY}));
@@ -201,7 +201,7 @@ function getListboxPanelStyles(
  * Базируется на `<ul>` и принимает пропсы `$drumShift`, `shape` и `sizePreset`.
  *
  * Генерация стилей:
- *  - `getListboxPanelStyles` — хром портала через `getOpenControlPortalPanelStyles`,
+ *  - `getListboxPanelStyles` — хром панели через `getOpenControlPanelStyles`,
  *    CSS-привязка к якорю, сдвиг барабана, высота и прокрутка
  */
 export const StyledListboxPanel = styled.ul.withConfig({

@@ -15,12 +15,12 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { getCssAnchorBindingStyles } from '@ui/anchored-portal';
+import { getCssAnchorBindingStyles } from '@ui/anchored-panel';
 import { Card } from '@ui/card';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { getSpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
+import { PANEL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 /**
  * ProfileMenuStyleProps — представляет пропсы стилизации ProfileMenu и layout-пропсы.
@@ -41,12 +41,12 @@ export const StyledProfileMenu = styled.div.withConfig({
 `;
 
 /**
- * StyledProfileMenuPanel — задаёт портальную панель компонента ProfileMenu.
+ * StyledProfileMenuPanel — задаёт привязанную панель компонента ProfileMenu.
  * Базируется на `Card` из `@ui/card` и принимает пропсы Card.
  *
  * Встроенные стили:
  *  - `inset-block` — задаёт IMCB: старт от `anchor(end)` с зазором из
- *    `getSpacingValue(12)`, конец у края вьюпорта с отступом `PORTAL_VIEWPORT_EDGE_INSET`
+ *    `getSpacingValue(12)`, конец у края вьюпорта с отступом `PANEL_VIEWPORT_EDGE_INSET`
  *  - `inset-inline-end: anchor(end)` — совмещает край `end` панели с краем `end`
  *    триггера
  *  - `block-size: max-content` — оставляет панель естественной высоты. Без него
@@ -59,9 +59,7 @@ export const StyledProfileMenu = styled.div.withConfig({
  */
 export const StyledProfileMenuPanel = styled(Card)`
   ${getCssAnchorBindingStyles()}
-  inset-block: calc(anchor(end) + ${getSpacingValue(
-    12
-  )}) ${PORTAL_VIEWPORT_EDGE_INSET}px;
+  inset-block: calc(anchor(end) + ${getSpacingValue(12)}) ${PANEL_VIEWPORT_EDGE_INSET}px;
   inset-inline-end: anchor(end);
   block-size: max-content;
   max-block-size: 100%;

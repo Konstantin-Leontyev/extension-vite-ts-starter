@@ -56,7 +56,7 @@ import {
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { CalendarIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
-import { AnchoredPortal } from '@ui/anchored-portal';
+import { AnchoredPanel } from '@ui/anchored-panel';
 import { FieldLabel } from '@ui/field-label';
 import { Icon, type IconShapePreset } from '@ui/icon';
 import { DEFAULT_SHAPE_PRESET, type ShapePreset } from '@ui/presets';
@@ -549,7 +549,7 @@ export function DateRangeInput({
         )}
       </StyledDateRangeInputTriggerRow>
 
-      <AnchoredPortal
+      <AnchoredPanel
         anchorRef={triggerRowRef}
         dismissZoneRefs={[rootRef, panelRef]}
         open={isOpen}
@@ -605,7 +605,7 @@ export function DateRangeInput({
             textSize={textSizePreset}
           />
         </StyledDateRangeInputPanel>
-      </AnchoredPortal>
+      </AnchoredPanel>
     </StyledDateRangeInputRoot>
   );
 }

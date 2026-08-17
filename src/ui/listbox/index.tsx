@@ -53,7 +53,7 @@ import {
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { CheckIcon, ChevronDownIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
-import { AnchoredPortal } from '@ui/anchored-portal';
+import { AnchoredPanel } from '@ui/anchored-panel';
 import { Checkbox } from '@ui/checkbox';
 import { FieldLabel } from '@ui/field-label';
 import {
@@ -70,7 +70,7 @@ import {
 } from '@ui/open-control';
 import { Text } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
-import { PORTAL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
+import { PANEL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
 import {
   StyledListboxOption,
@@ -298,7 +298,7 @@ function resolveDrumLineIndex(
  * 2. Ограничивает видимую высоту панели `OPEN_CONTROL_PANEL_MAX_OPTION_ROWS`
  * 3. Берёт вниз столько строк, сколько влезает по `rowsFitBelow` и потолку
  * 4. При известных `triggerTop` и `rowHeight` уменьшает число строк вниз, пока
- *    видимая панель с учётом `PORTAL_VIEWPORT_EDGE_INSET` не поместится во вьюпорт
+ *    видимая панель с учётом `PANEL_VIEWPORT_EDGE_INSET` не поместится во вьюпорт
  * 5. Строки выше — последние из остатка в пределах потолка; остальное уходит
  *    в хвост ниже строки на линии
  *
@@ -338,8 +338,8 @@ function splitPanelOptionIndices(
       const panelBottom = panelTop + panelHeight;
 
       if (
-        panelTop >= PORTAL_VIEWPORT_EDGE_INSET &&
-        panelBottom + PORTAL_VIEWPORT_EDGE_INSET <= window.innerHeight
+        panelTop >= PANEL_VIEWPORT_EDGE_INSET &&
+        panelBottom + PANEL_VIEWPORT_EDGE_INSET <= window.innerHeight
       ) {
         break;
       }
@@ -368,7 +368,7 @@ function splitPanelOptionIndices(
  *
  * Как работает:
  * 1. Считает свободное место ниже триггера с учётом
- *    `PORTAL_VIEWPORT_EDGE_INSET`
+ *    `PANEL_VIEWPORT_EDGE_INSET`
  * 2. Делит его на высоту строки и отдаёт целое число строк
  *
  * @param triggerTop верх триггера во вьюпорте
@@ -378,7 +378,7 @@ function splitPanelOptionIndices(
 function countRowsFitBelow(triggerTop: number, rowHeight: number): number {
   const spaceBelowSelected = Math.max(
     0,
-    window.innerHeight - triggerTop - rowHeight - PORTAL_VIEWPORT_EDGE_INSET
+    window.innerHeight - triggerTop - rowHeight - PANEL_VIEWPORT_EDGE_INSET
   );
 
   return Math.floor(spaceBelowSelected / Math.max(1, rowHeight));
@@ -939,7 +939,7 @@ export function Listbox({
         {!isIconStart && clearNode}
       </StyledListboxTriggerRow>
 
-      <AnchoredPortal
+      <AnchoredPanel
         anchorRef={triggerRowRef}
         dismissZoneRefs={[rootRef, panelRef]}
         open={isOpen}
@@ -962,7 +962,7 @@ export function Listbox({
         >
           {panelOptions}
         </StyledListboxPanel>
-      </AnchoredPortal>
+      </AnchoredPanel>
     </StyledListboxRoot>
   );
 }

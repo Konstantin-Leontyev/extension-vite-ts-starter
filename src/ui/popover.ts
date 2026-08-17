@@ -8,16 +8,16 @@
  * 2. Предоставить показ через `showPopover`
  *
  * Потребители:
- *  - `@ui/anchored-portal` и `src/context/toast/index.tsx` — ставят
+ *  - `@ui/anchored-panel` и `src/context/toast/index.tsx` — ставят
  *    `POPOVER_MANUAL` атрибутом `popover`
- *  - `@ui/anchored-portal` и `src/context/toast/index.tsx` —
+ *  - `@ui/anchored-panel` и `src/context/toast/index.tsx` —
  *    показывают элемент через `showPopover`
  */
 
 /**
  * POPOVER_MANUAL — задаёт режим нативного popover без автозакрытия UA.
  * Показ ведёт `showPopover`.
- * Используется в `@ui/anchored-portal` и `src/context/toast/index.tsx`.
+ * Используется в `@ui/anchored-panel` и `src/context/toast/index.tsx`.
  */
 export const POPOVER_MANUAL = 'manual';
 
@@ -25,7 +25,7 @@ export const POPOVER_MANUAL = 'manual';
  * showPopover — показывает элемент через нативный `showPopover`.
  * Пропускает вызов, если узел ещё не в дереве или уже открыт.
  * Перехватывает исключение, если UA отклоняет показ.
- * Используется в `@ui/anchored-portal` и `src/context/toast/index.tsx`.
+ * Используется в `@ui/anchored-panel` и `src/context/toast/index.tsx`.
  *
  * @param element DOM-узел с атрибутом `popover`
  * @param source DOM-узел якоря. Задаёт неявный якорь CSS Anchor Positioning

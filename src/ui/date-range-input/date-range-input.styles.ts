@@ -15,11 +15,11 @@
 
 import styled from 'styled-components';
 
-import { getCssAnchorPlacementStyles } from '@ui/anchored-portal';
+import { getCssAnchorPlacementStyles } from '@ui/anchored-panel';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   getOpenControlRootStyles,
-  getOpenControlStackedPortalPanelStyles,
+  getOpenControlStackedPanelStyles,
   getOpenControlTriggerRowStyles,
   type OpenControlSurfaceStyleProps,
 } from '@ui/open-control';
@@ -86,12 +86,12 @@ export const StyledDateRangeInputTriggerRow = styled.div.withConfig({
 
 /**
  * getDateRangeInputPanelStyles — возвращает CSS-правила для узла
- * `StyledDateRangeInputPanel`: стековый хром portal-панели через
- * `getOpenControlStackedPortalPanelStyles`, CSS-привязку к триггеру,
+ * `StyledDateRangeInputPanel`: стековый хром панели через
+ * `getOpenControlStackedPanelStyles`, CSS-привязку к триггеру,
  * ограничение у края вьюпорта и запасные позиции `@position-try`.
  *
  * Как работает:
- * 1. Подставляет стековый хром панели через `getOpenControlStackedPortalPanelStyles`
+ * 1. Подставляет стековый хром панели через `getOpenControlStackedPanelStyles`
  * 2. Привязывает панель к триггеру через `getCssAnchorPlacementStyles` с
  *    `viewport-edge`
  * 3. Включает прокрутку `overflow-y: auto`
@@ -103,7 +103,7 @@ function getDateRangeInputPanelStyles(
   props: OpenControlSurfaceStyleProps & { theme: AppTheme }
 ): string {
   return `
-    ${getOpenControlStackedPortalPanelStyles(props)}
+    ${getOpenControlStackedPanelStyles(props)}
     ${getCssAnchorPlacementStyles('viewport-edge')}
     min-inline-size: 0;
     overflow-y: auto;
@@ -111,11 +111,11 @@ function getDateRangeInputPanelStyles(
 }
 
 /**
- * StyledDateRangeInputPanel — задаёт портальную панель календаря компонента DateRangeInput.
+ * StyledDateRangeInputPanel — задаёт привязанную панель календаря компонента DateRangeInput.
  * Базируется на `<div>` и принимает пропсы из `OpenControlSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getDateRangeInputPanelStyles` — стековый хром portal-панели, CSS-привязка
+ *  - `getDateRangeInputPanelStyles` — стековый хром панели, CSS-привязка
  *    к триггеру, ограничение у края вьюпорта и запасные позиции `@position-try`
  */
 export const StyledDateRangeInputPanel = styled.div.withConfig({

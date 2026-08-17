@@ -7,7 +7,7 @@
  * 1. Предоставить хук `useAnchoredDismiss`
  *
  * Потребители:
- *  - `@ui/anchored-portal` — закрывает открытую панель
+ *  - `@ui/anchored-panel` — закрывает открытую панель
  */
 
 import { useEffect, useEffectEvent, useRef, type RefObject } from 'react';

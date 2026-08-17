@@ -1,6 +1,6 @@
 /**
- * Файл: `src/ui/anchored-portal/index.tsx`
- * Предоставляет компонент AnchoredPortal для отображения привязанной панели через нативный popover.
+ * Файл: `src/ui/anchored-panel/index.tsx`
+ * Предоставляет компонент AnchoredPanel для отображения привязанной панели через нативный popover.
  *
  * Поддерживает:
  *  - открытие и закрытие панели через проп `open`
@@ -15,23 +15,23 @@
  *  - ссылку на DOM-узел панели через проп `panelRef`
  *
  * Основные задачи:
- * 1. Экспортировать компонент AnchoredPortal
- * 2. Типизировать пропсы через `AnchoredPortalProps`
+ * 1. Экспортировать компонент AnchoredPanel
+ * 2. Типизировать пропсы через `AnchoredPanelProps`
  * 3. Удерживать обход `Tab` внутри открытой панели — ловушка фокуса встроена
  *    и пропом не управляется
  * 4. Показывать панель через `POPOVER_MANUAL` и `showPopover` из `@ui/popover`
  *    до отрисовки. Панель остаётся в дереве вызывающего кода
  * 5. Реэкспортировать `getCssAnchorBindingStyles`, `getCssAnchorPlacementStyles`
- *    и `getPortalPanelStyles` из `src/ui/anchored-portal/anchored-portal.styles.ts`
- *    и `AnchoredPortalPositionTryStyle` из
- *    `src/ui/anchored-portal/position-try.ts`
+ *    и `getAnchoredPanelStyles` из `src/ui/anchored-panel/anchored-panel.styles.ts`
+ *    и `AnchoredPanelPositionTryStyle` из
+ *    `src/ui/anchored-panel/position-try.ts`
  *
  * Потребители:
  *  - контролы, например Combobox, DateRangeInput, Listbox и RangeInput —
  *    рендерят выпадающие панели с CSS-привязкой
  *  - `@ui/table` — рендерит панели add и edit с CSS-привязкой
  *  - `src/components/profile-menu/index.tsx` — рендерит меню профиля
- *  - `src/context/theme/index.tsx` — подключает `AnchoredPortalPositionTryStyle`
+ *  - `src/context/theme/index.tsx` — подключает `AnchoredPanelPositionTryStyle`
  */
 
 import {
@@ -47,20 +47,20 @@ import { useFocus } from '@hooks/use-focus';
 import { POPOVER_MANUAL, showPopover } from '@ui/popover';
 
 import {
+  getAnchoredPanelStyles,
   getCssAnchorBindingStyles,
   getCssAnchorPlacementStyles,
-  getPortalPanelStyles,
-} from './anchored-portal.styles';
-import { AnchoredPortalPositionTryStyle } from './position-try';
+} from './anchored-panel.styles';
+import { AnchoredPanelPositionTryStyle } from './position-try';
 
 /**
- * DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS — задаёт зависимости перефокуса по умолчанию.
+ * DEFAULT_ANCHORED_PANEL_OPEN_FOCUS_DEPS — задаёт зависимости перефокуса по умолчанию.
  * Используется, когда вызывающий код не передал проп `openFocusDeps`.
  */
-const DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS: readonly unknown[] = [];
+const DEFAULT_ANCHORED_PANEL_OPEN_FOCUS_DEPS: readonly unknown[] = [];
 
 /**
- * AnchoredPortalProps — представляет пропсы компонента AnchoredPortal.
+ * AnchoredPanelProps — представляет пропсы компонента AnchoredPanel.
  *
  * @property anchorRef — ссылка на DOM-узел якоря для неявной CSS-привязки
  *   и закрытия, когда якорь уходит из полной видимости
@@ -76,7 +76,7 @@ const DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS: readonly unknown[] = [];
  * @property panelRef — ссылка на DOM-узел панели
  * @property returnFocusRef — ссылка на элемент для возврата фокуса при закрытии
  */
-type AnchoredPortalProps = {
+type AnchoredPanelProps = {
   anchorRef: RefObject<HTMLElement | null>;
   children: ReactElement<{ popover?: typeof POPOVER_MANUAL }>;
   dismissActive?: boolean;
@@ -90,10 +90,10 @@ type AnchoredPortalProps = {
 };
 
 /**
- * AnchoredPortal — отображает привязанную панель.
+ * AnchoredPanel — отображает привязанную панель.
  *
  * @example
- * <AnchoredPortal
+ * <AnchoredPanel
  *   anchorRef={triggerRef}
  *   dismissZoneRefs={[triggerRef, panelRef]}
  *   open={open}
@@ -102,9 +102,9 @@ type AnchoredPortalProps = {
  *   onDismiss={close}
  * >
  *   <StyledPanel ref={panelRef}>...</StyledPanel>
- * </AnchoredPortal>
+ * </AnchoredPanel>
  */
-export function AnchoredPortal({
+export function AnchoredPanel({
   anchorRef,
   children,
   dismissActive,
@@ -112,10 +112,10 @@ export function AnchoredPortal({
   onDismiss,
   onOpenFocus,
   open,
-  openFocusDeps = DEFAULT_ANCHORED_PORTAL_OPEN_FOCUS_DEPS,
+  openFocusDeps = DEFAULT_ANCHORED_PANEL_OPEN_FOCUS_DEPS,
   panelRef,
   returnFocusRef,
-}: AnchoredPortalProps) {
+}: AnchoredPanelProps) {
   const dismissEnabled = dismissActive ?? open;
 
   useAnchoredDismiss({
@@ -191,10 +191,10 @@ export function AnchoredPortal({
   });
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт генераторов стилей панели и AnchoredPortalPositionTryStyle */
+/* eslint-disable react-refresh/only-export-components -- реэкспорт генераторов стилей панели и AnchoredPanelPositionTryStyle */
 export {
-  AnchoredPortalPositionTryStyle,
+  AnchoredPanelPositionTryStyle,
+  getAnchoredPanelStyles,
   getCssAnchorBindingStyles,
   getCssAnchorPlacementStyles,
-  getPortalPanelStyles,
 };

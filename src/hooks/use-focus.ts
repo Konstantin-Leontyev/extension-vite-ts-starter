@@ -6,7 +6,7 @@
  * 1. Предоставить хук `useFocus`
  *
  * Потребители:
- *  - `@ui/anchored-portal` — удерживает фокус внутри открытой панели через `useFocus`
+ *  - `@ui/anchored-panel` — удерживает фокус внутри открытой панели через `useFocus`
  */
 
 import { useEffect, useRef, type RefObject } from 'react';

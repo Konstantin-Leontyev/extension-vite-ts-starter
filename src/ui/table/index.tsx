@@ -71,7 +71,7 @@ import {
 
 import { useLongPress } from '@hooks/use-long-press';
 import { PlusIcon } from '@icons';
-import { AnchoredPortal } from '@ui/anchored-portal';
+import { AnchoredPanel } from '@ui/anchored-panel';
 import { Checkbox } from '@ui/checkbox';
 import { FieldError } from '@ui/field-error';
 import { Icon } from '@ui/icon';
@@ -675,7 +675,7 @@ export function Table<Row>(props: TableProps<Row>) {
   const resolvedNumbered = numbered ?? DEFAULT_TABLE_NUMBERED;
 
   // Проп editable: без него таблица только выводит строки, без добавления,
-  // редактирования, порталов и long-press.
+  // редактирования, панелей и long-press.
   const addRowActive = editable && addRowActiveProp;
   const editRowActive = editable && editRowActiveProp;
   const onAddRow = editable ? onAddRowProp : undefined;
@@ -1051,7 +1051,7 @@ export function Table<Row>(props: TableProps<Row>) {
   const addAnchorRef = addRowSource === 'head' ? headAnchorRef : footAnchorRef;
 
   const addPanel = (
-    <AnchoredPortal
+    <AnchoredPanel
       anchorRef={addAnchorRef}
       dismissActive={showAddPanel && onAddCancel !== undefined}
       dismissZoneRefs={[panelRef]}
@@ -1095,12 +1095,12 @@ export function Table<Row>(props: TableProps<Row>) {
           </tbody>
         </StyledTableRowPanelTable>
       </StyledTableRowPanel>
-    </AnchoredPortal>
+    </AnchoredPanel>
   );
 
   const editPanel =
     showEditPanel && editingRow !== undefined ? (
-      <AnchoredPortal
+      <AnchoredPanel
         anchorRef={editRowAnchorRef}
         dismissActive={showEditPanel && onEditCancel !== undefined}
         dismissZoneRefs={[editPanelRef]}
@@ -1126,7 +1126,7 @@ export function Table<Row>(props: TableProps<Row>) {
             </tbody>
           </StyledTableRowPanelTable>
         </StyledTableRowPanel>
-      </AnchoredPortal>
+      </AnchoredPanel>
     ) : null;
 
   const table = (

@@ -11,7 +11,7 @@
  * Потребители:
  *  - `src/ui/reset.ts` — задаёт глобальную обводку `:focus-visible` и полей
  *    с `aria-invalid="true"` через `getOutlineStyles`
- *  - styles-файлы контролов и панелей, например Switch и AnchoredPortal —
+ *  - styles-файлы контролов и панелей, например Switch и AnchoredPanel —
  *    подставляют обводку через `getOutlineStyles`
  *  - оболочки с `&:has(:focus-visible)` — рисуют фокус-контур через `getOutlineStyles`:
  *    - `src/ui/open-control.ts`
@@ -50,7 +50,7 @@ const OUTLINE_OFFSET = `${OUTLINE_OFFSET_PX}px`;
  * OUTLINE_OVERHANG_PX — формирует вылет обводки за `border-box` из `OUTLINE_WIDTH_PX`
  * и `OUTLINE_OFFSET_PX`. Число px для JS-математики позиционирования — геометрия DOM
  * считается в px, в CSS-правиле не попадает.
- * Используется в `PORTAL_VIEWPORT_EDGE_INSET` из `@ui/viewport`.
+ * Используется в `PANEL_VIEWPORT_EDGE_INSET` из `@ui/viewport`.
  */
 export const OUTLINE_OVERHANG_PX = OUTLINE_WIDTH_PX + OUTLINE_OFFSET_PX;
 

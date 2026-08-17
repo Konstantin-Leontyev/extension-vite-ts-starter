@@ -66,7 +66,7 @@ import {
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { ChevronDownIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
-import { AnchoredPortal } from '@ui/anchored-portal';
+import { AnchoredPanel } from '@ui/anchored-panel';
 import { Button } from '@ui/button';
 import { FieldError } from '@ui/field-error';
 import { FieldLabel } from '@ui/field-label';
@@ -712,7 +712,7 @@ export function RangeInput({
         {!isIconStart && clearNode}
       </StyledRangeInputTriggerRow>
 
-      <AnchoredPortal
+      <AnchoredPanel
         anchorRef={triggerRowRef}
         dismissZoneRefs={[rootRef, panelRef]}
         open={isOpen}
@@ -828,7 +828,7 @@ export function RangeInput({
             </StyledRangeInputButtonRow>
           </StyledRangeInputCustomSection>
         </StyledRangeInputPanel>
-      </AnchoredPortal>
+      </AnchoredPanel>
     </StyledRangeInputRoot>
   );
 }

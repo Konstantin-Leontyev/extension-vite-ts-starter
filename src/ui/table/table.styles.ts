@@ -22,7 +22,7 @@
 
 import styled from 'styled-components';
 
-import { getCssAnchorBindingStyles, getPortalPanelStyles } from '@ui/anchored-portal';
+import { getAnchoredPanelStyles, getCssAnchorBindingStyles } from '@ui/anchored-panel';
 import { getBorderStyles } from '@ui/border';
 import { checkboxSizePresets } from '@ui/checkbox';
 import { type LayoutProps } from '@ui/layout';
@@ -426,13 +426,13 @@ const TABLE_ROW_PANEL_PROP_NAMES = new Set<string>(['$anchorBlockEnd', '$hasErro
 
 /**
  * getTableRowPanelStyles — возвращает CSS-правила для узла `StyledTableRowPanel`:
- * хром портала через `getPortalPanelStyles`, CSS-привязку к якорю и смещение
+ * хром панели через `getAnchoredPanelStyles`, CSS-привязку к якорю и смещение
  * по блочной оси.
  *
  * Как работает:
  * 1. Берёт тему и считает цвет обводки: при `$hasError` — `invalidOutline`,
  *    иначе `focusOutline`
- * 2. Подставляет хром панели через `getPortalPanelStyles`
+ * 2. Подставляет хром панели через `getAnchoredPanelStyles`
  * 3. Привязывает панель к якорю через `getCssAnchorBindingStyles`,
  *    `anchor(start)` по строчной оси и `anchor-size(width)`
  * 4. При `$anchorBlockEnd` ставит `inset-block-end: anchor(end)`, чтобы панель
@@ -450,7 +450,7 @@ function getTableRowPanelStyles(props: {
 }): string {
   const theme = getTheme(props);
   const styles = [
-    getPortalPanelStyles({
+    getAnchoredPanelStyles({
       borderRadius: resolveBlockRadius(
         DEFAULT_SHAPE_PRESET,
         getMinBlockSize(DEFAULT_SIZE_PRESET)
@@ -483,7 +483,7 @@ function getTableRowPanelStyles(props: {
  *    чтобы перекрыть `overflow: visible` сброса UA `[popover]`
  *
  * Генерация стилей:
- *  - `getTableRowPanelStyles` — хром портальной панели, CSS-привязка к якорю
+ *  - `getTableRowPanelStyles` — хром привязанной панели, CSS-привязка к якорю
  *    и цвет обводки по `$hasError`
  */
 export const StyledTableRowPanel = styled.div.withConfig({
@@ -535,7 +535,7 @@ function getTableRowPanelTableStyles(props: { theme: AppTheme }): string {
  *  - `getTableRowPanelTableStyles` — заливка и границы шапки и подвала панели
  *
  * Собственной рамки у таблицы нет: хром несёт `StyledTableRowPanel`.
- * Секций `thead` и `tfoot` в портале нет — фон и границы шапки и подвала панели
+ * Секций `thead` и `tfoot` в панели нет — фон и границы шапки и подвала панели
  * задаются по data-маркерам строк.
  */
 export const StyledTableRowPanelTable = styled.table.withConfig({

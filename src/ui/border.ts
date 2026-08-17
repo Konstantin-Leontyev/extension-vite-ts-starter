@@ -22,7 +22,7 @@
  *  - `src/pages/showcase` и `@ui/modal` — собирают пакет рамки через
  *    `resolveBorderProps`
  *  - styles-файлы с постоянной рамкой без публичных пропсов, например Button,
- *    Listbox, Checkbox, RadioButton, AnchoredPortal, SegmentButton и Toast —
+ *    Listbox, Checkbox, RadioButton, AnchoredPanel, SegmentButton и Toast —
  *    подставляют `getBorderStyles` с дефолтами
  */
 

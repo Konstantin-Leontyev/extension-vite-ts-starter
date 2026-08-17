@@ -4,13 +4,13 @@
  *
  * Основные задачи:
  * 1. Экспортировать константу `VIEWPORT_EDGE_INSET`
- * 2. Экспортировать константу `PORTAL_VIEWPORT_EDGE_INSET`
+ * 2. Экспортировать константу `PANEL_VIEWPORT_EDGE_INSET`
  *
  * Потребители:
  *  - `@ui/sidebar` — зонный отступ края панели и контента
  *  - `@ui/listbox` — отступ в арифметике барабана
  *  - `@ui/combobox`, `@ui/date-range-input`, `@ui/range-input`,
- *    `src/components/profile-menu` и `src/ui/anchored-portal` —
+ *    `src/components/profile-menu` и `src/ui/anchored-panel` —
  *    отступ CSS-привязки панели от края вьюпорта
  *  - `src/context/toast/toast.styles.ts` — отступ контейнера уведомлений от края вьюпорта
  */
@@ -29,13 +29,13 @@ import { type SpacingValue } from '@ui/spacing';
 export const VIEWPORT_EDGE_INSET: SpacingValue = 8;
 
 /**
- * PORTAL_VIEWPORT_EDGE_INSET — формирует отступ clamp панелей портала от края
+ * PANEL_VIEWPORT_EDGE_INSET — формирует отступ clamp привязанных панелей от края
  * вьюпорта из `VIEWPORT_EDGE_INSET` и `OUTLINE_OVERHANG_PX`, чтобы обводка панели
  * оставалась внутри отступа оболочки, а не заходила в него. Число px для
  * CSS-привязки панелей и для арифметики барабана списка.
  * Используется в `@ui/listbox`, `@ui/combobox`, `@ui/date-range-input`,
  * `@ui/range-input`, `src/components/profile-menu` и
- * `src/ui/anchored-portal`.
+ * `src/ui/anchored-panel`.
  */
-export const PORTAL_VIEWPORT_EDGE_INSET: number =
+export const PANEL_VIEWPORT_EDGE_INSET: number =
   VIEWPORT_EDGE_INSET + OUTLINE_OVERHANG_PX;

@@ -17,14 +17,14 @@
 
 import styled from 'styled-components';
 
-import { getCssAnchorPlacementStyles } from '@ui/anchored-portal';
+import { getCssAnchorPlacementStyles } from '@ui/anchored-panel';
 import { ICON_SETTING_PROP_NAMES } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   OPEN_CONTROL_ROW_GAP,
   getOpenControlRootStyles,
   getOpenControlSelectableRowSurfaceStyles,
-  getOpenControlStackedPortalPanelStyles,
+  getOpenControlStackedPanelStyles,
   getOpenControlTriggerRowStyles,
   getOpenControlTriggerStyles,
   type OpenControlSurfaceStyleProps,
@@ -154,11 +154,11 @@ export const StyledRangeInputValue = styled.span.withConfig({
 
 /**
  * getRangeInputPanelStyles — возвращает CSS-правила для узла `StyledRangeInputPanel`:
- * стековый хром портала через `getOpenControlStackedPortalPanelStyles`, CSS-привязку
+ * стековый хром панели через `getOpenControlStackedPanelStyles`, CSS-привязку
  * к триггеру, запасные позиции `@position-try` и прокрутку.
  *
  * Как работает:
- * 1. Подставляет стековый хром панели через `getOpenControlStackedPortalPanelStyles`
+ * 1. Подставляет стековый хром панели через `getOpenControlStackedPanelStyles`
  * 2. Привязывает панель к триггеру через `getCssAnchorPlacementStyles` с
  *    `trigger-start`
  * 3. Включает прокрутку `overflow: hidden auto`
@@ -170,7 +170,7 @@ function getRangeInputPanelStyles(
   props: RangeInputSurfaceStyleProps & { theme: AppTheme }
 ): string {
   return `
-    ${getOpenControlStackedPortalPanelStyles(props)}
+    ${getOpenControlStackedPanelStyles(props)}
     ${getCssAnchorPlacementStyles('trigger-start')}
     overflow: hidden auto;
   `;
@@ -181,7 +181,7 @@ function getRangeInputPanelStyles(
  * Базируется на `<div>` и принимает пропсы из `RangeInputSurfaceStyleProps`.
  *
  * Генерация стилей:
- *  - `getRangeInputPanelStyles` — стековый хром портала, CSS-привязка к триггеру,
+ *  - `getRangeInputPanelStyles` — стековый хром панели, CSS-привязка к триггеру,
  *    запасные позиции `@position-try` и прокрутка
  */
 export const StyledRangeInputPanel = styled.div.withConfig({

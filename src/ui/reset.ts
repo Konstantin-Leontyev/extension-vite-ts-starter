@@ -29,7 +29,7 @@ const APP_MIN_INLINE_SIZE = '320px';
  * Последующие правила переопределяют и дополняют его.
  * Подключается в `ThemeProvider` из `src/context/theme/index.tsx`:
  * сначала `GlobalResetStyle`, затем `GlobalThemeStyle`,
- * затем `AnchoredPortalPositionTryStyle`.
+ * затем `AnchoredPanelPositionTryStyle`.
  *
  * Устанавливает:
  *  - `box-sizing: border-box` для всех элементов
@@ -53,7 +53,7 @@ const APP_MIN_INLINE_SIZE = '320px';
  *    панелей с CSS-привязкой к якорю. Слой проигрывает правилам компонентов вне
  *    слоёв и по-прежнему выигрывает у стилей браузера. `padding`, `overflow` и
  *    `background-color` остаются моделью компонента. Позицию и хром задают
- *    потребители, например `getPortalPanelStyles`, `StyledToastViewport` и Card
+ *    потребители, например `getAnchoredPanelStyles`, `StyledToastViewport` и Card
  *  - состояния `disabled` — курсор и прозрачность из `DISABLED_OPACITY`.
  *    Три контракта. `:disabled` — сам нативный элемент. `label:has(:disabled)` —
  *    label-обёртка контрола с подписью. `[data-disabled]` — оболочка композитного
