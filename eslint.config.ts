@@ -48,6 +48,74 @@ const config: Config[] = defineConfig([
       react: {
         version: 'detect',
       },
+      'jsx-a11y': {
+        polymorphicPropName: 'as',
+        // polymorphicAllowList — учитывает проп as только у узлов, которые
+        // меняют тег на интерактивный или табличный. Card в перечень не входит:
+        // as меняет тег на article или section, а они в критерий не входят.
+        polymorphicAllowList: [
+          'Icon',
+          'StyledIcon',
+          'StyledTableCell',
+          'StyledText',
+          'TableCell',
+          'Text',
+        ],
+        // components — связывает компонент с нативным тегом корня для правил
+        // jsx-a11y. Новый компонент вносится, когда корень — тег, на который
+        // действуют правила плагина, и линтер видит связанный нативный контрол
+        // в JSX вызывающего кода. Switch не внесён: правило
+        // label-has-associated-control не видит вложенный input, потому что
+        // в JSX вызывающего кода его нет. StyledProfileMenuLegalLink не внесён:
+        // узел — Link с пропом to и обработчиком клика, а правила клика проп to
+        // за ссылку не считают даже с specialLink.
+        // Открытые находки доступности — в общем чеклисте набора
+        // .cursor/skills/shared/a11y-checklist.md проекта caption-downloader.
+        components: {
+          FieldClear: 'button',
+          FieldLabel: 'label',
+          Fieldset: 'fieldset',
+          Modal: 'dialog',
+          StyledButton: 'button',
+          StyledCalendarDayButton: 'button',
+          StyledCalendarNavButton: 'button',
+          StyledCheckboxControl: 'input',
+          StyledCheckboxRoot: 'label',
+          StyledComboboxList: 'ul',
+          StyledComboboxOption: 'button',
+          StyledComboboxTrigger: 'button',
+          StyledFieldset: 'fieldset',
+          StyledHeaderBrand: 'a',
+          StyledInputControl: 'input',
+          StyledListboxOption: 'li',
+          StyledListboxPanel: 'ul',
+          StyledListboxTrigger: 'button',
+          StyledModalDialog: 'dialog',
+          StyledRadioButtonControl: 'input',
+          StyledRadioButtonRoot: 'label',
+          StyledRangeInputPresetButton: 'button',
+          StyledRangeInputPresetList: 'ul',
+          StyledRangeInputTrigger: 'button',
+          StyledSearchFieldControl: 'input',
+          StyledSegmentButtonPartsPart: 'button',
+          StyledStepperButton: 'button',
+          StyledStepperInput: 'input',
+          StyledSwitchRoot: 'label',
+          StyledTable: 'table',
+          StyledTableBody: 'tbody',
+          StyledTableCell: 'td',
+          StyledTableCol: 'col',
+          StyledTableFoot: 'tfoot',
+          StyledTableHead: 'thead',
+          StyledTableInlineField: 'input',
+          StyledTablePanelErrorCell: 'td',
+          StyledTableRow: 'tr',
+          StyledTableRowPanelTable: 'table',
+          TableCell: 'td',
+          TableInlineField: 'input',
+          ThemeToggle: 'button',
+        },
+      },
     },
     rules: {
       '@typescript-eslint/consistent-type-imports': [
@@ -97,6 +165,7 @@ const config: Config[] = defineConfig([
           warnOnUnassignedImports: true,
         },
       ],
+      'jsx-a11y/anchor-is-valid': ['error', { specialLink: ['to'] }],
       'no-restricted-imports': ['error', { patterns: deepImportPatterns }],
       // Сортируются только перечислимые списки без собственной семантики порядка.
       // Литералы объектов вроде таблиц пресетов и соответствий проп → CSS-свойство не сортируются:
