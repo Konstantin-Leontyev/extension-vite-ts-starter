@@ -12,7 +12,6 @@
  *    `resolveGroupFieldLabel`, `resolveGroupContentLabel` и `resolveGroupFlagLabel`:
  *     - `src/pages/showcase/text-group/index.tsx`
  *     - `src/pages/showcase/icon-group/index.tsx`
- *     - `src/pages/showcase/title-group/index.tsx`
  *     - `src/pages/showcase/icon-row-group/index.tsx`
  */
 
@@ -54,21 +53,27 @@ export function resolveGroupContentLabel(labelPrefix: string, entity: string): s
  * и сущности.
  * С пустым префиксом — `{verb} {entity}`, например `Show text`, `Disable action`.
  * С префиксом — глагол и префикс с пониженной только первой буквой — `Show legend`,
- * `Disable action 1`.
+ * `Disable action 1`. У `Set` к подписи добавляется двоеточие — `Set title:`.
  *
  * @param labelPrefix префикс подписей контролов
  * @param entity имя сущности с заглавной буквы, например `Text` или `Icon`
- * @param verb глагол флага: показ или отключение
+ * @param verb глагол флага: показ булева пропа, отметка необязательного содержимого
+ *   или отключение
  * @returns подпись чекбокса флага
  */
 export function resolveGroupFlagLabel(
   labelPrefix: string,
   entity: string,
-  verb: 'Disable' | 'Show'
+  verb: 'Disable' | 'Set' | 'Show'
 ): string {
-  if (labelPrefix === '') {
-    return `${verb} ${entity.toLowerCase()}`;
+  const noun =
+    labelPrefix === ''
+      ? entity.toLowerCase()
+      : `${labelPrefix.charAt(0).toLowerCase()}${labelPrefix.slice(1)}`;
+
+  if (verb === 'Set') {
+    return `${verb} ${noun}:`;
   }
 
-  return `${verb} ${labelPrefix.charAt(0).toLowerCase()}${labelPrefix.slice(1)}`;
+  return `${verb} ${noun}`;
 }

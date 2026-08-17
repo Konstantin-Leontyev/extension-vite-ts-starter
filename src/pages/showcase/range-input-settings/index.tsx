@@ -37,13 +37,15 @@ import { IconGroup } from '../icon-group';
 import { ShapeListbox } from '../shape-listbox';
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
-import { TitleGroup } from '../title-group';
+import { TextGroup } from '../text-group';
 import { ToneListbox } from '../tone-listbox';
 
 /**
  * RangeInputWidgetState — представляет состояние настроек компонента RangeInput в витрине дизайн-системы.
  * Ключи совпадают с именами пропов компонента RangeInput, кроме витринных ключей: `withClear`
  * управляет передачей `onClear` в превью.
+ * Пустая строка заголовка означает вызов без пропа. Отметка `Set*`
+ * живёт внутри TextGroup.
  * Используется для синхронизации значений между панелью управления и демонстрационным RangeInput.
  *
  * @property buttonShape — форма кнопки применения. Стартует с формы контрола
@@ -68,6 +70,7 @@ import { ToneListbox } from '../tone-listbox';
  * @property sizePreset — размер компонента
  * @property title — заголовок панели
  * @property titleAlign — выравнивание заголовка панели
+ * @property titleItalic — включает курсив заголовка панели
  * @property titleSizePreset — размер заголовка панели
  * @property titleTone — тон заголовка панели
  * @property toPlaceholder — плейсхолдер поля `to`
@@ -96,6 +99,7 @@ export type RangeInputWidgetState = {
   sizePreset: SizePreset;
   title: string;
   titleAlign: TextAlignPreset;
+  titleItalic: boolean;
   titleSizePreset: TextSizePreset;
   titleTone: TextTone;
   toPlaceholder: string;
@@ -171,16 +175,27 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         onClear={() => onChange('placeholder', '')}
       />
 
-      <TitleGroup
+      <TextGroup
         align={state.titleAlign}
+        contents={[
+          {
+            value: state.title,
+            onChange: (value) => onChange('title', value),
+          },
+        ]}
+        italic={state.titleItalic}
         labelPrefix="Title"
+        set
         size={state.titleSizePreset}
-        title={state.title}
-        tone={state.titleTone}
+        tones={[
+          {
+            value: state.titleTone,
+            onChange: (tone) => onChange('titleTone', tone),
+          },
+        ]}
         onAlignChange={(align) => onChange('titleAlign', align)}
+        onItalicChange={(value) => onChange('titleItalic', value)}
         onSizeChange={(size) => onChange('titleSizePreset', size)}
-        onTitleChange={(title) => onChange('title', title)}
-        onToneChange={(tone) => onChange('titleTone', tone)}
       />
 
       <SizeListbox

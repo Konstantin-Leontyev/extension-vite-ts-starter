@@ -21,6 +21,8 @@ import { Button, getButtonTextSize, type ButtonIconProps } from '@ui/button';
 import {
   CARD_HEADER_ACTION_SIZE_PRESET,
   Card,
+  resolveCardSubtitleProps,
+  resolveCardTitleProps,
   type CardSubtitleProps,
   type CardTitleProps,
 } from '@ui/card';
@@ -42,6 +44,7 @@ import { RadioButton, getRadioButtonTextSize } from '@ui/radio-button';
 import {
   DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
   RangeInput,
+  type RangeInputTitleProps,
   type RangeValue,
 } from '@ui/range-input';
 import { ScrollPort } from '@ui/scroll-port';
@@ -544,6 +547,7 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   sizePreset: DEFAULT_SIZE_PRESET,
   title: 'Custom range:',
   titleAlign: 'center',
+  titleItalic: false,
   titleSizePreset: 'normal',
   titleTone: DEFAULT_TONE,
   toPlaceholder: 'To',
@@ -780,12 +784,12 @@ const DEFAULT_TABLE_STATE: TableWidgetState = {
  */
 const DEFAULT_MODAL_STATE: ModalWidgetState = {
   background: 'surface',
-  showSubtitle: true,
-  showTitle: true,
   sizePreset: DEFAULT_SIZE_PRESET,
   subtitle: 'Modal subtitle',
+  subtitleItalic: false,
   subtitleTone: 'muted',
   title: 'Modal title',
+  titleItalic: false,
   titleSizePreset: 'bold',
   titleTone: DEFAULT_TONE,
 };
@@ -807,11 +811,11 @@ const DEFAULT_CARD_STATE: CardWidgetState = {
   ],
   showBorder: true,
   showShadow: true,
-  showSubtitle: true,
-  showTitle: true,
   subtitle: 'Subtitle text',
+  subtitleItalic: false,
   subtitleTone: 'muted',
   title: 'Card title',
+  titleItalic: false,
   titleSizePreset: 'bold',
   titleTone: DEFAULT_TONE,
 };
@@ -1360,38 +1364,44 @@ export function ShowcasePage() {
     return card;
   }
 
-  const modalTitleProps: CardTitleProps = modal.showTitle
-    ? {
-        title: modal.title,
-        titleAlign: modal.titleAlign,
-        titleSizePreset: modal.titleSizePreset,
-        titleTone: modal.titleTone,
-      }
-    : {};
-  const modalSubtitleProps: CardSubtitleProps = modal.showSubtitle
-    ? {
-        subtitle: modal.subtitle,
-        subtitleAlign: modal.subtitleAlign,
-        subtitleSizePreset: modal.subtitleSizePreset,
-        subtitleTone: modal.subtitleTone,
-      }
-    : {};
-  const cardTitleProps: CardTitleProps = card.showTitle
-    ? {
-        title: card.title,
-        titleAlign: card.titleAlign,
-        titleSizePreset: card.titleSizePreset,
-        titleTone: card.titleTone,
-      }
-    : {};
-  const cardSubtitleProps: CardSubtitleProps = card.showSubtitle
-    ? {
-        subtitle: card.subtitle,
-        subtitleAlign: card.subtitleAlign,
-        subtitleSizePreset: card.subtitleSizePreset,
-        subtitleTone: card.subtitleTone,
-      }
-    : {};
+  const modalTitleProps: CardTitleProps = resolveCardTitleProps(
+    modal.title,
+    modal.titleAlign,
+    modal.titleItalic,
+    modal.titleSizePreset,
+    modal.titleTone
+  );
+  const modalSubtitleProps: CardSubtitleProps = resolveCardSubtitleProps(
+    modal.subtitle,
+    modal.subtitleAlign,
+    modal.subtitleItalic,
+    modal.subtitleSizePreset,
+    modal.subtitleTone
+  );
+  const cardTitleProps: CardTitleProps = resolveCardTitleProps(
+    card.title,
+    card.titleAlign,
+    card.titleItalic,
+    card.titleSizePreset,
+    card.titleTone
+  );
+  const cardSubtitleProps: CardSubtitleProps = resolveCardSubtitleProps(
+    card.subtitle,
+    card.subtitleAlign,
+    card.subtitleItalic,
+    card.subtitleSizePreset,
+    card.subtitleTone
+  );
+  const rangeInputTitleProps: RangeInputTitleProps =
+    rangeInput.title.trim() !== ''
+      ? {
+          title: rangeInput.title,
+          titleAlign: rangeInput.titleAlign,
+          titleItalic: rangeInput.titleItalic,
+          titleSizePreset: rangeInput.titleSizePreset,
+          titleTone: rangeInput.titleTone,
+        }
+      : {};
   const sidebarTitleProps: CardTitleProps = panelTitle ? { title: panelTitle } : {};
   const cardBorderProps: BorderProps = resolveBorderProps(
     card.showBorder,
@@ -1737,11 +1747,8 @@ export function ShowcasePage() {
                   reserveErrorSpace={rangeInput.reserveErrorSpace}
                   shape={rangeInput.shape}
                   sizePreset={rangeInput.sizePreset}
-                  title={rangeInput.title}
-                  titleAlign={rangeInput.titleAlign}
-                  titleSizePreset={rangeInput.titleSizePreset}
-                  titleTone={rangeInput.titleTone}
                   toPlaceholder={rangeInput.toPlaceholder}
+                  {...rangeInputTitleProps}
                   validate={validateDemoRange}
                   validationMessages={rangeInput.validationMessages}
                   value={rangeInput.value}

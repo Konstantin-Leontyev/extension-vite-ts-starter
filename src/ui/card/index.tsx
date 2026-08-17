@@ -30,6 +30,7 @@
  * 2. Типизировать пропсы через `CardProps`
  * 3. Реэкспортировать публичное API стилей: `CARD_HEADER_ACTION_SIZE_PRESET`
  * 4. Экспортировать типы `CardTitleProps` и `CardSubtitleProps`
+ * 5. Предоставить функции `resolveCardTitleProps` и `resolveCardSubtitleProps`
  *
  * Потребители:
  *  - `src/ui/modal/index.tsx` — собирает модальный диалог на Card
@@ -138,6 +139,42 @@ type CardSubtitleProps =
       subtitleTone?: never;
     };
 
+function resolveCardTitleProps(
+  title: string,
+  titleAlign?: CSSProperties['textAlign'],
+  titleItalic?: boolean,
+  titleSizePreset?: TextSizePreset,
+  titleTone?: TextTone
+): CardTitleProps {
+  return title.trim() !== ''
+    ? {
+        title,
+        titleAlign,
+        titleItalic,
+        titleSizePreset,
+        titleTone,
+      }
+    : {};
+}
+
+function resolveCardSubtitleProps(
+  subtitle: string,
+  subtitleAlign?: CSSProperties['textAlign'],
+  subtitleItalic?: boolean,
+  subtitleSizePreset?: TextSizePreset,
+  subtitleTone?: TextTone
+): CardSubtitleProps {
+  return subtitle.trim() !== ''
+    ? {
+        subtitle,
+        subtitleAlign,
+        subtitleItalic,
+        subtitleSizePreset,
+        subtitleTone,
+      }
+    : {};
+}
+
 /**
  * CardProps — представляет пропсы компонента Card.
  *
@@ -240,9 +277,12 @@ function Card<T extends CardHtmlTag = 'div'>({
   );
 }
 
+/* eslint-disable react-refresh/only-export-components -- реэкспорт резолверов заголовка и подзаголовка */
 export {
   CARD_HEADER_ACTION_SIZE_PRESET,
   Card,
+  resolveCardSubtitleProps,
+  resolveCardTitleProps,
   type CardSubtitleProps,
   type CardTitleProps,
 };

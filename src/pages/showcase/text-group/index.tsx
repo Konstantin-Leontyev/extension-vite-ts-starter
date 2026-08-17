@@ -14,10 +14,13 @@
  *    выравнивания не рендерится
  *  - обработчик изменения курсива через проп `onItalicChange`
  *  - обработчик изменения размера через проп `onSizeChange`
- *  - показ текста через проп `show`. Без `show` текст неотключаем и группа рендерится всегда.
- *    Опциональный `show.label` задаёт подпись чекбокса. Без него подпись собирается из
+ *  - флаг `Show*` через проп `show` — зеркало булева пропа. Чекбокс виден всегда.
+ *    Опциональный `show.label` задаёт подпись. Без него подпись собирается из
  *    `labelPrefix` — `Show text`, `Show legend`. Пример переопределения — `Invalid`
  *    у текста ошибки панели Input
+ *  - флаг `Set*` через проп `set` — чекбокс необязательного содержимого. Отметка
+ *    живёт локально. Непустой текст — чекбокса нет; пустое поле после blur
+ *    схлопывается в `Set title:`. `show` и `set` взаимно исключены
  *  - показ опций стилей при пустом содержимом через проп `showOptionsWithEmptyContent`.
  *    По умолчанию выключен. Эталон — Text-группа Input: плейсхолдер снаружи группы
  *    делит типографику с текстом поля
@@ -27,8 +30,8 @@
  * Основные задачи:
  * 1. Экспортировать компонент TextGroup
  * 2. Типизировать пропсы через `TextGroupProps`
- * 3. Рендерить единый блок текстовых настроек в порядке: показ, содержимое, размер,
- *    выравнивание, тон, обрезание и курсив
+ * 3. Рендерить единый блок текстовых настроек в порядке: флаг показа или отметки,
+ *    содержимое, размер, выравнивание, тон, обрезание и курсив
  * 4. Собирать подписи контролов через `resolveGroupFieldLabel`,
  *    `resolveGroupContentLabel` и `resolveGroupFlagLabel` из
  *    `src/pages/showcase/showcase-labels.ts`
@@ -49,9 +52,18 @@
  *     - `src/pages/showcase/input-settings/index.tsx`
  *     - `src/pages/showcase/search-field-settings/index.tsx`
  *     - `src/pages/showcase/segment-button-settings/index.tsx`
+ *     - `src/pages/showcase/card-settings/index.tsx`
+ *     - `src/pages/showcase/modal-settings/index.tsx`
+ *     - `src/pages/showcase/range-input-settings/index.tsx`
  */
 
-import { type ChangeEvent } from 'react';
+import {
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FocusEvent,
+} from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
@@ -117,11 +129,7 @@ const DEFAULT_TEXT_GROUP_LABEL_PREFIX = 'Text';
 const DEFAULT_TEXT_GROUP_SHOW_OPTIONS_WITH_EMPTY_CONTENT = false;
 
 /**
- * TextGroupProps — представляет пропсы компонента TextGroup.
- * При переданных `contents` контролы размера, выравнивания, тона, обрезания и курсива
- * скрыты, пока все поля содержимого пустые: нет текста — не к чему применять настройки.
- * Исключение — `showOptionsWithEmptyContent`. Без `contents` эти контролы остаются —
- * содержимое генерируется компонентом, как процент ProgressBar.
+ * TextGroupBaseProps — представляет общие пропсы компонента TextGroup.
  *
  * @property align — текущее выравнивание текста
  * @property contents — поля ввода содержимого. Отсутствуют, когда содержимое
@@ -136,17 +144,14 @@ const DEFAULT_TEXT_GROUP_SHOW_OPTIONS_WITH_EMPTY_CONTENT = false;
  *   Без него контрол выравнивания не рендерится — у компонента нет пропа `align`
  * @property onItalicChange — обработчик изменения курсива
  * @property onSizeChange — обработчик изменения размера текста.
- *   Без пары `size` / `onSizeChange` листбокс размера не рендерится
- * @property show — контрол показа текста. Без него текст компонента неотключаем
- *   и группа рендерится всегда. Поле `label` задаёт подпись чекбокса. Без него
- *   подпись собирается из `labelPrefix`
+ *   Без него листбокс размера не рендерится
  * @property showOptionsWithEmptyContent — показывает контролы размера, выравнивания,
  *   тона, обрезания и курсива при пустых `contents`. По умолчанию выключен
  * @property size — текущий размер текста
  * @property tones — листбоксы тона: один или несколько по содержимым.
  *   Без значения или с пустым перечнем листбоксы тона не рендерятся
  */
-type TextGroupProps = {
+type TextGroupBaseProps = {
   align?: TextAlignPreset;
   contents?: readonly TextGroupContent[];
   ellipsis?: { checked: boolean; onChange: (checked: boolean) => void };
@@ -155,15 +160,61 @@ type TextGroupProps = {
   onAlignChange?: (align: TextAlignPreset) => void;
   onItalicChange?: (value: boolean) => void;
   onSizeChange?: (size: TextSizePreset) => void;
-  show?: {
-    checked: boolean;
-    label?: string;
-    onChange: (checked: boolean) => void;
-  };
   showOptionsWithEmptyContent?: boolean;
   size?: TextSizePreset;
   tones?: readonly TextGroupTone[];
 };
+
+/**
+ * TextGroupRequiredText — представляет пропсы неотключаемого текста.
+ * Флаги `show` и `set` недопустимы: текст неотключаем и группа рендерится всегда.
+ */
+type TextGroupRequiredText = {
+  set?: never;
+  show?: never;
+};
+
+/**
+ * TextGroupSetFlag — представляет пропсы флага необязательного содержимого.
+ * Поля содержимого обязательны. Флаг `show` недопустим.
+ *
+ * @property contents — поля ввода содержимого
+ * @property set — флаг необязательного содержимого. Отметка живёт локально
+ *   и наружу не поднимается
+ */
+type TextGroupSetFlag = {
+  contents: readonly TextGroupContent[];
+  set: true;
+  show?: never;
+};
+
+/**
+ * TextGroupShowFlag — представляет пропсы флага-зеркала булева пропа.
+ * Флаг `set` недопустим.
+ *
+ * @property show — флаг-зеркало булева пропа. Поле `label` задаёт подпись
+ *   чекбокса. Без него подпись собирается из `labelPrefix`
+ */
+type TextGroupShowFlag = {
+  set?: never;
+  show: {
+    checked: boolean;
+    label?: string;
+    onChange: (checked: boolean) => void;
+  };
+};
+
+/**
+ * TextGroupProps — представляет пропсы компонента TextGroup.
+ * При переданных `contents` контролы размера, выравнивания, тона, обрезания и курсива
+ * скрыты, пока все поля содержимого пустые: нет текста — не к чему применять настройки.
+ * Исключение — `showOptionsWithEmptyContent`. Без `contents` эти контролы остаются —
+ * содержимое генерируется компонентом, как процент ProgressBar.
+ * Флаги `show` и `set` закрыты размеченным объединением: у группы либо зеркало
+ * булева пропа, либо чекбокс необязательного содержимого, либо ни того ни другого.
+ */
+type TextGroupProps = TextGroupBaseProps &
+  (TextGroupRequiredText | TextGroupSetFlag | TextGroupShowFlag);
 
 /**
  * TextGroup — отображает текстовую группу настроек в витрине дизайн-системы.
@@ -196,15 +247,47 @@ export function TextGroup({
   onAlignChange,
   onItalicChange,
   onSizeChange,
+  set,
   show,
   showOptionsWithEmptyContent = DEFAULT_TEXT_GROUP_SHOW_OPTIONS_WITH_EMPTY_CONTENT,
   size,
   tones,
 }: TextGroupProps) {
-  const isExpanded = !show || show.checked;
+  const [isSetChecked, setIsSetChecked] = useState(false);
+  const contentInputRef = useRef<HTMLInputElement>(null);
+  const setCheckboxRef = useRef<HTMLInputElement>(null);
+  const shouldReturnFocusToSetCheckboxRef = useRef(false);
   const hasContentValue =
     contents === undefined || contents.some((content) => content.value.trim() !== '');
+  const isExpanded = set ? hasContentValue || isSetChecked : !show || show.checked;
+  const showSetCheckbox = Boolean(set) && !hasContentValue && !isSetChecked;
+  const shouldFocusContent = Boolean(set) && isSetChecked && !hasContentValue;
   const showTextOptions = hasContentValue || showOptionsWithEmptyContent;
+
+  useLayoutEffect(() => {
+    if (shouldReturnFocusToSetCheckboxRef.current) {
+      shouldReturnFocusToSetCheckboxRef.current = false;
+      setCheckboxRef.current?.focus();
+      return;
+    }
+
+    if (shouldFocusContent) {
+      contentInputRef.current?.focus();
+    }
+  }, [isSetChecked, shouldFocusContent]);
+
+  function handleContentBlur(event: FocusEvent<HTMLInputElement>) {
+    if (!set || event.target.value.trim() !== '') {
+      return;
+    }
+
+    shouldReturnFocusToSetCheckboxRef.current = true;
+    setIsSetChecked(false);
+  }
+
+  function handleSetChange(event: ChangeEvent<HTMLInputElement>) {
+    setIsSetChecked(event.target.checked);
+  }
 
   return (
     <>
@@ -219,6 +302,12 @@ export function TextGroup({
         </Checkbox>
       )}
 
+      {showSetCheckbox && (
+        <Checkbox checked={isSetChecked} ref={setCheckboxRef} onChange={handleSetChange}>
+          {resolveGroupFlagLabel(labelPrefix, 'Text', 'Set')}
+        </Checkbox>
+      )}
+
       {isExpanded && (
         <>
           {contents?.map((content, index) => {
@@ -229,7 +318,9 @@ export function TextGroup({
               <Input
                 key={`${contentLabel}-${index}`}
                 label={contentLabel}
+                ref={index === 0 ? contentInputRef : undefined}
                 value={content.value}
+                onBlur={set ? handleContentBlur : undefined}
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   content.onChange(event.target.value)
                 }
@@ -240,7 +331,7 @@ export function TextGroup({
 
           {showTextOptions && (
             <>
-              {onSizeChange && size !== undefined && (
+              {onSizeChange && (
                 <SizeListbox
                   label={resolveGroupFieldLabel(labelPrefix, 'size')}
                   sizes={TEXT_SIZE_PRESET_KEYS}

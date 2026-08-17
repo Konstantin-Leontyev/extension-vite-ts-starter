@@ -27,7 +27,6 @@
  *     - `src/pages/showcase/switch-settings/index.tsx`
  *     - `src/pages/showcase/tag-settings/index.tsx`
  *     - `src/pages/showcase/text-group/index.tsx`
- *     - `src/pages/showcase/title-group/index.tsx`
  *     - `src/pages/showcase/toast-settings/index.tsx`
  */
 

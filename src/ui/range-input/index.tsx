@@ -45,8 +45,8 @@
  * Основные задачи:
  * 1. Экспортировать компонент RangeInput
  * 2. Типизировать пропсы через `RangeInputProps`
- * 3. Экспортировать типы `RangeValue`, `RangePreset`, `RangeInputValidationMessages`
- *    и `ResolvedRangeInputValidationMessages`
+ * 3. Экспортировать типы `RangeValue`, `RangePreset`, `RangeInputTitleProps`,
+ *    `RangeInputValidationMessages` и `ResolvedRangeInputValidationMessages`
  * 4. Экспортировать дефолты `DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES`
  * 5. Выставлять `role` и `aria`-атрибуты панели и триггера
  *
@@ -242,10 +242,10 @@ type RangeInputInputProps = {
 };
 
 /**
- * DEFAULT_RANGE_INPUT_TITLE — задаёт заголовок панели по умолчанию.
- * Используется, когда вызывающий код не передал проп `title`.
+ * RANGE_INPUT_PANEL_ARIA_LABEL — задаёт текст `aria-label` диалога панели RangeInput.
+ * Используется для статичного доступного имени панели без собственного титула.
  */
-const DEFAULT_RANGE_INPUT_TITLE = 'Custom range';
+const RANGE_INPUT_PANEL_ARIA_LABEL = 'Custom range';
 
 /**
  * RangeInputTitleProps — представляет пропсы заголовка панели RangeInput.
@@ -256,13 +256,21 @@ const DEFAULT_RANGE_INPUT_TITLE = 'Custom range';
  * @property titleSizePreset — размер заголовка панели
  * @property titleTone — тон заголовка панели
  */
-type RangeInputTitleProps = {
-  title?: string;
-  titleAlign?: TextAlignPreset;
-  titleItalic?: boolean;
-  titleSizePreset?: TextSizePreset;
-  titleTone?: TextTone;
-};
+export type RangeInputTitleProps =
+  | {
+      title: string;
+      titleAlign?: TextAlignPreset;
+      titleItalic?: boolean;
+      titleSizePreset?: TextSizePreset;
+      titleTone?: TextTone;
+    }
+  | {
+      title?: never;
+      titleAlign?: never;
+      titleItalic?: never;
+      titleSizePreset?: never;
+      titleTone?: never;
+    };
 
 /**
  * RangeInputProps — представляет пропсы компонента RangeInput.
@@ -439,7 +447,7 @@ export function RangeInput({
   reserveErrorSpace,
   shape,
   sizePreset,
-  title = DEFAULT_RANGE_INPUT_TITLE,
+  title,
   titleAlign = DEFAULT_RANGE_INPUT_TITLE_ALIGN,
   titleItalic,
   titleSizePreset,
@@ -489,6 +497,8 @@ export function RangeInput({
   const triggerLabel = isActive ? formatActiveLabel(committed) : placeholder;
   const textSizePreset = getRangeInputTextSize(sizePreset);
   const hasPanelError = Boolean(panelError?.message.trim());
+  const hasTitle = Boolean(title);
+  const panelTitleId = hasTitle ? titleId : undefined;
   const surfaceProps = { borderTone, iconTone, shape, sizePreset };
   const iconShape = resolveIconShape(shape);
   const clearShape = clearShapeProp ?? iconShape;
@@ -712,7 +722,8 @@ export function RangeInput({
         onOpenFocus={focusRangeInputFromField}
       >
         <StyledRangeInputPanel
-          aria-labelledby={titleId}
+          aria-label={hasTitle ? undefined : RANGE_INPUT_PANEL_ARIA_LABEL}
+          aria-labelledby={panelTitleId}
           aria-modal={true}
           id={panelId}
           ref={panelRef}
@@ -743,17 +754,19 @@ export function RangeInput({
           )}
 
           <StyledRangeInputCustomSection>
-            <Text
-              align={titleAlign}
-              as="h2"
-              id={titleId}
-              italic={titleItalic}
-              sizePreset={titleSizePreset}
-              tone={titleTone}
-            >
-              {title}
-            </Text>
-            <StyledRangeInputFields aria-labelledby={titleId} role="group">
+            {hasTitle && (
+              <Text
+                align={titleAlign}
+                as="h2"
+                id={titleId}
+                italic={titleItalic}
+                sizePreset={titleSizePreset}
+                tone={titleTone}
+              >
+                {title}
+              </Text>
+            )}
+            <StyledRangeInputFields aria-labelledby={panelTitleId} role="group">
               <Input
                 aria-describedby={hasPanelError ? panelErrorId : undefined}
                 inputMode="numeric"

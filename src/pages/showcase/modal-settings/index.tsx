@@ -20,39 +20,40 @@ import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/te
 import { BackgroundListbox } from '../background-listbox';
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
-import { TitleGroup } from '../title-group';
+import { TextGroup } from '../text-group';
 
 /**
  * ModalWidgetState — представляет состояние настроек компонента Modal в витрине дизайн-системы.
- * Ключи совпадают с именами пропов компонента Modal, кроме витринных ключей:
- * `showTitle` и `showSubtitle` управляют передачей заголовка и подзаголовка в превью,
+ * Ключи совпадают с именами пропов компонента Modal, кроме витринного ключа:
  * `sizePreset` задаёт ширину через `inlineSize` в родительской витрине.
+ * Пустая строка заголовка или подзаголовка означает вызов без пропа. Отметка `Set*`
+ * живёт внутри TextGroup.
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Modal.
  *
  * @property background — заливка поверхности
- * @property showSubtitle — витринный ключ показа подзаголовка. Выключенный — превью без подзаголовка
- * @property showTitle — витринный ключ показа заголовка. Выключенный — превью без заголовка
  * @property sizePreset — витринный ключ ширины панели. Витрина переводит его в `inlineSize` для Modal
  * @property subtitle — подзаголовок
  * @property subtitleAlign — выравнивание подзаголовка
+ * @property subtitleItalic — включает курсив подзаголовка
  * @property subtitleSizePreset — размер подзаголовка
  * @property subtitleTone — тон подзаголовка
  * @property title — заголовок
  * @property titleAlign — выравнивание заголовка
+ * @property titleItalic — включает курсив заголовка
  * @property titleSizePreset — размер заголовка
  * @property titleTone — тон заголовка
  */
 export type ModalWidgetState = {
   background: SurfaceBackground;
-  showSubtitle: boolean;
-  showTitle: boolean;
   sizePreset: SizePreset;
   subtitle: string;
   subtitleAlign?: TextAlignPreset;
+  subtitleItalic: boolean;
   subtitleSizePreset?: TextSizePreset;
   subtitleTone: TextTone;
   title: string;
   titleAlign?: TextAlignPreset;
+  titleItalic: boolean;
   titleSizePreset: TextSizePreset;
   titleTone: TextTone;
 };
@@ -93,36 +94,50 @@ export function ModalSettings({ onChange, state }: ModalSettingsProps) {
         onChange={(background) => onChange('background', background)}
       />
 
-      <TitleGroup
+      <TextGroup
         align={state.titleAlign}
+        contents={[
+          {
+            value: state.title,
+            onChange: (value) => onChange('title', value),
+          },
+        ]}
+        italic={state.titleItalic}
         labelPrefix="Title"
-        show={{
-          checked: state.showTitle,
-          onChange: (checked) => onChange('showTitle', checked),
-        }}
+        set
         size={state.titleSizePreset}
-        title={state.title}
-        tone={state.titleTone}
+        tones={[
+          {
+            value: state.titleTone,
+            onChange: (tone) => onChange('titleTone', tone),
+          },
+        ]}
         onAlignChange={(align) => onChange('titleAlign', align)}
+        onItalicChange={(value) => onChange('titleItalic', value)}
         onSizeChange={(size) => onChange('titleSizePreset', size)}
-        onTitleChange={(title) => onChange('title', title)}
-        onToneChange={(tone) => onChange('titleTone', tone)}
       />
 
-      <TitleGroup
+      <TextGroup
         align={state.subtitleAlign}
+        contents={[
+          {
+            value: state.subtitle,
+            onChange: (value) => onChange('subtitle', value),
+          },
+        ]}
+        italic={state.subtitleItalic}
         labelPrefix="Subtitle"
-        show={{
-          checked: state.showSubtitle,
-          onChange: (checked) => onChange('showSubtitle', checked),
-        }}
+        set
         size={state.subtitleSizePreset}
-        title={state.subtitle}
-        tone={state.subtitleTone}
+        tones={[
+          {
+            value: state.subtitleTone,
+            onChange: (tone) => onChange('subtitleTone', tone),
+          },
+        ]}
         onAlignChange={(align) => onChange('subtitleAlign', align)}
+        onItalicChange={(value) => onChange('subtitleItalic', value)}
         onSizeChange={(size) => onChange('subtitleSizePreset', size)}
-        onTitleChange={(title) => onChange('subtitle', title)}
-        onToneChange={(tone) => onChange('subtitleTone', tone)}
       />
     </StyledSettingsForm>
   );

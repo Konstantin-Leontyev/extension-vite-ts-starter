@@ -16,7 +16,6 @@
  * Потребители:
  *  - панели настроек витрины — выбирают выравнивание текста:
  *     - `src/pages/showcase/text-group/index.tsx`
- *     - `src/pages/showcase/title-group/index.tsx`
  */
 
 import { Listbox, type ListboxOption } from '@ui/listbox';
