@@ -21,7 +21,7 @@
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { getTextSize } from '@ui/presets';
-import { Text, type TextTonePreset } from '@ui/text';
+import { Text } from '@ui/text';
 
 import {
   StyledRadioButtonControl,
@@ -29,12 +29,6 @@ import {
   splitLayoutProps,
   type RadioButtonStyleProps,
 } from './radio-button.styles';
-
-/**
- * RADIO_BUTTON_TEXT_TONE — задаёт тон подписи.
- * Подпись контрола — вторичный текст, поэтому `muted`.
- */
-const RADIO_BUTTON_TEXT_TONE: TextTonePreset = 'muted';
 
 /**
  * RadioButtonProps — представляет пропсы компонента RadioButton.
@@ -73,9 +67,7 @@ function RadioButton({ children, sizePreset, ...rest }: RadioButtonProps) {
   return (
     <StyledRadioButtonRoot {...layoutProps}>
       {control}
-      <Text sizePreset={getTextSize(sizePreset)} tone={RADIO_BUTTON_TEXT_TONE}>
-        {children}
-      </Text>
+      <Text sizePreset={getTextSize(sizePreset)}>{children}</Text>
     </StyledRadioButtonRoot>
   );
 }

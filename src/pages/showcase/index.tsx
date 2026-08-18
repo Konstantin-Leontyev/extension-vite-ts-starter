@@ -27,13 +27,8 @@ import { Icon, getIconPadding, resolveIconShape } from '@ui/icon';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxMultipleProps } from '@ui/listbox';
 import { Modal, type ModalAccessibleName } from '@ui/modal';
-import {
-  DEFAULT_SHAPE_PRESET,
-  DEFAULT_SIZE_PRESET,
-  getTextSize,
-  type SizePreset,
-} from '@ui/presets';
-import { ProgressBar, type ProgressBarShowTextProps } from '@ui/progress-bar';
+import { DEFAULT_SHAPE_PRESET, DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
+import { ProgressBar } from '@ui/progress-bar';
 import { RadioButton } from '@ui/radio-button';
 import {
   DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
@@ -314,8 +309,6 @@ const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
   shape: DEFAULT_SHAPE_PRESET,
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Button',
-  textItalic: false,
-  textSize: getTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'neutral',
   tone: 'neutral',
   withIcon: false,
@@ -483,9 +476,6 @@ const DEFAULT_FIELDSET_STATE: FieldsetWidgetState = {
 const DEFAULT_PROGRESS_STATE: ProgressBarWidgetState = {
   showText: true,
   sizePreset: DEFAULT_SIZE_PRESET,
-  textItalic: false,
-  textSize: getTextSize(DEFAULT_SIZE_PRESET),
-  textTone: 'muted',
   tone: 'primary',
   value: 0.42,
 };
@@ -498,9 +488,6 @@ const DEFAULT_SPINNER_STATE: SpinnerWidgetState = {
   reserveTextSpace: false,
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Loading…',
-  textItalic: false,
-  textSize: getTextSize(DEFAULT_SIZE_PRESET),
-  textTone: 'muted',
   tone: 'primary',
 };
 
@@ -539,9 +526,6 @@ const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
 const DEFAULT_TOAST_STATE: ToastWidgetState = {
   message: 'Very important message',
   sizePreset: DEFAULT_SIZE_PRESET,
-  textItalic: false,
-  textSize: getTextSize(DEFAULT_SIZE_PRESET),
-  textTone: 'neutral',
   tone: 'success',
 };
 
@@ -581,8 +565,6 @@ const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   segmentCount: '2',
   shape: DEFAULT_SHAPE_PRESET,
   sizePreset: DEFAULT_SIZE_PRESET,
-  textItalic: false,
-  textSize: getTextSize(DEFAULT_SIZE_PRESET),
 };
 
 /**
@@ -1251,9 +1233,6 @@ export function ShowcasePage() {
     spinner.text.trim() !== ''
       ? {
           children: spinner.text,
-          textItalic: spinner.textItalic,
-          textSize: spinner.textSize,
-          textTone: spinner.textTone,
         }
       : {};
   const modalBorderProps: ShowBorderProps = resolveBorderProps(
@@ -1344,14 +1323,6 @@ export function ShowcasePage() {
         dotTone: tag.dotTone,
       }
     : { showDot: false };
-  const progressBarShowTextProps: ProgressBarShowTextProps = progress.showText
-    ? {
-        showText: true,
-        textItalic: progress.textItalic,
-        textSize: progress.textSize,
-        textTone: progress.textTone,
-      }
-    : { showText: false };
 
   return (
     <StyledMain>
@@ -1599,8 +1570,6 @@ export function ShowcasePage() {
                   label={button.label || undefined}
                   shape={button.shape}
                   sizePreset={button.sizePreset}
-                  textItalic={button.textItalic}
-                  textSize={button.textSize}
                   textTone={button.textTone}
                   tone={button.tone}
                   {...buttonIconProps}
@@ -1663,8 +1632,6 @@ export function ShowcasePage() {
                   }}
                   shape={segmentButton.shape}
                   sizePreset={segmentButton.sizePreset}
-                  textItalic={segmentButton.textItalic}
-                  textSize={segmentButton.textSize}
                 />
               )}
 
@@ -1731,8 +1698,8 @@ export function ShowcasePage() {
                   alignSelf="center"
                   borderTone={fieldset.borderTone}
                   inlineSize="100%"
-                  label={fieldset.label}
                   minInlineSize="0"
+                  {...(fieldset.label.trim() !== '' ? { label: fieldset.label } : {})}
                 >
                   <RadioButton
                     checked={fieldset.selected === 'a'}
@@ -1757,10 +1724,10 @@ export function ShowcasePage() {
                 'progress',
                 <ProgressBar
                   aria-labelledby={PROGRESS_WIDGET_TITLE_ID}
+                  showText={progress.showText}
                   sizePreset={progress.sizePreset}
                   tone={progress.tone}
                   value={progress.value}
-                  {...progressBarShowTextProps}
                 />,
                 false,
                 PROGRESS_WIDGET_TITLE_ID
@@ -1817,9 +1784,6 @@ export function ShowcasePage() {
                   <Toast
                     alignSelf="center"
                     sizePreset={toast.sizePreset}
-                    textItalic={toast.textItalic}
-                    textSize={toast.textSize}
-                    textTone={toast.textTone}
                     tone={toast.tone}
                   >
                     {toast.message}
@@ -1831,9 +1795,6 @@ export function ShowcasePage() {
                       showToast({
                         message: toast.message,
                         sizePreset: toast.sizePreset,
-                        textItalic: toast.textItalic,
-                        textSize: toast.textSize,
-                        textTone: toast.textTone,
                         tone: toast.tone,
                       })
                     }

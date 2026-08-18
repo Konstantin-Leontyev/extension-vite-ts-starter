@@ -29,7 +29,7 @@
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { getTextSize } from '@ui/presets';
-import { Text, type TextTonePreset } from '@ui/text';
+import { Text } from '@ui/text';
 
 import {
   CHECKBOX_CHECKED_MARK_KEYS,
@@ -42,12 +42,6 @@ import {
   type CheckboxStyleProps,
   type CheckboxUncheckedMark,
 } from './checkbox.styles';
-
-/**
- * CHECKBOX_TEXT_TONE — задаёт тон подписи.
- * Подпись контрола — вторичный текст, поэтому `muted`.
- */
-const CHECKBOX_TEXT_TONE: TextTonePreset = 'muted';
 
 /**
  * CheckboxProps — представляет пропсы компонента Checkbox.
@@ -98,9 +92,7 @@ function Checkbox({
   return (
     <StyledCheckboxRoot {...layoutProps}>
       {control}
-      <Text sizePreset={getTextSize(sizePreset)} tone={CHECKBOX_TEXT_TONE}>
-        {children}
-      </Text>
+      <Text sizePreset={getTextSize(sizePreset)}>{children}</Text>
     </StyledCheckboxRoot>
   );
 }

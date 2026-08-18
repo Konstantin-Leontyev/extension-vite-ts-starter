@@ -22,7 +22,7 @@
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { getTextSize } from '@ui/presets';
-import { Text, type TextTonePreset } from '@ui/text';
+import { Text } from '@ui/text';
 
 import {
   StyledSwitchRoot,
@@ -30,12 +30,6 @@ import {
   splitLayoutProps,
   type SwitchStyleProps,
 } from './switch.styles';
-
-/**
- * SWITCH_TEXT_TONE — задаёт тон подписи.
- * Подпись контрола — вторичный текст, поэтому `muted`.
- */
-const SWITCH_TEXT_TONE: TextTonePreset = 'muted';
 
 /**
  * SwitchProps — представляет пропсы компонента Switch.
@@ -63,11 +57,7 @@ function Switch({ children, sizePreset, tone, ...rest }: SwitchProps) {
     <StyledSwitchRoot {...layoutProps}>
       <input className="visually-hidden" role="switch" type="checkbox" {...restProps} />
       <StyledSwitchTrack aria-hidden="true" sizePreset={sizePreset} tone={tone} />
-      {Boolean(children) && (
-        <Text sizePreset={getTextSize(sizePreset)} tone={SWITCH_TEXT_TONE}>
-          {children}
-        </Text>
-      )}
+      {Boolean(children) && <Text sizePreset={getTextSize(sizePreset)}>{children}</Text>}
     </StyledSwitchRoot>
   );
 }

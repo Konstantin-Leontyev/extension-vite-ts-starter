@@ -14,8 +14,7 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { SIZE_PRESET_KEYS, getTextSize, type SizePreset } from '@ui/presets';
-import { type TextSizePreset, type TextTonePreset } from '@ui/text';
+import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../showcase.styles';
@@ -32,18 +31,12 @@ import { ToneListbox } from '../tone-listbox';
  * @property reserveTextSpace — включает резерв высоты под подпись
  * @property sizePreset — размер спиннера
  * @property text — подпись под индикатором
- * @property textItalic — включает курсив подписи
- * @property textSize — размер подписи
- * @property textTone — тон подписи
  * @property tone — семантический тон
  */
 export type SpinnerWidgetState = {
   reserveTextSpace: boolean;
   sizePreset: SizePreset;
   text: string;
-  textItalic: boolean;
-  textSize: TextSizePreset;
-  textTone: TextTonePreset;
   tone: TonePreset;
 };
 
@@ -74,10 +67,7 @@ export function SpinnerSettings({ onChange, state }: SpinnerSettingsProps) {
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
         value={state.sizePreset}
-        onChange={(size) => {
-          onChange('sizePreset', size);
-          onChange('textSize', getTextSize(size));
-        }}
+        onChange={(size) => onChange('sizePreset', size)}
       />
 
       <ToneListbox
@@ -94,18 +84,8 @@ export function SpinnerSettings({ onChange, state }: SpinnerSettingsProps) {
             onChange: (value) => onChange('text', value),
           },
         ]}
-        italic={state.textItalic}
         labelPrefix="Text"
         set
-        size={state.textSize}
-        tones={[
-          {
-            value: state.textTone,
-            onChange: (tone) => onChange('textTone', tone),
-          },
-        ]}
-        onItalicChange={(value) => onChange('textItalic', value)}
-        onSizeChange={(size) => onChange('textSize', size)}
       />
 
       <Checkbox

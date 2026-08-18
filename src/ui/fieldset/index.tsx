@@ -5,7 +5,7 @@
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - тон рамки через проп `borderTone`
- *  - заголовок группы через проп `label` в `<legend>`
+ *  - заголовок группы через проп `label` в `<legend>`. Без `label` рамка без разрыва
  *  - содержимое группы через `children`
  *
  * Основные задачи:
@@ -19,7 +19,7 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { type ComponentPropsWithRef } from 'react';
 
 import { Text, type TextSizePreset, type TextTonePreset } from '@ui/text';
 
@@ -45,12 +45,10 @@ const FIELDSET_LEGEND_TONE: TextTonePreset = 'muted';
 /**
  * FieldsetProps — представляет пропсы компонента Fieldset.
  *
- * @property children — содержимое группы
- * @property label — заголовок в `<legend>`
+ * @property label — заголовок в `<legend>`. Пустая или пробельная строка не рендерит `<legend>`
  */
 type FieldsetProps = {
-  children?: ReactNode;
-  label: string;
+  label?: string;
 } & FieldsetStyleProps &
   Omit<
     ComponentPropsWithRef<'fieldset'>,
@@ -58,7 +56,7 @@ type FieldsetProps = {
   >;
 
 /**
- * Fieldset — отображает группу полей с заголовком в `<legend>`.
+ * Fieldset — отображает группу полей с опциональным заголовком в `<legend>`.
  *
  * @example
  * <Fieldset label="Notifications">
@@ -66,16 +64,20 @@ type FieldsetProps = {
  * </Fieldset>
  */
 function Fieldset({ children, label, ...rest }: FieldsetProps) {
+  const hasLegend = Boolean(label?.trim());
+
   return (
     <StyledFieldset {...rest}>
-      <Text
-        as="legend"
-        paddingInline={4}
-        sizePreset={FIELDSET_LEGEND_SIZE_PRESET}
-        tone={FIELDSET_LEGEND_TONE}
-      >
-        {label}
-      </Text>
+      {hasLegend && (
+        <Text
+          as="legend"
+          paddingInline={4}
+          sizePreset={FIELDSET_LEGEND_SIZE_PRESET}
+          tone={FIELDSET_LEGEND_TONE}
+        >
+          {label}
+        </Text>
+      )}
       {children}
     </StyledFieldset>
   );

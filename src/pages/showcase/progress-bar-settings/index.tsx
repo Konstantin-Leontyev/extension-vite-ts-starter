@@ -14,8 +14,7 @@
 import { type ChangeEvent } from 'react';
 
 import { Input } from '@ui/input';
-import { SIZE_PRESET_KEYS, getTextSize, type SizePreset } from '@ui/presets';
-import { type TextSizePreset, type TextTonePreset } from '@ui/text';
+import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../showcase.styles';
@@ -30,18 +29,12 @@ import { ToneListbox } from '../tone-listbox';
  *
  * @property showText — включает подпись с процентом выполнения
  * @property sizePreset — размер полосы
- * @property textItalic — включает курсив подписи
- * @property textSize — размер подписи
- * @property textTone — тон подписи
  * @property tone — семантический тон заливки
  * @property value — доля заполнения от 0 до 1
  */
 export type ProgressBarWidgetState = {
   showText: boolean;
   sizePreset: SizePreset;
-  textItalic: boolean;
-  textSize: TextSizePreset;
-  textTone: TextTonePreset;
   tone: TonePreset;
   value: number;
 };
@@ -97,10 +90,7 @@ export function ProgressBarSettings({ onChange, state }: ProgressBarSettingsProp
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
         value={state.sizePreset}
-        onChange={(size) => {
-          onChange('sizePreset', size);
-          onChange('textSize', getTextSize(size));
-        }}
+        onChange={(size) => onChange('sizePreset', size)}
       />
 
       <ToneListbox
@@ -121,21 +111,11 @@ export function ProgressBarSettings({ onChange, state }: ProgressBarSettingsProp
       />
 
       <TextGroup
-        italic={state.textItalic}
         labelPrefix="Text"
         show={{
           checked: state.showText,
           onChange: (checked) => onChange('showText', checked),
         }}
-        size={state.textSize}
-        tones={[
-          {
-            value: state.textTone,
-            onChange: (tone) => onChange('textTone', tone),
-          },
-        ]}
-        onItalicChange={(value) => onChange('textItalic', value)}
-        onSizeChange={(size) => onChange('textSize', size)}
       />
     </StyledSettingsForm>
   );

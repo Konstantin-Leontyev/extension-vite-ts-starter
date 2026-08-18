@@ -7,9 +7,6 @@
  *  - размерный ряд через проп `sizePreset`
  *  - семантический тон через проп `tone`
  *  - текст сообщения через `children`
- *  - тон текста сообщения через проп `textTone`
- *  - размер текста сообщения через проп `textSize`
- *  - курсив текста сообщения через проп `textItalic`
  *
  * Основные задачи:
  * 1. Экспортировать компонент Toast
@@ -24,7 +21,7 @@
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { getTextSize } from '@ui/presets';
-import { Text, type TextSizePreset, type TextTonePreset } from '@ui/text';
+import { Text } from '@ui/text';
 
 import { StyledToast, type ToastStyleProps } from './toast.styles';
 
@@ -32,15 +29,9 @@ import { StyledToast, type ToastStyleProps } from './toast.styles';
  * ToastProps — представляет пропсы компонента Toast.
  *
  * @property children — текст сообщения
- * @property textItalic — включает курсив текста сообщения
- * @property textSize — размер текста сообщения
- * @property textTone — тон текста сообщения
  */
 type ToastProps = ToastStyleProps & {
   children: ReactNode;
-  textItalic?: boolean;
-  textSize?: TextSizePreset;
-  textTone?: TextTonePreset;
 } & Omit<
     ComponentPropsWithRef<'div'>,
     'children' | 'className' | 'style' | keyof ToastStyleProps
@@ -53,15 +44,7 @@ type ToastProps = ToastStyleProps & {
  * <Toast>Успешно сохранено</Toast>
  * <Toast tone="danger">Ошибка</Toast>
  */
-function Toast({
-  children,
-  sizePreset,
-  textItalic,
-  textSize,
-  textTone,
-  tone,
-  ...rest
-}: ToastProps) {
+function Toast({ children, sizePreset, tone, ...rest }: ToastProps) {
   const isDanger = tone === 'danger';
   const role = isDanger ? 'alert' : 'status';
   const ariaLive = isDanger ? 'assertive' : 'polite';
@@ -74,13 +57,7 @@ function Toast({
       tone={tone}
       {...rest}
     >
-      <Text
-        italic={textItalic}
-        sizePreset={textSize ?? getTextSize(sizePreset)}
-        tone={textTone}
-      >
-        {children}
-      </Text>
+      <Text sizePreset={getTextSize(sizePreset)}>{children}</Text>
     </StyledToast>
   );
 }

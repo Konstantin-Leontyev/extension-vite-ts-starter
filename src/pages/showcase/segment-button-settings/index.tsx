@@ -2,7 +2,7 @@
  * Файл: `src/pages/showcase/segment-button-settings/index.tsx`
  * Определяет панель настроек компонента SegmentButton в витрине дизайн-системы.
  * Содержит контролы для изменения подписи, размера, формы, числа сегментов,
- * тона сегментов, иконок, текста, типографики и состояний `active` и `disabled`
+ * тона сегментов, иконок, текста и состояний `active` и `disabled`
  * в реальном времени.
  *
  * Основные задачи:
@@ -18,8 +18,8 @@ import { type ChangeEvent } from 'react';
 import { Checkbox } from '@ui/checkbox';
 import { type IconPosition } from '@ui/icon';
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import { getTextSize, type ShapePreset, type SizePreset } from '@ui/presets';
-import { type TextSizePreset, type TextTonePreset } from '@ui/text';
+import { type ShapePreset, type SizePreset } from '@ui/presets';
+import { type TextTonePreset } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { ControlGroup } from '../control-group';
@@ -68,8 +68,6 @@ import { ToneListbox } from '../tone-listbox';
  * @property segmentCount — витринный ключ числа сегментов в превью
  * @property shape — форма оболочки ряда
  * @property sizePreset — размер компонента
- * @property textItalic — включает курсив текста сегмента
- * @property textSize — размер текста сегмента
  */
 export type SegmentButtonWidgetState = {
   centerActive: boolean;
@@ -103,8 +101,6 @@ export type SegmentButtonWidgetState = {
   segmentCount: '2' | '3';
   shape: ShapePreset;
   sizePreset: SizePreset;
-  textItalic: boolean;
-  textSize: TextSizePreset;
 };
 
 /**
@@ -145,10 +141,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
         sizePreset={state.sizePreset}
         onLabelChange={(label) => onChange('label', label)}
         onShapeChange={(shape) => onChange('shape', shape)}
-        onSizeChange={(size) => {
-          onChange('sizePreset', size);
-          onChange('textSize', getTextSize(size));
-        }}
+        onSizeChange={(size) => onChange('sizePreset', size)}
       />
 
       <Listbox
@@ -246,9 +239,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
             onChange: (value) => onChange('rightLabel', value),
           },
         ]}
-        italic={state.textItalic}
         labelPrefix="Text"
-        size={state.textSize}
         tones={[
           {
             label: 'Left text tone:',
@@ -270,8 +261,6 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
             onChange: (tone) => onChange('rightTextTone', tone),
           },
         ]}
-        onItalicChange={(value) => onChange('textItalic', value)}
-        onSizeChange={(size) => onChange('textSize', size)}
       />
 
       <Checkbox

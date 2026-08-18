@@ -10,12 +10,12 @@
  *  - тон рамки через проп `borderTone`
  *  - тело карточки через `children`
  *  - заголовок через проп `title`
- *  - уровень заголовка через проп `titleLevel`
- *  - подзаголовок через проп `subtitle`
  *  - тон заголовка через проп `titleTone`
  *  - размер заголовка через проп `titleSize`
  *  - курсив заголовка через проп `titleItalic`
  *  - выравнивание заголовка через проп `titleAlign`
+ *  - уровень заголовка через проп `titleLevel`
+ *  - подзаголовок через проп `subtitle`
  *  - тон подзаголовка через проп `subtitleTone`
  *  - размер подзаголовка через проп `subtitleSize`
  *  - курсив подзаголовка через проп `subtitleItalic`
@@ -44,12 +44,16 @@ import {
   useId,
   type ComponentProps,
   type ComponentPropsWithRef,
-  type ReactNode,
 } from 'react';
 
 import { type IconShapePreset } from '@ui/icon';
 import { IconButtonRow, type IconButtonRowAction } from '@ui/icon-button-row';
-import { Text, type TextNodeProps, type TextSizePreset, type TextTonePreset } from '@ui/text';
+import {
+  Text,
+  type TextNodeProps,
+  type TextSizePreset,
+  type TextTonePreset,
+} from '@ui/text';
 
 import {
   CARD_HEADER_ACTION_SIZE_PRESET,
@@ -97,14 +101,12 @@ const DEFAULT_CARD_HEADER_ACTIONS: IconButtonRowAction[] = [];
  *
  * @property actionShape — форма окна действия шапки. Без пропа остаётся дефолтом ряда
  * @property as — переопределяет корневой HTML-тег, например `<article>`, `<div>`, `<section>`
- * @property children — содержимое тела карточки
  * @property headerActions — ряд действий в правом верхнем углу
  * @property titleId — id заголовка для `aria-labelledby` у внешнего узла
  */
 type CardProps<T extends CardHtmlTag = 'div'> = {
   actionShape?: IconShapePreset;
   as?: T;
-  children?: ReactNode;
   headerActions?: IconButtonRowAction[];
   titleId?: string;
 } & TextNodeProps<'title'> &

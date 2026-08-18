@@ -16,7 +16,6 @@
 import { createContext } from 'react';
 
 import { type SizePreset } from '@ui/presets';
-import { type TextSizePreset, type TextTonePreset } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 /**
@@ -24,17 +23,11 @@ import { type TonePreset } from '@ui/tones';
  *
  * @property message — текст сообщения
  * @property sizePreset — размер уведомления
- * @property textItalic — включает курсив текста сообщения
- * @property textSize — размер текста сообщения
- * @property textTone — тон текста сообщения
  * @property tone — семантический тон
  */
 export type ToastInput = {
   message: string;
   sizePreset?: SizePreset;
-  textItalic?: boolean;
-  textSize?: TextSizePreset;
-  textTone?: TextTonePreset;
   tone?: TonePreset;
 };
 

@@ -2,7 +2,7 @@
  * Файл: `src/pages/showcase/button-settings/index.tsx`
  * Определяет панель настроек компонента Button в витрине дизайн-системы.
  * Содержит контролы для изменения подписи, размера, формы, тона, иконки,
- * содержимого лейбла и состояний `active` и `disabled` в реальном времени.
+ * содержимого и тона лейбла и состояний `active` и `disabled` в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `ButtonWidgetState`
@@ -16,8 +16,8 @@ import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { resolveIconShape, type IconPosition, type IconShapePreset } from '@ui/icon';
-import { getTextSize, type ShapePreset, type SizePreset } from '@ui/presets';
-import { type TextSizePreset, type TextTonePreset } from '@ui/text';
+import { type ShapePreset, type SizePreset } from '@ui/presets';
+import { type TextTonePreset } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { ControlGroup } from '../control-group';
@@ -44,9 +44,7 @@ import { ToneListbox } from '../tone-listbox';
  * @property label — подпись над кнопкой
  * @property shape — форма кнопки
  * @property sizePreset — размер компонента
- * @property text — содержимое `children` кнопки
- * @property textItalic — включает курсив лейбла
- * @property textSize — размер лейбла
+ * @property text — содержимое лейбла
  * @property textTone — тон лейбла
  * @property tone — семантический тон
  * @property withIcon — витринный ключ показа иконки. Выключенный — превью без иконки
@@ -63,8 +61,6 @@ export type ButtonWidgetState = {
   shape: ShapePreset;
   sizePreset: SizePreset;
   text: string;
-  textItalic: boolean;
-  textSize: TextSizePreset;
   textTone: TextTonePreset;
   tone: TonePreset;
   withIcon: boolean;
@@ -102,10 +98,7 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
           onChange('shape', shape);
           onChange('iconShape', resolveIconShape(shape));
         }}
-        onSizeChange={(size) => {
-          onChange('sizePreset', size);
-          onChange('textSize', getTextSize(size));
-        }}
+        onSizeChange={(size) => onChange('sizePreset', size)}
       />
 
       <ToneListbox
@@ -139,17 +132,14 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
             onChange: (value) => onChange('text', value),
           },
         ]}
-        italic={state.textItalic}
         labelPrefix="Text"
-        size={state.textSize}
+        set
         tones={[
           {
             value: state.textTone,
             onChange: (tone) => onChange('textTone', tone),
           },
         ]}
-        onItalicChange={(value) => onChange('textItalic', value)}
-        onSizeChange={(size) => onChange('textSize', size)}
       />
 
       <Checkbox

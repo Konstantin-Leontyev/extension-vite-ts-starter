@@ -637,7 +637,15 @@ Card → Modal → Text → Toolbar → Input → SearchField → Listbox + Comb
 
 **Сдано 18.08 (поля):** закрыты `text*` у Input, SearchField, TableInlineField и Stepper; `getNativeFieldTextStyles` снят. Типографика — `getTextProperties(getTextSize(…))`. Значение — буфер превью, суффикс Stepper — строка в слоте текста. `value*` не заводили.
 
-**Текущий шаг (18.08, вне маршрута компонента):** закрыть `text*` у Button, Toast, Spinner, ProgressBar и SegmentButton. Строка остаётся (`children` / подпись сегмента), вид вшит нынешними дефолтами. Ведущий проп `text` / `leadingKey` не заводить. Не в этом прогоне: `title*` / `subtitle*` (контент поверхности остаётся открытым), `label` → `legend`, `size` вместо `sizePreset`, `showClear` → `showClearButton`, вынос корня «подпись над контролом» и общий генератор хрома input-ряда.
+**Текущий шаг (18.08, вне маршрута компонента):** закрыть оси текста у Toast / Spinner / ProgressBar (вшитый тон — `neutral`, не `muted`); у Button и SegmentButton снять только `textSize` / `textItalic`, `textTone` оставить. Параллельно в том же прогоне: тон тройки Checkbox / RadioButton / Switch `muted` → `neutral`. Ведущий проп `text` / `leadingKey` не заводить.
+
+**Добор в тот же или ближайший прогон (решение 18.08 вечер):**
+- `TextNodeStyleProps` больше нигде сам не живёт — влить поля в `TextNodeProps` и тип снять.
+- Fieldset: пустая легенда не рендерится (иначе разрыв рамки). `label` становится опциональным. В витрине — `Set` как у остальных необязательных строк.
+- `Set*` везде, где строка необязательна: пусто и ушли с поля — один чекбокс. Сейчас дыра — Fieldset (группа без `set`, пустой `label` всё равно рисует `<legend>`).
+- Явный `children?: ReactNode` снимать, если он только повторяет `ComponentPropsWithRef` и тип не сужают. Оставлять: обязательный `children: ReactNode`; узкий тип (`string`); слот, которого у нативного узла нет (подпись Checkbox / Radio / Switch на `<input>`).
+
+Не в прогоне обёрток: `title*` / `subtitle*`, `label` → `legend` (имя), `size` вместо `sizePreset`, `showClear` → `showClearButton`, вынос корня «подпись над контролом».
 
 Решено по типам и панелям (16.08):
 

@@ -11,8 +11,6 @@
  *  - средний сегмент через проп `center`. Без `center` ряд из двух сегментов
  *  - правый сегмент через проп `right`
  *  - подпись над рядом через проп `label`
- *  - размер текста сегмента через проп `textSize`
- *  - курсив текста сегмента через проп `textItalic`
  *
  * Основные задачи:
  * 1. Экспортировать компонент SegmentButton
@@ -33,7 +31,6 @@ import {
   SegmentButtonParts,
   type SegmentButtonPartsProps,
 } from '@ui/segment-button-parts';
-import { type TextSizePreset } from '@ui/text';
 
 import {
   StyledSegmentButton,
@@ -46,13 +43,9 @@ import {
  * SegmentButtonProps — представляет пропсы компонента SegmentButton.
  *
  * @property label — подпись над рядом сегментов
- * @property textItalic — включает курсив текста сегмента
- * @property textSize — размер текста сегмента
  */
 type SegmentButtonProps = {
   label?: string;
-  textItalic?: boolean;
-  textSize?: TextSizePreset;
 } & Omit<SegmentButtonStyleProps, 'left' | 'right'> &
   Pick<SegmentButtonPartsProps, 'center' | 'left' | 'right'> &
   Omit<
@@ -84,22 +77,18 @@ export function SegmentButton({
   right,
   shape,
   sizePreset,
-  textItalic,
-  textSize,
   ...rest
 }: SegmentButtonProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const labelId = useId();
   const labelledBy = label ? labelId : undefined;
-  const resolvedTextSize = textSize ?? getTextSize(sizePreset);
 
   const partsProps = {
     left,
     // Прямые углы: скругление даёт обрезка оболочки SegmentButton, не сегменты.
     shape: SEGMENT_BUTTON_PARTS_FLUSH_SHAPE,
     sizePreset,
-    textItalic,
-    textSize: resolvedTextSize,
+    textSize: getTextSize(sizePreset),
     ...(center != null ? { center, right } : { right }),
   } as SegmentButtonPartsProps;
 

@@ -8,9 +8,6 @@
  *  - семантический тон через проп `tone`
  *  - доступное имя для скринридера через проп `ariaLabel`
  *  - подпись под индикатором через `children`
- *  - тон подписи через проп `textTone`
- *  - размер подписи через проп `textSize`
- *  - курсив подписи через проп `textItalic`
  *  - резерв высоты под подпись через проп `reserveTextSpace`
  *
  * Основные задачи:
@@ -23,10 +20,10 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { type ComponentPropsWithRef } from 'react';
 
 import { getTextSize } from '@ui/presets';
-import { Text, getTextLineHeight, type TextSizePreset, type TextTonePreset } from '@ui/text';
+import { Text, getTextLineHeight } from '@ui/text';
 
 import {
   StyledSpinner,
@@ -48,32 +45,15 @@ const DEFAULT_SPINNER_ARIA_LABEL = 'Loading';
 const DEFAULT_SPINNER_RESERVE_TEXT_SPACE = false;
 
 /**
- * DEFAULT_SPINNER_TEXT_TONE — задаёт тон подписи по умолчанию.
- * Подпись контрола — вторичный текст, поэтому `muted`.
- */
-const DEFAULT_SPINNER_TEXT_TONE: TextTonePreset = 'muted';
-
-/**
  * SpinnerProps — представляет пропсы компонента Spinner.
  *
  * @property ariaLabel — доступное имя для скринридера
- * @property children — подпись под индикатором
  * @property reserveTextSpace — включает резерв высоты под подпись, чтобы появление текста не сдвигало соседей
- * @property textItalic — включает курсив подписи
- * @property textSize — размер подписи
- * @property textTone — тон подписи
  */
 type SpinnerProps = SpinnerStyleProps & {
   ariaLabel?: string;
-  children?: ReactNode;
   reserveTextSpace?: boolean;
-  textItalic?: boolean;
-  textSize?: TextSizePreset;
-  textTone?: TextTonePreset;
-} & Omit<
-    ComponentPropsWithRef<'div'>,
-    'children' | 'className' | 'style' | keyof SpinnerStyleProps
-  >;
+} & Omit<ComponentPropsWithRef<'div'>, 'className' | 'style' | keyof SpinnerStyleProps>;
 
 /**
  * Spinner — отображает индикатор неопределённой загрузки.
@@ -87,14 +67,11 @@ function Spinner({
   children,
   reserveTextSpace = DEFAULT_SPINNER_RESERVE_TEXT_SPACE,
   sizePreset,
-  textItalic,
-  textSize,
-  textTone = DEFAULT_SPINNER_TEXT_TONE,
   tone,
   ...rest
 }: SpinnerProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const resolvedTextSize = textSize ?? getTextSize(sizePreset);
+  const textSizePreset = getTextSize(sizePreset);
   const hasText = Boolean(typeof children === 'string' ? children.trim() : children);
   const showText = hasText || reserveTextSpace;
 
@@ -110,14 +87,10 @@ function Spinner({
       {showText && (
         <Text
           align="center"
-          italic={textItalic}
           minBlockSize={
-            reserveTextSpace && !hasText
-              ? getTextLineHeight(resolvedTextSize)
-              : undefined
+            reserveTextSpace && !hasText ? getTextLineHeight(textSizePreset) : undefined
           }
-          sizePreset={resolvedTextSize}
-          tone={textTone}
+          sizePreset={textSizePreset}
         >
           {hasText ? children : null}
         </Text>

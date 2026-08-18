@@ -8,11 +8,9 @@
  *  - семантический тон через проп `tone`
  *  - форму через проп `shape`
  *  - тон рамки через проп `borderTone`
- *  - содержимое через `children`
- *  - подпись над кнопкой через проп `label`
+ *  - содержимое лейбла через `children`
  *  - тон лейбла через проп `textTone`
- *  - размер лейбла через проп `textSize`
- *  - курсив лейбла через проп `textItalic`
+ *  - подпись над кнопкой через проп `label`
  *  - иконку через проп `icon`
  *  - позицию иконки через проп `iconPosition`
  *  - тон секции иконки через проп `iconTone`
@@ -43,7 +41,7 @@ import {
   type IconShapePreset,
 } from '@ui/icon';
 import { getTextSize } from '@ui/presets';
-import { Text, type TextSizePreset, type TextTonePreset } from '@ui/text';
+import { Text, type TextTonePreset } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import {
@@ -90,15 +88,11 @@ type ButtonIconProps =
  *
  * @property children — содержимое лейбла
  * @property label — подпись над кнопкой
- * @property textItalic — включает курсив лейбла
- * @property textSize — размер лейбла
  * @property textTone — тон лейбла
  */
 type ButtonProps = {
   children: ReactNode;
   label?: string;
-  textItalic?: boolean;
-  textSize?: TextSizePreset;
   textTone?: TextTonePreset;
 } & ButtonIconProps &
   Omit<ButtonStyleProps, 'iconTone'> &
@@ -132,8 +126,6 @@ export function Button({
   label,
   shape,
   sizePreset,
-  textItalic,
-  textSize,
   textTone,
   tone,
   type = DEFAULT_BUTTON_TYPE,
@@ -179,8 +171,7 @@ export function Button({
           align="center"
           data-slot="label"
           ellipsis
-          italic={textItalic}
-          sizePreset={textSize ?? getTextSize(sizePreset)}
+          sizePreset={getTextSize(sizePreset)}
           tone={textTone}
         >
           {children}

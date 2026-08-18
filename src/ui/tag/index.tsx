@@ -26,7 +26,7 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { type ComponentPropsWithRef } from 'react';
 
 import { Text } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
@@ -59,16 +59,10 @@ type TagShowDotProps =
 
 /**
  * TagProps — представляет пропсы компонента Tag.
- *
- * @property children — содержимое метки
  */
-type TagProps = TagShowDotProps & {
-  children?: ReactNode;
-} & TagStyleProps &
-  Omit<
-    ComponentPropsWithRef<'span'>,
-    'children' | 'className' | 'style' | keyof TagStyleProps
-  >;
+type TagProps = TagShowDotProps &
+  TagStyleProps &
+  Omit<ComponentPropsWithRef<'span'>, 'className' | 'style' | keyof TagStyleProps>;
 
 /**
  * DEFAULT_TAG_SHOW_DOT — задаёт показ точки-индикатора по умолчанию.

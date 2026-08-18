@@ -9,15 +9,11 @@
  *  - семантический тон через проп `tone`
  *  - долю заполнения через проп `value`
  *  - подпись с процентом через проп `showText`
- *  - тон подписи через проп `textTone`
- *  - размер подписи через проп `textSize`
- *  - курсив подписи через проп `textItalic`
  *
  * Основные задачи:
  * 1. Экспортировать компонент ProgressBar
  * 2. Типизировать пропсы через `ProgressBarProps`
- * 3. Экспортировать тип `ProgressBarShowTextProps`
- * 4. Выставлять `role="progressbar"` и `aria-valuenow` для скринридеров
+ * 3. Выставлять `role="progressbar"` и `aria-valuenow` для скринридеров
  *
  * Потребители:
  *  - страницы и виджеты приложения — показывают ход выполнения операций
@@ -27,7 +23,7 @@
 import { type ComponentPropsWithRef } from 'react';
 
 import { getTextSize } from '@ui/presets';
-import { Text, type TextSizePreset, type TextTonePreset } from '@ui/text';
+import { Text } from '@ui/text';
 
 import {
   StyledProgressBar,
@@ -44,40 +40,13 @@ import {
 const DEFAULT_PROGRESS_BAR_SHOW_TEXT = true;
 
 /**
- * DEFAULT_PROGRESS_BAR_TEXT_TONE — задаёт тон подписи по умолчанию.
- * Подпись контрола — вторичный текст, поэтому `muted`.
- */
-const DEFAULT_PROGRESS_BAR_TEXT_TONE: TextTonePreset = 'muted';
-
-/**
- * ProgressBarShowTextProps — представляет пропсы подписи ProgressBar.
- * Поля подписи допустимы, пока `showText` не выключен: дефолт флага — подпись есть.
+ * ProgressBarProps — представляет пропсы компонента ProgressBar.
  *
  * @property showText — включает подпись с процентом выполнения рядом с полосой
- * @property textItalic — включает курсив подписи
- * @property textSize — размер подписи
- * @property textTone — тон подписи
  */
-type ProgressBarShowTextProps =
-  | {
-      showText: false;
-      textItalic?: never;
-      textSize?: never;
-      textTone?: never;
-    }
-  | {
-      showText?: true;
-      textItalic?: boolean;
-      textSize?: TextSizePreset;
-      textTone?: TextTonePreset;
-    };
-
-/**
- * ProgressBarProps — представляет пропсы компонента ProgressBar.
- */
-type ProgressBarProps = ProgressBarStyleProps &
-  ProgressBarShowTextProps &
-  Omit<
+type ProgressBarProps = ProgressBarStyleProps & {
+  showText?: boolean;
+} & Omit<
     ComponentPropsWithRef<'div'>,
     'className' | 'style' | keyof ProgressBarStyleProps
   >;
@@ -94,9 +63,6 @@ function ProgressBar({
   'aria-labelledby': ariaLabelledBy,
   showText = DEFAULT_PROGRESS_BAR_SHOW_TEXT,
   sizePreset,
-  textItalic,
-  textSize,
-  textTone = DEFAULT_PROGRESS_BAR_TEXT_TONE,
   tone,
   value,
   ...rest
@@ -120,9 +86,7 @@ function ProgressBar({
       {showText && (
         <Text
           aria-hidden={true}
-          italic={textItalic}
-          sizePreset={textSize ?? getTextSize(sizePreset)}
-          tone={textTone}
+          sizePreset={getTextSize(sizePreset)}
           whiteSpace="nowrap"
         >
           {percent}%
@@ -132,4 +96,4 @@ function ProgressBar({
   );
 }
 
-export { ProgressBar, type ProgressBarShowTextProps };
+export { ProgressBar };

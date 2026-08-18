@@ -148,9 +148,6 @@ export function ToastProvider({ children }: ToastProviderProps) {
             <Toast
               key={toast.id}
               sizePreset={toast.sizePreset}
-              textItalic={toast.textItalic}
-              textSize={toast.textSize}
-              textTone={toast.textTone}
               tone={toast.tone}
               onClick={() => dismiss(toast.id)}
             >

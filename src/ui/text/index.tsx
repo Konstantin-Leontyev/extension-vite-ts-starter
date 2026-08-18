@@ -79,22 +79,6 @@ type TextListItemTag = 'li';
 type TextTag = TextCaptionTag | TextHeadingTag | TextListItemTag | TextPlainTag;
 
 /**
- * TextNodeStyleProps — представляет пропсы стилизации текстового узла с префиксом имён.
- * Входит в пакет `TextNodeProps`.
- *
- * @template Prefix префикс имён пропсов, например `title` или `subtitle`
- */
-type TextNodeStyleProps<Prefix extends string> = {
-  [K in `${Prefix}Align`]?: TextAlignPreset;
-} & {
-  [K in `${Prefix}Italic`]?: boolean;
-} & {
-  [K in `${Prefix}Size`]?: TextSizePreset;
-} & {
-  [K in `${Prefix}Tone`]?: TextTonePreset;
-};
-
-/**
  * TextNodeProps — представляет пропсы текстового узла.
  * Поля узла допустимы только вместе с ведущей строкой `${Prefix}`.
  * Уровень заголовка `titleLevel` входит в пакет только при префиксе `title`.
@@ -106,8 +90,15 @@ type TextNodeStyleProps<Prefix extends string> = {
 type TextNodeProps<Prefix extends string> = AllOrNone<
   {
     [K in Prefix]: string;
-  } & TextNodeStyleProps<Prefix> &
-    (Prefix extends 'title' ? { titleLevel?: TextHeadingTag } : Record<never, never>)
+  } & {
+    [K in `${Prefix}Align`]?: TextAlignPreset;
+  } & {
+    [K in `${Prefix}Italic`]?: boolean;
+  } & {
+    [K in `${Prefix}Size`]?: TextSizePreset;
+  } & {
+    [K in `${Prefix}Tone`]?: TextTonePreset;
+  } & (Prefix extends 'title' ? { titleLevel?: TextHeadingTag } : Record<never, never>)
 >;
 
 /**
