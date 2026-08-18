@@ -119,6 +119,7 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
         fill={state.iconFill}
         iconOptions={COMBOBOX_OPTIONS}
         iconValue={state.iconKey}
+        labelPrefix="Icon"
         position={state.iconPosition}
         shape={state.iconShape}
         show={state.withIcon}
@@ -134,16 +135,15 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
       <TextGroup
         contents={[
           {
-            label: 'Text:',
             value: state.text,
             onChange: (value) => onChange('text', value),
           },
         ]}
         italic={state.textItalic}
+        labelPrefix="Text"
         size={state.textSize}
         tones={[
           {
-            label: 'Text tone:',
             value: state.textTone,
             onChange: (tone) => onChange('textTone', tone),
           },

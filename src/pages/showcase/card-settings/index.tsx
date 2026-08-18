@@ -51,12 +51,12 @@ const DEFAULT_CARD_HEADER_ACTION_ICON_PADDING = getIconPadding(
  * @property subtitle — подзаголовок
  * @property subtitleAlign — выравнивание подзаголовка
  * @property subtitleItalic — включает курсив подзаголовка
- * @property subtitleSizePreset — размер подзаголовка
+ * @property subtitleSize — размер подзаголовка
  * @property subtitleTone — тон подзаголовка
  * @property title — заголовок
  * @property titleAlign — выравнивание заголовка
  * @property titleItalic — включает курсив заголовка
- * @property titleSizePreset — размер заголовка
+ * @property titleSize — размер заголовка
  * @property titleTone — тон заголовка
  */
 export type CardWidgetState = {
@@ -69,12 +69,12 @@ export type CardWidgetState = {
   subtitle: string;
   subtitleAlign?: TextAlignPreset;
   subtitleItalic: boolean;
-  subtitleSizePreset?: TextSizePreset;
+  subtitleSize?: TextSizePreset;
   subtitleTone: TextTone;
   title: string;
   titleAlign?: TextAlignPreset;
   titleItalic: boolean;
-  titleSizePreset: TextSizePreset;
+  titleSize: TextSizePreset;
   titleTone: TextTone;
 };
 
@@ -124,7 +124,7 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
         italic={state.titleItalic}
         labelPrefix="Title"
         set
-        size={state.titleSizePreset}
+        size={state.titleSize}
         tones={[
           {
             value: state.titleTone,
@@ -133,7 +133,7 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
         ]}
         onAlignChange={(align) => onChange('titleAlign', align)}
         onItalicChange={(value) => onChange('titleItalic', value)}
-        onSizeChange={(size) => onChange('titleSizePreset', size)}
+        onSizeChange={(size) => onChange('titleSize', size)}
       />
 
       <TextGroup
@@ -147,7 +147,7 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
         italic={state.subtitleItalic}
         labelPrefix="Subtitle"
         set
-        size={state.subtitleSizePreset}
+        size={state.subtitleSize}
         tones={[
           {
             value: state.subtitleTone,
@@ -156,7 +156,7 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
         ]}
         onAlignChange={(align) => onChange('subtitleAlign', align)}
         onItalicChange={(value) => onChange('subtitleItalic', value)}
-        onSizeChange={(size) => onChange('subtitleSizePreset', size)}
+        onSizeChange={(size) => onChange('subtitleSize', size)}
       />
 
       <ShapeListbox

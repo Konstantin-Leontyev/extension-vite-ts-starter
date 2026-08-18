@@ -26,14 +26,12 @@ import { TextGroup } from '../text-group';
 /**
  * RadioButtonWidgetState — представляет состояние настроек компонента RadioButton в витрине дизайн-системы.
  * Часть ключей задаёт общие пропсы обоих переключателей в демо, остальные — отдельные параметры вариантов A и B.
- * Витринные ключи: `showText` управляет передачей подписей в превью, `textA` и `textB`
- * хранят содержимое `children` вариантов.
+ * Витринные ключи: `textA` и `textB` хранят содержимое `children` вариантов.
  * Используется для синхронизации значений между панелью управления и демонстрационной парой переключателей.
  *
  * @property disabledA — включает недоступное состояние варианта A
  * @property disabledB — включает недоступное состояние варианта B
  * @property selected — активный вариант в группе
- * @property showText — витринный ключ показа подписей. Выключенный — кружки без обёртки
  * @property sizePreset — размер переключателя
  * @property textA — подпись варианта A
  * @property textB — подпись варианта B
@@ -45,7 +43,6 @@ export type RadioButtonWidgetState = {
   disabledA: boolean;
   disabledB: boolean;
   selected: 'a' | 'b';
-  showText: boolean;
   sizePreset: SizePreset;
   textA: string;
   textB: string;
@@ -119,14 +116,11 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
           },
         ]}
         italic={state.textItalic}
-        show={{
-          checked: state.showText,
-          onChange: (checked) => onChange('showText', checked),
-        }}
+        labelPrefix="Text"
+        set
         size={state.textSize}
         tones={[
           {
-            label: 'Text tone:',
             value: state.textTone,
             onChange: (tone) => onChange('textTone', tone),
           },

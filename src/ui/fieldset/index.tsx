@@ -7,8 +7,9 @@
  *  - тон рамки через проп `borderTone`
  *  - заголовок группы через проп `label` в `<legend>`
  *  - тон заголовка через проп `legendTone`
- *  - размер заголовка через проп `legendSizePreset`
+ *  - размер заголовка через проп `legendSize`
  *  - курсив заголовка через проп `legendItalic`
+ *  - выравнивание заголовка через проп `legendAlign`
  *  - содержимое группы через `children`
  *
  * Основные задачи:
@@ -24,7 +25,12 @@
 
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
-import { Text, type TextSizePreset, type TextTone } from '@ui/text';
+import {
+  Text,
+  type TextNodeStyleProps,
+  type TextSizePreset,
+  type TextTone,
+} from '@ui/text';
 
 import {
   FIELDSET_BORDER_TONE_KEYS,
@@ -50,17 +56,12 @@ const DEFAULT_FIELDSET_LEGEND_TONE: TextTone = 'muted';
  *
  * @property children — содержимое группы
  * @property label — заголовок в `<legend>`
- * @property legendItalic — включает курсив заголовка
- * @property legendSizePreset — размер заголовка
- * @property legendTone — тон заголовка
  */
 type FieldsetProps = {
   children?: ReactNode;
   label: string;
-  legendItalic?: boolean;
-  legendSizePreset?: TextSizePreset;
-  legendTone?: TextTone;
-} & FieldsetStyleProps &
+} & TextNodeStyleProps<'legend'> &
+  FieldsetStyleProps &
   Omit<
     ComponentPropsWithRef<'fieldset'>,
     'className' | 'style' | keyof FieldsetStyleProps
@@ -77,18 +78,20 @@ type FieldsetProps = {
 function Fieldset({
   children,
   label,
+  legendAlign,
   legendItalic,
-  legendSizePreset = DEFAULT_FIELDSET_LEGEND_SIZE_PRESET,
+  legendSize = DEFAULT_FIELDSET_LEGEND_SIZE_PRESET,
   legendTone = DEFAULT_FIELDSET_LEGEND_TONE,
   ...rest
 }: FieldsetProps) {
   return (
     <StyledFieldset {...rest}>
       <Text
+        align={legendAlign}
         as="legend"
         italic={legendItalic}
         paddingInline={4}
-        sizePreset={legendSizePreset}
+        sizePreset={legendSize}
         tone={legendTone}
       >
         {label}

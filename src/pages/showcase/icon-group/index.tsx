@@ -7,9 +7,9 @@
  *  - тон глифа иконки через проп `fill`
  *  - опции глифов через проп `iconOptions`. Без `iconOptions` контрол `Icon:` не рендерится
  *  - ключ глифа через проп `iconValue`
- *  - префикс подписей контролов через проп `labelPrefix`. Пустой префикс даёт подписи
- *    без него, например `Tone:` и `Fill:` у панели Icon. Сегменты SegmentButton
- *    передают `Icon A` и `Icon B`
+ *  - префикс подписей контролов через проп `labelPrefix`. Без пропа подписи
+ *    без префикса, например `Tone:` и `Fill:` у панели Icon. Сегменты SegmentButton
+ *    передают `Left icon` и `Right icon`
  *  - обработчик изменения тона глифа через проп `onFillChange`
  *  - обработчик изменения ключа глифа через проп `onIconChange`
  *  - обработчик изменения позиции через проп `onPositionChange`. Без `onPositionChange`
@@ -79,19 +79,13 @@ function getIconPositionListboxOptions(): ListboxOption[] {
 }
 
 /**
- * DEFAULT_ICON_GROUP_LABEL_PREFIX — задаёт префикс подписей контролов по умолчанию.
- * Используется, когда вызывающий код не передал проп `labelPrefix`.
- */
-const DEFAULT_ICON_GROUP_LABEL_PREFIX = 'Icon';
-
-/**
  * IconGroupProps — представляет пропсы компонента IconGroup.
  *
  * @property fill — текущий тон глифа иконки
  * @property iconOptions — опции Combobox с глифами. Без него контрол `Icon:` не рендерится
  * @property iconValue — текущий ключ глифа
  * @property labelPrefix — префикс подписей контролов, например `Icon A`.
- *   Пустая строка даёт подписи без префикса
+ *   Без пропа подписи без префикса
  * @property onFillChange — обработчик изменения тона глифа
  * @property onIconChange — обработчик изменения ключа глифа
  * @property onPositionChange — обработчик изменения позиции. Без него контрол позиции
@@ -143,12 +137,11 @@ type IconGroupProps = {
  *   onShowChange={(checked) => onChange('withIcon', checked)}
  *   onToneChange={(tone) => onChange('iconTone', tone)}
  * />
- * // Icon: без позиции и флага показа, пустой префикс
+ * // Icon: без позиции, флага показа и префикса
  * <IconGroup
  *   fill={state.iconFill}
  *   iconOptions={COMBOBOX_OPTIONS}
  *   iconValue={state.iconKey}
- *   labelPrefix=""
  *   tone={state.iconTone}
  *   onFillChange={(tone) => onChange('iconFill', tone)}
  *   onIconChange={(value) => onChange('iconKey', value as IconKey)}
@@ -159,7 +152,7 @@ export function IconGroup({
   fill,
   iconOptions,
   iconValue,
-  labelPrefix = DEFAULT_ICON_GROUP_LABEL_PREFIX,
+  labelPrefix,
   onFillChange,
   onIconChange,
   onPositionChange,

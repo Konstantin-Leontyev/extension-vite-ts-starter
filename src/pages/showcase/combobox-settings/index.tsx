@@ -95,6 +95,7 @@ export function ComboboxSettings({ onChange, state }: ComboboxSettingsProps) {
 
       <IconGroup
         fill={state.iconFill}
+        labelPrefix="Icon"
         position={state.iconPosition}
         tone={state.iconTone}
         onFillChange={(tone) => onChange('iconFill', tone)}

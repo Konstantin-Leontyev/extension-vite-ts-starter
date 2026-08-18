@@ -136,6 +136,7 @@ export function SearchFieldSettings({ onChange, state }: SearchFieldSettingsProp
         fill={state.iconFill}
         iconOptions={COMBOBOX_OPTIONS}
         iconValue={state.iconKey}
+        labelPrefix="Icon"
         position={state.iconPosition}
         shape={state.iconShape}
         show={state.showIcon}
@@ -167,7 +168,7 @@ export function SearchFieldSettings({ onChange, state }: SearchFieldSettingsProp
         ]}
         italic={state.textItalic}
         labelPrefix="Text"
-        showOptionsWithEmptyContent
+        set
         onAlignChange={(align) => onChange('textAlign', align)}
         onItalicChange={(value) => onChange('textItalic', value)}
       />

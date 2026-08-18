@@ -26,13 +26,12 @@ import { ToneListbox } from '../tone-listbox';
 
 /**
  * SwitchWidgetState — представляет состояние настроек компонента Switch в витрине дизайн-системы.
- * Ключи совпадают с именами пропов компонента Switch, кроме витринных ключей:
- * `showText` управляет передачей подписи в превью, `text` хранит содержимое `children`.
+ * Ключи совпадают с именами пропов компонента Switch, кроме витринного ключа:
+ * `text` хранит содержимое `children`.
  * Используется для синхронизации значений между панелью управления и демонстрационным тумблером.
  *
  * @property checked — включает тумблер
  * @property disabled — включает недоступное состояние
- * @property showText — витринный ключ показа подписи. Выключенный — дорожка без подписи
  * @property sizePreset — размер дорожки
  * @property text — подпись тумблера
  * @property textItalic — включает курсив подписи
@@ -43,7 +42,6 @@ import { ToneListbox } from '../tone-listbox';
 export type SwitchWidgetState = {
   checked: boolean;
   disabled: boolean;
-  showText: boolean;
   sizePreset: SizePreset;
   text: string;
   textItalic: boolean;
@@ -95,20 +93,16 @@ export function SwitchSettings({ onChange, state }: SwitchSettingsProps) {
       <TextGroup
         contents={[
           {
-            label: 'Text:',
             value: state.text,
             onChange: (value) => onChange('text', value),
           },
         ]}
         italic={state.textItalic}
-        show={{
-          checked: state.showText,
-          onChange: (checked) => onChange('showText', checked),
-        }}
+        labelPrefix="Text"
+        set
         size={state.textSize}
         tones={[
           {
-            label: 'Text tone:',
             value: state.textTone,
             onChange: (tone) => onChange('textTone', tone),
           },

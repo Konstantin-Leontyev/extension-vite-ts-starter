@@ -28,8 +28,8 @@ import { ToneListbox } from '../tone-listbox';
 
 /**
  * TagWidgetState — представляет состояние настроек компонента Tag в витрине дизайн-системы.
- * Ключи совпадают с именами пропов компонента Tag, кроме витринных ключей:
- * `showText` управляет передачей содержимого в превью, `text` хранит содержимое `children`.
+ * Ключи совпадают с именами пропов компонента Tag, кроме витринного ключа:
+ * `text` хранит содержимое `children`.
  * Используется для синхронизации значений между панелью управления и демонстрационной меткой.
  *
  * @property borderTone — тон рамки при включённом `showBorder`
@@ -38,7 +38,6 @@ import { ToneListbox } from '../tone-listbox';
  * @property showBorder — включает рамку
  * @property showDot — включает точку-индикатор
  * @property showShadow — включает тень при включённой рамке
- * @property showText — витринный ключ показа текста. Выключенный — метка без текста
  * @property sizePreset — размер метки
  * @property text — содержимое метки
  * @property textItalic — включает курсив текста метки
@@ -54,7 +53,6 @@ export type TagWidgetState = {
   showBorder: boolean;
   showDot: boolean;
   showShadow: boolean;
-  showText: boolean;
   sizePreset: TagSizePreset;
   text: string;
   textItalic: boolean;
@@ -147,20 +145,16 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
       <TextGroup
         contents={[
           {
-            label: 'Text:',
             value: state.text,
             onChange: (value) => onChange('text', value),
           },
         ]}
         italic={state.textItalic}
-        show={{
-          checked: state.showText,
-          onChange: (checked) => onChange('showText', checked),
-        }}
+        labelPrefix="Text"
+        set
         size={state.textSize}
         tones={[
           {
-            label: 'Text tone:',
             value: state.textTone,
             onChange: (tone) => onChange('textTone', tone),
           },

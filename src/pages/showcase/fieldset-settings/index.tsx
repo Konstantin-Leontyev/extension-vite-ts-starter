@@ -13,7 +13,7 @@
  */
 
 import { FIELDSET_BORDER_TONE_KEYS, type FieldsetBorderTone } from '@ui/fieldset';
-import { type TextSizePreset, type TextTone } from '@ui/text';
+import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
 
 import { StyledSettingsForm } from '../showcase.styles';
 import { TextGroup } from '../text-group';
@@ -28,16 +28,18 @@ import { ToneListbox } from '../tone-listbox';
  *
  * @property borderTone — тон рамки
  * @property label — заголовок в `<legend>`
+ * @property legendAlign — выравнивание заголовка
  * @property legendItalic — включает курсив заголовка
- * @property legendSizePreset — размер заголовка
+ * @property legendSize — размер заголовка
  * @property legendTone — тон заголовка
  * @property selected — витринный ключ активного варианта демо-группы
  */
 export type FieldsetWidgetState = {
   borderTone: FieldsetBorderTone;
   label: string;
+  legendAlign?: TextAlignPreset;
   legendItalic: boolean;
-  legendSizePreset: TextSizePreset;
+  legendSize: TextSizePreset;
   legendTone: TextTone;
   selected: 'a' | 'b';
 };
@@ -73,6 +75,7 @@ export function FieldsetSettings({ onChange, state }: FieldsetSettingsProps) {
       />
 
       <TextGroup
+        align={state.legendAlign}
         contents={[
           {
             value: state.label,
@@ -81,15 +84,16 @@ export function FieldsetSettings({ onChange, state }: FieldsetSettingsProps) {
         ]}
         italic={state.legendItalic}
         labelPrefix="Legend"
-        size={state.legendSizePreset}
+        size={state.legendSize}
         tones={[
           {
             value: state.legendTone,
             onChange: (tone) => onChange('legendTone', tone),
           },
         ]}
+        onAlignChange={(align) => onChange('legendAlign', align)}
         onItalicChange={(value) => onChange('legendItalic', value)}
-        onSizeChange={(size) => onChange('legendSizePreset', size)}
+        onSizeChange={(size) => onChange('legendSize', size)}
       />
     </StyledSettingsForm>
   );

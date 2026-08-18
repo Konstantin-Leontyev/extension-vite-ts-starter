@@ -17,15 +17,18 @@
 
 /**
  * resolveGroupFieldLabel — возвращает подпись контрола группы из префикса и имени поля.
- * С префиксом — `Text size:`, `Icon tone:`. С пустым префиксом слово поля
+ * С префиксом — `Text size:`, `Icon tone:`. Без префикса слово поля
  * начинает подпись с заглавной буквы — `Size:`, `Tone:`.
  *
  * @param labelPrefix префикс подписей контролов
  * @param field имя поля в нижнем регистре, например `size`
  * @returns подпись контрола с двоеточием
  */
-export function resolveGroupFieldLabel(labelPrefix: string, field: string): string {
-  if (labelPrefix === '') {
+export function resolveGroupFieldLabel(
+  labelPrefix: string | undefined,
+  field: string
+): string {
+  if (labelPrefix === undefined) {
     return `${field.charAt(0).toUpperCase()}${field.slice(1)}:`;
   }
 
@@ -34,14 +37,17 @@ export function resolveGroupFieldLabel(labelPrefix: string, field: string): stri
 
 /**
  * resolveGroupContentLabel — возвращает подпись инпута содержимого из префикса и сущности.
- * С префиксом — `Text:`, `Icon A:`. С пустым префиксом — `{entity}:`.
+ * С префиксом — `Text:`, `Icon A:`. Без префикса — `{entity}:`.
  *
  * @param labelPrefix префикс подписей контролов
  * @param entity имя сущности с заглавной буквы, например `Text` или `Icon`
  * @returns подпись содержимого с двоеточием
  */
-export function resolveGroupContentLabel(labelPrefix: string, entity: string): string {
-  if (labelPrefix === '') {
+export function resolveGroupContentLabel(
+  labelPrefix: string | undefined,
+  entity: string
+): string {
+  if (labelPrefix === undefined) {
     return `${entity}:`;
   }
 
@@ -51,9 +57,9 @@ export function resolveGroupContentLabel(labelPrefix: string, entity: string): s
 /**
  * resolveGroupFlagLabel — возвращает подпись чекбокса флага из глагола, префикса
  * и сущности.
- * С пустым префиксом — `{verb} {entity}`, например `Show text`, `Disable action`.
+ * Без префикса — `{verb} {entity}`, например `Show text`, `Disable action`.
  * С префиксом — глагол и префикс с пониженной только первой буквой — `Show legend`,
- * `Disable action 1`. У `Set` к подписи добавляется двоеточие — `Set title:`.
+ * `Disable action 1`, `Set title`.
  *
  * @param labelPrefix префикс подписей контролов
  * @param entity имя сущности с заглавной буквы, например `Text` или `Icon`
@@ -62,18 +68,14 @@ export function resolveGroupContentLabel(labelPrefix: string, entity: string): s
  * @returns подпись чекбокса флага
  */
 export function resolveGroupFlagLabel(
-  labelPrefix: string,
+  labelPrefix: string | undefined,
   entity: string,
   verb: 'Disable' | 'Set' | 'Show'
 ): string {
   const noun =
-    labelPrefix === ''
+    labelPrefix === undefined
       ? entity.toLowerCase()
       : `${labelPrefix.charAt(0).toLowerCase()}${labelPrefix.slice(1)}`;
-
-  if (verb === 'Set') {
-    return `${verb} ${noun}:`;
-  }
 
   return `${verb} ${noun}`;
 }

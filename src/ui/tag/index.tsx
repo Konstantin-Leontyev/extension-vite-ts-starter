@@ -30,9 +30,9 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef } from 'react';
+import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
-import { Text, type ChildrenTextProps } from '@ui/text';
+import { Text, type TextNodeStyleProps } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import {
@@ -63,10 +63,13 @@ type TagShowDotProps =
 
 /**
  * TagProps — представляет пропсы компонента Tag.
+ *
+ * @property children — содержимое метки
  */
 type TagProps = TagShowDotProps &
-  ChildrenTextProps &
-  TagStyleProps &
+  Omit<TextNodeStyleProps<'text'>, 'textAlign'> & {
+    children?: ReactNode;
+  } & TagStyleProps &
   Omit<
     ComponentPropsWithRef<'span'>,
     'children' | 'className' | 'style' | keyof TagStyleProps

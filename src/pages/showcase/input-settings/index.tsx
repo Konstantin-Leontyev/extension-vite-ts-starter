@@ -127,7 +127,7 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         ]}
         italic={state.textItalic}
         labelPrefix="Text"
-        showOptionsWithEmptyContent
+        set
         onAlignChange={(align) => onChange('textAlign', align)}
         onItalicChange={(value) => onChange('textItalic', value)}
       />

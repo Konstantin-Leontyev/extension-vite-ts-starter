@@ -247,6 +247,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
           },
         ]}
         italic={state.textItalic}
+        labelPrefix="Text"
         size={state.textSize}
         tones={[
           {

@@ -25,12 +25,11 @@ import { ToneListbox } from '../tone-listbox';
 
 /**
  * SpinnerWidgetState — представляет состояние настроек компонента Spinner в витрине дизайн-системы.
- * Ключи совпадают с именами пропов компонента Spinner, кроме витринных ключей:
- * `showText` управляет передачей подписи в превью, `text` хранит содержимое `children`.
+ * Ключи совпадают с именами пропов компонента Spinner, кроме витринного ключа:
+ * `text` хранит содержимое `children`.
  * Используется для синхронизации значений между панелью управления и демонстрационным индикатором.
  *
  * @property reserveTextSpace — включает резерв высоты под подпись
- * @property showText — витринный ключ показа подписи. Выключенный — индикатор без подписи
  * @property sizePreset — размер спиннера
  * @property text — подпись под индикатором
  * @property textItalic — включает курсив подписи
@@ -40,7 +39,6 @@ import { ToneListbox } from '../tone-listbox';
  */
 export type SpinnerWidgetState = {
   reserveTextSpace: boolean;
-  showText: boolean;
   sizePreset: SizePreset;
   text: string;
   textItalic: boolean;
@@ -92,20 +90,16 @@ export function SpinnerSettings({ onChange, state }: SpinnerSettingsProps) {
       <TextGroup
         contents={[
           {
-            label: 'Text:',
             value: state.text,
             onChange: (value) => onChange('text', value),
           },
         ]}
         italic={state.textItalic}
-        show={{
-          checked: state.showText,
-          onChange: (checked) => onChange('showText', checked),
-        }}
+        labelPrefix="Text"
+        set
         size={state.textSize}
         tones={[
           {
-            label: 'Text tone:',
             value: state.textTone,
             onChange: (tone) => onChange('textTone', tone),
           },

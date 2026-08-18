@@ -34,7 +34,7 @@
  *  - резерв высоты под строку ошибки через проп `reserveErrorSpace`
  *  - заголовок панели через проп `title`
  *  - тон заголовка панели через проп `titleTone`
- *  - размер заголовка панели через проп `titleSizePreset`
+ *  - размер заголовка панели через проп `titleSize`
  *  - курсив заголовка панели через проп `titleItalic`
  *  - выравнивание заголовка панели через проп `titleAlign`
  *  - плейсхолдер поля `to` через проп `toPlaceholder`
@@ -420,7 +420,7 @@ export function RangeInput({
   title,
   titleAlign = DEFAULT_RANGE_INPUT_TITLE_ALIGN,
   titleItalic,
-  titleSizePreset,
+  titleSize,
   titleTone,
   toPlaceholder = DEFAULT_RANGE_INPUT_TO_PLACEHOLDER,
   validate,
@@ -730,7 +730,7 @@ export function RangeInput({
                 as="h2"
                 id={titleId}
                 italic={titleItalic}
-                sizePreset={titleSizePreset}
+                sizePreset={titleSize}
                 tone={titleTone}
               >
                 {title}

@@ -71,7 +71,7 @@ export function TextSettings({ onChange, state }: TextSettingsProps) {
           onChange: (checked) => onChange('ellipsis', checked),
         }}
         italic={state.italic}
-        labelPrefix=""
+        set={{ label: 'Set sample' }}
         size={state.sizePreset}
         tones={[
           {

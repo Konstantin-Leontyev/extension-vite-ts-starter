@@ -71,7 +71,7 @@ import { ToneListbox } from '../tone-listbox';
  * @property title — заголовок панели
  * @property titleAlign — выравнивание заголовка панели
  * @property titleItalic — включает курсив заголовка панели
- * @property titleSizePreset — размер заголовка панели
+ * @property titleSize — размер заголовка панели
  * @property titleTone — тон заголовка панели
  * @property toPlaceholder — плейсхолдер поля `to`
  * @property validationMessages — тексты встроенной валидации
@@ -100,7 +100,7 @@ export type RangeInputWidgetState = {
   title: string;
   titleAlign: TextAlignPreset;
   titleItalic: boolean;
-  titleSizePreset: TextSizePreset;
+  titleSize: TextSizePreset;
   titleTone: TextTone;
   toPlaceholder: string;
   validationMessages: ResolvedRangeInputValidationMessages;
@@ -150,6 +150,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
 
       <IconGroup
         fill={state.iconFill}
+        labelPrefix="Icon"
         position={state.iconPosition}
         tone={state.iconTone}
         onFillChange={(tone) => onChange('iconFill', tone)}
@@ -186,7 +187,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         italic={state.titleItalic}
         labelPrefix="Title"
         set
-        size={state.titleSizePreset}
+        size={state.titleSize}
         tones={[
           {
             value: state.titleTone,
@@ -195,7 +196,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         ]}
         onAlignChange={(align) => onChange('titleAlign', align)}
         onItalicChange={(value) => onChange('titleItalic', value)}
-        onSizeChange={(size) => onChange('titleSizePreset', size)}
+        onSizeChange={(size) => onChange('titleSize', size)}
       />
 
       <SizeListbox

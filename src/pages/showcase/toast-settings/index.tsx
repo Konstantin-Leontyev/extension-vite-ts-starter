@@ -86,16 +86,15 @@ export function ToastSettings({ onChange, state }: ToastSettingsProps) {
       <TextGroup
         contents={[
           {
-            label: 'Text:',
             value: state.message,
             onChange: (value) => onChange('message', value),
           },
         ]}
         italic={state.textItalic}
+        labelPrefix="Text"
         size={state.textSize}
         tones={[
           {
-            label: 'Text tone:',
             value: state.textTone,
             onChange: (tone) => onChange('textTone', tone),
           },

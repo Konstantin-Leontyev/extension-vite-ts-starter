@@ -122,6 +122,7 @@ export function ProgressBarSettings({ onChange, state }: ProgressBarSettingsProp
 
       <TextGroup
         italic={state.textItalic}
+        labelPrefix="Text"
         show={{
           checked: state.showText,
           onChange: (checked) => onChange('showText', checked),
@@ -129,7 +130,6 @@ export function ProgressBarSettings({ onChange, state }: ProgressBarSettingsProp
         size={state.textSize}
         tones={[
           {
-            label: 'Text tone:',
             value: state.textTone,
             onChange: (tone) => onChange('textTone', tone),
           },

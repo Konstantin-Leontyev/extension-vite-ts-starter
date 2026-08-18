@@ -8,8 +8,8 @@
  *  - поля содержимого через проп `contents`. Без `contents` поля ввода не рендерятся
  *  - обрезание с многоточием через проп `ellipsis`. Без `ellipsis` флаг не рендерится
  *  - курсив через проп `italic`
- *  - префикс подписей контролов через проп `labelPrefix`. Пустой префикс даёт подписи
- *    без него, например `Size:` у панели Text
+ *  - префикс подписей контролов через проп `labelPrefix`. Без пропа подписи
+ *    без префикса, например `Size:` у панели Text
  *  - обработчик изменения выравнивания через проп `onAlignChange`. Без него контрол
  *    выравнивания не рендерится
  *  - обработчик изменения курсива через проп `onItalicChange`
@@ -20,10 +20,8 @@
  *    у текста ошибки панели Input
  *  - флаг `Set*` через проп `set` — чекбокс необязательного содержимого. Отметка
  *    живёт локально. Непустой текст — чекбокса нет; пустое поле после blur
- *    схлопывается в `Set title:`. `show` и `set` взаимно исключены
- *  - показ опций стилей при пустом содержимом через проп `showOptionsWithEmptyContent`.
- *    По умолчанию выключен. Эталон — Text-группа Input: плейсхолдер снаружи группы
- *    делит типографику с текстом поля
+ *    схлопывается в `Set title`. Опциональный `set.label` задаёт подпись.
+ *    `show` и `set` взаимно исключены
  *  - размер текста через проп `size`
  *  - листбоксы тона через проп `tones`
  *
@@ -89,7 +87,7 @@ import { ToneListbox } from '../tone-listbox';
  * TextGroupContent — представляет одно поле ввода содержимого текстовой группы.
  *
  * @property label — подпись поля, например `Text A:` или `Sample:`. Без значения
- *   собирается из `labelPrefix` — `Text:`, `Legend:`. При пустом префиксе — `Text:`
+ *   собирается из `labelPrefix` — `Text:`, `Legend:`. Без префикса — `Text:`
  * @property onChange — обработчик изменения содержимого
  * @property value — текущее содержимое
  */
@@ -105,7 +103,7 @@ type TextGroupContent = {
  * например сегменты SegmentButton.
  *
  * @property label — подпись листбокса, например `Text A tone:`. Без значения
- *   собирается из `labelPrefix` — `Text tone:`, `Legend tone:`. При пустом префиксе — `Tone:`
+ *   собирается из `labelPrefix` — `Text tone:`, `Legend tone:`. Без префикса — `Tone:`
  * @property onChange — обработчик изменения тона
  * @property value — текущий тон. Без значения листбокс показывает `neutral`
  */
@@ -114,19 +112,6 @@ type TextGroupTone = {
   onChange: (tone: TextTone) => void;
   value?: TextTone;
 };
-
-/**
- * DEFAULT_TEXT_GROUP_LABEL_PREFIX — задаёт префикс подписей контролов по умолчанию.
- * Используется, когда вызывающий код не передал проп `labelPrefix`.
- */
-const DEFAULT_TEXT_GROUP_LABEL_PREFIX = 'Text';
-
-/**
- * DEFAULT_TEXT_GROUP_SHOW_OPTIONS_WITH_EMPTY_CONTENT — задаёт показ опций стилей
- * при пустых `contents` по умолчанию.
- * Используется, когда вызывающий код не передал проп `showOptionsWithEmptyContent`.
- */
-const DEFAULT_TEXT_GROUP_SHOW_OPTIONS_WITH_EMPTY_CONTENT = false;
 
 /**
  * TextGroupBaseProps — представляет общие пропсы компонента TextGroup.
@@ -139,14 +124,12 @@ const DEFAULT_TEXT_GROUP_SHOW_OPTIONS_WITH_EMPTY_CONTENT = false;
  * @property italic — текущее значение курсива. Без пары `italic` / `onItalicChange`
  *   флаг не рендерится — у компонента нет пропа `italic`
  * @property labelPrefix — префикс подписей контролов, например `Legend`.
- *   Пустая строка даёт подписи без префикса
+ *   Без пропа подписи без префикса
  * @property onAlignChange — обработчик изменения выравнивания текста.
  *   Без него контрол выравнивания не рендерится — у компонента нет пропа `align`
  * @property onItalicChange — обработчик изменения курсива
  * @property onSizeChange — обработчик изменения размера текста.
  *   Без него листбокс размера не рендерится
- * @property showOptionsWithEmptyContent — показывает контролы размера, выравнивания,
- *   тона, обрезания и курсива при пустых `contents`. По умолчанию выключен
  * @property size — текущий размер текста
  * @property tones — листбоксы тона: один или несколько по содержимым.
  *   Без значения или с пустым перечнем листбоксы тона не рендерятся
@@ -160,7 +143,6 @@ type TextGroupBaseProps = {
   onAlignChange?: (align: TextAlignPreset) => void;
   onItalicChange?: (value: boolean) => void;
   onSizeChange?: (size: TextSizePreset) => void;
-  showOptionsWithEmptyContent?: boolean;
   size?: TextSizePreset;
   tones?: readonly TextGroupTone[];
 };
@@ -180,11 +162,12 @@ type TextGroupRequiredText = {
  *
  * @property contents — поля ввода содержимого
  * @property set — флаг необязательного содержимого. Отметка живёт локально
- *   и наружу не поднимается
+ *   и наружу не поднимается. Поле `label` задаёт подпись чекбокса.
+ *   Без него подпись собирается из `labelPrefix`
  */
 type TextGroupSetFlag = {
   contents: readonly TextGroupContent[];
-  set: true;
+  set: { label?: string } | true;
   show?: never;
 };
 
@@ -208,8 +191,8 @@ type TextGroupShowFlag = {
  * TextGroupProps — представляет пропсы компонента TextGroup.
  * При переданных `contents` контролы размера, выравнивания, тона, обрезания и курсива
  * скрыты, пока все поля содержимого пустые: нет текста — не к чему применять настройки.
- * Исключение — `showOptionsWithEmptyContent`. Без `contents` эти контролы остаются —
- * содержимое генерируется компонентом, как процент ProgressBar.
+ * Без `contents` эти контролы остаются — содержимое генерируется компонентом,
+ * как процент ProgressBar.
  * Флаги `show` и `set` закрыты размеченным объединением: у группы либо зеркало
  * булева пропа, либо чекбокс необязательного содержимого, либо ни того ни другого.
  */
@@ -222,17 +205,14 @@ type TextGroupProps = TextGroupBaseProps &
  * @example
  * <TextGroup
  *   contents={[
- *     { label: 'Text:', value: state.text, onChange: (value) => onChange('text', value) },
+ *     { value: state.text, onChange: (value) => onChange('text', value) },
  *   ]}
  *   italic={state.textItalic}
+ *   labelPrefix="Text"
  *   show={{ checked: state.showText, onChange: (checked) => onChange('showText', checked) }}
  *   size={state.textSize}
  *   tones={[
- *     {
- *       label: 'Text tone:',
- *       value: state.textTone,
- *       onChange: (tone) => onChange('textTone', tone),
- *     },
+ *     { value: state.textTone, onChange: (tone) => onChange('textTone', tone) },
  *   ]}
  *   onItalicChange={(value) => onChange('textItalic', value)}
  *   onSizeChange={(size) => onChange('textSize', size)}
@@ -243,26 +223,27 @@ export function TextGroup({
   contents,
   ellipsis,
   italic,
-  labelPrefix = DEFAULT_TEXT_GROUP_LABEL_PREFIX,
+  labelPrefix,
   onAlignChange,
   onItalicChange,
   onSizeChange,
   set,
   show,
-  showOptionsWithEmptyContent = DEFAULT_TEXT_GROUP_SHOW_OPTIONS_WITH_EMPTY_CONTENT,
   size,
   tones,
 }: TextGroupProps) {
   const [isSetChecked, setIsSetChecked] = useState(false);
+  const [isContentFocused, setIsContentFocused] = useState(false);
   const contentInputRef = useRef<HTMLInputElement>(null);
   const setCheckboxRef = useRef<HTMLInputElement>(null);
   const shouldReturnFocusToSetCheckboxRef = useRef(false);
   const hasContentValue =
     contents === undefined || contents.some((content) => content.value.trim() !== '');
-  const isExpanded = set ? hasContentValue || isSetChecked : !show || show.checked;
-  const showSetCheckbox = Boolean(set) && !hasContentValue && !isSetChecked;
+  const isSetExpanded = hasContentValue || isSetChecked || isContentFocused;
+  const isExpanded = set ? isSetExpanded : !show || show.checked;
+  const showSetCheckbox = Boolean(set) && !isSetExpanded;
   const shouldFocusContent = Boolean(set) && isSetChecked && !hasContentValue;
-  const showTextOptions = hasContentValue || showOptionsWithEmptyContent;
+  const setLabel = typeof set === 'object' ? set.label : undefined;
 
   useLayoutEffect(() => {
     if (shouldReturnFocusToSetCheckboxRef.current) {
@@ -276,7 +257,13 @@ export function TextGroup({
     }
   }, [isSetChecked, shouldFocusContent]);
 
+  function handleContentFocus() {
+    setIsContentFocused(true);
+  }
+
   function handleContentBlur(event: FocusEvent<HTMLInputElement>) {
+    setIsContentFocused(false);
+
     if (!set || event.target.value.trim() !== '') {
       return;
     }
@@ -304,7 +291,7 @@ export function TextGroup({
 
       {showSetCheckbox && (
         <Checkbox checked={isSetChecked} ref={setCheckboxRef} onChange={handleSetChange}>
-          {resolveGroupFlagLabel(labelPrefix, 'Text', 'Set')}
+          {setLabel ?? resolveGroupFlagLabel(labelPrefix, 'Text', 'Set')}
         </Checkbox>
       )}
 
@@ -325,11 +312,12 @@ export function TextGroup({
                   content.onChange(event.target.value)
                 }
                 onClear={() => content.onChange('')}
+                onFocus={set ? handleContentFocus : undefined}
               />
             );
           })}
 
-          {showTextOptions && (
+          {hasContentValue && (
             <>
               {onSizeChange && (
                 <SizeListbox

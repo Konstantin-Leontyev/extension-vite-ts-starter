@@ -55,12 +55,7 @@ import {
   DEFAULT_TABLE_STRIPED,
 } from '@ui/table';
 import { Tag, getTagTextSize, type TagShowDotProps } from '@ui/tag';
-import {
-  Text,
-  resolveTextNodeProps,
-  type ChildrenTextProps,
-  type TextNodeProps,
-} from '@ui/text';
+import { Text, type TextNodeProps } from '@ui/text';
 import { Toast } from '@ui/toast';
 import { DEFAULT_TONE } from '@ui/tones';
 import { Toolbar } from '@ui/toolbar';
@@ -100,6 +95,7 @@ import {
   type SegmentButtonWidgetState,
 } from './segment-button-settings';
 import { COMBOBOX_OPTIONS, LIST_OPTIONS, getIcon } from './showcase-icon-options';
+import { resolveTextNodeProps } from './showcase-text-node';
 import {
   StyledMain,
   StyledRadioButtonDemo,
@@ -420,7 +416,7 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   title: 'Custom range:',
   titleAlign: 'center',
   titleItalic: false,
-  titleSizePreset: 'normal',
+  titleSize: 'normal',
   titleTone: DEFAULT_TONE,
   toPlaceholder: 'To',
   validationMessages: { ...DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES },
@@ -456,7 +452,6 @@ const DEFAULT_CHECKBOX_STATE: CheckboxWidgetState = {
   checkedMark: 'check',
   disabled: false,
   inverted: false,
-  showText: true,
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Example',
   textItalic: false,
@@ -473,7 +468,6 @@ const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
   disabledA: false,
   disabledB: false,
   selected: 'a',
-  showText: true,
   sizePreset: DEFAULT_SIZE_PRESET,
   textA: 'Option A',
   textB: 'Option B',
@@ -489,8 +483,9 @@ const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
 const DEFAULT_FIELDSET_STATE: FieldsetWidgetState = {
   borderTone: 'neutral',
   label: 'Label:',
+  legendAlign: undefined,
   legendItalic: false,
-  legendSizePreset: 'thin',
+  legendSize: 'thin',
   legendTone: 'muted',
   selected: 'a',
 };
@@ -515,7 +510,6 @@ const DEFAULT_PROGRESS_STATE: ProgressBarWidgetState = {
  */
 const DEFAULT_SPINNER_STATE: SpinnerWidgetState = {
   reserveTextSpace: false,
-  showText: true,
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Loading…',
   textItalic: false,
@@ -551,7 +545,6 @@ const DEFAULT_STEPPER_STATE: StepperWidgetState = {
 const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
   checked: true,
   disabled: false,
-  showText: true,
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Switch',
   textItalic: false,
@@ -624,7 +617,6 @@ const DEFAULT_TAG_STATE: TagWidgetState = {
   showBorder: true,
   showDot: true,
   showShadow: true,
-  showText: true,
   sizePreset: 'tiny',
   text: 'Tag',
   textItalic: false,
@@ -662,7 +654,7 @@ const DEFAULT_MODAL_STATE: ModalWidgetState = {
   subtitleTone: 'muted',
   title: 'Modal title',
   titleItalic: false,
-  titleSizePreset: 'bold',
+  titleSize: 'bold',
   titleTone: DEFAULT_TONE,
 };
 
@@ -688,7 +680,7 @@ const DEFAULT_CARD_STATE: CardWidgetState = {
   subtitleTone: 'muted',
   title: 'Card title',
   titleItalic: false,
-  titleSizePreset: 'bold',
+  titleSize: 'bold',
   titleTone: DEFAULT_TONE,
 };
 
@@ -1225,56 +1217,104 @@ export function ShowcasePage() {
     return card;
   }
 
-  const modalTitleProps: TextNodeProps<'title'> = resolveTextNodeProps(
-    'title',
-    modal.title,
-    modal.titleAlign,
-    modal.titleItalic,
-    modal.titleSizePreset,
-    modal.titleTone
-  );
+  const modalTitleProps: TextNodeProps<'title'> = resolveTextNodeProps({
+    prefix: 'title',
+    text: modal.title,
+    align: modal.titleAlign,
+    italic: modal.titleItalic,
+    size: modal.titleSize,
+    tone: modal.titleTone,
+  });
   const modalAccessibleName: ModalAccessibleName = modalTitleProps.title
     ? modalTitleProps
     : { ariaLabel: DEMO_MODAL_ARIA_LABEL };
-  const modalSubtitleProps: TextNodeProps<'subtitle'> = resolveTextNodeProps(
-    'subtitle',
-    modal.subtitle,
-    modal.subtitleAlign,
-    modal.subtitleItalic,
-    modal.subtitleSizePreset,
-    modal.subtitleTone
-  );
-  const resolvedCardTitleProps: TextNodeProps<'title'> = resolveTextNodeProps(
-    'title',
-    card.title,
-    card.titleAlign,
-    card.titleItalic,
-    card.titleSizePreset,
-    card.titleTone
-  );
+  const modalSubtitleProps: TextNodeProps<'subtitle'> = resolveTextNodeProps({
+    prefix: 'subtitle',
+    text: modal.subtitle,
+    align: modal.subtitleAlign,
+    italic: modal.subtitleItalic,
+    size: modal.subtitleSize,
+    tone: modal.subtitleTone,
+  });
+  const resolvedCardTitleProps: TextNodeProps<'title'> = resolveTextNodeProps({
+    prefix: 'title',
+    text: card.title,
+    align: card.titleAlign,
+    italic: card.titleItalic,
+    size: card.titleSize,
+    tone: card.titleTone,
+  });
   const cardTitleProps: CardTitleProps = resolvedCardTitleProps.title
     ? { ...resolvedCardTitleProps, titleAs: 'h3' }
     : resolvedCardTitleProps;
-  const cardSubtitleProps: TextNodeProps<'subtitle'> = resolveTextNodeProps(
-    'subtitle',
-    card.subtitle,
-    card.subtitleAlign,
-    card.subtitleItalic,
-    card.subtitleSizePreset,
-    card.subtitleTone
-  );
-  const rangeInputTitleProps: TextNodeProps<'title'> = resolveTextNodeProps(
-    'title',
-    rangeInput.title,
-    rangeInput.titleAlign,
-    rangeInput.titleItalic,
-    rangeInput.titleSizePreset,
-    rangeInput.titleTone
-  );
-  const sidebarTitleProps: TextNodeProps<'title'> = resolveTextNodeProps(
-    'title',
-    panelTitle ?? ''
-  );
+  const cardSubtitleProps: TextNodeProps<'subtitle'> = resolveTextNodeProps({
+    prefix: 'subtitle',
+    text: card.subtitle,
+    align: card.subtitleAlign,
+    italic: card.subtitleItalic,
+    size: card.subtitleSize,
+    tone: card.subtitleTone,
+  });
+  const rangeInputTitleProps: TextNodeProps<'title'> = resolveTextNodeProps({
+    prefix: 'title',
+    text: rangeInput.title,
+    align: rangeInput.titleAlign,
+    italic: rangeInput.titleItalic,
+    size: rangeInput.titleSize,
+    tone: rangeInput.titleTone,
+  });
+  const sidebarTitleProps: TextNodeProps<'title'> = resolveTextNodeProps({
+    prefix: 'title',
+    text: panelTitle ?? '',
+  });
+  const tagTextProps = resolveTextNodeProps({
+    prefix: 'text',
+    leadingKey: 'children',
+    text: tag.text,
+    italic: tag.textItalic,
+    size: tag.textSize,
+    tone: tag.textTone,
+  });
+  const checkboxTextProps = resolveTextNodeProps({
+    prefix: 'text',
+    leadingKey: 'children',
+    text: checkbox.text,
+    italic: checkbox.textItalic,
+    size: checkbox.textSize,
+    tone: checkbox.textTone,
+  });
+  const radioButtonTextAProps = resolveTextNodeProps({
+    prefix: 'text',
+    leadingKey: 'children',
+    text: radioButton.textA,
+    italic: radioButton.textItalic,
+    size: radioButton.textSize,
+    tone: radioButton.textTone,
+  });
+  const radioButtonTextBProps = resolveTextNodeProps({
+    prefix: 'text',
+    leadingKey: 'children',
+    text: radioButton.textB,
+    italic: radioButton.textItalic,
+    size: radioButton.textSize,
+    tone: radioButton.textTone,
+  });
+  const switchTextProps = resolveTextNodeProps({
+    prefix: 'text',
+    leadingKey: 'children',
+    text: switchState.text,
+    italic: switchState.textItalic,
+    size: switchState.textSize,
+    tone: switchState.textTone,
+  });
+  const spinnerTextProps = resolveTextNodeProps({
+    prefix: 'text',
+    leadingKey: 'children',
+    text: spinner.text,
+    italic: spinner.textItalic,
+    size: spinner.textSize,
+    tone: spinner.textTone,
+  });
   const cardBorderProps: BorderProps = resolveBorderProps(
     card.showBorder,
     card.borderTone,
@@ -1358,38 +1398,6 @@ export function ShowcasePage() {
         dotTone: tag.dotTone,
       }
     : { showDot: false };
-  const tagTextProps: ChildrenTextProps = tag.showText
-    ? {
-        children: tag.text,
-        textItalic: tag.textItalic,
-        textSize: tag.textSize,
-        textTone: tag.textTone,
-      }
-    : {};
-  const checkboxTextProps: ChildrenTextProps = checkbox.showText
-    ? {
-        children: checkbox.text,
-        textItalic: checkbox.textItalic,
-        textSize: checkbox.textSize,
-        textTone: checkbox.textTone,
-      }
-    : {};
-  const radioButtonATextProps: ChildrenTextProps = radioButton.showText
-    ? {
-        children: radioButton.textA,
-        textItalic: radioButton.textItalic,
-        textSize: radioButton.textSize,
-        textTone: radioButton.textTone,
-      }
-    : {};
-  const radioButtonBTextProps: ChildrenTextProps = radioButton.showText
-    ? {
-        children: radioButton.textB,
-        textItalic: radioButton.textItalic,
-        textSize: radioButton.textSize,
-        textTone: radioButton.textTone,
-      }
-    : {};
   const progressBarShowTextProps: ProgressBarShowTextProps = progress.showText
     ? {
         showText: true,
@@ -1398,14 +1406,6 @@ export function ShowcasePage() {
         textTone: progress.textTone,
       }
     : { showText: false };
-  const switchTextProps: ChildrenTextProps = switchState.showText
-    ? {
-        children: switchState.text,
-        textItalic: switchState.textItalic,
-        textSize: switchState.textSize,
-        textTone: switchState.textTone,
-      }
-    : {};
 
   return (
     <StyledMain>
@@ -1763,7 +1763,7 @@ export function ShowcasePage() {
                     sizePreset={radioButton.sizePreset}
                     value="a"
                     onChange={() => updateRadioButton('selected', 'a')}
-                    {...radioButtonATextProps}
+                    {...radioButtonTextAProps}
                   />
                   <RadioButton
                     checked={radioButton.selected === 'b'}
@@ -1772,7 +1772,7 @@ export function ShowcasePage() {
                     sizePreset={radioButton.sizePreset}
                     value="b"
                     onChange={() => updateRadioButton('selected', 'b')}
-                    {...radioButtonBTextProps}
+                    {...radioButtonTextBProps}
                   />
                 </StyledRadioButtonDemo>
               )}
@@ -1784,8 +1784,9 @@ export function ShowcasePage() {
                   borderTone={fieldset.borderTone}
                   inlineSize="100%"
                   label={fieldset.label}
+                  legendAlign={fieldset.legendAlign}
                   legendItalic={fieldset.legendItalic}
-                  legendSizePreset={fieldset.legendSizePreset}
+                  legendSize={fieldset.legendSize}
                   legendTone={fieldset.legendTone}
                   minInlineSize="0"
                 >
@@ -1828,13 +1829,9 @@ export function ShowcasePage() {
                   placeSelf="center"
                   reserveTextSpace={spinner.reserveTextSpace}
                   sizePreset={spinner.sizePreset}
-                  textItalic={spinner.textItalic}
-                  textSize={spinner.textSize}
-                  textTone={spinner.textTone}
                   tone={spinner.tone}
-                >
-                  {spinner.showText && spinner.text}
-                </Spinner>
+                  {...spinnerTextProps}
+                />
               )}
 
               {renderWidgetCard(

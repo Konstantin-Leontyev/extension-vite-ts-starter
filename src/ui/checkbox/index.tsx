@@ -29,10 +29,10 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef } from 'react';
+import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { getTextSize } from '@ui/presets';
-import { Text, type ChildrenTextProps, type TextTone } from '@ui/text';
+import { Text, type TextNodeStyleProps, type TextTone } from '@ui/text';
 
 import {
   CHECKBOX_CHECKED_MARK_KEYS,
@@ -54,10 +54,13 @@ const DEFAULT_CHECKBOX_TEXT_TONE: TextTone = 'muted';
 
 /**
  * CheckboxProps — представляет пропсы компонента Checkbox.
+ *
+ * @property children — подпись
  */
 type CheckboxProps = CheckboxStyleProps &
-  ChildrenTextProps &
-  Omit<
+  Omit<TextNodeStyleProps<'text'>, 'textAlign'> & {
+    children?: ReactNode;
+  } & Omit<
     ComponentPropsWithRef<'input'>,
     'children' | 'className' | 'style' | 'type' | keyof CheckboxStyleProps
   >;

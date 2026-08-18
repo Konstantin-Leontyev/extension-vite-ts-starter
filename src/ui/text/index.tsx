@@ -19,9 +19,8 @@
  * Основные задачи:
  * 1. Экспортировать полиморфный компонент Text
  * 2. Типизировать пропсы через `TextProps`
- * 3. Экспортировать типы `ChildrenTextProps` и `TextNodeProps`
- * 4. Предоставить функцию `resolveTextNodeProps` — пакет текстового узла по префиксу
- * 5. Реэкспортировать публичное API стилей: `TEXT_ALIGN_PRESET_KEYS`, `TEXT_SIZE_PRESET_KEYS`,
+ * 3. Экспортировать типы `TextNodeStyleProps` и `TextNodeProps`
+ * 4. Реэкспортировать публичное API стилей: `TEXT_ALIGN_PRESET_KEYS`, `TEXT_SIZE_PRESET_KEYS`,
  *    `TEXT_TONE_KEYS`, `textSizePresets`, `getEllipsisStyles`, `getNativeFieldTextStyles`,
  *    `getTextLineHeight`, `getTextProperties`, `getTextToneColor` и типы
  *
@@ -30,15 +29,11 @@
  *  - страницы и виджеты приложения, например HomePage — рендерят подписи, заголовки и лейблы
  *  - `@ui/presets` и `@ui/table/column-sizing` — используют реэкспорты типографики
  *  - `@ui/card` и `@ui/range-input` — подключают `TextNodeProps`
+ *  - `@ui/checkbox`, `@ui/radio-button`, `@ui/switch` и `@ui/tag` — подключают `TextNodeStyleProps`
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import {
-  createElement,
-  type ComponentPropsWithRef,
-  type ElementType,
-  type ReactNode,
-} from 'react';
+import { createElement, type ComponentPropsWithRef, type ElementType } from 'react';
 
 import { type AllOrNone } from '@ui/type-utils';
 
@@ -60,29 +55,20 @@ import {
 } from './text.styles';
 
 /**
- * ChildrenTextProps — представляет пропсы содержимого и текста.
- * Поля текста допустимы только вместе с `children`.
- * Подключается локально через `& ChildrenTextProps` у потребителей
- * с опциональным содержимым.
+ * TextNodeStyleProps — представляет пропсы стилизации текстового узла с префиксом имён.
+ * Подключается пересечением у носителей с собственным `children` и входит в пакет `TextNodeProps`.
  *
- * @property children — содержимое
- * @property textItalic — включает курсив текста
- * @property textSize — размер текста
- * @property textTone — тон текста
+ * @template Prefix префикс имён пропсов, например `text` или `title`
  */
-type ChildrenTextProps =
-  | {
-      children: ReactNode;
-      textItalic?: boolean;
-      textSize?: TextSizePreset;
-      textTone?: TextTone;
-    }
-  | {
-      children?: never;
-      textItalic?: never;
-      textSize?: never;
-      textTone?: never;
-    };
+type TextNodeStyleProps<Prefix extends string> = {
+  [K in `${Prefix}Align`]?: TextAlignPreset;
+} & {
+  [K in `${Prefix}Italic`]?: boolean;
+} & {
+  [K in `${Prefix}Size`]?: TextSizePreset;
+} & {
+  [K in `${Prefix}Tone`]?: TextTone;
+};
 
 /**
  * TextNodeProps — представляет пропсы текстового узла.
@@ -92,7 +78,7 @@ type ChildrenTextProps =
  * с опциональным текстовым узлом.
  *
  * @template Prefix префикс имён пропсов, например `title` или `subtitle`
- * @template Extra дополнительные поля той же ветки, например `titleAs` и `titleId`
+ * @template Extra дополнительные поля той же ветки, например `titleAs`
  */
 type TextNodeProps<
   Prefix extends string,
@@ -100,50 +86,9 @@ type TextNodeProps<
 > = AllOrNone<
   {
     [K in Prefix]: string;
-  } & {
-    [K in `${Prefix}Align`]?: TextAlignPreset;
-  } & {
-    [K in `${Prefix}Italic`]?: boolean;
-  } & {
-    [K in `${Prefix}SizePreset`]?: TextSizePreset;
-  } & {
-    [K in `${Prefix}Tone`]?: TextTone;
-  } & Extra
+  } & TextNodeStyleProps<Prefix> &
+    Extra
 >;
-
-/**
- * resolveTextNodeProps — возвращает пакет пропсов текстового узла по префиксу.
- * При непустой строке отдаёт ведущий ключ вместе с зависимыми, иначе гасит пакет.
- * Используется в `src/pages/showcase`.
- *
- * @param prefix префикс имён пропсов
- * @param text ведущая строка узла
- * @param align выравнивание текста
- * @param italic включает курсив
- * @param sizePreset размер текста
- * @param tone тон текста
- * @returns пакет пропсов текстового узла для передачи в потребитель
- */
-function resolveTextNodeProps<Prefix extends string>(
-  prefix: Prefix,
-  text: string,
-  align?: TextAlignPreset,
-  italic?: boolean,
-  sizePreset?: TextSizePreset,
-  tone?: TextTone
-): TextNodeProps<Prefix> {
-  return (
-    text.trim() !== ''
-      ? {
-          [prefix]: text,
-          [`${prefix}Align`]: align,
-          [`${prefix}Italic`]: italic,
-          [`${prefix}SizePreset`]: sizePreset,
-          [`${prefix}Tone`]: tone,
-        }
-      : {}
-  ) as TextNodeProps<Prefix>;
-}
 
 /**
  * TextProps — представляет пропсы компонента Text.
@@ -172,7 +117,7 @@ export function Text<T extends ElementType = 'span'>(props: TextProps<T>) {
   return createElement(StyledText, props);
 }
 
-/* eslint-disable react-refresh/only-export-components -- публичные типы, пресеты и резолвер */
+/* eslint-disable react-refresh/only-export-components -- публичные типы и пресеты */
 export {
   TEXT_ALIGN_PRESET_KEYS,
   TEXT_SIZE_PRESET_KEYS,
@@ -182,11 +127,10 @@ export {
   getTextLineHeight,
   getTextProperties,
   getTextToneColor,
-  resolveTextNodeProps,
   textSizePresets,
-  type ChildrenTextProps,
   type TextAlignPreset,
   type TextNodeProps,
+  type TextNodeStyleProps,
   type TextSizePreset,
   type TextTone,
 };

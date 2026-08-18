@@ -13,11 +13,11 @@
  *  - уровень заголовка через проп `titleAs`
  *  - подзаголовок через проп `subtitle`
  *  - тон заголовка через проп `titleTone`
- *  - размер заголовка через проп `titleSizePreset`
+ *  - размер заголовка через проп `titleSize`
  *  - курсив заголовка через проп `titleItalic`
  *  - выравнивание заголовка через проп `titleAlign`
  *  - тон подзаголовка через проп `subtitleTone`
- *  - размер подзаголовка через проп `subtitleSizePreset`
+ *  - размер подзаголовка через проп `subtitleSize`
  *  - курсив подзаголовка через проп `subtitleItalic`
  *  - выравнивание подзаголовка через проп `subtitleAlign`
  *  - id заголовка для `aria-labelledby` через проп `titleId`
@@ -30,7 +30,7 @@
  * 1. Экспортировать полиморфный компонент Card
  * 2. Типизировать пропсы через `CardProps`
  * 3. Реэкспортировать публичное API стилей: `CARD_HEADER_ACTION_SIZE_PRESET`
- * 4. Экспортировать тип `CardTitleProps` — `TextNodeProps` заголовка с `titleAs` и `titleId`
+ * 4. Экспортировать тип `CardTitleProps` — `TextNodeProps` заголовка с `titleAs`
  * 5. Связывать имя области с заголовком через `aria-labelledby`, когда у корня есть роль
  *
  * Потребители:
@@ -75,7 +75,7 @@ const DEFAULT_CARD_TITLE_AS = 'h2';
 
 /**
  * DEFAULT_CARD_TITLE_SIZE_PRESET — задаёт размер заголовка по умолчанию.
- * Используется, когда вызывающий код не передал проп `titleSizePreset`.
+ * Используется, когда вызывающий код не передал проп `titleSize`.
  */
 const DEFAULT_CARD_TITLE_SIZE_PRESET: TextSizePreset = 'bold';
 
@@ -103,11 +103,6 @@ const ROLELESS_CARD_HTML_TAG: CardHtmlTag = 'div';
  * CardTitleProps — представляет пропсы заголовка Card.
  * Пакет `TextNodeProps` с дополнительным `titleAs`.
  *
- * @property title — заголовок
- * @property titleAlign — выравнивание заголовка
- * @property titleItalic — включает курсив заголовка
- * @property titleSizePreset — размер заголовка
- * @property titleTone — тон заголовка
  * @property titleAs — уровень заголовка
  */
 type CardTitleProps = TextNodeProps<
@@ -155,14 +150,14 @@ function Card<T extends CardHtmlTag = 'div'>({
   subtitle,
   subtitleAlign,
   subtitleItalic,
-  subtitleSizePreset,
+  subtitleSize,
   subtitleTone = DEFAULT_CARD_SUBTITLE_TONE,
   title,
   titleAlign,
   titleAs = DEFAULT_CARD_TITLE_AS,
   titleId,
   titleItalic,
-  titleSizePreset = DEFAULT_CARD_TITLE_SIZE_PRESET,
+  titleSize = DEFAULT_CARD_TITLE_SIZE_PRESET,
   titleTone,
   ...rest
 }: CardProps<T>) {
@@ -180,7 +175,7 @@ function Card<T extends CardHtmlTag = 'div'>({
       align={subtitleAlign}
       as="p"
       italic={subtitleItalic}
-      sizePreset={subtitleSizePreset}
+      sizePreset={subtitleSize}
       tone={subtitleTone}
     >
       {subtitle}
@@ -196,7 +191,7 @@ function Card<T extends CardHtmlTag = 'div'>({
             as={titleAs}
             id={headingId}
             italic={titleItalic}
-            sizePreset={titleSizePreset}
+            sizePreset={titleSize}
             tone={titleTone}
           >
             {title}
