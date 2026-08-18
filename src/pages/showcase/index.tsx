@@ -266,7 +266,7 @@ const DEFAULT_INPUT_STATE: InputWidgetState = {
   shape: DEFAULT_SHAPE_PRESET,
   showBorder: true,
   showShadow: true,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
   value: '',
 };
 
@@ -289,7 +289,7 @@ const DEFAULT_SEARCH_FIELD_STATE: SearchFieldWidgetState = {
   showBorder: true,
   showIcon: true,
   showShadow: true,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
   value: '',
 };
 
@@ -307,7 +307,7 @@ const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
   iconTone: 'neutral',
   label: 'Label:',
   shape: DEFAULT_SHAPE_PRESET,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
   text: 'Button',
   textTone: 'neutral',
   tone: 'neutral',
@@ -329,7 +329,7 @@ const DEFAULT_ICON_STATE: IconWidgetState = {
   showBorder: false,
   showHover: true,
   showShadow: true,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
 };
 
 /**
@@ -347,7 +347,7 @@ const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
   placeholder: 'Select…',
   shape: DEFAULT_SHAPE_PRESET,
   showClear: false,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
   value: '',
 };
 
@@ -366,7 +366,7 @@ const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
   searchPlaceholder: 'Search…',
   shape: DEFAULT_SHAPE_PRESET,
   showClear: false,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
   value: '',
   withIcon: false,
 };
@@ -387,7 +387,7 @@ const COMBOBOX_DEMO_DISABLED_OPTION = {
  */
 const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   buttonShape: DEFAULT_SHAPE_PRESET,
-  buttonSizePreset: DEFAULT_SIZE_PRESET,
+  buttonSize: DEFAULT_SIZE_PRESET,
   buttonText: 'Apply',
   buttonTextTone: 'neutral',
   buttonTone: 'primary',
@@ -397,11 +397,11 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   iconPosition: 'end',
   iconTone: 'neutral',
   inputShape: DEFAULT_SHAPE_PRESET,
-  inputSizePreset: DEFAULT_SIZE_PRESET,
+  inputSize: DEFAULT_SIZE_PRESET,
   label: 'Label:',
   placeholder: 'Range: any',
   shape: DEFAULT_SHAPE_PRESET,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
   title: 'Custom range:',
   titleAlign: 'center',
   titleItalic: false,
@@ -427,7 +427,7 @@ const DEFAULT_DATE_RANGE_INPUT_STATE: DateRangeInputWidgetState = {
   maxDay: todayUtc(),
   minDay: '',
   shape: DEFAULT_SHAPE_PRESET,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
   startDay: '',
   startLabel: 'Start date',
 };
@@ -441,7 +441,7 @@ const DEFAULT_CHECKBOX_STATE: CheckboxWidgetState = {
   checkedMark: 'check',
   disabled: false,
   inverted: false,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
   text: 'Example',
   uncheckedMark: 'none',
 };
@@ -454,7 +454,7 @@ const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
   disabledA: false,
   disabledB: false,
   selected: 'a',
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
   textA: 'Option A',
   textB: 'Option B',
 };
@@ -475,7 +475,7 @@ const DEFAULT_FIELDSET_STATE: FieldsetWidgetState = {
  */
 const DEFAULT_PROGRESS_STATE: ProgressBarWidgetState = {
   showText: true,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
   tone: 'primary',
   value: 0.42,
 };
@@ -486,7 +486,7 @@ const DEFAULT_PROGRESS_STATE: ProgressBarWidgetState = {
  */
 const DEFAULT_SPINNER_STATE: SpinnerWidgetState = {
   reserveTextSpace: false,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
   text: 'Loading…',
   tone: 'primary',
 };
@@ -501,7 +501,7 @@ const DEFAULT_STEPPER_STATE: StepperWidgetState = {
   max: undefined,
   min: undefined,
   shape: DEFAULT_SHAPE_PRESET,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
   step: 1,
   suffix: '',
   value: 10,
@@ -514,7 +514,7 @@ const DEFAULT_STEPPER_STATE: StepperWidgetState = {
 const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
   checked: true,
   disabled: false,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
   text: 'Switch',
   tone: 'primary',
 };
@@ -525,7 +525,7 @@ const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
  */
 const DEFAULT_TOAST_STATE: ToastWidgetState = {
   message: 'Very important message',
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
   tone: 'success',
 };
 
@@ -564,7 +564,7 @@ const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   rightWithIcon: false,
   segmentCount: '2',
   shape: DEFAULT_SHAPE_PRESET,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
 };
 
 /**
@@ -578,7 +578,7 @@ const DEFAULT_TAG_STATE: TagWidgetState = {
   showBorder: true,
   showDot: true,
   showShadow: true,
-  sizePreset: 'tiny',
+  size: 'tiny',
   text: 'Tag',
   tinted: false,
   tone: 'primary',
@@ -596,7 +596,7 @@ const DEFAULT_TABLE_STATE: TableWidgetState = {
   separateCheckboxColumn: false,
   showBorder: DEFAULT_TABLE_SHOW_BORDER,
   showIndexColumn: true,
-  sizePreset: DEFAULT_TABLE_SIZE_PRESET,
+  size: DEFAULT_TABLE_SIZE_PRESET,
   striped: DEFAULT_TABLE_STRIPED,
 };
 
@@ -655,7 +655,7 @@ const DEFAULT_TEXT_STATE: TextWidgetState = {
   children: 'Sample text line long enough to show ellipsis in the demo',
   ellipsis: false,
   italic: false,
-  sizePreset: 'normal',
+  size: 'normal',
   tone: DEFAULT_TONE,
 };
 
@@ -697,7 +697,7 @@ const DEFAULT_TOOLBAR_STATE: ToolbarWidgetState = {
   shape: DEFAULT_SHAPE_PRESET,
   showBorder: true,
   showShadow: true,
-  sizePreset: DEFAULT_SIZE_PRESET,
+  size: DEFAULT_SIZE_PRESET,
 };
 
 /**
@@ -1395,7 +1395,7 @@ export function ShowcasePage() {
                   italic={text.italic}
                   minInlineSize="0"
                   placeSelf="center"
-                  sizePreset={text.sizePreset}
+                  size={text.size}
                   tone={text.tone}
                 >
                   {text.children}
@@ -1411,7 +1411,7 @@ export function ShowcasePage() {
                   background={toolbar.background}
                   placeSelf="center"
                   shape={toolbar.shape}
-                  sizePreset={toolbar.sizePreset}
+                  size={toolbar.size}
                   {...toolbarBorderProps}
                 />
               )}
@@ -1428,7 +1428,7 @@ export function ShowcasePage() {
                   placeholder={input.placeholder}
                   reserveErrorSpace={input.reserveErrorSpace}
                   shape={input.shape}
-                  sizePreset={input.sizePreset}
+                  size={input.size}
                   value={input.value}
                   onChange={(event) => updateInput('value', event.target.value)}
                   onClear={() => updateInput('value', '')}
@@ -1447,7 +1447,7 @@ export function ShowcasePage() {
                   label={searchField.label || undefined}
                   placeholder={searchField.placeholder}
                   shape={searchField.shape}
-                  sizePreset={searchField.sizePreset}
+                  size={searchField.size}
                   value={searchField.value}
                   onChange={(event) => updateSearchField('value', event.target.value)}
                   onClear={() => updateSearchField('value', '')}
@@ -1469,7 +1469,7 @@ export function ShowcasePage() {
                   placeholder={listbox.placeholder}
                   shape={listbox.shape}
                   showClear={listbox.showClear}
-                  sizePreset={listbox.sizePreset}
+                  size={listbox.size}
                   value={listbox.value}
                   onChange={(value) => updateListbox('value', value)}
                   {...listboxMultipleProps}
@@ -1491,7 +1491,7 @@ export function ShowcasePage() {
                   searchPlaceholder={combobox.searchPlaceholder}
                   shape={combobox.shape}
                   showClear={combobox.showClear}
-                  sizePreset={combobox.sizePreset}
+                  size={combobox.size}
                   value={combobox.value}
                   onChange={(value) => updateCombobox('value', value)}
                 />
@@ -1502,7 +1502,7 @@ export function ShowcasePage() {
                 <RangeInput
                   alignSelf="center"
                   buttonShape={rangeInput.buttonShape}
-                  buttonSizePreset={rangeInput.buttonSizePreset}
+                  buttonSize={rangeInput.buttonSize}
                   buttonText={rangeInput.buttonText}
                   buttonTextTone={rangeInput.buttonTextTone}
                   buttonTone={rangeInput.buttonTone}
@@ -1514,12 +1514,12 @@ export function ShowcasePage() {
                   iconPosition={rangeInput.iconPosition}
                   iconTone={rangeInput.iconTone}
                   inputShape={rangeInput.inputShape}
-                  inputSizePreset={rangeInput.inputSizePreset}
+                  inputSize={rangeInput.inputSize}
                   label={rangeInput.label || undefined}
                   placeholder={rangeInput.placeholder}
                   reserveErrorSpace={rangeInput.reserveErrorSpace}
                   shape={rangeInput.shape}
-                  sizePreset={rangeInput.sizePreset}
+                  size={rangeInput.size}
                   toPlaceholder={rangeInput.toPlaceholder}
                   {...rangeInputTitleProps}
                   validate={validateDemoRange}
@@ -1549,7 +1549,7 @@ export function ShowcasePage() {
                   maxDay={dateRangeInput.maxDay || undefined}
                   minDay={dateRangeInput.minDay || undefined}
                   shape={dateRangeInput.shape}
-                  sizePreset={dateRangeInput.sizePreset}
+                  size={dateRangeInput.size}
                   startDay={dateRangeInput.startDay}
                   startLabel={dateRangeInput.startLabel}
                   onClear={() => {
@@ -1569,7 +1569,7 @@ export function ShowcasePage() {
                   disabled={button.disabled}
                   label={button.label || undefined}
                   shape={button.shape}
-                  sizePreset={button.sizePreset}
+                  size={button.size}
                   textTone={button.textTone}
                   tone={button.tone}
                   {...buttonIconProps}
@@ -1590,7 +1590,7 @@ export function ShowcasePage() {
                   placeSelf="center"
                   shape={icon.shape}
                   showHover={icon.showHover}
-                  sizePreset={icon.sizePreset}
+                  size={icon.size}
                   {...iconBorderProps}
                 >
                   {getIcon(icon.iconKey)}
@@ -1631,7 +1631,7 @@ export function ShowcasePage() {
                     ...segmentButtonRightIconProps,
                   }}
                   shape={segmentButton.shape}
-                  sizePreset={segmentButton.sizePreset}
+                  size={segmentButton.size}
                 />
               )}
 
@@ -1640,7 +1640,7 @@ export function ShowcasePage() {
                 <Tag
                   placeSelf="center"
                   shape={tag.shape}
-                  sizePreset={tag.sizePreset}
+                  size={tag.size}
                   tinted={tag.tinted}
                   tone={tag.tone}
                   {...tagBorderProps}
@@ -1658,7 +1658,7 @@ export function ShowcasePage() {
                   disabled={checkbox.disabled}
                   inverted={checkbox.inverted}
                   placeSelf="center"
-                  sizePreset={checkbox.sizePreset}
+                  size={checkbox.size}
                   uncheckedMark={checkbox.uncheckedMark}
                   onChange={(event) => updateCheckbox('checked', event.target.checked)}
                 >
@@ -1673,7 +1673,7 @@ export function ShowcasePage() {
                     checked={radioButton.selected === 'a'}
                     disabled={radioButton.disabledA}
                     name={RADIO_BUTTON_DEMO_NAME}
-                    sizePreset={radioButton.sizePreset}
+                    size={radioButton.size}
                     value="a"
                     onChange={() => updateRadioButton('selected', 'a')}
                   >
@@ -1683,7 +1683,7 @@ export function ShowcasePage() {
                     checked={radioButton.selected === 'b'}
                     disabled={radioButton.disabledB}
                     name={RADIO_BUTTON_DEMO_NAME}
-                    sizePreset={radioButton.sizePreset}
+                    size={radioButton.size}
                     value="b"
                     onChange={() => updateRadioButton('selected', 'b')}
                   >
@@ -1725,7 +1725,7 @@ export function ShowcasePage() {
                 <ProgressBar
                   aria-labelledby={PROGRESS_WIDGET_TITLE_ID}
                   showText={progress.showText}
-                  sizePreset={progress.sizePreset}
+                  size={progress.size}
                   tone={progress.tone}
                   value={progress.value}
                 />,
@@ -1739,7 +1739,7 @@ export function ShowcasePage() {
                   minBlockSize="0"
                   placeSelf="center"
                   reserveTextSpace={spinner.reserveTextSpace}
-                  sizePreset={spinner.sizePreset}
+                  size={spinner.size}
                   tone={spinner.tone}
                   {...spinnerTextProps}
                 />
@@ -1753,7 +1753,7 @@ export function ShowcasePage() {
                   max={stepper.max}
                   min={stepper.min}
                   shape={stepper.shape}
-                  sizePreset={stepper.sizePreset}
+                  size={stepper.size}
                   step={stepper.step}
                   suffix={stepper.suffix}
                   value={stepper.value}
@@ -1770,7 +1770,7 @@ export function ShowcasePage() {
                   checked={switchState.checked}
                   disabled={switchState.disabled}
                   placeSelf="center"
-                  sizePreset={switchState.sizePreset}
+                  size={switchState.size}
                   tone={switchState.tone}
                   onChange={(event) => updateSwitch('checked', event.target.checked)}
                 >
@@ -1781,11 +1781,7 @@ export function ShowcasePage() {
               {renderWidgetCard(
                 'toast',
                 <>
-                  <Toast
-                    alignSelf="center"
-                    sizePreset={toast.sizePreset}
-                    tone={toast.tone}
-                  >
+                  <Toast alignSelf="center" size={toast.size} tone={toast.tone}>
                     {toast.message}
                   </Toast>
                   <Button
@@ -1794,7 +1790,7 @@ export function ShowcasePage() {
                     onClick={() =>
                       showToast({
                         message: toast.message,
-                        sizePreset: toast.sizePreset,
+                        size: toast.size,
                         tone: toast.tone,
                       })
                     }

@@ -39,7 +39,7 @@ export { splitLayoutProps } from '@ui/layout';
  *
  * @property iconTone — тон секции шеврона
  * @property shape — форма поверхности
- * @property sizePreset — размер компонента
+ * @property size — размер компонента
  */
 type ListboxSurfaceStyleProps = OpenControlSurfaceStyleProps & {
   iconTone?: TonePreset;
@@ -73,7 +73,7 @@ const LISTBOX_SURFACE_PROP_NAMES = new Set<string>([
   ...ICON_SETTING_PROP_NAMES,
   'borderTone',
   'shape',
-  'sizePreset',
+  'size',
 ]);
 
 /**
@@ -94,7 +94,7 @@ export const StyledListboxTriggerRow = styled.div.withConfig({
  * раскладку лейбла и хром кнопки-триггера через `getOpenControlTriggerStyles`.
  *
  * Как работает:
- * 1. Подставляет дефолт `sizePreset`
+ * 1. Подставляет дефолт `size`
  * 2. Подставляет хром кнопки-триггера через `getOpenControlTriggerStyles`:
  *    раскладку позиции иконки и канал `--icon-state-background`
  * 3. Задаёт слоту лейбла `min-inline-size: 0` и `padding-inline` по размеру
@@ -105,13 +105,13 @@ export const StyledListboxTriggerRow = styled.div.withConfig({
 function getListboxTriggerStyles(
   props: ListboxSurfaceStyleProps & { theme: AppTheme }
 ): string {
-  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const { size = DEFAULT_SIZE_PRESET } = props;
 
   return `
     ${getOpenControlTriggerStyles(props)}
     [data-slot='label'] {
       min-inline-size: 0;
-      padding-inline: ${getPaddingInline(sizePreset)};
+      padding-inline: ${getPaddingInline(size)};
     }
   `;
 }
@@ -132,14 +132,14 @@ export const StyledListboxTrigger = styled.button.withConfig({
 /**
  * LISTBOX_BOX_PROP_NAMES — хранит имена пропсов стилизации строки опции Listbox.
  */
-const LISTBOX_BOX_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
+const LISTBOX_BOX_PROP_NAMES = new Set<string>(['shape', 'size']);
 
 /**
  * ListboxPanelStyleProps — представляет пропсы стилизации выпадающей панели опций Listbox.
  *
  * @property $drumShift — сдвиг барабана относительно якоря
  */
-type ListboxPanelStyleProps = Pick<ListboxSurfaceStyleProps, 'shape' | 'sizePreset'> & {
+type ListboxPanelStyleProps = Pick<ListboxSurfaceStyleProps, 'shape' | 'size'> & {
   $drumShift: string;
 };
 
@@ -163,7 +163,7 @@ const LISTBOX_DRUM_SHIFT_CUSTOM_PROPERTY = '--listbox-drum-shift';
  * сдвиг барабана и прокрутку списка через `getOpenControlOptionsListScrollStyles`.
  *
  * Как работает:
- * 1. Подставляет дефолт `sizePreset`
+ * 1. Подставляет дефолт `size`
  * 2. Подставляет хром панели через `getOpenControlPanelStyles`
  * 3. Привязывает панель к триггеру через `getCssAnchorBindingStyles`,
  *    `anchor(start)`, `anchor-size(width)` и сдвиг `--listbox-drum-shift`
@@ -177,7 +177,7 @@ const LISTBOX_DRUM_SHIFT_CUSTOM_PROPERTY = '--listbox-drum-shift';
 function getListboxPanelStyles(
   props: ListboxPanelStyleProps & { theme: AppTheme }
 ): string {
-  const { $drumShift, sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const { $drumShift, size = DEFAULT_SIZE_PRESET } = props;
 
   return `
     ${getOpenControlPanelStyles(props)}
@@ -186,7 +186,7 @@ function getListboxPanelStyles(
     inset-block-start: calc(anchor(start) + var(${LISTBOX_DRUM_SHIFT_CUSTOM_PROPERTY}));
     inset-inline-start: anchor(start);
     inline-size: anchor-size(width);
-    ${getOpenControlOptionsListScrollStyles(sizePreset)}
+    ${getOpenControlOptionsListScrollStyles(size)}
     &[data-keyboard-navigating] {
       cursor: none;
     }
@@ -198,7 +198,7 @@ function getListboxPanelStyles(
 
 /**
  * StyledListboxPanel — задаёт выпадающую панель опций компонента Listbox.
- * Базируется на `<ul>` и принимает пропсы `$drumShift`, `shape` и `sizePreset`.
+ * Базируется на `<ul>` и принимает пропсы `$drumShift`, `shape` и `size`.
  *
  * Генерация стилей:
  *  - `getListboxPanelStyles` — хром панели через `getOpenControlPanelStyles`,
@@ -230,10 +230,10 @@ export const StyledListboxPanel = styled.ul.withConfig({
  * @returns CSS-правила, каждое с новой строки
  */
 function getListboxOptionStyles(
-  props: Pick<ListboxSurfaceStyleProps, 'shape' | 'sizePreset'> & { theme: AppTheme }
+  props: Pick<ListboxSurfaceStyleProps, 'shape' | 'size'> & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const { size = DEFAULT_SIZE_PRESET } = props;
 
   return `
     ${getOpenControlSelectableRowSurfaceStyles(props, {
@@ -248,7 +248,7 @@ function getListboxOptionStyles(
     }
     grid-template-columns: minmax(0, 1fr) auto;
     cursor: pointer;
-    padding-inline: ${getPaddingInline(sizePreset)};
+    padding-inline: ${getPaddingInline(size)};
     &[data-checkbox] {
       grid-template-columns: auto minmax(0, 1fr);
     }
@@ -265,13 +265,13 @@ function getListboxOptionStyles(
 
 /**
  * StyledListboxOption — задаёт строку опции компонента Listbox.
- * Базируется на `<li>` и принимает пропсы `shape` и `sizePreset`.
+ * Базируется на `<li>` и принимает пропсы `shape` и `size`.
  *
  * Генерация стилей:
  *  - `getListboxOptionStyles` — поверхность, отступы и подсветка
  */
 export const StyledListboxOption = styled.li.withConfig({
   shouldForwardProp: (prop) => !LISTBOX_BOX_PROP_NAMES.has(prop),
-})<Pick<ListboxSurfaceStyleProps, 'shape' | 'sizePreset'>>`
+})<Pick<ListboxSurfaceStyleProps, 'shape' | 'size'>>`
   ${(props) => getListboxOptionStyles(props)}
 `;

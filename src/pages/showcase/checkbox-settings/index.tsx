@@ -38,7 +38,7 @@ import { TextGroup } from '../text-group';
  * @property checkedMark — марка в checked-состоянии
  * @property disabled — включает недоступное состояние
  * @property inverted — включает инвертированную палитру
- * @property sizePreset — размер бокса
+ * @property size — размер бокса
  * @property text — подпись бокса
  * @property uncheckedMark — марка в unchecked-состоянии
  */
@@ -47,7 +47,7 @@ export type CheckboxWidgetState = {
   checkedMark: CheckboxCheckedMark;
   disabled: boolean;
   inverted: boolean;
-  sizePreset: SizePreset;
+  size: SizePreset;
   text: string;
   uncheckedMark: CheckboxUncheckedMark;
 };
@@ -100,8 +100,8 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
       <SizeListbox
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
+        value={state.size}
+        onChange={(size) => onChange('size', size)}
       />
 
       <Checkbox

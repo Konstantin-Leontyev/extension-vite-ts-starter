@@ -31,7 +31,7 @@ import { TextGroup } from '../text-group';
  * @property disabledA — включает недоступное состояние варианта A
  * @property disabledB — включает недоступное состояние варианта B
  * @property selected — активный вариант в группе
- * @property sizePreset — размер переключателя
+ * @property size — размер переключателя
  * @property textA — подпись варианта A
  * @property textB — подпись варианта B
  */
@@ -39,7 +39,7 @@ export type RadioButtonWidgetState = {
   disabledA: boolean;
   disabledB: boolean;
   selected: 'a' | 'b';
-  sizePreset: SizePreset;
+  size: SizePreset;
   textA: string;
   textB: string;
 };
@@ -79,8 +79,8 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
       <SizeListbox
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
+        value={state.size}
+        onChange={(size) => onChange('size', size)}
       />
 
       <Listbox

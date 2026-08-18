@@ -125,15 +125,15 @@ function widerText(
  * и `extraContentPx`.
  *
  * @param config вход замера колонки
- * @param sizePreset размерный ряд таблицы
+ * @param size размерный ряд таблицы
  * @returns CSS-длина в px
  */
 function computeTableColumnInlineSize(
   config: TableColumnSizeConfig,
-  sizePreset: SizePreset = DEFAULT_SIZE_PRESET
+  size: SizePreset = DEFAULT_SIZE_PRESET
 ): string {
-  const cellPaddingInlinePx = padding[sizePreset].inline;
-  const textPreset = textSizePresets[getTextSize(sizePreset)];
+  const cellPaddingInlinePx = padding[size].inline;
+  const textPreset = textSizePresets[getTextSize(size)];
   const extraContentPx = config.extraContentPx ?? 0;
 
   let maxText = config.header;
@@ -152,17 +152,17 @@ function computeTableColumnInlineSize(
  * Вызывающий код подставляет результат в `inlineSize` колонок Table.
  *
  * @param configs соответствие ключа колонки и входа замера
- * @param sizePreset размерный ряд таблицы
+ * @param size размерный ряд таблицы
  * @returns соответствие ключа колонки и CSS-длины в px
  */
 export function computeTableColumnInlineSizes<Key extends string>(
   configs: Record<Key, TableColumnSizeConfig>,
-  sizePreset: SizePreset = DEFAULT_SIZE_PRESET
+  size: SizePreset = DEFAULT_SIZE_PRESET
 ): Record<Key, string> {
   const sizes = {} as Record<Key, string>;
 
   for (const key of Object.keys(configs) as Key[]) {
-    sizes[key] = computeTableColumnInlineSize(configs[key], sizePreset);
+    sizes[key] = computeTableColumnInlineSize(configs[key], size);
   }
 
   return sizes;

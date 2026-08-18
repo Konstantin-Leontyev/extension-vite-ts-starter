@@ -5,7 +5,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - форму через проп `shape`
  *  - форму окна действия через проп `actionShape`. Без `actionShape` форма
  *    выводится из `shape`
@@ -65,7 +65,7 @@ function Toolbar({
   actions,
   ariaLabel,
   shape,
-  sizePreset,
+  size,
   ...rest
 }: ToolbarProps) {
   const actionShape = actionShapeProp ?? resolveIconShape(shape);
@@ -75,15 +75,10 @@ function Toolbar({
       aria-label={ariaLabel}
       role="toolbar"
       shape={shape}
-      sizePreset={sizePreset}
+      size={size}
       {...rest}
     >
-      <IconButtonRow
-        actions={actions}
-        rovingFocus
-        shape={actionShape}
-        sizePreset={sizePreset}
-      />
+      <IconButtonRow actions={actions} rovingFocus shape={actionShape} size={size} />
     </StyledToolbar>
   );
 }

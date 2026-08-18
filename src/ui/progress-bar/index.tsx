@@ -5,7 +5,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - семантический тон через проп `tone`
  *  - долю заполнения через проп `value`
  *  - подпись с процентом через проп `showText`
@@ -62,7 +62,7 @@ function ProgressBar({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   showText = DEFAULT_PROGRESS_BAR_SHOW_TEXT,
-  sizePreset,
+  size,
   tone,
   value,
   ...rest
@@ -79,16 +79,12 @@ function ProgressBar({
         aria-valuemin={0}
         aria-valuenow={percent}
         role="progressbar"
-        sizePreset={sizePreset}
+        size={size}
       >
         <StyledProgressBarFill tone={tone} value={clampedValue} />
       </StyledProgressBar>
       {showText && (
-        <Text
-          aria-hidden={true}
-          sizePreset={getTextSize(sizePreset)}
-          whiteSpace="nowrap"
-        >
+        <Text aria-hidden={true} size={getTextSize(size)} whiteSpace="nowrap">
           {percent}%
         </Text>
       )}

@@ -32,7 +32,7 @@ import { StyledSettingsForm } from '../showcase.styles';
  * @property max — верхняя граница значения
  * @property min — нижняя граница значения
  * @property shape — форма поля
- * @property sizePreset — размер компонента
+ * @property size — размер компонента
  * @property step — шаг изменения значения
  * @property suffix — подпись единицы внутри поля
  * @property value — числовое значение счётчика
@@ -43,7 +43,7 @@ export type StepperWidgetState = {
   max?: number;
   min?: number;
   shape: ShapePreset;
-  sizePreset: SizePreset;
+  size: SizePreset;
   step: number;
   suffix: string;
   value: number;
@@ -75,10 +75,10 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
       <ControlGroup
         label={state.label}
         shape={state.shape}
-        sizePreset={state.sizePreset}
+        size={state.size}
         onLabelChange={(label) => onChange('label', label)}
         onShapeChange={(shape) => onChange('shape', shape)}
-        onSizeChange={(size) => onChange('sizePreset', size)}
+        onSizeChange={(size) => onChange('size', size)}
       />
 
       <Input

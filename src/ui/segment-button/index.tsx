@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - форму оболочки через проп `shape`
  *  - тон рамки через проп `borderTone`
  *  - левый сегмент через проп `left`
@@ -65,7 +65,7 @@ type SegmentButtonProps = {
  *   left={{ label: 'A', active: true }}
  *   center={{ label: 'B' }}
  *   right={{ label: 'C' }}
- *   sizePreset="normal"
+ *   size="normal"
  * />
  */
 export function SegmentButton({
@@ -76,7 +76,7 @@ export function SegmentButton({
   ref,
   right,
   shape,
-  sizePreset,
+  size,
   ...rest
 }: SegmentButtonProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
@@ -87,8 +87,8 @@ export function SegmentButton({
     left,
     // Прямые углы: скругление даёт обрезка оболочки SegmentButton, не сегменты.
     shape: SEGMENT_BUTTON_PARTS_FLUSH_SHAPE,
-    sizePreset,
-    textSize: getTextSize(sizePreset),
+    size,
+    textSize: getTextSize(size),
     ...(center != null ? { center, right } : { right }),
   } as SegmentButtonPartsProps;
 
@@ -101,7 +101,7 @@ export function SegmentButton({
       {...restProps}
     >
       <FieldLabel id={labelId}>{label}</FieldLabel>
-      <StyledSegmentButton borderTone={borderTone} shape={shape} sizePreset={sizePreset}>
+      <StyledSegmentButton borderTone={borderTone} shape={shape} size={size}>
         <SegmentButtonParts {...partsProps} />
       </StyledSegmentButton>
     </StyledSegmentButtonRoot>

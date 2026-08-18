@@ -40,7 +40,7 @@ export { splitLayoutProps } from '@ui/layout';
  *
  * @property iconTone — тон секции шеврона и кнопки сброса
  * @property shape — форма поверхности
- * @property sizePreset — размер компонента
+ * @property size — размер компонента
  */
 type RangeInputSurfaceStyleProps = OpenControlSurfaceStyleProps & {
   iconTone?: TonePreset;
@@ -74,7 +74,7 @@ const RANGE_INPUT_SURFACE_PROP_NAMES = new Set<string>([
   ...ICON_SETTING_PROP_NAMES,
   'borderTone',
   'shape',
-  'sizePreset',
+  'size',
 ]);
 
 /**
@@ -112,12 +112,12 @@ export const StyledRangeInputTrigger = styled.button.withConfig({
  * @returns CSS-правила, каждое с новой строки
  */
 function getRangeInputValueStyles(props: RangeInputSurfaceStyleProps): string {
-  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const { size = DEFAULT_SIZE_PRESET } = props;
 
   return `
     display: block;
     min-inline-size: 0;
-    padding-inline: ${getPaddingInline(sizePreset)};
+    padding-inline: ${getPaddingInline(size)};
   `;
 }
 

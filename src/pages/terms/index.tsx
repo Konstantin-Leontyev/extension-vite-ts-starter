@@ -22,7 +22,7 @@ import { StyledTermsPage } from './terms.styles';
 export function TermsPage() {
   return (
     <StyledTermsPage>
-      <Text as="h1" sizePreset="extraBold">
+      <Text as="h1" size="extraBold">
         Terms of Service
       </Text>
     </StyledTermsPage>

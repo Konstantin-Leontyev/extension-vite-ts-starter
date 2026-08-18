@@ -53,13 +53,13 @@ import { type TableWidgetState } from '../table-settings';
 const ROW_ACTION_MIN_INLINE_SIZE = '5.5rem';
 
 /**
- * ROW_ACTION_SIZE_PRESET — задаёт `sizePreset` кнопок Delete в checkable-режиме.
+ * ROW_ACTION_SIZE_PRESET — задаёт `size` кнопок Delete в checkable-режиме.
  * Используется в `Delete` одиночного и группового удаления.
  */
 const ROW_ACTION_SIZE_PRESET: SizePreset = 'small';
 
 /**
- * GROUP_EXPANDER_SIZE_PRESET — задаёт `sizePreset` кнопки раскрытия группы.
+ * GROUP_EXPANDER_SIZE_PRESET — задаёт `size` кнопки раскрытия группы.
  * Используется в expander голов групп демо-таблицы.
  */
 const GROUP_EXPANDER_SIZE_PRESET: IconSizePreset = 'tiny';
@@ -169,7 +169,7 @@ function buildCatalogColumns(
           return null;
         }
 
-        return <Text sizePreset={textSize}>{row.indexLabel}</Text>;
+        return <Text size={textSize}>{row.indexLabel}</Text>;
       },
     },
     {
@@ -180,7 +180,7 @@ function buildCatalogColumns(
       renderCell: (row, _rowIndex, { textSize }) => {
         if (row.rowKind === 'brand-head') {
           return (
-            <Text ellipsis fontWeight={600} sizePreset={textSize}>
+            <Text ellipsis fontWeight={600} size={textSize}>
               {row.product}
             </Text>
           );
@@ -197,7 +197,7 @@ function buildCatalogColumns(
               as="button"
               shape={GROUP_EXPANDER_SHAPE}
               showBorder
-              sizePreset={GROUP_EXPANDER_SIZE_PRESET}
+              size={GROUP_EXPANDER_SIZE_PRESET}
               onClick={() => {
                 toggleGroup(row.groupId);
               }}
@@ -207,7 +207,7 @@ function buildCatalogColumns(
           );
 
           const label = (
-            <Text ellipsis fontWeight={600} sizePreset={textSize}>
+            <Text ellipsis fontWeight={600} size={textSize}>
               {row.product}
             </Text>
           );
@@ -233,7 +233,7 @@ function buildCatalogColumns(
         return (
           <TableNestedCell nestDepth={row.nestDepth ?? 1}>
             <TableMemberPrefix>↳</TableMemberPrefix>
-            <Text ellipsis sizePreset={textSize}>
+            <Text ellipsis size={textSize}>
               {row.product}
             </Text>
           </TableNestedCell>
@@ -252,7 +252,7 @@ function buildCatalogColumns(
           return null;
         }
 
-        return <Text sizePreset={textSize}>{row.stock}</Text>;
+        return <Text size={textSize}>{row.stock}</Text>;
       },
     },
     {
@@ -267,7 +267,7 @@ function buildCatalogColumns(
           return null;
         }
 
-        return <Text sizePreset={textSize}>{row.price}</Text>;
+        return <Text size={textSize}>{row.price}</Text>;
       },
     },
   ];
@@ -385,7 +385,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
         price: { header: 'Price', samples: priceSamples },
         stock: { header: 'Stock', samples: stockSamples },
       },
-      settings.sizePreset
+      settings.size
     );
   }, [
     addDraft.price,
@@ -395,7 +395,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
     editDraft.stock,
     isEditRowOpen,
     products,
-    settings.sizePreset,
+    settings.size,
   ]);
 
   const memberKeysByHeaderRowId = useMemo(
@@ -647,7 +647,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
       { editErrorId, textSize }: TableCellRenderContext
     ): ReactNode => {
       if (column.key === 'indexLabel') {
-        return <Text sizePreset={textSize}>{row.indexLabel}</Text>;
+        return <Text size={textSize}>{row.indexLabel}</Text>;
       }
 
       if (column.key === 'product') {
@@ -742,7 +742,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
     numbered: false,
     rows: tableRows,
     showBorder: settings.showBorder,
-    sizePreset: settings.sizePreset,
+    size: settings.size,
     striped: settings.striped,
   };
 
@@ -797,7 +797,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
       renderBulkSelectionActions={() => (
         <Button
           minInlineSize={ROW_ACTION_MIN_INLINE_SIZE}
-          sizePreset={ROW_ACTION_SIZE_PRESET}
+          size={ROW_ACTION_SIZE_PRESET}
           tone="danger"
           onClick={handleBulkDelete}
         >
@@ -807,7 +807,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
       renderSelectedRowActions={(row) => (
         <Button
           minInlineSize={ROW_ACTION_MIN_INLINE_SIZE}
-          sizePreset={ROW_ACTION_SIZE_PRESET}
+          size={ROW_ACTION_SIZE_PRESET}
           tone="danger"
           onClick={() => {
             handleDeleteRow(row);

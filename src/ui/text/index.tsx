@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - семантический тон через проп `tone`
  *  - курсивное начертание через проп `italic`
  *  - выравнивание через проп `align`
@@ -119,10 +119,10 @@ type TextProps<T extends TextTag> = {
  * @example
  * // Прямое использование: текст, заголовки
  * <Text>Обычный текст</Text>
- * <Text as="h1" sizePreset="bold" tone="primary">Заголовок</Text>
+ * <Text as="h1" size="bold" tone="primary">Заголовок</Text>
  * // Подпись поля — компонент FieldLabel из @ui/field-label, не Text напрямую
  * // Внутри контрола — через пропсы родителя, не tone на Text из вызывающего кода:
- * <Button textTone="primary" sizePreset="large">Сохранить</Button>
+ * <Button textTone="primary" size="large">Сохранить</Button>
  */
 export function Text<T extends TextTag = 'span'>(props: TextProps<T>) {
   return createElement(StyledText, props);

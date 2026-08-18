@@ -37,7 +37,7 @@ import { ToneListbox } from '../tone-listbox';
  * @property showBorder — включает рамку
  * @property showDot — включает точку-индикатор
  * @property showShadow — включает тень при включённой рамке
- * @property sizePreset — размер метки
+ * @property size — размер метки
  * @property text — содержимое метки
  * @property tinted — включает режим мягкой заливки
  * @property tone — тон заливки
@@ -49,7 +49,7 @@ export type TagWidgetState = {
   showBorder: boolean;
   showDot: boolean;
   showShadow: boolean;
-  sizePreset: TagSizePreset;
+  size: TagSizePreset;
   text: string;
   tinted: boolean;
   tone: TonePreset;
@@ -78,8 +78,8 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
       <SizeListbox
         label="Size:"
         sizes={TAG_SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
+        value={state.size}
+        onChange={(size) => onChange('size', size)}
       />
 
       <ShapeListbox

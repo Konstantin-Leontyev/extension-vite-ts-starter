@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - форму через проп `shape`
  *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
  *    окна — квадрат Icon: ряд-триггер обрезающий, скругление даёт обрезка ряда
@@ -335,7 +335,7 @@ export function DateRangeInput({
   onEndDayChange,
   onStartDayChange,
   shape,
-  sizePreset,
+  size,
   startDay = DEFAULT_DATE_RANGE_INPUT_START_DAY,
   startLabel = DEFAULT_DATE_RANGE_INPUT_START_LABEL,
   ...rest
@@ -359,11 +359,11 @@ export function DateRangeInput({
   const panelId = useId();
   const buttonShape = buttonShapeProp ?? shape ?? DEFAULT_SHAPE_PRESET;
   const dayShape = dayShapeProp ?? shape ?? DEFAULT_SHAPE_PRESET;
-  const surfaceProps = { borderTone, shape, sizePreset };
+  const surfaceProps = { borderTone, shape, size };
   const calendarIcon = <CalendarIcon />;
   const isActive = startDay !== '' || endDay !== '';
   const showClear = isActive && onClear !== undefined && !disabled;
-  const textSizePreset = getTextSize(sizePreset);
+  const textSizePreset = getTextSize(size);
 
   function handleOpenFromSegment(sourceDay: string): void {
     if (disabled) {
@@ -525,13 +525,13 @@ export function DateRangeInput({
           right={rightSegment}
           // Прямые углы: скругление даёт обрезка ряда-триггера, не сегменты.
           shape={SEGMENT_BUTTON_PARTS_FLUSH_SHAPE}
-          sizePreset={sizePreset}
+          size={size}
           textSize={textSizePreset}
         />
 
         {showClear && (
           <>
-            <SegmentButtonPartsDivider aria-hidden="true" sizePreset={sizePreset} />
+            <SegmentButtonPartsDivider aria-hidden="true" size={size} />
             <Icon
               aria-label={clearDateRangeButtonAriaLabel(startLabel, endLabel)}
               as="button"
@@ -539,7 +539,7 @@ export function DateRangeInput({
               disabled={disabled}
               shape={clearShape}
               showBorder={false}
-              sizePreset={sizePreset}
+              size={size}
               onClick={handleClear}
             >
               <CloseIcon />
@@ -576,7 +576,7 @@ export function DateRangeInput({
             rangeStart={draftStartDay}
             selectedDayRef={selectedDayRef}
             shape={shape}
-            sizePreset={sizePreset}
+            size={size}
             viewMonth={viewMonth}
             onSelectDay={handleSelectDay}
             onViewMonthChange={setViewMonth}
@@ -600,7 +600,7 @@ export function DateRangeInput({
               onClick: handlePanelDismiss,
             }}
             shape={buttonShape}
-            sizePreset={sizePreset}
+            size={size}
             textSize={textSizePreset}
           />
         </StyledDateRangeInputPanel>

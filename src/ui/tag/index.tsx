@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - семантический тон через проп `tone`
  *  - форму через проп `shape`
  *  - содержимое через `children`. Без `children` рендерится только точка-индикатор
@@ -82,15 +82,15 @@ export function Tag({
   children,
   dotTone,
   showDot = DEFAULT_TAG_SHOW_DOT,
-  sizePreset,
+  size,
   tone,
   ...rest
 }: TagProps) {
   return (
-    <StyledTag sizePreset={sizePreset} tone={tone} {...rest}>
+    <StyledTag size={size} tone={tone} {...rest}>
       {showDot && <StyledTagDot dotTone={dotTone} />}
       {Boolean(children) && (
-        <Text ellipsis sizePreset={getTagTextSize(sizePreset)}>
+        <Text ellipsis size={getTagTextSize(size)}>
           {children}
         </Text>
       )}

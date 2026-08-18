@@ -36,11 +36,11 @@ const spinnerSize = {
 /**
  * getSpinnerSize — возвращает CSS-размер стороны спиннера.
  *
- * @param sizePreset размер из ряда контролов
+ * @param size размер из ряда контролов
  * @returns длина стороны в rem
  */
-function getSpinnerSize(sizePreset: SizePreset): string {
-  return getSpacingValue(spinnerSize[sizePreset]);
+function getSpinnerSize(size: SizePreset): string {
+  return getSpacingValue(spinnerSize[size]);
 }
 
 /**
@@ -57,21 +57,21 @@ const spinnerBorderWidth = {
 /**
  * getSpinnerBorderWidth — возвращает толщину рамки спиннера в px.
  *
- * @param sizePreset размер из ряда контролов
+ * @param size размер из ряда контролов
  * @returns толщина рамки в px
  */
-function getSpinnerBorderWidth(sizePreset: SizePreset): number {
-  return spinnerBorderWidth[sizePreset];
+function getSpinnerBorderWidth(size: SizePreset): number {
+  return spinnerBorderWidth[size];
 }
 
 /**
  * SpinnerStyleProps — представляет пропсы стилизации Spinner и layout-пропсы.
  *
- * @property sizePreset — размер спиннера
+ * @property size — размер спиннера
  * @property tone — семантический тон
  */
 export type SpinnerStyleProps = LayoutProps & {
-  sizePreset?: SizePreset;
+  size?: SizePreset;
   tone?: TonePreset;
 };
 
@@ -101,12 +101,12 @@ export const StyledSpinnerRoot = styled.div.withConfig({
 /**
  * SpinnerIndicatorStyleProps — представляет пропсы стилизации индикатора Spinner.
  */
-type SpinnerIndicatorStyleProps = Pick<SpinnerStyleProps, 'sizePreset' | 'tone'>;
+type SpinnerIndicatorStyleProps = Pick<SpinnerStyleProps, 'size' | 'tone'>;
 
 /**
  * SPINNER_INDICATOR_PROP_NAMES — хранит имена пропсов стилизации индикатора Spinner.
  */
-const SPINNER_INDICATOR_PROP_NAMES = new Set<string>(['sizePreset', 'tone']);
+const SPINNER_INDICATOR_PROP_NAMES = new Set<string>(['size', 'tone']);
 
 /**
  * DEFAULT_SPINNER_TONE — задаёт тон по умолчанию.
@@ -134,7 +134,7 @@ const SPINNER_ROTATE_DURATION = '0.8s';
  * размер, рамку, цвет и скругление.
  *
  * Как работает:
- * 1. Берёт тему и подставляет дефолты `sizePreset` и `tone`
+ * 1. Берёт тему и подставляет дефолты `size` и `tone`
  * 2. Собирает габариты через `getSpinnerSize`, рамку нейтральным
  *    `theme.colors.border` с толщиной из `getSpinnerBorderWidth`, цвет верхней
  *    грани через `getToneColor` с запасным `theme.colors.border` и
@@ -147,13 +147,12 @@ function getSpinnerStyles(
   props: SpinnerIndicatorStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { sizePreset = DEFAULT_SIZE_PRESET, tone = DEFAULT_SPINNER_TONE } = props;
-  const size = getSpinnerSize(sizePreset);
+  const { size = DEFAULT_SIZE_PRESET, tone = DEFAULT_SPINNER_TONE } = props;
 
   return `
-    inline-size: ${size};
-    block-size: ${size};
-    border: ${getSpinnerBorderWidth(sizePreset)}px solid ${theme.colors.border};
+    inline-size: ${getSpinnerSize(size)};
+    block-size: ${getSpinnerSize(size)};
+    border: ${getSpinnerBorderWidth(size)}px solid ${theme.colors.border};
     border-block-start-color: ${getToneColor(theme, tone, theme.colors.border)};
     border-radius: 50%;
   `;

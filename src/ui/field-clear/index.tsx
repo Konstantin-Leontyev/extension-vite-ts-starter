@@ -3,7 +3,7 @@
  * Предоставляет компонент FieldClear для отображения кнопки сброса значения поля.
  *
  * Поддерживает:
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - форму через проп `shape`
  *  - тон заливки окна через проп `iconTone`
  *  - тон глифа через проп `iconFill`
@@ -25,7 +25,7 @@ import { type TonePreset } from '@ui/tones';
 
 /**
  * INLINE_FIELD_CLEAR_PADDING — задаёт отступ окна кнопки сброса.
- * Значение не берётся из таблицы отступов по `sizePreset`.
+ * Значение не берётся из таблицы отступов по `size`.
  */
 const INLINE_FIELD_CLEAR_PADDING = 12;
 
@@ -38,7 +38,7 @@ const INLINE_FIELD_CLEAR_PADDING = 12;
  * @property iconTone — тон заливки окна
  * @property onClick — обработчик клика
  * @property shape — форма кнопки сброса
- * @property sizePreset — размер кнопки сброса
+ * @property size — размер кнопки сброса
  */
 type FieldClearProps = {
   ariaLabel: string;
@@ -47,7 +47,7 @@ type FieldClearProps = {
   iconTone?: TonePreset;
   onClick: () => void;
   shape?: IconShapePreset;
-  sizePreset?: IconSizePreset;
+  size?: IconSizePreset;
 };
 
 /**
@@ -58,7 +58,7 @@ type FieldClearProps = {
  *   ariaLabel={resolveClearAriaLabel(label)}
  *   disabled={disabled}
  *   shape={clearShape}
- *   sizePreset={sizePreset}
+ *   size={size}
  *   onClick={handleClear}
  * />
  * <FieldClear
@@ -67,7 +67,7 @@ type FieldClearProps = {
  *   iconFill={iconFill}
  *   iconTone={iconTone}
  *   shape={clearShape}
- *   sizePreset={sizePreset}
+ *   size={size}
  *   onClick={handleClear}
  * />
  */
@@ -78,7 +78,7 @@ export function FieldClear({
   iconTone,
   onClick,
   shape,
-  sizePreset,
+  size,
 }: FieldClearProps) {
   return (
     <Icon
@@ -92,7 +92,7 @@ export function FieldClear({
       shape={shape}
       showBorder={false}
       showHover={false}
-      sizePreset={sizePreset}
+      size={size}
       onClick={onClick}
     >
       <CloseIcon />

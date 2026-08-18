@@ -84,13 +84,13 @@ export const ICON_SIZE_PRESET_KEYS = Object.freeze(
 );
 
 /**
- * getIconSize — возвращает ключ шкалы габарита окна иконки по `sizePreset`.
+ * getIconSize — возвращает ключ шкалы габарита окна иконки по `size`.
  *
- * @param sizePreset размер окна иконки
+ * @param size размер окна иконки
  * @returns ключ шкалы отступов из `@ui/spacing`
  */
-export function getIconSize(sizePreset: IconSizePreset): SpacingValue {
-  return iconSize[sizePreset];
+export function getIconSize(size: IconSizePreset): SpacingValue {
+  return iconSize[size];
 }
 
 /**
@@ -107,15 +107,15 @@ const iconPadding = {
 } as const satisfies Record<IconSizePreset, SpacingValue>;
 
 /**
- * getIconPadding — возвращает ключ шкалы внутреннего отступа окна иконки по `sizePreset`.
+ * getIconPadding — возвращает ключ шкалы внутреннего отступа окна иконки по `size`.
  * Мост размера → отступ для витрины и вызывающего кода: без явного `padding` окно
- * берёт значение из ряда. Панель синхронизирует состояние при смене `sizePreset`.
+ * берёт значение из ряда.
  *
- * @param sizePreset размер окна иконки
+ * @param size размер окна иконки
  * @returns ключ шкалы отступов из `@ui/spacing`
  */
-export function getIconPadding(sizePreset: IconSizePreset): SpacingValue {
-  return iconPadding[sizePreset];
+export function getIconPadding(size: IconSizePreset): SpacingValue {
+  return iconPadding[size];
 }
 
 /**
@@ -156,7 +156,7 @@ export function resolveIconShape(
 
 /**
  * resolveIconBorderRadius — возвращает значение для CSS-свойства `border-radius`
- * по `shape` и `sizePreset`.
+ * по `shape` и `size`.
  *
  * Как работает:
  * 1. Для `square` отдаёт `0`
@@ -166,13 +166,10 @@ export function resolveIconShape(
  *    `resolveBlockRadius` с формой `rounded` и габаритом окна
  *
  * @param shape форма окна иконки
- * @param sizePreset размер окна иконки
+ * @param size размер окна иконки
  * @returns значение для CSS-свойства `border-radius`
  */
-function resolveIconBorderRadius(
-  shape: IconShapePreset,
-  sizePreset: IconSizePreset
-): string {
+function resolveIconBorderRadius(shape: IconShapePreset, size: IconSizePreset): string {
   if (shape === 'square') {
     return '0';
   }
@@ -181,11 +178,11 @@ function resolveIconBorderRadius(
     return '50%';
   }
 
-  if (sizePreset === 'tiny') {
+  if (size === 'tiny') {
     return getSpacingValue(ICON_TINY_ROUNDED_RADIUS);
   }
 
-  return resolveBlockRadius('rounded', getSpacingValue(getIconSize(sizePreset)));
+  return resolveBlockRadius('rounded', getSpacingValue(getIconSize(size)));
 }
 
 /**
@@ -329,7 +326,7 @@ export function getIconPositionStyles(): string {
  * @property showHover — включает запись канала состояний на `:hover` и
  *   `:focus-visible`. Внутри контрола с собственным слоем наведения выключается,
  *   чтобы не было двойной подсветки
- * @property sizePreset — размер окна иконки
+ * @property size — размер окна иконки
  */
 export type IconStyleProps = LayoutProps &
   ShowBorderProps & {
@@ -338,7 +335,7 @@ export type IconStyleProps = LayoutProps &
     interactive?: boolean;
     shape?: IconShapePreset;
     showHover?: boolean;
-    sizePreset?: IconSizePreset;
+    size?: IconSizePreset;
   };
 
 /**
@@ -352,7 +349,7 @@ const ICON_PROP_NAMES = new Set<string>([
   'interactive',
   'shape',
   'showHover',
-  'sizePreset',
+  'size',
 ]);
 
 /**
@@ -388,9 +385,9 @@ const DEFAULT_ICON_SHOW_HOVER = true;
  *
  * Как работает:
  * 1. Собирает квадрат окна через `getIconSize` и внутренний отступ через
- *    `getIconPadding` по `sizePreset`
+ *    `getIconPadding` по `size`
  * 2. Задаёт `border-radius` через `resolveIconBorderRadius` по `shape` и
- *    `sizePreset`. Без `shape` подставляет `DEFAULT_ICON_SHAPE`
+ *    `size`. Без `shape` подставляет `DEFAULT_ICON_SHAPE`
  * 3. Кладёт рамку с тенью через `getBorderStyles`. Без `showBorder` рамка
  *    выключена через `DEFAULT_ICON_SHOW_BORDER`
  * 4. Считает статичную заливку и цвет глифа через `resolveIconSurface`
@@ -417,18 +414,17 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
     showBorder = DEFAULT_ICON_SHOW_BORDER,
     showHover = DEFAULT_ICON_SHOW_HOVER,
     showShadow = DEFAULT_SHOW_SHADOW,
-    sizePreset = DEFAULT_SIZE_PRESET,
+    size = DEFAULT_SIZE_PRESET,
   } = props;
-  const size = getSpacingValue(getIconSize(sizePreset));
   const surface = resolveIconSurface(theme, iconTone, iconFill);
   const usesStateChannel = interactive || showHover;
   const stateBackground = resolveIconStateBackground(theme, iconTone);
 
   const styles = [
-    `inline-size: ${size};`,
-    `block-size: ${size};`,
-    `padding: ${getSpacingValue(getIconPadding(sizePreset))};`,
-    `border-radius: ${resolveIconBorderRadius(shape, sizePreset)};`,
+    `inline-size: ${getSpacingValue(getIconSize(size))};`,
+    `block-size: ${getSpacingValue(getIconSize(size))};`,
+    `padding: ${getSpacingValue(getIconPadding(size))};`,
+    `border-radius: ${resolveIconBorderRadius(shape, size)};`,
     getBorderStyles(theme, showBorder, showShadow, borderTone),
   ];
 

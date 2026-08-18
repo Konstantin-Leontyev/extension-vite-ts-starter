@@ -81,14 +81,14 @@ type SizeListboxProps<Size extends string> = {
  * <SizeListbox
  *   label="Size:"
  *   sizes={SIZE_PRESET_KEYS}
- *   value={sizePreset}
- *   onChange={setSizePreset}
+ *   value={size}
+ *   onChange={setSize}
  * />
  * <SizeListbox
  *   label="Text size:"
  *   sizes={TEXT_SIZE_PRESET_KEYS}
- *   value={sizePreset}
- *   onChange={setSizePreset}
+ *   value={size}
+ *   onChange={setSize}
  * />
  */
 export function SizeListbox<Size extends string = SizePreset>({

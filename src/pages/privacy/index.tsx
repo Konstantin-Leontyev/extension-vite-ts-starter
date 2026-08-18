@@ -22,7 +22,7 @@ import { StyledPrivacyPage } from './privacy.styles';
 export function PrivacyPage() {
   return (
     <StyledPrivacyPage>
-      <Text as="h1" sizePreset="extraBold">
+      <Text as="h1" size="extraBold">
         Privacy Policy
       </Text>
     </StyledPrivacyPage>

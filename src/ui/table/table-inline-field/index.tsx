@@ -20,7 +20,7 @@ import { StyledTableInlineField } from './table-inline-field.styles';
  */
 type TableInlineFieldProps = Omit<
   ComponentPropsWithRef<'input'>,
-  'className' | 'style'
+  'className' | 'size' | 'style'
 >;
 
 /**

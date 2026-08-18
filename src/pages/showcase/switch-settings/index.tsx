@@ -31,14 +31,14 @@ import { ToneListbox } from '../tone-listbox';
  *
  * @property checked — включает тумблер
  * @property disabled — включает недоступное состояние
- * @property sizePreset — размер дорожки
+ * @property size — размер дорожки
  * @property text — подпись тумблера
  * @property tone — тон включённого состояния
  */
 export type SwitchWidgetState = {
   checked: boolean;
   disabled: boolean;
-  sizePreset: SizePreset;
+  size: SizePreset;
   text: string;
   tone: TonePreset;
 };
@@ -69,8 +69,8 @@ export function SwitchSettings({ onChange, state }: SwitchSettingsProps) {
       <SizeListbox
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
+        value={state.size}
+        onChange={(size) => onChange('size', size)}
       />
 
       <ToneListbox

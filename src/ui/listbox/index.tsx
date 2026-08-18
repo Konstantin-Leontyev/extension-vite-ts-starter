@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - форму через проп `shape`
  *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
  *    выводится из `shape`
@@ -491,15 +491,15 @@ export function Listbox({
   placeholder = DEFAULT_LISTBOX_PLACEHOLDER,
   shape,
   showClear = DEFAULT_LISTBOX_SHOW_CLEAR,
-  sizePreset,
+  size,
   value,
   ...rest
 }: ListboxProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const surfaceProps = { borderTone, iconTone, shape, sizePreset };
+  const surfaceProps = { borderTone, iconTone, shape, size };
   const iconShape = resolveIconShape(shape);
   const clearShape = clearShapeProp ?? iconShape;
-  const textSizePreset = getTextSize(sizePreset);
+  const textSizePreset = getTextSize(size);
   const isIconStart = iconPosition === 'start';
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -535,7 +535,7 @@ export function Listbox({
       showBorder
       showHover={false}
       showShadow={false}
-      sizePreset={sizePreset}
+      size={size}
     >
       <ChevronDownIcon />
     </Icon>
@@ -551,7 +551,7 @@ export function Listbox({
       shape={clearShape}
       showBorder
       showShadow={false}
-      sizePreset={sizePreset}
+      size={size}
       onClick={handleClear}
     >
       <CloseIcon />
@@ -826,7 +826,7 @@ export function Listbox({
         }}
         role="option"
         shape={shape}
-        sizePreset={sizePreset}
+        size={size}
         tabIndex={isTabStop ? 0 : -1}
         onClick={() => {
           if (isOptionDisabled) {
@@ -869,11 +869,11 @@ export function Listbox({
             checked={isSelected}
             inverted
             readOnly
-            sizePreset={sizePreset}
+            size={size}
             tabIndex={-1}
           />
         )}
-        <Text data-slot="label" ellipsis sizePreset={textSizePreset}>
+        <Text data-slot="label" ellipsis size={textSizePreset}>
           {option.label}
         </Text>
         {!showCheckbox && isSelected && (
@@ -882,7 +882,7 @@ export function Listbox({
             iconFill="primary"
             position="relative"
             showHover={false}
-            sizePreset={sizePreset}
+            size={size}
             zIndex={1}
           >
             <CheckIcon />
@@ -928,7 +928,7 @@ export function Listbox({
           <Text
             data-slot="label"
             ellipsis
-            sizePreset={textSizePreset}
+            size={textSizePreset}
             tone={triggerLabel ? undefined : 'muted'}
           >
             {triggerLabel ?? placeholder}
@@ -956,7 +956,7 @@ export function Listbox({
           ref={panelRef}
           role="listbox"
           shape={shape}
-          sizePreset={sizePreset}
+          size={size}
           onKeyDown={handlePanelKeyDown}
           onMouseMove={handlePanelMouseMove}
         >

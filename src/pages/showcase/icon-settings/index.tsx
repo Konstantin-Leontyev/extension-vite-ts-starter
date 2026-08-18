@@ -48,13 +48,12 @@ import { SizeListbox } from '../size-listbox';
  * @property iconFill — тон глифа иконки
  * @property iconKey — витринный ключ выбора иконки для превью
  * @property iconTone — тон заливки окна
- * @property padding — отступ окна Icon. При смене `sizePreset` синхронизируется
- *   мостом `getIconPadding`
+ * @property padding — отступ окна Icon
  * @property shape — форма окна
  * @property showBorder — включает рамку
  * @property showHover — включает канал hover
  * @property showShadow — включает тень при включённой рамке
- * @property sizePreset — размер окна
+ * @property size — размер окна
  */
 export type IconWidgetState = {
   borderTone: TonePreset;
@@ -67,7 +66,7 @@ export type IconWidgetState = {
   showBorder: boolean;
   showHover: boolean;
   showShadow: boolean;
-  sizePreset: IconSizePreset;
+  size: IconSizePreset;
 };
 
 /**
@@ -93,9 +92,9 @@ export function IconSettings({ onChange, state }: IconSettingsProps) {
       <SizeListbox
         label="Size:"
         sizes={ICON_SIZE_PRESET_KEYS}
-        value={state.sizePreset}
+        value={state.size}
         onChange={(size) => {
-          onChange('sizePreset', size);
+          onChange('size', size);
           onChange('padding', getIconPadding(size));
         }}
       />
@@ -120,7 +119,7 @@ export function IconSettings({ onChange, state }: IconSettingsProps) {
       <SizeListbox
         label="Padding:"
         sizes={ICON_SIZE_PRESET_KEYS}
-        value={resolveIconPaddingSizePreset(state.padding, state.sizePreset)}
+        value={resolveIconPaddingSizePreset(state.padding, state.size)}
         onChange={(size) => onChange('padding', getIconPadding(size))}
       />
 

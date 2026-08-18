@@ -67,7 +67,7 @@ import { ToneListbox } from '../tone-listbox';
  * @property rightWithIcon — витринный ключ показа иконки правого сегмента. Выключенный — сегмент без иконки
  * @property segmentCount — витринный ключ числа сегментов в превью
  * @property shape — форма оболочки ряда
- * @property sizePreset — размер компонента
+ * @property size — размер компонента
  */
 export type SegmentButtonWidgetState = {
   centerActive: boolean;
@@ -100,7 +100,7 @@ export type SegmentButtonWidgetState = {
   rightWithIcon: boolean;
   segmentCount: '2' | '3';
   shape: ShapePreset;
-  sizePreset: SizePreset;
+  size: SizePreset;
 };
 
 /**
@@ -138,10 +138,10 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
       <ControlGroup
         label={state.label}
         shape={state.shape}
-        sizePreset={state.sizePreset}
+        size={state.size}
         onLabelChange={(label) => onChange('label', label)}
         onShapeChange={(shape) => onChange('shape', shape)}
-        onSizeChange={(size) => onChange('sizePreset', size)}
+        onSizeChange={(size) => onChange('size', size)}
       />
 
       <Listbox

@@ -33,7 +33,7 @@ type TableGroupCellProps = Omit<ComponentPropsWithRef<'span'>, 'className' | 'st
  * @example
  * <TableGroupCell>
  *   {expander}
- *   <Text ellipsis fontWeight={600} sizePreset={textSize}>
+ *   <Text ellipsis fontWeight={600} size={textSize}>
  *     {row.product}
  *   </Text>
  * </TableGroupCell>

@@ -216,7 +216,7 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
                   The local language model could not be downloaded or initialized.
                 </Text>
                 {error != null && (
-                  <Text as="p" sizePreset="thin" tone="muted">
+                  <Text as="p" size="thin" tone="muted">
                     {error.message}
                   </Text>
                 )}

@@ -29,19 +29,19 @@ import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
 /**
  * ToastStyleProps — представляет пропсы стилизации Toast и layout-пропсы.
  *
- * @property sizePreset — размер компонента
+ * @property size — размер компонента
  * @property tone — семантический тон. Задаёт акцентную полосу слева
  *   через `border-inline-start`, а не заливку
  */
 export type ToastStyleProps = LayoutProps & {
-  sizePreset?: SizePreset;
+  size?: SizePreset;
   tone?: TonePreset;
 };
 
 /**
  * TOAST_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Toast.
  */
-const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 'tone']);
+const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'size', 'tone']);
 
 /**
  * getToastStyles — возвращает CSS-правила для корня `StyledToast`:
@@ -51,7 +51,7 @@ const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 't
  * остаётся только у акцентной полосы — инлайновая сторона высоту не растит.
  *
  * Как работает:
- * 1. Берёт тему и подставляет дефолты `sizePreset` и `tone`
+ * 1. Берёт тему и подставляет дефолты `size` и `tone`
  * 2. Собирает габариты, отступы, заливку `surface` и цвет текста
  * 3. Кладёт рамку с тенью через `getBorderStyles` без флагов — рамка с тенью
  *    по дефолтам
@@ -63,9 +63,9 @@ const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'sizePreset', 't
  */
 function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
-  const { sizePreset = DEFAULT_SIZE_PRESET, tone = DEFAULT_TONE } = props;
-  const minBlockSize = getMinBlockSize(sizePreset);
-  const padding = getPadding(sizePreset);
+  const { size = DEFAULT_SIZE_PRESET, tone = DEFAULT_TONE } = props;
+  const minBlockSize = getMinBlockSize(size);
+  const padding = getPadding(size);
 
   return `
     min-block-size: ${minBlockSize};

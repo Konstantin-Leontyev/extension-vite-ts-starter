@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - семантический тон через проп `tone`
  *  - форму через проп `shape`
  *  - тон рамки через проп `borderTone`
@@ -108,7 +108,7 @@ type ButtonProps = {
  * <Button
  *   icon={<SettingsIcon />}
  *   iconPosition="start"
- *   sizePreset="small"
+ *   size="small"
  *   tone="danger"
  *   onClick={handleBulkDelete}
  * >
@@ -125,7 +125,7 @@ export function Button({
   id,
   label,
   shape,
-  sizePreset,
+  size,
   textTone,
   tone,
   type = DEFAULT_BUTTON_TYPE,
@@ -147,7 +147,7 @@ export function Button({
       showBorder
       showHover={false}
       showShadow={false}
-      sizePreset={sizePreset}
+      size={size}
     >
       {icon}
     </Icon>
@@ -161,7 +161,7 @@ export function Button({
         iconTone={iconTone}
         id={buttonId}
         shape={shape}
-        sizePreset={sizePreset}
+        size={size}
         tone={tone}
         type={type}
         {...restProps}
@@ -171,7 +171,7 @@ export function Button({
           align="center"
           data-slot="label"
           ellipsis
-          sizePreset={getTextSize(sizePreset)}
+          size={getTextSize(size)}
           tone={textTone}
         >
           {children}

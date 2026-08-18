@@ -72,7 +72,7 @@ function Fieldset({ children, label, ...rest }: FieldsetProps) {
         <Text
           as="legend"
           paddingInline={4}
-          sizePreset={FIELDSET_LEGEND_SIZE_PRESET}
+          size={FIELDSET_LEGEND_SIZE_PRESET}
           tone={FIELDSET_LEGEND_TONE}
         >
           {label}

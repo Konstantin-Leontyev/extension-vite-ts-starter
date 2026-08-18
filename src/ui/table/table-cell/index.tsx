@@ -3,7 +3,7 @@
  * Предоставляет компонент TableCell для отображения ячейки таблицы.
  *
  * Поддерживает:
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - горизонтальное выравнивание через проп `textAlign`
  *  - обрезку с многоточием через проп `ellipsis`
  *  - запрет переноса строк через проп `nowrap`
@@ -56,11 +56,11 @@ type TableCellProps = TableCellStyleProps &
  * TableCell — отображает ячейку таблицы.
  *
  * @example
- * <TableCell textAlign="end" sizePreset={sizePreset}>
- *   <Text sizePreset={textSize}>{rowIndex + 1}</Text>
+ * <TableCell textAlign="end" size={size}>
+ *   <Text size={textSize}>{rowIndex + 1}</Text>
  * </TableCell>
- * <TableCell head scope="col" sizePreset={sizePreset}>
- *   <Text sizePreset={textSize}>{column.header}</Text>
+ * <TableCell head scope="col" size={size}>
+ *   <Text size={textSize}>{column.header}</Text>
  * </TableCell>
  */
 export function TableCell({ head, ...props }: TableCellProps) {

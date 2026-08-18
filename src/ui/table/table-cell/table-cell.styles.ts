@@ -33,13 +33,13 @@ const DEFAULT_TABLE_CELL_TEXT_ALIGN: TableCellAlign = 'center';
  *
  * @property ellipsis — включает обрезку с многоточием
  * @property nowrap — включает запрет переноса строк
- * @property sizePreset — размер ячейки
+ * @property size — размер ячейки
  * @property textAlign — горизонтальное выравнивание содержимого
  */
 export type TableCellStyleProps = {
   ellipsis?: boolean;
   nowrap?: boolean;
-  sizePreset?: SizePreset;
+  size?: SizePreset;
   textAlign?: TableCellAlign;
 };
 
@@ -49,7 +49,7 @@ export type TableCellStyleProps = {
 const TABLE_CELL_PROP_NAMES = new Set<string>([
   'ellipsis',
   'nowrap',
-  'sizePreset',
+  'size',
   'textAlign',
 ]);
 
@@ -58,7 +58,7 @@ const TABLE_CELL_PROP_NAMES = new Set<string>([
  * выравнивание и режим переноса или обрезки.
  *
  * Как работает:
- * 1. Берёт `sizePreset` или `DEFAULT_SIZE_PRESET` и задаёт `padding-inline`
+ * 1. Берёт `size` или `DEFAULT_SIZE_PRESET` и задаёт `padding-inline`
  * 2. Задаёт `vertical-align: middle` и `text-align` по `textAlign`
  * 3. При `ellipsis` подставляет `getEllipsisStyles`, при `nowrap` — `white-space: nowrap`,
  *    иначе `overflow-wrap: break-word`
@@ -67,9 +67,9 @@ const TABLE_CELL_PROP_NAMES = new Set<string>([
  * @returns CSS-правила, каждое с новой строки
  */
 function getTableCellStyles(props: TableCellStyleProps): string {
-  const sizePreset = props.sizePreset ?? DEFAULT_SIZE_PRESET;
+  const size = props.size ?? DEFAULT_SIZE_PRESET;
   const styles = [
-    `padding-inline: ${getPaddingInline(sizePreset)};`,
+    `padding-inline: ${getPaddingInline(size)};`,
     'vertical-align: middle;',
     `text-align: ${props.textAlign ?? DEFAULT_TABLE_CELL_TEXT_ALIGN};`,
   ];

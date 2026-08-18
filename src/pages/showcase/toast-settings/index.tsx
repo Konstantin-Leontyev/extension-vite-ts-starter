@@ -27,12 +27,12 @@ import { ToneListbox } from '../tone-listbox';
  * Используется для синхронизации значений между панелью управления и демонстрационным уведомлением.
  *
  * @property message — текст сообщения в уведомлении
- * @property sizePreset — размер уведомления
+ * @property size — размер уведомления
  * @property tone — семантический тон уведомления
  */
 export type ToastWidgetState = {
   message: string;
-  sizePreset: SizePreset;
+  size: SizePreset;
   tone: TonePreset;
 };
 
@@ -62,8 +62,8 @@ export function ToastSettings({ onChange, state }: ToastSettingsProps) {
       <SizeListbox
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
+        value={state.size}
+        onChange={(size) => onChange('size', size)}
       />
 
       <ToneListbox

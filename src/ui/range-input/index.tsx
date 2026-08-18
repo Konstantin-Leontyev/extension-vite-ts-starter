@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - форму через проп `shape`
  *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
  *    выводится из `shape`
@@ -15,7 +15,7 @@
  *  - ширину кнопки применения через проп `buttonInlineSize`
  *  - горизонтальные отступы кнопки применения через проп `buttonPaddingInline`
  *  - форму кнопки применения через проп `buttonShape`
- *  - размер кнопки применения через проп `buttonSizePreset`
+ *  - размер кнопки применения через проп `buttonSize`
  *  - текст кнопки применения через проп `buttonText`
  *  - тон лейбла кнопки применения через проп `buttonTextTone`
  *  - семантический тон кнопки применения через проп `buttonTone`
@@ -24,7 +24,7 @@
  *  - формат активного лейбла триггера через проп `formatActiveLabel`
  *  - плейсхолдер поля `from` через проп `fromPlaceholder`
  *  - форму полей `from` и `to` через проп `inputShape`
- *  - размер полей `from` и `to` через проп `inputSizePreset`
+ *  - размер полей `from` и `to` через проп `inputSize`
  *  - подпись над триггером через проп `label`
  *  - обработчик изменения значения через проп `onChange`
  *  - обработчик сброса значения через проп `onClear`
@@ -217,7 +217,7 @@ const EMPTY_RANGE_VALUE: RangeValue = { from: '', to: '' };
  * @property buttonInlineSize — ширина кнопки применения
  * @property buttonPaddingInline — горизонтальные отступы кнопки применения
  * @property buttonShape — форма кнопки применения
- * @property buttonSizePreset — размер кнопки применения
+ * @property buttonSize — размер кнопки применения
  * @property buttonText — текст кнопки применения
  * @property buttonTextTone — тон лейбла кнопки применения
  * @property buttonTone — семантический тон кнопки применения
@@ -226,7 +226,7 @@ type RangeInputButtonProps = {
   buttonInlineSize?: string;
   buttonPaddingInline?: SpacingValue;
   buttonShape?: ShapePreset;
-  buttonSizePreset?: SizePreset;
+  buttonSize?: SizePreset;
   buttonText: string;
   buttonTextTone?: TonePreset;
   buttonTone?: TonePreset;
@@ -236,11 +236,11 @@ type RangeInputButtonProps = {
  * RangeInputInputProps — представляет пропсы полей `from` и `to` RangeInput.
  *
  * @property inputShape — форма полей `from` и `to`
- * @property inputSizePreset — размер полей `from` и `to`
+ * @property inputSize — размер полей `from` и `to`
  */
 type RangeInputInputProps = {
   inputShape?: ShapePreset;
-  inputSizePreset?: SizePreset;
+  inputSize?: SizePreset;
 };
 
 /**
@@ -401,7 +401,7 @@ export function RangeInput({
   buttonInlineSize,
   buttonPaddingInline,
   buttonShape: buttonShapeProp,
-  buttonSizePreset: buttonSizePresetProp,
+  buttonSize: buttonSizeProp,
   buttonText,
   buttonTextTone,
   buttonTone = DEFAULT_RANGE_INPUT_BUTTON_TONE,
@@ -415,7 +415,7 @@ export function RangeInput({
   iconPosition = DEFAULT_ICON_POSITION,
   iconTone,
   inputShape: inputShapeProp,
-  inputSizePreset: inputSizePresetProp,
+  inputSize: inputSizeProp,
   label,
   onChange,
   onClear,
@@ -423,7 +423,7 @@ export function RangeInput({
   presets,
   reserveErrorSpace,
   shape,
-  sizePreset,
+  size,
   title,
   titleAlign = DEFAULT_RANGE_INPUT_TITLE_ALIGN,
   titleItalic,
@@ -444,11 +444,11 @@ export function RangeInput({
     [validationMessagesProp]
   );
   const resolvedShape = shape ?? DEFAULT_SHAPE_PRESET;
-  const resolvedSizePreset = sizePreset ?? DEFAULT_SIZE_PRESET;
+  const resolvedSizePreset = size ?? DEFAULT_SIZE_PRESET;
   const buttonShape = buttonShapeProp ?? resolvedShape;
-  const buttonSizePreset = buttonSizePresetProp ?? resolvedSizePreset;
+  const buttonSize = buttonSizeProp ?? resolvedSizePreset;
   const inputShape = inputShapeProp ?? resolvedShape;
-  const inputSizePreset = inputSizePresetProp ?? resolvedSizePreset;
+  const inputSize = inputSizeProp ?? resolvedSizePreset;
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -473,11 +473,11 @@ export function RangeInput({
   const showClear = isActive && onClear !== undefined && !disabled;
   const showChevron = !showClear;
   const triggerLabel = isActive ? formatActiveLabel(committed) : placeholder;
-  const textSizePreset = getTextSize(sizePreset);
+  const textSizePreset = getTextSize(size);
   const hasPanelError = Boolean(panelError?.message.trim());
   const hasTitle = Boolean(title);
   const panelTitleId = hasTitle ? titleId : undefined;
-  const surfaceProps = { borderTone, iconTone, shape, sizePreset };
+  const surfaceProps = { borderTone, iconTone, shape, size };
   const iconShape = resolveIconShape(shape);
   const clearShape = clearShapeProp ?? iconShape;
   const isIconStart = iconPosition === 'start';
@@ -491,7 +491,7 @@ export function RangeInput({
       showBorder
       showHover={false}
       showShadow={false}
-      sizePreset={sizePreset}
+      size={size}
     >
       <ChevronDownIcon />
     </Icon>
@@ -639,7 +639,7 @@ export function RangeInput({
       shape={clearShape}
       showBorder
       showShadow={false}
-      sizePreset={sizePreset}
+      size={size}
       onClick={handleClear}
     >
       <CloseIcon />
@@ -676,11 +676,7 @@ export function RangeInput({
         >
           {iconPosition === 'start' && iconNode}
           <StyledRangeInputValue {...surfaceProps}>
-            <Text
-              ellipsis
-              sizePreset={textSizePreset}
-              tone={isActive ? undefined : 'muted'}
-            >
+            <Text ellipsis size={textSizePreset} tone={isActive ? undefined : 'muted'}>
               {triggerLabel}
             </Text>
           </StyledRangeInputValue>
@@ -721,7 +717,7 @@ export function RangeInput({
                     }}
                   >
                     <StyledRangeInputValue {...surfaceProps}>
-                      <Text ellipsis sizePreset={textSizePreset} zIndex="1">
+                      <Text ellipsis size={textSizePreset} zIndex="1">
                         {preset.label}
                       </Text>
                     </StyledRangeInputValue>
@@ -738,7 +734,7 @@ export function RangeInput({
                 as={titleLevel}
                 id={titleId}
                 italic={titleItalic}
-                sizePreset={titleSize}
+                size={titleSize}
                 tone={titleTone}
               >
                 {title}
@@ -752,7 +748,7 @@ export function RangeInput({
                 placeholder={fromPlaceholder}
                 ref={fromInputRef}
                 shape={inputShape}
-                sizePreset={inputSizePreset}
+                size={inputSize}
                 value={draftFrom}
                 onChange={(event) => {
                   setDraftFrom(event.currentTarget.value);
@@ -770,7 +766,7 @@ export function RangeInput({
                 invalid={panelError?.invalidTo === true}
                 placeholder={toPlaceholder}
                 shape={inputShape}
-                sizePreset={inputSizePreset}
+                size={inputSize}
                 value={draftTo}
                 onChange={(event) => {
                   setDraftTo(event.currentTarget.value);
@@ -796,7 +792,7 @@ export function RangeInput({
                 inlineSize={buttonInlineSize}
                 paddingInline={buttonPaddingInline}
                 shape={buttonShape}
-                sizePreset={buttonSizePreset}
+                size={buttonSize}
                 textTone={buttonTextTone}
                 tone={buttonTone}
                 onClick={applyDraft}

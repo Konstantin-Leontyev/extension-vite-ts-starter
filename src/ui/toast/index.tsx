@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - семантический тон через проп `tone`
  *  - текст сообщения через `children`
  *
@@ -44,20 +44,14 @@ type ToastProps = ToastStyleProps & {
  * <Toast>Успешно сохранено</Toast>
  * <Toast tone="danger">Ошибка</Toast>
  */
-function Toast({ children, sizePreset, tone, ...rest }: ToastProps) {
+function Toast({ children, size, tone, ...rest }: ToastProps) {
   const isDanger = tone === 'danger';
   const role = isDanger ? 'alert' : 'status';
   const ariaLive = isDanger ? 'assertive' : 'polite';
 
   return (
-    <StyledToast
-      aria-live={ariaLive}
-      role={role}
-      sizePreset={sizePreset}
-      tone={tone}
-      {...rest}
-    >
-      <Text sizePreset={getTextSize(sizePreset)}>{children}</Text>
+    <StyledToast aria-live={ariaLive} role={role} size={size} tone={tone} {...rest}>
+      <Text size={getTextSize(size)}>{children}</Text>
     </StyledToast>
   );
 }

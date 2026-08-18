@@ -43,7 +43,7 @@ import { TextGroup } from '../text-group';
  * @property shape — форма строки-поля
  * @property showBorder — включает рамку контрола
  * @property showShadow — включает тень при включённой рамке
- * @property sizePreset — размер контрола
+ * @property size — размер контрола
  * @property value — значение поля
  */
 export type InputWidgetState = {
@@ -58,7 +58,7 @@ export type InputWidgetState = {
   shape: ShapePreset;
   showBorder: boolean;
   showShadow: boolean;
-  sizePreset: SizePreset;
+  size: SizePreset;
   value: string;
 };
 
@@ -88,10 +88,10 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
       <ControlGroup
         label={state.label}
         shape={state.shape}
-        sizePreset={state.sizePreset}
+        size={state.size}
         onLabelChange={(label) => onChange('label', label)}
         onShapeChange={(shape) => onChange('shape', shape)}
-        onSizeChange={(size) => onChange('sizePreset', size)}
+        onSizeChange={(size) => onChange('size', size)}
       />
 
       <BorderGroup

@@ -42,7 +42,7 @@ export { splitLayoutProps } from '@ui/layout';
  *
  * @property iconTone — тон секции шеврона
  * @property shape — форма поверхности
- * @property sizePreset — размер компонента
+ * @property size — размер компонента
  */
 type ComboboxSurfaceStyleProps = OpenControlSurfaceStyleProps & {
   iconTone?: TonePreset;
@@ -76,7 +76,7 @@ const COMBOBOX_SURFACE_PROP_NAMES = new Set<string>([
   ...ICON_SETTING_PROP_NAMES,
   'borderTone',
   'shape',
-  'sizePreset',
+  'size',
 ]);
 
 /**
@@ -109,7 +109,7 @@ export const StyledComboboxTrigger = styled.button.withConfig({
 /**
  * COMBOBOX_BOX_PROP_NAMES — хранит имена пропсов стилизации строки и панели Combobox.
  */
-const COMBOBOX_BOX_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
+const COMBOBOX_BOX_PROP_NAMES = new Set<string>(['shape', 'size']);
 
 /**
  * getComboboxValueStyles — возвращает CSS-правила для узла `StyledComboboxValue`:
@@ -117,34 +117,34 @@ const COMBOBOX_BOX_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
  * исключение: отсутствующая иконка опции не резервирует трек.
  *
  * Как работает:
- * 1. Подставляет дефолт `sizePreset`
+ * 1. Подставляет дефолт `size`
  * 2. Собирает flex-ряд значения с `gap` и горизонтальным отступом
  *
  * @param props пропсы поверхности
  * @returns CSS-правила, каждое с новой строки
  */
 function getComboboxValueStyles(props: ComboboxSurfaceStyleProps): string {
-  const sizePreset = props.sizePreset ?? DEFAULT_SIZE_PRESET;
+  const size = props.size ?? DEFAULT_SIZE_PRESET;
 
   return `
     display: flex;
     gap: ${getSpacingValue(8)};
     align-items: center;
     min-inline-size: 0;
-    padding-inline: ${getPaddingInline(sizePreset)};
+    padding-inline: ${getPaddingInline(size)};
   `;
 }
 
 /**
  * StyledComboboxValue — задаёт ячейку значения триггера компонента Combobox.
- * Базируется на `<span>` и принимает проп `sizePreset`.
+ * Базируется на `<span>` и принимает проп `size`.
  *
  * Генерация стилей:
  *  - `getComboboxValueStyles` — раскладка значения и отступ
  */
 export const StyledComboboxValue = styled.span.withConfig({
   shouldForwardProp: (prop) => !COMBOBOX_BOX_PROP_NAMES.has(prop),
-})<Pick<ComboboxSurfaceStyleProps, 'sizePreset'>>`
+})<Pick<ComboboxSurfaceStyleProps, 'size'>>`
   ${(props) => getComboboxValueStyles(props)}
 `;
 
@@ -166,7 +166,7 @@ export const StyledComboboxValue = styled.span.withConfig({
  * @returns CSS-правила, каждое с новой строки
  */
 function getComboboxPanelStyles(
-  props: Pick<ComboboxSurfaceStyleProps, 'shape' | 'sizePreset'> & { theme: AppTheme }
+  props: Pick<ComboboxSurfaceStyleProps, 'shape' | 'size'> & { theme: AppTheme }
 ): string {
   return `
     display: grid;
@@ -179,7 +179,7 @@ function getComboboxPanelStyles(
 
 /**
  * StyledComboboxPanel — задаёт панель поиска и списка опций компонента Combobox.
- * Базируется на `<div>` и принимает пропсы `shape` и `sizePreset`.
+ * Базируется на `<div>` и принимает пропсы `shape` и `size`.
  *
  * Генерация стилей:
  *  - `getComboboxPanelStyles` — сетка поиска и списка, хром панели через
@@ -188,7 +188,7 @@ function getComboboxPanelStyles(
  */
 export const StyledComboboxPanel = styled.div.withConfig({
   shouldForwardProp: (prop) => !COMBOBOX_BOX_PROP_NAMES.has(prop),
-})<Pick<ComboboxSurfaceStyleProps, 'shape' | 'sizePreset'>>`
+})<Pick<ComboboxSurfaceStyleProps, 'shape' | 'size'>>`
   ${(props) => getComboboxPanelStyles(props)}
 `;
 
@@ -197,7 +197,7 @@ export const StyledComboboxPanel = styled.div.withConfig({
  * столбик опций, отступы, ограничение высоты и прокрутку по модели Listbox.
  *
  * Как работает:
- * 1. Подставляет дефолт `sizePreset`
+ * 1. Подставляет дефолт `size`
  * 2. Собирает столбик опций с отступами
  * 3. Ограничивает высоту и включает прокрутку через
  *    `getOpenControlOptionsListScrollStyles`
@@ -205,30 +205,28 @@ export const StyledComboboxPanel = styled.div.withConfig({
  * @param props пропсы размера
  * @returns CSS-правила, каждое с новой строки
  */
-function getComboboxListStyles(
-  props: Pick<ComboboxSurfaceStyleProps, 'sizePreset'>
-): string {
-  const sizePreset = props.sizePreset ?? DEFAULT_SIZE_PRESET;
+function getComboboxListStyles(props: Pick<ComboboxSurfaceStyleProps, 'size'>): string {
+  const size = props.size ?? DEFAULT_SIZE_PRESET;
 
   return `
     display: grid;
     min-block-size: 0;
     padding-block: ${getSpacingValue(OPEN_CONTROL_SELECTABLE_INSET)};
     padding-inline-end: ${getSpacingValue(8)};
-    ${getOpenControlOptionsListScrollStyles(sizePreset)}
+    ${getOpenControlOptionsListScrollStyles(size)}
   `;
 }
 
 /**
  * StyledComboboxList — задаёт список опций компонента Combobox.
- * Базируется на `<ul>` и принимает проп `sizePreset`.
+ * Базируется на `<ul>` и принимает проп `size`.
  *
  * Генерация стилей:
  *  - `getComboboxListStyles` — столбик, отступы, max-высота и прокрутка
  */
 export const StyledComboboxList = styled.ul.withConfig({
-  shouldForwardProp: (prop) => prop !== 'sizePreset',
-})<Pick<ComboboxSurfaceStyleProps, 'sizePreset'>>`
+  shouldForwardProp: (prop) => prop !== 'size',
+})<Pick<ComboboxSurfaceStyleProps, 'size'>>`
   ${(props) => getComboboxListStyles(props)}
 `;
 
@@ -239,7 +237,7 @@ export const StyledComboboxList = styled.ul.withConfig({
  * отсутствующие слоты не резервируют трек.
  *
  * Как работает:
- * 1. Берёт тему и подставляет дефолт `sizePreset`
+ * 1. Берёт тему и подставляет дефолт `size`
  * 2. Подставляет поверхность через `getOpenControlSelectableRowSurfaceStyles`:
  *    flex-раскладку, габариты, заливку и подложку активной строки через `::before`
  * 3. Задаёт `padding-inline` по размеру
@@ -250,10 +248,10 @@ export const StyledComboboxList = styled.ul.withConfig({
  * @returns CSS-правила, каждое с новой строки
  */
 function getComboboxOptionStyles(
-  props: Pick<ComboboxSurfaceStyleProps, 'shape' | 'sizePreset'> & { theme: AppTheme }
+  props: Pick<ComboboxSurfaceStyleProps, 'shape' | 'size'> & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const { size = DEFAULT_SIZE_PRESET } = props;
 
   return `
     ${getOpenControlSelectableRowSurfaceStyles(props, {
@@ -262,20 +260,20 @@ function getComboboxOptionStyles(
       highlight: 'primary',
       highlightWhen: `&[data-active='true']::before`,
     })}
-    padding-inline: ${getPaddingInline(sizePreset)};
+    padding-inline: ${getPaddingInline(size)};
     ${getOpenControlActiveRowHighlightStyles(theme)}
   `;
 }
 
 /**
  * StyledComboboxOption — задаёт кнопку опции компонента Combobox.
- * Базируется на `<button>` и принимает пропсы `shape` и `sizePreset`.
+ * Базируется на `<button>` и принимает пропсы `shape` и `size`.
  *
  * Генерация стилей:
  *  - `getComboboxOptionStyles` — поверхность, отступы и подсветка
  */
 export const StyledComboboxOption = styled.button.withConfig({
   shouldForwardProp: (prop) => !COMBOBOX_BOX_PROP_NAMES.has(prop),
-})<Pick<ComboboxSurfaceStyleProps, 'shape' | 'sizePreset'>>`
+})<Pick<ComboboxSurfaceStyleProps, 'shape' | 'size'>>`
   ${(props) => getComboboxOptionStyles(props)}
 `;

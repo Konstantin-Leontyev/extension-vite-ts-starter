@@ -72,13 +72,13 @@ const DEFAULT_TAG_SIZE_PRESET: TagSizePreset = 'tiny';
 
 /**
  * getTagMinBlockSize — возвращает значение для CSS-свойства `min-block-size`
- * по `sizePreset` метки.
+ * по `size` метки.
  *
- * @param sizePreset размер метки
+ * @param size размер метки
  * @returns CSS-длина в rem
  */
-function getTagMinBlockSize(sizePreset: TagSizePreset): string {
-  return getSpacingValue(tagMinBlockSize[sizePreset]);
+function getTagMinBlockSize(size: TagSizePreset): string {
+  return getSpacingValue(tagMinBlockSize[size]);
 }
 
 /**
@@ -103,14 +103,14 @@ const tagTextSize = {
 } as const satisfies Record<TagSizePreset, TextSizePreset>;
 
 /**
- * getTagTextSize — возвращает размер текста по `sizePreset`.
+ * getTagTextSize — возвращает размер текста по `size`.
  * Подставляет `DEFAULT_TAG_SIZE_PRESET`, когда размер не задан.
  *
- * @param sizePreset размер метки
+ * @param size размер метки
  * @returns метка размера текста из `TextSizePreset` для текста метки
  */
-export function getTagTextSize(sizePreset?: TagSizePreset): TextSizePreset {
-  return tagTextSize[sizePreset ?? DEFAULT_TAG_SIZE_PRESET];
+export function getTagTextSize(size?: TagSizePreset): TextSizePreset {
+  return tagTextSize[size ?? DEFAULT_TAG_SIZE_PRESET];
 }
 
 /**
@@ -183,14 +183,14 @@ function getTagDotColor(theme: AppTheme, dotTone: TonePreset | undefined): strin
  * TagStyleProps — представляет пропсы стилизации Tag и layout-пропсы.
  *
  * @property shape — форма метки
- * @property sizePreset — размер метки
+ * @property size — размер метки
  * @property tinted — включает режим мягкой заливки
  * @property tone — тон заливки
  */
 export type TagStyleProps = LayoutProps &
   BorderProps & {
     shape?: ShapePreset;
-    sizePreset?: TagSizePreset;
+    size?: TagSizePreset;
     tinted?: boolean;
     tone?: TonePreset;
   };
@@ -202,7 +202,7 @@ const TAG_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
   ...BORDER_PROP_NAMES,
   'shape',
-  'sizePreset',
+  'size',
   'tinted',
   'tone',
 ]);
@@ -237,7 +237,7 @@ const DEFAULT_TAG_TONE: TonePreset = 'primary';
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты `borderTone`, `shape`, `showBorder`,
- *    `showShadow`, `sizePreset`, `tinted` и `tone`
+ *    `showShadow`, `size`, `tinted` и `tone`
  * 2. Считает пару цветов поверхности через `resolveTagSurface` по `tone` и `tinted`
  * 3. Собирает `min-block-size`, `padding-inline`, рамку с тенью через
  *    `getBorderStyles`, `border-radius` через `resolveBlockRadius` и цвета
@@ -253,17 +253,17 @@ function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string {
     shape = DEFAULT_TAG_SHAPE,
     showBorder = DEFAULT_TAG_SHOW_BORDER,
     showShadow = DEFAULT_SHOW_SHADOW,
-    sizePreset = DEFAULT_TAG_SIZE_PRESET,
+    size = DEFAULT_TAG_SIZE_PRESET,
     tinted = DEFAULT_TAG_TINTED,
     tone = DEFAULT_TAG_TONE,
   } = props;
   const surface = resolveTagSurface(theme, tone, tinted);
 
   return `
-    min-block-size: ${getTagMinBlockSize(sizePreset)};
-    padding-inline: ${getSpacingValue(tagPaddingInline[sizePreset])};
+    min-block-size: ${getTagMinBlockSize(size)};
+    padding-inline: ${getSpacingValue(tagPaddingInline[size])};
     ${getBorderStyles(theme, showBorder, showShadow, borderTone)}
-    border-radius: ${resolveBlockRadius(shape, getTagMinBlockSize(sizePreset))};
+    border-radius: ${resolveBlockRadius(shape, getTagMinBlockSize(size))};
     background-color: ${surface.backgroundColor};
     color: ${surface.textColor};
   `;
@@ -318,7 +318,7 @@ function getTagDotStyles(props: { dotTone?: TonePreset; theme: AppTheme }): stri
  * Встроенные стили:
  *  - `flex-shrink: 0` — точка не сжимается при нехватке места
  *  - `inline-size` и `block-size: 0.5em` — половина высоты кегля из унаследованного
- *    `font-size`: точка масштабируется с типографикой контекста; от `sizePreset`
+ *    `font-size`: точка масштабируется с типографикой контекста; от `size`
  *    метки не зависит — корень `StyledTag` не задаёт `font-size`
  *  - `border-radius: 50%` — круглая форма
  *

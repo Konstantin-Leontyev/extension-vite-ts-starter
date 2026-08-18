@@ -94,10 +94,10 @@ function resolveSegmentButtonPartsRadius(
  * SegmentButtonPartsStyleProps — представляет пропсы стилизации SegmentButtonParts
  * и layout-пропсы.
  *
- * @property sizePreset — размер ряда сегментов
+ * @property size — размер ряда сегментов
  */
 export type SegmentButtonPartsStyleProps = LayoutProps & {
-  sizePreset?: SizePreset;
+  size?: SizePreset;
 };
 
 /**
@@ -106,20 +106,20 @@ export type SegmentButtonPartsStyleProps = LayoutProps & {
  */
 const SEGMENT_BUTTON_PARTS_ROOT_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
-  'sizePreset',
+  'size',
 ]);
 
 /**
  * getSegmentButtonPartsRootStyles — возвращает CSS-правила для корня
- * `StyledSegmentButtonPartsRoot`: минимальную высоту ряда по `sizePreset`.
+ * `StyledSegmentButtonPartsRoot`: минимальную высоту ряда по `size`.
  *
  * @param props пропсы стилизации корня
  * @returns CSS-правила, каждое с новой строки
  */
 function getSegmentButtonPartsRootStyles(props: SegmentButtonPartsStyleProps): string {
-  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const { size = DEFAULT_SIZE_PRESET } = props;
 
-  return `min-block-size: ${getMinBlockSize(sizePreset)};`;
+  return `min-block-size: ${getMinBlockSize(size)};`;
 }
 
 /**
@@ -167,13 +167,13 @@ export const StyledSegmentButtonPartsRoot = styled.div.withConfig({
  *
  * @property hasIcon — включает кластер иконки с текстом по центру сегмента
  * @property shape — форма ряда для скругления крайних сегментов
- * @property sizePreset — размер сегмента
+ * @property size — размер сегмента
  * @property tone — тон заливки сегмента
  */
 type SegmentButtonPartsPartStyleProps = {
   hasIcon: boolean;
   shape?: SegmentButtonPartsShape;
-  sizePreset?: SizePreset;
+  size?: SizePreset;
   tone?: TonePreset;
 };
 
@@ -183,7 +183,7 @@ type SegmentButtonPartsPartStyleProps = {
 const SEGMENT_BUTTON_PARTS_PART_PROP_NAMES = new Set<string>([
   'hasIcon',
   'shape',
-  'sizePreset',
+  'size',
   'tone',
 ]);
 
@@ -222,10 +222,10 @@ function getSegmentButtonPartsPartStyles(
   const {
     hasIcon,
     shape = DEFAULT_SHAPE_PRESET,
-    sizePreset = DEFAULT_SIZE_PRESET,
+    size = DEFAULT_SIZE_PRESET,
     tone = DEFAULT_TONE,
   } = props;
-  const minBlockSize = getMinBlockSize(sizePreset);
+  const minBlockSize = getMinBlockSize(size);
   const radius = resolveSegmentButtonPartsRadius(shape, minBlockSize);
   const colorKey = getToneColorKey(tone);
   const hoverStateBackground = resolveIconStateBackground(theme, tone, 'none');
@@ -235,7 +235,7 @@ function getSegmentButtonPartsPartStyles(
     'align-items: center;',
     `min-block-size: ${minBlockSize};`,
     'min-inline-size: 0;',
-    `padding-inline: ${getPaddingInline(sizePreset)};`,
+    `padding-inline: ${getPaddingInline(size)};`,
   ];
 
   if (colorKey) {
@@ -311,16 +311,16 @@ export const StyledSegmentButtonPartsPart = styled.button.withConfig({
 /**
  * SegmentButtonPartsDividerStyleProps — представляет пропсы стилизации разделителя сегментов.
  *
- * @property sizePreset — размер ряда для вертикального отступа разделителя
+ * @property size — размер ряда для вертикального отступа разделителя
  */
 type SegmentButtonPartsDividerStyleProps = {
-  sizePreset?: SizePreset;
+  size?: SizePreset;
 };
 
 /**
  * SEGMENT_BUTTON_PARTS_DIVIDER_PROP_NAMES — хранит имена пропсов стилизации разделителя.
  */
-const SEGMENT_BUTTON_PARTS_DIVIDER_PROP_NAMES = new Set<string>(['sizePreset']);
+const SEGMENT_BUTTON_PARTS_DIVIDER_PROP_NAMES = new Set<string>(['size']);
 
 /**
  * getSegmentButtonPartsDividerStyles — возвращает CSS-правила для узла
@@ -333,10 +333,10 @@ function getSegmentButtonPartsDividerStyles(
   props: SegmentButtonPartsDividerStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const { size = DEFAULT_SIZE_PRESET } = props;
 
   return `
-    margin-block: ${getSpacingValue(segmentButtonPartsDividerMarginBlock[sizePreset])};
+    margin-block: ${getSpacingValue(segmentButtonPartsDividerMarginBlock[size])};
     background-color: ${theme.colors.border};
   `;
 }

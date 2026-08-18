@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - форму через проп `shape`
  *  - ряд действий через проп `actions`. Пустой ряд не рендерит компонент
  *  - roving focus через проп `rovingFocus`
@@ -80,13 +80,13 @@ const DEFAULT_ICON_BUTTON_ROW_ROVING_FOCUS = false;
  * @property actions — ряд действий
  * @property rovingFocus — включает roving focus
  * @property shape — форма окна действия
- * @property sizePreset — размер окна действия
+ * @property size — размер окна действия
  */
 type IconButtonRowProps = {
   actions: IconButtonRowAction[];
   rovingFocus?: boolean;
   shape?: IconShapePreset;
-  sizePreset?: IconSizePreset;
+  size?: IconSizePreset;
 } & IconButtonRowStyleProps &
   Omit<
     ComponentPropsWithRef<'div'>,
@@ -216,7 +216,7 @@ function IconButtonRow({
   actions,
   rovingFocus = DEFAULT_ICON_BUTTON_ROW_ROVING_FOCUS,
   shape = DEFAULT_ICON_BUTTON_ROW_SHAPE,
-  sizePreset,
+  size,
   ...rest
 }: IconButtonRowProps) {
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -290,7 +290,7 @@ function IconButtonRow({
             buttonRefs.current[index] = element;
           }}
           shape={shape}
-          sizePreset={sizePreset}
+          size={size}
           tabIndex={resolveActionTabIndex(
             rovingFocus,
             index === currentIndex,

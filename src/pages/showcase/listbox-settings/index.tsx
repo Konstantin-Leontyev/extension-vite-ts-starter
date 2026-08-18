@@ -40,7 +40,7 @@ import { StyledSettingsForm } from '../showcase.styles';
  * @property placeholder — плейсхолдер неактивного триггера
  * @property shape — форма поверхности
  * @property showClear — включает кнопку сброса выбора при выбранном значении
- * @property sizePreset — размер компонента
+ * @property size — размер компонента
  * @property value — буфер выбранного значения в превью. В панель не выносится
  */
 export type ListboxWidgetState = {
@@ -54,7 +54,7 @@ export type ListboxWidgetState = {
   placeholder: string;
   shape: ShapePreset;
   showClear: boolean;
-  sizePreset: SizePreset;
+  size: SizePreset;
   value: string | string[];
 };
 
@@ -84,10 +84,10 @@ export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
       <ControlGroup
         label={state.label}
         shape={state.shape}
-        sizePreset={state.sizePreset}
+        size={state.size}
         onLabelChange={(label) => onChange('label', label)}
         onShapeChange={(shape) => onChange('shape', shape)}
-        onSizeChange={(size) => onChange('sizePreset', size)}
+        onSizeChange={(size) => onChange('size', size)}
       />
 
       <IconGroup

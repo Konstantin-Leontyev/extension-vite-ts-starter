@@ -5,7 +5,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - подпись справа от кружка через `children`. Без `children` рендерится один кружок
  *    без обёртки
  *
@@ -49,12 +49,12 @@ type RadioButtonProps = RadioButtonStyleProps & {
  * <RadioButton name="plan" value="a">Option A</RadioButton>
  * <RadioButton name="plan" value="b" />
  */
-function RadioButton({ children, sizePreset, ...rest }: RadioButtonProps) {
+function RadioButton({ children, size, ...rest }: RadioButtonProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
 
   const control = (
     <StyledRadioButtonControl
-      sizePreset={sizePreset}
+      size={size}
       type="radio"
       {...(children ? restProps : rest)}
     />
@@ -67,7 +67,7 @@ function RadioButton({ children, sizePreset, ...rest }: RadioButtonProps) {
   return (
     <StyledRadioButtonRoot {...layoutProps}>
       {control}
-      <Text sizePreset={getTextSize(sizePreset)}>{children}</Text>
+      <Text size={getTextSize(size)}>{children}</Text>
     </StyledRadioButtonRoot>
   );
 }

@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - форму через проп `shape`
  *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
  *    выводится из `shape`
@@ -215,15 +215,15 @@ export function Combobox({
   searchPlaceholder = DEFAULT_COMBOBOX_SEARCH_PLACEHOLDER,
   shape,
   showClear = DEFAULT_COMBOBOX_SHOW_CLEAR,
-  sizePreset,
+  size,
   value,
   ...rest
 }: ComboboxProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const surfaceProps = { borderTone, iconTone, shape, sizePreset };
+  const surfaceProps = { borderTone, iconTone, shape, size };
   const iconShape = resolveIconShape(shape);
   const clearShape = clearShapeProp ?? iconShape;
-  const textSizePreset = getTextSize(sizePreset);
+  const textSizePreset = getTextSize(size);
   const isIconStart = iconPosition === 'start';
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -255,7 +255,7 @@ export function Combobox({
       showBorder
       showHover={false}
       showShadow={false}
-      sizePreset={sizePreset}
+      size={size}
     >
       <ChevronDownIcon />
     </Icon>
@@ -271,7 +271,7 @@ export function Combobox({
       shape={clearShape}
       showBorder
       showShadow={false}
-      sizePreset={sizePreset}
+      size={size}
       onClick={handleClear}
     >
       <CloseIcon />
@@ -459,16 +459,16 @@ export function Combobox({
           onKeyDown={handleTriggerKeyDown}
         >
           {iconPosition === 'start' && iconNode}
-          <StyledComboboxValue sizePreset={sizePreset}>
+          <StyledComboboxValue size={size}>
             {Boolean(selectedOption?.icon) && (
-              <Icon showHover={false} sizePreset={sizePreset}>
+              <Icon showHover={false} size={size}>
                 {selectedOption?.icon}
               </Icon>
             )}
             <Text
               ellipsis
               minInlineSize="0"
-              sizePreset={textSizePreset}
+              size={textSizePreset}
               tone={selectedOption ? undefined : 'muted'}
             >
               {selectedOption?.label ?? placeholder}
@@ -492,7 +492,7 @@ export function Combobox({
         <StyledComboboxPanel
           ref={panelRef}
           shape={shape}
-          sizePreset={sizePreset}
+          size={size}
           onKeyDown={handlePanelKeyDown}
         >
           <SearchField
@@ -506,7 +506,7 @@ export function Combobox({
             shape={shape}
             showBorder={false}
             showIcon={false}
-            sizePreset={sizePreset}
+            size={size}
             value={query}
             onChange={handleQueryChange}
             onClear={() => setQuery('')}
@@ -516,7 +516,7 @@ export function Combobox({
             aria-label={label ?? placeholder}
             id={listId}
             role="listbox"
-            sizePreset={sizePreset}
+            size={size}
           >
             {filtered.length === 0 && (
               <Text
@@ -524,7 +524,7 @@ export function Combobox({
                 paddingBlock={8}
                 placeSelf="center"
                 role="presentation"
-                sizePreset={textSizePreset}
+                size={textSizePreset}
                 tone="muted"
               >
                 {emptyMessage}
@@ -547,7 +547,7 @@ export function Combobox({
                     }}
                     role="option"
                     shape={shape}
-                    sizePreset={sizePreset}
+                    size={size}
                     type="button"
                     onClick={() => commitSelected(option)}
                     onMouseMove={() => {
@@ -559,16 +559,11 @@ export function Combobox({
                     }}
                   >
                     {Boolean(option.icon) && (
-                      <Icon showHover={false} sizePreset={sizePreset}>
+                      <Icon showHover={false} size={size}>
                         {option.icon}
                       </Icon>
                     )}
-                    <Text
-                      ellipsis
-                      minInlineSize="0"
-                      sizePreset={textSizePreset}
-                      zIndex="1"
-                    >
+                    <Text ellipsis minInlineSize="0" size={textSizePreset} zIndex="1">
                       {option.label}
                     </Text>
                     {isSelected && (
@@ -578,7 +573,7 @@ export function Combobox({
                         marginInlineStart="auto"
                         position="relative"
                         showHover={false}
-                        sizePreset={sizePreset}
+                        size={size}
                         zIndex={1}
                       >
                         <CheckIcon />

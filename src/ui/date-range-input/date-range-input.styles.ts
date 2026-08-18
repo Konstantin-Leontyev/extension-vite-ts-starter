@@ -43,7 +43,7 @@ const DATE_RANGE_INPUT_ROOT_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES])
 const DATE_RANGE_INPUT_SURFACE_PROP_NAMES = new Set<string>([
   'borderTone',
   'shape',
-  'sizePreset',
+  'size',
 ]);
 
 /**

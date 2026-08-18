@@ -59,12 +59,12 @@ export type OpenControlTriggerRowClearLayout = 'both-branches' | 'trailing-only'
  *
  * @property borderTone — тон рамки ряда-триггера
  * @property shape — форма поверхности
- * @property sizePreset — размер компонента
+ * @property size — размер компонента
  */
 export type OpenControlSurfaceStyleProps = {
   borderTone?: TonePreset;
   shape?: ShapePreset;
-  sizePreset?: SizePreset;
+  size?: SizePreset;
 };
 
 /**
@@ -149,20 +149,17 @@ export function resolveEnabledOpenControlIndex<T extends { disabled?: boolean }>
 
 /**
  * resolveOpenControlBlockRadius — возвращает значение для CSS-свойства
- * `border-radius` поверхности open-control по `shape` и `sizePreset`.
+ * `border-radius` поверхности open-control по `shape` и `size`.
  * Используется в `getOpenControlTriggerRowStyles`,
  * `getOpenControlSelectableRowSurfaceStyles`, `getOpenControlPanelStyles` и
  * `getOpenControlStackedPanelStyles`.
  *
  * @param shape форма поверхности
- * @param sizePreset размер компонента
+ * @param size размер компонента
  * @returns значение для CSS-свойства `border-radius`
  */
-function resolveOpenControlBlockRadius(
-  shape: ShapePreset,
-  sizePreset: SizePreset
-): string {
-  return resolveBlockRadius(shape, getMinBlockSize(sizePreset));
+function resolveOpenControlBlockRadius(shape: ShapePreset, size: SizePreset): string {
+  return resolveBlockRadius(shape, getMinBlockSize(size));
 }
 
 /**
@@ -185,7 +182,7 @@ export function getOpenControlRootStyles(): string {
  * габариты, заливку, рамку с тенью и `outline` фокуса.
  *
  * Как работает:
- * 1. Берёт тему и подставляет дефолты `shape` и `sizePreset`
+ * 1. Берёт тему и подставляет дефолты `shape` и `size`
  * 2. Собирает сетку ряда: колонки под trailing clear и при `clearLayout`
  *    `both-branches` докладывает ветку `[data-slot='clear']:first-child`
  * 3. Задаёт габариты, заливку `surface` через `getSurfaceBackgroundColor`,
@@ -204,11 +201,7 @@ export function getOpenControlTriggerRowStyles(
   clearLayout: OpenControlTriggerRowClearLayout = 'both-branches'
 ): string {
   const theme = getTheme(props);
-  const {
-    borderTone,
-    shape = DEFAULT_SHAPE_PRESET,
-    sizePreset = DEFAULT_SIZE_PRESET,
-  } = props;
+  const { borderTone, shape = DEFAULT_SHAPE_PRESET, size = DEFAULT_SIZE_PRESET } = props;
   const styles = [
     'display: grid;',
     'grid-template-columns: minmax(0, 1fr);',
@@ -223,10 +216,10 @@ export function getOpenControlTriggerRowStyles(
 
   styles.push(
     'inline-size: 100%;',
-    `min-block-size: ${getMinBlockSize(sizePreset)};`,
+    `min-block-size: ${getMinBlockSize(size)};`,
     'overflow: hidden;',
     `background-color: ${getSurfaceBackgroundColor(theme, 'surface')};`,
-    `border-radius: ${resolveOpenControlBlockRadius(shape, sizePreset)};`,
+    `border-radius: ${resolveOpenControlBlockRadius(shape, size)};`,
     getBorderStyles(theme, undefined, undefined, borderTone),
     "&[data-open='true'] { visibility: hidden; }",
     `&:has(:focus-visible) {
@@ -282,7 +275,7 @@ export function getOpenControlTriggerStyles(
  * наведения через `::before`.
  *
  * Как работает:
- * 1. Берёт тему и подставляет дефолты `shape` и `sizePreset`
+ * 1. Берёт тему и подставляет дефолты `shape` и `size`
  * 2. Считает отступ подложки, скругление через `resolveOpenControlBlockRadius`
  *    и цвет подсветки по `highlight`
  * 3. Собирает раскладку, габариты и заливку `surface` через
@@ -300,9 +293,9 @@ export function getOpenControlSelectableRowSurfaceStyles(
   options: OpenControlSelectableRowSurfaceOptions
 ): string {
   const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const { shape = DEFAULT_SHAPE_PRESET, size = DEFAULT_SIZE_PRESET } = props;
   const inset = getSpacingValue(OPEN_CONTROL_SELECTABLE_INSET);
-  const borderRadius = resolveOpenControlBlockRadius(shape, sizePreset);
+  const borderRadius = resolveOpenControlBlockRadius(shape, size);
   const highlightColor =
     options.highlight === 'primary' ? theme.colors.primary : theme.colors.veil;
   const highlightWhen = options.highlightWhen ?? DEFAULT_SELECTABLE_HIGHLIGHT_WHEN;
@@ -315,7 +308,7 @@ export function getOpenControlSelectableRowSurfaceStyles(
   styles.push(
     'align-items: center;',
     'inline-size: 100%;',
-    `min-block-size: ${getMinBlockSize(sizePreset)};`,
+    `min-block-size: ${getMinBlockSize(size)};`,
     'text-align: start;',
     `background-color: ${getSurfaceBackgroundColor(theme, 'surface')};`,
     `&::before {
@@ -360,7 +353,7 @@ export function getOpenControlActiveRowHighlightStyles(theme: AppTheme): string 
  * скругление и `outline`.
  *
  * Как работает:
- * 1. Берёт тему и подставляет дефолты `shape` и `sizePreset`
+ * 1. Берёт тему и подставляет дефолты `shape` и `size`
  * 2. Считает скругление через `resolveOpenControlBlockRadius`
  * 3. Подставляет хром панели через `getAnchoredPanelStyles`
  *
@@ -371,10 +364,10 @@ export function getOpenControlPanelStyles(
   props: OpenControlSurfaceStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const { shape = DEFAULT_SHAPE_PRESET, size = DEFAULT_SIZE_PRESET } = props;
 
   return getAnchoredPanelStyles({
-    borderRadius: resolveOpenControlBlockRadius(shape, sizePreset),
+    borderRadius: resolveOpenControlBlockRadius(shape, size),
     theme,
   });
 }
@@ -391,13 +384,13 @@ export function getOpenControlStackedPanelStyles(
   props: OpenControlSurfaceStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { shape = DEFAULT_SHAPE_PRESET, sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const { shape = DEFAULT_SHAPE_PRESET, size = DEFAULT_SIZE_PRESET } = props;
 
   return `
     display: grid;
     gap: ${getSpacingValue(OPEN_CONTROL_ROW_GAP)};
     ${getAnchoredPanelStyles({
-      borderRadius: resolveOpenControlBlockRadius(shape, sizePreset),
+      borderRadius: resolveOpenControlBlockRadius(shape, size),
       padding: getSpacingValue(OPEN_CONTROL_PANEL_PADDING),
       theme,
     })}
@@ -409,12 +402,12 @@ export function getOpenControlStackedPanelStyles(
  * опций open-control: ограничение высоты по `OPEN_CONTROL_PANEL_MAX_OPTION_ROWS`
  * и `overflow: hidden auto`.
  *
- * @param sizePreset размер компонента
+ * @param size размер компонента
  * @returns CSS-правила, каждое с новой строки
  */
-export function getOpenControlOptionsListScrollStyles(sizePreset: SizePreset): string {
+export function getOpenControlOptionsListScrollStyles(size: SizePreset): string {
   return `
-    max-block-size: calc(${getMinBlockSize(sizePreset)} * ${OPEN_CONTROL_PANEL_MAX_OPTION_ROWS});
+    max-block-size: calc(${getMinBlockSize(size)} * ${OPEN_CONTROL_PANEL_MAX_OPTION_ROWS});
     overflow: hidden auto;
   `;
 }

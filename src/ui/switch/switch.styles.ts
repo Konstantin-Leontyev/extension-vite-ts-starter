@@ -39,11 +39,11 @@ const switchTrackInlineSize = {
 /**
  * getSwitchTrackInlineSize — возвращает CSS-ширину дорожки.
  *
- * @param sizePreset размер из ряда контролов
+ * @param size размер из ряда контролов
  * @returns ширина дорожки в rem
  */
-function getSwitchTrackInlineSize(sizePreset: SizePreset): string {
-  return getSpacingValue(switchTrackInlineSize[sizePreset]);
+function getSwitchTrackInlineSize(size: SizePreset): string {
+  return getSpacingValue(switchTrackInlineSize[size]);
 }
 
 /**
@@ -59,11 +59,11 @@ const switchTrackBlockSize = {
 /**
  * getSwitchTrackBlockSize — возвращает CSS-высоту дорожки.
  *
- * @param sizePreset размер из ряда контролов
+ * @param size размер из ряда контролов
  * @returns высота дорожки в rem
  */
-function getSwitchTrackBlockSize(sizePreset: SizePreset): string {
-  return getSpacingValue(switchTrackBlockSize[sizePreset]);
+function getSwitchTrackBlockSize(size: SizePreset): string {
+  return getSpacingValue(switchTrackBlockSize[size]);
 }
 
 /**
@@ -79,21 +79,21 @@ const switchKnobSize = {
 /**
  * getSwitchKnobSize — возвращает CSS-диаметр бегунка.
  *
- * @param sizePreset размер из ряда контролов
+ * @param size размер из ряда контролов
  * @returns диаметр бегунка в rem
  */
-function getSwitchKnobSize(sizePreset: SizePreset): string {
-  return getSpacingValue(switchKnobSize[sizePreset]);
+function getSwitchKnobSize(size: SizePreset): string {
+  return getSpacingValue(switchKnobSize[size]);
 }
 
 /**
  * SwitchStyleProps — представляет пропсы стилизации Switch и layout-пропсы.
  *
- * @property sizePreset — размер дорожки
+ * @property size — размер дорожки
  * @property tone — тон включённого состояния
  */
 export type SwitchStyleProps = LayoutProps & {
-  sizePreset?: SizePreset;
+  size?: SizePreset;
   tone?: TonePreset;
 };
 
@@ -127,12 +127,12 @@ export const StyledSwitchRoot = styled.label.withConfig({
 /**
  * SwitchTrackStyleProps — представляет пропсы стилизации дорожки Switch.
  */
-type SwitchTrackStyleProps = Pick<SwitchStyleProps, 'sizePreset' | 'tone'>;
+type SwitchTrackStyleProps = Pick<SwitchStyleProps, 'size' | 'tone'>;
 
 /**
  * SWITCH_TRACK_PROP_NAMES — хранит имена пропсов стилизации дорожки Switch.
  */
-const SWITCH_TRACK_PROP_NAMES = new Set<string>(['sizePreset', 'tone']);
+const SWITCH_TRACK_PROP_NAMES = new Set<string>(['size', 'tone']);
 
 /**
  * DEFAULT_SWITCH_TONE — задаёт тон включённого состояния по умолчанию.
@@ -148,12 +148,12 @@ const TRACK_BORDER = '1px';
 
 /**
  * getSwitchTrackStyles — возвращает CSS-правила для узла `StyledSwitchTrack`:
- * габариты, скругление, бегунок и checked/focus-вид по пропам `sizePreset` и `tone`.
+ * габариты, скругление, бегунок и checked/focus-вид по пропам `size` и `tone`.
  * Состояния читаются со скрытого соседнего input через селектор `input:checked + &`.
  *
  * Как работает:
- * 1. Берёт тему и подставляет дефолты `sizePreset` и `tone`
- * 2. Считает габариты дорожки и бегунка по `sizePreset`
+ * 1. Берёт тему и подставляет дефолты `size` и `tone`
+ * 2. Считает габариты дорожки и бегунка по `size`
  * 3. Центрирует бегунок смещением от края: из расчёта вычитает `TRACK_BORDER`,
  *    потому что `inset` отсчитывается от края области отступа
  * 4. Задаёт ход бегунка как ширину дорожки минус её высоту — обе позиции смещены
@@ -169,10 +169,10 @@ function getSwitchTrackStyles(
   props: SwitchTrackStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { sizePreset = DEFAULT_SIZE_PRESET, tone = DEFAULT_SWITCH_TONE } = props;
-  const trackInlineSize = getSwitchTrackInlineSize(sizePreset);
-  const trackBlockSize = getSwitchTrackBlockSize(sizePreset);
-  const knobSize = getSwitchKnobSize(sizePreset);
+  const { size = DEFAULT_SIZE_PRESET, tone = DEFAULT_SWITCH_TONE } = props;
+  const trackInlineSize = getSwitchTrackInlineSize(size);
+  const trackBlockSize = getSwitchTrackBlockSize(size);
+  const knobSize = getSwitchKnobSize(size);
   const knobInset = `calc((${trackBlockSize} - ${knobSize}) / 2 - ${TRACK_BORDER})`;
   const knobTravel = `calc(${trackInlineSize} - ${trackBlockSize})`;
   const checkedBackground = getToneColor(theme, tone, theme.colors.border);

@@ -47,12 +47,12 @@ export { splitLayoutProps } from '@ui/layout';
  * SearchFieldStyleProps — представляет пропсы стилизации SearchField и layout-пропсы.
  *
  * @property shape — форма строки-поля
- * @property sizePreset — размер контрола
+ * @property size — размер контрола
  */
 export type SearchFieldStyleProps = LayoutProps &
   BorderProps & {
     shape?: ShapePreset;
-    sizePreset?: SizePreset;
+    size?: SizePreset;
   };
 
 /**
@@ -90,7 +90,7 @@ export const StyledSearchFieldRoot = styled.div.withConfig({
  */
 type SearchFieldRowStyleProps = Pick<
   SearchFieldStyleProps,
-  'borderTone' | 'shape' | 'showBorder' | 'showShadow' | 'sizePreset'
+  'borderTone' | 'shape' | 'showBorder' | 'showShadow' | 'size'
 > & {
   iconTone?: TonePreset;
 };
@@ -103,7 +103,7 @@ const SEARCH_FIELD_ROW_PROP_NAMES = new Set<string>([
   ...BORDER_PROP_NAMES,
   'iconTone',
   'shape',
-  'sizePreset',
+  'size',
 ]);
 
 /**
@@ -118,7 +118,7 @@ const SEARCH_FIELD_ROW_PROP_NAMES = new Set<string>([
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты `shape`, `showBorder`, `showShadow`,
- *    `sizePreset` и `iconTone`
+ *    `size` и `iconTone`
  * 2. Собирает бокс ряда: `display: grid`, раскладку позиции через
  *    `getIconPositionStyles`, `align-items: center`, ширину, `min-block-size`
  *    через `getMinBlockSize`, `overflow: hidden` и `border-radius` через
@@ -149,9 +149,9 @@ function getSearchFieldRowStyles(
     shape = DEFAULT_SHAPE_PRESET,
     showBorder = DEFAULT_SHOW_BORDER,
     showShadow = DEFAULT_SHOW_SHADOW,
-    sizePreset = DEFAULT_SIZE_PRESET,
+    size = DEFAULT_SIZE_PRESET,
   } = props;
-  const minBlockSize = getMinBlockSize(sizePreset);
+  const minBlockSize = getMinBlockSize(size);
   const stateBackground = resolveIconStateBackground(theme, iconTone);
 
   const styles = [
@@ -196,12 +196,12 @@ export const StyledSearchFieldRow = styled.div.withConfig({
 /**
  * SearchFieldControlStyleProps — представляет пропсы стилизации нативного поля ввода.
  */
-type SearchFieldControlStyleProps = Pick<SearchFieldStyleProps, 'sizePreset'>;
+type SearchFieldControlStyleProps = Pick<SearchFieldStyleProps, 'size'>;
 
 /**
  * SEARCH_FIELD_CONTROL_PROP_NAMES — хранит имена пропсов стилизации нативного поля ввода.
  */
-const SEARCH_FIELD_CONTROL_PROP_NAMES = new Set<string>(['sizePreset']);
+const SEARCH_FIELD_CONTROL_PROP_NAMES = new Set<string>(['size']);
 
 /**
  * getSearchFieldControlStyles — возвращает CSS-правила для узла `StyledSearchFieldControl`:
@@ -209,7 +209,7 @@ const SEARCH_FIELD_CONTROL_PROP_NAMES = new Set<string>(['sizePreset']);
  * гашение UA-крестика WebKit.
  *
  * Как работает:
- * 1. Подставляет дефолт `sizePreset`
+ * 1. Подставляет дефолт `size`
  * 2. Собирает поле: ширину, `block-size: 100%` по высоте ряда, `padding-inline`
  *    через `getPaddingInline` и типографику через `getTextProperties`.
  *    `padding-block` не пишется: высоту держит ряд через `min-block-size`
@@ -221,15 +221,15 @@ const SEARCH_FIELD_CONTROL_PROP_NAMES = new Set<string>(['sizePreset']);
  * @returns CSS-правила, каждое с новой строки
  */
 function getSearchFieldControlStyles(props: SearchFieldControlStyleProps): string {
-  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
+  const { size = DEFAULT_SIZE_PRESET } = props;
 
   return `
     inline-size: 100%;
     min-inline-size: 0;
     block-size: 100%;
     min-block-size: 0;
-    padding-inline: ${getPaddingInline(sizePreset)};
-    ${getTextProperties(getTextSize(sizePreset))}
+    padding-inline: ${getPaddingInline(size)};
+    ${getTextProperties(getTextSize(size))}
     border: none;
     background-color: transparent;
     &:focus-visible { outline: none; }

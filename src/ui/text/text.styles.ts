@@ -30,7 +30,7 @@ import { TONE_PRESETS, type TonePreset } from '@ui/tones';
 
 /**
  * textSizePresets — хранит типографические пресеты текста.
- * Проп `sizePreset` у Text принимает `TextSizePreset` — собственный ряд,
+ * Проп `size` у Text принимает `TextSizePreset` — собственный ряд,
  * отличный от `SizePreset` контролов. Контролы согласуют размер через
  * `getTextSize` из `@ui/presets`, Tag — через `getTagTextSize` с локальным рядом.
  *
@@ -95,7 +95,7 @@ export const TEXT_SIZE_PRESET_KEYS = Object.freeze(
 
 /**
  * DEFAULT_TEXT_SIZE_PRESET — задаёт типографический пресет по умолчанию.
- * Используется, когда вызывающий код не передал проп `sizePreset`.
+ * Используется, когда вызывающий код не передал проп `size`.
  */
 const DEFAULT_TEXT_SIZE_PRESET: TextSizePreset = 'normal';
 
@@ -105,11 +105,11 @@ const DEFAULT_TEXT_SIZE_PRESET: TextSizePreset = 'normal';
  * Используется для нативных `<input>` и `<textarea>`, которые нельзя обернуть
  * в компонент Text.
  *
- * @param sizePreset типографический пресет
+ * @param size типографический пресет
  * @returns CSS-правила, каждое с новой строки
  */
-export function getTextProperties(sizePreset: TextSizePreset): string {
-  const preset = textSizePresets[sizePreset];
+export function getTextProperties(size: TextSizePreset): string {
+  const preset = textSizePresets[size];
 
   return `
     font-size: ${preset.fontSize};
@@ -122,11 +122,11 @@ export function getTextProperties(sizePreset: TextSizePreset): string {
  * getTextLineHeight — возвращает высоту строки для типографического пресета.
  * Используется для резерва места под однострочный Text без захардкоженных значений.
  *
- * @param sizePreset типографический пресет
+ * @param size типографический пресет
  * @returns значение для CSS-свойства `line-height`
  */
-export function getTextLineHeight(sizePreset: TextSizePreset): string {
-  return textSizePresets[sizePreset].lineHeight;
+export function getTextLineHeight(size: TextSizePreset): string {
+  return textSizePresets[size].lineHeight;
 }
 
 /**
@@ -220,11 +220,11 @@ export function getTextToneColor(
  * @property align — выравнивание текста
  * @property color — прямое переопределение цвета, приоритетнее `tone`
  * @property ellipsis — включает однострочное обрезание с многоточием
- * @property fontSize — размер шрифта, переопределяет `sizePreset`
- * @property fontWeight — насыщенность шрифта, переопределяет `sizePreset`
+ * @property fontSize — размер шрифта, переопределяет `size`
+ * @property fontWeight — насыщенность шрифта, переопределяет `size`
  * @property italic — включает курсивное начертание
- * @property lineHeight — высота строки, переопределяет `sizePreset`
- * @property sizePreset — типографический пресет
+ * @property lineHeight — высота строки, переопределяет `size`
+ * @property size — типографический пресет
  * @property tone — цвет текста из темы
  * @property whiteSpace — управление переносами
  */
@@ -236,7 +236,7 @@ export type TextStyleProps = LayoutProps & {
   fontWeight?: CSSProperties['fontWeight'];
   italic?: boolean;
   lineHeight?: CSSProperties['lineHeight'];
-  sizePreset?: TextSizePreset;
+  size?: TextSizePreset;
   tone?: TextTonePreset;
   whiteSpace?: CSSProperties['whiteSpace'];
 };
@@ -253,7 +253,7 @@ const TEXT_PROP_NAMES = new Set<string>([
   'fontWeight',
   'italic',
   'lineHeight',
-  'sizePreset',
+  'size',
   'tone',
   'whiteSpace',
 ]);
@@ -264,7 +264,7 @@ const TEXT_PROP_NAMES = new Set<string>([
  *
  * Как работает:
  * 1. Получает текущую тему через `getTheme`
- * 2. Выбирает пресет по `sizePreset`, подставляя `DEFAULT_TEXT_SIZE_PRESET`,
+ * 2. Выбирает пресет по `size`, подставляя `DEFAULT_TEXT_SIZE_PRESET`,
  *    когда размер не задан, и применяет `font-size`, `font-weight` и `line-height`
  *    через `getTextProperties`
  * 3. Переопределяет типографику прямыми пропсами `fontSize`, `fontWeight`
@@ -290,12 +290,12 @@ function getTextStyles(props: TextStyleProps & { theme: AppTheme }): string {
     fontWeight,
     italic,
     lineHeight,
-    sizePreset = DEFAULT_TEXT_SIZE_PRESET,
+    size = DEFAULT_TEXT_SIZE_PRESET,
     tone,
     whiteSpace,
   } = props;
 
-  const styles: string[] = [getTextProperties(sizePreset)];
+  const styles: string[] = [getTextProperties(size)];
 
   if (fontSize !== undefined) {
     styles.push(`font-size: ${fontSize};`);

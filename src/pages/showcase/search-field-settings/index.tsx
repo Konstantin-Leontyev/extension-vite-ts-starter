@@ -52,7 +52,7 @@ import { StyledSettingsForm } from '../showcase.styles';
  * @property showBorder — включает рамку контрола
  * @property showIcon — включает секцию иконки
  * @property showShadow — включает тень при включённой рамке
- * @property sizePreset — размер контрола
+ * @property size — размер контрола
  * @property value — значение поля
  */
 export type SearchFieldWidgetState = {
@@ -70,7 +70,7 @@ export type SearchFieldWidgetState = {
   showBorder: boolean;
   showIcon: boolean;
   showShadow: boolean;
-  sizePreset: SizePreset;
+  size: SizePreset;
   value: string;
 };
 
@@ -100,14 +100,14 @@ export function SearchFieldSettings({ onChange, state }: SearchFieldSettingsProp
       <ControlGroup
         label={state.label}
         shape={state.shape}
-        sizePreset={state.sizePreset}
+        size={state.size}
         onLabelChange={(label) => onChange('label', label)}
         onShapeChange={(shape) => {
           onChange('shape', shape);
           onChange('clearShape', resolveIconShape(shape));
           onChange('iconShape', resolveIconShape(shape));
         }}
-        onSizeChange={(size) => onChange('sizePreset', size)}
+        onSizeChange={(size) => onChange('size', size)}
       />
 
       <ShapeListbox

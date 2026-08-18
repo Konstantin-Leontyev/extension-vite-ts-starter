@@ -5,7 +5,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - подсветку строки при наведении через проп `hoverHighlight`
  *  - рамку вокруг таблицы через проп `showBorder`
  *  - чередование фона строк через проп `striped`
@@ -144,7 +144,7 @@ export type TableAddRowSource = 'foot' | 'head';
  * @property addErrorId — id полоски ошибки панели добавления для `aria-describedby`
  * @property editError — текст ошибки панели редактирования для связи с полем
  * @property editErrorId — id полоски ошибки панели редактирования для `aria-describedby`
- * @property textSize — размер текста ячейки по `sizePreset` таблицы
+ * @property textSize — размер текста ячейки по `size` таблицы
  */
 export type TableCellRenderContext = {
   addError?: string;
@@ -411,7 +411,7 @@ function TableCheckbox({
     <Checkbox
       aria-label={ariaLabel}
       checked={checked}
-      sizePreset="small"
+      size="small"
       onChange={onToggle}
     />
   );
@@ -458,7 +458,7 @@ function TableHeaderLeadSpacers({
  * @property rowSelectable — признак, можно ли выбрать строку
  * @property separateCheckboxColumn — признак отдельной колонки чекбокса
  * @property showRowActions — признак показа действий выбранной строки в ячейке
- * @property sizePreset — размер таблицы
+ * @property size — размер таблицы
  * @property textSize — размер текста ячейки
  * @property toggleGroupKeys — обработчик выбора или снятия группы ключей
  * @property toggleRowKey — обработчик переключения выбора одной строки
@@ -483,7 +483,7 @@ type TableBodyRowProps<Row> = {
   rowSelectable: boolean;
   separateCheckboxColumn: boolean;
   showRowActions: boolean;
-  sizePreset: TableStyleProps['sizePreset'];
+  size: TableStyleProps['size'];
   textSize: TextSizePreset;
   toggleGroupKeys: (memberKeys: string[]) => void;
   toggleRowKey: (rowKey: string) => void;
@@ -512,7 +512,7 @@ function TableBodyRow<Row>({
   rowSelectable,
   separateCheckboxColumn,
   showRowActions,
-  sizePreset,
+  size,
   textSize,
   toggleGroupKeys,
   toggleRowKey,
@@ -543,11 +543,11 @@ function TableBodyRow<Row>({
     <StyledTableRow
       $editHidden={isEditAnchor}
       ref={isEditAnchor ? anchorRef : undefined}
-      sizePreset={sizePreset}
+      size={size}
       {...(pointerProps ?? {})}
     >
       {separateCheckboxColumn && (
-        <TableCell sizePreset={sizePreset} textAlign="center">
+        <TableCell size={size} textAlign="center">
           {(rowSelectable && (
             <TableCheckbox
               ariaLabel={`Select row ${rowKey}`}
@@ -561,15 +561,15 @@ function TableBodyRow<Row>({
         </TableCell>
       )}
       {resolvedNumbered && (
-        <TableCell sizePreset={sizePreset} textAlign="end">
-          <Text sizePreset={textSize}>{rowIndex + 1}</Text>
+        <TableCell size={size} textAlign="end">
+          <Text size={textSize}>{rowIndex + 1}</Text>
         </TableCell>
       )}
       {columns.map((column) => {
         const cellContent = column.renderCell ? (
           column.renderCell(row, rowIndex, { textSize })
         ) : (
-          <Text sizePreset={textSize}>{String(row[column.key] ?? '')}</Text>
+          <Text size={textSize}>{String(row[column.key] ?? '')}</Text>
         );
         const isCheckboxColumn =
           checkable &&
@@ -604,7 +604,7 @@ function TableBodyRow<Row>({
             ellipsis={column.ellipsis && !showRowActionsInColumn}
             key={column.key}
             nowrap={column.nowrap}
-            sizePreset={sizePreset}
+            size={size}
             textAlign={column.align}
           >
             {(leadCheckbox && (
@@ -632,7 +632,7 @@ function TableBodyRow<Row>({
  *   numbered={false}
  *   rows={tableRows}
  *   showBorder
- *   sizePreset="normal"
+ *   size="normal"
  * />
  * <Table
  *   aria-label="Catalog table demo"
@@ -667,7 +667,7 @@ export function Table<Row>(props: TableProps<Row>) {
     renderEditCell,
     rows,
     showBorder,
-    sizePreset,
+    size,
     striped,
     ...rest
   } = props;
@@ -686,7 +686,7 @@ export function Table<Row>(props: TableProps<Row>) {
 
   const checkable = props.checkable === true;
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const textSize = getTextSize(sizePreset ?? DEFAULT_TABLE_SIZE_PRESET);
+  const textSize = getTextSize(size ?? DEFAULT_TABLE_SIZE_PRESET);
   const rowCheckboxColumnKey = checkable ? props.rowCheckboxColumnKey : undefined;
   const separateCheckboxColumn = checkable && rowCheckboxColumnKey === undefined;
   const fixed =
@@ -837,7 +837,7 @@ export function Table<Row>(props: TableProps<Row>) {
             ref={addSource === 'head' ? headAddButtonRef : footAddButtonRef}
             shape="rounded"
             showBorder
-            sizePreset="tiny"
+            size="tiny"
             tabIndex={onAddRow && !addRowActive && !editRowActive ? undefined : -1}
             onClick={() => {
               onAddRow?.(addSource);
@@ -848,7 +848,7 @@ export function Table<Row>(props: TableProps<Row>) {
         )) ||
           (!interactive && <TableHeaderLeadSpacers reserveAddButton />) ||
           null}
-        <Text sizePreset={textSize}>{column.header}</Text>
+        <Text size={textSize}>{column.header}</Text>
       </StyledTableCellLead>
       {interactive && hasBulkSelection && props.renderBulkSelectionActions?.()}
     </StyledTableHeaderKeywordBar>
@@ -864,13 +864,13 @@ export function Table<Row>(props: TableProps<Row>) {
     return (
       <>
         {separateCheckboxColumn && (
-          <TableCell sizePreset={sizePreset} textAlign="center" {...headProps}>
+          <TableCell size={size} textAlign="center" {...headProps}>
             <span className="visually-hidden">{TABLE_SELECT_COLUMN_LABEL}</span>
           </TableCell>
         )}
         {resolvedNumbered && (
-          <TableCell sizePreset={sizePreset} textAlign="end" {...headProps}>
-            <Text sizePreset={textSize}>#</Text>
+          <TableCell size={size} textAlign="end" {...headProps}>
+            <Text size={textSize}>#</Text>
           </TableCell>
         )}
         {columns.map((column) => (
@@ -878,7 +878,7 @@ export function Table<Row>(props: TableProps<Row>) {
             ellipsis={column.ellipsis}
             key={column.key}
             nowrap={column.nowrap}
-            sizePreset={sizePreset}
+            size={size}
             textAlign={column.headerAlign ?? column.align}
             {...headProps}
           >
@@ -887,7 +887,7 @@ export function Table<Row>(props: TableProps<Row>) {
             column.key === rowCheckboxColumnKey ? (
               renderKeywordColumnHeader(column, addSource, interactive)
             ) : (
-              <Text sizePreset={textSize}>{column.header}</Text>
+              <Text size={textSize}>{column.header}</Text>
             )}
           </TableCell>
         ))}
@@ -897,10 +897,8 @@ export function Table<Row>(props: TableProps<Row>) {
 
   const renderAddCells = (): ReactNode => (
     <>
-      {separateCheckboxColumn && (
-        <TableCell sizePreset={sizePreset} textAlign="center" />
-      )}
-      {resolvedNumbered && <TableCell sizePreset={sizePreset} textAlign="end" />}
+      {separateCheckboxColumn && <TableCell size={size} textAlign="center" />}
+      {resolvedNumbered && <TableCell size={size} textAlign="end" />}
       {columns.map((column) => {
         const addCellContent = renderAddCell?.(column, addCellContext);
         const cellBody =
@@ -918,7 +916,7 @@ export function Table<Row>(props: TableProps<Row>) {
           <TableCell
             key={column.key}
             nowrap={column.nowrap}
-            sizePreset={sizePreset}
+            size={size}
             textAlign={column.align}
           >
             {cellBody}
@@ -930,10 +928,8 @@ export function Table<Row>(props: TableProps<Row>) {
 
   const renderEditCells = (row: Row): ReactNode => (
     <>
-      {separateCheckboxColumn && (
-        <TableCell sizePreset={sizePreset} textAlign="center" />
-      )}
-      {resolvedNumbered && <TableCell sizePreset={sizePreset} textAlign="end" />}
+      {separateCheckboxColumn && <TableCell size={size} textAlign="center" />}
+      {resolvedNumbered && <TableCell size={size} textAlign="end" />}
       {columns.map((column) => {
         const editCellContent = renderEditCell?.(column, row, editCellContext);
         const cellBody =
@@ -951,7 +947,7 @@ export function Table<Row>(props: TableProps<Row>) {
           <TableCell
             key={column.key}
             nowrap={column.nowrap}
-            sizePreset={sizePreset}
+            size={size}
             textAlign={column.align}
           >
             {cellBody}
@@ -987,8 +983,8 @@ export function Table<Row>(props: TableProps<Row>) {
     const errorRowProps = isAdd ? { 'data-add-error': '' } : { 'data-edit-error': '' };
 
     return (
-      <StyledTableRow {...errorRowProps} sizePreset={sizePreset}>
-        <StyledTablePanelErrorCell colSpan={addColumnCount} sizePreset={sizePreset}>
+      <StyledTableRow {...errorRowProps} size={size}>
+        <StyledTablePanelErrorCell colSpan={addColumnCount} size={size}>
           <FieldError
             id={isAdd ? addErrorId : editErrorId}
             placeholder={isAdd ? addHint : editHint}
@@ -1073,21 +1069,21 @@ export function Table<Row>(props: TableProps<Row>) {
           <tbody>
             {addRowSource === 'head' ? (
               <>
-                <StyledTableRow data-add-header sizePreset={sizePreset}>
+                <StyledTableRow data-add-header size={size}>
                   {renderHeaderCells(true, 'head', false)}
                 </StyledTableRow>
-                <StyledTableRow data-add-row sizePreset={sizePreset}>
+                <StyledTableRow data-add-row size={size}>
                   {renderAddCells()}
                 </StyledTableRow>
                 {renderErrorRow('add')}
               </>
             ) : (
               <>
-                <StyledTableRow data-add-row sizePreset={sizePreset}>
+                <StyledTableRow data-add-row size={size}>
                   {renderAddCells()}
                 </StyledTableRow>
                 {renderErrorRow('add')}
-                <StyledTableRow data-add-footer sizePreset={sizePreset}>
+                <StyledTableRow data-add-footer size={size}>
                   {renderHeaderCells(false, 'foot', false)}
                 </StyledTableRow>
               </>
@@ -1119,7 +1115,7 @@ export function Table<Row>(props: TableProps<Row>) {
           <StyledTableRowPanelTable tableLayout={fixed ? 'fixed' : 'auto'}>
             {renderColgroup()}
             <tbody>
-              <StyledTableRow data-edit-row sizePreset={sizePreset}>
+              <StyledTableRow data-edit-row size={size}>
                 {renderEditCells(editingRow)}
               </StyledTableRow>
               {renderErrorRow('edit')}
@@ -1138,7 +1134,7 @@ export function Table<Row>(props: TableProps<Row>) {
       >
         {renderColgroup()}
         <StyledTableHead $addHidden={hideHeadAnchor} ref={headAnchorRef}>
-          <StyledTableRow sizePreset={sizePreset}>
+          <StyledTableRow size={size}>
             {renderHeaderCells(true, 'head', true)}
           </StyledTableRow>
         </StyledTableHead>
@@ -1180,7 +1176,7 @@ export function Table<Row>(props: TableProps<Row>) {
                 rowSelectable={isRowSelectable(row)}
                 separateCheckboxColumn={separateCheckboxColumn}
                 showRowActions={Boolean(showRowActions)}
-                sizePreset={sizePreset}
+                size={size}
                 textSize={textSize}
                 toggleGroupKeys={toggleGroupKeys}
                 toggleRowKey={toggleRowKey}
@@ -1191,7 +1187,7 @@ export function Table<Row>(props: TableProps<Row>) {
         </StyledTableBody>
         {showFootHeaderRow && (
           <StyledTableFoot $addHidden={hideFootAnchor} ref={footAnchorRef}>
-            <StyledTableRow sizePreset={sizePreset}>
+            <StyledTableRow size={size}>
               {renderHeaderCells(false, 'foot', true)}
             </StyledTableRow>
           </StyledTableFoot>

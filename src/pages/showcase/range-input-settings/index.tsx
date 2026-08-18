@@ -28,7 +28,11 @@ import {
   type RangeValue,
   type ResolvedRangeInputValidationMessages,
 } from '@ui/range-input';
-import { type TextAlignPreset, type TextSizePreset, type TextTonePreset } from '@ui/text';
+import {
+  type TextAlignPreset,
+  type TextSizePreset,
+  type TextTonePreset,
+} from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { ControlGroup } from '../control-group';
@@ -49,7 +53,7 @@ import { ToneListbox } from '../tone-listbox';
  * Используется для синхронизации значений между панелью управления и демонстрационным RangeInput.
  *
  * @property buttonShape — форма кнопки применения. Стартует с формы контрола
- * @property buttonSizePreset — размер кнопки применения. Стартует с размера контрола
+ * @property buttonSize — размер кнопки применения. Стартует с размера контрола
  * @property buttonText — текст кнопки применения
  * @property buttonTextTone — тон лейбла кнопки применения
  * @property buttonTone — семантический тон кнопки применения
@@ -61,13 +65,13 @@ import { ToneListbox } from '../tone-listbox';
  * @property iconPosition — позиция шеврона и кнопки сброса относительно значения
  * @property iconTone — тон секции шеврона и кнопки сброса
  * @property inputShape — форма полей `from` и `to`. Стартует с формы контрола
- * @property inputSizePreset — размер полей `from` и `to`. Стартует с размера контрола
+ * @property inputSize — размер полей `from` и `to`. Стартует с размера контрола
  * @property label — подпись над триггером
  * @property placeholder — плейсхолдер неактивного триггера
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки. Опционален:
  *   дефолт компонента не хранится в стейте
  * @property shape — форма поверхности
- * @property sizePreset — размер компонента
+ * @property size — размер компонента
  * @property title — заголовок панели
  * @property titleAlign — выравнивание заголовка панели
  * @property titleItalic — включает курсив заголовка панели
@@ -80,7 +84,7 @@ import { ToneListbox } from '../tone-listbox';
  */
 export type RangeInputWidgetState = {
   buttonShape: ShapePreset;
-  buttonSizePreset: SizePreset;
+  buttonSize: SizePreset;
   buttonText: string;
   buttonTextTone: TonePreset;
   buttonTone: TonePreset;
@@ -91,12 +95,12 @@ export type RangeInputWidgetState = {
   iconPosition: IconPosition;
   iconTone: TonePreset;
   inputShape: ShapePreset;
-  inputSizePreset: SizePreset;
+  inputSize: SizePreset;
   label: string;
   placeholder: string;
   reserveErrorSpace?: boolean;
   shape: ShapePreset;
-  sizePreset: SizePreset;
+  size: SizePreset;
   title: string;
   titleAlign: TextAlignPreset;
   titleItalic: boolean;
@@ -134,7 +138,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       <ControlGroup
         label={state.label}
         shape={state.shape}
-        sizePreset={state.sizePreset}
+        size={state.size}
         onLabelChange={(label) => onChange('label', label)}
         onShapeChange={(shape) => {
           onChange('shape', shape);
@@ -142,9 +146,9 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
           onChange('buttonShape', shape);
         }}
         onSizeChange={(size) => {
-          onChange('sizePreset', size);
-          onChange('inputSizePreset', size);
-          onChange('buttonSizePreset', size);
+          onChange('size', size);
+          onChange('inputSize', size);
+          onChange('buttonSize', size);
         }}
       />
 
@@ -202,8 +206,8 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       <SizeListbox
         label="Input size:"
         sizes={SIZE_PRESET_KEYS}
-        value={state.inputSizePreset}
-        onChange={(size) => onChange('inputSizePreset', size)}
+        value={state.inputSize}
+        onChange={(size) => onChange('inputSize', size)}
       />
 
       <ShapeListbox
@@ -234,8 +238,8 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       <SizeListbox
         label="Button size:"
         sizes={SIZE_PRESET_KEYS}
-        value={state.buttonSizePreset}
-        onChange={(size) => onChange('buttonSizePreset', size)}
+        value={state.buttonSize}
+        onChange={(size) => onChange('buttonSize', size)}
       />
 
       <ShapeListbox

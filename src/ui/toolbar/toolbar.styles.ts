@@ -41,13 +41,13 @@ import { getTheme, type AppTheme } from '@ui/theme';
  *
  * @property background — заливка панели инструментов
  * @property shape — форма панели
- * @property sizePreset — размер окна действия
+ * @property size — размер окна действия
  */
 export type ToolbarStyleProps = LayoutProps &
   BorderProps & {
     background?: SurfaceBackgroundPreset;
     shape?: ShapePreset;
-    sizePreset?: IconSizePreset;
+    size?: IconSizePreset;
   };
 
 /**
@@ -58,7 +58,7 @@ const TOOLBAR_PROP_NAMES = new Set<string>([
   ...BORDER_PROP_NAMES,
   'background',
   'shape',
-  'sizePreset',
+  'size',
 ]);
 
 /**
@@ -68,17 +68,14 @@ const TOOLBAR_PADDING: SpacingValue = 8;
 
 /**
  * resolveToolbarBlockRadius — возвращает скругление поверхности панели по `shape`
- * и `sizePreset`: высота = размер иконки плюс два `TOOLBAR_PADDING`.
+ * и `size`: высота = размер иконки плюс два `TOOLBAR_PADDING`.
  *
  * @param shape форма панели
- * @param sizePreset размер окна действия
+ * @param size размер окна действия
  * @returns значение для CSS-свойства `border-radius`
  */
-function resolveToolbarBlockRadius(
-  shape: ShapePreset,
-  sizePreset: IconSizePreset
-): string {
-  const surfaceBlockSize = `calc(${getSpacingValue(getIconSize(sizePreset))} + ${getSpacingValue(TOOLBAR_PADDING)} + ${getSpacingValue(TOOLBAR_PADDING)})`;
+function resolveToolbarBlockRadius(shape: ShapePreset, size: IconSizePreset): string {
+  const surfaceBlockSize = `calc(${getSpacingValue(getIconSize(size))} + ${getSpacingValue(TOOLBAR_PADDING)} + ${getSpacingValue(TOOLBAR_PADDING)})`;
 
   return resolveBlockRadius(shape, surfaceBlockSize);
 }
@@ -98,13 +95,13 @@ function getToolbarStyles(props: ToolbarStyleProps & { theme: AppTheme }): strin
     shape = DEFAULT_SHAPE_PRESET,
     showBorder = DEFAULT_SHOW_BORDER,
     showShadow = DEFAULT_SHOW_SHADOW,
-    sizePreset = DEFAULT_SIZE_PRESET,
+    size = DEFAULT_SIZE_PRESET,
   } = props;
 
   return `
     background-color: ${getSurfaceBackgroundColor(theme, background)};
     ${getBorderStyles(theme, showBorder, showShadow, borderTone)}
-    border-radius: ${resolveToolbarBlockRadius(shape, sizePreset)};
+    border-radius: ${resolveToolbarBlockRadius(shape, size)};
   `;
 }
 

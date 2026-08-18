@@ -95,24 +95,22 @@ export function getIcon(key: IconKey): ReactNode {
 /**
  * resolveIconPaddingSizePreset — возвращает ключ размерного ряда под текущий
  * отступ окна.
- * Если отступ совпадает с мостом от `sizePreset` — возвращает его.
+ * Если отступ совпадает с мостом от `size` — возвращает его.
  * Иначе берёт первый ключ ряда, у которого `getIconPadding` даёт то же значение.
  *
  * @param padding текущий отступ окна Icon
- * @param sizePreset предпочтительный ключ ряда, если отступ совпадает с его мостом
+ * @param size предпочтительный ключ ряда, если отступ совпадает с его мостом
  * @returns ключ ряда для контрола отступа окна Icon
  */
 export function resolveIconPaddingSizePreset(
   padding: SpacingValue,
-  sizePreset: IconSizePreset
+  size: IconSizePreset
 ): IconSizePreset {
-  if (getIconPadding(sizePreset) === padding) {
-    return sizePreset;
+  if (getIconPadding(size) === padding) {
+    return size;
   }
 
-  return (
-    ICON_SIZE_PRESET_KEYS.find((key) => getIconPadding(key) === padding) ?? sizePreset
-  );
+  return ICON_SIZE_PRESET_KEYS.find((key) => getIconPadding(key) === padding) ?? size;
 }
 
 /**

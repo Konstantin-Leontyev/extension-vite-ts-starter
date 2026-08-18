@@ -28,13 +28,13 @@ import { ToneListbox } from '../tone-listbox';
  * Используется для синхронизации значений между панелью управления и демонстрационной полосой прогресса.
  *
  * @property showText — включает подпись с процентом выполнения
- * @property sizePreset — размер полосы
+ * @property size — размер полосы
  * @property tone — семантический тон заливки
  * @property value — доля заполнения от 0 до 1
  */
 export type ProgressBarWidgetState = {
   showText: boolean;
-  sizePreset: SizePreset;
+  size: SizePreset;
   tone: TonePreset;
   value: number;
 };
@@ -89,8 +89,8 @@ export function ProgressBarSettings({ onChange, state }: ProgressBarSettingsProp
       <SizeListbox
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
+        value={state.size}
+        onChange={(size) => onChange('size', size)}
       />
 
       <ToneListbox

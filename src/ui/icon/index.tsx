@@ -5,7 +5,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - форму через проп `shape`
  *  - рамку через проп `showBorder`
  *  - тень через проп `showShadow`
@@ -85,7 +85,7 @@ type IconProps<T extends ElementType = 'span'> = {
  * Icon — отображает окно иконки. При `as="button"` — иконочное действие.
  *
  * @example
- * <Icon sizePreset="normal">
+ * <Icon size="normal">
  *   <CalendarIcon />
  * </Icon>
  * <Icon as="button" aria-label="Settings" shape="round">
@@ -98,7 +98,7 @@ type IconProps<T extends ElementType = 'span'> = {
  *   showBorder
  *   showHover={false}
  *   showShadow={false}
- *   sizePreset={sizePreset}
+ *   size={size}
  * >
  *   <ChevronDownIcon />
  * </Icon>

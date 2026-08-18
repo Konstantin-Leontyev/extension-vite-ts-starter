@@ -5,7 +5,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - форму кнопок навигации через проп `shape`
  *  - форму подсветки дня через проп `dayShape`
  *  - верхнюю границу допустимых дней через проп `maxDay`
@@ -141,7 +141,7 @@ export function CalendarPanel({
   rangeStart,
   selectedDayRef,
   shape,
-  sizePreset,
+  size,
   viewMonth,
   ...rest
 }: CalendarPanelProps) {
@@ -177,8 +177,8 @@ export function CalendarPanel({
   const canGoMonthNext = canNavigateMonthNext(viewMonth, maxDay);
   const canGoYearPrevious = canNavigateYearPrevious(viewMonth, minDay);
   const canGoYearNext = canNavigateYearNext(viewMonth, maxDay);
-  const textSizePreset = getTextSize(sizePreset ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET);
-  const navGlyphSize = getCalendarNavGlyphSize(sizePreset);
+  const textSizePreset = getTextSize(size ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET);
+  const navGlyphSize = getCalendarNavGlyphSize(size);
 
   function handlePreviousYearClick(): void {
     onViewMonthChange(addYears(viewMonth, -1));
@@ -203,7 +203,7 @@ export function CalendarPanel({
           aria-label={CALENDAR_NAV_PREVIOUS_YEAR_ARIA_LABEL}
           disabled={!canGoYearPrevious}
           shape={shape}
-          sizePreset={sizePreset}
+          size={size}
           type="button"
           onClick={handlePreviousYearClick}
         >
@@ -220,7 +220,7 @@ export function CalendarPanel({
           aria-label={CALENDAR_NAV_PREVIOUS_MONTH_ARIA_LABEL}
           disabled={!canGoMonthPrevious}
           shape={shape}
-          sizePreset={sizePreset}
+          size={size}
           type="button"
           onClick={handlePreviousMonthClick}
         >
@@ -238,7 +238,7 @@ export function CalendarPanel({
             align="center"
             as="p"
             minInlineSize="0"
-            sizePreset={textSizePreset}
+            size={textSizePreset}
             whiteSpace="normal"
           >
             {formatMonthTitle(viewMonth)}
@@ -248,7 +248,7 @@ export function CalendarPanel({
           aria-label={CALENDAR_NAV_NEXT_MONTH_ARIA_LABEL}
           disabled={!canGoMonthNext}
           shape={shape}
-          sizePreset={sizePreset}
+          size={size}
           type="button"
           onClick={handleNextMonthClick}
         >
@@ -265,7 +265,7 @@ export function CalendarPanel({
           aria-label={CALENDAR_NAV_NEXT_YEAR_ARIA_LABEL}
           disabled={!canGoYearNext}
           shape={shape}
-          sizePreset={sizePreset}
+          size={size}
           type="button"
           onClick={handleNextYearClick}
         >
@@ -283,13 +283,7 @@ export function CalendarPanel({
       <StyledCalendarWeekdayRow>
         {WEEKDAY_LABELS.map((label) => (
           <StyledCalendarWeekdayCell key={label}>
-            <Text
-              align="center"
-              ellipsis
-              minInlineSize="0"
-              sizePreset="thin"
-              tone="muted"
-            >
+            <Text align="center" ellipsis minInlineSize="0" size="thin" tone="muted">
               {label}
             </Text>
           </StyledCalendarWeekdayCell>
@@ -334,11 +328,11 @@ export function CalendarPanel({
                   assignRef(firstAvailableDayRef, node);
                 }
               }}
-              sizePreset={sizePreset}
+              size={size}
               type="button"
               onClick={handleDayClick}
             >
-              <Text ellipsis minInlineSize="0" sizePreset={textSizePreset}>
+              <Text ellipsis minInlineSize="0" size={textSizePreset}>
                 {cell.day}
               </Text>
             </StyledCalendarDayButton>

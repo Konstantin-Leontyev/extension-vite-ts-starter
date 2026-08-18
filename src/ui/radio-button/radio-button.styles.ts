@@ -35,11 +35,11 @@ const radioSize = {
 /**
  * getRadioSize — возвращает CSS-размер стороны кружка.
  *
- * @param sizePreset размер из ряда контролов
+ * @param size размер из ряда контролов
  * @returns длина стороны в rem
  */
-function getRadioSize(sizePreset: SizePreset): string {
-  return getSpacingValue(radioSize[sizePreset]);
+function getRadioSize(size: SizePreset): string {
+  return getSpacingValue(radioSize[size]);
 }
 
 /**
@@ -70,26 +70,23 @@ export const StyledRadioButtonRoot = styled.label.withConfig({
 /**
  * RadioButtonStyleProps — представляет пропсы стилизации RadioButton и layout-пропсы.
  *
- * @property sizePreset — размер кружка
+ * @property size — размер кружка
  */
 export type RadioButtonStyleProps = LayoutProps & {
-  sizePreset?: SizePreset;
+  size?: SizePreset;
 };
 
 /**
  * RADIO_BUTTON_CONTROL_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации кружка RadioButton.
  */
-const RADIO_BUTTON_CONTROL_PROP_NAMES = new Set<string>([
-  ...LAYOUT_PROP_NAMES,
-  'sizePreset',
-]);
+const RADIO_BUTTON_CONTROL_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'size']);
 
 /**
  * getRadioButtonControlStyles — возвращает CSS-правила для узла `StyledRadioButtonControl`:
  * габариты, рамку с тенью и состояние `checked`.
  *
  * Как работает:
- * 1. Берёт тему и подставляет дефолт `sizePreset`
+ * 1. Берёт тему и подставляет дефолт `size`
  * 2. Собирает габариты, сброс layout-рамки UA через `border: none`, заливку
  *    `surface`, рамку с тенью через `getBorderStyles` без флагов и
  *    `border-radius: 50%`
@@ -103,13 +100,12 @@ function getRadioButtonControlStyles(
   props: RadioButtonStyleProps & { theme: AppTheme }
 ): string {
   const theme = getTheme(props);
-  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
-  const size = getRadioSize(sizePreset);
+  const { size = DEFAULT_SIZE_PRESET } = props;
 
   return `
     flex-shrink: 0;
-    inline-size: ${size};
-    block-size: ${size};
+    inline-size: ${getRadioSize(size)};
+    block-size: ${getRadioSize(size)};
     appearance: none;
     border: none;
     background-color: ${theme.colors.surface};

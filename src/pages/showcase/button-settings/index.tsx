@@ -43,7 +43,7 @@ import { ToneListbox } from '../tone-listbox';
  * @property iconTone — тон секции иконки
  * @property label — подпись над кнопкой
  * @property shape — форма кнопки
- * @property sizePreset — размер компонента
+ * @property size — размер компонента
  * @property text — содержимое лейбла
  * @property textTone — тон лейбла
  * @property tone — семантический тон
@@ -59,7 +59,7 @@ export type ButtonWidgetState = {
   iconTone: TonePreset;
   label: string;
   shape: ShapePreset;
-  sizePreset: SizePreset;
+  size: SizePreset;
   text: string;
   textTone: TextTonePreset;
   tone: TonePreset;
@@ -92,13 +92,13 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
       <ControlGroup
         label={state.label}
         shape={state.shape}
-        sizePreset={state.sizePreset}
+        size={state.size}
         onLabelChange={(label) => onChange('label', label)}
         onShapeChange={(shape) => {
           onChange('shape', shape);
           onChange('iconShape', resolveIconShape(shape));
         }}
-        onSizeChange={(size) => onChange('sizePreset', size)}
+        onSizeChange={(size) => onChange('size', size)}
       />
 
       <ToneListbox

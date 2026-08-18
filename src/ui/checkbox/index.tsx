@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - подпись справа от бокса через `children`. Без `children` рендерится один бокс
  *    без обёртки
  *  - инвертированную палитру через проп `inverted`
@@ -67,7 +67,7 @@ function Checkbox({
   checkedMark,
   children,
   inverted,
-  sizePreset,
+  size,
   uncheckedMark,
   ...rest
 }: CheckboxProps) {
@@ -78,7 +78,7 @@ function Checkbox({
     <StyledCheckboxControl
       checkedMark={checkedMark}
       inverted={inverted}
-      sizePreset={sizePreset}
+      size={size}
       type="checkbox"
       uncheckedMark={uncheckedMark}
       {...(hasText ? restProps : rest)}
@@ -92,7 +92,7 @@ function Checkbox({
   return (
     <StyledCheckboxRoot {...layoutProps}>
       {control}
-      <Text sizePreset={getTextSize(sizePreset)}>{children}</Text>
+      <Text size={getTextSize(size)}>{children}</Text>
     </StyledCheckboxRoot>
   );
 }

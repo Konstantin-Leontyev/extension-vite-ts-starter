@@ -29,13 +29,13 @@ import { ToneListbox } from '../tone-listbox';
  * Используется для синхронизации значений между панелью управления и демонстрационным индикатором.
  *
  * @property reserveTextSpace — включает резерв высоты под подпись
- * @property sizePreset — размер спиннера
+ * @property size — размер спиннера
  * @property text — подпись под индикатором
  * @property tone — семантический тон
  */
 export type SpinnerWidgetState = {
   reserveTextSpace: boolean;
-  sizePreset: SizePreset;
+  size: SizePreset;
   text: string;
   tone: TonePreset;
 };
@@ -66,8 +66,8 @@ export function SpinnerSettings({ onChange, state }: SpinnerSettingsProps) {
       <SizeListbox
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
+        value={state.size}
+        onChange={(size) => onChange('size', size)}
       />
 
       <ToneListbox

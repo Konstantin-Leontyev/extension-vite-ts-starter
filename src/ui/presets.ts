@@ -1,7 +1,7 @@
 /**
  * Файл: `src/ui/presets.ts`
  * Определяет размерные пресеты компонентов: единый ряд `small`, `normal`, `large`,
- * который компонент выбирает через проп `sizePreset`.
+ * который компонент выбирает через проп `size`.
  * Преобразует выбранный размер в согласованные значения высоты, отступов
  * и размера текста. Задаёт формы строки-поля для пропа `shape`.
  *
@@ -14,8 +14,8 @@
  * 6. Предоставить `resolveBlockRadius` для вычисления радиуса по форме
  *
  * Потребители:
- *  - контролы, например Button, Input и Tag — задают размер через `sizePreset`
- *  - все `*.styles.ts` компонентов с пропом `sizePreset` — читают значения через геттеры
+ *  - контролы, например Button, Input и Tag — задают размер через `size`
+ *  - все `*.styles.ts` компонентов с пропом `size` — читают значения через геттеры
  *  - панели настроек витрины дизайн-системы — передают `SIZE_PRESET_KEYS` в `SizeListbox`
  *    и `SHAPE_PRESET_KEYS` в `ShapeListbox`
  *  - `src/pages/showcase/index.tsx` и панели настроек витрины дизайн-системы — берут размер текста через `getTextSize`
@@ -26,7 +26,7 @@ import { type TextSizePreset } from '@ui/text';
 
 /**
  * SizePreset — представляет единый размерный ряд проекта.
- * Используется как основной тип пропа `sizePreset` в компонентах.
+ * Используется как основной тип пропа `size` в компонентах.
  */
 export type SizePreset = 'large' | 'normal' | 'small';
 
@@ -51,18 +51,18 @@ export const SIZE_PRESET_KEYS = Object.freeze(Object.keys(minBlockSize) as SizeP
 
 /**
  * DEFAULT_SIZE_PRESET — задаёт размер по умолчанию.
- * Используется, когда вызывающий код не передал проп `sizePreset`.
+ * Используется, когда вызывающий код не передал проп `size`.
  */
 export const DEFAULT_SIZE_PRESET: SizePreset = 'normal';
 
 /**
- * getMinBlockSize — возвращает значение для CSS-свойства `min-block-size` по `sizePreset`.
+ * getMinBlockSize — возвращает значение для CSS-свойства `min-block-size` по `size`.
  *
- * @param sizePreset размер компонента
+ * @param size размер компонента
  * @returns CSS-длина в rem
  */
-export function getMinBlockSize(sizePreset: SizePreset): string {
-  return getSpacingValue(minBlockSize[sizePreset]);
+export function getMinBlockSize(size: SizePreset): string {
+  return getSpacingValue(minBlockSize[size]);
 }
 
 /**
@@ -96,13 +96,13 @@ type ControlPadding = {
 };
 
 /**
- * getPadding — возвращает значения для CSS-свойств `padding-inline` и `padding-block` по `sizePreset`.
+ * getPadding — возвращает значения для CSS-свойств `padding-inline` и `padding-block` по `size`.
  *
- * @param sizePreset размер компонента
+ * @param size размер компонента
  * @returns значения для CSS-свойств `padding-inline` и `padding-block`
  */
-export function getPadding(sizePreset: SizePreset): ControlPadding {
-  const preset = padding[sizePreset];
+export function getPadding(size: SizePreset): ControlPadding {
+  const preset = padding[size];
 
   return {
     inline: getSpacingValue(preset.inline),
@@ -111,23 +111,23 @@ export function getPadding(sizePreset: SizePreset): ControlPadding {
 }
 
 /**
- * getPaddingInline — возвращает значение для CSS-свойства `padding-inline` по `sizePreset`.
+ * getPaddingInline — возвращает значение для CSS-свойства `padding-inline` по `size`.
  *
- * @param sizePreset размер компонента
+ * @param size размер компонента
  * @returns значение для CSS-свойства `padding-inline`
  */
-export function getPaddingInline(sizePreset: SizePreset): string {
-  return getPadding(sizePreset).inline;
+export function getPaddingInline(size: SizePreset): string {
+  return getPadding(size).inline;
 }
 
 /**
- * getPaddingBlock — возвращает значение для CSS-свойства `padding-block` по `sizePreset`.
+ * getPaddingBlock — возвращает значение для CSS-свойства `padding-block` по `size`.
  *
- * @param sizePreset размер компонента
+ * @param size размер компонента
  * @returns значение для CSS-свойства `padding-block`
  */
-export function getPaddingBlock(sizePreset: SizePreset): string {
-  return getPadding(sizePreset).block;
+export function getPaddingBlock(size: SizePreset): string {
+  return getPadding(size).block;
 }
 
 /**
@@ -188,12 +188,12 @@ export const textSize = Object.freeze({
 } as const satisfies Record<SizePreset, TextSizePreset>);
 
 /**
- * getTextSize — возвращает размер текста по `sizePreset`.
+ * getTextSize — возвращает размер текста по `size`.
  * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
  *
- * @param sizePreset размер компонента
+ * @param size размер компонента
  * @returns метка размера текста из `TextSizePreset`
  */
-export function getTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return textSize[sizePreset ?? DEFAULT_SIZE_PRESET];
+export function getTextSize(size?: SizePreset): TextSizePreset {
+  return textSize[size ?? DEFAULT_SIZE_PRESET];
 }

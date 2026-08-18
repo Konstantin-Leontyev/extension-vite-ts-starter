@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - семантический тон через проп `tone`
  *  - доступное имя для скринридера через проп `ariaLabel`
  *  - подпись под индикатором через `children`
@@ -60,18 +60,18 @@ type SpinnerProps = SpinnerStyleProps & {
  *
  * @example
  * <Spinner />
- * <Spinner sizePreset="large" tone="primary" reserveTextSpace>Загрузка…</Spinner>
+ * <Spinner size="large" tone="primary" reserveTextSpace>Загрузка…</Spinner>
  */
 function Spinner({
   ariaLabel = DEFAULT_SPINNER_ARIA_LABEL,
   children,
   reserveTextSpace = DEFAULT_SPINNER_RESERVE_TEXT_SPACE,
-  sizePreset,
+  size,
   tone,
   ...rest
 }: SpinnerProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const textSizePreset = getTextSize(sizePreset);
+  const textSizePreset = getTextSize(size);
   const hasText = Boolean(typeof children === 'string' ? children.trim() : children);
   const showText = hasText || reserveTextSpace;
 
@@ -80,7 +80,7 @@ function Spinner({
       <StyledSpinner
         aria-label={ariaLabel}
         role="status"
-        sizePreset={sizePreset}
+        size={size}
         tone={tone}
         {...restProps}
       />
@@ -90,7 +90,7 @@ function Spinner({
           minBlockSize={
             reserveTextSpace && !hasText ? getTextLineHeight(textSizePreset) : undefined
           }
-          sizePreset={textSizePreset}
+          size={textSizePreset}
         >
           {hasText ? children : null}
         </Text>

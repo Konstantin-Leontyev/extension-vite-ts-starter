@@ -36,7 +36,7 @@ type TableNestedCellProps = {
  * @example
  * <TableNestedCell nestDepth={row.nestDepth ?? 1}>
  *   <TableMemberPrefix>↳</TableMemberPrefix>
- *   <Text ellipsis sizePreset={textSize}>
+ *   <Text ellipsis size={textSize}>
  *     {row.product}
  *   </Text>
  * </TableNestedCell>

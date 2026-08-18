@@ -1,24 +1,24 @@
 /**
  * Файл: `src/ui/border.ts`
- * Содержит управляемую рамку и тень вне layout-box: обводка `0 0 0 1px` и
+ * Содержит управляемую рамку и тень вне layout-box: обводку `0 0 0 1px` и
  * опционально `shadow.surface` одним `box-shadow`, плюс два пакета пропсов
- * для локального opt-in у потребителей. `BorderProps` — когда дефолт
- * потребителя «рамка есть»; `ShowBorderProps` — когда дефолт «рамки нет».
+ * для локального opt-in у потребителей. Даёт пакет `BorderProps` при дефолте
+ * потребителя «рамка есть» и пакет `ShowBorderProps` при дефолте «рамки нет».
  *
  * Основные задачи:
- * 1. Типизировать пропсы рамки через `BorderProps`, `ShowBorderProps`
- *    и перечень `BORDER_PROP_NAMES`
- * 2. Предоставить функцию `getBorderStyles` — рамка и тень вне layout-box
- * 3. Предоставить функцию `resolveBorderProps` — пакет рамки по флагу показа
- * 4. Задать дефолты пропов `showBorder` и `showShadow` через
+ * 1. Типизировать пропсы рамки через `BorderProps` и `ShowBorderProps`
+ * 2. Хранить имена пропсов рамки в `BORDER_PROP_NAMES`
+ * 3. Предоставить функцию `getBorderStyles` — рамка и тень вне layout-box
+ * 4. Предоставить функцию `resolveBorderProps` — пакет рамки по флагу показа
+ * 5. Задать дефолты пропов `showBorder` и `showShadow` через
  *    `DEFAULT_SHOW_BORDER` и `DEFAULT_SHOW_SHADOW`
  *
  * Потребители:
  *  - styles-файлы с рамкой и тенью и дефолтом «рамка есть», например Card,
  *    Input, SearchField, Tag и Toolbar — подключают `BorderProps` /
- *    `BORDER_PROP_NAMES` и подставляют рамку через `getBorderStyles`
- *  - styles-файлы и оболочки с дефолтом «рамки нет», например Icon и Modal —
- *    подключают `ShowBorderProps` / `BORDER_PROP_NAMES`
+ *    `BORDER_PROP_NAMES` и подставляют рамку с тенью через `getBorderStyles`
+ *  - styles-файлы с дефолтом «рамки нет», например Icon — подключают
+ *    `ShowBorderProps` / `BORDER_PROP_NAMES`
  *  - `src/pages/showcase` и `@ui/modal` — собирают пакет рамки через
  *    `resolveBorderProps`
  *  - styles-файлы с постоянной рамкой без публичных пропсов, например Button,
@@ -38,17 +38,15 @@ export const DEFAULT_SHOW_BORDER = true;
 /**
  * DEFAULT_SHOW_SHADOW — задаёт показ тени по умолчанию.
  * Используется, когда вызывающий код не передал проп `showShadow`.
- * Тень без рамки в дизайн-системе не существует: при `showBorder={false}`
- * хелпер гасит и тень.
  */
 export const DEFAULT_SHOW_SHADOW = true;
 
 /**
  * BorderProps — представляет пропсы управления рамкой и тенью.
  * Поля тона и тени допустимы, пока `showBorder` не выключен: дефолт флага — рамка есть.
- * Для потребителя с дефолтом «рамки нет» берётся `ShowBorderProps`.
+ * Для потребителя с дефолтом «рамки нет» берётся `ShowBorderProps`. В `LayoutProps` не входит.
  * Подключается локально через `& BorderProps` и `...BORDER_PROP_NAMES`
- * у потребителей, которым нужна рамка; в `LayoutProps` не входит.
+ * у потребителей, которым нужна рамка.
  *
  * @property borderTone — тон цвета рамки при включённом `showBorder`
  * @property showBorder — включает рамку
@@ -69,9 +67,9 @@ export type BorderProps =
 /**
  * ShowBorderProps — представляет пропсы управления рамкой и тенью.
  * Поля тона и тени допустимы только при явном `showBorder: true`: дефолт флага — рамки нет.
- * Для потребителя с дефолтом «рамка есть» берётся `BorderProps`.
+ * Для потребителя с дефолтом «рамка есть» берётся `BorderProps`. В `LayoutProps` не входит.
  * Подключается локально через `& ShowBorderProps` и `...BORDER_PROP_NAMES`
- * у потребителей, которым нужна рамка; в `LayoutProps` не входит.
+ * у потребителей, которым нужна рамка.
  *
  * @property borderTone — тон цвета рамки при включённом `showBorder`
  * @property showBorder — включает рамку
@@ -138,27 +136,32 @@ function getBorderColor(theme: AppTheme, borderTone: TonePreset = DEFAULT_TONE):
 }
 
 /**
- * getBorderStyles — возвращает CSS-правило рамки вне layout-box: обводку
+ * getBorderStyles — возвращает CSS-правила рамки с тенью вне layout-box: обводку
  * `0 0 0 1px` и опционально тень `shadow.surface` одним `box-shadow`.
- * Рамочный и безрамочный режимы дают один `content-box` и одно окно `Icon`,
+ * Рамочный и безрамочный режимы дают один `content-box` и одно окно Icon,
  * без резерва `border: 1px solid transparent`.
+ * `border: none` вызывающий код пишет только там, где layout-рамку даёт
+ * UA-стиль тега, например `<input>` и `<dialog>`: у `<button>` её снял reset,
+ * у `<div>` рамки нет — повтор запрещён.
  * Пропсы `showBorder` и `showShadow` подключает потребитель осознанно: эталоны
  * Icon, Card, Input, SearchField, Tag и Toolbar. Составные триггеры, например
  * Listbox, Combobox, Stepper и RangeInput, пропсы не получают без отдельного
  * кейса и вызывают хелпер с дефолтами. Оболочка композита и поверхность с
  * постоянной рамкой, например Checkbox, RadioButton и Toast, вызывают функцию
  * без флагов.
- * При `showBorder` — обводка цвета рамки по `borderTone` и при `showShadow` —
- * тень `shadow.surface`. Без рамки — `box-shadow: none`: тени без рамки нет.
- * `border: none` вызывающий код пишет только там, где layout-рамку даёт
- * UA-стиль тега, например `<input>` и `<dialog>`: у `<button>` её снял reset,
- * у `<div>` рамки нет — повтор запрещён.
+ *
+ * Как работает:
+ * 1. Без рамки отдаёт `box-shadow: none`: тени без рамки нет
+ * 2. С рамкой собирает обводку `0 0 0 1px` цвета по `borderTone`
+ * 3. Дописывает `shadow.surface` в то же `box-shadow` только когда `showShadow`
+ *    включён и токен не равен `none`. Слой `none` в списке невалиден, браузер
+ *    отбрасывает всё правило вместе с обводкой. В тёмной теме токен равен `none`
  *
  * @param theme текущая тема
  * @param showBorder включает рамку
  * @param showShadow включает тень при включённой рамке
  * @param borderTone тон цвета рамки
- * @returns CSS-правило `box-shadow`
+ * @returns CSS-правила, каждое с новой строки
  */
 export function getBorderStyles(
   theme: AppTheme,
@@ -171,8 +174,9 @@ export function getBorderStyles(
   }
 
   const border = `0 0 0 1px ${getBorderColor(theme, borderTone)}`;
+  const surfaceShadow = theme.shadow.surface;
 
-  return showShadow
-    ? `box-shadow: ${border}, ${theme.shadow.surface};`
+  return showShadow && surfaceShadow !== 'none'
+    ? `box-shadow: ${border}, ${surfaceShadow};`
     : `box-shadow: ${border};`;
 }

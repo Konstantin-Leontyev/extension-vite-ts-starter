@@ -48,7 +48,7 @@ export type TableSizePreset = SizePreset;
 
 /**
  * DEFAULT_TABLE_SIZE_PRESET — задаёт размер таблицы по умолчанию.
- * Используется, когда вызывающий код не передал проп `sizePreset`.
+ * Используется, когда вызывающий код не передал проп `size`.
  */
 export const DEFAULT_TABLE_SIZE_PRESET: TableSizePreset = DEFAULT_SIZE_PRESET;
 
@@ -142,13 +142,13 @@ function resolveTableRowHoverFill(theme: AppTheme): string {
  * @property hoverHighlight — включает подсветку строки при наведении
  * @property showBorder — включает рамку и заливку `surface` вокруг таблицы. Собственный
  *   проп Table, не пакет `BorderProps`
- * @property sizePreset — размер компонента
+ * @property size — размер компонента
  * @property striped — включает чередование фона чётных строк тела
  */
 export type TableStyleProps = LayoutProps & {
   hoverHighlight?: boolean;
   showBorder?: boolean;
-  sizePreset?: TableSizePreset;
+  size?: TableSizePreset;
   striped?: boolean;
 };
 
@@ -387,22 +387,21 @@ export const StyledTableBody = styled.tbody.withConfig({
 /**
  * TABLE_ROW_PROP_NAMES — хранит имена пропсов стилизации строки таблицы.
  */
-const TABLE_ROW_PROP_NAMES = new Set<string>(['$editHidden', 'sizePreset']);
+const TABLE_ROW_PROP_NAMES = new Set<string>(['$editHidden', 'size']);
 
 /**
  * StyledTableRow — задаёт строку компонента Table.
- * Базируется на `<tr>` и принимает пропсы `$editHidden` и `sizePreset`.
+ * Базируется на `<tr>` и принимает пропсы `$editHidden` и `size`.
  *
  * Встроенные стили:
- *  - `block-size` — высота строки по `sizePreset`
+ *  - `block-size` — высота строки по `size`
  *  - `visibility: hidden` при `$editHidden` — скрывает якорную строку под edit-панелью,
  *    оставляя место в потоке
  */
 export const StyledTableRow = styled.tr.withConfig({
   shouldForwardProp: (prop) => !TABLE_ROW_PROP_NAMES.has(prop),
-})<{ $editHidden?: boolean; sizePreset?: TableSizePreset }>`
-  block-size: ${(props) =>
-    getMinBlockSize(props.sizePreset ?? DEFAULT_TABLE_SIZE_PRESET)};
+})<{ $editHidden?: boolean; size?: TableSizePreset }>`
+  block-size: ${(props) => getMinBlockSize(props.size ?? DEFAULT_TABLE_SIZE_PRESET)};
   ${(props) => props.$editHidden && 'visibility: hidden;'}
 `;
 
@@ -536,7 +535,7 @@ export const StyledTableRowPanelTable = styled.table.withConfig({
 
 /**
  * StyledTablePanelErrorCell — задаёт ячейку строки ошибки add- и edit-панели.
- * Базируется на `<td>` и принимает проп `sizePreset`.
+ * Базируется на `<td>` и принимает проп `size`.
  *
  * Встроенные стили:
  *  - `padding-block` и `padding-inline` — отступы содержимого по размеру таблицы
@@ -544,11 +543,11 @@ export const StyledTableRowPanelTable = styled.table.withConfig({
  *  - `border-block-end: none` — без нижнего шва: строка замыкает панель
  */
 export const StyledTablePanelErrorCell = styled.td.withConfig({
-  shouldForwardProp: (prop) => prop !== 'sizePreset',
-})<{ sizePreset?: TableSizePreset }>`
+  shouldForwardProp: (prop) => prop !== 'size',
+})<{ size?: TableSizePreset }>`
   padding-block: ${getSpacingValue(8)};
   padding-inline: ${(props) =>
-    getPaddingInline(props.sizePreset ?? DEFAULT_TABLE_SIZE_PRESET)};
+    getPaddingInline(props.size ?? DEFAULT_TABLE_SIZE_PRESET)};
   vertical-align: middle;
   border-block-end: none;
 `;

@@ -53,36 +53,36 @@ const calendarDayHighlightMinBlockSize = {
 /**
  * getCalendarDayHighlightMinBlockSize — возвращает минимальный размер подсветки дня.
  *
- * @param sizePreset размер панели
+ * @param size размер панели
  * @returns значение для CSS-свойства размера подсветки
  */
-function getCalendarDayHighlightMinBlockSize(sizePreset: SizePreset): string {
-  return getSpacingValue(calendarDayHighlightMinBlockSize[sizePreset]);
+function getCalendarDayHighlightMinBlockSize(size: SizePreset): string {
+  return getSpacingValue(calendarDayHighlightMinBlockSize[size]);
 }
 
 /**
  * getCalendarDayHighlightMaxSize — возвращает верхнюю границу размера подсветки дня.
  * Ограничивает квадрат подсветки ячейкой с учётом зазора сетки.
  *
- * @param sizePreset размер панели
+ * @param size размер панели
  * @returns значение для CSS-свойств `inline-size` и `max-block-size` подсветки
  */
-function getCalendarDayHighlightMaxSize(sizePreset: SizePreset): string {
-  return `min(${getCalendarDayHighlightMinBlockSize(sizePreset)}, calc(100% + ${CALENDAR_DAY_GRID_GAP} - 1px))`;
+function getCalendarDayHighlightMaxSize(size: SizePreset): string {
+  return `min(${getCalendarDayHighlightMinBlockSize(size)}, calc(100% + ${CALENDAR_DAY_GRID_GAP} - 1px))`;
 }
 
 /**
  * resolveCalendarDayHighlightRadius — возвращает скругление подсветки дня.
  *
  * @param dayShape форма подсветки
- * @param sizePreset размер панели
+ * @param size размер панели
  * @returns значение для CSS-свойства `border-radius` псевдоэлемента подсветки
  */
 function resolveCalendarDayHighlightRadius(
   dayShape: ShapePreset,
-  sizePreset: SizePreset
+  size: SizePreset
 ): string {
-  return resolveBlockRadius(dayShape, getCalendarDayHighlightMinBlockSize(sizePreset));
+  return resolveBlockRadius(dayShape, getCalendarDayHighlightMinBlockSize(size));
 }
 
 /**
@@ -99,11 +99,11 @@ const calendarNavButtonMaxSize = {
 /**
  * getCalendarNavButtonMaxSize — возвращает потолок квадрата стрелки шапки.
  *
- * @param sizePreset размер панели
+ * @param size размер панели
  * @returns значение для CSS-свойств `max-inline-size` и `max-block-size`
  */
-function getCalendarNavButtonMaxSize(sizePreset: SizePreset): string {
-  return getSpacingValue(calendarNavButtonMaxSize[sizePreset]);
+function getCalendarNavButtonMaxSize(size: SizePreset): string {
+  return getSpacingValue(calendarNavButtonMaxSize[size]);
 }
 
 /**
@@ -119,7 +119,7 @@ const calendarNavGlyphSize = {
 
 /**
  * DEFAULT_CALENDAR_PANEL_SIZE_PRESET — задаёт размер CalendarPanel по умолчанию.
- * Используется, когда вызывающий код не передал проп `sizePreset`.
+ * Используется, когда вызывающий код не передал проп `size`.
  */
 export const DEFAULT_CALENDAR_PANEL_SIZE_PRESET: SizePreset = DEFAULT_SIZE_PRESET;
 
@@ -127,12 +127,12 @@ export const DEFAULT_CALENDAR_PANEL_SIZE_PRESET: SizePreset = DEFAULT_SIZE_PRESE
  * getCalendarNavGlyphSize — возвращает CSS-сторону глифа стрелки без паддинга.
  * Подставляет `DEFAULT_CALENDAR_PANEL_SIZE_PRESET`, когда размер не задан.
  *
- * @param sizePreset размер панели календаря
+ * @param size размер панели календаря
  * @returns значение для CSS-свойств `inline-size` и `block-size` окна Icon
  */
-export function getCalendarNavGlyphSize(sizePreset?: SizePreset): string {
+export function getCalendarNavGlyphSize(size?: SizePreset): string {
   return getSpacingValue(
-    calendarNavGlyphSize[sizePreset ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET]
+    calendarNavGlyphSize[size ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET]
   );
 }
 
@@ -141,12 +141,12 @@ export function getCalendarNavGlyphSize(sizePreset?: SizePreset): string {
  *
  * @property dayShape — форма подсветки дня
  * @property shape — форма кнопок навигации
- * @property sizePreset — размер панели
+ * @property size — размер панели
  */
 type CalendarPanelSurfaceStyleProps = {
   dayShape?: ShapePreset;
   shape?: ShapePreset;
-  sizePreset?: SizePreset;
+  size?: SizePreset;
 };
 
 /**
@@ -214,17 +214,17 @@ export const StyledCalendarHeader = styled.div`
  * CalendarNavButtonStyleProps — представляет пропсы стилизации кнопки навигации.
  *
  * @property shape — форма кнопки
- * @property sizePreset — размер кнопки
+ * @property size — размер кнопки
  */
 type CalendarNavButtonStyleProps = {
   shape?: ShapePreset;
-  sizePreset?: SizePreset;
+  size?: SizePreset;
 };
 
 /**
  * CALENDAR_NAV_BUTTON_PROP_NAMES — хранит имена пропсов стилизации кнопки навигации.
  */
-const CALENDAR_NAV_BUTTON_PROP_NAMES = new Set<string>(['shape', 'sizePreset']);
+const CALENDAR_NAV_BUTTON_PROP_NAMES = new Set<string>(['shape', 'size']);
 
 /**
  * getCalendarNavButtonStyles — возвращает CSS-правила для узла
@@ -240,15 +240,14 @@ function getCalendarNavButtonStyles(
 ): string {
   const theme = getTheme(props);
   const shape = props.shape ?? DEFAULT_CALENDAR_PANEL_SHAPE;
-  const sizePreset = props.sizePreset ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET;
-  const maxSize = getCalendarNavButtonMaxSize(sizePreset);
-  const size = `min(100%, ${maxSize})`;
+  const size = props.size ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET;
+  const maxSize = getCalendarNavButtonMaxSize(size);
 
   return `
     display: grid;
     place-items: center;
     justify-self: center;
-    inline-size: ${size};
+    inline-size: min(100%, ${maxSize});
     aspect-ratio: 1;
     max-block-size: ${maxSize};
     color: ${theme.colors.default};
@@ -351,17 +350,17 @@ export const StyledCalendarGrid = styled.div`
  * CalendarDayButtonStyleProps — представляет пропсы стилизации кнопки дня.
  *
  * @property dayShape — форма подсветки дня
- * @property sizePreset — размер кнопки дня
+ * @property size — размер кнопки дня
  */
 type CalendarDayButtonStyleProps = {
   dayShape?: ShapePreset;
-  sizePreset?: SizePreset;
+  size?: SizePreset;
 };
 
 /**
  * CALENDAR_DAY_BUTTON_PROP_NAMES — хранит имена пропсов стилизации кнопки дня.
  */
-const CALENDAR_DAY_BUTTON_PROP_NAMES = new Set<string>(['dayShape', 'sizePreset']);
+const CALENDAR_DAY_BUTTON_PROP_NAMES = new Set<string>(['dayShape', 'size']);
 
 /**
  * getCalendarDayButtonStyles — возвращает CSS-правила для узла
@@ -377,9 +376,9 @@ function getCalendarDayButtonStyles(
 ): string {
   const theme = getTheme(props);
   const dayShape = props.dayShape ?? DEFAULT_CALENDAR_PANEL_SHAPE;
-  const sizePreset = props.sizePreset ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET;
-  const highlightMaxSize = getCalendarDayHighlightMaxSize(sizePreset);
-  const highlightRadius = resolveCalendarDayHighlightRadius(dayShape, sizePreset);
+  const size = props.size ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET;
+  const highlightMaxSize = getCalendarDayHighlightMaxSize(size);
+  const highlightRadius = resolveCalendarDayHighlightRadius(dayShape, size);
 
   return `
     position: relative;

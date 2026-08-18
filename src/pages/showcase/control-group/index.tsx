@@ -10,7 +10,7 @@
  *  - обработчик изменения формы через проп `onShapeChange`
  *  - обработчик изменения размера через проп `onSizeChange`
  *  - форму контрола через проп `shape`
- *  - размер контрола через проп `sizePreset`
+ *  - размер контрола через проп `size`
  *
  * Основные задачи:
  * 1. Экспортировать компонент ControlGroup
@@ -51,7 +51,7 @@ import { SizeListbox } from '../size-listbox';
  * @property onShapeChange — обработчик изменения формы
  * @property onSizeChange — обработчик изменения размера
  * @property shape — текущая форма контрола
- * @property sizePreset — текущий размер контрола
+ * @property size — текущий размер контрола
  */
 type ControlGroupProps = {
   label: string;
@@ -59,7 +59,7 @@ type ControlGroupProps = {
   onShapeChange: (shape: ShapePreset) => void;
   onSizeChange: (size: SizePreset) => void;
   shape: ShapePreset;
-  sizePreset: SizePreset;
+  size: SizePreset;
 };
 
 /**
@@ -70,10 +70,10 @@ type ControlGroupProps = {
  * <ControlGroup
  *   label={state.label}
  *   shape={state.shape}
- *   sizePreset={state.sizePreset}
+ *   size={state.size}
  *   onLabelChange={(label) => onChange('label', label)}
  *   onShapeChange={(shape) => onChange('shape', shape)}
- *   onSizeChange={(size) => onChange('sizePreset', size)}
+ *   onSizeChange={(size) => onChange('size', size)}
  * />
  */
 export function ControlGroup({
@@ -82,7 +82,7 @@ export function ControlGroup({
   onShapeChange,
   onSizeChange,
   shape,
-  sizePreset,
+  size,
 }: ControlGroupProps) {
   return (
     <>
@@ -98,7 +98,7 @@ export function ControlGroup({
       <SizeListbox
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
-        value={sizePreset}
+        value={size}
         onChange={onSizeChange}
       />
 

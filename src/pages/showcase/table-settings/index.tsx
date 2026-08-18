@@ -38,7 +38,7 @@ import { SizeListbox } from '../size-listbox';
  * @property showBorder — включает рамку вокруг таблицы
  * @property showIndexColumn — витринный ключ показа колонки нумерации каталога. Выключенный —
  *   таблица без колонки `#`
- * @property sizePreset — размер таблицы
+ * @property size — размер таблицы
  * @property striped — включает чередование фона строк
  */
 export type TableWidgetState = {
@@ -49,7 +49,7 @@ export type TableWidgetState = {
   separateCheckboxColumn: boolean;
   showBorder: boolean;
   showIndexColumn: boolean;
-  sizePreset: SizePreset;
+  size: SizePreset;
   striped: boolean;
 };
 
@@ -79,8 +79,8 @@ export function TableSettings({ onChange, state }: TableSettingsProps) {
       <SizeListbox
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
+        value={state.size}
+        onChange={(size) => onChange('size', size)}
       />
 
       <Checkbox

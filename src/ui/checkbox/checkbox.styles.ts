@@ -40,21 +40,21 @@ export const checkboxSizePresets = Object.freeze({
 /**
  * getCheckboxSize — возвращает CSS-размер стороны бокса.
  *
- * @param sizePreset размер из ряда контролов
+ * @param size размер из ряда контролов
  * @returns длина стороны в rem
  */
-function getCheckboxSize(sizePreset: SizePreset): string {
-  return getSpacingValue(checkboxSizePresets[sizePreset].size);
+function getCheckboxSize(size: SizePreset): string {
+  return getSpacingValue(checkboxSizePresets[size].size);
 }
 
 /**
  * getCheckboxIconSize — возвращает CSS-размер марки.
  *
- * @param sizePreset размер из ряда контролов
+ * @param size размер из ряда контролов
  * @returns размер марки в rem
  */
-function getCheckboxIconSize(sizePreset: SizePreset): string {
-  return getSpacingValue(checkboxSizePresets[sizePreset].iconSize);
+function getCheckboxIconSize(size: SizePreset): string {
+  return getSpacingValue(checkboxSizePresets[size].iconSize);
 }
 
 /**
@@ -117,13 +117,13 @@ export const StyledCheckboxRoot = styled.label.withConfig({
  *
  * @property checkedMark — марка в checked-состоянии
  * @property inverted — включает инверсию палитры бокса и марки
- * @property sizePreset — размер бокса
+ * @property size — размер бокса
  * @property uncheckedMark — марка в unchecked-состоянии
  */
 export type CheckboxStyleProps = LayoutProps & {
   checkedMark?: CheckboxCheckedMark;
   inverted?: boolean;
-  sizePreset?: SizePreset;
+  size?: SizePreset;
   uncheckedMark?: CheckboxUncheckedMark;
 };
 
@@ -134,7 +134,7 @@ const CHECKBOX_CONTROL_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
   'checkedMark',
   'inverted',
-  'sizePreset',
+  'size',
   'uncheckedMark',
 ]);
 
@@ -243,11 +243,11 @@ function getCheckboxControlStyles(
   const {
     checkedMark = DEFAULT_CHECKBOX_CHECKED_MARK,
     inverted = DEFAULT_CHECKBOX_INVERTED,
-    sizePreset = DEFAULT_SIZE_PRESET,
+    size = DEFAULT_SIZE_PRESET,
     uncheckedMark = DEFAULT_CHECKBOX_UNCHECKED_MARK,
   } = props;
-  const size = getCheckboxSize(sizePreset);
-  const iconSize = getCheckboxIconSize(sizePreset);
+  const checkboxSize = getCheckboxSize(size);
+  const iconSize = getCheckboxIconSize(size);
 
   const checkedBackground = inverted ? theme.colors.inverse : theme.colors.primary;
   const uncheckedStroke = inverted ? theme.colors.primary : theme.colors.default;
@@ -257,8 +257,8 @@ function getCheckboxControlStyles(
 
   const styles = [
     'flex-shrink: 0;',
-    `inline-size: ${size};`,
-    `block-size: ${size};`,
+    `inline-size: ${checkboxSize};`,
+    `block-size: ${checkboxSize};`,
     'appearance: none;',
     'border: none;',
     `background-color: ${theme.colors.surface};`,

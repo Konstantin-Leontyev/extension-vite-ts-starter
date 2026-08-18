@@ -22,12 +22,12 @@ import { type TonePreset } from '@ui/tones';
  * ToastInput — представляет параметры уведомления.
  *
  * @property message — текст сообщения
- * @property sizePreset — размер уведомления
+ * @property size — размер уведомления
  * @property tone — семантический тон
  */
 export type ToastInput = {
   message: string;
-  sizePreset?: SizePreset;
+  size?: SizePreset;
   tone?: TonePreset;
 };
 

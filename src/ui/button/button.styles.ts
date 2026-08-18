@@ -101,7 +101,7 @@ function resolveButtonSurface(theme: AppTheme, tone: TonePreset): ButtonSurface 
  * @property borderTone — тон рамки
  * @property iconTone — тон секции иконки
  * @property shape — форма кнопки
- * @property sizePreset — размер компонента
+ * @property size — размер компонента
  * @property tone — семантический тон
  */
 export type ButtonStyleProps = LayoutProps & {
@@ -109,7 +109,7 @@ export type ButtonStyleProps = LayoutProps & {
   borderTone?: TonePreset;
   iconTone?: TonePreset;
   shape?: ShapePreset;
-  sizePreset?: SizePreset;
+  size?: SizePreset;
   tone?: TonePreset;
 };
 
@@ -153,7 +153,7 @@ const BUTTON_PROP_NAMES = new Set<string>([
   'borderTone',
   'hasIcon',
   'shape',
-  'sizePreset',
+  'size',
   'tone',
 ]);
 
@@ -188,7 +188,7 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
   const {
     active = DEFAULT_BUTTON_ACTIVE,
     iconTone = DEFAULT_TONE,
-    sizePreset = DEFAULT_SIZE_PRESET,
+    size = DEFAULT_SIZE_PRESET,
   } = props;
   const iconColorKey = getToneColorKey(iconTone);
   const hoverStateBackground = resolveIconStateBackground(theme, iconTone);
@@ -196,7 +196,7 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
   const styles = [
     getIconPositionStyles(),
     `[data-slot='label'] {`,
-    `padding-inline: ${getPaddingInline(sizePreset)};`,
+    `padding-inline: ${getPaddingInline(size)};`,
     `}`,
     `&:not(:disabled):hover {`,
     `--icon-state-background: ${hoverStateBackground};`,
@@ -249,11 +249,11 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
     borderTone,
     hasIcon,
     shape = DEFAULT_SHAPE_PRESET,
-    sizePreset = DEFAULT_SIZE_PRESET,
+    size = DEFAULT_SIZE_PRESET,
     tone = DEFAULT_TONE,
   } = props;
   const surface = resolveButtonSurface(theme, tone);
-  const minBlockSize = getMinBlockSize(sizePreset);
+  const minBlockSize = getMinBlockSize(size);
 
   const styles = [
     `min-block-size: ${minBlockSize};`,
@@ -274,7 +274,7 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
   if (hasIcon) {
     styles.push(getButtonSplitStyles(props));
   } else {
-    styles.push(`padding-inline: ${getPaddingInline(sizePreset)};`);
+    styles.push(`padding-inline: ${getPaddingInline(size)};`);
   }
 
   return styles.join('\n');

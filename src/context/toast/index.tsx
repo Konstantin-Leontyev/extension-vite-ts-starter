@@ -147,7 +147,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
           {toasts.map((toast) => (
             <Toast
               key={toast.id}
-              sizePreset={toast.sizePreset}
+              size={toast.size}
               tone={toast.tone}
               onClick={() => dismiss(toast.id)}
             >

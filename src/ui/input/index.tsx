@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - форму строки-поля через проп `shape`
  *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
  *    выводится из `shape`
@@ -130,7 +130,7 @@ export function Input({
   showBorder,
   showClear = DEFAULT_INPUT_SHOW_CLEAR,
   showShadow,
-  sizePreset,
+  size,
   value,
   ...rest
 }: InputProps) {
@@ -186,7 +186,7 @@ export function Input({
         shape={shape}
         showBorder={showBorder}
         showShadow={showShadow}
-        sizePreset={sizePreset}
+        size={size}
       >
         <StyledInputControl
           type="text"
@@ -200,7 +200,7 @@ export function Input({
             inputRef.current = node;
             assignRef(ref, node);
           }}
-          sizePreset={sizePreset}
+          size={size}
           value={isControlled ? value : undefined}
           onChange={handleChange}
         />
@@ -209,7 +209,7 @@ export function Input({
             ariaLabel={resolveClearAriaLabel(label)}
             disabled={disabled}
             shape={clearShape}
-            sizePreset={sizePreset}
+            size={size}
             onClick={handleClear}
           />
         )}

@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - семантический тон через проп `tone`
  *  - подпись справа от дорожки через `children`. Без `children` — дорожка без подписи
  *
@@ -50,14 +50,14 @@ type SwitchProps = SwitchStyleProps & {
  * <Switch checked={enabled} onChange={handleChange}>Notifications</Switch>
  * <Switch checked={enabled} onChange={handleChange} aria-label="Notifications" />
  */
-function Switch({ children, sizePreset, tone, ...rest }: SwitchProps) {
+function Switch({ children, size, tone, ...rest }: SwitchProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
 
   return (
     <StyledSwitchRoot {...layoutProps}>
       <input className="visually-hidden" role="switch" type="checkbox" {...restProps} />
-      <StyledSwitchTrack aria-hidden="true" sizePreset={sizePreset} tone={tone} />
-      {Boolean(children) && <Text sizePreset={getTextSize(sizePreset)}>{children}</Text>}
+      <StyledSwitchTrack aria-hidden="true" size={size} tone={tone} />
+      {Boolean(children) && <Text size={getTextSize(size)}>{children}</Text>}
     </StyledSwitchRoot>
   );
 }

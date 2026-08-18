@@ -89,7 +89,7 @@ type FieldErrorProps = {
   | 'id'
   | 'italic'
   | 'lineHeight'
-  | 'sizePreset'
+  | 'size'
   | 'style'
   | 'tone'
   | 'whiteSpace'
@@ -133,7 +133,7 @@ export function FieldError({
       minBlockSize={
         reserveErrorSpace ? getTextLineHeight(FIELD_ERROR_SIZE_PRESET) : undefined
       }
-      sizePreset={FIELD_ERROR_SIZE_PRESET}
+      size={FIELD_ERROR_SIZE_PRESET}
       tone={hasError ? FIELD_ERROR_TEXT_TONE : FIELD_ERROR_PLACEHOLDER_TEXT_TONE}
       {...rest}
     >

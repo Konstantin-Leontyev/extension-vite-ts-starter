@@ -119,7 +119,7 @@ function useHeaderAutoHide(autoHide: boolean) {
  *
  * @example
  * <Header />
- * <Header autoHide brand={<Text sizePreset="bold">AlgoTrade</Text>} />
+ * <Header autoHide brand={<Text size="bold">AlgoTrade</Text>} />
  */
 export function Header({
   autoHide,
@@ -134,7 +134,7 @@ export function Header({
     autoHide ?? DEFAULT_HEADER_AUTO_HIDE
   );
   const handleSettingsClick = onSettingsClick ?? (() => navigate('/showcase'));
-  const brandNode = brand ?? <Text sizePreset="bold">Project Name</Text>;
+  const brandNode = brand ?? <Text size="bold">Project Name</Text>;
 
   return (
     <>

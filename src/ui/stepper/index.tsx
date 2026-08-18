@@ -4,7 +4,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - форму поля через проп `shape`
  *  - тон рамки через проп `borderTone`
  *  - числовое значение через проп `value`
@@ -157,7 +157,7 @@ type StepperProps = StepperStyleProps &
  * <Stepper label="Quantity:" value={1} onChange={setValue} />
  * <Stepper aria-label="Quantity" value={1} onChange={setValue} />
  * <Stepper aria-labelledby="qty-label" min={0} max={10} step={1} value={5} onChange={setValue} />
- * <Stepper sizePreset="normal" suffix="K" value={100} onChange={setValue} />
+ * <Stepper size="normal" suffix="K" value={100} onChange={setValue} />
  */
 export function Stepper({
   'aria-label': ariaLabel,
@@ -170,7 +170,7 @@ export function Stepper({
   onChange,
   onCommit,
   shape,
-  sizePreset,
+  size,
   step = DEFAULT_STEPPER_STEP,
   suffix,
   value,
@@ -342,9 +342,9 @@ export function Stepper({
         borderTone={borderTone}
         data-disabled={disabled ? '' : undefined}
         shape={shape}
-        sizePreset={sizePreset}
+        size={size}
       >
-        <StyledStepperValue sizePreset={sizePreset} onClick={handleValueClick}>
+        <StyledStepperValue size={size} onClick={handleValueClick}>
           <StyledStepperInput
             inputMode="numeric"
             {...inputProps}
@@ -359,7 +359,7 @@ export function Stepper({
               assignRef(ref, node);
             }}
             role="spinbutton"
-            sizePreset={sizePreset}
+            size={size}
             type="text"
             value={draft ?? String(value)}
             onBlur={handleBlur}
@@ -367,17 +367,17 @@ export function Stepper({
             onKeyDown={handleKeyDown}
           />
           {Boolean(suffix) && (
-            <Text sizePreset={getTextSize(sizePreset)} tone={STEPPER_SUFFIX_TONE}>
+            <Text size={getTextSize(size)} tone={STEPPER_SUFFIX_TONE}>
               {suffix}
             </Text>
           )}
         </StyledStepperValue>
 
-        <StyledStepperSpin sizePreset={sizePreset}>
+        <StyledStepperSpin size={size}>
           <StyledStepperButton
             aria-label={INCREASE_LABEL}
             disabled={disabled}
-            sizePreset={sizePreset}
+            size={size}
             type="button"
             onClick={handleIncreaseClick}
             onPointerDown={handleIncreasePointerDown}
@@ -396,7 +396,7 @@ export function Stepper({
           <StyledStepperButton
             aria-label={DECREASE_LABEL}
             disabled={disabled}
-            sizePreset={sizePreset}
+            size={size}
             type="button"
             onClick={handleDecreaseClick}
             onPointerDown={handleDecreasePointerDown}

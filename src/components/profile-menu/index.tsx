@@ -205,7 +205,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
               >
                 <AvatarIcon />
               </Icon>
-              <Text align="center" as="p" id={titleId} sizePreset="extraBold">
+              <Text align="center" as="p" id={titleId} size="extraBold">
                 Hello, {displayName}!
               </Text>
             </StyledProfileMenuHeader>
@@ -238,7 +238,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
                     </Text>
                   )}
                   <StyledProfileMenuLegalLink to={link.to} onClick={handleClose}>
-                    <Text align="center" sizePreset="thin">
+                    <Text align="center" size="thin">
                       {link.label}
                     </Text>
                   </StyledProfileMenuLegalLink>

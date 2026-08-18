@@ -5,7 +5,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - форму ряда через проп `shape`
  *  - левый сегмент через проп `left`
  *  - средний сегмент через проп `center`. Без `center` ряд из двух сегментов
@@ -149,7 +149,7 @@ export type SegmentButtonPartsProps = {
  *
  * @param action действие сегмента
  * @param shape форма ряда
- * @param sizePreset размер сегмента
+ * @param size размер сегмента
  * @param textItalic включает курсив текста
  * @param textSize размер текста сегмента
  * @returns кнопка сегмента
@@ -157,13 +157,13 @@ export type SegmentButtonPartsProps = {
 function SegmentButtonPartsPart({
   action,
   shape,
-  sizePreset,
+  size,
   textItalic,
   textSize,
 }: {
   action: SegmentButtonPartsAction;
   shape?: SegmentButtonPartsShape;
-  sizePreset?: SizePreset;
+  size?: SizePreset;
   textItalic?: boolean;
   textSize: TextSizePreset;
 }) {
@@ -208,13 +208,7 @@ function SegmentButtonPartsPart({
 
   const hasIcon = Boolean(icon);
   const iconNode = hasIcon && (
-    <Icon
-      iconFill={iconFill}
-      iconTone={tone}
-      interactive
-      showHover={false}
-      sizePreset={sizePreset}
-    >
+    <Icon iconFill={iconFill} iconTone={tone} interactive showHover={false} size={size}>
       {icon}
     </Icon>
   );
@@ -230,7 +224,7 @@ function SegmentButtonPartsPart({
       hasIcon={hasIcon}
       ref={ref}
       shape={shape}
-      sizePreset={sizePreset}
+      size={size}
       title={title}
       tone={tone}
       type="button"
@@ -244,7 +238,7 @@ function SegmentButtonPartsPart({
         ellipsis
         italic={textItalic}
         minInlineSize="0"
-        sizePreset={textSize}
+        size={textSize}
         tone={resolvedTextTone}
       >
         {label}
@@ -269,7 +263,7 @@ export function SegmentButtonParts({
   left,
   right,
   shape,
-  sizePreset,
+  size,
   textItalic,
   textSize,
   ...rest
@@ -289,21 +283,18 @@ export function SegmentButtonParts({
   return (
     <StyledSegmentButtonPartsRoot
       data-segments={segmentSlots.length}
-      sizePreset={sizePreset}
+      size={size}
       {...rest}
     >
       {segmentSlots.map((slot, index) => (
         <Fragment key={slot.key}>
           {index > 0 && (
-            <StyledSegmentButtonPartsDivider
-              aria-hidden="true"
-              sizePreset={sizePreset}
-            />
+            <StyledSegmentButtonPartsDivider aria-hidden="true" size={size} />
           )}
           <SegmentButtonPartsPart
             action={slot.action}
             shape={shape}
-            sizePreset={sizePreset}
+            size={size}
             textItalic={textItalic}
             textSize={textSize}
           />

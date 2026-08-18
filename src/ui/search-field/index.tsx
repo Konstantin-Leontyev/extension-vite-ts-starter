@@ -5,7 +5,7 @@
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
- *  - размерный ряд через проп `sizePreset`
+ *  - размерный ряд через проп `size`
  *  - форму строки-поля через проп `shape`
  *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
  *    выводится из `shape`
@@ -172,7 +172,7 @@ function SearchField({
   showBorder,
   showIcon = DEFAULT_SEARCH_FIELD_SHOW_ICON,
   showShadow,
-  sizePreset,
+  size,
   value,
   ...rest
 }: SearchFieldProps) {
@@ -201,7 +201,7 @@ function SearchField({
       shape={iconShape}
       showBorder={false}
       showHover={false}
-      sizePreset={sizePreset}
+      size={size}
     >
       {icon}
     </Icon>
@@ -214,7 +214,7 @@ function SearchField({
       iconFill={iconFill}
       iconTone={iconTone}
       shape={clearShape}
-      sizePreset={sizePreset}
+      size={size}
       onClick={handleClear}
     />
   );
@@ -229,7 +229,7 @@ function SearchField({
         shape={shape}
         showBorder={showBorder}
         showShadow={showShadow}
-        sizePreset={sizePreset}
+        size={size}
       >
         {isIconStart && iconNode}
         <StyledSearchFieldControl
@@ -240,7 +240,7 @@ function SearchField({
             inputRef.current = node;
             assignRef(ref, node);
           }}
-          sizePreset={sizePreset}
+          size={size}
           type="search"
           value={value}
           onChange={onChange}

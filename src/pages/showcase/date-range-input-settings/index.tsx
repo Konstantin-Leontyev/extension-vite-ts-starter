@@ -37,7 +37,7 @@ import { StyledSettingsForm } from '../showcase.styles';
  * @property maxDay — верхняя граница допустимых дней в формате ISO
  * @property minDay — нижняя граница допустимых дней в формате ISO
  * @property shape — форма поверхности
- * @property sizePreset — размер компонента
+ * @property size — размер компонента
  * @property startDay — начальный день диапазона в превью в формате ISO
  * @property startLabel — текст `title` начального сегмента и фрагмент `aria-label` сброса
  */
@@ -51,7 +51,7 @@ export type DateRangeInputWidgetState = {
   maxDay: string;
   minDay: string;
   shape: ShapePreset;
-  sizePreset: SizePreset;
+  size: SizePreset;
   startDay: string;
   startLabel: string;
 };
@@ -85,14 +85,14 @@ export function DateRangeInputSettings({
       <ControlGroup
         label={state.label}
         shape={state.shape}
-        sizePreset={state.sizePreset}
+        size={state.size}
         onLabelChange={(label) => onChange('label', label)}
         onShapeChange={(shape) => {
           onChange('shape', shape);
           onChange('dayShape', shape);
           onChange('buttonShape', shape);
         }}
-        onSizeChange={(size) => onChange('sizePreset', size)}
+        onSizeChange={(size) => onChange('size', size)}
       />
 
       <Input

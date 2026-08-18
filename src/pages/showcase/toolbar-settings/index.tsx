@@ -45,7 +45,7 @@ import { SizeListbox } from '../size-listbox';
  * @property shape — форма панели
  * @property showBorder — включает рамку
  * @property showShadow — включает тень при включённой рамке
- * @property sizePreset — размер окна действия
+ * @property size — размер окна действия
  */
 export type ToolbarWidgetState = {
   actions: IconRowGroupAction[];
@@ -55,7 +55,7 @@ export type ToolbarWidgetState = {
   shape: ShapePreset;
   showBorder: boolean;
   showShadow: boolean;
-  sizePreset: IconSizePreset;
+  size: IconSizePreset;
 };
 
 /**
@@ -84,9 +84,9 @@ export function ToolbarSettings({ onChange, state }: ToolbarSettingsProps) {
       <SizeListbox
         label="Size:"
         sizes={ICON_SIZE_PRESET_KEYS}
-        value={state.sizePreset}
+        value={state.size}
         onChange={(size) => {
-          onChange('sizePreset', size);
+          onChange('size', size);
           onChange(
             'actions',
             state.actions.map((action) => ({
@@ -131,7 +131,7 @@ export function ToolbarSettings({ onChange, state }: ToolbarSettingsProps) {
 
       <IconRowGroup
         actions={state.actions}
-        defaultIconPadding={getIconPadding(state.sizePreset)}
+        defaultIconPadding={getIconPadding(state.size)}
         onActionsChange={(actions) => onChange('actions', actions)}
       />
     </StyledSettingsForm>
