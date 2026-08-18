@@ -26,7 +26,6 @@
  * 1. Экспортировать компонент Stepper
  * 2. Типизировать пропсы через `StepperProps`
  * 3. Выставлять `role="spinbutton"` и атрибуты `aria-valuenow`, `aria-valuemin`, `aria-valuemax`
- * 4. Реэкспортировать мост размера текста `getStepperTextSize`
  *
  * Потребители:
  *  - `src/pages/showcase/stepper-settings/index.tsx` — выбирает шаг в панели настроек
@@ -46,6 +45,7 @@ import {
 import { ChevronDownIcon, ChevronUpIcon } from '@icons';
 import { FieldLabel } from '@ui/field-label';
 import { Icon } from '@ui/icon';
+import { getTextSize } from '@ui/presets';
 import { assignRef } from '@ui/ref';
 import { type SpacingValue } from '@ui/spacing';
 import { Text, type TextTone } from '@ui/text';
@@ -57,7 +57,6 @@ import {
   StyledStepperRoot,
   StyledStepperSpin,
   StyledStepperValue,
-  getStepperTextSize,
   splitLayoutProps,
   type StepperStyleProps,
 } from './stepper.styles';
@@ -193,7 +192,7 @@ export function Stepper({
   const resolvedLabelledBy = label ? labelId : ariaLabelledBy;
 
   // Размер пары «значение + суффикс» вычисляется один раз: поле и Text получают готовое значение
-  const resolvedTextSize = textSize ?? getStepperTextSize(sizePreset);
+  const resolvedTextSize = textSize ?? getTextSize(sizePreset);
 
   // Если draft не null, пользователь печатает, иначе показывается актуальное value
   const [draft, setDraft] = useState<null | string>(null);
@@ -440,6 +439,3 @@ export function Stepper({
     </StyledStepperFieldRoot>
   );
 }
-
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
-export { getStepperTextSize };

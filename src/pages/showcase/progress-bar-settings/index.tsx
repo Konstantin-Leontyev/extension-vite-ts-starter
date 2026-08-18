@@ -14,8 +14,7 @@
 import { type ChangeEvent } from 'react';
 
 import { Input } from '@ui/input';
-import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
-import { getProgressBarTextSize } from '@ui/progress-bar';
+import { SIZE_PRESET_KEYS, getTextSize, type SizePreset } from '@ui/presets';
 import { type TextSizePreset, type TextTone } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
@@ -100,7 +99,7 @@ export function ProgressBarSettings({ onChange, state }: ProgressBarSettingsProp
         value={state.sizePreset}
         onChange={(size) => {
           onChange('sizePreset', size);
-          onChange('textSize', getProgressBarTextSize(size));
+          onChange('textSize', getTextSize(size));
         }}
       />
 

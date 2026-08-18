@@ -11,9 +11,8 @@
  *  - `src/pages/showcase/index.tsx` — подключает панель и синхронизирует состояние с превью виджета уведомления
  */
 
-import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
+import { SIZE_PRESET_KEYS, getTextSize, type SizePreset } from '@ui/presets';
 import { type TextSizePreset, type TextTone } from '@ui/text';
-import { getToastTextSize } from '@ui/toast';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../showcase.styles';
@@ -73,7 +72,7 @@ export function ToastSettings({ onChange, state }: ToastSettingsProps) {
         value={state.sizePreset}
         onChange={(size) => {
           onChange('sizePreset', size);
-          onChange('textSize', getToastTextSize(size));
+          onChange('textSize', getTextSize(size));
         }}
       />
 

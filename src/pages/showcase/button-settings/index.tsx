@@ -14,10 +14,9 @@
 
 import { type ChangeEvent } from 'react';
 
-import { getButtonTextSize } from '@ui/button';
 import { Checkbox } from '@ui/checkbox';
 import { resolveIconShape, type IconPosition, type IconShapePreset } from '@ui/icon';
-import { type ShapePreset, type SizePreset } from '@ui/presets';
+import { getTextSize, type ShapePreset, type SizePreset } from '@ui/presets';
 import { type TextSizePreset, type TextTone } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
@@ -105,7 +104,7 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
         }}
         onSizeChange={(size) => {
           onChange('sizePreset', size);
-          onChange('textSize', getButtonTextSize(size));
+          onChange('textSize', getTextSize(size));
         }}
       />
 

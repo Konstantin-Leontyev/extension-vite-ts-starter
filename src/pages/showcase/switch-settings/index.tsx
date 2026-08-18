@@ -15,8 +15,7 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
-import { getSwitchTextSize } from '@ui/switch';
+import { SIZE_PRESET_KEYS, getTextSize, type SizePreset } from '@ui/presets';
 import { type TextSizePreset, type TextTone } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
@@ -82,7 +81,7 @@ export function SwitchSettings({ onChange, state }: SwitchSettingsProps) {
         value={state.sizePreset}
         onChange={(size) => {
           onChange('sizePreset', size);
-          onChange('textSize', getSwitchTextSize(size));
+          onChange('textSize', getTextSize(size));
         }}
       />
 

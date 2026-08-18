@@ -7,7 +7,7 @@
  * 2. Хранить минимальные размеры подсветки дня в `calendarDayHighlightMinBlockSize`,
  *    потолок квадрата стрелки в `calendarNavButtonMaxSize` и глиф без паддинга в
  *    `calendarNavGlyphSize`
- * 3. Предоставить функции `getCalendarNavGlyphSize` и `getCalendarPanelTextSize`
+ * 3. Предоставить функцию `getCalendarNavGlyphSize`, а также дефолт `DEFAULT_CALENDAR_PANEL_SIZE_PRESET`
  * 4. Предоставить styled-узлы `StyledCalendarPanelRoot`, `StyledCalendarHeader`,
  *    `StyledCalendarNavButton`, `StyledCalendarMonthTitle`, `StyledCalendarWeekdayRow`,
  *    `StyledCalendarWeekdayCell`, `StyledCalendarGrid` и `StyledCalendarDayButton`
@@ -23,13 +23,11 @@ import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
-  getTextSize,
   resolveBlockRadius,
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { resolveColorMix } from '@ui/tones';
 
@@ -123,7 +121,7 @@ const calendarNavGlyphSize = {
  * DEFAULT_CALENDAR_PANEL_SIZE_PRESET — задаёт размер CalendarPanel по умолчанию.
  * Используется, когда вызывающий код не передал проп `sizePreset`.
  */
-const DEFAULT_CALENDAR_PANEL_SIZE_PRESET: SizePreset = DEFAULT_SIZE_PRESET;
+export const DEFAULT_CALENDAR_PANEL_SIZE_PRESET: SizePreset = DEFAULT_SIZE_PRESET;
 
 /**
  * getCalendarNavGlyphSize — возвращает CSS-сторону глифа стрелки без паддинга.
@@ -136,17 +134,6 @@ export function getCalendarNavGlyphSize(sizePreset?: SizePreset): string {
   return getSpacingValue(
     calendarNavGlyphSize[sizePreset ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET]
   );
-}
-
-/**
- * getCalendarPanelTextSize — возвращает размер текста дня и заголовка по `sizePreset`.
- * Подставляет `DEFAULT_CALENDAR_PANEL_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер панели календаря
- * @returns метка размера текста из `TextSizePreset` для дня и заголовка месяца
- */
-export function getCalendarPanelTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET);
 }
 
 /**

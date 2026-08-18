@@ -4,9 +4,8 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `SegmentButtonStyleProps`
- * 2. Предоставить функцию `getSegmentButtonTextSize`
- * 3. Предоставить styled-узлы `StyledSegmentButtonRoot` и `StyledSegmentButton`
- * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 2. Предоставить styled-узлы `StyledSegmentButtonRoot` и `StyledSegmentButton`
+ * 3. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/segment-button/index.tsx` — собирает компонент SegmentButton и реэкспортирует
@@ -22,28 +21,15 @@ import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
   getMinBlockSize,
-  getTextSize,
   resolveBlockRadius,
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
-
-/**
- * getSegmentButtonTextSize — возвращает размер текста сегмента по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер сегментной кнопки
- * @returns метка размера текста из `TextSizePreset` для текста сегмента
- */
-export function getSegmentButtonTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
-}
 
 /**
  * SegmentButtonStyleProps — представляет пропсы стилизации SegmentButton и layout-пропсы.

@@ -18,7 +18,6 @@
  * 2. Типизировать пропсы через `ProgressBarProps`
  * 3. Экспортировать тип `ProgressBarShowTextProps`
  * 4. Выставлять `role="progressbar"` и `aria-valuenow` для скринридеров
- * 5. Реэкспортировать мост размера текста `getProgressBarTextSize`
  *
  * Потребители:
  *  - страницы и виджеты приложения — показывают ход выполнения операций
@@ -27,6 +26,7 @@
 
 import { type ComponentPropsWithRef } from 'react';
 
+import { getTextSize } from '@ui/presets';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 
 import {
@@ -34,7 +34,6 @@ import {
   StyledProgressBarFill,
   StyledProgressBarRoot,
   clampProgressValue,
-  getProgressBarTextSize,
   type ProgressBarStyleProps,
 } from './progress-bar.styles';
 
@@ -122,7 +121,7 @@ function ProgressBar({
         <Text
           aria-hidden={true}
           italic={textItalic}
-          sizePreset={textSize ?? getProgressBarTextSize(sizePreset)}
+          sizePreset={textSize ?? getTextSize(sizePreset)}
           tone={textTone}
           whiteSpace="nowrap"
         >
@@ -133,5 +132,4 @@ function ProgressBar({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста и публичного типа */
-export { ProgressBar, getProgressBarTextSize, type ProgressBarShowTextProps };
+export { ProgressBar, type ProgressBarShowTextProps };

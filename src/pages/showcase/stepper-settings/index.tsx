@@ -16,8 +16,8 @@ import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
-import { type ShapePreset, type SizePreset } from '@ui/presets';
-import { Stepper, getStepperTextSize } from '@ui/stepper';
+import { getTextSize, type ShapePreset, type SizePreset } from '@ui/presets';
+import { Stepper } from '@ui/stepper';
 import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
 
 import { ControlGroup } from '../control-group';
@@ -90,7 +90,7 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
         onShapeChange={(shape) => onChange('shape', shape)}
         onSizeChange={(size) => {
           onChange('sizePreset', size);
-          onChange('textSize', getStepperTextSize(size));
+          onChange('textSize', getTextSize(size));
         }}
       />
 

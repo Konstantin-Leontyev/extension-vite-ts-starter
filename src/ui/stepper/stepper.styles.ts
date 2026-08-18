@@ -4,10 +4,9 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `StepperStyleProps`
- * 2. Предоставить функцию `getStepperTextSize`
- * 3. Предоставить styled-узлы `StyledStepperFieldRoot`, `StyledStepperRoot`,
+ * 2. Предоставить styled-узлы `StyledStepperFieldRoot`, `StyledStepperRoot`,
  *    `StyledStepperValue`, `StyledStepperInput`, `StyledStepperSpin` и `StyledStepperButton`
- * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 3. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/stepper/index.tsx` — собирает компонент Stepper и реэкспортирует публичное API
@@ -22,7 +21,6 @@ import {
   DEFAULT_SIZE_PRESET,
   getMinBlockSize,
   getPaddingInline,
-  getTextSize,
   resolveBlockRadius,
   type ShapePreset,
   type SizePreset,
@@ -39,17 +37,6 @@ import { getTheme, type AppTheme } from '@ui/theme';
 import { type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
-
-/**
- * getStepperTextSize — возвращает размер значения и суффикса по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер счётчика
- * @returns метка размера текста из `TextSizePreset` для значения и суффикса счётчика
- */
-export function getStepperTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
-}
 
 /**
  * StepperRootStyleProps — представляет пропсы стилизации корневого поля Stepper.

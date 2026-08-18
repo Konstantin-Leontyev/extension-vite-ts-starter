@@ -62,10 +62,8 @@ import {
   type IconPosition,
   type IconShapePreset,
 } from '@ui/icon';
-import {
-  getOpenControlTextSize,
-  resolveEnabledOpenControlIndex,
-} from '@ui/open-control';
+import { resolveEnabledOpenControlIndex } from '@ui/open-control';
+import { getTextSize } from '@ui/presets';
 import { SearchField } from '@ui/search-field';
 import { Text } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
@@ -225,7 +223,7 @@ export function Combobox({
   const surfaceProps = { borderTone, iconTone, shape, sizePreset };
   const iconShape = resolveIconShape(shape);
   const clearShape = clearShapeProp ?? iconShape;
-  const textSizePreset = getOpenControlTextSize(sizePreset);
+  const textSizePreset = getTextSize(sizePreset);
   const isIconStart = iconPosition === 'start';
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);

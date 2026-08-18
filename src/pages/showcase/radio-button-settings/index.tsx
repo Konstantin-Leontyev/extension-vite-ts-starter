@@ -16,8 +16,7 @@ import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
-import { getRadioButtonTextSize } from '@ui/radio-button';
+import { SIZE_PRESET_KEYS, getTextSize, type SizePreset } from '@ui/presets';
 import { type TextSizePreset, type TextTone } from '@ui/text';
 
 import { StyledSettingsForm } from '../showcase.styles';
@@ -93,7 +92,7 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
         value={state.sizePreset}
         onChange={(size) => {
           onChange('sizePreset', size);
-          onChange('textSize', getRadioButtonTextSize(size));
+          onChange('textSize', getTextSize(size));
         }}
       />
 

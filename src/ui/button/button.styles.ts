@@ -4,9 +4,8 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `ButtonStyleProps`
- * 2. Предоставить функцию `getButtonTextSize`
- * 3. Предоставить styled-узлы `StyledButtonRoot` и `StyledButton`
- * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 2. Предоставить styled-узлы `StyledButtonRoot` и `StyledButton`
+ * 3. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/button/index.tsx` — собирает компонент Button и реэкспортирует публичное API
@@ -26,13 +25,11 @@ import {
   DEFAULT_SIZE_PRESET,
   getMinBlockSize,
   getPaddingInline,
-  getTextSize,
   resolveBlockRadius,
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import {
   BORDER_SURFACE_MIX_PERCENT,
@@ -45,17 +42,6 @@ import {
 } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
-
-/**
- * getButtonTextSize — возвращает размер лейбла по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер кнопки
- * @returns метка размера текста из `TextSizePreset` для лейбла кнопки
- */
-export function getButtonTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
-}
 
 /**
  * ButtonSurface — представляет заливки и цвет текста кнопки.

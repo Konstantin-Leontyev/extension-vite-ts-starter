@@ -81,6 +81,7 @@ import { Input } from '@ui/input';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
+  getTextSize,
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
@@ -99,7 +100,6 @@ import {
   StyledRangeInputTrigger,
   StyledRangeInputTriggerRow,
   StyledRangeInputValue,
-  getRangeInputTextSize,
   splitLayoutProps,
   type RangeInputStyleProps,
 } from './range-input.styles';
@@ -465,7 +465,7 @@ export function RangeInput({
   const showClear = isActive && onClear !== undefined && !disabled;
   const showChevron = !showClear;
   const triggerLabel = isActive ? formatActiveLabel(committed) : placeholder;
-  const textSizePreset = getRangeInputTextSize(sizePreset);
+  const textSizePreset = getTextSize(sizePreset);
   const hasPanelError = Boolean(panelError?.message.trim());
   const hasTitle = Boolean(title);
   const panelTitleId = hasTitle ? titleId : undefined;

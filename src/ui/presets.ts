@@ -18,6 +18,7 @@
  *  - все `*.styles.ts` компонентов с пропом `sizePreset` — читают значения через геттеры
  *  - панели настроек витрины дизайн-системы — передают `SIZE_PRESET_KEYS` в `SizeListbox`
  *    и `SHAPE_PRESET_KEYS` в `ShapeListbox`
+ *  - `src/pages/showcase/index.tsx` и панели настроек витрины дизайн-системы — берут размер текста через `getTextSize`
  */
 
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
@@ -188,10 +189,11 @@ export const textSize = Object.freeze({
 
 /**
  * getTextSize — возвращает размер текста по `sizePreset`.
+ * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
  *
  * @param sizePreset размер компонента
  * @returns метка размера текста из `TextSizePreset`
  */
-export function getTextSize(sizePreset: SizePreset): TextSizePreset {
-  return textSize[sizePreset];
+export function getTextSize(sizePreset?: SizePreset): TextSizePreset {
+  return textSize[sizePreset ?? DEFAULT_SIZE_PRESET];
 }

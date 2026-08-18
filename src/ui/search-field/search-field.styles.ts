@@ -5,10 +5,9 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `SearchFieldStyleProps`, `SearchFieldRowStyleProps`
  *    и `SearchFieldControlStyleProps`
- * 2. Предоставить функцию `getSearchFieldTextSize`
- * 3. Предоставить styled-узлы `StyledSearchFieldRoot`, `StyledSearchFieldRow`
+ * 2. Предоставить styled-узлы `StyledSearchFieldRoot`, `StyledSearchFieldRow`
  *    и `StyledSearchFieldControl`
- * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 3. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/search-field/index.tsx` — собирает компонент SearchField
@@ -44,17 +43,6 @@ import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
-
-/**
- * getSearchFieldTextSize — возвращает размер значения по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер поля поиска
- * @returns метка размера текста из `TextSizePreset` для значения
- */
-export function getSearchFieldTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
-}
 
 /**
  * SearchFieldStyleProps — представляет пропсы стилизации SearchField и layout-пропсы.
@@ -271,7 +259,7 @@ function getSearchFieldControlStyles(
     ${getNativeFieldTextStyles({
       textAlign,
       textItalic,
-      textSize: textSize ?? getSearchFieldTextSize(sizePreset),
+      textSize: textSize ?? getTextSize(sizePreset),
       textTone,
       theme,
     })}

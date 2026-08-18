@@ -4,10 +4,9 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `InputStyleProps`
- * 2. Предоставить функцию `getInputTextSize`
- * 3. Предоставить styled-узлы `StyledInputRoot`, `StyledInputRow`
+ * 2. Предоставить styled-узлы `StyledInputRoot`, `StyledInputRow`
  *    и `StyledInputControl`
- * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 3. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/input/index.tsx` — собирает компонент Input
@@ -41,17 +40,6 @@ import { getNativeFieldTextStyles, type TextSizePreset, type TextTone } from '@u
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
-
-/**
- * getInputTextSize — возвращает размер значения по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер поля ввода
- * @returns метка размера текста из `TextSizePreset` для значения
- */
-export function getInputTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
-}
 
 /**
  * InputStyleProps — представляет пропсы стилизации Input и layout-пропсы.
@@ -233,7 +221,7 @@ function getInputControlStyles(
     ${getNativeFieldTextStyles({
       textAlign,
       textItalic,
-      textSize: textSize ?? getInputTextSize(sizePreset),
+      textSize: textSize ?? getTextSize(sizePreset),
       textTone,
       theme,
     })}

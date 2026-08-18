@@ -15,7 +15,6 @@
  * 1. Экспортировать компонент Toast
  * 2. Типизировать пропсы через `ToastProps`
  * 3. Выставлять `role` и `aria-live` по тону: для `danger` — `alert` и `assertive`
- * 4. Реэкспортировать мост размера текста `getToastTextSize`
  *
  * Потребители:
  *  - `src/context/toast/index.tsx` — рендерит Toast в стеке уведомлений
@@ -24,9 +23,10 @@
 
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
+import { getTextSize } from '@ui/presets';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 
-import { StyledToast, getToastTextSize, type ToastStyleProps } from './toast.styles';
+import { StyledToast, type ToastStyleProps } from './toast.styles';
 
 /**
  * ToastProps — представляет пропсы компонента Toast.
@@ -76,7 +76,7 @@ function Toast({
     >
       <Text
         italic={textItalic}
-        sizePreset={textSize ?? getToastTextSize(sizePreset)}
+        sizePreset={textSize ?? getTextSize(sizePreset)}
         tone={textTone}
       >
         {children}
@@ -85,5 +85,4 @@ function Toast({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
-export { Toast, getToastTextSize };
+export { Toast };

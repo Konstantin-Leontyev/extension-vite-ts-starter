@@ -38,10 +38,12 @@ import {
   ChevronRightIcon,
 } from '@icons';
 import { Icon } from '@ui/icon';
+import { getTextSize } from '@ui/presets';
 import { assignRef } from '@ui/ref';
 import { Text } from '@ui/text';
 
 import {
+  DEFAULT_CALENDAR_PANEL_SIZE_PRESET,
   StyledCalendarDayButton,
   StyledCalendarGrid,
   StyledCalendarHeader,
@@ -51,7 +53,6 @@ import {
   StyledCalendarWeekdayCell,
   StyledCalendarWeekdayRow,
   getCalendarNavGlyphSize,
-  getCalendarPanelTextSize,
   splitLayoutProps,
   type CalendarPanelStyleProps,
 } from './calendar-panel.styles';
@@ -176,7 +177,7 @@ export function CalendarPanel({
   const canGoMonthNext = canNavigateMonthNext(viewMonth, maxDay);
   const canGoYearPrevious = canNavigateYearPrevious(viewMonth, minDay);
   const canGoYearNext = canNavigateYearNext(viewMonth, maxDay);
-  const textSizePreset = getCalendarPanelTextSize(sizePreset);
+  const textSizePreset = getTextSize(sizePreset ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET);
   const navGlyphSize = getCalendarNavGlyphSize(sizePreset);
 
   function handlePreviousYearClick(): void {

@@ -6,9 +6,8 @@
  * 1. Типизировать пропсы через `SwitchStyleProps`
  * 2. Хранить габариты дорожки и бегунка в `switchTrackInlineSize`,
  *    `switchTrackBlockSize` и `switchKnobSize`
- * 3. Предоставить функцию `getSwitchTextSize`
- * 4. Предоставить styled-узлы `StyledSwitchRoot` и `StyledSwitchTrack`
- * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 3. Предоставить styled-узлы `StyledSwitchRoot` и `StyledSwitchTrack`
+ * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/switch/index.tsx` — собирает компонент Switch и реэкспортирует публичное API
@@ -19,14 +18,8 @@ import styled from 'styled-components';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { MOTION_CONTROL_DURATION, getTransitionStyles } from '@ui/motion';
 import { getOutlineStyles } from '@ui/outline';
-import {
-  DEFAULT_SIZE_PRESET,
-  getTextSize,
-  resolveBlockRadius,
-  type SizePreset,
-} from '@ui/presets';
+import { DEFAULT_SIZE_PRESET, resolveBlockRadius, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { getToneColor, type TonePreset } from '@ui/tones';
 
@@ -91,17 +84,6 @@ const switchKnobSize = {
  */
 function getSwitchKnobSize(sizePreset: SizePreset): string {
   return getSpacingValue(switchKnobSize[sizePreset]);
-}
-
-/**
- * getSwitchTextSize — возвращает размер подписи по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер дорожки
- * @returns метка размера текста из `TextSizePreset` для подписи справа от дорожки
- */
-export function getSwitchTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
 }
 
 /**

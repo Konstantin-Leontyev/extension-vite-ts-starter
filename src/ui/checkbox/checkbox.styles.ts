@@ -5,7 +5,7 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `CheckboxStyleProps`, `CheckboxCheckedMark` и `CheckboxUncheckedMark`
  * 2. Хранить габариты бокса и размер марки в `checkboxSizePresets`
- * 3. Предоставить функцию `getCheckboxTextSize` и перечни `CHECKBOX_CHECKED_MARK_KEYS`
+ * 3. Предоставить перечни `CHECKBOX_CHECKED_MARK_KEYS`
  *    и `CHECKBOX_UNCHECKED_MARK_KEYS`
  * 4. Предоставить styled-узлы `StyledCheckboxRoot` и `StyledCheckboxControl`
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
@@ -18,9 +18,8 @@ import styled from 'styled-components';
 
 import { getBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
+import { DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -56,17 +55,6 @@ function getCheckboxSize(sizePreset: SizePreset): string {
  */
 function getCheckboxIconSize(sizePreset: SizePreset): string {
   return getSpacingValue(checkboxSizePresets[sizePreset].iconSize);
-}
-
-/**
- * getCheckboxTextSize — возвращает размер подписи по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер бокса
- * @returns метка размера текста из `TextSizePreset` для подписи справа от бокса
- */
-export function getCheckboxTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
 }
 
 /**

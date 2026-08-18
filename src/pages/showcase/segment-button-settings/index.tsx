@@ -18,8 +18,7 @@ import { type ChangeEvent } from 'react';
 import { Checkbox } from '@ui/checkbox';
 import { type IconPosition } from '@ui/icon';
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import { type ShapePreset, type SizePreset } from '@ui/presets';
-import { getSegmentButtonTextSize } from '@ui/segment-button';
+import { getTextSize, type ShapePreset, type SizePreset } from '@ui/presets';
 import { type TextSizePreset, type TextTone } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
@@ -148,7 +147,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
         onShapeChange={(shape) => onChange('shape', shape)}
         onSizeChange={(size) => {
           onChange('sizePreset', size);
-          onChange('textSize', getSegmentButtonTextSize(size));
+          onChange('textSize', getTextSize(size));
         }}
       />
 

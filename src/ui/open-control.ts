@@ -14,7 +14,7 @@
  *    `getOpenControlSelectableRowSurfaceStyles`,
  *    `getOpenControlActiveRowHighlightStyles`, `getOpenControlPanelStyles`,
  *    `getOpenControlStackedPanelStyles`,
- *    `getOpenControlOptionsListScrollStyles`, `getOpenControlTextSize` и
+ *    `getOpenControlOptionsListScrollStyles` и
  *    `resolveEnabledOpenControlIndex`
  *
  * Потребители:
@@ -22,7 +22,7 @@
  *    подставляют корень, ряд и кнопку-триггер, панель, скролл списка,
  *    поверхность опции и подсветку активной строки
  *  - `src/ui/listbox/index.tsx` и `src/ui/combobox/index.tsx` — берут потолок
- *    видимых строк барабана, размер текста и поиск ближайшей доступной строки
+ *    видимых строк барабана и поиск ближайшей доступной строки
  *  - `src/ui/range-input/range-input.styles.ts` — подставляет корень, ряд и
  *    кнопку-триггер и поверхность пресета
  *  - `src/ui/date-range-input/date-range-input.styles.ts` — подставляет корень,
@@ -38,14 +38,12 @@ import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
   getMinBlockSize,
-  getTextSize,
   resolveBlockRadius,
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { getSurfaceBackgroundColor } from '@ui/surface';
-import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
 
@@ -125,17 +123,6 @@ const OPEN_CONTROL_PANEL_PADDING: SpacingValue = 16;
  */
 const DEFAULT_SELECTABLE_HIGHLIGHT_WHEN = `&:not(:disabled):hover::before,
     &:focus-visible::before`;
-
-/**
- * getOpenControlTextSize — возвращает размер текста триггера и опций по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер компонента
- * @returns метка размера текста из `TextSizePreset` для текста триггера и опций
- */
-export function getOpenControlTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
-}
 
 /**
  * resolveEnabledOpenControlIndex — возвращает индекс ближайшей доступной строки

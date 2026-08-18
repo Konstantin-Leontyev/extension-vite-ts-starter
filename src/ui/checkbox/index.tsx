@@ -19,7 +19,6 @@
  * 2. Типизировать пропсы через `CheckboxProps`
  * 3. Реэкспортировать пресеты `checkboxSizePresets`, перечни марок и типы
  *    `CheckboxCheckedMark` и `CheckboxUncheckedMark`
- * 4. Реэкспортировать мост размера текста `getCheckboxTextSize`
  *
  * Потребители:
  *  - контролы, например Listbox и Table — рендерят чекбоксы
@@ -32,6 +31,7 @@
 
 import { type ComponentPropsWithRef } from 'react';
 
+import { getTextSize } from '@ui/presets';
 import { Text, type ChildrenTextProps, type TextTone } from '@ui/text';
 
 import {
@@ -40,7 +40,6 @@ import {
   StyledCheckboxControl,
   StyledCheckboxRoot,
   checkboxSizePresets,
-  getCheckboxTextSize,
   splitLayoutProps,
   type CheckboxCheckedMark,
   type CheckboxStyleProps,
@@ -105,7 +104,7 @@ function Checkbox({
       {control}
       <Text
         italic={textItalic}
-        sizePreset={textSize ?? getCheckboxTextSize(sizePreset)}
+        sizePreset={textSize ?? getTextSize(sizePreset)}
         tone={textTone}
       >
         {children}
@@ -114,13 +113,12 @@ function Checkbox({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт пресетов, перечней марок, моста размера текста и публичного типа */
+/* eslint-disable react-refresh/only-export-components -- реэкспорт пресетов, перечней марок и публичных типов */
 export {
   CHECKBOX_CHECKED_MARK_KEYS,
   CHECKBOX_UNCHECKED_MARK_KEYS,
   Checkbox,
   checkboxSizePresets,
-  getCheckboxTextSize,
   type CheckboxCheckedMark,
   type CheckboxUncheckedMark,
 };

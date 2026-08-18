@@ -6,7 +6,7 @@
  * 1. Типизировать пропсы через `TableStyleProps` и `TableSizePreset`
  * 2. Хранить габарит бокса Checkbox / Icon `tiny` в `TABLE_HEADER_MARK_BLOCK_SIZE`
  *    для спейсера выравнивания в шапке
- * 3. Предоставить функцию `getTableTextSize`, а также дефолты `DEFAULT_TABLE_SIZE_PRESET`,
+ * 3. Предоставить дефолты `DEFAULT_TABLE_SIZE_PRESET`,
  *    `DEFAULT_TABLE_SHOW_BORDER`, `DEFAULT_TABLE_HOVER_HIGHLIGHT` и `DEFAULT_TABLE_STRIPED`
  * 4. Предоставить styled-узлы `StyledTableClip`, `StyledTable`, `StyledTableCol`,
  *    `StyledTableHead`, `StyledTableFoot`, `StyledTableBody`, `StyledTableRow`,
@@ -31,12 +31,10 @@ import {
   DEFAULT_SIZE_PRESET,
   getMinBlockSize,
   getPaddingInline,
-  getTextSize,
   resolveBlockRadius,
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { resolveColorMix } from '@ui/tones';
 
@@ -71,17 +69,6 @@ export const DEFAULT_TABLE_HOVER_HIGHLIGHT = true;
  * Используется, когда вызывающий код не передал проп `striped`.
  */
 export const DEFAULT_TABLE_STRIPED = true;
-
-/**
- * getTableTextSize — возвращает размер текста ячеек по `sizePreset`.
- * Подставляет `DEFAULT_TABLE_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер Table
- * @returns метка размера текста из `TextSizePreset` для текста ячеек
- */
-export function getTableTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_TABLE_SIZE_PRESET);
-}
 
 /**
  * TABLE_EDGE_BORDER_WIDTH — задаёт толщину рамки шапки и подвала таблицы.

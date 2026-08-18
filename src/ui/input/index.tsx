@@ -28,8 +28,7 @@
  * Основные задачи:
  * 1. Экспортировать компонент Input
  * 2. Типизировать пропсы через `InputProps`
- * 3. Реэкспортировать мост размера текста `getInputTextSize`
- * 4. Связывать подпись, поле и строку ошибки для доступности
+ * 3. Связывать подпись, поле и строку ошибки для доступности
  *
  * Потребители:
  *  - контролы и панели настроек витрины дизайн-системы, например TextGroup и InputSettings —
@@ -57,7 +56,6 @@ import {
   StyledInputControl,
   StyledInputRoot,
   StyledInputRow,
-  getInputTextSize,
   splitLayoutProps,
   type InputStyleProps,
 } from './input.styles';
@@ -238,6 +236,3 @@ export function Input({
     </StyledInputRoot>
   );
 }
-
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
-export { getInputTextSize };

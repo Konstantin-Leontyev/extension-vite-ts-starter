@@ -4,8 +4,7 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `ToastStyleProps`
- * 2. Предоставить функцию `getToastTextSize`
- * 3. Предоставить styled-узел `StyledToast`
+ * 2. Предоставить styled-узел `StyledToast`
  *
  * Потребители:
  *  - `src/ui/toast/index.tsx` — собирает компонент Toast и реэкспортирует публичное API
@@ -20,25 +19,12 @@ import {
   DEFAULT_SIZE_PRESET,
   getMinBlockSize,
   getPadding,
-  getTextSize,
   resolveBlockRadius,
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, getToneColor, type TonePreset } from '@ui/tones';
-
-/**
- * getToastTextSize — возвращает размер текста сообщения по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер уведомления
- * @returns метка размера текста из `TextSizePreset` для текста сообщения
- */
-export function getToastTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
-}
 
 /**
  * ToastStyleProps — представляет пропсы стилизации Toast и layout-пропсы.

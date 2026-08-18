@@ -18,12 +18,11 @@ import {
   CHECKBOX_CHECKED_MARK_KEYS,
   CHECKBOX_UNCHECKED_MARK_KEYS,
   Checkbox,
-  getCheckboxTextSize,
   type CheckboxCheckedMark,
   type CheckboxUncheckedMark,
 } from '@ui/checkbox';
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
+import { SIZE_PRESET_KEYS, getTextSize, type SizePreset } from '@ui/presets';
 import { type TextSizePreset, type TextTone } from '@ui/text';
 
 import { StyledSettingsForm } from '../showcase.styles';
@@ -113,7 +112,7 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
         value={state.sizePreset}
         onChange={(size) => {
           onChange('sizePreset', size);
-          onChange('textSize', getCheckboxTextSize(size));
+          onChange('textSize', getTextSize(size));
         }}
       />
 

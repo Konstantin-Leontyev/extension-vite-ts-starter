@@ -32,9 +32,8 @@
  * 1. Экспортировать компонент SearchField
  * 2. Типизировать пропсы через `SearchFieldProps`
  * 3. Экспортировать тип `SearchFieldShowIconProps`
- * 4. Реэкспортировать мост размера текста `getSearchFieldTextSize`
- * 5. Связывать подпись и поле для доступности
- * 6. Выставлять `aria-label` кнопки сброса через `resolveClearAriaLabel`
+ * 4. Связывать подпись и поле для доступности
+ * 5. Выставлять `aria-label` кнопки сброса через `resolveClearAriaLabel`
  *
  * Потребители:
  *  - `@ui/combobox` — рендерит поле поиска в панели
@@ -67,7 +66,6 @@ import {
   StyledSearchFieldControl,
   StyledSearchFieldRoot,
   StyledSearchFieldRow,
-  getSearchFieldTextSize,
   splitLayoutProps,
   type SearchFieldStyleProps,
 } from './search-field.styles';
@@ -266,5 +264,4 @@ function SearchField({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста и публичного типа */
-export { SearchField, getSearchFieldTextSize, type SearchFieldShowIconProps };
+export { SearchField, type SearchFieldShowIconProps };

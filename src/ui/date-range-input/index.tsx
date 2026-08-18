@@ -59,8 +59,7 @@ import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPanel } from '@ui/anchored-panel';
 import { FieldLabel } from '@ui/field-label';
 import { Icon, type IconShapePreset } from '@ui/icon';
-import { DEFAULT_SHAPE_PRESET, type ShapePreset } from '@ui/presets';
-import { getSegmentButtonTextSize } from '@ui/segment-button';
+import { DEFAULT_SHAPE_PRESET, getTextSize, type ShapePreset } from '@ui/presets';
 import {
   SEGMENT_BUTTON_PARTS_FLUSH_SHAPE,
   SegmentButtonParts,
@@ -364,7 +363,7 @@ export function DateRangeInput({
   const calendarIcon = <CalendarIcon />;
   const isActive = startDay !== '' || endDay !== '';
   const showClear = isActive && onClear !== undefined && !disabled;
-  const textSizePreset = getSegmentButtonTextSize(sizePreset);
+  const textSizePreset = getTextSize(sizePreset);
 
   function handleOpenFromSegment(sourceDay: string): void {
     if (disabled) {

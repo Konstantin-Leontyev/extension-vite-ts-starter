@@ -24,8 +24,7 @@
  * Основные задачи:
  * 1. Экспортировать компонент Button
  * 2. Типизировать пропсы через `ButtonProps`
- * 3. Реэкспортировать мост размера текста `getButtonTextSize`
- * 4. Экспортировать тип `ButtonIconProps`
+ * 3. Экспортировать тип `ButtonIconProps`
  *
  * Потребители:
  *  - контролы, например RangeInput — рендерят кнопки действий внутри себя
@@ -43,13 +42,13 @@ import {
   type IconPosition,
   type IconShapePreset,
 } from '@ui/icon';
+import { getTextSize } from '@ui/presets';
 import { Text, type TextSizePreset, type TextTone } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import {
   StyledButton,
   StyledButtonRoot,
-  getButtonTextSize,
   splitLayoutProps,
   type ButtonStyleProps,
 } from './button.styles';
@@ -181,7 +180,7 @@ export function Button({
           data-slot="label"
           ellipsis
           italic={textItalic}
-          sizePreset={textSize ?? getButtonTextSize(sizePreset)}
+          sizePreset={textSize ?? getTextSize(sizePreset)}
           tone={textTone}
         >
           {children}
@@ -192,5 +191,4 @@ export function Button({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста и публичного типа */
-export { getButtonTextSize, type ButtonIconProps };
+export { type ButtonIconProps };

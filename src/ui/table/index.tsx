@@ -52,8 +52,7 @@
  * 4. Реэкспортировать утилиту `computeTableColumnInlineSizes`, тип `TableColumnSizeConfig`
  *    и дефолты осей
  * 5. Реэкспортировать сателлиты `TableCell`, `TableCellAlign`, `TableGroupCell`,
- *    `TableInlineField`, `TableMemberPrefix` и `TableNestedCell`, а также мост
- *    размера текста `getTableInlineFieldTextSize`
+ *    `TableInlineField`, `TableMemberPrefix` и `TableNestedCell`
  *
  * Потребители:
  *  - `src/pages/showcase/table-demo/index.tsx` — собирает демо-таблицу каталога
@@ -75,6 +74,7 @@ import { AnchoredPanel } from '@ui/anchored-panel';
 import { Checkbox } from '@ui/checkbox';
 import { FieldError } from '@ui/field-error';
 import { Icon } from '@ui/icon';
+import { getTextSize } from '@ui/presets';
 import { ScrollPort } from '@ui/scroll-port';
 import { Text, type TextSizePreset } from '@ui/text';
 
@@ -85,6 +85,7 @@ import {
   type TableCellHeadProps,
 } from './table-cell';
 import {
+  DEFAULT_TABLE_SIZE_PRESET,
   StyledTable,
   StyledTableBody,
   StyledTableCellTrailing,
@@ -98,7 +99,6 @@ import {
   StyledTableRow,
   StyledTableRowPanel,
   StyledTableRowPanelTable,
-  getTableTextSize,
   splitLayoutProps,
   type TableStyleProps,
 } from './table.styles';
@@ -686,7 +686,7 @@ export function Table<Row>(props: TableProps<Row>) {
 
   const checkable = props.checkable === true;
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const textSize = getTableTextSize(sizePreset);
+  const textSize = getTextSize(sizePreset ?? DEFAULT_TABLE_SIZE_PRESET);
   const rowCheckboxColumnKey = checkable ? props.rowCheckboxColumnKey : undefined;
   const separateCheckboxColumn = checkable && rowCheckboxColumnKey === undefined;
   const fixed =
@@ -1211,8 +1211,7 @@ export function Table<Row>(props: TableProps<Row>) {
 
 export { TableCell, type TableCellAlign } from './table-cell';
 export { TableGroupCell } from './table-group-cell';
-/* eslint-disable react-refresh/only-export-components -- мост размера текста инлайн-поля */
-export { TableInlineField, getTableInlineFieldTextSize } from './table-inline-field';
+export { TableInlineField } from './table-inline-field';
 export { TableMemberPrefix } from './table-member-prefix';
 export { TableNestedCell } from './table-nested-cell';
 /* eslint-disable react-refresh/only-export-components -- реэкспорт утилит sizing и дефолтов осей Table */

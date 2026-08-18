@@ -5,9 +5,8 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `RadioButtonStyleProps`
  * 2. Хранить размер кружка в `radioSize`
- * 3. Предоставить функцию `getRadioButtonTextSize`
- * 4. Предоставить styled-узлы `StyledRadioButtonRoot` и `StyledRadioButtonControl`
- * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 3. Предоставить styled-узлы `StyledRadioButtonRoot` и `StyledRadioButtonControl`
+ * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/radio-button/index.tsx` — собирает компонент RadioButton и реэкспортирует публичное API
@@ -17,9 +16,8 @@ import styled from 'styled-components';
 
 import { getBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
+import { DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -42,17 +40,6 @@ const radioSize = {
  */
 function getRadioSize(sizePreset: SizePreset): string {
   return getSpacingValue(radioSize[sizePreset]);
-}
-
-/**
- * getRadioButtonTextSize — возвращает размер подписи по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер кружка
- * @returns метка размера текста из `TextSizePreset` для подписи справа от кружка
- */
-export function getRadioButtonTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
 }
 
 /**

@@ -15,7 +15,6 @@
  * Основные задачи:
  * 1. Экспортировать компонент RadioButton
  * 2. Типизировать пропсы через `RadioButtonProps`
- * 3. Реэкспортировать мост размера текста `getRadioButtonTextSize`
  *
  * Потребители:
  *  - страницы и виджеты приложения — рендерят поля выбора одного значения
@@ -24,12 +23,12 @@
 
 import { type ComponentPropsWithRef } from 'react';
 
+import { getTextSize } from '@ui/presets';
 import { Text, type ChildrenTextProps, type TextTone } from '@ui/text';
 
 import {
   StyledRadioButtonControl,
   StyledRadioButtonRoot,
-  getRadioButtonTextSize,
   splitLayoutProps,
   type RadioButtonStyleProps,
 } from './radio-button.styles';
@@ -84,7 +83,7 @@ function RadioButton({
       {control}
       <Text
         italic={textItalic}
-        sizePreset={textSize ?? getRadioButtonTextSize(sizePreset)}
+        sizePreset={textSize ?? getTextSize(sizePreset)}
         tone={textTone}
       >
         {children}
@@ -93,5 +92,4 @@ function RadioButton({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
-export { RadioButton, getRadioButtonTextSize };
+export { RadioButton };

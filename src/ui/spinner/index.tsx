@@ -17,7 +17,6 @@
  * 1. Экспортировать компонент Spinner
  * 2. Типизировать пропсы через `SpinnerProps`
  * 3. Выставлять `role="status"` и `aria-label` для скринридеров
- * 4. Реэкспортировать мост размера текста `getSpinnerTextSize`
  *
  * Потребители:
  *  - страницы и виджеты приложения — показывают состояние загрузки
@@ -26,12 +25,12 @@
 
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
+import { getTextSize } from '@ui/presets';
 import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
 
 import {
   StyledSpinner,
   StyledSpinnerRoot,
-  getSpinnerTextSize,
   splitLayoutProps,
   type SpinnerStyleProps,
 } from './spinner.styles';
@@ -95,7 +94,7 @@ function Spinner({
   ...rest
 }: SpinnerProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const resolvedTextSize = textSize ?? getSpinnerTextSize(sizePreset);
+  const resolvedTextSize = textSize ?? getTextSize(sizePreset);
   const hasText = Boolean(typeof children === 'string' ? children.trim() : children);
   const showText = hasText || reserveTextSpace;
 
@@ -127,5 +126,4 @@ function Spinner({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
-export { Spinner, getSpinnerTextSize };
+export { Spinner };

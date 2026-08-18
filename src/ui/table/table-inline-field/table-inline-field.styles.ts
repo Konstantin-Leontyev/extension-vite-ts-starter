@@ -4,8 +4,7 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `TableInlineFieldStyleProps`
- * 2. Предоставить функцию `getTableInlineFieldTextSize`
- * 3. Предоставить styled-узел `StyledTableInlineField`
+ * 2. Предоставить styled-узел `StyledTableInlineField`
  *
  * Потребители:
  *  - `src/ui/table/table-inline-field/index.tsx` — собирает компонент TableInlineField
@@ -14,20 +13,9 @@
 import { type CSSProperties } from 'react';
 import styled from 'styled-components';
 
-import { DEFAULT_SIZE_PRESET, getTextSize, type SizePreset } from '@ui/presets';
+import { getTextSize } from '@ui/presets';
 import { getNativeFieldTextStyles, type TextSizePreset, type TextTone } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
-
-/**
- * getTableInlineFieldTextSize — возвращает размер значения по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер поля
- * @returns метка размера текста из `TextSizePreset` для значения
- */
-export function getTableInlineFieldTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
-}
 
 /**
  * TableInlineFieldStyleProps — представляет пропсы стилизации TableInlineField.
@@ -73,7 +61,7 @@ function getTableInlineFieldStyles(
     ${getNativeFieldTextStyles({
       textAlign,
       textItalic,
-      textSize: textSize ?? getTableInlineFieldTextSize(),
+      textSize: textSize ?? getTextSize(),
       textTone,
       theme,
     })}

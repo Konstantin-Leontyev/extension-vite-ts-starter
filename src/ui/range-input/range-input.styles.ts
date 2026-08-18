@@ -4,12 +4,11 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `RangeInputStyleProps` и `RangeInputSurfaceStyleProps`
- * 2. Предоставить функцию `getRangeInputTextSize`
- * 3. Предоставить styled-узлы `StyledRangeInputRoot`, `StyledRangeInputTriggerRow`,
+ * 2. Предоставить styled-узлы `StyledRangeInputRoot`, `StyledRangeInputTriggerRow`,
  *    `StyledRangeInputTrigger`, `StyledRangeInputValue`,
  *    `StyledRangeInputPanel`, `StyledRangeInputPresetList`, `StyledRangeInputPresetButton`,
  *    `StyledRangeInputCustomSection`, `StyledRangeInputFields` и `StyledRangeInputButtonRow`
- * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 3. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/range-input/index.tsx` — собирает компонент RangeInput
@@ -25,29 +24,16 @@ import {
   getOpenControlRootStyles,
   getOpenControlSelectableRowSurfaceStyles,
   getOpenControlStackedPanelStyles,
-  getOpenControlTextSize,
   getOpenControlTriggerRowStyles,
   getOpenControlTriggerStyles,
   type OpenControlSurfaceStyleProps,
 } from '@ui/open-control';
-import { DEFAULT_SIZE_PRESET, getPaddingInline, type SizePreset } from '@ui/presets';
+import { DEFAULT_SIZE_PRESET, getPaddingInline } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
 import { type AppTheme } from '@ui/theme';
 import { type TonePreset } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
-
-/**
- * getRangeInputTextSize — возвращает размер текста триггера и пресетов по `sizePreset`.
- * Подставляет `DEFAULT_SIZE_PRESET`, когда размер не задан.
- *
- * @param sizePreset размер RangeInput
- * @returns метка размера текста из `TextSizePreset` для текста триггера и пресетов
- */
-export function getRangeInputTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getOpenControlTextSize(sizePreset);
-}
 
 /**
  * RangeInputSurfaceStyleProps — представляет пропсы стилизации поверхности RangeInput.

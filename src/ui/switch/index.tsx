@@ -15,7 +15,6 @@
  * 1. Экспортировать компонент Switch
  * 2. Типизировать пропсы через `SwitchProps`
  * 3. Выставлять `role="switch"` на скрытом input
- * 4. Реэкспортировать мост размера текста `getSwitchTextSize`
  *
  * Потребители:
  *  - `src/pages/showcase/header-settings/index.tsx` — переключает режим `autoHide` шапки
@@ -25,12 +24,12 @@
 
 import { type ComponentPropsWithRef } from 'react';
 
+import { getTextSize } from '@ui/presets';
 import { Text, type ChildrenTextProps, type TextTone } from '@ui/text';
 
 import {
   StyledSwitchRoot,
   StyledSwitchTrack,
-  getSwitchTextSize,
   splitLayoutProps,
   type SwitchStyleProps,
 } from './switch.styles';
@@ -76,7 +75,7 @@ function Switch({
       {Boolean(children) && (
         <Text
           italic={textItalic}
-          sizePreset={textSize ?? getSwitchTextSize(sizePreset)}
+          sizePreset={textSize ?? getTextSize(sizePreset)}
           tone={textTone}
         >
           {children}
@@ -86,5 +85,4 @@ function Switch({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
-export { Switch, getSwitchTextSize };
+export { Switch };

@@ -17,9 +17,9 @@ import { useShellOutletContext } from '@components/router';
 import { useToast } from '@hooks/use-toast';
 import { SettingsIcon } from '@icons';
 import { resolveBorderProps, type BorderProps, type ShowBorderProps } from '@ui/border';
-import { Button, getButtonTextSize, type ButtonIconProps } from '@ui/button';
+import { Button, type ButtonIconProps } from '@ui/button';
 import { CARD_HEADER_ACTION_SIZE_PRESET, Card, type CardTitleProps } from '@ui/card';
-import { Checkbox, getCheckboxTextSize } from '@ui/checkbox';
+import { Checkbox } from '@ui/checkbox';
 import { Combobox } from '@ui/combobox';
 import { DateRangeInput, todayUtc } from '@ui/date-range-input';
 import { Fieldset } from '@ui/fieldset';
@@ -27,13 +27,14 @@ import { Icon, getIconPadding, resolveIconShape } from '@ui/icon';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxMultipleProps } from '@ui/listbox';
 import { Modal, type ModalAccessibleName } from '@ui/modal';
-import { DEFAULT_SHAPE_PRESET, DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
 import {
-  ProgressBar,
-  getProgressBarTextSize,
-  type ProgressBarShowTextProps,
-} from '@ui/progress-bar';
-import { RadioButton, getRadioButtonTextSize } from '@ui/radio-button';
+  DEFAULT_SHAPE_PRESET,
+  DEFAULT_SIZE_PRESET,
+  getTextSize,
+  type SizePreset,
+} from '@ui/presets';
+import { ProgressBar, type ProgressBarShowTextProps } from '@ui/progress-bar';
+import { RadioButton } from '@ui/radio-button';
 import {
   DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
   RangeInput,
@@ -41,12 +42,12 @@ import {
 } from '@ui/range-input';
 import { ScrollPort } from '@ui/scroll-port';
 import { SearchField, type SearchFieldShowIconProps } from '@ui/search-field';
-import { SegmentButton, getSegmentButtonTextSize } from '@ui/segment-button';
+import { SegmentButton } from '@ui/segment-button';
 import { type SegmentButtonPartsActionIconProps } from '@ui/segment-button-parts';
 import { Sidebar } from '@ui/sidebar';
-import { Spinner, getSpinnerTextSize } from '@ui/spinner';
-import { Stepper, getStepperTextSize } from '@ui/stepper';
-import { Switch, getSwitchTextSize } from '@ui/switch';
+import { Spinner } from '@ui/spinner';
+import { Stepper } from '@ui/stepper';
+import { Switch } from '@ui/switch';
 import {
   DEFAULT_TABLE_HOVER_HIGHLIGHT,
   DEFAULT_TABLE_SHOW_BORDER,
@@ -60,7 +61,7 @@ import {
   type ChildrenTextProps,
   type TextNodeProps,
 } from '@ui/text';
-import { Toast, getToastTextSize } from '@ui/toast';
+import { Toast } from '@ui/toast';
 import { DEFAULT_TONE } from '@ui/tones';
 import { Toolbar } from '@ui/toolbar';
 
@@ -322,7 +323,7 @@ const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Button',
   textItalic: false,
-  textSize: getButtonTextSize(DEFAULT_SIZE_PRESET),
+  textSize: getTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'neutral',
   tone: 'neutral',
   withIcon: false,
@@ -459,7 +460,7 @@ const DEFAULT_CHECKBOX_STATE: CheckboxWidgetState = {
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Example',
   textItalic: false,
-  textSize: getCheckboxTextSize(DEFAULT_SIZE_PRESET),
+  textSize: getTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'muted',
   uncheckedMark: 'none',
 };
@@ -477,7 +478,7 @@ const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
   textA: 'Option A',
   textB: 'Option B',
   textItalic: false,
-  textSize: getRadioButtonTextSize(DEFAULT_SIZE_PRESET),
+  textSize: getTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'muted',
 };
 
@@ -502,7 +503,7 @@ const DEFAULT_PROGRESS_STATE: ProgressBarWidgetState = {
   showText: true,
   sizePreset: DEFAULT_SIZE_PRESET,
   textItalic: false,
-  textSize: getProgressBarTextSize(DEFAULT_SIZE_PRESET),
+  textSize: getTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'muted',
   tone: 'primary',
   value: 0.42,
@@ -518,7 +519,7 @@ const DEFAULT_SPINNER_STATE: SpinnerWidgetState = {
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Loading…',
   textItalic: false,
-  textSize: getSpinnerTextSize(DEFAULT_SIZE_PRESET),
+  textSize: getTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'muted',
   tone: 'primary',
 };
@@ -538,7 +539,7 @@ const DEFAULT_STEPPER_STATE: StepperWidgetState = {
   suffix: '',
   textAlign: 'center',
   textItalic: false,
-  textSize: getStepperTextSize(DEFAULT_SIZE_PRESET),
+  textSize: getTextSize(DEFAULT_SIZE_PRESET),
   textTone: undefined,
   value: 10,
 };
@@ -554,7 +555,7 @@ const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Switch',
   textItalic: false,
-  textSize: getSwitchTextSize(DEFAULT_SIZE_PRESET),
+  textSize: getTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'muted',
   tone: 'primary',
 };
@@ -567,7 +568,7 @@ const DEFAULT_TOAST_STATE: ToastWidgetState = {
   message: 'Very important message',
   sizePreset: DEFAULT_SIZE_PRESET,
   textItalic: false,
-  textSize: getToastTextSize(DEFAULT_SIZE_PRESET),
+  textSize: getTextSize(DEFAULT_SIZE_PRESET),
   textTone: 'neutral',
   tone: 'success',
 };
@@ -609,7 +610,7 @@ const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   shape: DEFAULT_SHAPE_PRESET,
   sizePreset: DEFAULT_SIZE_PRESET,
   textItalic: false,
-  textSize: getSegmentButtonTextSize(DEFAULT_SIZE_PRESET),
+  textSize: getTextSize(DEFAULT_SIZE_PRESET),
 };
 
 /**

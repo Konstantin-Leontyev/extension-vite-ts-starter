@@ -65,9 +65,9 @@ import {
 } from '@ui/icon';
 import {
   OPEN_CONTROL_PANEL_MAX_OPTION_ROWS,
-  getOpenControlTextSize,
   resolveEnabledOpenControlIndex,
 } from '@ui/open-control';
+import { getTextSize } from '@ui/presets';
 import { Text } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 import { PANEL_VIEWPORT_EDGE_INSET } from '@ui/viewport';
@@ -499,7 +499,7 @@ export function Listbox({
   const surfaceProps = { borderTone, iconTone, shape, sizePreset };
   const iconShape = resolveIconShape(shape);
   const clearShape = clearShapeProp ?? iconShape;
-  const textSizePreset = getOpenControlTextSize(sizePreset);
+  const textSizePreset = getTextSize(sizePreset);
   const isIconStart = iconPosition === 'start';
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);

@@ -18,17 +18,16 @@
  * 1. Экспортировать компонент SegmentButton
  * 2. Типизировать пропсы через `SegmentButtonProps`
  * 3. Выставлять `role="group"` и `aria-labelledby` при передаче `label`
- * 4. Реэкспортировать мост размера текста `getSegmentButtonTextSize`
  *
  * Потребители:
  *  - компоненты приложения, например ProfileMenu — переключают режимы и действия
- *  - `@ui/date-range-input` — берёт размер текста сегментов через `getSegmentButtonTextSize`
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
 import { useId, type ComponentPropsWithRef } from 'react';
 
 import { FieldLabel } from '@ui/field-label';
+import { getTextSize } from '@ui/presets';
 import {
   SEGMENT_BUTTON_PARTS_FLUSH_SHAPE,
   SegmentButtonParts,
@@ -39,7 +38,6 @@ import { type TextSizePreset } from '@ui/text';
 import {
   StyledSegmentButton,
   StyledSegmentButtonRoot,
-  getSegmentButtonTextSize,
   splitLayoutProps,
   type SegmentButtonStyleProps,
 } from './segment-button.styles';
@@ -93,7 +91,7 @@ export function SegmentButton({
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const labelId = useId();
   const labelledBy = label ? labelId : undefined;
-  const resolvedTextSize = textSize ?? getSegmentButtonTextSize(sizePreset);
+  const resolvedTextSize = textSize ?? getTextSize(sizePreset);
 
   const partsProps = {
     left,
@@ -120,6 +118,3 @@ export function SegmentButton({
     </StyledSegmentButtonRoot>
   );
 }
-
-/* eslint-disable react-refresh/only-export-components -- реэкспорт моста размера текста */
-export { getSegmentButtonTextSize };
