@@ -2,7 +2,7 @@
  * Файл: `src/pages/showcase/stepper-settings/index.tsx`
  * Определяет панель настроек компонента Stepper в витрине дизайн-системы.
  * Содержит контролы для изменения подписи, размера, формы, минимума, максимума, шага,
- * суффикса, значения, его текстовых настроек и недоступного состояния в реальном времени.
+ * суффикса и недоступного состояния в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `StepperWidgetState`
@@ -16,13 +16,11 @@ import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
-import { getTextSize, type ShapePreset, type SizePreset } from '@ui/presets';
+import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { Stepper } from '@ui/stepper';
-import { type TextAlignPreset, type TextSizePreset, type TextTonePreset } from '@ui/text';
 
 import { ControlGroup } from '../control-group';
 import { StyledSettingsForm } from '../showcase.styles';
-import { TextGroup } from '../text-group';
 
 /**
  * StepperWidgetState — представляет состояние настроек компонента Stepper в витрине дизайн-системы.
@@ -37,10 +35,6 @@ import { TextGroup } from '../text-group';
  * @property sizePreset — размер компонента
  * @property step — шаг изменения значения
  * @property suffix — подпись единицы внутри поля
- * @property textAlign — горизонтальное выравнивание пары «значение + суффикс»
- * @property textItalic — включает курсив значения и суффикса
- * @property textSize — размер значения и суффикса
- * @property textTone — тон значения и суффикса
  * @property value — числовое значение счётчика
  */
 export type StepperWidgetState = {
@@ -52,10 +46,6 @@ export type StepperWidgetState = {
   sizePreset: SizePreset;
   step: number;
   suffix: string;
-  textAlign?: TextAlignPreset;
-  textItalic: boolean;
-  textSize: TextSizePreset;
-  textTone?: TextTonePreset;
   value: number;
 };
 
@@ -88,10 +78,16 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
         sizePreset={state.sizePreset}
         onLabelChange={(label) => onChange('label', label)}
         onShapeChange={(shape) => onChange('shape', shape)}
-        onSizeChange={(size) => {
-          onChange('sizePreset', size);
-          onChange('textSize', getTextSize(size));
-        }}
+        onSizeChange={(size) => onChange('sizePreset', size)}
+      />
+
+      <Input
+        label="Suffix:"
+        value={state.suffix}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('suffix', event.target.value)
+        }
+        onClear={() => onChange('suffix', '')}
       />
 
       <Input
@@ -131,43 +127,6 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
         min={1}
         value={state.step}
         onChange={(value) => onChange('step', value)}
-      />
-
-      <Input
-        label="Suffix:"
-        value={state.suffix}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('suffix', event.target.value)
-        }
-        onClear={() => onChange('suffix', '')}
-      />
-
-      <TextGroup
-        align={state.textAlign}
-        contents={[
-          {
-            value: String(state.value),
-            onChange: (nextValue) => {
-              const parsed = Number(nextValue);
-
-              if (nextValue.trim() !== '' && Number.isFinite(parsed)) {
-                onChange('value', parsed);
-              }
-            },
-          },
-        ]}
-        italic={state.textItalic}
-        labelPrefix="Value"
-        size={state.textSize}
-        tones={[
-          {
-            value: state.textTone,
-            onChange: (tone) => onChange('textTone', tone),
-          },
-        ]}
-        onAlignChange={(align) => onChange('textAlign', align)}
-        onItalicChange={(value) => onChange('textItalic', value)}
-        onSizeChange={(size) => onChange('textSize', size)}
       />
 
       <Checkbox

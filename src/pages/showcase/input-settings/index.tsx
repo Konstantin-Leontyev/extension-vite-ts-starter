@@ -2,7 +2,7 @@
  * Файл: `src/pages/showcase/input-settings/index.tsx`
  * Определяет панель настроек компонента Input в витрине дизайн-системы.
  * Содержит контролы для изменения размера, формы, рамки, подписи, плейсхолдера,
- * значения, выравнивания, курсива, ошибки и состояний в реальном времени.
+ * ошибки и состояний в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `InputWidgetState`
@@ -17,7 +17,6 @@ import { type ChangeEvent } from 'react';
 import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
-import { type TextAlignPreset } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import { BorderGroup } from '../border-group';
@@ -45,8 +44,6 @@ import { TextGroup } from '../text-group';
  * @property showBorder — включает рамку контрола
  * @property showShadow — включает тень при включённой рамке
  * @property sizePreset — размер контрола
- * @property textAlign — горизонтальное выравнивание значения
- * @property textItalic — включает курсив значения
  * @property value — значение поля
  */
 export type InputWidgetState = {
@@ -62,8 +59,6 @@ export type InputWidgetState = {
   showBorder: boolean;
   showShadow: boolean;
   sizePreset: SizePreset;
-  textAlign?: TextAlignPreset;
-  textItalic: boolean;
   value: string;
 };
 
@@ -115,21 +110,6 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
           onChange('placeholder', event.target.value)
         }
         onClear={() => onChange('placeholder', '')}
-      />
-
-      <TextGroup
-        align={state.textAlign}
-        contents={[
-          {
-            value: state.value,
-            onChange: (value) => onChange('value', value),
-          },
-        ]}
-        italic={state.textItalic}
-        labelPrefix="Text"
-        set
-        onAlignChange={(align) => onChange('textAlign', align)}
-        onItalicChange={(value) => onChange('textItalic', value)}
       />
 
       <FieldErrorGroup

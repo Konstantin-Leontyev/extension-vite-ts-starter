@@ -14,10 +14,6 @@
  *  - рамку контрола через проп `showBorder`
  *  - тень через проп `showShadow`
  *  - тон рамки через проп `borderTone`
- *  - тон значения через проп `textTone`
- *  - размер значения через проп `textSize`
- *  - курсив значения через проп `textItalic`
- *  - горизонтальное выравнивание значения через проп `textAlign`
  *  - иконку через проп `icon`
  *  - позицию иконки через проп `iconPosition`
  *  - тон секции иконки через проп `iconTone`
@@ -177,10 +173,6 @@ function SearchField({
   showIcon = DEFAULT_SEARCH_FIELD_SHOW_ICON,
   showShadow,
   sizePreset,
-  textAlign,
-  textItalic,
-  textSize,
-  textTone,
   value,
   ...rest
 }: SearchFieldProps) {
@@ -249,10 +241,6 @@ function SearchField({
             assignRef(ref, node);
           }}
           sizePreset={sizePreset}
-          textAlign={textAlign}
-          textItalic={textItalic}
-          textSize={textSize}
-          textTone={textTone}
           type="search"
           value={value}
           onChange={onChange}

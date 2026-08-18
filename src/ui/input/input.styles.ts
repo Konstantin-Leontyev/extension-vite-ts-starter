@@ -12,7 +12,6 @@
  *  - `src/ui/input/index.tsx` — собирает компонент Input
  */
 
-import { type CSSProperties } from 'react';
 import styled from 'styled-components';
 
 import {
@@ -36,7 +35,7 @@ import {
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
 import { getSurfaceBackgroundColor } from '@ui/surface';
-import { getNativeFieldTextStyles, type TextSizePreset, type TextTonePreset } from '@ui/text';
+import { getTextProperties } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -46,19 +45,11 @@ export { splitLayoutProps } from '@ui/layout';
  *
  * @property shape — форма строки-поля
  * @property sizePreset — размер контрола
- * @property textAlign — горизонтальное выравнивание значения
- * @property textItalic — включает курсив значения
- * @property textSize — размер значения
- * @property textTone — тон значения
  */
 export type InputStyleProps = LayoutProps &
   BorderProps & {
     shape?: ShapePreset;
     sizePreset?: SizePreset;
-    textAlign?: CSSProperties['textAlign'];
-    textItalic?: boolean;
-    textSize?: TextSizePreset;
-    textTone?: TextTonePreset;
   };
 
 /**
@@ -168,49 +159,31 @@ export const StyledInputRow = styled.div.withConfig({
 /**
  * InputControlStyleProps — представляет пропсы стилизации нативного поля ввода.
  */
-type InputControlStyleProps = Pick<
-  InputStyleProps,
-  'sizePreset' | 'textAlign' | 'textItalic' | 'textSize' | 'textTone'
->;
+type InputControlStyleProps = Pick<InputStyleProps, 'sizePreset'>;
 
 /**
  * INPUT_CONTROL_PROP_NAMES — хранит имена пропсов стилизации нативного поля ввода.
  */
-const INPUT_CONTROL_PROP_NAMES = new Set<string>([
-  'sizePreset',
-  'textAlign',
-  'textItalic',
-  'textSize',
-  'textTone',
-]);
+const INPUT_CONTROL_PROP_NAMES = new Set<string>(['sizePreset']);
 
 /**
  * getInputControlStyles — возвращает CSS-правила для узла `StyledInputControl`:
- * заполнение ряда, горизонтальный отступ, текстовый блок нативного поля.
+ * заполнение ряда, горизонтальный отступ, типографику нативного поля.
  *
  * Как работает:
- * 1. Берёт тему и подставляет дефолт `sizePreset`
+ * 1. Подставляет дефолт `sizePreset`
  * 2. Собирает поле: ширину, `block-size: 100%` по высоте ряда, `padding-inline`
- *    через `getPaddingInline` и текстовый блок через `getNativeFieldTextStyles`.
+ *    через `getPaddingInline` и типографику через `getTextProperties`.
  *    `padding-block` не пишется: высоту держит ряд через `min-block-size`
  * 3. Сбрасывает рамку и фон: `border: none`, `background-color: transparent`.
  *    Гасит `outline` на `:focus-visible`: при рамке контур композита рисует ряд,
  *    без рамки контура нет
  *
- * @param props пропсы стилизации нативного поля ввода и тема
+ * @param props пропсы стилизации нативного поля ввода
  * @returns CSS-правила, каждое с новой строки
  */
-function getInputControlStyles(
-  props: InputControlStyleProps & { theme: AppTheme }
-): string {
-  const theme = getTheme(props);
-  const {
-    sizePreset = DEFAULT_SIZE_PRESET,
-    textAlign,
-    textItalic,
-    textSize,
-    textTone,
-  } = props;
+function getInputControlStyles(props: InputControlStyleProps): string {
+  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
 
   return `
     inline-size: 100%;
@@ -218,13 +191,7 @@ function getInputControlStyles(
     block-size: 100%;
     min-block-size: 0;
     padding-inline: ${getPaddingInline(sizePreset)};
-    ${getNativeFieldTextStyles({
-      textAlign,
-      textItalic,
-      textSize: textSize ?? getTextSize(sizePreset),
-      textTone,
-      theme,
-    })}
+    ${getTextProperties(getTextSize(sizePreset))}
     border: none;
     background-color: transparent;
     &:focus-visible { outline: none; }
@@ -236,7 +203,7 @@ function getInputControlStyles(
  * Базируется на `<input>` и поддерживает пропсы из `InputControlStyleProps`.
  *
  * Генерация стилей:
- *  - `getInputControlStyles` — заполнение ряда, отступ, текстовый блок нативного
+ *  - `getInputControlStyles` — заполнение ряда, отступ, типографика нативного
  *    поля, сброс рамки и фона, гашение контура
  */
 export const StyledInputControl = styled.input.withConfig({

@@ -5,19 +5,17 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `TextStyleProps`, `TextTonePreset`, `TextSizePreset` и `TextAlignPreset`
  * 2. Хранить тоны текста в `TEXT_TONE_PRESETS` и пресеты типографики в `textSizePresets`
- * 3. Предоставить функции `getTextProperties`, `getNativeFieldTextStyles`,
- *    `getTextLineHeight`, `getTextToneColor` и `getEllipsisStyles`, а также
- *    перечни `TEXT_TONE_PRESET_KEYS`, `TEXT_SIZE_PRESET_KEYS` и `TEXT_ALIGN_PRESET_KEYS`
+ * 3. Предоставить функции `getTextProperties`, `getTextLineHeight`, `getTextToneColor`
+ *    и `getEllipsisStyles`, а также перечни `TEXT_TONE_PRESET_KEYS`, `TEXT_SIZE_PRESET_KEYS`
+ *    и `TEXT_ALIGN_PRESET_KEYS`
  * 4. Предоставить styled-узел `StyledText`
  *
  * Потребители:
  *  - `src/ui/text/index.tsx` — собирает компонент Text и реэкспортирует публичное API
  *  - `@ui/presets` — использует тип `TextSizePreset` для моста `getTextSize`
  *  - `@ui/table/column-sizing` — замеряет ширину колонки по `textSizePresets`
- *  - `@ui/input`, `@ui/search-field`, `@ui/table/table-inline-field` — стилизуют
- *    нативное поле ввода через `getNativeFieldTextStyles`
- *  - `@ui/stepper` — стилизует нативное поле ввода через `getTextProperties`
- *    и `getTextToneColor`
+ *  - `@ui/input`, `@ui/search-field`, `@ui/stepper`, `@ui/table/table-inline-field` —
+ *    стилизуют нативное поле ввода через `getTextProperties`
  *  - `@ui/field-error`, `@ui/spinner` — резервируют место под однострочный текст
  *    через `getTextLineHeight`
  *  - `@ui/table/table-cell` — обрезает содержимое ячейки через `getEllipsisStyles`
@@ -200,61 +198,19 @@ function getTextToneColorKey(tone: TextTonePreset): keyof ThemeColors | undefine
 /**
  * getTextToneColor — возвращает цвет темы для указанного тона текста.
  * Для тона по умолчанию возвращает `undefined` — цвет наследуется от родителя.
- * Используется в `getTextStyles` и в нативных полях ввода, которые нельзя
- * обернуть в компонент Text, например в `@ui/stepper`.
+ * Используется в `getTextStyles`.
  *
  * @param theme текущая тема
  * @param tone тон текста
  * @returns CSS-цвет или `undefined`
  */
-export function getTextToneColor(theme: AppTheme, tone: TextTonePreset): string | undefined {
+export function getTextToneColor(
+  theme: AppTheme,
+  tone: TextTonePreset
+): string | undefined {
   const colorKey = getTextToneColorKey(tone);
 
   return colorKey ? theme.colors[colorKey] : undefined;
-}
-
-/**
- * getNativeFieldTextStyles — возвращает CSS-правила типографики нативного поля:
- * размер, насыщенность, высоту строки и опциональные цвет, выравнивание и курсив.
- * Используется в `@ui/input`, `@ui/search-field` и `@ui/table/table-inline-field`
- * для нативных `<input>`, которые нельзя обернуть в компонент Text.
- *
- * Как работает:
- * 1. Берёт тему через `getTheme`
- * 2. Кладёт типографику через `getTextProperties`
- * 3. При переданном `textTone` добавляет цвет через `getTextToneColor`
- * 4. При переданном `textAlign` добавляет выравнивание
- * 5. При `textItalic` добавляет курсив
- *
- * @param props типографика нативного поля и тема
- * @returns CSS-правила, каждое с новой строки
- */
-export function getNativeFieldTextStyles(props: {
-  textAlign?: CSSProperties['textAlign'];
-  textItalic?: boolean;
-  textSize: TextSizePreset;
-  textTone?: TextTonePreset;
-  theme: AppTheme;
-}): string {
-  const theme = getTheme(props);
-  const { textAlign, textItalic, textSize, textTone } = props;
-  const styles = [getTextProperties(textSize)];
-  const textColor =
-    textTone !== undefined ? getTextToneColor(theme, textTone) : undefined;
-
-  if (textColor !== undefined) {
-    styles.push(`color: ${textColor};`);
-  }
-
-  if (textAlign !== undefined) {
-    styles.push(`text-align: ${textAlign};`);
-  }
-
-  if (textItalic === true) {
-    styles.push('font-style: italic;');
-  }
-
-  return styles.join('\n');
 }
 
 /**

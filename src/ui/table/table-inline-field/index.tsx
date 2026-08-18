@@ -2,12 +2,6 @@
  * Файл: `src/ui/table/table-inline-field/index.tsx`
  * Предоставляет компонент TableInlineField для отображения поля ввода в ячейке таблицы.
  *
- * Поддерживает:
- *  - тон значения через проп `textTone`
- *  - размер значения через проп `textSize`
- *  - курсив значения через проп `textItalic`
- *  - горизонтальное выравнивание значения через проп `textAlign`
- *
  * Основные задачи:
  * 1. Экспортировать компонент TableInlineField
  * 2. Типизировать пропсы через `TableInlineFieldProps`
@@ -19,19 +13,15 @@
 
 import { type ComponentPropsWithRef } from 'react';
 
-import {
-  StyledTableInlineField,
-  type TableInlineFieldStyleProps,
-} from './table-inline-field.styles';
+import { StyledTableInlineField } from './table-inline-field.styles';
 
 /**
  * TableInlineFieldProps — представляет пропсы компонента TableInlineField.
  */
-type TableInlineFieldProps = TableInlineFieldStyleProps &
-  Omit<
-    ComponentPropsWithRef<'input'>,
-    'className' | 'style' | keyof TableInlineFieldStyleProps
-  >;
+type TableInlineFieldProps = Omit<
+  ComponentPropsWithRef<'input'>,
+  'className' | 'style'
+>;
 
 /**
  * TableInlineField — отображает поле ввода в ячейке таблицы.
@@ -39,7 +29,6 @@ type TableInlineFieldProps = TableInlineFieldStyleProps &
  * @example
  * <TableInlineField
  *   placeholder="Product"
- *   textSize={textSize}
  *   value={addDraft.product}
  *   onChange={(event) =>
  *     setAddDraft((current) => ({ ...current, product: event.target.value }))
@@ -48,8 +37,6 @@ type TableInlineFieldProps = TableInlineFieldStyleProps &
  * <TableInlineField
  *   inputMode="numeric"
  *   placeholder="Stock"
- *   textAlign="end"
- *   textSize={textSize}
  *   value={addDraft.stock}
  *   onChange={(event) =>
  *     setAddDraft((current) => ({ ...current, stock: event.target.value }))

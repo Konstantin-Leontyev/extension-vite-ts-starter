@@ -11,10 +11,6 @@
  *  - рамку контрола через проп `showBorder`
  *  - тень через проп `showShadow`
  *  - тон рамки через проп `borderTone`
- *  - тон значения через проп `textTone`
- *  - размер значения через проп `textSize`
- *  - курсив значения через проп `textItalic`
- *  - горизонтальное выравнивание значения через проп `textAlign`
  *  - контролируемое значение через проп `value`. Без `value` поле неконтролируемое
  *  - кнопку сброса через проп `showClear`. Дефолт — сброс есть; кнопка
  *    появляется при непустом значении
@@ -135,10 +131,6 @@ export function Input({
   showClear = DEFAULT_INPUT_SHOW_CLEAR,
   showShadow,
   sizePreset,
-  textAlign,
-  textItalic,
-  textSize,
-  textTone,
   value,
   ...rest
 }: InputProps) {
@@ -209,10 +201,6 @@ export function Input({
             assignRef(ref, node);
           }}
           sizePreset={sizePreset}
-          textAlign={textAlign}
-          textItalic={textItalic}
-          textSize={textSize}
-          textTone={textTone}
           value={isControlled ? value : undefined}
           onChange={handleChange}
         />

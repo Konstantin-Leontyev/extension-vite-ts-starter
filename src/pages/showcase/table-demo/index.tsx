@@ -557,7 +557,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
   const renderAddCell = useCallback(
     (
       column: TableColumn<CatalogTableRow>,
-      { addErrorId, textSize }: TableCellRenderContext
+      { addErrorId }: TableCellRenderContext
     ): ReactNode => {
       if (column.key === 'indexLabel') {
         return null;
@@ -568,7 +568,6 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
           <TableInlineField
             aria-describedby={addErrorId}
             placeholder="Product"
-            textSize={textSize}
             value={addDraft.product}
             onChange={(event) =>
               setAddDraft((current) => ({
@@ -597,8 +596,6 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
             aria-describedby={addErrorId}
             inputMode="numeric"
             placeholder="Stock"
-            textAlign="end"
-            textSize={textSize}
             value={addDraft.stock}
             onChange={(event) =>
               setAddDraft((current) => ({
@@ -621,8 +618,6 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
           <TableInlineField
             aria-describedby={addErrorId}
             placeholder="Price"
-            textAlign="end"
-            textSize={textSize}
             value={addDraft.price}
             onChange={(event) =>
               setAddDraft((current) => ({
@@ -660,7 +655,6 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
           <TableInlineField
             aria-describedby={editErrorId}
             placeholder="Product"
-            textSize={textSize}
             value={editDraft.product}
             onChange={(event) =>
               setEditDraft((current) => ({
@@ -696,8 +690,6 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
             aria-describedby={editErrorId}
             inputMode="numeric"
             placeholder="Stock"
-            textAlign="end"
-            textSize={textSize}
             value={editDraft.stock}
             onChange={(event) =>
               setEditDraft((current) => ({
@@ -720,8 +712,6 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
           <TableInlineField
             aria-describedby={editErrorId}
             placeholder="Price"
-            textAlign="end"
-            textSize={textSize}
             value={editDraft.price}
             onChange={(event) =>
               setEditDraft((current) => ({

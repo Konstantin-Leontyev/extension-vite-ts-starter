@@ -272,8 +272,6 @@ const DEFAULT_INPUT_STATE: InputWidgetState = {
   showBorder: true,
   showShadow: true,
   sizePreset: DEFAULT_SIZE_PRESET,
-  textAlign: undefined,
-  textItalic: false,
   value: '',
 };
 
@@ -297,8 +295,6 @@ const DEFAULT_SEARCH_FIELD_STATE: SearchFieldWidgetState = {
   showIcon: true,
   showShadow: true,
   sizePreset: DEFAULT_SIZE_PRESET,
-  textAlign: undefined,
-  textItalic: false,
   value: '',
 };
 
@@ -521,10 +517,6 @@ const DEFAULT_STEPPER_STATE: StepperWidgetState = {
   sizePreset: DEFAULT_SIZE_PRESET,
   step: 1,
   suffix: '',
-  textAlign: 'center',
-  textItalic: false,
-  textSize: getTextSize(DEFAULT_SIZE_PRESET),
-  textTone: undefined,
   value: 10,
 };
 
@@ -1466,8 +1458,6 @@ export function ShowcasePage() {
                   reserveErrorSpace={input.reserveErrorSpace}
                   shape={input.shape}
                   sizePreset={input.sizePreset}
-                  textAlign={input.textAlign}
-                  textItalic={input.textItalic}
                   value={input.value}
                   onChange={(event) => updateInput('value', event.target.value)}
                   onClear={() => updateInput('value', '')}
@@ -1487,8 +1477,6 @@ export function ShowcasePage() {
                   placeholder={searchField.placeholder}
                   shape={searchField.shape}
                   sizePreset={searchField.sizePreset}
-                  textAlign={searchField.textAlign}
-                  textItalic={searchField.textItalic}
                   value={searchField.value}
                   onChange={(event) => updateSearchField('value', event.target.value)}
                   onClear={() => updateSearchField('value', '')}
@@ -1801,10 +1789,6 @@ export function ShowcasePage() {
                   sizePreset={stepper.sizePreset}
                   step={stepper.step}
                   suffix={stepper.suffix}
-                  textAlign={stepper.textAlign}
-                  textItalic={stepper.textItalic}
-                  textSize={stepper.textSize}
-                  textTone={stepper.textTone}
                   value={stepper.value}
                   onChange={(value) => updateStepper('value', value)}
                   {...(stepper.label.trim()

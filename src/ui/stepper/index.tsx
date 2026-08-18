@@ -14,10 +14,6 @@
  *  - верхнюю границу через проп `max`
  *  - шаг изменения через проп `step`
  *  - подпись единицы внутри поля через проп `suffix`
- *  - тон значения и суффикса через проп `textTone`
- *  - размер значения и суффикса через проп `textSize`
- *  - курсив значения и суффикса через проп `textItalic`
- *  - горизонтальное выравнивание пары «значение + суффикс» через проп `textAlign`
  *  - подпись над полем через проп `label`
  *  - текстовую метку через проп `aria-label`
  *  - id метки через проп `aria-labelledby`
@@ -68,10 +64,10 @@ import {
 const DEFAULT_STEPPER_STEP = 1;
 
 /**
- * DEFAULT_STEPPER_SUFFIX_TONE — задаёт тон суффикса по умолчанию.
+ * STEPPER_SUFFIX_TONE — задаёт тон суффикса.
  * Суффикс единицы — вторичный текст, поэтому `muted`.
  */
-const DEFAULT_STEPPER_SUFFIX_TONE: TextTonePreset = 'muted';
+const STEPPER_SUFFIX_TONE: TextTonePreset = 'muted';
 
 /**
  * DECREASE_LABEL — задаёт текст `aria-label` кнопки уменьшения.
@@ -109,8 +105,7 @@ const STEP_REPEAT_INTERVAL_MS = 60;
  *
  * @property aria-label — текстовая метка поля
  * @property aria-labelledby — id элемента с меткой поля
- * @property label — подпись над полем; при передаче выставляет `aria-labelledby`
- *   на spinbutton через `resolvedLabelledBy`
+ * @property label — подпись над полем
  */
 type StepperAccessibleName =
   | { 'aria-label': string; 'aria-labelledby'?: never; label?: never }
@@ -162,7 +157,7 @@ type StepperProps = StepperStyleProps &
  * <Stepper label="Quantity:" value={1} onChange={setValue} />
  * <Stepper aria-label="Quantity" value={1} onChange={setValue} />
  * <Stepper aria-labelledby="qty-label" min={0} max={10} step={1} value={5} onChange={setValue} />
- * <Stepper sizePreset="normal" suffix="K" textAlign="start" value={100} onChange={setValue} />
+ * <Stepper sizePreset="normal" suffix="K" value={100} onChange={setValue} />
  */
 export function Stepper({
   'aria-label': ariaLabel,
@@ -178,10 +173,6 @@ export function Stepper({
   sizePreset,
   step = DEFAULT_STEPPER_STEP,
   suffix,
-  textAlign,
-  textItalic,
-  textSize,
-  textTone,
   value,
   ...rest
 }: StepperProps) {
@@ -190,9 +181,6 @@ export function Stepper({
   const inputRef = useRef<HTMLInputElement>(null);
   const labelId = useId();
   const resolvedLabelledBy = label ? labelId : ariaLabelledBy;
-
-  // Размер пары «значение + суффикс» вычисляется один раз: поле и Text получают готовое значение
-  const resolvedTextSize = textSize ?? getTextSize(sizePreset);
 
   // Если draft не null, пользователь печатает, иначе показывается актуальное value
   const [draft, setDraft] = useState<null | string>(null);
@@ -356,16 +344,9 @@ export function Stepper({
         shape={shape}
         sizePreset={sizePreset}
       >
-        <StyledStepperValue
-          sizePreset={sizePreset}
-          textAlign={textAlign}
-          onClick={handleValueClick}
-        >
+        <StyledStepperValue sizePreset={sizePreset} onClick={handleValueClick}>
           <StyledStepperInput
             inputMode="numeric"
-            textItalic={textItalic}
-            textSize={resolvedTextSize}
-            textTone={textTone}
             {...inputProps}
             aria-label={ariaLabel}
             aria-labelledby={resolvedLabelledBy}
@@ -378,6 +359,7 @@ export function Stepper({
               assignRef(ref, node);
             }}
             role="spinbutton"
+            sizePreset={sizePreset}
             type="text"
             value={draft ?? String(value)}
             onBlur={handleBlur}
@@ -385,11 +367,7 @@ export function Stepper({
             onKeyDown={handleKeyDown}
           />
           {Boolean(suffix) && (
-            <Text
-              italic={textItalic}
-              sizePreset={resolvedTextSize}
-              tone={textTone ?? DEFAULT_STEPPER_SUFFIX_TONE}
-            >
+            <Text sizePreset={getTextSize(sizePreset)} tone={STEPPER_SUFFIX_TONE}>
               {suffix}
             </Text>
           )}

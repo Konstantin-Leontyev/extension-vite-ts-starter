@@ -46,9 +46,7 @@
  *     - `src/pages/showcase/radio-button-settings/index.tsx`
  *     - `src/pages/showcase/switch-settings/index.tsx`
  *     - `src/pages/showcase/fieldset-settings/index.tsx`
- *     - `src/pages/showcase/stepper-settings/index.tsx`
  *     - `src/pages/showcase/input-settings/index.tsx`
- *     - `src/pages/showcase/search-field-settings/index.tsx`
  *     - `src/pages/showcase/segment-button-settings/index.tsx`
  *     - `src/pages/showcase/card-settings/index.tsx`
  *     - `src/pages/showcase/modal-settings/index.tsx`

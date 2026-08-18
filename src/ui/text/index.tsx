@@ -21,7 +21,7 @@
  * 2. Типизировать пропсы через `TextProps`
  * 3. Экспортировать типы `TextProps` и `TextNodeProps`
  * 4. Реэкспортировать публичное API стилей: `TEXT_ALIGN_PRESET_KEYS`, `TEXT_SIZE_PRESET_KEYS`,
- *    `TEXT_TONE_PRESET_KEYS`, `textSizePresets`, `getEllipsisStyles`, `getNativeFieldTextStyles`,
+ *    `TEXT_TONE_PRESET_KEYS`, `textSizePresets`, `getEllipsisStyles`,
  *    `getTextLineHeight`, `getTextProperties`, `getTextToneColor` и типы
  *
  * Потребители:
@@ -43,7 +43,6 @@ import {
   TEXT_SIZE_PRESET_KEYS,
   TEXT_TONE_PRESET_KEYS,
   getEllipsisStyles,
-  getNativeFieldTextStyles,
   getTextLineHeight,
   getTextProperties,
   getTextToneColor,
@@ -83,7 +82,7 @@ type TextTag = TextCaptionTag | TextHeadingTag | TextListItemTag | TextPlainTag;
  * TextNodeStyleProps — представляет пропсы стилизации текстового узла с префиксом имён.
  * Входит в пакет `TextNodeProps`.
  *
- * @template Prefix префикс имён пропсов, например `title` или `value`
+ * @template Prefix префикс имён пропсов, например `title` или `subtitle`
  */
 type TextNodeStyleProps<Prefix extends string> = {
   [K in `${Prefix}Align`]?: TextAlignPreset;
@@ -144,7 +143,6 @@ export {
   TEXT_SIZE_PRESET_KEYS,
   TEXT_TONE_PRESET_KEYS,
   getEllipsisStyles,
-  getNativeFieldTextStyles,
   getTextLineHeight,
   getTextProperties,
   getTextToneColor,

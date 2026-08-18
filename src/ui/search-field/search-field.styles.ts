@@ -13,7 +13,6 @@
  *  - `src/ui/search-field/index.tsx` — собирает компонент SearchField
  */
 
-import { type CSSProperties } from 'react';
 import styled from 'styled-components';
 
 import {
@@ -38,7 +37,7 @@ import {
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
 import { getSurfaceBackgroundColor } from '@ui/surface';
-import { getNativeFieldTextStyles, type TextSizePreset, type TextTonePreset } from '@ui/text';
+import { getTextProperties } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
 
@@ -49,19 +48,11 @@ export { splitLayoutProps } from '@ui/layout';
  *
  * @property shape — форма строки-поля
  * @property sizePreset — размер контрола
- * @property textAlign — горизонтальное выравнивание значения
- * @property textItalic — включает курсив значения
- * @property textSize — размер значения
- * @property textTone — тон значения
  */
 export type SearchFieldStyleProps = LayoutProps &
   BorderProps & {
     shape?: ShapePreset;
     sizePreset?: SizePreset;
-    textAlign?: CSSProperties['textAlign'];
-    textItalic?: boolean;
-    textSize?: TextSizePreset;
-    textTone?: TextTonePreset;
   };
 
 /**
@@ -205,50 +196,32 @@ export const StyledSearchFieldRow = styled.div.withConfig({
 /**
  * SearchFieldControlStyleProps — представляет пропсы стилизации нативного поля ввода.
  */
-type SearchFieldControlStyleProps = Pick<
-  SearchFieldStyleProps,
-  'sizePreset' | 'textAlign' | 'textItalic' | 'textSize' | 'textTone'
->;
+type SearchFieldControlStyleProps = Pick<SearchFieldStyleProps, 'sizePreset'>;
 
 /**
  * SEARCH_FIELD_CONTROL_PROP_NAMES — хранит имена пропсов стилизации нативного поля ввода.
  */
-const SEARCH_FIELD_CONTROL_PROP_NAMES = new Set<string>([
-  'sizePreset',
-  'textAlign',
-  'textItalic',
-  'textSize',
-  'textTone',
-]);
+const SEARCH_FIELD_CONTROL_PROP_NAMES = new Set<string>(['sizePreset']);
 
 /**
  * getSearchFieldControlStyles — возвращает CSS-правила для узла `StyledSearchFieldControl`:
- * заполнение ряда, горизонтальный отступ, текстовый блок нативного поля,
+ * заполнение ряда, горизонтальный отступ, типографику нативного поля,
  * гашение UA-крестика WebKit.
  *
  * Как работает:
- * 1. Берёт тему и подставляет дефолт `sizePreset`
+ * 1. Подставляет дефолт `sizePreset`
  * 2. Собирает поле: ширину, `block-size: 100%` по высоте ряда, `padding-inline`
- *    через `getPaddingInline` и текстовый блок через `getNativeFieldTextStyles`.
+ *    через `getPaddingInline` и типографику через `getTextProperties`.
  *    `padding-block` не пишется: высоту держит ряд через `min-block-size`
  * 3. Сбрасывает рамку и фон: `border: none`, `background-color: transparent`.
  *    Гасит `outline` на `:focus-visible`: при рамке контур композита рисует ряд,
  *    без рамки контура нет. Скрывает нативную кнопку очистки WebKit
  *
- * @param props пропсы стилизации нативного поля ввода и тема
+ * @param props пропсы стилизации нативного поля ввода
  * @returns CSS-правила, каждое с новой строки
  */
-function getSearchFieldControlStyles(
-  props: SearchFieldControlStyleProps & { theme: AppTheme }
-): string {
-  const theme = getTheme(props);
-  const {
-    sizePreset = DEFAULT_SIZE_PRESET,
-    textAlign,
-    textItalic,
-    textSize,
-    textTone,
-  } = props;
+function getSearchFieldControlStyles(props: SearchFieldControlStyleProps): string {
+  const { sizePreset = DEFAULT_SIZE_PRESET } = props;
 
   return `
     inline-size: 100%;
@@ -256,13 +229,7 @@ function getSearchFieldControlStyles(
     block-size: 100%;
     min-block-size: 0;
     padding-inline: ${getPaddingInline(sizePreset)};
-    ${getNativeFieldTextStyles({
-      textAlign,
-      textItalic,
-      textSize: textSize ?? getTextSize(sizePreset),
-      textTone,
-      theme,
-    })}
+    ${getTextProperties(getTextSize(sizePreset))}
     border: none;
     background-color: transparent;
     &:focus-visible { outline: none; }
@@ -276,7 +243,7 @@ function getSearchFieldControlStyles(
  * Базируется на `<input>` и поддерживает пропсы из `SearchFieldControlStyleProps`.
  *
  * Генерация стилей:
- *  - `getSearchFieldControlStyles` — заполнение ряда, отступ, текстовый блок
+ *  - `getSearchFieldControlStyles` — заполнение ряда, отступ, типографика
  *    нативного поля, гашение UA-крестика WebKit
  */
 export const StyledSearchFieldControl = styled.input.withConfig({

@@ -2,7 +2,7 @@
  * Файл: `src/pages/showcase/search-field-settings/index.tsx`
  * Определяет панель настроек компонента SearchField в витрине дизайн-системы.
  * Содержит контролы для изменения размера, формы, формы сброса, формы секции иконки, рамки, иконки, подписи,
- * плейсхолдера, значения, выравнивания, курсива и состояния `disabled` в реальном времени.
+ * плейсхолдера и состояния `disabled` в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `SearchFieldWidgetState`
@@ -23,7 +23,6 @@ import {
 } from '@ui/icon';
 import { Input } from '@ui/input';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
-import { type TextAlignPreset } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import { BorderGroup } from '../border-group';
@@ -32,7 +31,6 @@ import { IconGroup } from '../icon-group';
 import { ShapeListbox } from '../shape-listbox';
 import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
 import { StyledSettingsForm } from '../showcase.styles';
-import { TextGroup } from '../text-group';
 
 /**
  * SearchFieldWidgetState — представляет состояние настроек компонента SearchField в витрине дизайн-системы.
@@ -41,12 +39,12 @@ import { TextGroup } from '../text-group';
  * Используется для синхронизации значений между панелью управления и демонстрационным SearchField.
  *
  * @property borderTone — тон рамки
- * @property clearShape — форма кнопки сброса. Стартует с вывода из `shape`
+ * @property clearShape — форма кнопки сброса
  * @property disabled — включает недоступное состояние поля
  * @property iconFill — тон глифа иконки
  * @property iconKey — витринный ключ выбора глифа иконки для превью
  * @property iconPosition — позиция иконки относительно поля
- * @property iconShape — форма секции иконки. Стартует с вывода из `shape`
+ * @property iconShape — форма секции иконки
  * @property iconTone — тон секции иконки
  * @property label — подпись над полем
  * @property placeholder — плейсхолдер значения
@@ -55,8 +53,6 @@ import { TextGroup } from '../text-group';
  * @property showIcon — включает секцию иконки
  * @property showShadow — включает тень при включённой рамке
  * @property sizePreset — размер контрола
- * @property textAlign — горизонтальное выравнивание значения
- * @property textItalic — включает курсив значения
  * @property value — значение поля
  */
 export type SearchFieldWidgetState = {
@@ -75,8 +71,6 @@ export type SearchFieldWidgetState = {
   showIcon: boolean;
   showShadow: boolean;
   sizePreset: SizePreset;
-  textAlign?: TextAlignPreset;
-  textItalic: boolean;
   value: string;
 };
 
@@ -156,21 +150,6 @@ export function SearchFieldSettings({ onChange, state }: SearchFieldSettingsProp
           onChange('placeholder', event.target.value)
         }
         onClear={() => onChange('placeholder', '')}
-      />
-
-      <TextGroup
-        align={state.textAlign}
-        contents={[
-          {
-            value: state.value,
-            onChange: (value) => onChange('value', value),
-          },
-        ]}
-        italic={state.textItalic}
-        labelPrefix="Text"
-        set
-        onAlignChange={(align) => onChange('textAlign', align)}
-        onItalicChange={(value) => onChange('textItalic', value)}
       />
 
       <Checkbox
