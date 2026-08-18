@@ -22,7 +22,7 @@ import { getTheme, type AppTheme } from '@ui/theme';
 const MODAL_VIEWPORT_EDGE_INSET: SpacingValue = 32;
 
 /**
- * getModalDialogStyles — возвращает CSS-правила для узла `StyledModalDialog`:
+ * getModalDialogStyles — возвращает CSS-правила для корня `StyledModalDialog`:
  * затемнение страницы под модальным окном через псевдоэлемент `::backdrop`.
  *
  * @param props объект с полем `theme` из styled-components

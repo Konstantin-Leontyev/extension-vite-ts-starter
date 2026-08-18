@@ -10,6 +10,7 @@
  *  - тон рамки через проп `borderTone`
  *  - тело карточки через `children`
  *  - заголовок через проп `title`
+ *  - уровень заголовка через проп `titleAs`
  *  - подзаголовок через проп `subtitle`
  *  - тон заголовка через проп `titleTone`
  *  - размер заголовка через проп `titleSizePreset`
@@ -29,8 +30,8 @@
  * 1. Экспортировать полиморфный компонент Card
  * 2. Типизировать пропсы через `CardProps`
  * 3. Реэкспортировать публичное API стилей: `CARD_HEADER_ACTION_SIZE_PRESET`
- * 4. Экспортировать типы `CardTitleProps` и `CardSubtitleProps`
- * 5. Предоставить функции `resolveCardTitleProps` и `resolveCardSubtitleProps`
+ * 4. Экспортировать тип `CardTitleProps` — `TextNodeProps` заголовка с `titleAs` и `titleId`
+ * 5. Связывать имя области с заголовком через `aria-labelledby`, когда у корня есть роль
  *
  * Потребители:
  *  - `src/ui/modal/index.tsx` — собирает модальный диалог на Card
@@ -41,7 +42,7 @@
 
 import {
   createElement,
-  type CSSProperties,
+  useId,
   type ComponentProps,
   type ComponentPropsWithRef,
   type ReactNode,
@@ -49,7 +50,7 @@ import {
 
 import { type IconShapePreset } from '@ui/icon';
 import { IconButtonRow, type IconButtonRowAction } from '@ui/icon-button-row';
-import { Text, type TextSizePreset, type TextTone } from '@ui/text';
+import { Text, type TextNodeProps, type TextSizePreset, type TextTone } from '@ui/text';
 
 import {
   CARD_HEADER_ACTION_SIZE_PRESET,
@@ -65,6 +66,12 @@ import {
  * CardHtmlTag — представляет допустимые корневые HTML-теги компонента Card.
  */
 type CardHtmlTag = 'article' | 'div' | 'section';
+
+/**
+ * DEFAULT_CARD_TITLE_AS — задаёт уровень заголовка по умолчанию.
+ * Используется, когда вызывающий код не передал проп `titleAs`.
+ */
+const DEFAULT_CARD_TITLE_AS = 'h2';
 
 /**
  * DEFAULT_CARD_TITLE_SIZE_PRESET — задаёт размер заголовка по умолчанию.
@@ -85,95 +92,30 @@ const DEFAULT_CARD_SUBTITLE_TONE: TextTone = 'muted';
 const DEFAULT_CARD_HEADER_ACTIONS: IconButtonRowAction[] = [];
 
 /**
+ * ROLELESS_CARD_HTML_TAG — задаёт единственный корневой тег без роли области.
+ * Остальные теги роль несут: `aria-labelledby` на корне имеет смысл только с ней.
+ * Дефолтный корень тега не получает вовсе, поэтому отсутствие `as` проверяется
+ * отдельно: сравнение с этой константой такой корень не отсеивает.
+ */
+const ROLELESS_CARD_HTML_TAG: CardHtmlTag = 'div';
+
+/**
  * CardTitleProps — представляет пропсы заголовка Card.
- * Поля заголовка допустимы только вместе с `title`.
+ * Пакет `TextNodeProps` с дополнительным `titleAs`.
  *
  * @property title — заголовок
  * @property titleAlign — выравнивание заголовка
- * @property titleId — id заголовка для `aria-labelledby`
  * @property titleItalic — включает курсив заголовка
  * @property titleSizePreset — размер заголовка
  * @property titleTone — тон заголовка
+ * @property titleAs — уровень заголовка
  */
-type CardTitleProps =
-  | {
-      title: string;
-      titleAlign?: CSSProperties['textAlign'];
-      titleId?: string;
-      titleItalic?: boolean;
-      titleSizePreset?: TextSizePreset;
-      titleTone?: TextTone;
-    }
-  | {
-      title?: never;
-      titleAlign?: never;
-      titleId?: never;
-      titleItalic?: never;
-      titleSizePreset?: never;
-      titleTone?: never;
-    };
-
-/**
- * CardSubtitleProps — представляет пропсы подзаголовка Card.
- * Поля подзаголовка допустимы только вместе с `subtitle`.
- *
- * @property subtitle — подзаголовок под заголовком
- * @property subtitleAlign — выравнивание подзаголовка
- * @property subtitleItalic — включает курсив подзаголовка
- * @property subtitleSizePreset — размер подзаголовка
- * @property subtitleTone — тон подзаголовка
- */
-type CardSubtitleProps =
-  | {
-      subtitle: string;
-      subtitleAlign?: CSSProperties['textAlign'];
-      subtitleItalic?: boolean;
-      subtitleSizePreset?: TextSizePreset;
-      subtitleTone?: TextTone;
-    }
-  | {
-      subtitle?: never;
-      subtitleAlign?: never;
-      subtitleItalic?: never;
-      subtitleSizePreset?: never;
-      subtitleTone?: never;
-    };
-
-function resolveCardTitleProps(
-  title: string,
-  titleAlign?: CSSProperties['textAlign'],
-  titleItalic?: boolean,
-  titleSizePreset?: TextSizePreset,
-  titleTone?: TextTone
-): CardTitleProps {
-  return title.trim() !== ''
-    ? {
-        title,
-        titleAlign,
-        titleItalic,
-        titleSizePreset,
-        titleTone,
-      }
-    : {};
-}
-
-function resolveCardSubtitleProps(
-  subtitle: string,
-  subtitleAlign?: CSSProperties['textAlign'],
-  subtitleItalic?: boolean,
-  subtitleSizePreset?: TextSizePreset,
-  subtitleTone?: TextTone
-): CardSubtitleProps {
-  return subtitle.trim() !== ''
-    ? {
-        subtitle,
-        subtitleAlign,
-        subtitleItalic,
-        subtitleSizePreset,
-        subtitleTone,
-      }
-    : {};
-}
+type CardTitleProps = TextNodeProps<
+  'title',
+  {
+    titleAs?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  }
+>;
 
 /**
  * CardProps — представляет пропсы компонента Card.
@@ -181,17 +123,19 @@ function resolveCardSubtitleProps(
  * @template T тип корневого элемента, по умолчанию `div`
  *
  * @property actionShape — форма окна действия шапки. Без пропа остаётся дефолтом ряда
- * @property as — переопределяет корневой HTML-тег, например `<article>`, `<section>`
+ * @property as — переопределяет корневой HTML-тег, например `<article>`, `<div>`, `<section>`
  * @property children — содержимое тела карточки
  * @property headerActions — ряд действий в правом верхнем углу
+ * @property titleId — id заголовка для `aria-labelledby` у внешнего узла
  */
 type CardProps<T extends CardHtmlTag = 'div'> = {
   actionShape?: IconShapePreset;
   as?: T;
   children?: ReactNode;
   headerActions?: IconButtonRowAction[];
+  titleId?: string;
 } & CardTitleProps &
-  CardSubtitleProps &
+  TextNodeProps<'subtitle'> &
   Omit<CardStyleProps, 'hasHeader'> &
   Omit<ComponentPropsWithRef<T>, 'className' | 'style' | 'title' | keyof CardStyleProps>;
 
@@ -215,14 +159,22 @@ function Card<T extends CardHtmlTag = 'div'>({
   subtitleTone = DEFAULT_CARD_SUBTITLE_TONE,
   title,
   titleAlign,
+  titleAs = DEFAULT_CARD_TITLE_AS,
   titleId,
   titleItalic,
   titleSizePreset = DEFAULT_CARD_TITLE_SIZE_PRESET,
   titleTone,
   ...rest
 }: CardProps<T>) {
+  const fallbackTitleId = useId();
   const hasHeader = Boolean(title || subtitle);
+  const headingId = titleId ?? fallbackTitleId;
+  const hasRootRole = as !== undefined && as !== ROLELESS_CARD_HTML_TAG;
+  const labelledBy = title && hasRootRole ? headingId : undefined;
 
+  // Подзаголовок остаётся абзацем и уровня не получает: он поясняет карточку
+  // целиком, а не открывает часть содержимого. Попав в оглавление, обещал бы
+  // раздел, которого нет.
   const subtitleNode = Boolean(subtitle) && (
     <Text
       align={subtitleAlign}
@@ -241,8 +193,8 @@ function Card<T extends CardHtmlTag = 'div'>({
         {Boolean(title) && (
           <Text
             align={titleAlign}
-            as="h2"
-            id={titleId}
+            as={titleAs}
+            id={headingId}
             italic={titleItalic}
             sizePreset={titleSizePreset}
             tone={titleTone}
@@ -260,9 +212,11 @@ function Card<T extends CardHtmlTag = 'div'>({
     StyledCard,
     {
       as,
+      'aria-labelledby': labelledBy,
       hasHeader,
       ...(rest as Omit<ComponentProps<typeof StyledCard>, 'as' | 'hasHeader'>),
     },
+    header,
     <IconButtonRow
       actions={headerActions}
       insetBlockStart={CARD_PADDING}
@@ -272,17 +226,8 @@ function Card<T extends CardHtmlTag = 'div'>({
       sizePreset={CARD_HEADER_ACTION_SIZE_PRESET}
       zIndex={1}
     />,
-    header,
-    <StyledCardBody>{children}</StyledCardBody>
+    Boolean(children) && <StyledCardBody>{children}</StyledCardBody>
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт резолверов заголовка и подзаголовка */
-export {
-  CARD_HEADER_ACTION_SIZE_PRESET,
-  Card,
-  resolveCardSubtitleProps,
-  resolveCardTitleProps,
-  type CardSubtitleProps,
-  type CardTitleProps,
-};
+export { CARD_HEADER_ACTION_SIZE_PRESET, Card, type CardTitleProps };

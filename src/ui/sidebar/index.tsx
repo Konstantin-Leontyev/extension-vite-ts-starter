@@ -21,6 +21,7 @@
  *  - тень панели через проп `showShadow`
  *  - тон рамки панели через проп `borderTone`
  *  - заголовок панели через проп `title`
+ *  - уровень заголовка панели через проп `titleAs`
  *  - подзаголовок панели через проп `subtitle`
  *  - тон заголовка через проп `titleTone`
  *  - размер заголовка через проп `titleSizePreset`
@@ -32,7 +33,6 @@
  *  - выравнивание подзаголовка через проп `subtitleAlign`
  *  - форму окна действия шапки через проп `actionShape`. Без `actionShape`
  *    форма остаётся дефолтом ряда
- *  - переопределение корневого элемента панели через проп `as`
  *
  * Основные задачи:
  * 1. Экспортировать компонент Sidebar
@@ -55,9 +55,9 @@ import {
 } from 'react';
 
 import { SidebarIcon } from '@icons';
-import { type BorderProps } from '@ui/border';
-import { Card, type CardSubtitleProps, type CardTitleProps } from '@ui/card';
+import { Card } from '@ui/card';
 import { type IconButtonRowAction } from '@ui/icon-button-row';
+import { type DistributiveOmit } from '@ui/type-utils';
 
 import {
   StyledSidebar,
@@ -87,31 +87,13 @@ const DEFAULT_SIDEBAR_ICON = <SidebarIcon />;
 const DEFAULT_SIDEBAR_ICON_ARIA_LABEL = 'Close panel';
 
 /**
- * SidebarCardTitleProps — представляет пропсы заголовка Card без `titleId`.
- */
-type SidebarCardTitleProps = CardTitleProps extends infer Title
-  ? Title extends unknown
-    ? Omit<Title, 'titleId'>
-    : never
-  : never;
-
-/**
  * CardForwardProps — представляет пропсы Card, доступные панели Sidebar.
  * Layout-пропсы зарезервированы за оболочкой Sidebar через `SidebarStyleProps`.
  */
-type CardForwardProps = Omit<
+type CardForwardProps = DistributiveOmit<
   ComponentProps<typeof Card>,
-  | 'children'
-  | 'headerActions'
-  | 'id'
-  | keyof BorderProps
-  | keyof CardSubtitleProps
-  | keyof CardTitleProps
-  | keyof SidebarStyleProps
-> &
-  BorderProps &
-  CardSubtitleProps &
-  SidebarCardTitleProps;
+  'children' | 'headerActions' | 'id' | 'titleId' | keyof SidebarStyleProps
+>;
 
 /**
  * SidebarProps — представляет пропсы компонента Sidebar.
@@ -252,20 +234,14 @@ export function Sidebar({
             Нижний отступ Card равен 0: тень контента панели уходит в
             paddingBlockEnd ScrollPort у вызывающего кода.
           */}
-          {(cardProps.title && (
-            <Card
-              headerActions={cardHeaderActions}
-              paddingBlockEnd={0}
-              {...cardProps}
-              titleId={titleId}
-            >
-              {sidebarContent}
-            </Card>
-          )) || (
-            <Card headerActions={cardHeaderActions} paddingBlockEnd={0} {...cardProps}>
-              {sidebarContent}
-            </Card>
-          )}
+          <Card
+            headerActions={cardHeaderActions}
+            paddingBlockEnd={0}
+            {...cardProps}
+            titleId={titleId}
+          >
+            {sidebarContent}
+          </Card>
         </StyledSidebarTrack>
       </StyledSidebarSlot>
     </StyledSidebar>

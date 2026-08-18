@@ -45,7 +45,7 @@
  * Основные задачи:
  * 1. Экспортировать компонент RangeInput
  * 2. Типизировать пропсы через `RangeInputProps`
- * 3. Экспортировать типы `RangeValue`, `RangePreset`, `RangeInputTitleProps`,
+ * 3. Экспортировать типы `RangeValue`, `RangePreset`,
  *    `RangeInputValidationMessages` и `ResolvedRangeInputValidationMessages`
  * 4. Экспортировать дефолты `DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES`
  * 5. Выставлять `role` и `aria`-атрибуты панели и триггера
@@ -85,12 +85,7 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import { type SpacingValue } from '@ui/spacing';
-import {
-  Text,
-  type TextAlignPreset,
-  type TextSizePreset,
-  type TextTone,
-} from '@ui/text';
+import { Text, type TextAlignPreset, type TextNodeProps } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import {
@@ -248,31 +243,6 @@ type RangeInputInputProps = {
 const RANGE_INPUT_PANEL_ARIA_LABEL = 'Custom range';
 
 /**
- * RangeInputTitleProps — представляет пропсы заголовка панели RangeInput.
- *
- * @property title — заголовок панели
- * @property titleAlign — выравнивание заголовка панели
- * @property titleItalic — включает курсив заголовка панели
- * @property titleSizePreset — размер заголовка панели
- * @property titleTone — тон заголовка панели
- */
-export type RangeInputTitleProps =
-  | {
-      title: string;
-      titleAlign?: TextAlignPreset;
-      titleItalic?: boolean;
-      titleSizePreset?: TextSizePreset;
-      titleTone?: TextTone;
-    }
-  | {
-      title?: never;
-      titleAlign?: never;
-      titleItalic?: never;
-      titleSizePreset?: never;
-      titleTone?: never;
-    };
-
-/**
  * RangeInputProps — представляет пропсы компонента RangeInput.
  *
  * @property clearShape — форма кнопки сброса
@@ -297,7 +267,7 @@ export type RangeInputTitleProps =
 type RangeInputProps = RangeInputStyleProps &
   RangeInputButtonProps &
   RangeInputInputProps &
-  RangeInputTitleProps & {
+  TextNodeProps<'title'> & {
     clearShape?: IconShapePreset;
     defaultValue?: RangeValue;
     disabled?: boolean;
@@ -355,13 +325,13 @@ type RangePanelError = {
 };
 
 /**
- * validateNumericRangeValue — возвращает текст ошибки встроенной числовой валидации.
+ * validateNumericRangeValue — возвращает ошибку встроенной числовой валидации.
  * Проверяет целые числа не меньше нуля. Значение `inputMode` `numeric` не блокирует
  * буквы на десктопе.
  *
  * @param value границы диапазона
  * @param messages тексты встроенной валидации
- * @returns текст ошибки или `null`
+ * @returns ошибка с флагами полей и текстом или `null`
  */
 function validateNumericRangeValue(
   value: RangeValue,

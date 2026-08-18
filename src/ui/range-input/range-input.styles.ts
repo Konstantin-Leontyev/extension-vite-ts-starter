@@ -25,16 +25,12 @@ import {
   getOpenControlRootStyles,
   getOpenControlSelectableRowSurfaceStyles,
   getOpenControlStackedPanelStyles,
+  getOpenControlTextSize,
   getOpenControlTriggerRowStyles,
   getOpenControlTriggerStyles,
   type OpenControlSurfaceStyleProps,
 } from '@ui/open-control';
-import {
-  DEFAULT_SIZE_PRESET,
-  getPaddingInline,
-  getTextSize,
-  type SizePreset,
-} from '@ui/presets';
+import { DEFAULT_SIZE_PRESET, getPaddingInline, type SizePreset } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
 import { type TextSizePreset } from '@ui/text';
 import { type AppTheme } from '@ui/theme';
@@ -50,7 +46,7 @@ export { splitLayoutProps } from '@ui/layout';
  * @returns метка размера текста из `TextSizePreset` для текста триггера и пресетов
  */
 export function getRangeInputTextSize(sizePreset?: SizePreset): TextSizePreset {
-  return getTextSize(sizePreset ?? DEFAULT_SIZE_PRESET);
+  return getOpenControlTextSize(sizePreset);
 }
 
 /**

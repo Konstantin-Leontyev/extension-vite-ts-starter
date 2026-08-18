@@ -18,14 +18,7 @@ import { useToast } from '@hooks/use-toast';
 import { SettingsIcon } from '@icons';
 import { resolveBorderProps, type BorderProps, type ShowBorderProps } from '@ui/border';
 import { Button, getButtonTextSize, type ButtonIconProps } from '@ui/button';
-import {
-  CARD_HEADER_ACTION_SIZE_PRESET,
-  Card,
-  resolveCardSubtitleProps,
-  resolveCardTitleProps,
-  type CardSubtitleProps,
-  type CardTitleProps,
-} from '@ui/card';
+import { CARD_HEADER_ACTION_SIZE_PRESET, Card, type CardTitleProps } from '@ui/card';
 import { Checkbox, getCheckboxTextSize } from '@ui/checkbox';
 import { Combobox } from '@ui/combobox';
 import { DateRangeInput, todayUtc } from '@ui/date-range-input';
@@ -33,7 +26,7 @@ import { Fieldset } from '@ui/fieldset';
 import { Icon, getIconPadding, resolveIconShape } from '@ui/icon';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxMultipleProps } from '@ui/listbox';
-import { Modal } from '@ui/modal';
+import { Modal, type ModalAccessibleName } from '@ui/modal';
 import { DEFAULT_SHAPE_PRESET, DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
 import {
   ProgressBar,
@@ -44,7 +37,6 @@ import { RadioButton, getRadioButtonTextSize } from '@ui/radio-button';
 import {
   DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
   RangeInput,
-  type RangeInputTitleProps,
   type RangeValue,
 } from '@ui/range-input';
 import { ScrollPort } from '@ui/scroll-port';
@@ -62,7 +54,12 @@ import {
   DEFAULT_TABLE_STRIPED,
 } from '@ui/table';
 import { Tag, getTagTextSize, type TagShowDotProps } from '@ui/tag';
-import { Text, type ChildrenTextProps } from '@ui/text';
+import {
+  Text,
+  resolveTextNodeProps,
+  type ChildrenTextProps,
+  type TextNodeProps,
+} from '@ui/text';
 import { Toast, getToastTextSize } from '@ui/toast';
 import { DEFAULT_TONE } from '@ui/tones';
 import { Toolbar } from '@ui/toolbar';
@@ -154,148 +151,22 @@ const CLOSE_WIDGET_SETTINGS_ARIA_LABEL = 'Close settings';
 const DEMO_RANGE_FROM_EXCEEDS_TO_ERROR = 'From must not exceed To.';
 
 /**
+ * DEMO_MODAL_ARIA_LABEL — задаёт запасной `ariaLabel` превью Modal без заголовка.
+ * Используется, когда витрина вызывает Modal без `title`.
+ */
+const DEMO_MODAL_ARIA_LABEL = 'Demo modal';
+
+/**
  * DEMO_MODAL_BODY_TEXT — задаёт текст тела превью Modal.
  * Используется в теле превью Modal.
  */
 const DEMO_MODAL_BODY_TEXT = 'Place your content here';
 
 /**
- * INPUT_WIDGET_TITLE_ID — задаёт id заголовка виджета Input в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const INPUT_WIDGET_TITLE_ID = 'showcase-input-heading';
-
-/**
- * SEARCH_FIELD_WIDGET_TITLE_ID — задаёт id заголовка виджета SearchField в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const SEARCH_FIELD_WIDGET_TITLE_ID = 'showcase-search-field-heading';
-
-/**
- * BUTTON_WIDGET_TITLE_ID — задаёт id заголовка виджета Button в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const BUTTON_WIDGET_TITLE_ID = 'showcase-button-heading';
-
-/**
- * ICON_WIDGET_TITLE_ID — задаёт id заголовка виджета Icon в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const ICON_WIDGET_TITLE_ID = 'showcase-icon-heading';
-
-/**
- * LISTBOX_WIDGET_TITLE_ID — задаёт id заголовка виджета Listbox в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const LISTBOX_WIDGET_TITLE_ID = 'showcase-listbox-heading';
-
-/**
- * COMBOBOX_WIDGET_TITLE_ID — задаёт id заголовка виджета Combobox в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const COMBOBOX_WIDGET_TITLE_ID = 'showcase-combobox-heading';
-
-/**
- * RANGE_INPUT_WIDGET_TITLE_ID — задаёт id заголовка виджета RangeInput в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const RANGE_INPUT_WIDGET_TITLE_ID = 'showcase-range-input-heading';
-
-/**
- * DATE_RANGE_INPUT_WIDGET_TITLE_ID — задаёт id заголовка виджета DateRangeInput в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const DATE_RANGE_INPUT_WIDGET_TITLE_ID = 'showcase-date-range-input-heading';
-
-/**
- * CHECKBOX_WIDGET_TITLE_ID — задаёт id заголовка виджета Checkbox в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const CHECKBOX_WIDGET_TITLE_ID = 'showcase-checkbox-heading';
-
-/**
- * RADIO_BUTTON_WIDGET_TITLE_ID — задаёт id заголовка виджета RadioButton в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const RADIO_BUTTON_WIDGET_TITLE_ID = 'showcase-radio-button-heading';
-
-/**
- * FIELDSET_WIDGET_TITLE_ID — задаёт id заголовка виджета Fieldset в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const FIELDSET_WIDGET_TITLE_ID = 'showcase-fieldset-heading';
-
-/**
  * PROGRESS_WIDGET_TITLE_ID — задаёт id заголовка виджета ProgressBar в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
+ * Используется как `titleId` карточки виджета и в `aria-labelledby` индикатора ProgressBar.
  */
 const PROGRESS_WIDGET_TITLE_ID = 'showcase-progress-heading';
-
-/**
- * SPINNER_WIDGET_TITLE_ID — задаёт id заголовка виджета Spinner в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const SPINNER_WIDGET_TITLE_ID = 'showcase-spinner-heading';
-
-/**
- * STEPPER_WIDGET_TITLE_ID — задаёт id заголовка виджета Stepper в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const STEPPER_WIDGET_TITLE_ID = 'showcase-stepper-heading';
-
-/**
- * SEGMENT_BUTTON_WIDGET_TITLE_ID — задаёт id заголовка виджета SegmentButton в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const SEGMENT_BUTTON_WIDGET_TITLE_ID = 'showcase-segment-button-heading';
-
-/**
- * TAG_WIDGET_TITLE_ID — задаёт id заголовка виджета Tag в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const TAG_WIDGET_TITLE_ID = 'showcase-tag-heading';
-
-/**
- * TABLE_WIDGET_TITLE_ID — задаёт id заголовка виджета Table в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const TABLE_WIDGET_TITLE_ID = 'showcase-table-heading';
-
-/**
- * SWITCH_WIDGET_TITLE_ID — задаёт id заголовка виджета Switch в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const SWITCH_WIDGET_TITLE_ID = 'showcase-switch-heading';
-
-/**
- * TOAST_WIDGET_TITLE_ID — задаёт id заголовка виджета Toast в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const TOAST_WIDGET_TITLE_ID = 'showcase-toast-heading';
-
-/**
- * MODAL_WIDGET_TITLE_ID — задаёт id заголовка виджета Modal в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const MODAL_WIDGET_TITLE_ID = 'showcase-modal-heading';
-
-/**
- * CARD_WIDGET_TITLE_ID — задаёт id заголовка виджета Card в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const CARD_WIDGET_TITLE_ID = 'showcase-card-heading';
-
-/**
- * TEXT_WIDGET_TITLE_ID — задаёт id заголовка виджета Text в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const TEXT_WIDGET_TITLE_ID = 'showcase-text-heading';
-
-/**
- * TOOLBAR_WIDGET_TITLE_ID — задаёт id заголовка виджета Toolbar в витрине.
- * Используется в `aria-labelledby` карточки и как `titleId` виджета.
- */
-const TOOLBAR_WIDGET_TITLE_ID = 'showcase-toolbar-heading';
 
 /**
  * TOOLBAR_DEMO_ARIA_LABEL — задаёт `aria-label` превью Toolbar.
@@ -987,15 +858,6 @@ export function ShowcasePage() {
       ? SETTINGS_TITLES[activeSettings]
       : undefined;
 
-  function activateSettings(target: WidgetSettingsKey): void {
-    if (!isPanelOpen) {
-      return;
-    }
-
-    setIsHeaderSettingsOpen(false);
-    setActiveSettings(target);
-  }
-
   function toggleSettings(target: WidgetSettingsKey): void {
     setIsHeaderSettingsOpen(false);
     setActiveSettings((current) => (current === target ? null : target));
@@ -1311,29 +1173,28 @@ export function ShowcasePage() {
 
   /**
    * renderWidgetCard — возвращает карточку виджета витрины с общим скелетом Card.
-   * В продукт копируются `Card as="article"`, `aria-labelledby`, `titleId`, `headerActions`
-   * при действиях в шапке и содержимое `children`.
-   * Только для витрины: `onClick` на карточке активирует панель настроек в Sidebar,
-   * `ariaControls` и `ariaExpanded` на кнопке настроек, иконка SettingsIcon с
-   * `toggleSettings`. Эту обвязку в продуктовый код не переносить.
+   * В продукт копируются `Card as="article"`, `headerActions` при действиях в шапке
+   * и содержимое `children`. Связывание имени области с заголовком делает Card.
+   * Только для витрины: `ariaControls` и `ariaExpanded` на кнопке настроек, иконка
+   * SettingsIcon с `toggleSettings`. Эту обвязку в продуктовый код не переносить.
+   * `titleId` передают, когда тем же заголовком называют другой узел внутри карточки.
    *
    * @param widgetKey ключ панели настроек виджета
-   * @param titleId id заголовка карточки
    * @param children содержимое превью виджета
    * @param fullRow включает растяжение карточки на всю ширину сетки
+   * @param titleId id заголовка, когда им называют узел внутри карточки
    * @returns карточка виджета, при `fullRow` — в обёртке `StyledShowcaseWidgetFullRow`
    */
   function renderWidgetCard(
     widgetKey: WidgetSettingsKey,
-    titleId: string,
     children: ReactNode,
-    fullRow = false
+    fullRow = false,
+    titleId?: string
   ): ReactNode {
     const open = activeSettings === widgetKey;
 
     const card = (
       <Card
-        aria-labelledby={titleId}
         as="article"
         background="surface"
         headerActions={[
@@ -1351,7 +1212,6 @@ export function ShowcasePage() {
         minBlockSize={fullRow ? '0' : undefined}
         title={SETTINGS_TITLES[widgetKey]}
         titleId={titleId}
-        onClick={() => activateSettings(widgetKey)}
       >
         {children}
       </Card>
@@ -1364,45 +1224,56 @@ export function ShowcasePage() {
     return card;
   }
 
-  const modalTitleProps: CardTitleProps = resolveCardTitleProps(
+  const modalTitleProps: TextNodeProps<'title'> = resolveTextNodeProps(
+    'title',
     modal.title,
     modal.titleAlign,
     modal.titleItalic,
     modal.titleSizePreset,
     modal.titleTone
   );
-  const modalSubtitleProps: CardSubtitleProps = resolveCardSubtitleProps(
+  const modalAccessibleName: ModalAccessibleName = modalTitleProps.title
+    ? modalTitleProps
+    : { ariaLabel: DEMO_MODAL_ARIA_LABEL };
+  const modalSubtitleProps: TextNodeProps<'subtitle'> = resolveTextNodeProps(
+    'subtitle',
     modal.subtitle,
     modal.subtitleAlign,
     modal.subtitleItalic,
     modal.subtitleSizePreset,
     modal.subtitleTone
   );
-  const cardTitleProps: CardTitleProps = resolveCardTitleProps(
+  const resolvedCardTitleProps: TextNodeProps<'title'> = resolveTextNodeProps(
+    'title',
     card.title,
     card.titleAlign,
     card.titleItalic,
     card.titleSizePreset,
     card.titleTone
   );
-  const cardSubtitleProps: CardSubtitleProps = resolveCardSubtitleProps(
+  const cardTitleProps: CardTitleProps = resolvedCardTitleProps.title
+    ? { ...resolvedCardTitleProps, titleAs: 'h3' }
+    : resolvedCardTitleProps;
+  const cardSubtitleProps: TextNodeProps<'subtitle'> = resolveTextNodeProps(
+    'subtitle',
     card.subtitle,
     card.subtitleAlign,
     card.subtitleItalic,
     card.subtitleSizePreset,
     card.subtitleTone
   );
-  const rangeInputTitleProps: RangeInputTitleProps =
-    rangeInput.title.trim() !== ''
-      ? {
-          title: rangeInput.title,
-          titleAlign: rangeInput.titleAlign,
-          titleItalic: rangeInput.titleItalic,
-          titleSizePreset: rangeInput.titleSizePreset,
-          titleTone: rangeInput.titleTone,
-        }
-      : {};
-  const sidebarTitleProps: CardTitleProps = panelTitle ? { title: panelTitle } : {};
+  const rangeInputTitleProps: TextNodeProps<'title'> = resolveTextNodeProps(
+    'title',
+    rangeInput.title,
+    rangeInput.titleAlign,
+    rangeInput.titleItalic,
+    rangeInput.titleSizePreset,
+    rangeInput.titleTone
+  );
+  const sidebarTitleProps: TextNodeProps<'title'> = resolveTextNodeProps(
+    'title',
+    panelTitle ?? ''
+  );
   const cardBorderProps: BorderProps = resolveBorderProps(
     card.showBorder,
     card.borderTone,
@@ -1558,16 +1429,10 @@ export function ShowcasePage() {
         <Card as="section" maxBlockSize="100%" paddingBlock={0}>
           <ScrollPort paddingBlock={16}>
             <StyledShowcaseWidgets>
-              {renderWidgetCard(
-                'table',
-                TABLE_WIDGET_TITLE_ID,
-                <TableDemo settings={table} />,
-                true
-              )}
+              {renderWidgetCard('table', <TableDemo settings={table} />, true)}
 
               {renderWidgetCard(
                 'modal',
-                MODAL_WIDGET_TITLE_ID,
                 <>
                   <Button
                     alignSelf="center"
@@ -1581,7 +1446,7 @@ export function ShowcasePage() {
                     inlineSize={MODAL_INLINE_SIZE[modal.sizePreset]}
                     open={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
-                    {...modalTitleProps}
+                    {...modalAccessibleName}
                     {...modalSubtitleProps}
                   >
                     {DEMO_MODAL_BODY_TEXT}
@@ -1591,7 +1456,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'card',
-                CARD_WIDGET_TITLE_ID,
                 <Card
                   actionShape={card.actionShape}
                   background={card.background}
@@ -1604,7 +1468,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'text',
-                TEXT_WIDGET_TITLE_ID,
                 <Text
                   align={text.align}
                   ellipsis={text.ellipsis}
@@ -1621,7 +1484,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'toolbar',
-                TOOLBAR_WIDGET_TITLE_ID,
                 <Toolbar
                   actionShape={toolbar.actionShape}
                   actions={toolbar.actions.map(resolveIconButtonRowAction)}
@@ -1636,7 +1498,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'input',
-                INPUT_WIDGET_TITLE_ID,
                 <Input
                   alignSelf="center"
                   disabled={input.disabled}
@@ -1659,7 +1520,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'search-field',
-                SEARCH_FIELD_WIDGET_TITLE_ID,
                 <SearchField
                   alignSelf="center"
                   clearShape={searchField.clearShape}
@@ -1682,7 +1542,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'listbox',
-                LISTBOX_WIDGET_TITLE_ID,
                 <Listbox
                   alignSelf="center"
                   disabled={listbox.disabled}
@@ -1703,7 +1562,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'combobox',
-                COMBOBOX_WIDGET_TITLE_ID,
                 <Combobox
                   alignSelf="center"
                   disabled={combobox.disabled}
@@ -1725,7 +1583,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'range-input',
-                RANGE_INPUT_WIDGET_TITLE_ID,
                 <RangeInput
                   alignSelf="center"
                   buttonShape={rangeInput.buttonShape}
@@ -1765,7 +1622,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'date-range-input',
-                DATE_RANGE_INPUT_WIDGET_TITLE_ID,
                 <DateRangeInput
                   alignSelf="center"
                   buttonShape={dateRangeInput.buttonShape}
@@ -1791,7 +1647,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'button',
-                BUTTON_WIDGET_TITLE_ID,
                 <Button
                   active={button.active}
                   alignSelf="center"
@@ -1811,7 +1666,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'icon',
-                ICON_WIDGET_TITLE_ID,
                 <Icon
                   aria-label={DEMO_ICON_ARIA_LABEL}
                   as="button"
@@ -1831,7 +1685,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'segment-button',
-                SEGMENT_BUTTON_WIDGET_TITLE_ID,
                 <SegmentButton
                   alignSelf="center"
                   center={
@@ -1872,7 +1725,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'tag',
-                TAG_WIDGET_TITLE_ID,
                 <Tag
                   placeSelf="center"
                   shape={tag.shape}
@@ -1887,7 +1739,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'checkbox',
-                CHECKBOX_WIDGET_TITLE_ID,
                 <Checkbox
                   checked={checkbox.checked}
                   checkedMark={checkbox.checkedMark}
@@ -1903,7 +1754,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'radio-button',
-                RADIO_BUTTON_WIDGET_TITLE_ID,
                 <StyledRadioButtonDemo>
                   <RadioButton
                     checked={radioButton.selected === 'a'}
@@ -1928,7 +1778,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'fieldset',
-                FIELDSET_WIDGET_TITLE_ID,
                 <Fieldset
                   alignSelf="center"
                   borderTone={fieldset.borderTone}
@@ -1960,19 +1809,19 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'progress',
-                PROGRESS_WIDGET_TITLE_ID,
                 <ProgressBar
                   aria-labelledby={PROGRESS_WIDGET_TITLE_ID}
                   sizePreset={progress.sizePreset}
                   tone={progress.tone}
                   value={progress.value}
                   {...progressBarShowTextProps}
-                />
+                />,
+                false,
+                PROGRESS_WIDGET_TITLE_ID
               )}
 
               {renderWidgetCard(
                 'spinner',
-                SPINNER_WIDGET_TITLE_ID,
                 <Spinner
                   minBlockSize="0"
                   placeSelf="center"
@@ -1989,7 +1838,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'stepper',
-                STEPPER_WIDGET_TITLE_ID,
                 <Stepper
                   alignSelf="center"
                   disabled={stepper.disabled}
@@ -2013,7 +1861,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'switch',
-                SWITCH_WIDGET_TITLE_ID,
                 <Switch
                   checked={switchState.checked}
                   disabled={switchState.disabled}
@@ -2027,7 +1874,6 @@ export function ShowcasePage() {
 
               {renderWidgetCard(
                 'toast',
-                TOAST_WIDGET_TITLE_ID,
                 <>
                   <Toast
                     alignSelf="center"

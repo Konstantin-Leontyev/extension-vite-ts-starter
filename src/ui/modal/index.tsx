@@ -9,6 +9,7 @@
  *  - тень через проп `showShadow`
  *  - тон рамки через проп `borderTone`
  *  - заголовок через проп `title`
+ *  - уровень заголовка через проп `titleAs`
  *  - подзаголовок через проп `subtitle`
  *  - тон заголовка через проп `titleTone`
  *  - размер заголовка через проп `titleSizePreset`
@@ -19,18 +20,19 @@
  *  - курсив подзаголовка через проп `subtitleItalic`
  *  - выравнивание подзаголовка через проп `subtitleAlign`
  *  - id заголовка для `aria-labelledby` через проп `titleId`
+ *  - доступное имя без заголовка через проп `ariaLabel`
  *  - тело через `children`
  *  - видимость через проп `open`
  *  - закрытие через проп `onClose`
  *  - доступное имя кнопки закрытия через проп `closeAriaLabel`
  *  - форму окна действия шапки через проп `actionShape`. Без `actionShape`
  *    форма остаётся дефолтом ряда
- *  - переопределение корневого элемента Card через проп `as`
  *
  * Основные задачи:
  * 1. Экспортировать компонент Modal
- * 2. Типизировать пропсы через `ModalProps`
- * 3. Связывать заголовок и диалог через `aria-labelledby`
+ * 2. Типизировать пропсы через `ModalProps` и `ModalAccessibleName`
+ * 3. Связывать заголовок и диалог через `aria-labelledby`; без заголовка —
+ *    `aria-label` на диалоге
  *
  * Потребители:
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
@@ -40,8 +42,9 @@ import { useEffect, useId, useRef, type ComponentProps, type ReactNode } from 'r
 
 import { CloseIcon } from '@icons';
 import { resolveBorderProps, type ShowBorderProps } from '@ui/border';
-import { Card, type CardSubtitleProps, type CardTitleProps } from '@ui/card';
+import { Card, type CardTitleProps } from '@ui/card';
 import { type SpacingValue } from '@ui/spacing';
+import { type DistributiveOmit } from '@ui/type-utils';
 
 import { StyledModalDialog } from './modal.styles';
 
@@ -65,19 +68,15 @@ const MODAL_CLOSE_ICON_PADDING: SpacingValue = 8;
 const DEFAULT_MODAL_SHOW_BORDER = false;
 
 /**
- * CardForwardProps — представляет пропсы Card без `children` и `headerActions`.
+ * ModalAccessibleName — представляет обязательное доступное имя диалога.
+ * Требует один из пропов: `title` или `ariaLabel`.
+ *
+ * @property ariaLabel — текстовая метка диалога без видимого заголовка
+ * @property title — видимый заголовок
  */
-type CardForwardProps = Omit<
-  ComponentProps<typeof Card>,
-  | 'children'
-  | 'headerActions'
-  | keyof CardSubtitleProps
-  | keyof CardTitleProps
-  | keyof ShowBorderProps
-> &
-  CardSubtitleProps &
-  CardTitleProps &
-  ShowBorderProps;
+type ModalAccessibleName =
+  | (Extract<CardTitleProps, { title: string }> & { ariaLabel?: never })
+  | (Extract<CardTitleProps, { title?: never }> & { ariaLabel: string });
 
 /**
  * ModalProps — представляет пропсы компонента Modal.
@@ -87,12 +86,17 @@ type CardForwardProps = Omit<
  * @property onClose — обработчик закрытия модального окна
  * @property open — включает видимость модального окна
  */
-type ModalProps = CardForwardProps & {
-  children: ReactNode;
-  closeAriaLabel?: string;
-  onClose: () => void;
-  open: boolean;
-};
+type ModalProps = DistributiveOmit<
+  ComponentProps<typeof Card>,
+  'aria-label' | 'aria-labelledby' | 'children' | 'headerActions' | keyof ShowBorderProps
+> &
+  ModalAccessibleName &
+  ShowBorderProps & {
+    children: ReactNode;
+    closeAriaLabel?: string;
+    onClose: () => void;
+    open: boolean;
+  };
 
 /**
  * Modal — отображает модальный диалог с Card и кнопкой закрытия.
@@ -103,6 +107,7 @@ type ModalProps = CardForwardProps & {
  * </Modal>
  */
 function Modal({
+  ariaLabel,
   children,
   closeAriaLabel = DEFAULT_MODAL_CLOSE_ARIA_LABEL,
   onClose,
@@ -110,9 +115,12 @@ function Modal({
   ...cardForward
 }: ModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const generatedTitleId = useId();
-  const cardProps = cardForward as CardForwardProps;
-  const titleId = cardProps.title ? (cardProps.titleId ?? generatedTitleId) : undefined;
+  const fallbackTitleId = useId();
+  const cardProps = cardForward as DistributiveOmit<
+    ComponentProps<typeof Card>,
+    'children' | 'headerActions'
+  >;
+  const titleId = cardProps.title ? (cardProps.titleId ?? fallbackTitleId) : undefined;
   const cardBorderProps = resolveBorderProps(
     cardProps.showBorder ?? DEFAULT_MODAL_SHOW_BORDER,
     cardProps.borderTone,
@@ -162,23 +170,22 @@ function Modal({
   ];
 
   return (
-    <StyledModalDialog aria-labelledby={titleId} ref={dialogRef} onClose={onClose}>
-      {(cardProps.title && (
-        <Card
-          headerActions={headerActions}
-          {...cardProps}
-          {...cardBorderProps}
-          titleId={titleId}
-        >
-          {children}
-        </Card>
-      )) || (
-        <Card headerActions={headerActions} {...cardProps} {...cardBorderProps}>
-          {children}
-        </Card>
-      )}
+    <StyledModalDialog
+      aria-label={ariaLabel}
+      aria-labelledby={titleId}
+      ref={dialogRef}
+      onClose={onClose}
+    >
+      <Card
+        headerActions={headerActions}
+        {...cardProps}
+        {...cardBorderProps}
+        titleId={titleId}
+      >
+        {children}
+      </Card>
     </StyledModalDialog>
   );
 }
 
-export { Modal };
+export { Modal, type ModalAccessibleName };
