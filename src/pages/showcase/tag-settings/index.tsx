@@ -15,8 +15,7 @@ import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { SHAPE_PRESET_KEYS, type ShapePreset } from '@ui/presets';
-import { TAG_SIZE_PRESET_KEYS, getTagTextSize, type TagSizePreset } from '@ui/tag';
-import { type TextSizePreset, type TextTonePreset } from '@ui/text';
+import { TAG_SIZE_PRESET_KEYS, type TagSizePreset } from '@ui/tag';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { BorderGroup } from '../border-group';
@@ -40,9 +39,6 @@ import { ToneListbox } from '../tone-listbox';
  * @property showShadow — включает тень при включённой рамке
  * @property sizePreset — размер метки
  * @property text — содержимое метки
- * @property textItalic — включает курсив текста метки
- * @property textSize — размер текста метки
- * @property textTone — тон текста метки
  * @property tinted — включает режим мягкой заливки
  * @property tone — тон заливки
  */
@@ -55,9 +51,6 @@ export type TagWidgetState = {
   showShadow: boolean;
   sizePreset: TagSizePreset;
   text: string;
-  textItalic: boolean;
-  textSize: TextSizePreset;
-  textTone: TextTonePreset;
   tinted: boolean;
   tone: TonePreset;
 };
@@ -86,10 +79,7 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
         label="Size:"
         sizes={TAG_SIZE_PRESET_KEYS}
         value={state.sizePreset}
-        onChange={(size) => {
-          onChange('sizePreset', size);
-          onChange('textSize', getTagTextSize(size));
-        }}
+        onChange={(size) => onChange('sizePreset', size)}
       />
 
       <ShapeListbox
@@ -149,18 +139,8 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
             onChange: (value) => onChange('text', value),
           },
         ]}
-        italic={state.textItalic}
         labelPrefix="Text"
         set
-        size={state.textSize}
-        tones={[
-          {
-            value: state.textTone,
-            onChange: (tone) => onChange('textTone', tone),
-          },
-        ]}
-        onItalicChange={(value) => onChange('textItalic', value)}
-        onSizeChange={(size) => onChange('textSize', size)}
       />
     </StyledSettingsForm>
   );

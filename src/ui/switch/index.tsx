@@ -7,9 +7,6 @@
  *  - размерный ряд через проп `sizePreset`
  *  - семантический тон через проп `tone`
  *  - подпись справа от дорожки через `children`. Без `children` — дорожка без подписи
- *  - тон подписи через проп `textTone`
- *  - размер подписи через проп `textSize`
- *  - курсив подписи через проп `textItalic`
  *
  * Основные задачи:
  * 1. Экспортировать компонент Switch
@@ -25,7 +22,7 @@
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { getTextSize } from '@ui/presets';
-import { Text, type TextNodeStyleProps, type TextTonePreset } from '@ui/text';
+import { Text, type TextTonePreset } from '@ui/text';
 
 import {
   StyledSwitchRoot,
@@ -35,20 +32,19 @@ import {
 } from './switch.styles';
 
 /**
- * DEFAULT_SWITCH_TEXT_TONE — задаёт тон подписи по умолчанию.
+ * SWITCH_TEXT_TONE — задаёт тон подписи.
  * Подпись контрола — вторичный текст, поэтому `muted`.
  */
-const DEFAULT_SWITCH_TEXT_TONE: TextTonePreset = 'muted';
+const SWITCH_TEXT_TONE: TextTonePreset = 'muted';
 
 /**
  * SwitchProps — представляет пропсы компонента Switch.
  *
  * @property children — подпись
  */
-type SwitchProps = SwitchStyleProps &
-  Omit<TextNodeStyleProps<'text'>, 'textAlign'> & {
-    children?: ReactNode;
-  } & Omit<
+type SwitchProps = SwitchStyleProps & {
+  children?: ReactNode;
+} & Omit<
     ComponentPropsWithRef<'input'>,
     'children' | 'className' | 'style' | 'type' | keyof SwitchStyleProps
   >;
@@ -60,15 +56,7 @@ type SwitchProps = SwitchStyleProps &
  * <Switch checked={enabled} onChange={handleChange}>Notifications</Switch>
  * <Switch checked={enabled} onChange={handleChange} aria-label="Notifications" />
  */
-function Switch({
-  children,
-  sizePreset,
-  textItalic,
-  textSize,
-  textTone = DEFAULT_SWITCH_TEXT_TONE,
-  tone,
-  ...rest
-}: SwitchProps) {
+function Switch({ children, sizePreset, tone, ...rest }: SwitchProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
 
   return (
@@ -76,11 +64,7 @@ function Switch({
       <input className="visually-hidden" role="switch" type="checkbox" {...restProps} />
       <StyledSwitchTrack aria-hidden="true" sizePreset={sizePreset} tone={tone} />
       {Boolean(children) && (
-        <Text
-          italic={textItalic}
-          sizePreset={textSize ?? getTextSize(sizePreset)}
-          tone={textTone}
-        >
+        <Text sizePreset={getTextSize(sizePreset)} tone={SWITCH_TEXT_TONE}>
           {children}
         </Text>
       )}

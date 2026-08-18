@@ -6,10 +6,6 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - тон рамки через проп `borderTone`
  *  - заголовок группы через проп `label` в `<legend>`
- *  - тон заголовка через проп `legendTone`
- *  - размер заголовка через проп `legendSize`
- *  - курсив заголовка через проп `legendItalic`
- *  - выравнивание заголовка через проп `legendAlign`
  *  - содержимое группы через `children`
  *
  * Основные задачи:
@@ -25,12 +21,7 @@
 
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
-import {
-  Text,
-  type TextNodeStyleProps,
-  type TextSizePreset,
-  type TextTonePreset,
-} from '@ui/text';
+import { Text, type TextSizePreset, type TextTonePreset } from '@ui/text';
 
 import {
   FIELDSET_BORDER_TONE_PRESET_KEYS,
@@ -40,16 +31,16 @@ import {
 } from './fieldset.styles';
 
 /**
- * DEFAULT_FIELDSET_LEGEND_SIZE_PRESET — задаёт размер заголовка по умолчанию.
+ * FIELDSET_LEGEND_SIZE_PRESET — задаёт размер заголовка.
  * Заголовок группы — служебный текст, поэтому мельче основного.
  */
-const DEFAULT_FIELDSET_LEGEND_SIZE_PRESET: TextSizePreset = 'thin';
+const FIELDSET_LEGEND_SIZE_PRESET: TextSizePreset = 'thin';
 
 /**
- * DEFAULT_FIELDSET_LEGEND_TONE — задаёт тон заголовка по умолчанию.
+ * FIELDSET_LEGEND_TONE — задаёт тон заголовка.
  * Заголовок группы — вторичный текст, поэтому `muted`.
  */
-const DEFAULT_FIELDSET_LEGEND_TONE: TextTonePreset = 'muted';
+const FIELDSET_LEGEND_TONE: TextTonePreset = 'muted';
 
 /**
  * FieldsetProps — представляет пропсы компонента Fieldset.
@@ -60,8 +51,7 @@ const DEFAULT_FIELDSET_LEGEND_TONE: TextTonePreset = 'muted';
 type FieldsetProps = {
   children?: ReactNode;
   label: string;
-} & TextNodeStyleProps<'legend'> &
-  FieldsetStyleProps &
+} & FieldsetStyleProps &
   Omit<
     ComponentPropsWithRef<'fieldset'>,
     'className' | 'style' | keyof FieldsetStyleProps
@@ -75,24 +65,14 @@ type FieldsetProps = {
  *   <Checkbox checked={email}>Email</Checkbox>
  * </Fieldset>
  */
-function Fieldset({
-  children,
-  label,
-  legendAlign,
-  legendItalic,
-  legendSize = DEFAULT_FIELDSET_LEGEND_SIZE_PRESET,
-  legendTone = DEFAULT_FIELDSET_LEGEND_TONE,
-  ...rest
-}: FieldsetProps) {
+function Fieldset({ children, label, ...rest }: FieldsetProps) {
   return (
     <StyledFieldset {...rest}>
       <Text
-        align={legendAlign}
         as="legend"
-        italic={legendItalic}
         paddingInline={4}
-        sizePreset={legendSize}
-        tone={legendTone}
+        sizePreset={FIELDSET_LEGEND_SIZE_PRESET}
+        tone={FIELDSET_LEGEND_TONE}
       >
         {label}
       </Text>

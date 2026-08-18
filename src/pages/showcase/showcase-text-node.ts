@@ -12,27 +12,24 @@
 
 import {
   type TextAlignPreset,
-  type TextNodeStyleProps,
+  type TextNodeProps,
   type TextSizePreset,
   type TextTonePreset,
 } from '@ui/text';
-import { type AllOrNone } from '@ui/type-utils';
 
 /**
  * ResolveTextNodeParams — представляет поля сборки пакета текстового узла.
  *
  * @property align — выравнивание текста
  * @property italic — включает курсив
- * @property leadingKey — ключ ведущей строки в пакете
  * @property prefix — префикс имён пропсов
  * @property size — размер текста
  * @property text — ведущая строка узла
  * @property tone — тон текста
  */
-type ResolveTextNodeParams<Prefix extends string, Leading extends string = Prefix> = {
+type ResolveTextNodeParams<Prefix extends string> = {
   align?: TextAlignPreset;
   italic?: boolean;
-  leadingKey?: Leading;
   prefix: Prefix;
   size?: TextSizePreset;
   text: string;
@@ -44,42 +41,29 @@ type ResolveTextNodeParams<Prefix extends string, Leading extends string = Prefi
  * При непустой строке отдаёт ведущий ключ вместе с зависимыми, иначе гасит пакет.
  * Используется в `src/pages/showcase/index.tsx`.
  *
- * @param params поля сборки пакета текстового узла
+ * @param params поля сборки пакета
  * @returns пакет пропсов текстового узла для передачи в потребитель
  *
  * @example
  * resolveTextNodeProps({ prefix: 'title', text: modal.title })
- * resolveTextNodeProps({
- *   prefix: 'text',
- *   leadingKey: 'children',
- *   text: tag.text,
- * })
  */
-export function resolveTextNodeProps<
-  Prefix extends string,
-  Leading extends string = Prefix,
->({
+export function resolveTextNodeProps<Prefix extends string>({
   align,
   italic,
-  leadingKey,
   prefix,
   size,
   text,
   tone,
-}: ResolveTextNodeParams<Prefix, Leading>): AllOrNone<
-  { [K in Leading]: string } & TextNodeStyleProps<Prefix>
-> {
-  const resolvedLeadingKey = leadingKey ?? prefix;
-
+}: ResolveTextNodeParams<Prefix>): TextNodeProps<Prefix> {
   return (
     text.trim() !== ''
       ? {
-          [resolvedLeadingKey]: text,
+          [prefix]: text,
           [`${prefix}Align`]: align,
           [`${prefix}Italic`]: italic,
           [`${prefix}Size`]: size,
           [`${prefix}Tone`]: tone,
         }
       : {}
-  ) as AllOrNone<{ [K in Leading]: string } & TextNodeStyleProps<Prefix>>;
+  ) as TextNodeProps<Prefix>;
 }

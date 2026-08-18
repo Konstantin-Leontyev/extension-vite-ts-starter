@@ -19,7 +19,7 @@
  * Основные задачи:
  * 1. Экспортировать полиморфный компонент Text
  * 2. Типизировать пропсы через `TextProps`
- * 3. Экспортировать типы `TextProps`, `TextNodeStyleProps` и `TextNodeProps`
+ * 3. Экспортировать типы `TextProps` и `TextNodeProps`
  * 4. Реэкспортировать публичное API стилей: `TEXT_ALIGN_PRESET_KEYS`, `TEXT_SIZE_PRESET_KEYS`,
  *    `TEXT_TONE_PRESET_KEYS`, `textSizePresets`, `getEllipsisStyles`, `getNativeFieldTextStyles`,
  *    `getTextLineHeight`, `getTextProperties`, `getTextToneColor` и типы
@@ -29,7 +29,6 @@
  *  - страницы и виджеты приложения, например HomePage — рендерят подписи, заголовки и лейблы
  *  - `@ui/presets` и `@ui/table/column-sizing` — используют реэкспорты типографики
  *  - `@ui/card`, `@ui/range-input` и `@ui/modal` — подключают `TextNodeProps`
- *  - `@ui/checkbox`, `@ui/radio-button`, `@ui/switch`, `@ui/tag` и `@ui/fieldset` — подключают `TextNodeStyleProps`
  *  - `@ui/field-error` и `@ui/field-label` — подключают `TextProps`
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
@@ -82,9 +81,9 @@ type TextTag = TextCaptionTag | TextHeadingTag | TextListItemTag | TextPlainTag;
 
 /**
  * TextNodeStyleProps — представляет пропсы стилизации текстового узла с префиксом имён.
- * Подключается пересечением у носителей с собственным `children` и входит в пакет `TextNodeProps`.
+ * Входит в пакет `TextNodeProps`.
  *
- * @template Prefix префикс имён пропсов, например `text` или `title`
+ * @template Prefix префикс имён пропсов, например `title` или `value`
  */
 type TextNodeStyleProps<Prefix extends string> = {
   [K in `${Prefix}Align`]?: TextAlignPreset;
@@ -152,7 +151,6 @@ export {
   textSizePresets,
   type TextAlignPreset,
   type TextNodeProps,
-  type TextNodeStyleProps,
   type TextProps,
   type TextSizePreset,
   type TextTonePreset,

@@ -628,10 +628,12 @@ Card → Modal → Text → Toolbar → Input → SearchField → Listbox + Comb
 - Сброс: `showClearButton` и `clearButtonShape`; образец — Input, затем механический проход по остальным носителям.
 - Fieldset: ведущая строка `legend`, не `label`.
 - Подписи флагов без двоеточия. Превью не отдаёт оси текста без содержимого.
-- На этой ветке не переводим пятёрку на ведущий `text` и не заводим `leadingKey`: не плодим переопределения содержимого.
+- На этой ветке не переводим пятёрку на ведущий `text` и не заводим `leadingKey`: не плодим переопределения содержимого. Резолвер витрины `resolveTextNodeProps` собирает только пакет `TextNodeProps` с ведущим ключом = префиксу (`title`, `subtitle`). Ветки `leadingKey: 'children'` и локального `ChildrenTextNodeProps` нет: `children` в превью передаётся сам, без резолвера.
 - `titleAs` → `titleLevel`. Уровень заголовка вшит в `TextNodeProps` только у префикса `title`; `CardTitleProps` и параметр `Extra` снимаются. Тип уровня — внутренний `TextHeadingTag`, из барреля не экспортируется: ограничение уже на `titleLevel` и на `as` у Text.
 - `as` у Text сужается до объединения групп: heading (`h1`…`h6`), plain (`p` | `span`), caption (`label` | `legend`), list item (`li`). Не текстовые теги (`div`, `section`, `button`) не проходят.
 - В контролах текст не настраивается. Оси `text*` / `legend*` у Tag, Checkbox, RadioButton, Switch и легенды Fieldset закрываются; `value*` у полей тоже вшиваются. Наружу текст настраивается только как контент поверхности (заголовок / подзаголовок). `getNativeFieldTextStyles` уходит вместе с проходом полей: остаётся `getTextProperties` от размера контрола.
+
+**Текущий шаг (18.08, вне маршрута компонента):** закрыть `text*` у Tag, Checkbox, RadioButton, Switch и `legend*` у Fieldset; снять публичный экспорт `TextNodeStyleProps`. Строка остаётся (`children` / `label`), вид вшит нынешними дефолтами. Ведущий проп `text` / `leadingKey` не заводить. `label` → `legend`, `size` вместо `sizePreset`, поля `value*` и `text*` у Button / Toast / Spinner / ProgressBar / SegmentButton — не в этом прогоне. Редакция `project.mdc` §7.6 ещё называет `children` этих контролов контентом с полным набором — правится после OK на формулировку, в этом прогоне действует запись выше.
 
 Решено по типам и панелям (16.08):
 

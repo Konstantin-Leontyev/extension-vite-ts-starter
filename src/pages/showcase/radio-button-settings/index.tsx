@@ -16,8 +16,7 @@ import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import { SIZE_PRESET_KEYS, getTextSize, type SizePreset } from '@ui/presets';
-import { type TextSizePreset, type TextTonePreset } from '@ui/text';
+import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
@@ -35,9 +34,6 @@ import { TextGroup } from '../text-group';
  * @property sizePreset — размер переключателя
  * @property textA — подпись варианта A
  * @property textB — подпись варианта B
- * @property textItalic — включает курсив подписи
- * @property textSize — размер подписи
- * @property textTone — тон подписи
  */
 export type RadioButtonWidgetState = {
   disabledA: boolean;
@@ -46,9 +42,6 @@ export type RadioButtonWidgetState = {
   sizePreset: SizePreset;
   textA: string;
   textB: string;
-  textItalic: boolean;
-  textSize: TextSizePreset;
-  textTone: TextTonePreset;
 };
 
 /**
@@ -87,10 +80,7 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
         value={state.sizePreset}
-        onChange={(size) => {
-          onChange('sizePreset', size);
-          onChange('textSize', getTextSize(size));
-        }}
+        onChange={(size) => onChange('sizePreset', size)}
       />
 
       <Listbox
@@ -115,18 +105,8 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
             onChange: (value) => onChange('textB', value),
           },
         ]}
-        italic={state.textItalic}
         labelPrefix="Text"
         set
-        size={state.textSize}
-        tones={[
-          {
-            value: state.textTone,
-            onChange: (tone) => onChange('textTone', tone),
-          },
-        ]}
-        onItalicChange={(value) => onChange('textItalic', value)}
-        onSizeChange={(size) => onChange('textSize', size)}
       />
 
       <Checkbox

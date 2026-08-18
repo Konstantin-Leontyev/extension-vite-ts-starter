@@ -7,9 +7,6 @@
  *  - размерный ряд через проп `sizePreset`
  *  - подпись справа от бокса через `children`. Без `children` рендерится один бокс
  *    без обёртки
- *  - тон подписи через проп `textTone`
- *  - размер подписи через проп `textSize`
- *  - курсив подписи через проп `textItalic`
  *  - инвертированную палитру через проп `inverted`
  *  - марку checked-состояния через проп `checkedMark`
  *  - марку unchecked-состояния через проп `uncheckedMark`
@@ -32,7 +29,7 @@
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { getTextSize } from '@ui/presets';
-import { Text, type TextNodeStyleProps, type TextTonePreset } from '@ui/text';
+import { Text, type TextTonePreset } from '@ui/text';
 
 import {
   CHECKBOX_CHECKED_MARK_KEYS,
@@ -47,20 +44,19 @@ import {
 } from './checkbox.styles';
 
 /**
- * DEFAULT_CHECKBOX_TEXT_TONE — задаёт тон подписи по умолчанию.
+ * CHECKBOX_TEXT_TONE — задаёт тон подписи.
  * Подпись контрола — вторичный текст, поэтому `muted`.
  */
-const DEFAULT_CHECKBOX_TEXT_TONE: TextTonePreset = 'muted';
+const CHECKBOX_TEXT_TONE: TextTonePreset = 'muted';
 
 /**
  * CheckboxProps — представляет пропсы компонента Checkbox.
  *
  * @property children — подпись
  */
-type CheckboxProps = CheckboxStyleProps &
-  Omit<TextNodeStyleProps<'text'>, 'textAlign'> & {
-    children?: ReactNode;
-  } & Omit<
+type CheckboxProps = CheckboxStyleProps & {
+  children?: ReactNode;
+} & Omit<
     ComponentPropsWithRef<'input'>,
     'children' | 'className' | 'style' | 'type' | keyof CheckboxStyleProps
   >;
@@ -78,9 +74,6 @@ function Checkbox({
   children,
   inverted,
   sizePreset,
-  textItalic,
-  textSize,
-  textTone = DEFAULT_CHECKBOX_TEXT_TONE,
   uncheckedMark,
   ...rest
 }: CheckboxProps) {
@@ -105,11 +98,7 @@ function Checkbox({
   return (
     <StyledCheckboxRoot {...layoutProps}>
       {control}
-      <Text
-        italic={textItalic}
-        sizePreset={textSize ?? getTextSize(sizePreset)}
-        tone={textTone}
-      >
+      <Text sizePreset={getTextSize(sizePreset)} tone={CHECKBOX_TEXT_TONE}>
         {children}
       </Text>
     </StyledCheckboxRoot>

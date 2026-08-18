@@ -22,8 +22,7 @@ import {
   type CheckboxUncheckedMark,
 } from '@ui/checkbox';
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import { SIZE_PRESET_KEYS, getTextSize, type SizePreset } from '@ui/presets';
-import { type TextSizePreset, type TextTonePreset } from '@ui/text';
+import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
@@ -41,9 +40,6 @@ import { TextGroup } from '../text-group';
  * @property inverted — включает инвертированную палитру
  * @property sizePreset — размер бокса
  * @property text — подпись бокса
- * @property textItalic — включает курсив подписи
- * @property textSize — размер подписи
- * @property textTone — тон подписи
  * @property uncheckedMark — марка в unchecked-состоянии
  */
 export type CheckboxWidgetState = {
@@ -53,9 +49,6 @@ export type CheckboxWidgetState = {
   inverted: boolean;
   sizePreset: SizePreset;
   text: string;
-  textItalic: boolean;
-  textSize: TextSizePreset;
-  textTone: TextTonePreset;
   uncheckedMark: CheckboxUncheckedMark;
 };
 
@@ -108,10 +101,7 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
         value={state.sizePreset}
-        onChange={(size) => {
-          onChange('sizePreset', size);
-          onChange('textSize', getTextSize(size));
-        }}
+        onChange={(size) => onChange('sizePreset', size)}
       />
 
       <Checkbox
@@ -130,18 +120,8 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
             onChange: (value) => onChange('text', value),
           },
         ]}
-        italic={state.textItalic}
         labelPrefix="Text"
         set
-        size={state.textSize}
-        tones={[
-          {
-            value: state.textTone,
-            onChange: (tone) => onChange('textTone', tone),
-          },
-        ]}
-        onItalicChange={(value) => onChange('textItalic', value)}
-        onSizeChange={(size) => onChange('textSize', size)}
       />
 
       <Checkbox

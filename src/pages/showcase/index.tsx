@@ -54,7 +54,7 @@ import {
   DEFAULT_TABLE_SIZE_PRESET,
   DEFAULT_TABLE_STRIPED,
 } from '@ui/table';
-import { Tag, getTagTextSize, type TagShowDotProps } from '@ui/tag';
+import { Tag, type TagShowDotProps } from '@ui/tag';
 import { Text, type TextNodeProps } from '@ui/text';
 import { Toast } from '@ui/toast';
 import { DEFAULT_TONE } from '@ui/tones';
@@ -454,9 +454,6 @@ const DEFAULT_CHECKBOX_STATE: CheckboxWidgetState = {
   inverted: false,
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Example',
-  textItalic: false,
-  textSize: getTextSize(DEFAULT_SIZE_PRESET),
-  textTone: 'muted',
   uncheckedMark: 'none',
 };
 
@@ -471,9 +468,6 @@ const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
   sizePreset: DEFAULT_SIZE_PRESET,
   textA: 'Option A',
   textB: 'Option B',
-  textItalic: false,
-  textSize: getTextSize(DEFAULT_SIZE_PRESET),
-  textTone: 'muted',
 };
 
 /**
@@ -483,10 +477,6 @@ const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
 const DEFAULT_FIELDSET_STATE: FieldsetWidgetState = {
   borderTone: 'neutral',
   label: 'Label:',
-  legendAlign: undefined,
-  legendItalic: false,
-  legendSize: 'thin',
-  legendTone: 'muted',
   selected: 'a',
 };
 
@@ -547,9 +537,6 @@ const DEFAULT_SWITCH_STATE: SwitchWidgetState = {
   disabled: false,
   sizePreset: DEFAULT_SIZE_PRESET,
   text: 'Switch',
-  textItalic: false,
-  textSize: getTextSize(DEFAULT_SIZE_PRESET),
-  textTone: 'muted',
   tone: 'primary',
 };
 
@@ -619,9 +606,6 @@ const DEFAULT_TAG_STATE: TagWidgetState = {
   showShadow: true,
   sizePreset: 'tiny',
   text: 'Tag',
-  textItalic: false,
-  textSize: getTagTextSize('tiny'),
-  textTone: 'neutral',
   tinted: false,
   tone: 'primary',
 };
@@ -1271,54 +1255,15 @@ export function ShowcasePage() {
     prefix: 'title',
     text: panelTitle ?? '',
   });
-  const tagTextProps = resolveTextNodeProps({
-    prefix: 'text',
-    leadingKey: 'children',
-    text: tag.text,
-    italic: tag.textItalic,
-    size: tag.textSize,
-    tone: tag.textTone,
-  });
-  const checkboxTextProps = resolveTextNodeProps({
-    prefix: 'text',
-    leadingKey: 'children',
-    text: checkbox.text,
-    italic: checkbox.textItalic,
-    size: checkbox.textSize,
-    tone: checkbox.textTone,
-  });
-  const radioButtonTextAProps = resolveTextNodeProps({
-    prefix: 'text',
-    leadingKey: 'children',
-    text: radioButton.textA,
-    italic: radioButton.textItalic,
-    size: radioButton.textSize,
-    tone: radioButton.textTone,
-  });
-  const radioButtonTextBProps = resolveTextNodeProps({
-    prefix: 'text',
-    leadingKey: 'children',
-    text: radioButton.textB,
-    italic: radioButton.textItalic,
-    size: radioButton.textSize,
-    tone: radioButton.textTone,
-  });
-  const switchTextProps = resolveTextNodeProps({
-    prefix: 'text',
-    leadingKey: 'children',
-    text: switchState.text,
-    italic: switchState.textItalic,
-    size: switchState.textSize,
-    tone: switchState.textTone,
-  });
-  const spinnerTextProps = resolveTextNodeProps({
-    prefix: 'text',
-    leadingKey: 'children',
-    text: spinner.text,
-    italic: spinner.textItalic,
-    size: spinner.textSize,
-    tone: spinner.textTone,
-  });
+  const spinnerTextProps =
+    spinner.text.trim() !== ''
+      ? {
+          children: spinner.text,
+          textItalic: spinner.textItalic,
+          textSize: spinner.textSize,
+          textTone: spinner.textTone,
+        }
+      : {};
   const modalBorderProps: ShowBorderProps = resolveBorderProps(
     modal.showBorder,
     modal.borderTone,
@@ -1745,8 +1690,9 @@ export function ShowcasePage() {
                   tone={tag.tone}
                   {...tagBorderProps}
                   {...tagShowDotProps}
-                  {...tagTextProps}
-                />
+                >
+                  {tag.text.trim() !== '' ? tag.text : undefined}
+                </Tag>
               )}
 
               {renderWidgetCard(
@@ -1760,8 +1706,9 @@ export function ShowcasePage() {
                   sizePreset={checkbox.sizePreset}
                   uncheckedMark={checkbox.uncheckedMark}
                   onChange={(event) => updateCheckbox('checked', event.target.checked)}
-                  {...checkboxTextProps}
-                />
+                >
+                  {checkbox.text.trim() !== '' ? checkbox.text : undefined}
+                </Checkbox>
               )}
 
               {renderWidgetCard(
@@ -1774,8 +1721,9 @@ export function ShowcasePage() {
                     sizePreset={radioButton.sizePreset}
                     value="a"
                     onChange={() => updateRadioButton('selected', 'a')}
-                    {...radioButtonTextAProps}
-                  />
+                  >
+                    {radioButton.textA.trim() !== '' ? radioButton.textA : undefined}
+                  </RadioButton>
                   <RadioButton
                     checked={radioButton.selected === 'b'}
                     disabled={radioButton.disabledB}
@@ -1783,8 +1731,9 @@ export function ShowcasePage() {
                     sizePreset={radioButton.sizePreset}
                     value="b"
                     onChange={() => updateRadioButton('selected', 'b')}
-                    {...radioButtonTextBProps}
-                  />
+                  >
+                    {radioButton.textB.trim() !== '' ? radioButton.textB : undefined}
+                  </RadioButton>
                 </StyledRadioButtonDemo>
               )}
 
@@ -1795,10 +1744,6 @@ export function ShowcasePage() {
                   borderTone={fieldset.borderTone}
                   inlineSize="100%"
                   label={fieldset.label}
-                  legendAlign={fieldset.legendAlign}
-                  legendItalic={fieldset.legendItalic}
-                  legendSize={fieldset.legendSize}
-                  legendTone={fieldset.legendTone}
                   minInlineSize="0"
                 >
                   <RadioButton
@@ -1877,8 +1822,9 @@ export function ShowcasePage() {
                   sizePreset={switchState.sizePreset}
                   tone={switchState.tone}
                   onChange={(event) => updateSwitch('checked', event.target.checked)}
-                  {...switchTextProps}
-                />
+                >
+                  {switchState.text.trim() !== '' ? switchState.text : undefined}
+                </Switch>
               )}
 
               {renderWidgetCard(

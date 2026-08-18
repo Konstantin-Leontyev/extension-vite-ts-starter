@@ -8,9 +8,6 @@
  *  - семантический тон через проп `tone`
  *  - форму через проп `shape`
  *  - содержимое через `children`. Без `children` рендерится только точка-индикатор
- *  - тон текста через проп `textTone`
- *  - размер текста через проп `textSize`
- *  - курсив текста через проп `textItalic`
  *  - точку-индикатор через проп `showDot`
  *  - тон точки через проп `dotTone`
  *  - рамку через проп `showBorder`
@@ -22,8 +19,7 @@
  * 1. Экспортировать компонент Tag
  * 2. Типизировать пропсы через `TagProps`
  * 3. Экспортировать тип `TagShowDotProps`
- * 4. Реэкспортировать публичное API стилей: `TAG_SIZE_PRESET_KEYS`, `getTagTextSize`
- *    и тип `TagSizePreset`
+ * 4. Реэкспортировать публичное API стилей: `TAG_SIZE_PRESET_KEYS` и тип `TagSizePreset`
  *
  * Потребители:
  *  - страницы и виджеты приложения — показывают статусы и метки
@@ -32,7 +28,7 @@
 
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
-import { Text, type TextNodeStyleProps } from '@ui/text';
+import { Text } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import {
@@ -66,10 +62,9 @@ type TagShowDotProps =
  *
  * @property children — содержимое метки
  */
-type TagProps = TagShowDotProps &
-  Omit<TextNodeStyleProps<'text'>, 'textAlign'> & {
-    children?: ReactNode;
-  } & TagStyleProps &
+type TagProps = TagShowDotProps & {
+  children?: ReactNode;
+} & TagStyleProps &
   Omit<
     ComponentPropsWithRef<'span'>,
     'children' | 'className' | 'style' | keyof TagStyleProps
@@ -94,9 +89,6 @@ export function Tag({
   dotTone,
   showDot = DEFAULT_TAG_SHOW_DOT,
   sizePreset,
-  textItalic,
-  textSize,
-  textTone,
   tone,
   ...rest
 }: TagProps) {
@@ -104,12 +96,7 @@ export function Tag({
     <StyledTag sizePreset={sizePreset} tone={tone} {...rest}>
       {showDot && <StyledTagDot dotTone={dotTone} />}
       {Boolean(children) && (
-        <Text
-          ellipsis
-          italic={textItalic}
-          sizePreset={textSize ?? getTagTextSize(sizePreset)}
-          tone={textTone}
-        >
+        <Text ellipsis sizePreset={getTagTextSize(sizePreset)}>
           {children}
         </Text>
       )}
@@ -117,10 +104,4 @@ export function Tag({
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- публичные типы, пресеты и мост размера текста */
-export {
-  TAG_SIZE_PRESET_KEYS,
-  getTagTextSize,
-  type TagShowDotProps,
-  type TagSizePreset,
-};
+export { TAG_SIZE_PRESET_KEYS, type TagShowDotProps, type TagSizePreset };
