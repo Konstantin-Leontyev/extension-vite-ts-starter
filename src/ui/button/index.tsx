@@ -15,8 +15,6 @@
  *  - позицию иконки через проп `iconPosition`
  *  - тон секции иконки через проп `iconTone`
  *  - тон глифа иконки через проп `iconFill`
- *  - форму секции иконки через проп `iconShape`. Без `iconShape` форма
- *    выводится из `shape`
  *  - зафиксированное нажатое состояние через проп `active`
  *
  * Основные задачи:
@@ -38,7 +36,6 @@ import {
   Icon,
   resolveIconShape,
   type IconPosition,
-  type IconShapePreset,
 } from '@ui/icon';
 import { getTextSize } from '@ui/presets';
 import { Text, type TextTonePreset } from '@ui/text';
@@ -64,7 +61,6 @@ const DEFAULT_BUTTON_TYPE = 'button';
  * @property icon — svg иконки действия
  * @property iconFill — тон глифа иконки при нейтральном `iconTone`
  * @property iconPosition — позиция иконки относительно лейбла
- * @property iconShape — форма секции иконки
  * @property iconTone — тон секции иконки
  */
 type ButtonIconProps =
@@ -72,14 +68,12 @@ type ButtonIconProps =
       icon: ReactNode;
       iconFill?: TonePreset;
       iconPosition?: IconPosition;
-      iconShape?: IconShapePreset;
       iconTone?: TonePreset;
     }
   | {
       icon?: never;
       iconFill?: never;
       iconPosition?: never;
-      iconShape?: never;
       iconTone?: never;
     };
 
@@ -120,7 +114,6 @@ export function Button({
   icon,
   iconFill,
   iconPosition = DEFAULT_ICON_POSITION,
-  iconShape: iconShapeProp,
   iconTone,
   id,
   label,
@@ -135,7 +128,7 @@ export function Button({
   const fallbackId = useId();
   const buttonId = id ?? fallbackId;
   const hasIcon = Boolean(icon);
-  const iconShape = iconShapeProp ?? resolveIconShape(shape);
+  const iconShape = resolveIconShape(shape);
 
   const iconNode = hasIcon && (
     <Icon

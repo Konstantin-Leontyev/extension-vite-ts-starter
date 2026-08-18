@@ -6,8 +6,6 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `size`
  *  - форму через проп `shape`
- *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
- *    выводится из `shape`
  *  - тон рамки через проп `borderTone`
  *  - тон глифа шеврона через проп `iconFill`
  *  - позицию шеврона через проп `iconPosition`
@@ -22,8 +20,8 @@
  *  - опции списка через проп `options`
  *  - плейсхолдер неактивного триггера через проп `placeholder`
  *  - контролируемое значение через проп `value`
- *  - опциональный сброс выбора через проп `showClear`. Базовая логика — шеврон.
- *    Clear появляется при выборе, только когда проп включён
+ *  - опциональный сброс выбора через проп `showClearButton`. Базовая логика — шеврон.
+ *    Кнопка сброса появляется при выборе, только когда проп включён
  *
  * Основные задачи:
  * 1. Экспортировать компонент Listbox
@@ -61,7 +59,6 @@ import {
   Icon,
   resolveIconShape,
   type IconPosition,
-  type IconShapePreset,
 } from '@ui/icon';
 import {
   OPEN_CONTROL_PANEL_MAX_OPTION_ROWS,
@@ -107,10 +104,10 @@ const DEFAULT_LISTBOX_MULTIPLE = false;
 const DEFAULT_LISTBOX_PLACEHOLDER = 'Select…';
 
 /**
- * DEFAULT_LISTBOX_SHOW_CLEAR — задаёт показ кнопки сброса выбора по умолчанию.
- * Используется, когда вызывающий код не передал проп `showClear`.
+ * DEFAULT_LISTBOX_SHOW_CLEAR_BUTTON — задаёт показ кнопки сброса выбора по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showClearButton`.
  */
-const DEFAULT_LISTBOX_SHOW_CLEAR = false;
+const DEFAULT_LISTBOX_SHOW_CLEAR_BUTTON = false;
 
 /**
  * LISTBOX_DRUM_SHIFT_NONE — задаёт нулевой сдвиг барабана.
@@ -151,7 +148,6 @@ export type ListboxMultipleProps =
 /**
  * ListboxProps — представляет пропсы компонента Listbox.
  *
- * @property clearShape — форма кнопки сброса
  * @property defaultValue — начальное значение в неконтролируемом режиме
  * @property disabled — включает недоступное состояние
  * @property iconFill — тон глифа шеврона при нейтральном `iconTone`
@@ -160,12 +156,11 @@ export type ListboxMultipleProps =
  * @property onChange — обработчик изменения значения
  * @property options — опции списка
  * @property placeholder — плейсхолдер неактивного триггера
- * @property showClear — включает кнопку сброса выбора при выбранном значении
+ * @property showClearButton — включает кнопку сброса выбора при выбранном значении
  * @property value — контролируемое значение
  */
 type ListboxProps = ListboxStyleProps &
   ListboxMultipleProps & {
-    clearShape?: IconShapePreset;
     defaultValue?: string | string[];
     disabled?: boolean;
     iconFill?: TonePreset;
@@ -174,7 +169,7 @@ type ListboxProps = ListboxStyleProps &
     onChange?: (value: string | string[]) => void;
     options: readonly ListboxOption[];
     placeholder?: string;
-    showClear?: boolean;
+    showClearButton?: boolean;
     value?: string | string[];
   } & Omit<
     ComponentPropsWithRef<'div'>,
@@ -477,7 +472,6 @@ function resolveInitialActiveIndex(
  */
 export function Listbox({
   borderTone,
-  clearShape: clearShapeProp,
   defaultValue,
   disabled = DEFAULT_LISTBOX_DISABLED,
   iconFill,
@@ -490,7 +484,7 @@ export function Listbox({
   options,
   placeholder = DEFAULT_LISTBOX_PLACEHOLDER,
   shape,
-  showClear = DEFAULT_LISTBOX_SHOW_CLEAR,
+  showClearButton = DEFAULT_LISTBOX_SHOW_CLEAR_BUTTON,
   size,
   value,
   ...rest
@@ -498,7 +492,6 @@ export function Listbox({
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const surfaceProps = { borderTone, iconTone, shape, size };
   const iconShape = resolveIconShape(shape);
-  const clearShape = clearShapeProp ?? iconShape;
   const textSizePreset = getTextSize(size);
   const isIconStart = iconPosition === 'start';
   const rootRef = useRef<HTMLDivElement>(null);
@@ -523,7 +516,7 @@ export function Listbox({
   const selectedIndex = options.findIndex((option) => option.value === selectedValue);
   const lineIndex = resolveDrumLineIndex(options, selectedIndex);
   const optionsKey = options.map((option) => option.value).join('\0');
-  const isClearVisible = showClear && selected.length > 0 && !disabled;
+  const isClearVisible = showClearButton && selected.length > 0 && !disabled;
   const showChevron = !isClearVisible;
   const iconNode = showChevron && (
     <Icon
@@ -548,7 +541,7 @@ export function Listbox({
       disabled={disabled}
       iconFill={iconFill}
       iconTone={iconTone}
-      shape={clearShape}
+      shape={iconShape}
       showBorder
       showShadow={false}
       size={size}

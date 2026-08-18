@@ -35,12 +35,12 @@
  *  - контролы с секцией иконки, например Button, Listbox, Combobox и RangeInput —
  *    подключают хелперы секции и читают позицию через `@ui/icon`
  *  - `@ui/toolbar` — читает `resolveIconShape` для формы действий
- *  - `@ui/button` и `@ui/search-field` — читают `resolveIconShape` для формы
- *    секции иконки; SearchField — также для формы сброса
+ *  - `@ui/button`, `@ui/input` и `@ui/search-field` — читают `resolveIconShape`
+ *    для формы секции иконки или сброса; SearchField — для обоих
  *  - `@ui/listbox`, `@ui/combobox` и `@ui/range-input` —
  *    читают `resolveIconShape` для формы окна сброса и шеврона
- *  - `src/pages/showcase` — читает `getIconPadding` и `resolveIconShape` и
- *    демонстрирует состояния в витрине
+ *  - `src/pages/showcase` — читает `getIconPadding` и демонстрирует состояния
+ *    в витрине
  */
 
 import { createElement, type ComponentPropsWithRef, type ElementType } from 'react';

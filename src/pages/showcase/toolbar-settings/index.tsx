@@ -1,8 +1,8 @@
 /**
  * Файл: `src/pages/showcase/toolbar-settings/index.tsx`
  * Определяет панель настроек компонента Toolbar в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, рамки, тени, заливки,
- * формы действия и набора действий в реальном времени.
+ * Содержит контролы для изменения размера, формы, рамки, тени, заливки
+ * и набора действий в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `ToolbarWidgetState`
@@ -12,14 +12,7 @@
  *  - `src/pages/showcase/index.tsx` — подключает панель и синхронизирует состояние с превью виджета Toolbar
  */
 
-import {
-  ICON_SHAPE_PRESET_KEYS,
-  ICON_SIZE_PRESET_KEYS,
-  getIconPadding,
-  resolveIconShape,
-  type IconShapePreset,
-  type IconSizePreset,
-} from '@ui/icon';
+import { ICON_SIZE_PRESET_KEYS, getIconPadding, type IconSizePreset } from '@ui/icon';
 import { SHAPE_PRESET_KEYS, type ShapePreset } from '@ui/presets';
 import { type SurfaceBackgroundPreset } from '@ui/surface';
 import { type TonePreset } from '@ui/tones';
@@ -39,7 +32,6 @@ import { SizeListbox } from '../size-listbox';
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Toolbar.
  *
  * @property actions — демо-ряд действий
- * @property actionShape — форма окна действия
  * @property background — заливка панели инструментов
  * @property borderTone — тон рамки
  * @property shape — форма панели
@@ -49,7 +41,6 @@ import { SizeListbox } from '../size-listbox';
  */
 export type ToolbarWidgetState = {
   actions: IconRowGroupAction[];
-  actionShape: IconShapePreset;
   background: SurfaceBackgroundPreset;
   borderTone: TonePreset;
   shape: ShapePreset;
@@ -101,10 +92,7 @@ export function ToolbarSettings({ onChange, state }: ToolbarSettingsProps) {
         label="Shape:"
         shapes={SHAPE_PRESET_KEYS}
         value={state.shape}
-        onChange={(shape) => {
-          onChange('shape', shape);
-          onChange('actionShape', resolveIconShape(shape));
-        }}
+        onChange={(shape) => onChange('shape', shape)}
       />
 
       <BorderGroup
@@ -120,13 +108,6 @@ export function ToolbarSettings({ onChange, state }: ToolbarSettingsProps) {
         label="Background:"
         value={state.background}
         onChange={(background) => onChange('background', background)}
-      />
-
-      <ShapeListbox
-        label="Action shape:"
-        shapes={ICON_SHAPE_PRESET_KEYS}
-        value={state.actionShape}
-        onChange={(shape) => onChange('actionShape', shape)}
       />
 
       <IconRowGroup

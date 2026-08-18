@@ -22,8 +22,6 @@
  *  - выравнивание подзаголовка через проп `subtitleAlign`
  *  - id заголовка для `aria-labelledby` через проп `titleId`
  *  - ряд действий в шапке через проп `headerActions`
- *  - форму окна действия шапки через проп `actionShape`. Без `actionShape`
- *    форма остаётся дефолтом ряда
  *  - переопределение корневого элемента через проп `as`
  *
  * Основные задачи:
@@ -46,7 +44,6 @@ import {
   type ComponentPropsWithRef,
 } from 'react';
 
-import { type IconShapePreset } from '@ui/icon';
 import { IconButtonRow, type IconButtonRowAction } from '@ui/icon-button-row';
 import {
   Text,
@@ -99,13 +96,11 @@ const DEFAULT_CARD_HEADER_ACTIONS: IconButtonRowAction[] = [];
  *
  * @template T тип корневого элемента, по умолчанию `div`
  *
- * @property actionShape — форма окна действия шапки. Без пропа остаётся дефолтом ряда
  * @property as — переопределяет корневой HTML-тег, например `<article>`, `<div>`, `<section>`
  * @property headerActions — ряд действий в правом верхнем углу
  * @property titleId — id заголовка для `aria-labelledby` у внешнего узла
  */
 type CardProps<T extends CardHtmlTag = 'div'> = {
-  actionShape?: IconShapePreset;
   as?: T;
   headerActions?: IconButtonRowAction[];
   titleId?: string;
@@ -123,7 +118,6 @@ type CardProps<T extends CardHtmlTag = 'div'> = {
  * </Card>
  */
 function Card<T extends CardHtmlTag = 'div'>({
-  actionShape,
   as,
   children,
   headerActions = DEFAULT_CARD_HEADER_ACTIONS,
@@ -155,7 +149,7 @@ function Card<T extends CardHtmlTag = 'div'>({
       align={subtitleAlign}
       as="p"
       italic={subtitleItalic}
-      sizePreset={subtitleSize}
+      size={subtitleSize}
       tone={subtitleTone}
     >
       {subtitle}
@@ -171,7 +165,7 @@ function Card<T extends CardHtmlTag = 'div'>({
             as={titleLevel}
             id={headingId}
             italic={titleItalic}
-            sizePreset={titleSize}
+            size={titleSize}
             tone={titleTone}
           >
             {title}
@@ -197,8 +191,7 @@ function Card<T extends CardHtmlTag = 'div'>({
       insetBlockStart={CARD_PADDING}
       insetInlineEnd={CARD_PADDING}
       position="absolute"
-      shape={actionShape}
-      sizePreset={CARD_HEADER_ACTION_SIZE_PRESET}
+      size={CARD_HEADER_ACTION_SIZE_PRESET}
       zIndex={1}
     />,
     Boolean(children) && <StyledCardBody>{children}</StyledCardBody>

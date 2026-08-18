@@ -39,7 +39,7 @@ import { StyledSettingsForm } from '../showcase.styles';
  * @property multiple — включает множественный выбор
  * @property placeholder — плейсхолдер неактивного триггера
  * @property shape — форма поверхности
- * @property showClear — включает кнопку сброса выбора при выбранном значении
+ * @property showClearButton — включает кнопку сброса выбора при выбранном значении
  * @property size — размер компонента
  * @property value — буфер выбранного значения в превью. В панель не выносится
  */
@@ -53,7 +53,7 @@ export type ListboxWidgetState = {
   multiple: boolean;
   placeholder: string;
   shape: ShapePreset;
-  showClear: boolean;
+  showClearButton: boolean;
   size: SizePreset;
   value: string | string[];
 };
@@ -121,12 +121,12 @@ export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
       )}
 
       <Checkbox
-        checked={state.showClear}
+        checked={state.showClearButton}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('showClear', event.target.checked)
+          onChange('showClearButton', event.target.checked)
         }
       >
-        Show clear
+        Show clear button
       </Checkbox>
 
       <Input

@@ -2,7 +2,7 @@
  * Файл: `src/pages/showcase/input-settings/index.tsx`
  * Определяет панель настроек компонента Input в витрине дизайн-системы.
  * Содержит контролы для изменения размера, формы, рамки, подписи, плейсхолдера,
- * ошибки и состояний в реальном времени.
+ * кнопки сброса, ошибки и состояний в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `InputWidgetState`
@@ -42,6 +42,7 @@ import { TextGroup } from '../text-group';
  *   дефолт компонента не хранится в стейте
  * @property shape — форма строки-поля
  * @property showBorder — включает рамку контрола
+ * @property showClearButton — включает кнопку сброса
  * @property showShadow — включает тень при включённой рамке
  * @property size — размер контрола
  * @property value — значение поля
@@ -57,6 +58,7 @@ export type InputWidgetState = {
   reserveErrorSpace?: boolean;
   shape: ShapePreset;
   showBorder: boolean;
+  showClearButton: boolean;
   showShadow: boolean;
   size: SizePreset;
   value: string;
@@ -111,6 +113,15 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         }
         onClear={() => onChange('placeholder', '')}
       />
+
+      <Checkbox
+        checked={state.showClearButton}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('showClearButton', event.target.checked)
+        }
+      >
+        Show clear button
+      </Checkbox>
 
       <FieldErrorGroup
         errorPlaceholder={state.errorPlaceholder}

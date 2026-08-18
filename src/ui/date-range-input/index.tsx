@@ -6,8 +6,8 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `size`
  *  - форму через проп `shape`
- *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
- *    окна — квадрат Icon: ряд-триггер обрезающий, скругление даёт обрезка ряда
+ *  - кнопка сброса внутри ряда всегда `square`. Публичного пропа формы сброса нет:
+ *    иначе шов с соседней кнопкой поедет
  *  - тон рамки через проп `borderTone`
  *  - форму кнопок подвала через проп `buttonShape`. Без `buttonShape` совпадает
  *    с `shape`
@@ -58,7 +58,7 @@ import { CalendarIcon, CloseIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPanel } from '@ui/anchored-panel';
 import { FieldLabel } from '@ui/field-label';
-import { Icon, type IconShapePreset } from '@ui/icon';
+import { Icon } from '@ui/icon';
 import { DEFAULT_SHAPE_PRESET, getTextSize, type ShapePreset } from '@ui/presets';
 import {
   SEGMENT_BUTTON_PARTS_FLUSH_SHAPE,
@@ -156,16 +156,9 @@ const CALENDAR_PANEL_ARIA_LABEL = 'Date range calendar';
 const CLEAR_DATE_RANGE_ARIA_LABEL = 'Clear date range';
 
 /**
- * DEFAULT_DATE_RANGE_INPUT_CLEAR_SHAPE — задаёт форму кнопки сброса по умолчанию.
- * Используется, когда вызывающий код не передал проп `clearShape`.
- */
-const DEFAULT_DATE_RANGE_INPUT_CLEAR_SHAPE: IconShapePreset = 'square';
-
-/**
  * DateRangeInputProps — представляет пропсы компонента DateRangeInput.
  *
  * @property buttonShape — форма кнопок подвала панели. Без пропа совпадает с `shape`
- * @property clearShape — форма кнопки сброса
  * @property dayShape — форма подсветки дня в панели. Без пропа совпадает с `shape`
  * @property disabled — включает недоступное состояние
  * @property endDay — конечный день диапазона в формате ISO
@@ -193,7 +186,6 @@ type DateRangeInputProps = DateRangeInputStyleProps &
     | keyof DateRangeInputStyleProps
   > & {
     buttonShape?: ShapePreset;
-    clearShape?: IconShapePreset;
     dayShape?: ShapePreset;
     disabled?: boolean;
     endDay?: string;
@@ -323,7 +315,6 @@ function clearDateRangeButtonAriaLabel(startLabel: string, endLabel: string): st
 export function DateRangeInput({
   borderTone,
   buttonShape: buttonShapeProp,
-  clearShape = DEFAULT_DATE_RANGE_INPUT_CLEAR_SHAPE,
   dayShape: dayShapeProp,
   disabled = DEFAULT_DATE_RANGE_INPUT_DISABLED,
   endDay = DEFAULT_DATE_RANGE_INPUT_END_DAY,
@@ -537,7 +528,7 @@ export function DateRangeInput({
               as="button"
               data-slot="clear"
               disabled={disabled}
-              shape={clearShape}
+              shape="square"
               showBorder={false}
               size={size}
               onClick={handleClear}

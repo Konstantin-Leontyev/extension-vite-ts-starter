@@ -6,8 +6,6 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `size`
  *  - форму через проп `shape`
- *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
- *    выводится из `shape`
  *  - тон рамки через проп `borderTone`
  *  - тон глифа шеврона и кнопки сброса через проп `iconFill`
  *  - позицию шеврона и кнопки сброса через проп `iconPosition`
@@ -76,7 +74,6 @@ import {
   Icon,
   resolveIconShape,
   type IconPosition,
-  type IconShapePreset,
 } from '@ui/icon';
 import { Input } from '@ui/input';
 import {
@@ -252,7 +249,6 @@ const RANGE_INPUT_PANEL_ARIA_LABEL = 'Custom range';
 /**
  * RangeInputProps — представляет пропсы компонента RangeInput.
  *
- * @property clearShape — форма кнопки сброса
  * @property defaultValue — начальное значение в неконтролируемом режиме
  * @property disabled — включает недоступное состояние
  * @property errorPlaceholder — серая подсказка в полоске ошибки панели, пока нет ошибки
@@ -275,7 +271,6 @@ type RangeInputProps = RangeInputStyleProps &
   RangeInputButtonProps &
   RangeInputInputProps &
   TextNodeProps<'title'> & {
-    clearShape?: IconShapePreset;
     defaultValue?: RangeValue;
     disabled?: boolean;
     errorPlaceholder?: string;
@@ -405,7 +400,6 @@ export function RangeInput({
   buttonText,
   buttonTextTone,
   buttonTone = DEFAULT_RANGE_INPUT_BUTTON_TONE,
-  clearShape: clearShapeProp,
   defaultValue = EMPTY_RANGE_VALUE,
   disabled = DEFAULT_RANGE_INPUT_DISABLED,
   errorPlaceholder,
@@ -479,7 +473,6 @@ export function RangeInput({
   const panelTitleId = hasTitle ? titleId : undefined;
   const surfaceProps = { borderTone, iconTone, shape, size };
   const iconShape = resolveIconShape(shape);
-  const clearShape = clearShapeProp ?? iconShape;
   const isIconStart = iconPosition === 'start';
   const iconNode = showChevron && (
     <Icon
@@ -636,7 +629,7 @@ export function RangeInput({
       disabled={disabled}
       iconFill={iconFill}
       iconTone={iconTone}
-      shape={clearShape}
+      shape={iconShape}
       showBorder
       showShadow={false}
       size={size}

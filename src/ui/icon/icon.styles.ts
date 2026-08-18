@@ -21,11 +21,11 @@
  *    SearchField и SegmentButtonParts — подключают хелперы секции и читают
  *    позицию через `@ui/icon`
  *  - `@ui/toolbar` — читает `resolveIconShape` для формы действий
- *  - `@ui/button` и `@ui/search-field` — читают `resolveIconShape` для формы
- *    секции иконки; SearchField — также для формы сброса
+ *  - `@ui/button`, `@ui/input` и `@ui/search-field` — читают `resolveIconShape`
+ *    для формы секции иконки или сброса; SearchField — для обоих
  *  - `@ui/listbox`, `@ui/combobox` и `@ui/range-input` —
  *    читают `resolveIconShape` для формы окна сброса и шеврона
- *  - `src/pages/showcase` — читает `getIconPadding` и `resolveIconShape`
+ *  - `src/pages/showcase` — читает `getIconPadding`
  *  - `src/ui/card/card.styles.ts` — читает `getIconSize` для резерва высоты
  *    ряда действий шапки
  */

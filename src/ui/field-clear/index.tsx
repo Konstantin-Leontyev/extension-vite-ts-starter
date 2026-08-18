@@ -57,7 +57,7 @@ type FieldClearProps = {
  * <FieldClear
  *   ariaLabel={resolveClearAriaLabel(label)}
  *   disabled={disabled}
- *   shape={clearShape}
+ *   shape={resolveIconShape(shape)}
  *   size={size}
  *   onClick={handleClear}
  * />
@@ -66,7 +66,7 @@ type FieldClearProps = {
  *   disabled={disabled}
  *   iconFill={iconFill}
  *   iconTone={iconTone}
- *   shape={clearShape}
+ *   shape={resolveIconShape(shape)}
  *   size={size}
  *   onClick={handleClear}
  * />

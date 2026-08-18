@@ -121,19 +121,17 @@ type IconGroupProps = {
  * IconGroup — отображает группу настроек иконки в витрине дизайн-системы.
  *
  * @example
- * // Button: флаг, выбор глифа, формы окна, тона и позиция
+ * // Button: флаг, выбор глифа, тона и позиция
  * <IconGroup
  *   fill={state.iconFill}
  *   iconOptions={COMBOBOX_OPTIONS}
  *   iconValue={state.iconKey}
  *   position={state.iconPosition}
- *   shape={state.iconShape}
  *   show={state.withIcon}
  *   tone={state.iconTone}
  *   onFillChange={(tone) => onChange('iconFill', tone)}
  *   onIconChange={(value) => onChange('iconKey', value as IconKey)}
  *   onPositionChange={(position) => onChange('iconPosition', position)}
- *   onShapeChange={(shape) => onChange('iconShape', shape)}
  *   onShowChange={(checked) => onChange('withIcon', checked)}
  *   onToneChange={(tone) => onChange('iconTone', tone)}
  * />

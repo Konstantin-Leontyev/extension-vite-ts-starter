@@ -6,8 +6,6 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `size`
  *  - форму через проп `shape`
- *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
- *    выводится из `shape`
  *  - тон рамки через проп `borderTone`
  *  - тон глифа шеврона через проп `iconFill`
  *  - позицию шеврона через проп `iconPosition`
@@ -22,8 +20,8 @@
  *  - плейсхолдер поля поиска через проп `searchPlaceholder`
  *  - контролируемое значение через проп `value`
  *  - текстовую метку через проп `aria-label`
- *  - опциональный сброс выбора через проп `showClear`. Базовая логика — шеврон.
- *    Clear появляется при выборе, только когда проп включён
+ *  - опциональный сброс выбора через проп `showClearButton`. Базовая логика — шеврон.
+ *    Кнопка сброса появляется при выборе, только когда проп включён
  *
  * Основные задачи:
  * 1. Экспортировать компонент Combobox
@@ -60,7 +58,6 @@ import {
   Icon,
   resolveIconShape,
   type IconPosition,
-  type IconShapePreset,
 } from '@ui/icon';
 import { resolveEnabledOpenControlIndex } from '@ui/open-control';
 import { getTextSize } from '@ui/presets';
@@ -105,10 +102,10 @@ const DEFAULT_COMBOBOX_PLACEHOLDER = 'Select…';
 const DEFAULT_COMBOBOX_SEARCH_PLACEHOLDER = 'Search…';
 
 /**
- * DEFAULT_COMBOBOX_SHOW_CLEAR — задаёт показ кнопки сброса выбора по умолчанию.
- * Используется, когда вызывающий код не передал проп `showClear`.
+ * DEFAULT_COMBOBOX_SHOW_CLEAR_BUTTON — задаёт показ кнопки сброса выбора по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showClearButton`.
  */
-const DEFAULT_COMBOBOX_SHOW_CLEAR = false;
+const DEFAULT_COMBOBOX_SHOW_CLEAR_BUTTON = false;
 
 /**
  * ComboboxOption — представляет опцию списка Combobox.
@@ -129,7 +126,6 @@ export type ComboboxOption = {
  * ComboboxProps — представляет пропсы компонента Combobox.
  *
  * @property aria-label — текстовая метка триггера
- * @property clearShape — форма кнопки сброса
  * @property defaultValue — начальное значение в неконтролируемом режиме
  * @property disabled — включает недоступное состояние
  * @property emptyMessage — текст при пустом результате поиска
@@ -140,12 +136,11 @@ export type ComboboxOption = {
  * @property options — опции списка
  * @property placeholder — плейсхолдер неактивного триггера
  * @property searchPlaceholder — плейсхолдер поля поиска
- * @property showClear — включает кнопку сброса выбора при выбранном значении
+ * @property showClearButton — включает кнопку сброса выбора при выбранном значении
  * @property value — контролируемое значение
  */
 type ComboboxProps = ComboboxStyleProps & {
   'aria-label'?: string;
-  clearShape?: IconShapePreset;
   defaultValue?: string;
   disabled?: boolean;
   emptyMessage?: string;
@@ -156,7 +151,7 @@ type ComboboxProps = ComboboxStyleProps & {
   options: readonly ComboboxOption[];
   placeholder?: string;
   searchPlaceholder?: string;
-  showClear?: boolean;
+  showClearButton?: boolean;
   value?: string;
 } & Omit<
     ComponentPropsWithRef<'div'>,
@@ -201,7 +196,6 @@ function filterComboboxOptions(
 export function Combobox({
   'aria-label': ariaLabel,
   borderTone,
-  clearShape: clearShapeProp,
   defaultValue,
   disabled = DEFAULT_COMBOBOX_DISABLED,
   emptyMessage = DEFAULT_COMBOBOX_EMPTY_MESSAGE,
@@ -214,7 +208,7 @@ export function Combobox({
   placeholder = DEFAULT_COMBOBOX_PLACEHOLDER,
   searchPlaceholder = DEFAULT_COMBOBOX_SEARCH_PLACEHOLDER,
   shape,
-  showClear = DEFAULT_COMBOBOX_SHOW_CLEAR,
+  showClearButton = DEFAULT_COMBOBOX_SHOW_CLEAR_BUTTON,
   size,
   value,
   ...rest
@@ -222,7 +216,6 @@ export function Combobox({
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const surfaceProps = { borderTone, iconTone, shape, size };
   const iconShape = resolveIconShape(shape);
-  const clearShape = clearShapeProp ?? iconShape;
   const textSizePreset = getTextSize(size);
   const isIconStart = iconPosition === 'start';
   const rootRef = useRef<HTMLDivElement>(null);
@@ -243,7 +236,7 @@ export function Combobox({
   const isControlled = value !== undefined;
   const selectedValue = isControlled ? value : internalSelected;
   const isClearVisible =
-    showClear && selectedValue !== undefined && selectedValue !== '' && !disabled;
+    showClearButton && selectedValue !== undefined && selectedValue !== '' && !disabled;
   const showChevron = !isClearVisible;
   const iconNode = showChevron && (
     <Icon
@@ -268,7 +261,7 @@ export function Combobox({
       disabled={disabled}
       iconFill={iconFill}
       iconTone={iconTone}
-      shape={clearShape}
+      shape={iconShape}
       showBorder
       showShadow={false}
       size={size}

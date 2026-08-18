@@ -7,10 +7,6 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `size`
  *  - форму строки-поля через проп `shape`
- *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
- *    выводится из `shape`
- *  - форму секции иконки через проп `iconShape`. Без `iconShape` форма
- *    выводится из `shape`
  *  - рамку контрола через проп `showBorder`
  *  - тень через проп `showShadow`
  *  - тон рамки через проп `borderTone`
@@ -49,12 +45,7 @@ import { SearchIcon } from '@icons';
 import { resolveClearAriaLabel } from '@ui/a11y';
 import { FieldClear } from '@ui/field-clear';
 import { FieldLabel } from '@ui/field-label';
-import {
-  Icon,
-  resolveIconShape,
-  type IconPosition,
-  type IconShapePreset,
-} from '@ui/icon';
+import { Icon, resolveIconShape, type IconPosition } from '@ui/icon';
 import { assignRef } from '@ui/ref';
 import { type TonePreset } from '@ui/tones';
 
@@ -96,27 +87,23 @@ const CLEAR_SEARCH_ARIA_LABEL = 'Clear search';
  *
  * @property icon — svg секции иконки
  * @property iconPosition — позиция иконки относительно поля
- * @property iconShape — форма секции иконки
  * @property showIcon — включает секцию иконки
  */
 type SearchFieldShowIconProps =
   | {
       icon?: never;
       iconPosition?: never;
-      iconShape?: never;
       showIcon: false;
     }
   | {
       icon?: ReactNode;
       iconPosition?: IconPosition;
-      iconShape?: IconShapePreset;
       showIcon?: true;
     };
 
 /**
  * SearchFieldProps — представляет пропсы компонента SearchField.
  *
- * @property clearShape — форма кнопки сброса
  * @property iconFill — тон глифа иконки при нейтральном `iconTone`
  * @property iconTone — тон секции иконки
  * @property label — подпись над полем
@@ -125,7 +112,6 @@ type SearchFieldShowIconProps =
  * @property value — контролируемое значение
  */
 type SearchFieldProps = {
-  clearShape?: IconShapePreset;
   iconFill?: TonePreset;
   iconTone?: TonePreset;
   label?: string;
@@ -159,11 +145,9 @@ type SearchFieldProps = {
  */
 function SearchField({
   borderTone,
-  clearShape: clearShapeProp,
   icon = DEFAULT_SEARCH_FIELD_ICON,
   iconFill,
   iconPosition = DEFAULT_SEARCH_FIELD_ICON_POSITION,
-  iconShape: iconShapeProp,
   iconTone,
   label,
   onChange,
@@ -176,9 +160,7 @@ function SearchField({
   value,
   ...rest
 }: SearchFieldProps) {
-  const resolvedIconShape = resolveIconShape(shape);
-  const clearShape = clearShapeProp ?? resolvedIconShape;
-  const iconShape = iconShapeProp ?? resolvedIconShape;
+  const iconShape = resolveIconShape(shape);
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const { disabled, id: idProp, ref, ...inputProps } = restProps;
   const fallbackId = useId();
@@ -213,7 +195,7 @@ function SearchField({
       disabled={disabled}
       iconFill={iconFill}
       iconTone={iconTone}
-      shape={clearShape}
+      shape={iconShape}
       size={size}
       onClick={handleClear}
     />

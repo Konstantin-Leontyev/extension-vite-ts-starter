@@ -1,7 +1,7 @@
 /**
  * Файл: `src/pages/showcase/search-field-settings/index.tsx`
  * Определяет панель настроек компонента SearchField в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, формы сброса, формы секции иконки, рамки, иконки, подписи,
+ * Содержит контролы для изменения размера, формы, рамки, иконки, подписи,
  * плейсхолдера и состояния `disabled` в реальном времени.
  *
  * Основные задачи:
@@ -15,12 +15,7 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import {
-  ICON_SHAPE_PRESET_KEYS,
-  resolveIconShape,
-  type IconPosition,
-  type IconShapePreset,
-} from '@ui/icon';
+import { type IconPosition } from '@ui/icon';
 import { Input } from '@ui/input';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { type TonePreset } from '@ui/tones';
@@ -28,7 +23,6 @@ import { type TonePreset } from '@ui/tones';
 import { BorderGroup } from '../border-group';
 import { ControlGroup } from '../control-group';
 import { IconGroup } from '../icon-group';
-import { ShapeListbox } from '../shape-listbox';
 import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
 import { StyledSettingsForm } from '../showcase.styles';
 
@@ -39,12 +33,10 @@ import { StyledSettingsForm } from '../showcase.styles';
  * Используется для синхронизации значений между панелью управления и демонстрационным SearchField.
  *
  * @property borderTone — тон рамки
- * @property clearShape — форма кнопки сброса
  * @property disabled — включает недоступное состояние поля
  * @property iconFill — тон глифа иконки
  * @property iconKey — витринный ключ выбора глифа иконки для превью
  * @property iconPosition — позиция иконки относительно поля
- * @property iconShape — форма секции иконки
  * @property iconTone — тон секции иконки
  * @property label — подпись над полем
  * @property placeholder — плейсхолдер значения
@@ -57,12 +49,10 @@ import { StyledSettingsForm } from '../showcase.styles';
  */
 export type SearchFieldWidgetState = {
   borderTone: TonePreset;
-  clearShape: IconShapePreset;
   disabled: boolean;
   iconFill: TonePreset;
   iconKey: IconKey;
   iconPosition: IconPosition;
-  iconShape: IconShapePreset;
   iconTone: TonePreset;
   label: string;
   placeholder: string;
@@ -102,19 +92,8 @@ export function SearchFieldSettings({ onChange, state }: SearchFieldSettingsProp
         shape={state.shape}
         size={state.size}
         onLabelChange={(label) => onChange('label', label)}
-        onShapeChange={(shape) => {
-          onChange('shape', shape);
-          onChange('clearShape', resolveIconShape(shape));
-          onChange('iconShape', resolveIconShape(shape));
-        }}
+        onShapeChange={(shape) => onChange('shape', shape)}
         onSizeChange={(size) => onChange('size', size)}
-      />
-
-      <ShapeListbox
-        label="Clear shape:"
-        shapes={ICON_SHAPE_PRESET_KEYS}
-        value={state.clearShape}
-        onChange={(shape) => onChange('clearShape', shape)}
       />
 
       <BorderGroup
@@ -132,13 +111,11 @@ export function SearchFieldSettings({ onChange, state }: SearchFieldSettingsProp
         iconValue={state.iconKey}
         labelPrefix="Icon"
         position={state.iconPosition}
-        shape={state.iconShape}
         show={state.showIcon}
         tone={state.iconTone}
         onFillChange={(tone) => onChange('iconFill', tone)}
         onIconChange={(value) => onChange('iconKey', value as IconKey)}
         onPositionChange={(position) => onChange('iconPosition', position)}
-        onShapeChange={(shape) => onChange('iconShape', shape)}
         onShowChange={(checked) => onChange('showIcon', checked)}
         onToneChange={(tone) => onChange('iconTone', tone)}
       />

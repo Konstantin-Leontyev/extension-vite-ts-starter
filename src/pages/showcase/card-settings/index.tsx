@@ -1,8 +1,8 @@
 /**
  * Файл: `src/pages/showcase/card-settings/index.tsx`
  * Определяет панель настроек компонента Card в витрине дизайн-системы.
- * Содержит контролы для изменения рамки и тени, фона, заголовка, подзаголовка,
- * формы действий шапки и набора действий в реальном времени.
+ * Содержит контролы для изменения рамки и тени, фона, заголовка, подзаголовка
+ * и набора действий в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `CardWidgetState`
@@ -13,7 +13,7 @@
  */
 
 import { CARD_HEADER_ACTION_SIZE_PRESET } from '@ui/card';
-import { ICON_SHAPE_PRESET_KEYS, getIconPadding, type IconShapePreset } from '@ui/icon';
+import { getIconPadding } from '@ui/icon';
 import { type SurfaceBackgroundPreset } from '@ui/surface';
 import { type TextAlignPreset, type TextSizePreset, type TextTonePreset } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
@@ -21,7 +21,6 @@ import { type TonePreset } from '@ui/tones';
 import { BackgroundListbox } from '../background-listbox';
 import { BorderGroup } from '../border-group';
 import { IconRowGroup, type IconRowGroupAction } from '../icon-row-group';
-import { ShapeListbox } from '../shape-listbox';
 import { StyledSettingsForm } from '../showcase.styles';
 import { TextGroup } from '../text-group';
 
@@ -42,7 +41,6 @@ const DEFAULT_CARD_HEADER_ACTION_ICON_PADDING = getIconPadding(
  * живёт внутри TextGroup.
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Card.
  *
- * @property actionShape — форма окна действия шапки
  * @property background — заливка карточки
  * @property borderTone — тон рамки
  * @property headerActions — демо-ряд действий шапки
@@ -60,7 +58,6 @@ const DEFAULT_CARD_HEADER_ACTION_ICON_PADDING = getIconPadding(
  * @property titleTone — тон заголовка
  */
 export type CardWidgetState = {
-  actionShape: IconShapePreset;
   background: SurfaceBackgroundPreset;
   borderTone: TonePreset;
   headerActions: IconRowGroupAction[];
@@ -157,13 +154,6 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
         onAlignChange={(align) => onChange('subtitleAlign', align)}
         onItalicChange={(value) => onChange('subtitleItalic', value)}
         onSizeChange={(size) => onChange('subtitleSize', size)}
-      />
-
-      <ShapeListbox
-        label="Action shape:"
-        shapes={ICON_SHAPE_PRESET_KEYS}
-        value={state.actionShape}
-        onChange={(shape) => onChange('actionShape', shape)}
       />
 
       <IconRowGroup

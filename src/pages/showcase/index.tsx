@@ -23,7 +23,7 @@ import { Checkbox } from '@ui/checkbox';
 import { Combobox } from '@ui/combobox';
 import { DateRangeInput, todayUtc } from '@ui/date-range-input';
 import { Fieldset } from '@ui/fieldset';
-import { Icon, getIconPadding, resolveIconShape } from '@ui/icon';
+import { Icon, getIconPadding } from '@ui/icon';
 import { Input } from '@ui/input';
 import { Listbox, type ListboxMultipleProps } from '@ui/listbox';
 import { Modal, type ModalAccessibleName } from '@ui/modal';
@@ -265,6 +265,7 @@ const DEFAULT_INPUT_STATE: InputWidgetState = {
   placeholder: 'e.g. value',
   shape: DEFAULT_SHAPE_PRESET,
   showBorder: true,
+  showClearButton: true,
   showShadow: true,
   size: DEFAULT_SIZE_PRESET,
   value: '',
@@ -276,12 +277,10 @@ const DEFAULT_INPUT_STATE: InputWidgetState = {
  */
 const DEFAULT_SEARCH_FIELD_STATE: SearchFieldWidgetState = {
   borderTone: 'neutral',
-  clearShape: resolveIconShape(DEFAULT_SHAPE_PRESET),
   disabled: false,
   iconFill: 'neutral',
   iconKey: 'search',
   iconPosition: 'start',
-  iconShape: resolveIconShape(DEFAULT_SHAPE_PRESET),
   iconTone: 'neutral',
   label: 'Label:',
   placeholder: 'Search…',
@@ -303,7 +302,6 @@ const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
   iconFill: 'neutral',
   iconKey: 'search',
   iconPosition: 'end',
-  iconShape: resolveIconShape(DEFAULT_SHAPE_PRESET),
   iconTone: 'neutral',
   label: 'Label:',
   shape: DEFAULT_SHAPE_PRESET,
@@ -346,7 +344,7 @@ const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
   multiple: false,
   placeholder: 'Select…',
   shape: DEFAULT_SHAPE_PRESET,
-  showClear: false,
+  showClearButton: false,
   size: DEFAULT_SIZE_PRESET,
   value: '',
 };
@@ -365,7 +363,7 @@ const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
   placeholder: 'Select…',
   searchPlaceholder: 'Search…',
   shape: DEFAULT_SHAPE_PRESET,
-  showClear: false,
+  showClearButton: false,
   size: DEFAULT_SIZE_PRESET,
   value: '',
   withIcon: false,
@@ -605,7 +603,6 @@ const DEFAULT_TABLE_STATE: TableWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_MODAL_STATE: ModalWidgetState = {
-  actionShape: 'round',
   background: 'surface',
   borderTone: 'neutral',
   showBorder: false,
@@ -625,7 +622,6 @@ const DEFAULT_MODAL_STATE: ModalWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_CARD_STATE: CardWidgetState = {
-  actionShape: 'round',
   background: 'surface',
   borderTone: 'neutral',
   headerActions: [
@@ -664,7 +660,6 @@ const DEFAULT_TEXT_STATE: TextWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_TOOLBAR_STATE: ToolbarWidgetState = {
-  actionShape: resolveIconShape(DEFAULT_SHAPE_PRESET),
   actions: [
     {
       disabled: false,
@@ -1275,7 +1270,6 @@ export function ShowcasePage() {
         showIcon: true,
         icon: getIcon(searchField.iconKey),
         iconPosition: searchField.iconPosition,
-        iconShape: searchField.iconShape,
       }
     : { showIcon: false };
   const listboxMultipleProps: ListboxMultipleProps = listbox.multiple
@@ -1289,7 +1283,6 @@ export function ShowcasePage() {
         icon: getIcon(button.iconKey),
         iconFill: button.iconFill,
         iconPosition: button.iconPosition,
-        iconShape: button.iconShape,
         iconTone: button.iconTone,
       }
     : {};
@@ -1360,7 +1353,6 @@ export function ShowcasePage() {
                     Open modal
                   </Button>
                   <Modal
-                    actionShape={modal.actionShape}
                     background={modal.background}
                     inlineSize={MODAL_INLINE_SIZE[modal.size]}
                     open={isModalOpen}
@@ -1377,7 +1369,6 @@ export function ShowcasePage() {
               {renderWidgetCard(
                 'card',
                 <Card
-                  actionShape={card.actionShape}
                   background={card.background}
                   headerActions={card.headerActions.map(resolveIconButtonRowAction)}
                   {...cardBorderProps}
@@ -1405,7 +1396,6 @@ export function ShowcasePage() {
               {renderWidgetCard(
                 'toolbar',
                 <Toolbar
-                  actionShape={toolbar.actionShape}
                   actions={toolbar.actions.map(resolveIconButtonRowAction)}
                   ariaLabel={TOOLBAR_DEMO_ARIA_LABEL}
                   background={toolbar.background}
@@ -1428,6 +1418,7 @@ export function ShowcasePage() {
                   placeholder={input.placeholder}
                   reserveErrorSpace={input.reserveErrorSpace}
                   shape={input.shape}
+                  showClearButton={input.showClearButton}
                   size={input.size}
                   value={input.value}
                   onChange={(event) => updateInput('value', event.target.value)}
@@ -1440,7 +1431,6 @@ export function ShowcasePage() {
                 'search-field',
                 <SearchField
                   alignSelf="center"
-                  clearShape={searchField.clearShape}
                   disabled={searchField.disabled}
                   iconFill={searchField.iconFill}
                   iconTone={searchField.iconTone}
@@ -1468,7 +1458,7 @@ export function ShowcasePage() {
                   options={LISTBOX_DEMO_OPTIONS}
                   placeholder={listbox.placeholder}
                   shape={listbox.shape}
-                  showClear={listbox.showClear}
+                  showClearButton={listbox.showClearButton}
                   size={listbox.size}
                   value={listbox.value}
                   onChange={(value) => updateListbox('value', value)}
@@ -1490,7 +1480,7 @@ export function ShowcasePage() {
                   placeholder={combobox.placeholder}
                   searchPlaceholder={combobox.searchPlaceholder}
                   shape={combobox.shape}
-                  showClear={combobox.showClear}
+                  showClearButton={combobox.showClearButton}
                   size={combobox.size}
                   value={combobox.value}
                   onChange={(value) => updateCombobox('value', value)}

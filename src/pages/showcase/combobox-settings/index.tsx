@@ -40,7 +40,7 @@ import { StyledSettingsForm } from '../showcase.styles';
  * @property placeholder — плейсхолдер неактивного триггера
  * @property searchPlaceholder — плейсхолдер поля поиска
  * @property shape — форма поверхности
- * @property showClear — включает кнопку сброса выбора при выбранном значении
+ * @property showClearButton — включает кнопку сброса выбора при выбранном значении
  * @property size — размер компонента
  * @property value — буфер выбранного значения в превью. В панель не выносится
  * @property withIcon — витринный ключ показа иконок в демо-опциях. Выключенный — опции без иконок
@@ -55,7 +55,7 @@ export type ComboboxWidgetState = {
   placeholder: string;
   searchPlaceholder: string;
   shape: ShapePreset;
-  showClear: boolean;
+  showClearButton: boolean;
   size: SizePreset;
   value: string;
   withIcon: boolean;
@@ -113,12 +113,12 @@ export function ComboboxSettings({ onChange, state }: ComboboxSettingsProps) {
       </Checkbox>
 
       <Checkbox
-        checked={state.showClear}
+        checked={state.showClearButton}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('showClear', event.target.checked)
+          onChange('showClearButton', event.target.checked)
         }
       >
-        Show clear
+        Show clear button
       </Checkbox>
 
       <Input

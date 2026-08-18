@@ -15,7 +15,7 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { resolveIconShape, type IconPosition, type IconShapePreset } from '@ui/icon';
+import { type IconPosition } from '@ui/icon';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { type TextTonePreset } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
@@ -39,7 +39,6 @@ import { ToneListbox } from '../tone-listbox';
  * @property iconFill — тон глифа иконки
  * @property iconKey — витринный ключ выбора глифа иконки для превью
  * @property iconPosition — позиция иконки относительно лейбла
- * @property iconShape — форма секции иконки. Стартует с вывода из `shape`
  * @property iconTone — тон секции иконки
  * @property label — подпись над кнопкой
  * @property shape — форма кнопки
@@ -55,7 +54,6 @@ export type ButtonWidgetState = {
   iconFill: TonePreset;
   iconKey: IconKey;
   iconPosition: IconPosition;
-  iconShape: IconShapePreset;
   iconTone: TonePreset;
   label: string;
   shape: ShapePreset;
@@ -94,10 +92,7 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
         shape={state.shape}
         size={state.size}
         onLabelChange={(label) => onChange('label', label)}
-        onShapeChange={(shape) => {
-          onChange('shape', shape);
-          onChange('iconShape', resolveIconShape(shape));
-        }}
+        onShapeChange={(shape) => onChange('shape', shape)}
         onSizeChange={(size) => onChange('size', size)}
       />
 
@@ -114,13 +109,11 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
         iconValue={state.iconKey}
         labelPrefix="Icon"
         position={state.iconPosition}
-        shape={state.iconShape}
         show={state.withIcon}
         tone={state.iconTone}
         onFillChange={(tone) => onChange('iconFill', tone)}
         onIconChange={(value) => onChange('iconKey', value as IconKey)}
         onPositionChange={(position) => onChange('iconPosition', position)}
-        onShapeChange={(shape) => onChange('iconShape', shape)}
         onShowChange={(checked) => onChange('withIcon', checked)}
         onToneChange={(tone) => onChange('iconTone', tone)}
       />

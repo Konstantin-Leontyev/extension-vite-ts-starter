@@ -6,13 +6,11 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `size`
  *  - форму строки-поля через проп `shape`
- *  - форму кнопки сброса через проп `clearShape`. Без `clearShape` форма
- *    выводится из `shape`
  *  - рамку контрола через проп `showBorder`
  *  - тень через проп `showShadow`
  *  - тон рамки через проп `borderTone`
  *  - контролируемое значение через проп `value`. Без `value` поле неконтролируемое
- *  - кнопку сброса через проп `showClear`. Дефолт — сброс есть; кнопка
+ *  - кнопку сброса через проп `showClearButton`. Дефолт — сброс есть; кнопка
  *    появляется при непустом значении
  *  - обработчик сброса через проп `onClear`
  *  - подпись над полем через проп `label`
@@ -45,7 +43,7 @@ import { resolveClearAriaLabel } from '@ui/a11y';
 import { FieldClear } from '@ui/field-clear';
 import { FieldError } from '@ui/field-error';
 import { FieldLabel } from '@ui/field-label';
-import { resolveIconShape, type IconShapePreset } from '@ui/icon';
+import { resolveIconShape } from '@ui/icon';
 import { assignRef } from '@ui/ref';
 
 import {
@@ -63,10 +61,10 @@ import {
 const DEFAULT_INPUT_INVALID = false;
 
 /**
- * DEFAULT_INPUT_SHOW_CLEAR — задаёт показ кнопки сброса по умолчанию.
- * Используется, когда вызывающий код не передал проп `showClear`.
+ * DEFAULT_INPUT_SHOW_CLEAR_BUTTON — задаёт показ кнопки сброса по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showClearButton`.
  */
-const DEFAULT_INPUT_SHOW_CLEAR = true;
+const DEFAULT_INPUT_SHOW_CLEAR_BUTTON = true;
 
 /**
  * InputValueProps — представляет пропсы контролируемого значения Input.
@@ -88,23 +86,21 @@ type InputValueProps =
 /**
  * InputProps — представляет пропсы компонента Input.
  *
- * @property clearShape — форма кнопки сброса
  * @property error — текст ошибки под полем
  * @property errorPlaceholder — серая подсказка в полоске ошибки, пока нет ошибки
  * @property invalid — включает обводку ошибки без текста, если проп `error` не передан
  * @property label — подпись над полем
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки, чтобы появление текста не сдвигало соседей
- * @property showClear — включает кнопку сброса
+ * @property showClearButton — включает кнопку сброса
  */
 type InputProps = InputStyleProps &
   InputValueProps & {
-    clearShape?: IconShapePreset;
     error?: string;
     errorPlaceholder?: string;
     invalid?: boolean;
     label?: string;
     reserveErrorSpace?: boolean;
-    showClear?: boolean;
+    showClearButton?: boolean;
   } & Omit<
     ComponentPropsWithRef<'input'>,
     'className' | 'style' | 'value' | keyof InputStyleProps
@@ -119,7 +115,6 @@ type InputProps = InputStyleProps &
  */
 export function Input({
   borderTone,
-  clearShape: clearShapeProp,
   error,
   errorPlaceholder,
   invalid = DEFAULT_INPUT_INVALID,
@@ -128,7 +123,7 @@ export function Input({
   reserveErrorSpace,
   shape,
   showBorder,
-  showClear = DEFAULT_INPUT_SHOW_CLEAR,
+  showClearButton = DEFAULT_INPUT_SHOW_CLEAR_BUTTON,
   showShadow,
   size,
   value,
@@ -151,8 +146,8 @@ export function Input({
     () => String(defaultValue ?? '').length > 0
   );
   const hasValue = isControlled ? String(value).length > 0 : hasUncontrolledValue;
-  const hasClear = showClear && hasValue;
-  const clearShape = clearShapeProp ?? resolveIconShape(shape);
+  const hasClear = showClearButton && hasValue;
+  const clearShape = resolveIconShape(shape);
 
   function handleChange(event: ChangeEvent<HTMLInputElement>): void {
     if (!isControlled) {
