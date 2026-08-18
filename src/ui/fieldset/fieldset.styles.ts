@@ -3,9 +3,9 @@
  * Определяет внешний вид компонента Fieldset.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `FieldsetStyleProps` и тон рамки через `FieldsetBorderTone`
+ * 1. Типизировать пропсы через `FieldsetStyleProps` и тон рамки через `FieldsetBorderTonePreset`
  * 2. Хранить расширенный ряд тонов рамки в `FIELDSET_BORDER_TONE_PRESETS`
- * 3. Предоставить перечень `FIELDSET_BORDER_TONE_KEYS`
+ * 3. Предоставить перечень `FIELDSET_BORDER_TONE_PRESET_KEYS`
  * 4. Предоставить styled-узел `StyledFieldset`
  *
  * Потребители:
@@ -31,7 +31,7 @@ import { DEFAULT_TONE, TONE_PRESETS, type TonePreset } from '@ui/tones';
  * Канонический набор расширен ключом `inverted` для белой рамки на цветной подложке.
  *
  * Соответствие приватно для модуля, доступ к перечню тонов — только через
- * `FIELDSET_BORDER_TONE_KEYS`, чтение цвета — через `getFieldsetBorderColor`.
+ * `FIELDSET_BORDER_TONE_PRESET_KEYS`, чтение цвета — через `getFieldsetBorderColor`.
  */
 const FIELDSET_BORDER_TONE_PRESETS = {
   ...TONE_PRESETS,
@@ -39,18 +39,18 @@ const FIELDSET_BORDER_TONE_PRESETS = {
 } as const satisfies Record<'inverted' | TonePreset, keyof ThemeColors | undefined>;
 
 /**
- * FieldsetBorderTone — представляет тон рамки Fieldset, включая расширение `inverted`.
+ * FieldsetBorderTonePreset — представляет тон рамки Fieldset, включая расширение `inverted`.
  */
-export type FieldsetBorderTone = keyof typeof FIELDSET_BORDER_TONE_PRESETS;
+export type FieldsetBorderTonePreset = keyof typeof FIELDSET_BORDER_TONE_PRESETS;
 
 /**
- * FIELDSET_BORDER_TONE_KEYS — формирует перечень тонов рамки из ключей
+ * FIELDSET_BORDER_TONE_PRESET_KEYS — формирует перечень тонов рамки из ключей
  * `FIELDSET_BORDER_TONE_PRESETS`.
  * Используется в панелях настроек витрины дизайн-системы: `ToneListbox` принимает его
  * пропом `tones`.
  */
-export const FIELDSET_BORDER_TONE_KEYS = Object.freeze(
-  Object.keys(FIELDSET_BORDER_TONE_PRESETS) as FieldsetBorderTone[]
+export const FIELDSET_BORDER_TONE_PRESET_KEYS = Object.freeze(
+  Object.keys(FIELDSET_BORDER_TONE_PRESETS) as FieldsetBorderTonePreset[]
 );
 
 /**
@@ -64,7 +64,7 @@ export const FIELDSET_BORDER_TONE_KEYS = Object.freeze(
  */
 function getFieldsetBorderColor(
   theme: AppTheme,
-  borderTone: FieldsetBorderTone
+  borderTone: FieldsetBorderTonePreset
 ): string {
   const colorKey = FIELDSET_BORDER_TONE_PRESETS[borderTone];
 
@@ -77,7 +77,7 @@ function getFieldsetBorderColor(
  * @property borderTone — тон рамки
  */
 export type FieldsetStyleProps = LayoutProps & {
-  borderTone?: FieldsetBorderTone;
+  borderTone?: FieldsetBorderTonePreset;
 };
 
 /**
@@ -89,7 +89,7 @@ const FIELDSET_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'borderTone']
  * DEFAULT_FIELDSET_BORDER_TONE — задаёт тон рамки по умолчанию.
  * Используется, когда вызывающий код не передал проп `borderTone`.
  */
-const DEFAULT_FIELDSET_BORDER_TONE: FieldsetBorderTone = DEFAULT_TONE;
+const DEFAULT_FIELDSET_BORDER_TONE: FieldsetBorderTonePreset = DEFAULT_TONE;
 
 /**
  * getFieldsetStyles — возвращает CSS-правила для корня `StyledFieldset`: габариты, отступы

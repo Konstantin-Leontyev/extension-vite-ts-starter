@@ -115,7 +115,7 @@ type TextNodeProps<Prefix extends string> = AllOrNone<
 /**
  * TextProps — представляет пропсы компонента Text.
  *
- * @template T тип корневого элемента. Дефолт `span` задаёт функция `Text`, не этот тип
+ * @template T тип корневого элемента
  *
  * @property as — переопределяет корневой HTML-тег, например `<p>`, `<h1>`, `<label>`
  */

@@ -21,7 +21,7 @@ import {
   type IconSizePreset,
 } from '@ui/icon';
 import { SHAPE_PRESET_KEYS, type ShapePreset } from '@ui/presets';
-import { type SurfaceBackground } from '@ui/surface';
+import { type SurfaceBackgroundPreset } from '@ui/surface';
 import { type TonePreset } from '@ui/tones';
 
 import { BackgroundListbox } from '../background-listbox';
@@ -50,7 +50,7 @@ import { SizeListbox } from '../size-listbox';
 export type ToolbarWidgetState = {
   actions: IconRowGroupAction[];
   actionShape: IconShapePreset;
-  background: SurfaceBackground;
+  background: SurfaceBackgroundPreset;
   borderTone: TonePreset;
   shape: ShapePreset;
   showBorder: boolean;

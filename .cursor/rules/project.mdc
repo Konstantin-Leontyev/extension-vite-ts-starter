@@ -596,7 +596,7 @@ background-color: ${getToneColor(theme, tone, theme.colors.border)};
 
 - Проп с типом `TonePreset` называется `[что]Tone` (`borderTone`, `dotTone`), не `[что]Color`. Имя `[что]Color` — только для локальной переменной с уже резолвленной CSS-строкой внутри `<name>.styles.ts`; имя — по элементу, который красит (`textColor`, `toastColor`, `borderColor`), не по способу получения (`resolvedColor`) и не абстрактно (`accentColor`).
 - Источник union — только `@ui/tones`; в теме держать соответствующие токены.
-- Опции для витрины — сателлиты `pages/showcase/<проп>-listbox`: `tone-listbox` (проп `tones`, фильтр `excludeTone`), `size-listbox` (проп `sizes`), `shape-listbox` (проп `shapes`), `align-listbox` (проп `aligns`). Сателлит — дженерик по union пропа (`<Tone extends string = TonePreset>`), принимает перечень `*_KEYS` настраиваемого компонента. Хелперы преобразования перечней в опции (`get*ListboxOptions`) живут в сателлите; в `ui/` экспортов, собирающих опции для витрины, не заводить — наружу из `ui/` идут только перечни `*_KEYS`. Сателлит перечня одного компонента (`background-listbox` для `SURFACE_BACKGROUND_KEYS`) дженерик и проп перечня не заводит — перечень зашит внутри, снаружи только `label`, `value` и `onChange`; хелпер опций — по общему правилу.
+- Опции для витрины — сателлиты `pages/showcase/<проп>-listbox`: `tone-listbox` (проп `tones`, фильтр `excludeTone`), `size-listbox` (проп `sizes`), `shape-listbox` (проп `shapes`), `align-listbox` (проп `aligns`). Сателлит — дженерик по union пропа (`<Tone extends string = TonePreset>`), принимает перечень `*_KEYS` настраиваемого компонента. Хелперы преобразования перечней в опции (`get*ListboxOptions`) живут в сателлите; в `ui/` экспортов, собирающих опции для витрины, не заводить — наружу из `ui/` идут только перечни `*_KEYS`. Сателлит перечня одного компонента (`background-listbox` для `SURFACE_BACKGROUND_PRESET_KEYS`) дженерик и проп перечня не заводит — перечень зашит внутри, снаружи только `label`, `value` и `onChange`; хелпер опций — по общему правилу.
 
 ### 7.5. Расширение ряда и тона — спред + локальный ключ
 
@@ -611,7 +611,7 @@ background-color: ${getToneColor(theme, tone, theme.colors.border)};
 Плохо — ветка по расширенному ключу, значение `'inverse'` из таблицы продублировано хардкодом:
 
 ```ts
-function getFieldsetBorderColor(theme: AppTheme, borderTone: FieldsetBorderTone): string {
+function getFieldsetBorderColor(theme: AppTheme, borderTone: FieldsetBorderTonePreset): string {
   if (borderTone === 'inverted') {
     return theme.colors.inverse;
   }
@@ -623,7 +623,7 @@ function getFieldsetBorderColor(theme: AppTheme, borderTone: FieldsetBorderTone)
 Хорошо — единый lookup, тон по умолчанию даёт `undefined` и падает в запасной цвет:
 
 ```ts
-function getFieldsetBorderColor(theme: AppTheme, borderTone: FieldsetBorderTone): string {
+function getFieldsetBorderColor(theme: AppTheme, borderTone: FieldsetBorderTonePreset): string {
   const colorKey = FIELDSET_BORDER_TONE_PRESETS[borderTone];
 
   return colorKey === undefined ? theme.colors.border : theme.colors[colorKey];

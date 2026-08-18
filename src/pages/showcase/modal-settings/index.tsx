@@ -15,7 +15,7 @@
 
 import { ICON_SHAPE_PRESET_KEYS, type IconShapePreset } from '@ui/icon';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
-import { type SurfaceBackground } from '@ui/surface';
+import { type SurfaceBackgroundPreset } from '@ui/surface';
 import { type TextAlignPreset, type TextSizePreset, type TextTonePreset } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
@@ -53,7 +53,7 @@ import { TextGroup } from '../text-group';
  */
 export type ModalWidgetState = {
   actionShape: IconShapePreset;
-  background: SurfaceBackground;
+  background: SurfaceBackgroundPreset;
   borderTone: TonePreset;
   showBorder: boolean;
   showShadow: boolean;

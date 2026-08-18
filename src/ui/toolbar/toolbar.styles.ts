@@ -32,7 +32,7 @@ import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import {
   DEFAULT_SURFACE_BACKGROUND,
   getSurfaceBackgroundColor,
-  type SurfaceBackground,
+  type SurfaceBackgroundPreset,
 } from '@ui/surface';
 import { getTheme, type AppTheme } from '@ui/theme';
 
@@ -45,7 +45,7 @@ import { getTheme, type AppTheme } from '@ui/theme';
  */
 export type ToolbarStyleProps = LayoutProps &
   BorderProps & {
-    background?: SurfaceBackground;
+    background?: SurfaceBackgroundPreset;
     shape?: ShapePreset;
     sizePreset?: IconSizePreset;
   };

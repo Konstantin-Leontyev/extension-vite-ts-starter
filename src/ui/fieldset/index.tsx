@@ -15,8 +15,8 @@
  * Основные задачи:
  * 1. Экспортировать компонент Fieldset
  * 2. Типизировать пропсы через `FieldsetProps`
- * 3. Реэкспортировать перечень тонов рамки `FIELDSET_BORDER_TONE_KEYS`
- *    и тип `FieldsetBorderTone`
+ * 3. Реэкспортировать перечень тонов рамки `FIELDSET_BORDER_TONE_PRESET_KEYS`
+ *    и тип `FieldsetBorderTonePreset`
  *
  * Потребители:
  *  - страницы и виджеты приложения — группируют поля формы
@@ -33,9 +33,9 @@ import {
 } from '@ui/text';
 
 import {
-  FIELDSET_BORDER_TONE_KEYS,
+  FIELDSET_BORDER_TONE_PRESET_KEYS,
   StyledFieldset,
-  type FieldsetBorderTone,
+  type FieldsetBorderTonePreset,
   type FieldsetStyleProps,
 } from './fieldset.styles';
 
@@ -101,4 +101,4 @@ function Fieldset({
   );
 }
 
-export { FIELDSET_BORDER_TONE_KEYS, Fieldset, type FieldsetBorderTone };
+export { FIELDSET_BORDER_TONE_PRESET_KEYS, Fieldset, type FieldsetBorderTonePreset };

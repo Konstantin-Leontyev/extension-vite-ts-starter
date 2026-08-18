@@ -12,7 +12,7 @@
  *  - `src/pages/showcase/index.tsx` — подключает панель и синхронизирует состояние с превью виджета группы полей
  */
 
-import { FIELDSET_BORDER_TONE_KEYS, type FieldsetBorderTone } from '@ui/fieldset';
+import { FIELDSET_BORDER_TONE_PRESET_KEYS, type FieldsetBorderTonePreset } from '@ui/fieldset';
 import { type TextAlignPreset, type TextSizePreset, type TextTonePreset } from '@ui/text';
 
 import { StyledSettingsForm } from '../showcase.styles';
@@ -35,7 +35,7 @@ import { ToneListbox } from '../tone-listbox';
  * @property selected — витринный ключ активного варианта демо-группы
  */
 export type FieldsetWidgetState = {
-  borderTone: FieldsetBorderTone;
+  borderTone: FieldsetBorderTonePreset;
   label: string;
   legendAlign?: TextAlignPreset;
   legendItalic: boolean;
@@ -69,7 +69,7 @@ export function FieldsetSettings({ onChange, state }: FieldsetSettingsProps) {
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
       <ToneListbox
         label="Border tone:"
-        tones={FIELDSET_BORDER_TONE_KEYS}
+        tones={FIELDSET_BORDER_TONE_PRESET_KEYS}
         value={state.borderTone}
         onChange={(tone) => onChange('borderTone', tone)}
       />

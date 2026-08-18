@@ -2,7 +2,7 @@
  * Файл: `src/pages/showcase/background-listbox/index.tsx`
  * Предоставляет компонент BackgroundListbox для выбора заливки поверхности
  * в витрине дизайн-системы. Используется только в витрине: в продуктовый код
- * и `@ui/` не входит. Зашивает перечень `SURFACE_BACKGROUND_KEYS` внутри сателлита.
+ * и `@ui/` не входит. Зашивает перечень `SURFACE_BACKGROUND_PRESET_KEYS` внутри сателлита.
  *
  * Поддерживает:
  *  - подпись через проп `label`
@@ -20,15 +20,15 @@
  */
 
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import { SURFACE_BACKGROUND_KEYS, type SurfaceBackground } from '@ui/surface';
+import { SURFACE_BACKGROUND_PRESET_KEYS, type SurfaceBackgroundPreset } from '@ui/surface';
 
 /**
- * getBackgroundListboxOptions — преобразует `SURFACE_BACKGROUND_KEYS` в опции Listbox.
+ * getBackgroundListboxOptions — преобразует `SURFACE_BACKGROUND_PRESET_KEYS` в опции Listbox.
  *
  * @returns опции для Listbox
  */
 function getBackgroundListboxOptions(): ListboxOption[] {
-  return SURFACE_BACKGROUND_KEYS.map((background) => ({
+  return SURFACE_BACKGROUND_PRESET_KEYS.map((background) => ({
     label: background,
     value: background,
   }));
@@ -43,8 +43,8 @@ function getBackgroundListboxOptions(): ListboxOption[] {
  */
 type BackgroundListboxProps = {
   label: string;
-  onChange: (background: SurfaceBackground) => void;
-  value: SurfaceBackground;
+  onChange: (background: SurfaceBackgroundPreset) => void;
+  value: SurfaceBackgroundPreset;
 };
 
 /**
@@ -63,7 +63,7 @@ export function BackgroundListbox({ label, onChange, value }: BackgroundListboxP
       label={label}
       options={getBackgroundListboxOptions()}
       value={value}
-      onChange={(nextBackground) => onChange(nextBackground as SurfaceBackground)}
+      onChange={(nextBackground) => onChange(nextBackground as SurfaceBackgroundPreset)}
     />
   );
 }

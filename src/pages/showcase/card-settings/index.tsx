@@ -14,7 +14,7 @@
 
 import { CARD_HEADER_ACTION_SIZE_PRESET } from '@ui/card';
 import { ICON_SHAPE_PRESET_KEYS, getIconPadding, type IconShapePreset } from '@ui/icon';
-import { type SurfaceBackground } from '@ui/surface';
+import { type SurfaceBackgroundPreset } from '@ui/surface';
 import { type TextAlignPreset, type TextSizePreset, type TextTonePreset } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
@@ -61,7 +61,7 @@ const DEFAULT_CARD_HEADER_ACTION_ICON_PADDING = getIconPadding(
  */
 export type CardWidgetState = {
   actionShape: IconShapePreset;
-  background: SurfaceBackground;
+  background: SurfaceBackgroundPreset;
   borderTone: TonePreset;
   headerActions: IconRowGroupAction[];
   showBorder: boolean;
