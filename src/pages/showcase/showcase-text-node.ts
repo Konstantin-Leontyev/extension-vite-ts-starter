@@ -14,7 +14,7 @@ import {
   type TextAlignPreset,
   type TextNodeStyleProps,
   type TextSizePreset,
-  type TextTone,
+  type TextTonePreset,
 } from '@ui/text';
 import { type AllOrNone } from '@ui/type-utils';
 
@@ -36,7 +36,7 @@ type ResolveTextNodeParams<Prefix extends string, Leading extends string = Prefi
   prefix: Prefix;
   size?: TextSizePreset;
   text: string;
-  tone?: TextTone;
+  tone?: TextTonePreset;
 };
 
 /**

@@ -14,7 +14,7 @@ import { type CSSProperties } from 'react';
 import styled from 'styled-components';
 
 import { getTextSize } from '@ui/presets';
-import { getNativeFieldTextStyles, type TextSizePreset, type TextTone } from '@ui/text';
+import { getNativeFieldTextStyles, type TextSizePreset, type TextTonePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 /**
@@ -29,7 +29,7 @@ export type TableInlineFieldStyleProps = {
   textAlign?: CSSProperties['textAlign'];
   textItalic?: boolean;
   textSize?: TextSizePreset;
-  textTone?: TextTone;
+  textTone?: TextTonePreset;
 };
 
 /**

@@ -16,7 +16,7 @@
 import { createContext } from 'react';
 
 import { type SizePreset } from '@ui/presets';
-import { type TextSizePreset, type TextTone } from '@ui/text';
+import { type TextSizePreset, type TextTonePreset } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 /**
@@ -34,7 +34,7 @@ export type ToastInput = {
   sizePreset?: SizePreset;
   textItalic?: boolean;
   textSize?: TextSizePreset;
-  textTone?: TextTone;
+  textTone?: TextTonePreset;
   tone?: TonePreset;
 };
 

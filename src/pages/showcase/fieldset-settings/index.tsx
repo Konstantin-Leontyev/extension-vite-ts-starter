@@ -13,7 +13,7 @@
  */
 
 import { FIELDSET_BORDER_TONE_KEYS, type FieldsetBorderTone } from '@ui/fieldset';
-import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
+import { type TextAlignPreset, type TextSizePreset, type TextTonePreset } from '@ui/text';
 
 import { StyledSettingsForm } from '../showcase.styles';
 import { TextGroup } from '../text-group';
@@ -40,7 +40,7 @@ export type FieldsetWidgetState = {
   legendAlign?: TextAlignPreset;
   legendItalic: boolean;
   legendSize: TextSizePreset;
-  legendTone: TextTone;
+  legendTone: TextTonePreset;
   selected: 'a' | 'b';
 };
 

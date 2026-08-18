@@ -15,7 +15,7 @@
 import { CARD_HEADER_ACTION_SIZE_PRESET } from '@ui/card';
 import { ICON_SHAPE_PRESET_KEYS, getIconPadding, type IconShapePreset } from '@ui/icon';
 import { type SurfaceBackground } from '@ui/surface';
-import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
+import { type TextAlignPreset, type TextSizePreset, type TextTonePreset } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import { BackgroundListbox } from '../background-listbox';
@@ -70,12 +70,12 @@ export type CardWidgetState = {
   subtitleAlign?: TextAlignPreset;
   subtitleItalic: boolean;
   subtitleSize?: TextSizePreset;
-  subtitleTone: TextTone;
+  subtitleTone: TextTonePreset;
   title: string;
   titleAlign?: TextAlignPreset;
   titleItalic: boolean;
   titleSize: TextSizePreset;
-  titleTone: TextTone;
+  titleTone: TextTonePreset;
 };
 
 /**

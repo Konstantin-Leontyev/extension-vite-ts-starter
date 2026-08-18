@@ -18,7 +18,7 @@ import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { getTextSize, type ShapePreset, type SizePreset } from '@ui/presets';
 import { Stepper } from '@ui/stepper';
-import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
+import { type TextAlignPreset, type TextSizePreset, type TextTonePreset } from '@ui/text';
 
 import { ControlGroup } from '../control-group';
 import { StyledSettingsForm } from '../showcase.styles';
@@ -55,7 +55,7 @@ export type StepperWidgetState = {
   textAlign?: TextAlignPreset;
   textItalic: boolean;
   textSize: TextSizePreset;
-  textTone?: TextTone;
+  textTone?: TextTonePreset;
   value: number;
 };
 

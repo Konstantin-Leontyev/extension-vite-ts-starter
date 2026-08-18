@@ -638,8 +638,8 @@ const TEXT_TONE_PRESETS = {
   muted: 'muted',
 } as const satisfies Record<TonePreset | 'muted', keyof ThemeColors | undefined>;
 
-export type TextTone = keyof typeof TEXT_TONE_PRESETS;
-export const TEXT_TONE_KEYS = Object.freeze(Object.keys(TEXT_TONE_PRESETS) as TextTone[]);
+export type TextTonePreset = keyof typeof TEXT_TONE_PRESETS;
+export const TEXT_TONE_PRESET_KEYS = Object.freeze(Object.keys(TEXT_TONE_PRESETS) as TextTonePreset[]);
 ```
 
 Хорошо — расширение размерного ряда, из `src/ui/tag/tag.styles.ts`:
@@ -686,7 +686,7 @@ const tagMinBlockSize = {
 
 **Механика по носителям.**
 
-- У Text проп — `tone` типа `TextTone`, включает `muted`; `muted` в канон контролов не входит.
+- У Text проп — `tone` типа `TextTonePreset`, включает `muted`; `muted` в канон контролов не входит.
 - Обёртки с внутренним Text (Button, Tag, Toast, Spinner, ProgressBar, RadioButton, SegmentButton, Card) наружу отдают пропсы проброса текста `textTone`, `textSize`, `textItalic` и пробрасывают их во внутренний Text (`tone`, `sizePreset`, `italic`). Компонент не резолвит цвет текста за Text — контраст на заливке обеспечивает CSS контрола плюс `color: inherit` у Text.
 - Контрол, чей контент — значение нативного поля с текстовым суффиксом (Stepper), отдаёт набор осей значения `valueTone`, `valueSize`, `valueItalic`, `valueAlign`: набор красит и поле, и суффикс — суффикс через внутренний Text, поле через генератор стилей (типографика — `getTextProperties`, тон — `getTextToneColor`, раздел 7.8). Размер пары резолвится один раз в `index.tsx` (`valueSize ?? getTextSize(sizePreset)`) и передаётся узлам готовым значением — по 8.2 дубль дефолта вниз по дереву запрещён.
 - Контрол, чей контент — значение нативного поля без суффикса (Input, SearchField, инлайн-поле Table), отдаёт наружу тот же набор `value*`: значение поля — такой же пользовательский контент, как `children` у Tag, и урезать его до выравнивания с курсивом нельзя. Размер идёт общим `getTextSize(sizePreset)`, тон — `getTextToneColor` в генераторе (раздел 7.8). Составной контрол, собирающий подпись из выбора (триггер Listbox, Combobox, RangeInput, сегменты DateRangeInput), набор осей не отдаёт: текст там не введён пользователем, а согласован с шевроном, сбросом и панелью, и тон уже занят ролью «значения нет».
@@ -723,7 +723,7 @@ const tagMinBlockSize = {
 Где значение нельзя обернуть в Text (`<input>`, `<textarea>`, ячейка-редактор), текстовую стилизацию даёт модуль `@ui/text` — единственный источник типографики и тонов текста:
 
 - Типографика — `getTextProperties(textSizePreset)`: тройка `font-size`, `font-weight`, `line-height` из `textSizePresets`. Мост от размера контрола: `getTextProperties(getTextSize(sizePreset))` в генераторе компонента. Копия тройки правил — локальная в компоненте или дубль-таблица в `@ui/presets` — запрещена; сам `@ui/presets` типографику не пишет, наружу отдаёт только метку через `getTextSize` (раздел 7.2).
-- Тон — `getTextToneColor(theme, textTone)`: цвет темы или `undefined` для тона по умолчанию — правило `color` не пишется, работает наследование через `color: inherit` узла. Локальная таблица тонов текста и резолв тона текста через `@ui/tones` запрещены — тип пропа `TextTone`, его цвета знает только `@ui/text`.
+- Тон — `getTextToneColor(theme, textTone)`: цвет темы или `undefined` для тона по умолчанию — правило `color` не пишется, работает наследование через `color: inherit` узла. Локальная таблица тонов текста и резолв тона текста через `@ui/tones` запрещены — тип пропа `TextTonePreset`, его цвета знает только `@ui/text`.
 - **Текстовый блок нативного поля — один хелпер на всех.** Набор «типографика мостом + тон + условные `text-align` и `font-style: italic`» одинаков у Input, SearchField и инлайн-поля Table, поэтому живёт одним генератором рядом с `getTextProperties`, а компоненты его зовут. Три копии этого блока по `<name>.styles.ts` — дубль ресурса.
 - **Плейсхолдер стилизуется через поле, не через псевдоэлемент.** Размер, насыщенность, высота строки, выравнивание и курсив ставятся на сам `input` и наследуются подсказкой: дублировать их в псевдоэлементе запрещено — получится вторая точка правды, расходящаяся с полем. Псевдоэлемент по спецификации принимает и остальные свойства шрифта, но проект их не задаёт: разный вид подсказки и значения — не ось дизайн-системы.
 - **Цвет плейсхолдера — одно правило в `ui/reset.ts`.** `::placeholder { color: ${theme.colors.muted} }` пишется глобально, а не в генераторе поля: приглушённая подсказка одинакова у каждого поля проекта, включая поля панелей и `<textarea>`, у которых своего текстового генератора нет. Правило `::placeholder` в `<name>.styles.ts` — перебивание ресета и вторая точка правды.
@@ -760,7 +760,7 @@ type TagProps = {
   children?: ReactNode;
   dotTone?: TonePreset;
   showDot?: boolean;
-  textTone?: TextTone;
+  textTone?: TextTonePreset;
 } & TagStyleProps &
   Omit<ComponentPropsWithRef<'span'>, keyof TagStyleProps | 'className' | 'style'>;
 ```
@@ -870,7 +870,7 @@ type CardTitleProps =
       title: string;
       titleAlign?: TextAlignPreset;
       titleSize?: TextSizePreset;
-      titleTone?: TextTone;
+      titleTone?: TextTonePreset;
     }
   | { title?: never; titleAlign?: never; titleSize?: never; titleTone?: never };
 ```

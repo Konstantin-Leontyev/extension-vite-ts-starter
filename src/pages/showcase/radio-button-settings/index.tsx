@@ -17,7 +17,7 @@ import { type ChangeEvent } from 'react';
 import { Checkbox } from '@ui/checkbox';
 import { Listbox, type ListboxOption } from '@ui/listbox';
 import { SIZE_PRESET_KEYS, getTextSize, type SizePreset } from '@ui/presets';
-import { type TextSizePreset, type TextTone } from '@ui/text';
+import { type TextSizePreset, type TextTonePreset } from '@ui/text';
 
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
@@ -48,7 +48,7 @@ export type RadioButtonWidgetState = {
   textB: string;
   textItalic: boolean;
   textSize: TextSizePreset;
-  textTone: TextTone;
+  textTone: TextTonePreset;
 };
 
 /**

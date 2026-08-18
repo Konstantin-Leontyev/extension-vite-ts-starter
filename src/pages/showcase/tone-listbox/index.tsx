@@ -100,7 +100,7 @@ function resolveToneListboxValue<Tone extends string>(
  * @property label — текст подписи над листбоксом
  * @property onChange — обработчик изменения выбранного тона
  * @property tones — перечень допустимых тонов из настраиваемого компонента,
- *   например `TONE_PRESET_KEYS` или `TEXT_TONE_KEYS`
+ *   например `TONE_PRESET_KEYS` или `TEXT_TONE_PRESET_KEYS`
  * @property value — текущий выбранный тон, по умолчанию `neutral`.
  *   Панели передают состояние как есть, не дублируя это умолчание запасными значениями
  */
@@ -124,7 +124,7 @@ type ToneListboxProps<Tone extends string> = {
  * />
  * <ToneListbox
  *   label="Text tone:"
- *   tones={TEXT_TONE_KEYS}
+ *   tones={TEXT_TONE_PRESET_KEYS}
  *   excludeTone="primary"
  *   value={textTone}
  *   onChange={setTextTone}

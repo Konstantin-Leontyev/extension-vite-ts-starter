@@ -24,7 +24,7 @@
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { getTextSize } from '@ui/presets';
-import { Text, type TextSizePreset, type TextTone } from '@ui/text';
+import { Text, type TextSizePreset, type TextTonePreset } from '@ui/text';
 
 import { StyledToast, type ToastStyleProps } from './toast.styles';
 
@@ -40,7 +40,7 @@ type ToastProps = ToastStyleProps & {
   children: ReactNode;
   textItalic?: boolean;
   textSize?: TextSizePreset;
-  textTone?: TextTone;
+  textTone?: TextTonePreset;
 } & Omit<
     ComponentPropsWithRef<'div'>,
     'children' | 'className' | 'style' | keyof ToastStyleProps

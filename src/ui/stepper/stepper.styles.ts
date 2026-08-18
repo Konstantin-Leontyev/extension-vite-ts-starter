@@ -31,7 +31,7 @@ import {
   getTextToneColor,
   type TextAlignPreset,
   type TextSizePreset,
-  type TextTone,
+  type TextTonePreset,
 } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { type TonePreset } from '@ui/tones';
@@ -64,7 +64,7 @@ export type StepperStyleProps = LayoutProps &
     textAlign?: TextAlignPreset;
     textItalic?: boolean;
     textSize?: TextSizePreset;
-    textTone?: TextTone;
+    textTone?: TextTonePreset;
   };
 
 /**
@@ -250,7 +250,7 @@ export const StyledStepperValue = styled.div.withConfig({
 type StepperInputStyleProps = {
   textItalic?: boolean;
   textSize: TextSizePreset;
-  textTone?: TextTone;
+  textTone?: TextTonePreset;
 };
 
 /**

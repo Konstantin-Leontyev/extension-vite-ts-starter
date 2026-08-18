@@ -26,7 +26,7 @@
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { getTextSize } from '@ui/presets';
-import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
+import { Text, getTextLineHeight, type TextSizePreset, type TextTonePreset } from '@ui/text';
 
 import {
   StyledSpinner,
@@ -51,7 +51,7 @@ const DEFAULT_SPINNER_RESERVE_TEXT_SPACE = false;
  * DEFAULT_SPINNER_TEXT_TONE — задаёт тон подписи по умолчанию.
  * Подпись контрола — вторичный текст, поэтому `muted`.
  */
-const DEFAULT_SPINNER_TEXT_TONE: TextTone = 'muted';
+const DEFAULT_SPINNER_TEXT_TONE: TextTonePreset = 'muted';
 
 /**
  * SpinnerProps — представляет пропсы компонента Spinner.
@@ -69,7 +69,7 @@ type SpinnerProps = SpinnerStyleProps & {
   reserveTextSpace?: boolean;
   textItalic?: boolean;
   textSize?: TextSizePreset;
-  textTone?: TextTone;
+  textTone?: TextTonePreset;
 } & Omit<
     ComponentPropsWithRef<'div'>,
     'children' | 'className' | 'style' | keyof SpinnerStyleProps

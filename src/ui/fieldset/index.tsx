@@ -29,7 +29,7 @@ import {
   Text,
   type TextNodeStyleProps,
   type TextSizePreset,
-  type TextTone,
+  type TextTonePreset,
 } from '@ui/text';
 
 import {
@@ -49,7 +49,7 @@ const DEFAULT_FIELDSET_LEGEND_SIZE_PRESET: TextSizePreset = 'thin';
  * DEFAULT_FIELDSET_LEGEND_TONE — задаёт тон заголовка по умолчанию.
  * Заголовок группы — вторичный текст, поэтому `muted`.
  */
-const DEFAULT_FIELDSET_LEGEND_TONE: TextTone = 'muted';
+const DEFAULT_FIELDSET_LEGEND_TONE: TextTonePreset = 'muted';
 
 /**
  * FieldsetProps — представляет пропсы компонента Fieldset.

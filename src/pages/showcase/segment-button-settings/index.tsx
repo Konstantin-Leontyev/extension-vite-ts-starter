@@ -19,7 +19,7 @@ import { Checkbox } from '@ui/checkbox';
 import { type IconPosition } from '@ui/icon';
 import { Listbox, type ListboxOption } from '@ui/listbox';
 import { getTextSize, type ShapePreset, type SizePreset } from '@ui/presets';
-import { type TextSizePreset, type TextTone } from '@ui/text';
+import { type TextSizePreset, type TextTonePreset } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { ControlGroup } from '../control-group';
@@ -78,7 +78,7 @@ export type SegmentButtonWidgetState = {
   centerIconKey: IconKey;
   centerIconPosition: IconPosition;
   centerLabel: string;
-  centerTextTone: TextTone;
+  centerTextTone: TextTonePreset;
   centerTone: TonePreset;
   centerWithIcon: boolean;
   label: string;
@@ -88,7 +88,7 @@ export type SegmentButtonWidgetState = {
   leftIconKey: IconKey;
   leftIconPosition: IconPosition;
   leftLabel: string;
-  leftTextTone: TextTone;
+  leftTextTone: TextTonePreset;
   leftTone: TonePreset;
   leftWithIcon: boolean;
   rightActive: boolean;
@@ -97,7 +97,7 @@ export type SegmentButtonWidgetState = {
   rightIconKey: IconKey;
   rightIconPosition: IconPosition;
   rightLabel: string;
-  rightTextTone: TextTone;
+  rightTextTone: TextTonePreset;
   rightTone: TonePreset;
   rightWithIcon: boolean;
   segmentCount: '2' | '3';
@@ -260,7 +260,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
                 {
                   label: 'Center text tone:',
                   value: state.centerTextTone,
-                  onChange: (tone: TextTone) => onChange('centerTextTone', tone),
+                  onChange: (tone: TextTonePreset) => onChange('centerTextTone', tone),
                 },
               ]
             : []),

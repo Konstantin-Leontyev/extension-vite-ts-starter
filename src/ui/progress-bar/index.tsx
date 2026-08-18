@@ -27,7 +27,7 @@
 import { type ComponentPropsWithRef } from 'react';
 
 import { getTextSize } from '@ui/presets';
-import { Text, type TextSizePreset, type TextTone } from '@ui/text';
+import { Text, type TextSizePreset, type TextTonePreset } from '@ui/text';
 
 import {
   StyledProgressBar,
@@ -47,7 +47,7 @@ const DEFAULT_PROGRESS_BAR_SHOW_TEXT = true;
  * DEFAULT_PROGRESS_BAR_TEXT_TONE — задаёт тон подписи по умолчанию.
  * Подпись контрола — вторичный текст, поэтому `muted`.
  */
-const DEFAULT_PROGRESS_BAR_TEXT_TONE: TextTone = 'muted';
+const DEFAULT_PROGRESS_BAR_TEXT_TONE: TextTonePreset = 'muted';
 
 /**
  * ProgressBarShowTextProps — представляет пропсы подписи ProgressBar.
@@ -69,7 +69,7 @@ type ProgressBarShowTextProps =
       showText?: true;
       textItalic?: boolean;
       textSize?: TextSizePreset;
-      textTone?: TextTone;
+      textTone?: TextTonePreset;
     };
 
 /**

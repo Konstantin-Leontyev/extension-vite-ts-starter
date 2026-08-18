@@ -68,10 +68,10 @@ import { Input } from '@ui/input';
 import {
   TEXT_ALIGN_PRESET_KEYS,
   TEXT_SIZE_PRESET_KEYS,
-  TEXT_TONE_KEYS,
+  TEXT_TONE_PRESET_KEYS,
   type TextAlignPreset,
   type TextSizePreset,
-  type TextTone,
+  type TextTonePreset,
 } from '@ui/text';
 
 import { AlignListbox } from '../align-listbox';
@@ -109,8 +109,8 @@ type TextGroupContent = {
  */
 type TextGroupTone = {
   label?: string;
-  onChange: (tone: TextTone) => void;
-  value?: TextTone;
+  onChange: (tone: TextTonePreset) => void;
+  value?: TextTonePreset;
 };
 
 /**
@@ -345,7 +345,7 @@ export function TextGroup({
                   <ToneListbox
                     key={`${toneLabel}-${index}`}
                     label={toneLabel}
-                    tones={TEXT_TONE_KEYS}
+                    tones={TEXT_TONE_PRESET_KEYS}
                     value={toneControl.value}
                     onChange={toneControl.onChange}
                   />

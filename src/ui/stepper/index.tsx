@@ -48,7 +48,7 @@ import { Icon } from '@ui/icon';
 import { getTextSize } from '@ui/presets';
 import { assignRef } from '@ui/ref';
 import { type SpacingValue } from '@ui/spacing';
-import { Text, type TextTone } from '@ui/text';
+import { Text, type TextTonePreset } from '@ui/text';
 
 import {
   StyledStepperButton,
@@ -71,7 +71,7 @@ const DEFAULT_STEPPER_STEP = 1;
  * DEFAULT_STEPPER_SUFFIX_TONE — задаёт тон суффикса по умолчанию.
  * Суффикс единицы — вторичный текст, поэтому `muted`.
  */
-const DEFAULT_STEPPER_SUFFIX_TONE: TextTone = 'muted';
+const DEFAULT_STEPPER_SUFFIX_TONE: TextTonePreset = 'muted';
 
 /**
  * DECREASE_LABEL — задаёт текст `aria-label` кнопки уменьшения.

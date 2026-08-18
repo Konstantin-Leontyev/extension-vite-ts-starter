@@ -3,11 +3,11 @@
  * Определяет внешний вид компонента Text.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `TextStyleProps`, `TextTone`, `TextSizePreset` и `TextAlignPreset`
+ * 1. Типизировать пропсы через `TextStyleProps`, `TextTonePreset`, `TextSizePreset` и `TextAlignPreset`
  * 2. Хранить тоны текста в `TEXT_TONE_PRESETS` и пресеты типографики в `textSizePresets`
  * 3. Предоставить функции `getTextProperties`, `getNativeFieldTextStyles`,
  *    `getTextLineHeight`, `getTextToneColor` и `getEllipsisStyles`, а также
- *    перечни `TEXT_TONE_KEYS`, `TEXT_SIZE_PRESET_KEYS` и `TEXT_ALIGN_PRESET_KEYS`
+ *    перечни `TEXT_TONE_PRESET_KEYS`, `TEXT_SIZE_PRESET_KEYS` и `TEXT_ALIGN_PRESET_KEYS`
  * 4. Предоставить styled-узел `StyledText`
  *
  * Потребители:
@@ -165,7 +165,7 @@ export function getEllipsisStyles(): string {
  * Расширяет канон `TONE_PRESETS` спредом, добавляя тон `muted` для вторичного текста.
  *
  * Соответствие приватно для модуля, доступ к перечню тонов — только через
- * `TEXT_TONE_KEYS`, чтение цвета — через `getTextToneColor`.
+ * `TEXT_TONE_PRESET_KEYS`, чтение цвета — через `getTextToneColor`.
  */
 const TEXT_TONE_PRESETS = {
   ...TONE_PRESETS,
@@ -173,17 +173,17 @@ const TEXT_TONE_PRESETS = {
 } as const satisfies Record<'muted' | TonePreset, keyof ThemeColors | undefined>;
 
 /**
- * TextTone — представляет тоны текста.
+ * TextTonePreset — представляет тоны текста.
  * Включает все канонические тона и дополнительный `muted` для вторичного текста.
  */
-export type TextTone = keyof typeof TEXT_TONE_PRESETS;
+export type TextTonePreset = keyof typeof TEXT_TONE_PRESETS;
 
 /**
- * TEXT_TONE_KEYS — формирует перечень тонов текста из ключей `TEXT_TONE_PRESETS`.
+ * TEXT_TONE_PRESET_KEYS — формирует перечень тонов текста из ключей `TEXT_TONE_PRESETS`.
  * Используется в панелях настроек витрины дизайн-системы: `ToneListbox` принимает его пропом `tones`.
  */
-export const TEXT_TONE_KEYS = Object.freeze(
-  Object.keys(TEXT_TONE_PRESETS) as TextTone[]
+export const TEXT_TONE_PRESET_KEYS = Object.freeze(
+  Object.keys(TEXT_TONE_PRESETS) as TextTonePreset[]
 );
 
 /**
@@ -193,7 +193,7 @@ export const TEXT_TONE_KEYS = Object.freeze(
  * @param tone тон текста
  * @returns ключ цвета темы или `undefined`
  */
-function getTextToneColorKey(tone: TextTone): keyof ThemeColors | undefined {
+function getTextToneColorKey(tone: TextTonePreset): keyof ThemeColors | undefined {
   return TEXT_TONE_PRESETS[tone];
 }
 
@@ -207,7 +207,7 @@ function getTextToneColorKey(tone: TextTone): keyof ThemeColors | undefined {
  * @param tone тон текста
  * @returns CSS-цвет или `undefined`
  */
-export function getTextToneColor(theme: AppTheme, tone: TextTone): string | undefined {
+export function getTextToneColor(theme: AppTheme, tone: TextTonePreset): string | undefined {
   const colorKey = getTextToneColorKey(tone);
 
   return colorKey ? theme.colors[colorKey] : undefined;
@@ -233,7 +233,7 @@ export function getNativeFieldTextStyles(props: {
   textAlign?: CSSProperties['textAlign'];
   textItalic?: boolean;
   textSize: TextSizePreset;
-  textTone?: TextTone;
+  textTone?: TextTonePreset;
   theme: AppTheme;
 }): string {
   const theme = getTheme(props);
@@ -281,7 +281,7 @@ export type TextStyleProps = LayoutProps & {
   italic?: boolean;
   lineHeight?: CSSProperties['lineHeight'];
   sizePreset?: TextSizePreset;
-  tone?: TextTone;
+  tone?: TextTonePreset;
   whiteSpace?: CSSProperties['whiteSpace'];
 };
 

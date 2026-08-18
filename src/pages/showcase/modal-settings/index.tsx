@@ -1,9 +1,9 @@
 /**
  * Файл: `src/pages/showcase/modal-settings/index.tsx`
  * Определяет панель настроек компонента Modal в витрине дизайн-системы.
- * Содержит контролы для изменения размера, фона, заголовка и подзаголовка
- * в реальном времени. Не настраивает тело модального окна: превью передаёт
- * витринный плейсхолдер через `children`.
+ * Содержит контролы для изменения размера, рамки и тени, фона, заголовка,
+ * подзаголовка и формы окна действия шапки в реальном времени. Не настраивает
+ * тело модального окна: превью передаёт витринный плейсхолдер через `children`.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `ModalWidgetState`
@@ -13,25 +13,33 @@
  *  - `src/pages/showcase/index.tsx` — подключает панель и синхронизирует состояние с превью виджета Modal
  */
 
+import { ICON_SHAPE_PRESET_KEYS, type IconShapePreset } from '@ui/icon';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 import { type SurfaceBackground } from '@ui/surface';
-import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
+import { type TextAlignPreset, type TextSizePreset, type TextTonePreset } from '@ui/text';
+import { type TonePreset } from '@ui/tones';
 
 import { BackgroundListbox } from '../background-listbox';
+import { BorderGroup } from '../border-group';
+import { ShapeListbox } from '../shape-listbox';
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
 import { TextGroup } from '../text-group';
 
 /**
  * ModalWidgetState — представляет состояние настроек компонента Modal в витрине дизайн-системы.
- * Ключи совпадают с именами пропов компонента Modal, кроме витринного ключа:
- * `sizePreset` задаёт ширину через `inlineSize` в родительской витрине.
+ * Ключи совпадают с именами пропов компонента Modal, кроме витринных ключей: `size`
+ * управляет передачей `inlineSize` в превью.
  * Пустая строка заголовка или подзаголовка означает вызов без пропа. Отметка `Set*`
  * живёт внутри TextGroup.
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Modal.
  *
+ * @property actionShape — форма окна действия шапки
  * @property background — заливка поверхности
- * @property sizePreset — витринный ключ ширины панели. Витрина переводит его в `inlineSize` для Modal
+ * @property borderTone — тон рамки
+ * @property showBorder — включает рамку
+ * @property showShadow — включает тень при включённой рамке
+ * @property size — витринный ключ ширины панели
  * @property subtitle — подзаголовок
  * @property subtitleAlign — выравнивание подзаголовка
  * @property subtitleItalic — включает курсив подзаголовка
@@ -44,18 +52,22 @@ import { TextGroup } from '../text-group';
  * @property titleTone — тон заголовка
  */
 export type ModalWidgetState = {
+  actionShape: IconShapePreset;
   background: SurfaceBackground;
-  sizePreset: SizePreset;
+  borderTone: TonePreset;
+  showBorder: boolean;
+  showShadow: boolean;
+  size: SizePreset;
   subtitle: string;
   subtitleAlign?: TextAlignPreset;
   subtitleItalic: boolean;
   subtitleSize?: TextSizePreset;
-  subtitleTone: TextTone;
+  subtitleTone: TextTonePreset;
   title: string;
   titleAlign?: TextAlignPreset;
   titleItalic: boolean;
   titleSize: TextSizePreset;
-  titleTone: TextTone;
+  titleTone: TextTonePreset;
 };
 
 /**
@@ -84,8 +96,17 @@ export function ModalSettings({ onChange, state }: ModalSettingsProps) {
       <SizeListbox
         label="Size:"
         sizes={SIZE_PRESET_KEYS}
-        value={state.sizePreset}
-        onChange={(size) => onChange('sizePreset', size)}
+        value={state.size}
+        onChange={(size) => onChange('size', size)}
+      />
+
+      <BorderGroup
+        borderTone={state.borderTone}
+        showBorder={state.showBorder}
+        showShadow={state.showShadow}
+        onBorderToneChange={(tone) => onChange('borderTone', tone)}
+        onShowBorderChange={(show) => onChange('showBorder', show)}
+        onShowShadowChange={(show) => onChange('showShadow', show)}
       />
 
       <BackgroundListbox
@@ -138,6 +159,13 @@ export function ModalSettings({ onChange, state }: ModalSettingsProps) {
         onAlignChange={(align) => onChange('subtitleAlign', align)}
         onItalicChange={(value) => onChange('subtitleItalic', value)}
         onSizeChange={(size) => onChange('subtitleSize', size)}
+      />
+
+      <ShapeListbox
+        label="Action shape:"
+        shapes={ICON_SHAPE_PRESET_KEYS}
+        value={state.actionShape}
+        onChange={(shape) => onChange('actionShape', shape)}
       />
     </StyledSettingsForm>
   );

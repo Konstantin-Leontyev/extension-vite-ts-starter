@@ -16,7 +16,7 @@ import { type ChangeEvent } from 'react';
 import { Checkbox } from '@ui/checkbox';
 import { SHAPE_PRESET_KEYS, type ShapePreset } from '@ui/presets';
 import { TAG_SIZE_PRESET_KEYS, getTagTextSize, type TagSizePreset } from '@ui/tag';
-import { type TextSizePreset, type TextTone } from '@ui/text';
+import { type TextSizePreset, type TextTonePreset } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { BorderGroup } from '../border-group';
@@ -57,7 +57,7 @@ export type TagWidgetState = {
   text: string;
   textItalic: boolean;
   textSize: TextSizePreset;
-  textTone: TextTone;
+  textTone: TextTonePreset;
   tinted: boolean;
   tone: TonePreset;
 };

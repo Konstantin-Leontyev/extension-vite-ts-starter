@@ -36,7 +36,7 @@ import {
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
 import { getSurfaceBackgroundColor } from '@ui/surface';
-import { getNativeFieldTextStyles, type TextSizePreset, type TextTone } from '@ui/text';
+import { getNativeFieldTextStyles, type TextSizePreset, type TextTonePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 
 export { splitLayoutProps } from '@ui/layout';
@@ -58,7 +58,7 @@ export type InputStyleProps = LayoutProps &
     textAlign?: CSSProperties['textAlign'];
     textItalic?: boolean;
     textSize?: TextSizePreset;
-    textTone?: TextTone;
+    textTone?: TextTonePreset;
   };
 
 /**

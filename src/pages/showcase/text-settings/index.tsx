@@ -11,7 +11,7 @@
  *  - `src/pages/showcase/index.tsx` — подключает панель и синхронизирует состояние с превью виджета текста
  */
 
-import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
+import { type TextAlignPreset, type TextSizePreset, type TextTonePreset } from '@ui/text';
 
 import { StyledSettingsForm } from '../showcase.styles';
 import { TextGroup } from '../text-group';
@@ -34,7 +34,7 @@ export type TextWidgetState = {
   ellipsis: boolean;
   italic: boolean;
   sizePreset: TextSizePreset;
-  tone: TextTone;
+  tone: TextTonePreset;
 };
 
 /**

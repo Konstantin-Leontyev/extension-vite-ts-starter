@@ -25,9 +25,9 @@
  *    DateRangeInput и Stepper — рендерят подпись поля
  */
 
-import { type ComponentProps, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
-import { Text, type TextSizePreset, type TextTone } from '@ui/text';
+import { Text, type TextProps, type TextSizePreset, type TextTonePreset } from '@ui/text';
 
 /**
  * FIELD_LABEL_SIZE_PRESET — задаёт типографический пресет подписи поля.
@@ -39,7 +39,7 @@ const FIELD_LABEL_SIZE_PRESET: TextSizePreset = 'thin';
  * FIELD_LABEL_TEXT_TONE — задаёт тон текста подписи поля.
  * Подпись поля — вторичный текст, поэтому `muted`.
  */
-const FIELD_LABEL_TEXT_TONE: TextTone = 'muted';
+const FIELD_LABEL_TEXT_TONE: TextTonePreset = 'muted';
 
 /**
  * FieldLabelProps — представляет пропсы компонента FieldLabel.
@@ -51,7 +51,7 @@ type FieldLabelProps = {
   children?: ReactNode;
   htmlFor?: string;
 } & Omit<
-  ComponentProps<typeof Text>,
+  TextProps<'label'>,
   'as' | 'children' | 'className' | 'htmlFor' | 'sizePreset' | 'style' | 'tone'
 >;
 

@@ -18,7 +18,7 @@ import { useToast } from '@hooks/use-toast';
 import { SettingsIcon } from '@icons';
 import { resolveBorderProps, type BorderProps, type ShowBorderProps } from '@ui/border';
 import { Button, type ButtonIconProps } from '@ui/button';
-import { CARD_HEADER_ACTION_SIZE_PRESET, Card, type CardTitleProps } from '@ui/card';
+import { CARD_HEADER_ACTION_SIZE_PRESET, Card } from '@ui/card';
 import { Checkbox } from '@ui/checkbox';
 import { Combobox } from '@ui/combobox';
 import { DateRangeInput, todayUtc } from '@ui/date-range-input';
@@ -647,8 +647,12 @@ const DEFAULT_TABLE_STATE: TableWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_MODAL_STATE: ModalWidgetState = {
+  actionShape: 'round',
   background: 'surface',
-  sizePreset: DEFAULT_SIZE_PRESET,
+  borderTone: 'neutral',
+  showBorder: false,
+  showShadow: true,
+  size: DEFAULT_SIZE_PRESET,
   subtitle: 'Modal subtitle',
   subtitleItalic: false,
   subtitleTone: 'muted',
@@ -1244,8 +1248,8 @@ export function ShowcasePage() {
     size: card.titleSize,
     tone: card.titleTone,
   });
-  const cardTitleProps: CardTitleProps = resolvedCardTitleProps.title
-    ? { ...resolvedCardTitleProps, titleAs: 'h3' }
+  const cardTitleProps: TextNodeProps<'title'> = resolvedCardTitleProps.title
+    ? { ...resolvedCardTitleProps, titleLevel: 'h3' }
     : resolvedCardTitleProps;
   const cardSubtitleProps: TextNodeProps<'subtitle'> = resolveTextNodeProps({
     prefix: 'subtitle',
@@ -1315,6 +1319,11 @@ export function ShowcasePage() {
     size: spinner.textSize,
     tone: spinner.textTone,
   });
+  const modalBorderProps: ShowBorderProps = resolveBorderProps(
+    modal.showBorder,
+    modal.borderTone,
+    modal.showShadow
+  );
   const cardBorderProps: BorderProps = resolveBorderProps(
     card.showBorder,
     card.borderTone,
@@ -1443,10 +1452,12 @@ export function ShowcasePage() {
                     Open modal
                   </Button>
                   <Modal
+                    actionShape={modal.actionShape}
                     background={modal.background}
-                    inlineSize={MODAL_INLINE_SIZE[modal.sizePreset]}
+                    inlineSize={MODAL_INLINE_SIZE[modal.size]}
                     open={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
+                    {...modalBorderProps}
                     {...modalAccessibleName}
                     {...modalSubtitleProps}
                   >

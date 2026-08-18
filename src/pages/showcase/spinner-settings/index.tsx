@@ -15,7 +15,7 @@ import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { SIZE_PRESET_KEYS, getTextSize, type SizePreset } from '@ui/presets';
-import { type TextSizePreset, type TextTone } from '@ui/text';
+import { type TextSizePreset, type TextTonePreset } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../showcase.styles';
@@ -43,7 +43,7 @@ export type SpinnerWidgetState = {
   text: string;
   textItalic: boolean;
   textSize: TextSizePreset;
-  textTone: TextTone;
+  textTone: TextTonePreset;
   tone: TonePreset;
 };
 

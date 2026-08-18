@@ -23,9 +23,15 @@
  *    строки
  */
 
-import { type CSSProperties, type ComponentProps } from 'react';
+import { type CSSProperties } from 'react';
 
-import { Text, getTextLineHeight, type TextSizePreset, type TextTone } from '@ui/text';
+import {
+  Text,
+  getTextLineHeight,
+  type TextProps,
+  type TextSizePreset,
+  type TextTonePreset,
+} from '@ui/text';
 
 /**
  * DEFAULT_FIELD_ERROR_RESERVE_ERROR_SPACE — задаёт резерв высоты строки по умолчанию.
@@ -49,13 +55,13 @@ const FIELD_ERROR_SIZE_PRESET: TextSizePreset = 'thin';
  * FIELD_ERROR_TEXT_TONE — задаёт тон текста ошибки.
  * Сообщение об ошибке выделяется семантическим тоном `danger`.
  */
-const FIELD_ERROR_TEXT_TONE: TextTone = 'danger';
+const FIELD_ERROR_TEXT_TONE: TextTonePreset = 'danger';
 
 /**
  * FIELD_ERROR_PLACEHOLDER_TEXT_TONE — задаёт тон текста подсказки.
  * Подсказка — вторичный текст, поэтому `muted`.
  */
-const FIELD_ERROR_PLACEHOLDER_TEXT_TONE: TextTone = 'muted';
+const FIELD_ERROR_PLACEHOLDER_TEXT_TONE: TextTonePreset = 'muted';
 
 /**
  * FieldErrorProps — представляет пропсы компонента FieldError.
@@ -71,7 +77,7 @@ type FieldErrorProps = {
   placeholder?: string;
   reserveErrorSpace?: boolean;
 } & Omit<
-  ComponentProps<typeof Text>,
+  TextProps<'p'>,
   | 'align'
   | 'as'
   | 'children'

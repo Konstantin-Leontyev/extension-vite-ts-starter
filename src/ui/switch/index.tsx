@@ -25,7 +25,7 @@
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { getTextSize } from '@ui/presets';
-import { Text, type TextNodeStyleProps, type TextTone } from '@ui/text';
+import { Text, type TextNodeStyleProps, type TextTonePreset } from '@ui/text';
 
 import {
   StyledSwitchRoot,
@@ -38,7 +38,7 @@ import {
  * DEFAULT_SWITCH_TEXT_TONE — задаёт тон подписи по умолчанию.
  * Подпись контрола — вторичный текст, поэтому `muted`.
  */
-const DEFAULT_SWITCH_TEXT_TONE: TextTone = 'muted';
+const DEFAULT_SWITCH_TEXT_TONE: TextTonePreset = 'muted';
 
 /**
  * SwitchProps — представляет пропсы компонента Switch.

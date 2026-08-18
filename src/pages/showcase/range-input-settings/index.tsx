@@ -28,7 +28,7 @@ import {
   type RangeValue,
   type ResolvedRangeInputValidationMessages,
 } from '@ui/range-input';
-import { type TextAlignPreset, type TextSizePreset, type TextTone } from '@ui/text';
+import { type TextAlignPreset, type TextSizePreset, type TextTonePreset } from '@ui/text';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { ControlGroup } from '../control-group';
@@ -101,7 +101,7 @@ export type RangeInputWidgetState = {
   titleAlign: TextAlignPreset;
   titleItalic: boolean;
   titleSize: TextSizePreset;
-  titleTone: TextTone;
+  titleTone: TextTonePreset;
   toPlaceholder: string;
   validationMessages: ResolvedRangeInputValidationMessages;
   value: RangeValue;

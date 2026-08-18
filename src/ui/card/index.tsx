@@ -10,7 +10,7 @@
  *  - тон рамки через проп `borderTone`
  *  - тело карточки через `children`
  *  - заголовок через проп `title`
- *  - уровень заголовка через проп `titleAs`
+ *  - уровень заголовка через проп `titleLevel`
  *  - подзаголовок через проп `subtitle`
  *  - тон заголовка через проп `titleTone`
  *  - размер заголовка через проп `titleSize`
@@ -30,8 +30,7 @@
  * 1. Экспортировать полиморфный компонент Card
  * 2. Типизировать пропсы через `CardProps`
  * 3. Реэкспортировать публичное API стилей: `CARD_HEADER_ACTION_SIZE_PRESET`
- * 4. Экспортировать тип `CardTitleProps` — `TextNodeProps` заголовка с `titleAs`
- * 5. Связывать имя области с заголовком через `aria-labelledby`, когда у корня есть роль
+ * 4. Связывать имя области с заголовком через `aria-labelledby`, когда у корня есть роль
  *
  * Потребители:
  *  - `src/ui/modal/index.tsx` — собирает модальный диалог на Card
@@ -50,7 +49,7 @@ import {
 
 import { type IconShapePreset } from '@ui/icon';
 import { IconButtonRow, type IconButtonRowAction } from '@ui/icon-button-row';
-import { Text, type TextNodeProps, type TextSizePreset, type TextTone } from '@ui/text';
+import { Text, type TextNodeProps, type TextSizePreset, type TextTonePreset } from '@ui/text';
 
 import {
   CARD_HEADER_ACTION_SIZE_PRESET,
@@ -68,10 +67,10 @@ import {
 type CardHtmlTag = 'article' | 'div' | 'section';
 
 /**
- * DEFAULT_CARD_TITLE_AS — задаёт уровень заголовка по умолчанию.
- * Используется, когда вызывающий код не передал проп `titleAs`.
+ * DEFAULT_CARD_TITLE_LEVEL — задаёт уровень заголовка по умолчанию.
+ * Используется, когда вызывающий код не передал проп `titleLevel`.
  */
-const DEFAULT_CARD_TITLE_AS = 'h2';
+const DEFAULT_CARD_TITLE_LEVEL = 'h2' as const;
 
 /**
  * DEFAULT_CARD_TITLE_SIZE_PRESET — задаёт размер заголовка по умолчанию.
@@ -83,34 +82,13 @@ const DEFAULT_CARD_TITLE_SIZE_PRESET: TextSizePreset = 'bold';
  * DEFAULT_CARD_SUBTITLE_TONE — задаёт тон подзаголовка по умолчанию.
  * Подзаголовок — вторичный текст, поэтому `muted`.
  */
-const DEFAULT_CARD_SUBTITLE_TONE: TextTone = 'muted';
+const DEFAULT_CARD_SUBTITLE_TONE: TextTonePreset = 'muted';
 
 /**
  * DEFAULT_CARD_HEADER_ACTIONS — задаёт пустой ряд действий по умолчанию.
  * Используется, когда вызывающий код не передал проп `headerActions`.
  */
 const DEFAULT_CARD_HEADER_ACTIONS: IconButtonRowAction[] = [];
-
-/**
- * ROLELESS_CARD_HTML_TAG — задаёт единственный корневой тег без роли области.
- * Остальные теги роль несут: `aria-labelledby` на корне имеет смысл только с ней.
- * Дефолтный корень тега не получает вовсе, поэтому отсутствие `as` проверяется
- * отдельно: сравнение с этой константой такой корень не отсеивает.
- */
-const ROLELESS_CARD_HTML_TAG: CardHtmlTag = 'div';
-
-/**
- * CardTitleProps — представляет пропсы заголовка Card.
- * Пакет `TextNodeProps` с дополнительным `titleAs`.
- *
- * @property titleAs — уровень заголовка
- */
-type CardTitleProps = TextNodeProps<
-  'title',
-  {
-    titleAs?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-  }
->;
 
 /**
  * CardProps — представляет пропсы компонента Card.
@@ -129,7 +107,7 @@ type CardProps<T extends CardHtmlTag = 'div'> = {
   children?: ReactNode;
   headerActions?: IconButtonRowAction[];
   titleId?: string;
-} & CardTitleProps &
+} & TextNodeProps<'title'> &
   TextNodeProps<'subtitle'> &
   Omit<CardStyleProps, 'hasHeader'> &
   Omit<ComponentPropsWithRef<T>, 'className' | 'style' | 'title' | keyof CardStyleProps>;
@@ -154,9 +132,9 @@ function Card<T extends CardHtmlTag = 'div'>({
   subtitleTone = DEFAULT_CARD_SUBTITLE_TONE,
   title,
   titleAlign,
-  titleAs = DEFAULT_CARD_TITLE_AS,
   titleId,
   titleItalic,
+  titleLevel = DEFAULT_CARD_TITLE_LEVEL,
   titleSize = DEFAULT_CARD_TITLE_SIZE_PRESET,
   titleTone,
   ...rest
@@ -164,7 +142,7 @@ function Card<T extends CardHtmlTag = 'div'>({
   const fallbackTitleId = useId();
   const hasHeader = Boolean(title || subtitle);
   const headingId = titleId ?? fallbackTitleId;
-  const hasRootRole = as !== undefined && as !== ROLELESS_CARD_HTML_TAG;
+  const hasRootRole = as === 'article' || as === 'section';
   const labelledBy = title && hasRootRole ? headingId : undefined;
 
   // Подзаголовок остаётся абзацем и уровня не получает: он поясняет карточку
@@ -188,7 +166,7 @@ function Card<T extends CardHtmlTag = 'div'>({
         {Boolean(title) && (
           <Text
             align={titleAlign}
-            as={titleAs}
+            as={titleLevel}
             id={headingId}
             italic={titleItalic}
             sizePreset={titleSize}
@@ -225,4 +203,4 @@ function Card<T extends CardHtmlTag = 'div'>({
   );
 }
 
-export { CARD_HEADER_ACTION_SIZE_PRESET, Card, type CardTitleProps };
+export { CARD_HEADER_ACTION_SIZE_PRESET, Card };

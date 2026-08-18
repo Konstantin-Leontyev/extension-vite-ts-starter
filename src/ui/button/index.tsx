@@ -43,7 +43,7 @@ import {
   type IconShapePreset,
 } from '@ui/icon';
 import { getTextSize } from '@ui/presets';
-import { Text, type TextSizePreset, type TextTone } from '@ui/text';
+import { Text, type TextSizePreset, type TextTonePreset } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import {
@@ -99,7 +99,7 @@ type ButtonProps = {
   label?: string;
   textItalic?: boolean;
   textSize?: TextSizePreset;
-  textTone?: TextTone;
+  textTone?: TextTonePreset;
 } & ButtonIconProps &
   Omit<ButtonStyleProps, 'iconTone'> &
   Omit<ComponentPropsWithRef<'button'>, 'className' | 'style' | keyof ButtonStyleProps>;

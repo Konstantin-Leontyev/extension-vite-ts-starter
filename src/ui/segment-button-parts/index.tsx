@@ -33,7 +33,7 @@ import { Fragment, type ReactNode, type RefObject } from 'react';
 import { useLongPress } from '@hooks/use-long-press';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
 import { type SizePreset } from '@ui/presets';
-import { Text, type TextSizePreset, type TextTone } from '@ui/text';
+import { Text, type TextSizePreset, type TextTonePreset } from '@ui/text';
 import { DEFAULT_TONE, getToneColorKey, type TonePreset } from '@ui/tones';
 
 import {
@@ -49,7 +49,7 @@ import {
  * Активный сегмент без явного `textTone` и без цветного `tone` подсвечивается `primary`.
  * На цветной заливке текст без `textTone` наследует `color: inverse` от сегмента.
  */
-const SEGMENT_BUTTON_PARTS_ACTIVE_TEXT_TONE: TextTone = 'primary';
+const SEGMENT_BUTTON_PARTS_ACTIVE_TEXT_TONE: TextTonePreset = 'primary';
 
 /**
  * SegmentButtonPartsActionIconProps — представляет пропсы иконки действия сегмента.
@@ -101,7 +101,7 @@ type SegmentButtonPartsAction = {
   onDoubleClick?: () => void;
   onLongPress?: () => void;
   ref?: RefObject<HTMLButtonElement | null>;
-  textTone?: TextTone;
+  textTone?: TextTonePreset;
   title?: string;
   tone?: TonePreset;
 } & SegmentButtonPartsActionIconProps;

@@ -9,7 +9,7 @@
  *  - тень через проп `showShadow`
  *  - тон рамки через проп `borderTone`
  *  - заголовок через проп `title`
- *  - уровень заголовка через проп `titleAs`
+ *  - уровень заголовка через проп `titleLevel`
  *  - подзаголовок через проп `subtitle`
  *  - тон заголовка через проп `titleTone`
  *  - размер заголовка через проп `titleSize`
@@ -42,8 +42,9 @@ import { useEffect, useId, useRef, type ComponentProps, type ReactNode } from 'r
 
 import { CloseIcon } from '@icons';
 import { resolveBorderProps, type ShowBorderProps } from '@ui/border';
-import { Card, type CardTitleProps } from '@ui/card';
+import { Card } from '@ui/card';
 import { type SpacingValue } from '@ui/spacing';
+import { type TextNodeProps } from '@ui/text';
 import { type DistributiveOmit } from '@ui/type-utils';
 
 import { StyledModalDialog } from './modal.styles';
@@ -75,8 +76,8 @@ const DEFAULT_MODAL_SHOW_BORDER = false;
  * @property title — видимый заголовок
  */
 type ModalAccessibleName =
-  | (Extract<CardTitleProps, { title: string }> & { ariaLabel?: never })
-  | (Extract<CardTitleProps, { title?: never }> & { ariaLabel: string });
+  | (Extract<TextNodeProps<'title'>, { title: string }> & { ariaLabel?: never })
+  | (Extract<TextNodeProps<'title'>, { title?: never }> & { ariaLabel: string });
 
 /**
  * ModalProps — представляет пропсы компонента Modal.

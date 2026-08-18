@@ -33,6 +33,7 @@
  *  - серую подсказку в полоске ошибки панели через проп `errorPlaceholder`
  *  - резерв высоты под строку ошибки через проп `reserveErrorSpace`
  *  - заголовок панели через проп `title`
+ *  - уровень заголовка панели через проп `titleLevel`
  *  - тон заголовка панели через проп `titleTone`
  *  - размер заголовка панели через проп `titleSize`
  *  - курсив заголовка панели через проп `titleItalic`
@@ -86,7 +87,7 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import { type SpacingValue } from '@ui/spacing';
-import { Text, type TextAlignPreset, type TextNodeProps } from '@ui/text';
+import { Text, type TextNodeProps } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import {
@@ -132,7 +133,13 @@ const DEFAULT_RANGE_INPUT_DISABLED = false;
  * DEFAULT_RANGE_INPUT_TITLE_ALIGN — задаёт выравнивание заголовка панели по умолчанию.
  * Используется, когда вызывающий код не передал проп `titleAlign`.
  */
-const DEFAULT_RANGE_INPUT_TITLE_ALIGN: TextAlignPreset = 'center';
+const DEFAULT_RANGE_INPUT_TITLE_ALIGN = 'center' as const;
+
+/**
+ * DEFAULT_RANGE_INPUT_TITLE_LEVEL — задаёт уровень заголовка панели по умолчанию.
+ * Используется, когда вызывающий код не передал проп `titleLevel`.
+ */
+const DEFAULT_RANGE_INPUT_TITLE_LEVEL = 'h2' as const;
 
 /**
  * DEFAULT_RANGE_INPUT_PLACEHOLDER — задаёт плейсхолдер неактивного триггера по умолчанию.
@@ -420,6 +427,7 @@ export function RangeInput({
   title,
   titleAlign = DEFAULT_RANGE_INPUT_TITLE_ALIGN,
   titleItalic,
+  titleLevel = DEFAULT_RANGE_INPUT_TITLE_LEVEL,
   titleSize,
   titleTone,
   toPlaceholder = DEFAULT_RANGE_INPUT_TO_PLACEHOLDER,
@@ -727,7 +735,7 @@ export function RangeInput({
             {hasTitle && (
               <Text
                 align={titleAlign}
-                as="h2"
+                as={titleLevel}
                 id={titleId}
                 italic={titleItalic}
                 sizePreset={titleSize}
