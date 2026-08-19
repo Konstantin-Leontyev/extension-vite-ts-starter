@@ -286,6 +286,7 @@ const DEFAULT_SEARCH_FIELD_STATE: SearchFieldWidgetState = {
   placeholder: 'Search…',
   shape: DEFAULT_SHAPE_PRESET,
   showBorder: true,
+  showClearButton: true,
   showIcon: true,
   showShadow: true,
   size: DEFAULT_SIZE_PRESET,
@@ -400,6 +401,7 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   inputSize: DEFAULT_SIZE_PRESET,
   label: 'Label:',
   placeholder: 'Range: any',
+  reserveErrorSpace: true,
   shape: DEFAULT_SHAPE_PRESET,
   size: DEFAULT_SIZE_PRESET,
   title: 'Custom range:',
@@ -1458,6 +1460,7 @@ export function ShowcasePage() {
                   label={searchField.label || undefined}
                   placeholder={searchField.placeholder}
                   shape={searchField.shape}
+                  showClearButton={searchField.showClearButton}
                   size={searchField.size}
                   value={searchField.value}
                   onChange={(event) => updateSearchField('value', event.target.value)}

@@ -2,7 +2,7 @@
  * Файл: `src/pages/showcase/search-field-settings/index.tsx`
  * Определяет панель настроек компонента SearchField в витрине дизайн-системы.
  * Содержит контролы для изменения размера, формы, рамки, иконки, подписи,
- * плейсхолдера и состояния `disabled` в реальном времени.
+ * плейсхолдера, кнопки сброса и состояния `disabled` в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `SearchFieldWidgetState`
@@ -16,7 +16,6 @@ import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { type IconPosition } from '@ui/icon';
-import { Input } from '@ui/input';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { type TonePreset } from '@ui/tones';
 
@@ -25,6 +24,7 @@ import { ControlGroup } from '../control-group';
 import { IconGroup } from '../icon-group';
 import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
 import { StyledSettingsForm } from '../showcase.styles';
+import { TextGroup } from '../text-group';
 
 /**
  * SearchFieldWidgetState — представляет состояние настроек компонента SearchField в витрине дизайн-системы.
@@ -42,6 +42,7 @@ import { StyledSettingsForm } from '../showcase.styles';
  * @property placeholder — плейсхолдер значения
  * @property shape — форма строки-поля
  * @property showBorder — включает рамку контрола
+ * @property showClearButton — включает кнопку сброса
  * @property showIcon — включает секцию иконки
  * @property showShadow — включает тень при включённой рамке
  * @property size — размер контрола
@@ -58,6 +59,7 @@ export type SearchFieldWidgetState = {
   placeholder: string;
   shape: ShapePreset;
   showBorder: boolean;
+  showClearButton: boolean;
   showIcon: boolean;
   showShadow: boolean;
   size: SizePreset;
@@ -105,6 +107,16 @@ export function SearchFieldSettings({ onChange, state }: SearchFieldSettingsProp
         onShowShadowChange={(show) => onChange('showShadow', show)}
       />
 
+      <TextGroup
+        contents={[
+          {
+            value: state.placeholder,
+            onChange: (value) => onChange('placeholder', value),
+          },
+        ]}
+        labelPrefix="Placeholder"
+      />
+
       <IconGroup
         fill={state.iconFill}
         iconOptions={COMBOBOX_OPTIONS}
@@ -120,14 +132,14 @@ export function SearchFieldSettings({ onChange, state }: SearchFieldSettingsProp
         onToneChange={(tone) => onChange('iconTone', tone)}
       />
 
-      <Input
-        label="Placeholder:"
-        value={state.placeholder}
+      <Checkbox
+        checked={state.showClearButton}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('placeholder', event.target.value)
+          onChange('showClearButton', event.target.checked)
         }
-        onClear={() => onChange('placeholder', '')}
-      />
+      >
+        Show clear button
+      </Checkbox>
 
       <Checkbox
         checked={state.disabled}

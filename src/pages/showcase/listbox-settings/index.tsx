@@ -17,13 +17,13 @@ import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { type IconPosition } from '@ui/icon';
-import { Input } from '@ui/input';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { type TonePreset } from '@ui/tones';
 
 import { ControlGroup } from '../control-group';
 import { IconGroup } from '../icon-group';
 import { StyledSettingsForm } from '../showcase.styles';
+import { TextGroup } from '../text-group';
 
 /**
  * ListboxWidgetState — представляет состояние настроек компонента Listbox в витрине дизайн-системы.
@@ -90,6 +90,16 @@ export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
         onSizeChange={(size) => onChange('size', size)}
       />
 
+      <TextGroup
+        contents={[
+          {
+            value: state.placeholder,
+            onChange: (value) => onChange('placeholder', value),
+          },
+        ]}
+        labelPrefix="Placeholder"
+      />
+
       <IconGroup
         fill={state.iconFill}
         labelPrefix="Icon"
@@ -99,6 +109,15 @@ export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
         onPositionChange={(position) => onChange('iconPosition', position)}
         onToneChange={(tone) => onChange('iconTone', tone)}
       />
+
+      <Checkbox
+        checked={state.showClearButton}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('showClearButton', event.target.checked)
+        }
+      >
+        Show clear button
+      </Checkbox>
 
       <Checkbox
         checked={state.multiple}
@@ -119,24 +138,6 @@ export function ListboxSettings({ onChange, state }: ListboxSettingsProps) {
           Inline checkbox
         </Checkbox>
       )}
-
-      <Checkbox
-        checked={state.showClearButton}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('showClearButton', event.target.checked)
-        }
-      >
-        Show clear button
-      </Checkbox>
-
-      <Input
-        label="Placeholder:"
-        value={state.placeholder}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('placeholder', event.target.value)
-        }
-        onClear={() => onChange('placeholder', '')}
-      />
 
       <Checkbox
         checked={state.disabled}

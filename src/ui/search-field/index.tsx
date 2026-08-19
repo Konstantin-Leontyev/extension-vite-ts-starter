@@ -18,6 +18,8 @@
  *  - подпись над полем через проп `label`
  *  - контролируемое значение через проп `value`
  *  - обработчик изменения значения через проп `onChange`
+ *  - кнопку сброса через проп `showClearButton`. Дефолт — сброс есть; кнопка
+ *    появляется при непустом значении
  *  - обработчик сброса значения через проп `onClear`
  *
  * Основные задачи:
@@ -76,6 +78,12 @@ const DEFAULT_SEARCH_FIELD_ICON_POSITION: IconPosition = 'start';
 const DEFAULT_SEARCH_FIELD_SHOW_ICON = true;
 
 /**
+ * DEFAULT_SEARCH_FIELD_SHOW_CLEAR_BUTTON — задаёт показ кнопки сброса по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showClearButton`.
+ */
+const DEFAULT_SEARCH_FIELD_SHOW_CLEAR_BUTTON = true;
+
+/**
  * CLEAR_SEARCH_ARIA_LABEL — задаёт запасной `aria-label` кнопки сброса поиска.
  * Передаётся вторым аргументом в `resolveClearAriaLabel`, когда подпись пуста.
  */
@@ -109,6 +117,7 @@ type SearchFieldShowIconProps =
  * @property label — подпись над полем
  * @property onChange — обработчик изменения значения
  * @property onClear — обработчик сброса значения
+ * @property showClearButton — включает кнопку сброса
  * @property value — контролируемое значение
  */
 type SearchFieldProps = {
@@ -117,6 +126,7 @@ type SearchFieldProps = {
   label?: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
   onClear: () => void;
+  showClearButton?: boolean;
   value: string;
 } & SearchFieldShowIconProps &
   SearchFieldStyleProps &
@@ -154,6 +164,7 @@ function SearchField({
   onClear,
   shape,
   showBorder,
+  showClearButton = DEFAULT_SEARCH_FIELD_SHOW_CLEAR_BUTTON,
   showIcon = DEFAULT_SEARCH_FIELD_SHOW_ICON,
   showShadow,
   size,
@@ -166,7 +177,7 @@ function SearchField({
   const fallbackId = useId();
   const id = idProp ?? fallbackId;
   const inputRef = useRef<HTMLInputElement>(null);
-  const hasClear = value.length > 0;
+  const hasClear = showClearButton && value.length > 0;
   const isIconStart = iconPosition === 'start';
 
   function handleClear(): void {

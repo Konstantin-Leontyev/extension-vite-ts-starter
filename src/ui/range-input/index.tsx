@@ -84,7 +84,7 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import { type SpacingValue } from '@ui/spacing';
-import { Text, type TextNodeProps } from '@ui/text';
+import { Text, type TextNodeProps, type TextTonePreset } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import {
@@ -125,6 +125,12 @@ const DEFAULT_RANGE_INPUT_BUTTON_TONE: TonePreset = 'primary';
  * Используется, когда вызывающий код не передал проп `disabled`.
  */
 const DEFAULT_RANGE_INPUT_DISABLED = false;
+
+/**
+ * DEFAULT_RANGE_INPUT_RESERVE_ERROR_SPACE — задаёт режим `reserveErrorSpace` по умолчанию.
+ * Используется, когда вызывающий код не передал проп `reserveErrorSpace`.
+ */
+const DEFAULT_RANGE_INPUT_RESERVE_ERROR_SPACE = true;
 
 /**
  * DEFAULT_RANGE_INPUT_TITLE_ALIGN — задаёт выравнивание заголовка панели по умолчанию.
@@ -225,7 +231,7 @@ type RangeInputButtonProps = {
   buttonShape?: ShapePreset;
   buttonSize?: SizePreset;
   buttonText: string;
-  buttonTextTone?: TonePreset;
+  buttonTextTone?: TextTonePreset;
   buttonTone?: TonePreset;
 };
 
@@ -415,7 +421,7 @@ export function RangeInput({
   onClear,
   placeholder = DEFAULT_RANGE_INPUT_PLACEHOLDER,
   presets,
-  reserveErrorSpace,
+  reserveErrorSpace = DEFAULT_RANGE_INPUT_RESERVE_ERROR_SPACE,
   shape,
   size,
   title,

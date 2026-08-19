@@ -17,13 +17,13 @@ import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { type IconPosition } from '@ui/icon';
-import { Input } from '@ui/input';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { type TonePreset } from '@ui/tones';
 
 import { ControlGroup } from '../control-group';
 import { IconGroup } from '../icon-group';
 import { StyledSettingsForm } from '../showcase.styles';
+import { TextGroup } from '../text-group';
 
 /**
  * ComboboxWidgetState — представляет состояние настроек компонента Combobox в витрине дизайн-системы.
@@ -93,6 +93,16 @@ export function ComboboxSettings({ onChange, state }: ComboboxSettingsProps) {
         onSizeChange={(size) => onChange('size', size)}
       />
 
+      <TextGroup
+        contents={[
+          {
+            value: state.placeholder,
+            onChange: (value) => onChange('placeholder', value),
+          },
+        ]}
+        labelPrefix="Placeholder"
+      />
+
       <IconGroup
         fill={state.iconFill}
         labelPrefix="Icon"
@@ -104,15 +114,6 @@ export function ComboboxSettings({ onChange, state }: ComboboxSettingsProps) {
       />
 
       <Checkbox
-        checked={state.withIcon}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('withIcon', event.target.checked)
-        }
-      >
-        Show option icons
-      </Checkbox>
-
-      <Checkbox
         checked={state.showClearButton}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('showClearButton', event.target.checked)
@@ -121,32 +122,34 @@ export function ComboboxSettings({ onChange, state }: ComboboxSettingsProps) {
         Show clear button
       </Checkbox>
 
-      <Input
-        label="Placeholder:"
-        value={state.placeholder}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('placeholder', event.target.value)
-        }
-        onClear={() => onChange('placeholder', '')}
+      <TextGroup
+        contents={[
+          {
+            value: state.searchPlaceholder,
+            onChange: (value) => onChange('searchPlaceholder', value),
+          },
+        ]}
+        labelPrefix="Search placeholder"
       />
 
-      <Input
-        label="Search placeholder:"
-        value={state.searchPlaceholder}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('searchPlaceholder', event.target.value)
-        }
-        onClear={() => onChange('searchPlaceholder', '')}
+      <TextGroup
+        contents={[
+          {
+            value: state.emptyMessage,
+            onChange: (value) => onChange('emptyMessage', value),
+          },
+        ]}
+        labelPrefix="Empty message"
       />
 
-      <Input
-        label="Empty message:"
-        value={state.emptyMessage}
+      <Checkbox
+        checked={state.withIcon}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('emptyMessage', event.target.value)
+          onChange('withIcon', event.target.checked)
         }
-        onClear={() => onChange('emptyMessage', '')}
-      />
+      >
+        Show option icons
+      </Checkbox>
 
       <Checkbox
         checked={state.disabled}

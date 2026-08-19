@@ -103,21 +103,6 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
         onChange={(tone) => onChange('tone', tone)}
       />
 
-      <IconGroup
-        fill={state.iconFill}
-        iconOptions={COMBOBOX_OPTIONS}
-        iconValue={state.iconKey}
-        labelPrefix="Icon"
-        position={state.iconPosition}
-        show={state.withIcon}
-        tone={state.iconTone}
-        onFillChange={(tone) => onChange('iconFill', tone)}
-        onIconChange={(value) => onChange('iconKey', value as IconKey)}
-        onPositionChange={(position) => onChange('iconPosition', position)}
-        onShowChange={(checked) => onChange('withIcon', checked)}
-        onToneChange={(tone) => onChange('iconTone', tone)}
-      />
-
       <TextGroup
         contents={[
           {
@@ -132,6 +117,21 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
             onChange: (tone) => onChange('textTone', tone),
           },
         ]}
+      />
+
+      <IconGroup
+        fill={state.iconFill}
+        iconOptions={COMBOBOX_OPTIONS}
+        iconValue={state.iconKey}
+        labelPrefix="Icon"
+        position={state.iconPosition}
+        show={state.withIcon}
+        tone={state.iconTone}
+        onFillChange={(tone) => onChange('iconFill', tone)}
+        onIconChange={(value) => onChange('iconKey', value as IconKey)}
+        onPositionChange={(position) => onChange('iconPosition', position)}
+        onShowChange={(checked) => onChange('withIcon', checked)}
+        onToneChange={(tone) => onChange('iconTone', tone)}
       />
 
       <Checkbox
