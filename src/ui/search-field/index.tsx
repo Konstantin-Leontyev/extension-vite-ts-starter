@@ -202,11 +202,11 @@ function SearchField({
   );
 
   return (
-    <StyledSearchFieldRoot data-disabled={disabled ? '' : undefined} {...layoutProps}>
+    <StyledSearchFieldRoot data-disabled={disabled ? true : undefined} {...layoutProps}>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <StyledSearchFieldRow
         borderTone={borderTone}
-        data-has-clear={hasClear ? '' : undefined}
+        data-has-clear={hasClear ? true : undefined}
         iconTone={iconTone}
         shape={shape}
         showBorder={showBorder}

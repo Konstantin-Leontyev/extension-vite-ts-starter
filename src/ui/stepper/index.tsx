@@ -340,7 +340,7 @@ export function Stepper({
       <FieldLabel id={labelId}>{label}</FieldLabel>
       <StyledStepperRoot
         borderTone={borderTone}
-        data-disabled={disabled ? '' : undefined}
+        data-disabled={disabled ? true : undefined}
         shape={shape}
         size={size}
       >

@@ -424,14 +424,14 @@ export function Combobox({
 
   return (
     <StyledComboboxRoot
-      data-disabled={disabled ? '' : undefined}
+      data-disabled={disabled ? true : undefined}
       ref={rootRef}
       {...layoutProps}
       {...restProps}
     >
       <FieldLabel htmlFor={triggerId}>{label}</FieldLabel>
       <StyledComboboxTriggerRow
-        data-has-clear={isClearVisible ? '' : undefined}
+        data-has-clear={isClearVisible ? true : undefined}
         data-open={isOpen ? 'true' : undefined}
         ref={triggerRowRef}
         {...surfaceProps}

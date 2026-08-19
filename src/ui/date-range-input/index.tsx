@@ -505,7 +505,7 @@ export function DateRangeInput({
     >
       <FieldLabel id={labelId}>{label}</FieldLabel>
       <StyledDateRangeInputTriggerRow
-        data-has-clear={showClear ? '' : undefined}
+        data-has-clear={showClear ? true : undefined}
         data-open={isOpen ? 'true' : undefined}
         ref={triggerRowRef}
         tabIndex={-1}

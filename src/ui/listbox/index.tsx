@@ -812,7 +812,7 @@ export function Listbox({
         aria-disabled={isOptionDisabled ? true : undefined}
         aria-selected={isSelected}
         data-active={isActive ? true : undefined}
-        data-checkbox={showCheckbox ? '' : undefined}
+        data-checkbox={showCheckbox ? true : undefined}
         key={option.value}
         ref={(node) => {
           optionRefs.current[optionIndex] = node;
@@ -891,14 +891,14 @@ export function Listbox({
 
   return (
     <StyledListboxRoot
-      data-disabled={disabled ? '' : undefined}
+      data-disabled={disabled ? true : undefined}
       ref={rootRef}
       {...layoutProps}
       {...restProps}
     >
       <FieldLabel htmlFor={triggerId}>{label}</FieldLabel>
       <StyledListboxTriggerRow
-        data-has-clear={isClearVisible ? '' : undefined}
+        data-has-clear={isClearVisible ? true : undefined}
         data-open={isOpen ? 'true' : undefined}
         ref={triggerRowRef}
         {...surfaceProps}

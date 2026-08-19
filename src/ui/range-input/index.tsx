@@ -641,14 +641,14 @@ export function RangeInput({
 
   return (
     <StyledRangeInputRoot
-      data-disabled={disabled ? '' : undefined}
+      data-disabled={disabled ? true : undefined}
       ref={rootRef}
       {...layoutProps}
       {...restProps}
     >
       <FieldLabel htmlFor={triggerId}>{label}</FieldLabel>
       <StyledRangeInputTriggerRow
-        data-has-clear={showClear ? '' : undefined}
+        data-has-clear={showClear ? true : undefined}
         data-open={isOpen ? 'true' : undefined}
         ref={triggerRowRef}
         {...surfaceProps}
