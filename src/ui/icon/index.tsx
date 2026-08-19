@@ -92,7 +92,7 @@ type IconDomProps<T extends ElementType> = DistributiveOmit<
  */
 type IconProps<T extends ElementType = 'span'> = T extends 'button'
   ? { as: 'button'; interactive?: never } & IconStyleProps & IconDomProps<'button'>
-  : { as?: T; active?: never; disabled?: never } & IconStyleProps & IconDomProps<T>;
+  : { active?: never; as?: T; disabled?: never } & IconStyleProps & IconDomProps<T>;
 
 /**
  * Icon — отображает окно иконки. При `as="button"` — иконочное действие.
