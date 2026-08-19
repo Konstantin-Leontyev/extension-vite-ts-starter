@@ -1,6 +1,6 @@
 /**
  * Файл: `src/pages/showcase/control-group/index.tsx`
- * Предоставляет компонент ControlGroup для настройки подписи и осей размера
+ * Предоставляет компонент ControlGroup для настройки подписи, размера
  * и формы контрола в витрине дизайн-системы.
  * Используется только в витрине: в продуктовый код и `@ui/` не входит.
  *
@@ -15,11 +15,12 @@
  * Основные задачи:
  * 1. Экспортировать компонент ControlGroup
  * 2. Типизировать пропсы через `ControlGroupProps`
- * 3. Рендерить единый блок настроек контрола в порядке: подпись, размер и форма —
- *    `Label:` → `Size:` → `Shape:`. Порядок `Size:` → `Shape:` → `Label:` запрещён
+ * 3. Рендерить единый блок настроек контрола в порядке: подпись через TextGroup
+ *    с `Set label`, затем `Size:` и `Shape:`. Порядок `Size:` → `Shape:` →
+ *    `Label:` запрещён
  *
  * Потребители:
- *  - панели настроек витрины — настраивают подпись и оси контрола:
+ *  - панели настроек витрины — настраивают подпись, размер и форму контрола:
  *     - `src/pages/showcase/input-settings/index.tsx`
  *     - `src/pages/showcase/listbox-settings/index.tsx`
  *     - `src/pages/showcase/range-input-settings/index.tsx`
@@ -30,9 +31,6 @@
  *     - `src/pages/showcase/stepper-settings/index.tsx`
  */
 
-import { type ChangeEvent } from 'react';
-
-import { Input } from '@ui/input';
 import {
   SHAPE_PRESET_KEYS,
   SIZE_PRESET_KEYS,
@@ -42,6 +40,7 @@ import {
 
 import { ShapeListbox } from '../shape-listbox';
 import { SizeListbox } from '../size-listbox';
+import { TextGroup } from '../text-group';
 
 /**
  * ControlGroupProps — представляет пропсы компонента ControlGroup.
@@ -86,13 +85,15 @@ export function ControlGroup({
 }: ControlGroupProps) {
   return (
     <>
-      <Input
-        label="Label:"
-        value={label}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onLabelChange(event.target.value)
-        }
-        onClear={() => onLabelChange('')}
+      <TextGroup
+        contents={[
+          {
+            label: 'Label:',
+            value: label,
+            onChange: onLabelChange,
+          },
+        ]}
+        set={{ label: 'Set label' }}
       />
 
       <SizeListbox

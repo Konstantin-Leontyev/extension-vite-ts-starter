@@ -15,7 +15,6 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { Input } from '@ui/input';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
 import { type TonePreset } from '@ui/tones';
 
@@ -105,13 +104,15 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         onShowShadowChange={(show) => onChange('showShadow', show)}
       />
 
-      <Input
-        label="Placeholder:"
-        value={state.placeholder}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('placeholder', event.target.value)
-        }
-        onClear={() => onChange('placeholder', '')}
+      <TextGroup
+        contents={[
+          {
+            label: 'Placeholder:',
+            value: state.placeholder,
+            onChange: (value) => onChange('placeholder', value),
+          },
+        ]}
+        set={{ label: 'Set placeholder' }}
       />
 
       <Checkbox
@@ -130,20 +131,32 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         onReserveErrorSpaceChange={(reserve) => onChange('reserveErrorSpace', reserve)}
       />
 
-      <TextGroup
-        contents={[
-          {
-            value: state.error,
-            onChange: (value) => onChange('error', value),
-          },
-        ]}
-        labelPrefix="Error"
-        show={{
-          checked: state.invalid,
-          label: 'Invalid',
-          onChange: (checked) => onChange('invalid', checked),
+      <Checkbox
+        checked={state.invalid}
+        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+          const checked = event.target.checked;
+          onChange('invalid', checked);
+
+          if (!checked) {
+            onChange('error', '');
+          }
         }}
-      />
+      >
+        Invalid
+      </Checkbox>
+
+      {state.invalid && (
+        <TextGroup
+          contents={[
+            {
+              label: 'Error:',
+              value: state.error,
+              onChange: (value) => onChange('error', value),
+            },
+          ]}
+          set={{ label: 'Set error' }}
+        />
+      )}
 
       <Checkbox
         checked={state.disabled}

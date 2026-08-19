@@ -90,7 +90,7 @@ const INPUT_ROW_PROP_NAMES = new Set<string>([...BORDER_PROP_NAMES, 'shape', 'si
 
 /**
  * getInputRowStyles — возвращает CSS-правила для узла `StyledInputRow`:
- * сетку поля и сброса, высоту ряда, рамку с тенью, фон и фокус.
+ * сетку поля и сброса, высоту ряда, рамку с тенью, фон, фокус и невалидность.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты `shape`, `showBorder`, `showShadow` и
@@ -102,6 +102,10 @@ const INPUT_ROW_PROP_NAMES = new Set<string>([...BORDER_PROP_NAMES, 'shape', 'si
  * 3. Красит фон через `getSurfaceBackgroundColor`: при рамке — `surface`, без
  *    рамки — `transparent`. Кладёт рамку с тенью через `getBorderStyles`
  * 4. При рамке на `&:has(:focus-visible)` кладёт `outline` через `getOutlineStyles`
+ * 5. На `&[data-invalid]` кладёт ту же обводку цветом `invalidOutline`.
+ *    Ряд ставит признак сам, как `data-disabled` у композита: состояние
+ *    не угадывается по потомку. Правило стоит после фокуса, чтобы
+ *    невалидность перебивала фокус. В отличие от фокуса, не зависит от рамки
  *
  * @param props пропсы стилизации ряда и тема
  * @returns CSS-правила, каждое с новой строки
@@ -136,6 +140,10 @@ function getInputRowStyles(props: InputRowStyleProps & { theme: AppTheme }): str
     );
   }
 
+  styles.push(
+    `&[data-invalid] { ${getOutlineStyles(theme.colors.invalidOutline)} }`
+  );
+
   return styles.join('\n');
 }
 
@@ -144,7 +152,7 @@ function getInputRowStyles(props: InputRowStyleProps & { theme: AppTheme }): str
  * Базируется на `<div>` и принимает пропсы из `InputRowStyleProps`.
  *
  * Генерация стилей:
- *  - `getInputRowStyles` — сетка, высота, рамка с тенью, фон и фокус
+ *  - `getInputRowStyles` — сетка, высота, рамка с тенью, фон, фокус и невалидность
  */
 export const StyledInputRow = styled.div.withConfig({
   shouldForwardProp: (prop) => !INPUT_ROW_PROP_NAMES.has(prop),
@@ -172,8 +180,9 @@ const INPUT_CONTROL_PROP_NAMES = new Set<string>(['size']);
  *    через `getPaddingInline` и типографику через `getTextProperties`.
  *    `padding-block` не пишется: высоту держит ряд через `min-block-size`
  * 3. Сбрасывает рамку и фон: `border: none`, `background-color: transparent`.
- *    Гасит `outline` на `:focus-visible`: при рамке контур композита рисует ряд,
- *    без рамки контура нет
+ *    Гасит `outline` на `:focus-visible` и на `[aria-invalid='true']`: контур
+ *    композита рисует ряд. Локальное гашение глушит контур `GlobalResetStyle`
+ *    на нативном поле, чтобы не оставлять шов у кнопки сброса
  *
  * @param props пропсы стилизации нативного поля ввода
  * @returns CSS-правила, каждое с новой строки
@@ -190,7 +199,12 @@ function getInputControlStyles(props: InputControlStyleProps): string {
     ${getTextProperties(getTextSize(size))}
     border: none;
     background-color: transparent;
-    &:focus-visible { outline: none; }
+    &:focus-visible,
+    &[aria-invalid='true'],
+    &[aria-invalid='true']:focus,
+    &[aria-invalid='true']:focus-visible {
+      outline: none;
+    }
   `;
 }
 

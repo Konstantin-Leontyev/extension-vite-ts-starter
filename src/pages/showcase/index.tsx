@@ -1411,11 +1411,15 @@ export function ShowcasePage() {
                 <Input
                   alignSelf="center"
                   disabled={input.disabled}
-                  error={input.error || undefined}
+                  error={
+                    input.invalid && input.error.trim() !== '' ? input.error : undefined
+                  }
                   errorPlaceholder={input.errorPlaceholder}
-                  invalid={input.invalid}
-                  label={input.label || undefined}
-                  placeholder={input.placeholder}
+                  invalid={input.invalid || undefined}
+                  label={input.label.trim() !== '' ? input.label : undefined}
+                  placeholder={
+                    input.placeholder.trim() !== '' ? input.placeholder : undefined
+                  }
                   reserveErrorSpace={input.reserveErrorSpace}
                   shape={input.shape}
                   showClearButton={input.showClearButton}

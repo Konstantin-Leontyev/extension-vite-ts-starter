@@ -177,7 +177,8 @@ export function Input({
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <StyledInputRow
         borderTone={borderTone}
-        data-has-clear={hasClear ? '' : undefined}
+        data-has-clear={hasClear ? true : undefined}
+        data-invalid={isInvalid ? true : undefined}
         shape={shape}
         showBorder={showBorder}
         showShadow={showShadow}

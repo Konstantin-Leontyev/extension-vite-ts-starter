@@ -14,7 +14,8 @@
  * 1. Экспортировать компонент FieldErrorGroup
  * 2. Типизировать пропсы через `FieldErrorGroupProps`
  * 3. Рендерить единый блок: `Reserve error space`, при включённом резерве —
- *    `Reserved space placeholder:`; при выключении резерва сбрасывать подсказку
+ *    `Set Reserved space placeholder` через TextGroup. При выключении резерва
+ *    сбрасывать подсказку
  *
  * Потребители:
  *  - панели настроек витрины — настраивают полоску FieldError:
@@ -25,7 +26,8 @@
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { Input } from '@ui/input';
+
+import { TextGroup } from '../text-group';
 
 /**
  * FieldErrorGroupProps — представляет пропсы компонента FieldErrorGroup.
@@ -77,13 +79,15 @@ export function FieldErrorGroup({
       </Checkbox>
 
       {isReserved && (
-        <Input
-          label="Reserved space placeholder:"
-          value={errorPlaceholder ?? ''}
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            onErrorPlaceholderChange(event.target.value || undefined)
-          }
-          onClear={() => onErrorPlaceholderChange(undefined)}
+        <TextGroup
+          contents={[
+            {
+              label: 'Reserved space placeholder:',
+              value: errorPlaceholder ?? '',
+              onChange: (value) => onErrorPlaceholderChange(value || undefined),
+            },
+          ]}
+          set={{ label: 'Set Reserved space placeholder' }}
         />
       )}
     </>
