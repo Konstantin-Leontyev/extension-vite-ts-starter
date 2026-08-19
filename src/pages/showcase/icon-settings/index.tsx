@@ -1,8 +1,9 @@
 /**
  * Файл: `src/pages/showcase/icon-settings/index.tsx`
  * Определяет панель настроек компонента Icon в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, иконки и её тонов, отступа
- * окна, рамки, тени, hover и состояния `disabled` в реальном времени.
+ * Содержит контролы для изменения размера, формы, рамки, иконки и её тонов,
+ * отступа окна, роли `as`, hover, а при `as="button"` — состояний `active`
+ * и `disabled` в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `IconWidgetState`
@@ -23,6 +24,7 @@ import {
   type IconShapePreset,
   type IconSizePreset,
 } from '@ui/icon';
+import { Listbox, type ListboxOption } from '@ui/listbox';
 import { type SpacingValue } from '@ui/spacing';
 import { type TonePreset } from '@ui/tones';
 
@@ -43,6 +45,8 @@ import { SizeListbox } from '../size-listbox';
  * `iconKey` выбирает иконку для `children` в превью.
  * Используется для синхронизации значений между панелью управления и демонстрационным Icon.
  *
+ * @property active — включает зафиксированное нажатое состояние
+ * @property as — корневой тег окна или действия
  * @property borderTone — тон рамки
  * @property disabled — включает недоступное состояние
  * @property iconFill — тон глифа иконки
@@ -56,6 +60,8 @@ import { SizeListbox } from '../size-listbox';
  * @property size — размер окна
  */
 export type IconWidgetState = {
+  active: boolean;
+  as: 'button' | 'span';
   borderTone: TonePreset;
   disabled: boolean;
   iconFill: TonePreset;
@@ -68,6 +74,16 @@ export type IconWidgetState = {
   showShadow: boolean;
   size: IconSizePreset;
 };
+
+/**
+ * ICON_TYPE_OPTIONS — задаёт опции листбокса роли Icon.
+ * Значение опции — проп `as`: `button` для действия, `span` для окна.
+ * Используется в `Listbox` поля Type внутри IconSettings.
+ */
+const ICON_TYPE_OPTIONS: ListboxOption[] = [
+  { label: 'Button', value: 'button' },
+  { label: 'Icon', value: 'span' },
+];
 
 /**
  * IconSettingsProps — представляет пропсы компонента IconSettings.
@@ -106,6 +122,15 @@ export function IconSettings({ onChange, state }: IconSettingsProps) {
         onChange={(shape) => onChange('shape', shape)}
       />
 
+      <BorderGroup
+        borderTone={state.borderTone}
+        showBorder={state.showBorder}
+        showShadow={state.showShadow}
+        onBorderToneChange={(tone) => onChange('borderTone', tone)}
+        onShowBorderChange={(show) => onChange('showBorder', show)}
+        onShowShadowChange={(show) => onChange('showShadow', show)}
+      />
+
       <IconGroup
         fill={state.iconFill}
         iconOptions={COMBOBOX_OPTIONS}
@@ -123,13 +148,11 @@ export function IconSettings({ onChange, state }: IconSettingsProps) {
         onChange={(size) => onChange('padding', getIconPadding(size))}
       />
 
-      <BorderGroup
-        borderTone={state.borderTone}
-        showBorder={state.showBorder}
-        showShadow={state.showShadow}
-        onBorderToneChange={(tone) => onChange('borderTone', tone)}
-        onShowBorderChange={(show) => onChange('showBorder', show)}
-        onShowShadowChange={(show) => onChange('showShadow', show)}
+      <Listbox
+        label="Type:"
+        options={ICON_TYPE_OPTIONS}
+        value={state.as}
+        onChange={(value) => onChange('as', value as IconWidgetState['as'])}
       />
 
       <Checkbox
@@ -141,14 +164,27 @@ export function IconSettings({ onChange, state }: IconSettingsProps) {
         Show hover
       </Checkbox>
 
-      <Checkbox
-        checked={state.disabled}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('disabled', event.target.checked)
-        }
-      >
-        Disabled
-      </Checkbox>
+      {state.as === 'button' && (
+        <>
+          <Checkbox
+            checked={state.active}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              onChange('active', event.target.checked)
+            }
+          >
+            Active
+          </Checkbox>
+
+          <Checkbox
+            checked={state.disabled}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              onChange('disabled', event.target.checked)
+            }
+          >
+            Disabled
+          </Checkbox>
+        </>
+      )}
     </StyledSettingsForm>
   );
 }

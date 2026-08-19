@@ -3,8 +3,7 @@
  * Определяет внешний вид компонента SegmentButtonParts.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `SegmentButtonPartsStyleProps`,
- *    `SegmentButtonPartsPartStyleProps`, `SegmentButtonPartsDividerStyleProps`
+ * 1. Типизировать пропсы через `SegmentButtonPartsStyleProps`
  *    и `SegmentButtonPartsShape`
  * 2. Хранить вертикальный отступ разделителя в `segmentButtonPartsDividerMarginBlock`,
  *    зазор иконки с текстом в `SEGMENT_BUTTON_PARTS_ICON_LABEL_GAP`
@@ -14,6 +13,7 @@
  *
  * Потребители:
  *  - `src/ui/segment-button-parts/index.tsx` — собирает компонент SegmentButtonParts
+ *    и реэкспортирует публичное API
  */
 
 import styled from 'styled-components';
@@ -35,6 +35,7 @@ import {
   DEFAULT_TONE,
   getToneColorKey,
   resolveColorMix,
+  resolvePressedBackground,
   type TonePreset,
 } from '@ui/tones';
 
@@ -64,7 +65,7 @@ export const SEGMENT_BUTTON_PARTS_FLUSH_SHAPE = 'square' as const;
 
 /**
  * SegmentButtonPartsShape — представляет форму ряда сегментов.
- * Канонические `rounded` / `pill` скругляют крайние сегменты;
+ * Канонические `rounded` / `pill` скругляют крайние сегменты.
  * `square` оставляет прямые углы под обрезкой оболочки.
  */
 export type SegmentButtonPartsShape =
@@ -165,12 +166,14 @@ export const StyledSegmentButtonPartsRoot = styled.div.withConfig({
  * Позиция иконки в CSS сегмента не участвует — `iconPosition` живёт только
  * в JSX-порядке узлов и в styled-пропсы не передаётся.
  *
+ * @property active — включает активное состояние сегмента
  * @property hasIcon — включает кластер иконки с текстом по центру сегмента
  * @property shape — форма ряда для скругления крайних сегментов
  * @property size — размер сегмента
  * @property tone — тон заливки сегмента
  */
 type SegmentButtonPartsPartStyleProps = {
+  active?: boolean;
   hasIcon: boolean;
   shape?: SegmentButtonPartsShape;
   size?: SizePreset;
@@ -178,9 +181,16 @@ type SegmentButtonPartsPartStyleProps = {
 };
 
 /**
+ * DEFAULT_SEGMENT_BUTTON_PARTS_ACTIVE — задаёт активное состояние сегмента по умолчанию.
+ * Используется, когда вызывающий код не передал проп `active`.
+ */
+const DEFAULT_SEGMENT_BUTTON_PARTS_ACTIVE = false;
+
+/**
  * SEGMENT_BUTTON_PARTS_PART_PROP_NAMES — хранит имена пропсов стилизации сегмента.
  */
 const SEGMENT_BUTTON_PARTS_PART_PROP_NAMES = new Set<string>([
+  'active',
   'hasIcon',
   'shape',
   'size',
@@ -190,9 +200,10 @@ const SEGMENT_BUTTON_PARTS_PART_PROP_NAMES = new Set<string>([
 /**
  * getSegmentButtonPartsPartStyles — возвращает CSS-правила для узла
  * `StyledSegmentButtonPartsPart`: высоту, заливку по `tone`, центрирование
- * кластера иконки с текстом, наведение, фокус и скругление крайних сегментов
- * по `shape`. Статику окна красит внутренний Icon своими пропсами. Шов секции
- * не ставится: иконка и текст — кластер в сегменте, не краевая секция.
+ * кластера иконки с текстом, наведение, фокус, скругление крайних сегментов
+ * по `shape` и тень нажатия. Статику окна красит внутренний Icon своими
+ * пропсами. Шов секции не ставится: иконка и текст — кластер в сегменте, не
+ * краевая секция.
  *
  * Как работает:
  * 1. Берёт тему и дефолты пропсов
@@ -211,6 +222,9 @@ const SEGMENT_BUTTON_PARTS_PART_PROP_NAMES = new Set<string>([
  * 6. Скругляет первый и последний сегмент радиусом из
  *    `resolveSegmentButtonPartsRadius` по `shape` и минимальной высоте ряда.
  *    Форма `square` радиус не пишет: углы прямые, скругление даёт обрезка ряда
+ * 7. На `:active` и при `active` красит сегмент заливкой нажатия через
+ *    `resolvePressedBackground` и ставит `shadow.pressed`. Оболочка ряда
+ *    тень не меняет. Положение сегмента не меняется
  *
  * @param props пропсы стилизации сегмента и тема
  * @returns CSS-правила, каждое с новой строки
@@ -220,6 +234,7 @@ function getSegmentButtonPartsPartStyles(
 ): string {
   const theme = getTheme(props);
   const {
+    active = DEFAULT_SEGMENT_BUTTON_PARTS_ACTIVE,
     hasIcon,
     shape = DEFAULT_SHAPE_PRESET,
     size = DEFAULT_SIZE_PRESET,
@@ -229,6 +244,8 @@ function getSegmentButtonPartsPartStyles(
   const radius = resolveSegmentButtonPartsRadius(shape, minBlockSize);
   const colorKey = getToneColorKey(tone);
   const hoverStateBackground = resolveIconStateBackground(theme, tone, 'none');
+  const pressedBackground = resolvePressedBackground(theme, tone);
+  const pressedShadow = `box-shadow: ${theme.shadow.pressed};`;
 
   const styles = [
     'display: grid;',
@@ -284,6 +301,22 @@ function getSegmentButtonPartsPartStyles(
     );
   }
 
+  styles.push(
+    `&:not(:disabled):active {`,
+    `background-color: ${pressedBackground};`,
+    pressedShadow,
+    '}'
+  );
+
+  if (active) {
+    styles.push(
+      `&:not(:disabled) {`,
+      `background-color: ${pressedBackground};`,
+      pressedShadow,
+      '}'
+    );
+  }
+
   return styles.join('\n');
 }
 
@@ -296,7 +329,7 @@ function getSegmentButtonPartsPartStyles(
  *
  * Генерация стилей:
  *  - `getSegmentButtonPartsPartStyles` — заливка, кластер иконки с текстом,
- *    наведение, фокус и радиусы
+ *    наведение, фокус, радиусы и тень нажатия
  */
 export const StyledSegmentButtonPartsPart = styled.button.withConfig({
   shouldForwardProp: (prop) => !SEGMENT_BUTTON_PARTS_PART_PROP_NAMES.has(prop),

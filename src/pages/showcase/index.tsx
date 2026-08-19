@@ -317,6 +317,8 @@ const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_ICON_STATE: IconWidgetState = {
+  active: false,
+  as: 'button',
   borderTone: 'neutral',
   disabled: false,
   iconFill: 'neutral',
@@ -1260,6 +1262,21 @@ export function ShowcasePage() {
     icon.borderTone,
     icon.showShadow
   );
+  /**
+   * iconRoleProps — формирует пропсы роли превью Icon по `icon.as`.
+   * Для `button` передаёт `active`, `disabled` и `aria-label`. Для `span` отдаёт
+   * только тег окна: состояния кнопки в превью не идут.
+   * Используется в превью виджета Icon.
+   */
+  const iconRoleProps =
+    icon.as === 'button'
+      ? {
+          active: icon.active,
+          'aria-label': DEMO_ICON_ARIA_LABEL,
+          as: 'button' as const,
+          disabled: icon.disabled,
+        }
+      : { as: 'span' as const };
   const tagBorderProps: BorderProps = resolveBorderProps(
     tag.showBorder,
     tag.borderTone,
@@ -1575,9 +1592,6 @@ export function ShowcasePage() {
               {renderWidgetCard(
                 'icon',
                 <Icon
-                  aria-label={DEMO_ICON_ARIA_LABEL}
-                  as="button"
-                  disabled={icon.disabled}
                   iconFill={icon.iconFill}
                   iconTone={icon.iconTone}
                   padding={icon.padding}
@@ -1586,6 +1600,7 @@ export function ShowcasePage() {
                   showHover={icon.showHover}
                   size={icon.size}
                   {...iconBorderProps}
+                  {...iconRoleProps}
                 >
                   {getIcon(icon.iconKey)}
                 </Icon>

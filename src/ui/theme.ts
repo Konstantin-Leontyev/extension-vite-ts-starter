@@ -72,12 +72,14 @@ export type ThemeColors = {
  *
  * @property colors — объект с цветами текущей темы
  * @property colorScheme — режим темы для нативной части браузера
+ * @property shadow.pressed — внутренняя тень нажатой поверхности, используется в `box-shadow`
  * @property shadow.surface — тень для поверхностей, используется в `box-shadow`
  */
 export type AppTheme = {
   colors: ThemeColors;
   colorScheme: 'dark' | 'light';
   shadow: {
+    pressed: string;
     surface: string;
   };
 };
@@ -146,6 +148,8 @@ export const styledLightTheme: AppTheme = {
   colorScheme: 'light',
   colors: { ...lightColors },
   shadow: {
+    pressed:
+      'inset 0 2px 4px rgb(0 0 0 / 8%), inset 0 4px 12px rgb(0 0 0 / 4%), inset 0 1px 0 rgb(0 0 0 / 6%)',
     surface:
       '0 1px 2px rgb(15 23 42 / 10%), 0 2px 4px rgb(15 23 42 / 12%), 0 4px 12px -4px rgb(15 23 42 / 10%)',
   },
@@ -153,12 +157,14 @@ export const styledLightTheme: AppTheme = {
 
 /**
  * styledDarkTheme — представляет готовую тёмную тему приложения.
- * Содержит цветовую схему и все цвета. Тени отключены.
+ * Содержит цветовую схему, все цвета и тень нажатия. Тень поверхностей отключена.
  */
 export const styledDarkTheme: AppTheme = {
   colorScheme: 'dark',
   colors: { ...darkColors },
   shadow: {
+    pressed:
+      'inset 0 2px 4px rgb(0 0 0 / 42%), inset 0 4px 12px rgb(0 0 0 / 24%), inset 0 1px 0 rgb(0 0 0 / 32%)',
     surface: 'none',
   },
 };

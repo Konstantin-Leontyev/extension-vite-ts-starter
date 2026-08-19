@@ -1,9 +1,10 @@
 /**
  * Файл: `src/ui/border.ts`
  * Содержит управляемую рамку и тень вне layout-box: обводку `0 0 0 1px` и
- * опционально `shadow.surface` одним `box-shadow`, плюс два пакета пропсов
- * для локального opt-in у потребителей. Даёт пакет `BorderProps` при дефолте
- * потребителя «рамка есть» и пакет `ShowBorderProps` при дефолте «рамки нет».
+ * опционально `shadow.surface` и `shadow.pressed` одним `box-shadow`, плюс два
+ * пакета пропсов для локального opt-in у потребителей. Даёт пакет `BorderProps`
+ * при дефолте потребителя «рамка есть» и пакет `ShowBorderProps` при дефолте
+ * «рамки нет».
  *
  * Основные задачи:
  * 1. Типизировать пропсы рамки через `BorderProps` и `ShowBorderProps`
@@ -137,7 +138,8 @@ function getBorderColor(theme: AppTheme, borderTone: TonePreset = DEFAULT_TONE):
 
 /**
  * getBorderStyles — возвращает CSS-правила рамки с тенью вне layout-box: обводку
- * `0 0 0 1px` и опционально тень `shadow.surface` одним `box-shadow`.
+ * `0 0 0 1px` и опционально тени `shadow.surface` и `shadow.pressed` одним
+ * `box-shadow`.
  * Рамочный и безрамочный режимы дают один `content-box` и одно окно Icon,
  * без резерва `border: 1px solid transparent`.
  * `border: none` вызывающий код пишет только там, где layout-рамку даёт
@@ -151,32 +153,47 @@ function getBorderColor(theme: AppTheme, borderTone: TonePreset = DEFAULT_TONE):
  * без флагов.
  *
  * Как работает:
- * 1. Без рамки отдаёт `box-shadow: none`: тени без рамки нет
+ * 1. Без рамки и без `pressed` отдаёт `box-shadow: none`
  * 2. С рамкой собирает обводку `0 0 0 1px` цвета по `borderTone`
- * 3. Дописывает `shadow.surface` в то же `box-shadow` только когда `showShadow`
- *    включён и токен не равен `none`. Слой `none` в списке невалиден, браузер
- *    отбрасывает всё правило вместе с обводкой. В тёмной теме токен равен `none`
+ * 3. При рамке, `showShadow` и токене не `none` дописывает `shadow.surface`.
+ *    Слой `none` в списке невалиден, браузер отбрасывает всё правило вместе с
+ *    обводкой. В тёмной теме токен равен `none`
+ * 4. При `pressed` дописывает `shadow.pressed` в тот же список, в том числе
+ *    без рамки: вдавленность принадлежит кнопке, не обводке. Подъём
+ *    не снимается
  *
  * @param theme текущая тема
  * @param showBorder включает рамку
  * @param showShadow включает тень при включённой рамке
  * @param borderTone тон цвета рамки
+ * @param pressed включает тень нажатия
  * @returns CSS-правила, каждое с новой строки
  */
 export function getBorderStyles(
   theme: AppTheme,
   showBorder: boolean = DEFAULT_SHOW_BORDER,
   showShadow: boolean = DEFAULT_SHOW_SHADOW,
-  borderTone: TonePreset = DEFAULT_TONE
+  borderTone: TonePreset = DEFAULT_TONE,
+  pressed: boolean = false
 ): string {
-  if (!showBorder) {
+  const layers: string[] = [];
+
+  if (showBorder) {
+    layers.push(`0 0 0 1px ${getBorderColor(theme, borderTone)}`);
+    const surfaceShadow = theme.shadow.surface;
+
+    if (showShadow && surfaceShadow !== 'none') {
+      layers.push(surfaceShadow);
+    }
+  }
+
+  if (pressed) {
+    layers.push(theme.shadow.pressed);
+  }
+
+  if (layers.length === 0) {
     return 'box-shadow: none;';
   }
 
-  const border = `0 0 0 1px ${getBorderColor(theme, borderTone)}`;
-  const surfaceShadow = theme.shadow.surface;
-
-  return showShadow && surfaceShadow !== 'none'
-    ? `box-shadow: ${border}, ${surfaceShadow};`
-    : `box-shadow: ${border};`;
+  return `box-shadow: ${layers.join(', ')};`;
 }

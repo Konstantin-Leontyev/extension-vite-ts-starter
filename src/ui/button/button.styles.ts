@@ -8,7 +8,7 @@
  * 3. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
- *  - `src/ui/button/index.tsx` — собирает компонент Button и реэкспортирует публичное API
+ *  - `src/ui/button/index.tsx` — собирает компонент Button
  */
 
 import styled from 'styled-components';
@@ -32,11 +32,11 @@ import {
 import { getSpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 import {
-  BORDER_SURFACE_MIX_PERCENT,
   DEFAULT_TONE,
   VARIANT_SURFACE_MIX_PERCENT,
   getToneColorKey,
   resolveColorMix,
+  resolvePressedBackground,
   resolveVeilBackground,
   type TonePreset,
 } from '@ui/tones';
@@ -61,8 +61,8 @@ type ButtonSurface = {
 /**
  * resolveButtonSurface — возвращает заливки и цвет текста кнопки по `tone`.
  * Для нейтрального тона основа `surface`, наведение — вуаль поверх неё,
- * `active` — смесь `border` с `surface` через `BORDER_SURFACE_MIX_PERCENT`.
- * Для цветного — цвет из темы со сдвигом состояний к `shade`.
+ * `active` — заливка из `resolvePressedBackground`. Для цветного — цвет из
+ * темы, состояния — сдвиг к `shade`.
  *
  * @param theme текущая тема
  * @param tone семантический тон кнопки
@@ -70,14 +70,11 @@ type ButtonSurface = {
  */
 function resolveButtonSurface(theme: AppTheme, tone: TonePreset): ButtonSurface {
   const colorKey = getToneColorKey(tone);
+  const activeBackground = resolvePressedBackground(theme, tone);
 
   if (!colorKey) {
     return {
-      activeBackground: resolveColorMix(
-        theme.colors.border,
-        theme.colors.surface,
-        BORDER_SURFACE_MIX_PERCENT
-      ),
+      activeBackground,
       backgroundColor: theme.colors.surface,
       color: theme.colors.default,
       hoverBackground: resolveVeilBackground(theme, theme.colors.surface),
@@ -87,7 +84,7 @@ function resolveButtonSurface(theme: AppTheme, tone: TonePreset): ButtonSurface 
   const color = theme.colors[colorKey];
 
   return {
-    activeBackground: resolveColorMix(color, theme.colors.shade),
+    activeBackground,
     backgroundColor: color,
     color: theme.colors.inverse,
     hoverBackground: resolveColorMix(color, theme.colors.shade),
@@ -234,10 +231,13 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
  * 1. Собирает общие правила узла: размер, рамку с тенью через `getBorderStyles`,
  *    радиус, цвет и заливка. Без иконки наведение красит тело целиком.
  *    С иконкой тело на `:hover` и `:focus-visible` заливку не меняет —
- *    подсветку несёт канал секции. `active` красит тело в обеих ветках
- * 2. При `hasIcon` делегирует раскладку позиции, отступ лейбла и канал
+ *    подсветку несёт канал секции. Наведение тень не меняет
+ * 2. На `:active` и при `active` красит тело заливкой нажатия и дописывает
+ *    `shadow.pressed` через `getBorderStyles`. Подъём `shadow.surface` не
+ *    снимается. Положение узла не меняется
+ * 3. При `hasIcon` делегирует раскладку позиции, отступ лейбла и канал
  *    секции иконки в `getButtonSplitStyles`
- * 3. Без иконки кладёт `padding-inline` на узел
+ * 4. Без иконки кладёт `padding-inline` на узел
  *
  * @param props пропсы стилизации узла и текущая тема
  * @returns CSS-правила, каждое с новой строки
@@ -255,20 +255,35 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
   const surface = resolveButtonSurface(theme, tone);
   const minBlockSize = getMinBlockSize(size);
 
+  const restBorder = getBorderStyles(theme, undefined, undefined, borderTone);
+  const pressedBorder = getBorderStyles(theme, undefined, undefined, borderTone, true);
+
   const styles = [
     `min-block-size: ${minBlockSize};`,
     `border-radius: ${resolveBlockRadius(shape, minBlockSize)};`,
     `color: ${surface.color};`,
     `background-color: ${surface.backgroundColor};`,
-    getBorderStyles(theme, undefined, undefined, borderTone),
+    restBorder,
   ];
 
   if (!hasIcon) {
     styles.push(`&:not(:disabled):hover { background: ${surface.hoverBackground}; }`);
   }
 
+  styles.push(
+    `&:not(:disabled):active {`,
+    `background: ${surface.activeBackground};`,
+    pressedBorder,
+    '}'
+  );
+
   if (active) {
-    styles.push(`&:not(:disabled) { background: ${surface.activeBackground}; }`);
+    styles.push(
+      `&:not(:disabled) {`,
+      `background: ${surface.activeBackground};`,
+      pressedBorder,
+      '}'
+    );
   }
 
   if (hasIcon) {

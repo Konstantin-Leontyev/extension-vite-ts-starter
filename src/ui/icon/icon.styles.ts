@@ -53,6 +53,8 @@ import {
   DEFAULT_TONE,
   getToneColorKey,
   resolveColorMix,
+  resolvePressedBackground,
+  resolveVeilBackground,
   type TonePreset,
 } from '@ui/tones';
 
@@ -120,7 +122,7 @@ export function getIconPadding(size: IconSizePreset): SpacingValue {
 
 /**
  * ICON_TINY_ROUNDED_RADIUS — задаёт радиус формы `rounded` для размера `tiny`.
- * Паритет с боксом Checkbox размера `small`; ключи канона берут радиус из
+ * Паритет с боксом Checkbox размера `small`. Ключи канона берут радиус из
  * `resolveBlockRadius`.
  */
 const ICON_TINY_ROUNDED_RADIUS = 4;
@@ -187,8 +189,8 @@ function resolveIconBorderRadius(shape: IconShapePreset, size: IconSizePreset): 
 
 /**
  * IconSurface — представляет статичную поверхность окна иконки: заливку и цвет глифа.
- * Состояния наведения и нажатия поверхность не включает — их родитель или сам Icon
- * при `showHover` передаёт каналом `--icon-state-background`.
+ * Состояния наведения и нажатия поверхность не включает. Секция-окно передаёт
+ * их каналом `--icon-state-background`. Кнопка красит заливку сама.
  *
  * @property backgroundColor — заливка окна в покое. Нейтральный тон заливку не красит
  * @property color — цвет глифа. Нейтральный тон без `iconFill` наследует цвет контекста
@@ -318,6 +320,7 @@ export function getIconPositionStyles(): string {
 /**
  * IconStyleProps — представляет пропсы стилизации Icon и layout-пропсы.
  *
+ * @property active — включает зафиксированное нажатое состояние у `as="button"`
  * @property iconFill — тон глифа иконки при нейтральном `iconTone`
  * @property iconTone — тон заливки окна иконки
  * @property interactive — включает канал состояний `--icon-state-background`
@@ -330,6 +333,7 @@ export function getIconPositionStyles(): string {
  */
 export type IconStyleProps = LayoutProps &
   ShowBorderProps & {
+    active?: boolean;
     iconFill?: TonePreset;
     iconTone?: TonePreset;
     interactive?: boolean;
@@ -339,14 +343,23 @@ export type IconStyleProps = LayoutProps &
   };
 
 /**
+ * IconStyledProps — представляет пропсы стилизации узла `StyledIcon`.
+ *
+ * @property isButton — включает ветку заливки и тени как у Button
+ */
+type IconStyledProps = IconStyleProps & { isButton?: boolean };
+
+/**
  * ICON_PROP_NAMES — объединяет имена layout-пропсов и пропсов стилизации Icon.
  */
 const ICON_PROP_NAMES = new Set<string>([
   ...LAYOUT_PROP_NAMES,
   ...BORDER_PROP_NAMES,
+  'active',
   'iconFill',
   'iconTone',
   'interactive',
+  'isButton',
   'shape',
   'showHover',
   'size',
@@ -379,9 +392,21 @@ const DEFAULT_ICON_INTERACTIVE = false;
 const DEFAULT_ICON_SHOW_HOVER = true;
 
 /**
+ * DEFAULT_ICON_ACTIVE — задаёт зафиксированное нажатое состояние по умолчанию.
+ * Используется, когда вызывающий код не передал проп `active`.
+ */
+const DEFAULT_ICON_ACTIVE = false;
+
+/**
+ * DEFAULT_ICON_IS_BUTTON — задаёт ветку кнопки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `isButton`.
+ */
+const DEFAULT_ICON_IS_BUTTON = false;
+
+/**
  * getIconStyles — возвращает CSS-правила для корня `StyledIcon`: габарит,
- * внутренний отступ, форму, рамку, статичную поверхность, канал состояний и
- * фокус кнопки сброса.
+ * внутренний отступ, форму, рамку с тенью, статичную поверхность, канал
+ * состояний, ветку `isButton` и фокус кнопки сброса.
  *
  * Как работает:
  * 1. Собирает квадрат окна через `getIconSize` и внутренний отступ через
@@ -391,11 +416,17 @@ const DEFAULT_ICON_SHOW_HOVER = true;
  * 3. Кладёт рамку с тенью через `getBorderStyles`. Без `showBorder` рамка
  *    выключена через `DEFAULT_ICON_SHOW_BORDER`
  * 4. Считает статичную заливку и цвет глифа через `resolveIconSurface`
- * 5. При `interactive` или `showHover` кладёт заливку через канал
+ * 5. При `isButton` красит окно как кнопку: нейтраль — `surface`, цветной —
+ *    тон. Наведение — вуаль поверх заливки или сдвиг к `shade`. На `:active` и
+ *    при `active` — заливка из `resolvePressedBackground` и `shadow.pressed`
+ *    через `getBorderStyles`. Без рамки снаружи пусто, вдавленность остаётся.
+ *    Наведение тень не меняет. `Icon` ставит проп только при `as="button"`.
+ *    Секция-`span` ветку не берёт
+ * 6. Иначе при `interactive` или `showHover` кладёт заливку через канал
  *    `--icon-state-background` с запасным значением на статику
- * 6. При `showHover` на `:not(:disabled):hover` и `:focus-visible` пишет
- *    значение канала через `resolveIconStateBackground`
- * 7. Для кнопки сброса `[data-slot='clear']` на `:focus-visible` снимает
+ * 7. При `showHover` без `isButton` на `:not(:disabled):hover` и
+ *    `:focus-visible` пишет значение канала через `resolveIconStateBackground`
+ * 8. Для кнопки сброса `[data-slot='clear']` на `:focus-visible` снимает
  *    глобальный `outline` и красит `background-color` декларацией тем же
  *    цветом, что возвращает `resolveIconStateBackground`, не через канал
  *    `--icon-state-background`
@@ -403,13 +434,15 @@ const DEFAULT_ICON_SHOW_HOVER = true;
  * @param props пропсы стилизации Icon и тема
  * @returns CSS-правила, каждое с новой строки
  */
-function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
+function getIconStyles(props: IconStyledProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
   const {
+    active = DEFAULT_ICON_ACTIVE,
     borderTone,
     iconFill,
     iconTone = DEFAULT_TONE,
     interactive = DEFAULT_ICON_INTERACTIVE,
+    isButton = DEFAULT_ICON_IS_BUTTON,
     shape = DEFAULT_ICON_SHAPE,
     showBorder = DEFAULT_ICON_SHOW_BORDER,
     showHover = DEFAULT_ICON_SHOW_HOVER,
@@ -417,7 +450,7 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
     size = DEFAULT_SIZE_PRESET,
   } = props;
   const surface = resolveIconSurface(theme, iconTone, iconFill);
-  const usesStateChannel = interactive || showHover;
+  const usesStateChannel = !isButton && (interactive || showHover);
   const stateBackground = resolveIconStateBackground(theme, iconTone);
 
   const styles = [
@@ -428,7 +461,52 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
     getBorderStyles(theme, showBorder, showShadow, borderTone),
   ];
 
-  if (usesStateChannel) {
+  if (isButton) {
+    const restBackground = surface.backgroundColor ?? theme.colors.surface;
+    const colorKey = getToneColorKey(iconTone);
+    const hoverBackground = colorKey
+      ? resolveColorMix(theme.colors[colorKey], theme.colors.shade)
+      : resolveVeilBackground(theme, restBackground);
+    const pressedBackground = resolvePressedBackground(theme, iconTone);
+    const pressedBorder = getBorderStyles(
+      theme,
+      showBorder,
+      showShadow,
+      borderTone,
+      true
+    );
+
+    styles.push(`background-color: ${restBackground};`);
+
+    if (!surface.color) {
+      styles.push(`color: ${theme.colors.default};`);
+    }
+
+    if (showHover) {
+      styles.push(
+        `&:not(:disabled):hover,`,
+        `&:focus-visible {`,
+        `background: ${hoverBackground};`,
+        '}'
+      );
+    }
+
+    styles.push(
+      `&:not(:disabled):active {`,
+      `background: ${pressedBackground};`,
+      pressedBorder,
+      '}'
+    );
+
+    if (active) {
+      styles.push(
+        `&:not(:disabled) {`,
+        `background: ${pressedBackground};`,
+        pressedBorder,
+        '}'
+      );
+    }
+  } else if (usesStateChannel) {
     styles.push(
       `background-color: var(--icon-state-background, ${surface.backgroundColor ?? 'transparent'});`
     );
@@ -440,7 +518,7 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
     styles.push(`color: ${surface.color};`);
   }
 
-  if (showHover) {
+  if (!isButton && showHover) {
     styles.push(
       `&:not(:disabled):hover,`,
       `&:focus-visible {`,
@@ -463,7 +541,7 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
 
 /**
  * StyledIcon — задаёт корневой узел компонента Icon.
- * Базируется на `<span>` и поддерживает все пропсы из `IconStyleProps`.
+ * Базируется на `<span>` и поддерживает все пропсы из `IconStyledProps`.
  * Полиморфный `as` задаёт корневой тег, например `<button>`.
  *
  * Встроенные стили:
@@ -474,7 +552,7 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
  *
  * Генерация стилей:
  *  - `getIconStyles` — габарит, внутренний отступ, форма, рамка с тенью,
- *    поверхность, канал состояний и фокус кнопки сброса
+ *    поверхность, канал состояний, ветка `isButton` и фокус кнопки сброса
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *
  * Единственный узел проекта, создающий условия рендера svg: центрирующий бокс.
@@ -482,7 +560,7 @@ function getIconStyles(props: IconStyleProps & { theme: AppTheme }): string {
  */
 export const StyledIcon = styled.span.withConfig({
   shouldForwardProp: (prop) => !ICON_PROP_NAMES.has(prop),
-})<IconStyleProps>`
+})<IconStyledProps>`
   display: grid;
   flex-shrink: 0;
   place-items: center;

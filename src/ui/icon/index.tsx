@@ -1,7 +1,7 @@
 /**
  * Файл: `src/ui/icon/index.tsx`
- * Предоставляет полиморфный компонент Icon для отображения окна иконки
- * и standalone-действия через `as="button"`.
+ * Предоставляет компонент Icon для отображения окна иконки
+ * и иконочного действия через `as="button"`.
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
@@ -13,7 +13,8 @@
  *  - канал hover через проп `showHover`
  *  - тон заливки окна через проп `iconTone`
  *  - тон глифа через проп `iconFill`
- *  - канал состояний родителя через проп `interactive`
+ *  - канал состояний родителя через проп `interactive` у окна
+ *  - зафиксированное нажатое состояние через проп `active` у `as="button"`
  *  - переопределение корневого элемента через проп `as`
  *  - svg через `children`
  *
@@ -45,6 +46,8 @@
 
 import { createElement, type ComponentPropsWithRef, type ElementType } from 'react';
 
+import { type DistributiveOmit } from '@ui/type-utils';
+
 import {
   DEFAULT_ICON_POSITION,
   ICON_POSITION_KEYS,
@@ -70,16 +73,26 @@ import {
 const DEFAULT_ICON_TYPE = 'button';
 
 /**
+ * IconDomProps — представляет HTML-пропсы корня Icon без стилей и `className`.
+ * Вычитает ключи из каждой ветки объединения отдельно.
+ */
+type IconDomProps<T extends ElementType> = DistributiveOmit<
+  ComponentPropsWithRef<T>,
+  'className' | 'style' | keyof IconStyleProps
+>;
+
+/**
  * IconProps — представляет пропсы компонента Icon.
+ * Ведущий `as="button"` открывает `active` и `disabled`, гасит `interactive`.
+ * Окно гасит `active` и `disabled`.
  *
  * @template T тип корневого элемента, по умолчанию `span`
  *
- * @property as — переопределяет корневой HTML-тег, например `<button>`
+ * @property as — переопределяет корневой HTML-тег, например `<span>`, `<button>`
  */
-type IconProps<T extends ElementType = 'span'> = {
-  as?: T;
-} & IconStyleProps &
-  Omit<ComponentPropsWithRef<T>, 'className' | 'style' | keyof IconStyleProps>;
+type IconProps<T extends ElementType = 'span'> = T extends 'button'
+  ? { as: 'button'; interactive?: never } & IconStyleProps & IconDomProps<'button'>
+  : { as?: T; active?: never; disabled?: never } & IconStyleProps & IconDomProps<T>;
 
 /**
  * Icon — отображает окно иконки. При `as="button"` — иконочное действие.
@@ -110,11 +123,15 @@ export function Icon<T extends ElementType = 'span'>(props: IconProps<T>) {
     return createElement(StyledIcon, {
       ...rest,
       as: 'button',
+      isButton: true,
       type: type ?? DEFAULT_ICON_TYPE,
     });
   }
 
-  return createElement(StyledIcon, props);
+  return createElement(StyledIcon, {
+    ...(props as IconProps<'span'>),
+    isButton: false,
+  });
 }
 
 /* eslint-disable react-refresh/only-export-components -- реэкспорт публичных типов, пресетов, мостов и хелперов секции */

@@ -215,6 +215,7 @@ function SegmentButtonPartsPart({
 
   return (
     <StyledSegmentButtonPartsPart
+      active={active}
       aria-controls={ariaControls}
       aria-current={active ? 'true' : undefined}
       aria-expanded={ariaExpanded}

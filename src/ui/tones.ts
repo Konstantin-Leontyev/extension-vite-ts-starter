@@ -9,8 +9,8 @@
  * 3. Задать значение по умолчанию через `DEFAULT_TONE`
  * 4. Предоставить перечень тонов через `TONE_PRESET_KEYS`
  * 5. Задать доли смешения `BORDER_SURFACE_MIX_PERCENT` и `VARIANT_SURFACE_MIX_PERCENT`
- * 6. Предоставить утилиты `getToneColorKey`, `getToneColor`, `resolveColorMix`
- *    и `resolveVeilBackground`
+ * 6. Предоставить утилиты `getToneColorKey`, `getToneColor`, `resolveColorMix`,
+ *    `resolveVeilBackground` и `resolvePressedBackground`
  *
  * Потребители:
  *  - `@ui/border` — читает цвет рамки через `getToneColor`
@@ -20,8 +20,9 @@
  *    `getToneColorKey`
  *  - контролы, например Button, Tag, Icon и Table — смешивают цвета темы через
  *    `resolveColorMix`
- *  - `@ui/button` — читает доли смешения `BORDER_SURFACE_MIX_PERCENT` и
- *    `VARIANT_SURFACE_MIX_PERCENT`
+ *  - `@ui/button` — читает долю смешения `VARIANT_SURFACE_MIX_PERCENT`
+ *  - контролы, например Button, Icon и SegmentButtonParts — читают заливку
+ *    нажатия через `resolvePressedBackground`
  *  - `@ui/button` — кладёт вуаль поверх непрозрачной нейтральной заливки через
  *    `resolveVeilBackground`
  *  - `@ui/text` — расширяет канонический набор тонов
@@ -114,7 +115,7 @@ const SHADE_KEEP_PERCENT = 80;
 
 /**
  * BORDER_SURFACE_MIX_PERCENT — задаёт долю `border` в смеси с `surface`.
- * Используется для `active`-заливки нейтральной непрозрачной секции, например лейбла Button.
+ * Используется в `resolvePressedBackground` для нейтральной заливки нажатия.
  */
 export const BORDER_SURFACE_MIX_PERCENT = 40;
 
@@ -156,4 +157,30 @@ export function resolveColorMix(
  */
 export function resolveVeilBackground(theme: AppTheme, backgroundColor: string): string {
   return `linear-gradient(${theme.colors.veil}, ${theme.colors.veil}) ${backgroundColor}`;
+}
+
+/**
+ * resolvePressedBackground — возвращает заливку нажатия по `tone`.
+ * Цветной тон — сдвиг к `shade`. Нейтральный — смесь `border` с `surface`
+ * через `BORDER_SURFACE_MIX_PERCENT`.
+ *
+ * @param theme текущая тема
+ * @param tone семантический тон поверхности
+ * @returns значение для CSS-свойств `background` и `background-color`
+ */
+export function resolvePressedBackground(
+  theme: AppTheme,
+  tone: TonePreset = DEFAULT_TONE
+): string {
+  const colorKey = getToneColorKey(tone);
+
+  if (colorKey) {
+    return resolveColorMix(theme.colors[colorKey], theme.colors.shade);
+  }
+
+  return resolveColorMix(
+    theme.colors.border,
+    theme.colors.surface,
+    BORDER_SURFACE_MIX_PERCENT
+  );
 }
