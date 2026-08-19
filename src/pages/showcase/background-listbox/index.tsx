@@ -20,7 +20,10 @@
  */
 
 import { Listbox, type ListboxOption } from '@ui/listbox';
-import { SURFACE_BACKGROUND_PRESET_KEYS, type SurfaceBackgroundPreset } from '@ui/surface';
+import {
+  SURFACE_BACKGROUND_PRESET_KEYS,
+  type SurfaceBackgroundPreset,
+} from '@ui/surface';
 
 /**
  * getBackgroundListboxOptions — преобразует `SURFACE_BACKGROUND_PRESET_KEYS` в опции Listbox.

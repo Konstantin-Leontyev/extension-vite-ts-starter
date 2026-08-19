@@ -140,9 +140,7 @@ function getInputRowStyles(props: InputRowStyleProps & { theme: AppTheme }): str
     );
   }
 
-  styles.push(
-    `&[data-invalid] { ${getOutlineStyles(theme.colors.invalidOutline)} }`
-  );
+  styles.push(`&[data-invalid] { ${getOutlineStyles(theme.colors.invalidOutline)} }`);
 
   return styles.join('\n');
 }

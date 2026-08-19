@@ -56,13 +56,7 @@ type ToolbarProps = {
  *   ariaLabel="Toolbar"
  * />
  */
-function Toolbar({
-  actions,
-  ariaLabel,
-  shape,
-  size,
-  ...rest
-}: ToolbarProps) {
+function Toolbar({ actions, ariaLabel, shape, size, ...rest }: ToolbarProps) {
   const actionShape = resolveIconShape(shape);
 
   return (
