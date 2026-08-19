@@ -180,7 +180,7 @@ alwaysApply: false
 | `title` элемента набора (всплывающая подсказка) | `Action 1 tooltip:` — поле блока повторяемого элемента |
 | текстовый контент (`children`, поле `message`) | `Text:`; у панели Text — `Sample:`, иначе лейбл дублирует заголовок карточки |
 | `label` (подпись поля) | `Label:` — первый контрол `control-group`, строка без осей вида |
-| `legend` / `label` Fieldset | `Legend:` и `Set legend` — строка без осей; пусто и blur — один чекбокс |
+| `legend` Fieldset | `Legend:` и `Set legend` — строка без осей; пусто и blur — один чекбокс |
 | `value` | буфер превью, контрола нет |
 | `suffix` | `Suffix:` — строка без осей |
 | булев проп (`showBorder`, `showText` у ProgressBar) | глагол + существительное (`Show border`, `Show text`) |

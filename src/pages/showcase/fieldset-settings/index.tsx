@@ -28,12 +28,12 @@ import { ToneListbox } from '../tone-listbox';
  * группой полей.
  *
  * @property borderTone — тон рамки
- * @property label — заголовок в `<legend>`
+ * @property legend — заголовок в `<legend>`
  * @property selected — витринный ключ активного варианта демо-группы
  */
 export type FieldsetWidgetState = {
   borderTone: FieldsetBorderTonePreset;
-  label: string;
+  legend: string;
   selected: 'a' | 'b';
 };
 
@@ -70,8 +70,8 @@ export function FieldsetSettings({ onChange, state }: FieldsetSettingsProps) {
       <TextGroup
         contents={[
           {
-            value: state.label,
-            onChange: (value) => onChange('label', value),
+            value: state.legend,
+            onChange: (value) => onChange('legend', value),
           },
         ]}
         labelPrefix="Legend"

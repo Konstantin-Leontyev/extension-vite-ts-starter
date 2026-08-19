@@ -5,7 +5,7 @@
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - тон рамки через проп `borderTone`
- *  - заголовок группы через проп `label` в `<legend>`. Без `label` рамка без разрыва
+ *  - заголовок группы через проп `legend` в `<legend>`. Без `legend` рамка без разрыва
  *  - содержимое группы через `children`
  *
  * Основные задачи:
@@ -45,10 +45,10 @@ const FIELDSET_LEGEND_TONE: TextTonePreset = 'muted';
 /**
  * FieldsetProps — представляет пропсы компонента Fieldset.
  *
- * @property label — заголовок в `<legend>`. Пустая или пробельная строка не рендерит `<legend>`
+ * @property legend — заголовок в `<legend>`. Пустая или пробельная строка не рендерит `<legend>`
  */
 type FieldsetProps = {
-  label?: string;
+  legend?: string;
 } & FieldsetStyleProps &
   Omit<
     ComponentPropsWithRef<'fieldset'>,
@@ -59,12 +59,12 @@ type FieldsetProps = {
  * Fieldset — отображает группу полей с опциональным заголовком в `<legend>`.
  *
  * @example
- * <Fieldset label="Notifications">
+ * <Fieldset legend="Notifications">
  *   <Checkbox checked={email}>Email</Checkbox>
  * </Fieldset>
  */
-function Fieldset({ children, label, ...rest }: FieldsetProps) {
-  const hasLegend = Boolean(label?.trim());
+function Fieldset({ children, legend, ...rest }: FieldsetProps) {
+  const hasLegend = Boolean(legend?.trim());
 
   return (
     <StyledFieldset {...rest}>
@@ -75,7 +75,7 @@ function Fieldset({ children, label, ...rest }: FieldsetProps) {
           size={FIELDSET_LEGEND_SIZE_PRESET}
           tone={FIELDSET_LEGEND_TONE}
         >
-          {label}
+          {legend}
         </Text>
       )}
       {children}

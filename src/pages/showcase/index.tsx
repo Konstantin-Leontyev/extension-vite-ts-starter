@@ -463,7 +463,7 @@ const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
  */
 const DEFAULT_FIELDSET_STATE: FieldsetWidgetState = {
   borderTone: 'neutral',
-  label: 'Label:',
+  legend: 'Label:',
   selected: 'a',
 };
 
@@ -1689,7 +1689,7 @@ export function ShowcasePage() {
                   borderTone={fieldset.borderTone}
                   inlineSize="100%"
                   minInlineSize="0"
-                  {...(fieldset.label.trim() !== '' ? { label: fieldset.label } : {})}
+                  {...(fieldset.legend.trim() !== '' ? { legend: fieldset.legend } : {})}
                 >
                   <RadioButton
                     checked={fieldset.selected === 'a'}
