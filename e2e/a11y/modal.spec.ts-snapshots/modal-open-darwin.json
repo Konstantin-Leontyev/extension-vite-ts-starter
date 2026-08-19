@@ -1,0 +1,33 @@
+{
+  "children": [
+    {
+      "children": [],
+      "name": "Modal title",
+      "role": "heading",
+      "states": {
+        "level": 2
+      }
+    },
+    {
+      "children": [],
+      "name": "Modal subtitle",
+      "role": "paragraph",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Close",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Place your content here",
+      "role": "text",
+      "states": {}
+    }
+  ],
+  "name": "Modal title",
+  "role": "dialog",
+  "states": {}
+}

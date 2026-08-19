@@ -9,13 +9,14 @@
     "build": "tsc -b && vite build",
     "eslint": "eslint .",
     "eslint:fix": "eslint . --fix",
-    "prettier": "prettier --check \"src/**/*.{ts,tsx,css,json,md,html}\"",
-    "prettier:fix": "prettier --write \"src/**/*.{ts,tsx,css,json,md,html}\"",
+    "prettier": "prettier --check \"src/**/*.{ts,tsx,css,json,md,html}\" \"e2e/**/*.{ts,tsx}\" \"playwright.config.ts\"",
+    "prettier:fix": "prettier --write \"src/**/*.{ts,tsx,css,json,md,html}\" \"e2e/**/*.{ts,tsx}\" \"playwright.config.ts\"",
     "stylelint": "stylelint \"src/**/*.{css,styles.ts}\"",
     "stylelint:fix": "stylelint \"src/**/*.{css,styles.ts}\" --fix",
     "lint": "npm run stylelint && npm run eslint && npm run prettier",
     "lint:fix": "npm run stylelint:fix && npm run eslint:fix && npm run prettier:fix",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:a11y": "playwright test"
   },
   "dependencies": {
     "react": "^19.2.6",
@@ -25,7 +26,9 @@
     "styled-normalize": "^8.1.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.62.1",
     "@types/chrome": "^0.0.268",
     "@types/dom-chromium-ai": "^0.0.17",
     "@types/node": "^24.12.3",

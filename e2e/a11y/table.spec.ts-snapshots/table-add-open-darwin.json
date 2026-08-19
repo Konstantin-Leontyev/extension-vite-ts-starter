@@ -1,0 +1,124 @@
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "#",
+                  "role": "columnheader",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Product",
+                  "role": "columnheader",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Stock",
+                  "role": "columnheader",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Price",
+                  "role": "columnheader",
+                  "states": {}
+                }
+              ],
+              "name": "# Product Stock Price",
+              "role": "row",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "",
+                  "role": "cell",
+                  "states": {}
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "name": "Product",
+                      "role": "textbox",
+                      "states": {}
+                    }
+                  ],
+                  "name": "",
+                  "role": "cell",
+                  "states": {}
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "name": "Stock",
+                      "role": "textbox",
+                      "states": {}
+                    }
+                  ],
+                  "name": "",
+                  "role": "cell",
+                  "states": {}
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "name": "Price",
+                      "role": "textbox",
+                      "states": {}
+                    }
+                  ],
+                  "name": "",
+                  "role": "cell",
+                  "states": {}
+                }
+              ],
+              "name": "",
+              "role": "row",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "name": "Press Esc to close without saving, or Enter to add the row. Use Tab to move between fields.",
+                      "role": "paragraph",
+                      "states": {}
+                    }
+                  ],
+                  "name": "Press Esc to close without saving, or Enter to add the row. Use Tab to move between fields.",
+                  "role": "cell",
+                  "states": {}
+                }
+              ],
+              "name": "Press Esc to close without saving, or Enter to add the row. Use Tab to move between fields.",
+              "role": "row",
+              "states": {}
+            }
+          ],
+          "name": "",
+          "role": "rowgroup",
+          "states": {}
+        }
+      ],
+      "name": "",
+      "role": "table",
+      "states": {}
+    }
+  ],
+  "name": "Add row",
+  "role": "dialog",
+  "states": {}
+}

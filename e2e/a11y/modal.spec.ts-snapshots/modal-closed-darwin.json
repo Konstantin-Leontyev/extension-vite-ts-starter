@@ -1,0 +1,27 @@
+{
+  "children": [
+    {
+      "children": [],
+      "name": "Modal",
+      "role": "heading",
+      "states": {
+        "level": 2
+      }
+    },
+    {
+      "children": [],
+      "name": "Open settings",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Open modal",
+      "role": "button",
+      "states": {}
+    }
+  ],
+  "name": "Modal",
+  "role": "article",
+  "states": {}
+}

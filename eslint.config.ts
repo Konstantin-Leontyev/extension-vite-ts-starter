@@ -204,6 +204,25 @@ const config: Config[] = defineConfig([
       'import-x/prefer-default-export': 'off',
     },
   },
+  // Playwright: Node-глобалы для сценариев e2e и playwright.config.ts.
+  // jsx-a11y, react-hooks и react-refresh на оснастке не действуют.
+  // no-empty-pattern выключен из-за пустой деструктуризации fixture baseURL.
+  {
+    files: ['e2e/**/*.ts', 'playwright.config.ts'],
+    languageOptions: {
+      globals: globals.node,
+    },
+    rules: {
+      ...Object.fromEntries(
+        Object.keys(jsxA11y.flatConfigs.recommended.rules as object).map(
+          (rule) => [rule, 'off']
+        )
+      ),
+      'no-empty-pattern': 'off',
+      'react-hooks/rules-of-hooks': 'off',
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ]);
 
 export default config;

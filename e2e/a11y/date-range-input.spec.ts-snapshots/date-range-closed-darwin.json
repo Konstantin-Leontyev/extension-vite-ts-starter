@@ -1,0 +1,25 @@
+{
+  "children": [
+    {
+      "children": [],
+      "name": "\"Label:\"",
+      "role": "text",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "DD.MM.YY",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "DD.MM.YY",
+      "role": "button",
+      "states": {}
+    }
+  ],
+  "name": "Label:",
+  "role": "group",
+  "states": {}
+}

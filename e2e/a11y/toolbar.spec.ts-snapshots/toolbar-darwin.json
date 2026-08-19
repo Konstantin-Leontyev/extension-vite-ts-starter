@@ -1,0 +1,37 @@
+{
+  "children": [
+    {
+      "children": [],
+      "name": "search",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "copy",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "download",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "settings",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "sign-out",
+      "role": "button",
+      "states": {}
+    }
+  ],
+  "name": "Toolbar",
+  "role": "toolbar",
+  "states": {}
+}

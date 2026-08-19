@@ -29,6 +29,8 @@ export default defineConfig({
       },
     }),
     webExtension({
+      // Playwright выставляет PLAYWRIGHT_TEST на время прохода: не открывать окно расширения.
+      disableAutoLaunch: Boolean(process.env.PLAYWRIGHT_TEST),
       manifest: generateManifest,
     }),
   ],

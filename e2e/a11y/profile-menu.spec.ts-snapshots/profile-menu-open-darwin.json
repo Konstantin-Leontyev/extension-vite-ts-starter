@@ -1,0 +1,77 @@
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "user@example.com",
+          "role": "paragraph",
+          "states": {}
+        }
+      ],
+      "name": "",
+      "role": "banner",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Close profile menu",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Hello, User!",
+      "role": "paragraph",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Profile",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Sign out",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "\"#/privacy\"",
+              "role": "/url",
+              "states": {}
+            }
+          ],
+          "name": "Privacy Policy",
+          "role": "link",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "\"#/terms\"",
+              "role": "/url",
+              "states": {}
+            }
+          ],
+          "name": "Terms of Service",
+          "role": "link",
+          "states": {}
+        }
+      ],
+      "name": "Legal",
+      "role": "navigation",
+      "states": {}
+    }
+  ],
+  "name": "Hello, User!",
+  "role": "dialog",
+  "states": {}
+}

@@ -1,0 +1,1640 @@
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "#",
+              "role": "columnheader",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select all rows",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Add row",
+                  "role": "button",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Product",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select all rows Add row Product",
+              "role": "columnheader",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "Stock",
+              "role": "columnheader",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "Price",
+              "role": "columnheader",
+              "states": {}
+            }
+          ],
+          "name": "# Select all rows Add row Product Stock Price",
+          "role": "row",
+          "states": {}
+        }
+      ],
+      "name": "",
+      "role": "rowgroup",
+      "states": {}
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "Apple",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Apple",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select group",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Collapse Phones",
+                  "role": "button",
+                  "states": {
+                    "expanded": true
+                  }
+                },
+                {
+                  "children": [],
+                  "name": "Phones",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select group Collapse Phones Phones",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Select group Collapse Phones Phones",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select group",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Collapse iPhone 17",
+                  "role": "button",
+                  "states": {
+                    "expanded": true
+                  }
+                },
+                {
+                  "children": [],
+                  "name": "iPhone 17",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select group Collapse iPhone 17 iPhone 17",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Select group Collapse iPhone 17 iPhone 17",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "1",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Apple:phones:iphone-17:iphone-17-pro",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "iPhone 17 Pro",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Apple:phones:iphone-17:iphone-17-pro iPhone 17 Pro",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "320",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$1,099",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "1 Select row group-member:Apple:phones:iphone-17:iphone-17-pro iPhone 17 Pro 320 $1,099",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "2",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Apple:phones:iphone-17:iphone-17-pro-max",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "iPhone 17 Pro Max",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Apple:phones:iphone-17:iphone-17-pro-max iPhone 17 Pro Max",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "280",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$1,199",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "2 Select row group-member:Apple:phones:iphone-17:iphone-17-pro-max iPhone 17 Pro Max 280 $1,199",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select group",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Collapse iPhone 16",
+                  "role": "button",
+                  "states": {
+                    "expanded": true
+                  }
+                },
+                {
+                  "children": [],
+                  "name": "iPhone 16",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select group Collapse iPhone 16 iPhone 16",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Select group Collapse iPhone 16 iPhone 16",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "1",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Apple:phones:iphone-16:iphone-16",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "iPhone 16",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Apple:phones:iphone-16:iphone-16 iPhone 16",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "410",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$799",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "1 Select row group-member:Apple:phones:iphone-16:iphone-16 iPhone 16 410 $799",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "2",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Apple:phones:iphone-16:iphone-16-plus",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "iPhone 16 Plus",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Apple:phones:iphone-16:iphone-16-plus iPhone 16 Plus",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "365",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$899",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "2 Select row group-member:Apple:phones:iphone-16:iphone-16-plus iPhone 16 Plus 365 $899",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select group",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Collapse Tablets",
+                  "role": "button",
+                  "states": {
+                    "expanded": true
+                  }
+                },
+                {
+                  "children": [],
+                  "name": "Tablets",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select group Collapse Tablets Tablets",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Select group Collapse Tablets Tablets",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "1",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Apple:tablets:ipad-pro",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "iPad Pro",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Apple:tablets:ipad-pro iPad Pro",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "95",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$1,099",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "1 Select row group-member:Apple:tablets:ipad-pro iPad Pro 95 $1,099",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select group",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Collapse Smart watches",
+                  "role": "button",
+                  "states": {
+                    "expanded": true
+                  }
+                },
+                {
+                  "children": [],
+                  "name": "Smart watches",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select group Collapse Smart watches Smart watches",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Select group Collapse Smart watches Smart watches",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "1",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Apple:watches:apple-watch",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Apple Watch Series 10",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Apple:watches:apple-watch Apple Watch Series 10",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "210",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$399",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "1 Select row group-member:Apple:watches:apple-watch Apple Watch Series 10 210 $399",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "Samsung",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Samsung",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select group",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Collapse Phones",
+                  "role": "button",
+                  "states": {
+                    "expanded": true
+                  }
+                },
+                {
+                  "children": [],
+                  "name": "Phones",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select group Collapse Phones Phones",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Select group Collapse Phones Phones",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "1",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Samsung:phones:galaxy-s25",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Galaxy S25",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Samsung:phones:galaxy-s25 Galaxy S25",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "310",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$899",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "1 Select row group-member:Samsung:phones:galaxy-s25 Galaxy S25 310 $899",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select group",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Collapse Tablets",
+                  "role": "button",
+                  "states": {
+                    "expanded": true
+                  }
+                },
+                {
+                  "children": [],
+                  "name": "Tablets",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select group Collapse Tablets Tablets",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Select group Collapse Tablets Tablets",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "1",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Samsung:tablets:galaxy-tab-s9",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Galaxy Tab S9",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Samsung:tablets:galaxy-tab-s9 Galaxy Tab S9",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "120",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$849",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "1 Select row group-member:Samsung:tablets:galaxy-tab-s9 Galaxy Tab S9 120 $849",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select group",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Collapse Smart watches",
+                  "role": "button",
+                  "states": {
+                    "expanded": true
+                  }
+                },
+                {
+                  "children": [],
+                  "name": "Smart watches",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select group Collapse Smart watches Smart watches",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Select group Collapse Smart watches Smart watches",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "1",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Samsung:watches:galaxy-watch",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Galaxy Watch 7",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Samsung:watches:galaxy-watch Galaxy Watch 7",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "175",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$349",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "1 Select row group-member:Samsung:watches:galaxy-watch Galaxy Watch 7 175 $349",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "Huawei",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Huawei",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select group",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Collapse Phones",
+                  "role": "button",
+                  "states": {
+                    "expanded": true
+                  }
+                },
+                {
+                  "children": [],
+                  "name": "Phones",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select group Collapse Phones Phones",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Select group Collapse Phones Phones",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "1",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Huawei:phones:pura-70",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Pura 70",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Huawei:phones:pura-70 Pura 70",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "180",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$849",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "1 Select row group-member:Huawei:phones:pura-70 Pura 70 180 $849",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select group",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Collapse Tablets",
+                  "role": "button",
+                  "states": {
+                    "expanded": true
+                  }
+                },
+                {
+                  "children": [],
+                  "name": "Tablets",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select group Collapse Tablets Tablets",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Select group Collapse Tablets Tablets",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "1",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Huawei:tablets:matepad-pro",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "MatePad Pro",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Huawei:tablets:matepad-pro MatePad Pro",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "88",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$749",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "1 Select row group-member:Huawei:tablets:matepad-pro MatePad Pro 88 $749",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select group",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Collapse Smart watches",
+                  "role": "button",
+                  "states": {
+                    "expanded": true
+                  }
+                },
+                {
+                  "children": [],
+                  "name": "Smart watches",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select group Collapse Smart watches Smart watches",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Select group Collapse Smart watches Smart watches",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "1",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Huawei:watches:watch-gt",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Watch GT 5",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Huawei:watches:watch-gt Watch GT 5",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "130",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$299",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "1 Select row group-member:Huawei:watches:watch-gt Watch GT 5 130 $299",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "Xiaomi",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Xiaomi",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select group",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Collapse Phones",
+                  "role": "button",
+                  "states": {
+                    "expanded": true
+                  }
+                },
+                {
+                  "children": [],
+                  "name": "Phones",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select group Collapse Phones Phones",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Select group Collapse Phones Phones",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "1",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Xiaomi:phones:xiaomi-15",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Xiaomi 15",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Xiaomi:phones:xiaomi-15 Xiaomi 15",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "260",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$699",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "1 Select row group-member:Xiaomi:phones:xiaomi-15 Xiaomi 15 260 $699",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select group",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Collapse Tablets",
+                  "role": "button",
+                  "states": {
+                    "expanded": true
+                  }
+                },
+                {
+                  "children": [],
+                  "name": "Tablets",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select group Collapse Tablets Tablets",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Select group Collapse Tablets Tablets",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "1",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Xiaomi:tablets:pad-6",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Pad 6",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Xiaomi:tablets:pad-6 Pad 6",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "140",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$499",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "1 Select row group-member:Xiaomi:tablets:pad-6 Pad 6 140 $499",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select group",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Collapse Smart watches",
+                  "role": "button",
+                  "states": {
+                    "expanded": true
+                  }
+                },
+                {
+                  "children": [],
+                  "name": "Smart watches",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select group Collapse Smart watches Smart watches",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "Select group Collapse Smart watches Smart watches",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "1",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select row group-member:Xiaomi:watches:watch-s3",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Watch S3",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select row group-member:Xiaomi:watches:watch-s3 Watch S3",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "190",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "$249",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "1 Select row group-member:Xiaomi:watches:watch-s3 Watch S3 190 $249",
+          "role": "row",
+          "states": {}
+        }
+      ],
+      "name": "",
+      "role": "rowgroup",
+      "states": {}
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "#",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Select all rows",
+                  "role": "checkbox",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Add row",
+                  "role": "button",
+                  "states": {}
+                },
+                {
+                  "children": [],
+                  "name": "Product",
+                  "role": "text",
+                  "states": {}
+                }
+              ],
+              "name": "Select all rows Add row Product",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "Stock",
+              "role": "cell",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "Price",
+              "role": "cell",
+              "states": {}
+            }
+          ],
+          "name": "# Select all rows Add row Product Stock Price",
+          "role": "row",
+          "states": {}
+        }
+      ],
+      "name": "",
+      "role": "rowgroup",
+      "states": {}
+    }
+  ],
+  "name": "Catalog table demo",
+  "role": "table",
+  "states": {}
+}

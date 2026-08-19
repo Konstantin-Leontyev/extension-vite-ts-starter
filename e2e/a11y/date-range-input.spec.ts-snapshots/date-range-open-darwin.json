@@ -1,0 +1,739 @@
+{
+  "children": [
+    {
+      "children": [],
+      "name": "Previous year",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Previous month",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "[month]",
+      "role": "paragraph",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Next month",
+      "role": "button",
+      "states": {
+        "disabled": true
+      }
+    },
+    {
+      "children": [],
+      "name": "Next year",
+      "role": "button",
+      "states": {
+        "disabled": true
+      }
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "Mon",
+              "role": "columnheader",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "Tue",
+              "role": "columnheader",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "Wed",
+              "role": "columnheader",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "Thu",
+              "role": "columnheader",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "Fri",
+              "role": "columnheader",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "Sat",
+              "role": "columnheader",
+              "states": {}
+            },
+            {
+              "children": [],
+              "name": "Sun",
+              "role": "columnheader",
+              "states": {}
+            }
+          ],
+          "name": "Mon Tue Wed Thu Fri Sat Sun",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            }
+          ],
+          "name": "Monday, July 27, 2026 Tuesday, July 28, 2026 Wednesday, July 29, 2026 Thursday, July 30, 2026 Friday, July 31, 2026 Saturday, August 1, 2026 Sunday, August 2, 2026",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            }
+          ],
+          "name": "Monday, August 3, 2026 Tuesday, August 4, 2026 Wednesday, August 5, 2026 Thursday, August 6, 2026 Friday, August 7, 2026 Saturday, August 8, 2026 Sunday, August 9, 2026",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            }
+          ],
+          "name": "Monday, August 10, 2026 Tuesday, August 11, 2026 Wednesday, August 12, 2026 Thursday, August 13, 2026 Friday, August 14, 2026 Saturday, August 15, 2026 Sunday, August 16, 2026",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {}
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            }
+          ],
+          "name": "Monday, August 17, 2026 Tuesday, August 18, 2026 Wednesday, August 19, 2026 Thursday, August 20, 2026 Friday, August 21, 2026 Saturday, August 22, 2026 Sunday, August 23, 2026",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            }
+          ],
+          "name": "Monday, August 24, 2026 Tuesday, August 25, 2026 Wednesday, August 26, 2026 Thursday, August 27, 2026 Friday, August 28, 2026 Saturday, August 29, 2026 Sunday, August 30, 2026",
+          "role": "row",
+          "states": {}
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "[date]",
+                  "role": "button",
+                  "states": {
+                    "disabled": true
+                  }
+                }
+              ],
+              "name": "[date]",
+              "role": "gridcell",
+              "states": {}
+            }
+          ],
+          "name": "Monday, August 31, 2026 Tuesday, September 1, 2026 Wednesday, September 2, 2026 Thursday, September 3, 2026 Friday, September 4, 2026 Saturday, September 5, 2026 Sunday, September 6, 2026",
+          "role": "row",
+          "states": {}
+        }
+      ],
+      "name": "[month]",
+      "role": "grid",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Set",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Reset",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Close",
+      "role": "button",
+      "states": {}
+    }
+  ],
+  "name": "Date range calendar",
+  "role": "dialog",
+  "states": {}
+}
