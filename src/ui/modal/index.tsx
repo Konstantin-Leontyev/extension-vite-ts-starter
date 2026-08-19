@@ -155,9 +155,9 @@ function Modal({
   /**
    * Синхронизирует видимость с пропом `open` через `showModal` и `close`.
    * Задаёт `closedby="any"`, чтобы закрытие работало по Escape и клику по backdrop.
-   * Перед `showModal` ставит `autofocus` на диалог, чтобы браузер не уводил
-   * фокус на Close. После открытия ставит фокус на узел `initialFocusRef`,
-   * если ссылка передана.
+   * После открытия ставит фокус на узел `initialFocusRef`, без ссылки — на сам
+   * диалог. Атрибут `autofocus` на диалоге для этого непригоден: при наличии
+   * внутри интерактивных узлов Chrome его игнорирует и уводит фокус на Close.
    */
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -170,11 +170,12 @@ function Modal({
 
     if (open) {
       if (!dialog.open) {
-        dialog.setAttribute('autofocus', '');
         dialog.showModal();
       }
 
-      initialFocusRef?.current?.focus();
+      const initialFocusNode = initialFocusRef?.current ?? dialog;
+
+      initialFocusNode.focus();
 
       return;
     }
@@ -205,6 +206,9 @@ function Modal({
       aria-label={ariaLabel}
       aria-labelledby={titleId}
       ref={dialogRef}
+      // Остановкой обхода диалог не становится: `-1` открывает только
+      // программный фокус, которым эффект открытия ставит начальный фокус.
+      tabIndex={-1}
       onClose={onClose}
     >
       <Card
