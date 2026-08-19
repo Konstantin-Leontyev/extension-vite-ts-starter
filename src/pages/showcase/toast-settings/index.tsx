@@ -80,6 +80,7 @@ export function ToastSettings({ onChange, state }: ToastSettingsProps) {
             onChange: (value) => onChange('message', value),
           },
         ]}
+        labelPrefix="Text"
       />
     </StyledSettingsForm>
   );

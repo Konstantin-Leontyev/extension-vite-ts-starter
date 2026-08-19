@@ -13,13 +13,13 @@
 
 import { type ChangeEvent } from 'react';
 
+import { Checkbox } from '@ui/checkbox';
 import { Input } from '@ui/input';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
-import { TextGroup } from '../text-group';
 import { ToneListbox } from '../tone-listbox';
 
 /**
@@ -110,13 +110,14 @@ export function ProgressBarSettings({ onChange, state }: ProgressBarSettingsProp
         onClear={() => onChange('value', parseValueFromPercent(''))}
       />
 
-      <TextGroup
-        labelPrefix="Text"
-        show={{
-          checked: state.showText,
-          onChange: (checked) => onChange('showText', checked),
-        }}
-      />
+      <Checkbox
+        checked={state.showText}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('showText', event.target.checked)
+        }
+      >
+        Show text
+      </Checkbox>
     </StyledSettingsForm>
   );
 }

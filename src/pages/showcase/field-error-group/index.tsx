@@ -14,7 +14,7 @@
  * 1. Экспортировать компонент FieldErrorGroup
  * 2. Типизировать пропсы через `FieldErrorGroupProps`
  * 3. Рендерить единый блок: `Reserve error space`, при включённом резерве —
- *    `Set Reserved space placeholder` через TextGroup. При выключении резерва
+ *    группу с `labelPrefix="Reserved space placeholder"`. При выключении резерва
  *    сбрасывать подсказку
  *
  * Потребители:
@@ -82,12 +82,11 @@ export function FieldErrorGroup({
         <TextGroup
           contents={[
             {
-              label: 'Reserved space placeholder:',
               value: errorPlaceholder ?? '',
               onChange: (value) => onErrorPlaceholderChange(value || undefined),
             },
           ]}
-          set={{ label: 'Set Reserved space placeholder' }}
+          labelPrefix="Reserved space placeholder"
         />
       )}
     </>

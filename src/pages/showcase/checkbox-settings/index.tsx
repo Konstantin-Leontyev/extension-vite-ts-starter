@@ -104,15 +104,6 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
         onChange={(size) => onChange('size', size)}
       />
 
-      <Checkbox
-        checked={state.inverted}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('inverted', event.target.checked)
-        }
-      >
-        Show inverted
-      </Checkbox>
-
       <TextGroup
         contents={[
           {
@@ -121,8 +112,16 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
           },
         ]}
         labelPrefix="Text"
-        set
       />
+
+      <Checkbox
+        checked={state.inverted}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('inverted', event.target.checked)
+        }
+      >
+        Show inverted
+      </Checkbox>
 
       <Checkbox
         checked={state.checked}

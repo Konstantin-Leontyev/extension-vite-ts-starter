@@ -107,12 +107,11 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
       <TextGroup
         contents={[
           {
-            label: 'Placeholder:',
             value: state.placeholder,
             onChange: (value) => onChange('placeholder', value),
           },
         ]}
-        set={{ label: 'Set placeholder' }}
+        labelPrefix="Placeholder"
       />
 
       <Checkbox
@@ -149,12 +148,11 @@ export function InputSettings({ onChange, state }: InputSettingsProps) {
         <TextGroup
           contents={[
             {
-              label: 'Error:',
               value: state.error,
               onChange: (value) => onChange('error', value),
             },
           ]}
-          set={{ label: 'Set error' }}
+          labelPrefix="Error"
         />
       )}
 

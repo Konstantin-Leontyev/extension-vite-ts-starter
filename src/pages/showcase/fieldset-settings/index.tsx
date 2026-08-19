@@ -75,7 +75,6 @@ export function FieldsetSettings({ onChange, state }: FieldsetSettingsProps) {
           },
         ]}
         labelPrefix="Legend"
-        set
       />
     </StyledSettingsForm>
   );

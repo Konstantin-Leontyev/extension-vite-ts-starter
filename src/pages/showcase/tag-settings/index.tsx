@@ -123,15 +123,6 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
         />
       )}
 
-      <Checkbox
-        checked={state.tinted}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('tinted', event.target.checked)
-        }
-      >
-        Show tinted
-      </Checkbox>
-
       <TextGroup
         contents={[
           {
@@ -140,8 +131,16 @@ export function TagSettings({ onChange, state }: TagSettingsProps) {
           },
         ]}
         labelPrefix="Text"
-        set
       />
+
+      <Checkbox
+        checked={state.tinted}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('tinted', event.target.checked)
+        }
+      >
+        Show tinted
+      </Checkbox>
     </StyledSettingsForm>
   );
 }

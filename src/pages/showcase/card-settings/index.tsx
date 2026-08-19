@@ -15,7 +15,11 @@
 import { CARD_HEADER_ACTION_SIZE_PRESET } from '@ui/card';
 import { getIconPadding } from '@ui/icon';
 import { type SurfaceBackgroundPreset } from '@ui/surface';
-import { type TextAlignPreset, type TextSizePreset, type TextTonePreset } from '@ui/text';
+import {
+  type TextAlignPreset,
+  type TextSizePreset,
+  type TextTonePreset,
+} from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import { BackgroundListbox } from '../background-listbox';
@@ -120,7 +124,6 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
         ]}
         italic={state.titleItalic}
         labelPrefix="Title"
-        set
         size={state.titleSize}
         tones={[
           {
@@ -143,7 +146,6 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
         ]}
         italic={state.subtitleItalic}
         labelPrefix="Subtitle"
-        set
         size={state.subtitleSize}
         tones={[
           {

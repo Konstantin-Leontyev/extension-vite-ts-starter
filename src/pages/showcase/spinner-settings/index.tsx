@@ -85,7 +85,6 @@ export function SpinnerSettings({ onChange, state }: SpinnerSettingsProps) {
           },
         ]}
         labelPrefix="Text"
-        set
       />
 
       <Checkbox

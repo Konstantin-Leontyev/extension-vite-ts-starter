@@ -15,7 +15,11 @@
 
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
 import { type SurfaceBackgroundPreset } from '@ui/surface';
-import { type TextAlignPreset, type TextSizePreset, type TextTonePreset } from '@ui/text';
+import {
+  type TextAlignPreset,
+  type TextSizePreset,
+  type TextTonePreset,
+} from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
 import { BackgroundListbox } from '../background-listbox';
@@ -121,7 +125,6 @@ export function ModalSettings({ onChange, state }: ModalSettingsProps) {
         ]}
         italic={state.titleItalic}
         labelPrefix="Title"
-        set
         size={state.titleSize}
         tones={[
           {
@@ -144,7 +147,6 @@ export function ModalSettings({ onChange, state }: ModalSettingsProps) {
         ]}
         italic={state.subtitleItalic}
         labelPrefix="Subtitle"
-        set
         size={state.subtitleSize}
         tones={[
           {
@@ -156,7 +158,6 @@ export function ModalSettings({ onChange, state }: ModalSettingsProps) {
         onItalicChange={(value) => onChange('subtitleItalic', value)}
         onSizeChange={(size) => onChange('subtitleSize', size)}
       />
-
     </StyledSettingsForm>
   );
 }

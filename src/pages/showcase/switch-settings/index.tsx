@@ -88,7 +88,6 @@ export function SwitchSettings({ onChange, state }: SwitchSettingsProps) {
           },
         ]}
         labelPrefix="Text"
-        set
       />
 
       <Checkbox

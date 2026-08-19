@@ -190,7 +190,6 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
         ]}
         italic={state.titleItalic}
         labelPrefix="Title"
-        set
         size={state.titleSize}
         tones={[
           {

@@ -126,7 +126,6 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
           },
         ]}
         labelPrefix="Text"
-        set
         tones={[
           {
             value: state.textTone,

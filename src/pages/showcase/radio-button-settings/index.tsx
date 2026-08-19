@@ -95,18 +95,11 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
       <TextGroup
         contents={[
           {
-            label: 'Text A:',
             value: state.textA,
             onChange: (value) => onChange('textA', value),
           },
-          {
-            label: 'Text B:',
-            value: state.textB,
-            onChange: (value) => onChange('textB', value),
-          },
         ]}
-        labelPrefix="Text"
-        set
+        labelPrefix="Option A text"
       />
 
       <Checkbox
@@ -115,8 +108,18 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
           onChange('disabledA', event.target.checked)
         }
       >
-        Disable A
+        Disable A option
       </Checkbox>
+
+      <TextGroup
+        contents={[
+          {
+            value: state.textB,
+            onChange: (value) => onChange('textB', value),
+          },
+        ]}
+        labelPrefix="Option B text"
+      />
 
       <Checkbox
         checked={state.disabledB}
@@ -124,7 +127,7 @@ export function RadioButtonSettings({ onChange, state }: RadioButtonSettingsProp
           onChange('disabledB', event.target.checked)
         }
       >
-        Disable B
+        Disable B option
       </Checkbox>
     </StyledSettingsForm>
   );

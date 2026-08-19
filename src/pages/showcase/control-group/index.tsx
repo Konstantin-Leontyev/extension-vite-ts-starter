@@ -16,7 +16,7 @@
  * 1. Экспортировать компонент ControlGroup
  * 2. Типизировать пропсы через `ControlGroupProps`
  * 3. Рендерить единый блок настроек контрола в порядке: подпись через TextGroup
- *    с `Set label`, затем `Size:` и `Shape:`. Порядок `Size:` → `Shape:` →
+ *    с `labelPrefix="Label"`, затем `Size:` и `Shape:`. Порядок `Size:` → `Shape:` →
  *    `Label:` запрещён
  *
  * Потребители:
@@ -88,12 +88,11 @@ export function ControlGroup({
       <TextGroup
         contents={[
           {
-            label: 'Label:',
             value: label,
             onChange: onLabelChange,
           },
         ]}
-        set={{ label: 'Set label' }}
+        labelPrefix="Label"
       />
 
       <SizeListbox

@@ -220,43 +220,47 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
       <TextGroup
         contents={[
           {
-            label: 'Left text:',
             value: state.leftLabel,
             onChange: (value) => onChange('leftLabel', value),
           },
-          ...(state.segmentCount === '3'
-            ? [
-                {
-                  label: 'Center text:',
-                  value: state.centerLabel,
-                  onChange: (value: string) => onChange('centerLabel', value),
-                },
-              ]
-            : []),
+        ]}
+        labelPrefix="Left text"
+        tones={[
           {
-            label: 'Right text:',
+            value: state.leftTextTone,
+            onChange: (tone) => onChange('leftTextTone', tone),
+          },
+        ]}
+      />
+
+      {state.segmentCount === '3' && (
+        <TextGroup
+          contents={[
+            {
+              value: state.centerLabel,
+              onChange: (value) => onChange('centerLabel', value),
+            },
+          ]}
+          labelPrefix="Center text"
+          tones={[
+            {
+              value: state.centerTextTone,
+              onChange: (tone) => onChange('centerTextTone', tone),
+            },
+          ]}
+        />
+      )}
+
+      <TextGroup
+        contents={[
+          {
             value: state.rightLabel,
             onChange: (value) => onChange('rightLabel', value),
           },
         ]}
-        labelPrefix="Text"
+        labelPrefix="Right text"
         tones={[
           {
-            label: 'Left text tone:',
-            value: state.leftTextTone,
-            onChange: (tone) => onChange('leftTextTone', tone),
-          },
-          ...(state.segmentCount === '3'
-            ? [
-                {
-                  label: 'Center text tone:',
-                  value: state.centerTextTone,
-                  onChange: (tone: TextTonePreset) => onChange('centerTextTone', tone),
-                },
-              ]
-            : []),
-          {
-            label: 'Right text tone:',
             value: state.rightTextTone,
             onChange: (tone) => onChange('rightTextTone', tone),
           },

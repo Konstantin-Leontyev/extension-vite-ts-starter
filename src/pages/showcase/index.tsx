@@ -463,7 +463,7 @@ const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
  */
 const DEFAULT_FIELDSET_STATE: FieldsetWidgetState = {
   borderTone: 'neutral',
-  legend: 'Label:',
+  legend: 'Legend',
   selected: 'a',
 };
 
@@ -483,7 +483,7 @@ const DEFAULT_PROGRESS_STATE: ProgressBarWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_SPINNER_STATE: SpinnerWidgetState = {
-  reserveTextSpace: false,
+  reserveTextSpace: true,
   size: DEFAULT_SIZE_PRESET,
   text: 'Loading…',
   tone: 'primary',

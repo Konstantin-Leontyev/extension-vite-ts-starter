@@ -65,7 +65,6 @@ export function TextSettings({ onChange, state }: TextSettingsProps) {
         align={state.align}
         contents={[
           {
-            label: 'Sample:',
             value: state.children,
             onChange: (value) => onChange('children', value),
           },
@@ -75,7 +74,7 @@ export function TextSettings({ onChange, state }: TextSettingsProps) {
           onChange: (checked) => onChange('ellipsis', checked),
         }}
         italic={state.italic}
-        set={{ label: 'Set sample' }}
+        labelPrefix="Sample"
         size={state.size}
         tones={[
           {
