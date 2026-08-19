@@ -53,6 +53,9 @@
  *    и дефолты осей
  * 5. Реэкспортировать сателлиты `TableCell`, `TableCellAlign`, `TableGroupCell`,
  *    `TableInlineField`, `TableMemberPrefix` и `TableNestedCell`
+ * 6. Ставить фокус при открытии панелей add и edit на узел с `autofocus`
+ *    внутри панели, иначе на первое поле ввода. Панель открывают ради
+ *    правки строки, кнопка шапки и чекбокс в обход не входят
  *
  * Потребители:
  *  - `src/pages/showcase/table-demo/index.tsx` — собирает демо-таблицу каталога
@@ -64,6 +67,7 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type KeyboardEvent,
   type ReactNode,
   type RefObject,
 } from 'react';
@@ -394,6 +398,26 @@ type TableProps<Row> = {
           | keyof TableStyleProps
         >)
   );
+
+/**
+ * handleTablePanelOpenFocus — ставит начальный фокус панели add или edit.
+ *
+ * @param panel DOM-узел панели
+ */
+function handleTablePanelOpenFocus(panel: HTMLElement): void {
+  const autofocusNode = panel.querySelector<HTMLElement>('[autofocus]');
+
+  if (autofocusNode) {
+    autofocusNode.focus();
+    return;
+  }
+
+  panel
+    .querySelector<HTMLElement>(
+      'input:not([disabled]):not([type="checkbox"]):not([type="hidden"]):not([type="radio"])'
+    )
+    ?.focus();
+}
 
 /**
  * TableCheckbox — отображает чекбокс выбора строки или группы в таблице.
@@ -842,6 +866,12 @@ export function Table<Row>(props: TableProps<Row>) {
             onClick={() => {
               onAddRow?.(addSource);
             }}
+            onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => {
+              if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                onAddRow?.(addSource);
+              }
+            }}
           >
             <PlusIcon />
           </Icon>
@@ -1055,6 +1085,7 @@ export function Table<Row>(props: TableProps<Row>) {
       panelRef={panelRef}
       returnFocusRef={addRowSource === 'foot' ? footAddButtonRef : headAddButtonRef}
       onDismiss={() => onAddCancel?.()}
+      onOpenFocus={handleTablePanelOpenFocus}
     >
       <StyledTableRowPanel
         $anchorBlockEnd={addRowSource === 'foot'}
@@ -1104,6 +1135,7 @@ export function Table<Row>(props: TableProps<Row>) {
         panelRef={editPanelRef}
         returnFocusRef={editRowAnchorRef}
         onDismiss={() => onEditCancel?.()}
+        onOpenFocus={handleTablePanelOpenFocus}
       >
         <StyledTableRowPanel
           $hasError={hasEditError}

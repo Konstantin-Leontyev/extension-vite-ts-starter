@@ -28,7 +28,7 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { Fragment, type ReactNode, type RefObject } from 'react';
+import { Fragment, type KeyboardEvent, type ReactNode, type RefObject } from 'react';
 
 import { useLongPress } from '@hooks/use-long-press';
 import { DEFAULT_ICON_POSITION, Icon, type IconPosition } from '@ui/icon';
@@ -83,8 +83,11 @@ export type SegmentButtonPartsActionIconProps =
  * @property label — текст сегмента
  * @property onClick — обработчик клика по сегменту
  * @property onDoubleClick — обработчик двойного клика по сегменту
+ * @property onFocus — обработчик фокуса на сегменте
+ * @property onKeyDown — обработчик нажатия клавиши на сегменте
  * @property onLongPress — обработчик долгого нажатия по сегменту
  * @property ref — ссылка на DOM-узел кнопки сегмента
+ * @property tabIndex — индекс табуляции кнопки сегмента
  * @property textTone — тон текста сегмента
  * @property title — подсказка нативного `title`
  * @property tone — тон заливки сегмента
@@ -99,8 +102,11 @@ type SegmentButtonPartsAction = {
   label: string;
   onClick?: () => void;
   onDoubleClick?: () => void;
+  onFocus?: () => void;
+  onKeyDown?: (event: KeyboardEvent<HTMLButtonElement>) => void;
   onLongPress?: () => void;
   ref?: RefObject<HTMLButtonElement | null>;
+  tabIndex?: number;
   textTone?: TextTonePreset;
   title?: string;
   tone?: TonePreset;
@@ -180,8 +186,11 @@ function SegmentButtonPartsPart({
     label,
     onClick,
     onDoubleClick,
+    onFocus,
+    onKeyDown,
     onLongPress,
     ref,
+    tabIndex,
     textTone,
     title,
     tone,
@@ -226,11 +235,14 @@ function SegmentButtonPartsPart({
       ref={ref}
       shape={shape}
       size={size}
+      tabIndex={tabIndex}
       title={title}
       tone={tone}
       type="button"
       onClick={onClick || onLongPress ? handleClick : undefined}
       onDoubleClick={onDoubleClick}
+      onFocus={onFocus}
+      onKeyDown={onKeyDown}
       {...(pointerProps ?? {})}
     >
       {iconPosition === 'start' && iconNode}

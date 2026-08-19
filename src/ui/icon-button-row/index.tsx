@@ -134,12 +134,10 @@ function isActionNavigable(action?: IconButtonRowAction): boolean {
  * resolveFirstNavigableIndex — возвращает индекс первого действия из обхода.
  *
  * @param actions ряд действий
- * @returns индекс первого действия из обхода, иначе `0`
+ * @returns индекс первого действия из обхода, иначе `-1`
  */
 function resolveFirstNavigableIndex(actions: IconButtonRowAction[]): number {
-  const index = actions.findIndex(isActionNavigable);
-
-  return index === -1 ? 0 : index;
+  return actions.findIndex(isActionNavigable);
 }
 
 /**
@@ -147,7 +145,7 @@ function resolveFirstNavigableIndex(actions: IconButtonRowAction[]): number {
  *
  * @param actions ряд действий
  * @param fromIndex текущий индекс
- * @param direction направление обхода: `-1` влево, `1` вправо
+ * @param direction направление обхода: `-1` к предыдущему, `1` к следующему
  * @returns индекс соседа из обхода или `fromIndex`, если таких нет
  */
 function resolveNavigableNeighborIndex(
@@ -174,7 +172,7 @@ function resolveNavigableNeighborIndex(
  *
  * @param actions ряд действий
  * @param edge край ряда: `start` или `end`
- * @returns индекс первого или последнего действия из обхода, иначе `0`
+ * @returns индекс первого или последнего действия из обхода, иначе `-1`
  */
 function resolveNavigableEdgeIndex(
   actions: IconButtonRowAction[],
@@ -190,7 +188,7 @@ function resolveNavigableEdgeIndex(
     }
   }
 
-  return 0;
+  return -1;
 }
 
 /**
@@ -261,14 +259,19 @@ function IconButtonRow({
     event: KeyboardEvent<HTMLButtonElement>,
     index: number
   ) => {
+    const isRtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+    const nextKey = isRtl ? 'ArrowLeft' : 'ArrowRight';
+    const previousKey = isRtl ? 'ArrowRight' : 'ArrowLeft';
     let nextIndex: number;
 
     switch (event.key) {
-      case 'ArrowLeft': {
+      case 'ArrowUp':
+      case previousKey: {
         nextIndex = resolveNavigableNeighborIndex(actions, index, -1);
         break;
       }
-      case 'ArrowRight': {
+      case 'ArrowDown':
+      case nextKey: {
         nextIndex = resolveNavigableNeighborIndex(actions, index, 1);
         break;
       }
@@ -316,7 +319,7 @@ function IconButtonRow({
           {...actionBorderProps}
           tabIndex={resolveActionTabIndex(
             rovingFocus,
-            index === currentIndex,
+            index === currentIndex && isActionNavigable(action),
             Boolean(action.ariaLabel)
           )}
           title={action.title}

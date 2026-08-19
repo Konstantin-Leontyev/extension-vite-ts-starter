@@ -37,7 +37,8 @@
  * 2. Типизировать пропсы через `DateRangeInputProps`
  * 3. Выставлять `role="group"` и `aria-labelledby` при передаче `label`, а также
  *    `aria`-атрибуты сегментов и панели календаря.
- *    Фокус панели — на выбранном дне, иначе на первом доступном
+ *    Фокус панели — на выбранном дне, иначе на сегодняшнем, иначе на первом доступном.
+ *    Подвал панели — одна Tab-остановка со стрелками между кнопками
  * 4. Реэкспортировать `todayUtc` из `src/ui/date-range-input/calendar-panel`
  *
  * Потребители:
@@ -339,13 +340,18 @@ export function DateRangeInput({
   const [viewMonth, setViewMonth] = useState<MonthView>(() =>
     monthViewFromIsoDayOrToday(startDay, maxDay)
   );
+  const [footerTabStop, setFooterTabStop] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRowRef = useRef<HTMLDivElement>(null);
   const startTriggerRef = useRef<HTMLButtonElement>(null);
   const endTriggerRef = useRef<HTMLButtonElement>(null);
   const returnFocusRef = useRef<HTMLElement>(null);
   const selectedDayRef = useRef<HTMLButtonElement>(null);
+  const todayDayRef = useRef<HTMLButtonElement>(null);
   const firstAvailableDayRef = useRef<HTMLButtonElement>(null);
+  const commitButtonRef = useRef<HTMLButtonElement>(null);
+  const resetButtonRef = useRef<HTMLButtonElement>(null);
+  const dismissButtonRef = useRef<HTMLButtonElement>(null);
   const labelId = useId();
   const panelId = useId();
   const buttonShape = buttonShapeProp ?? shape ?? DEFAULT_SHAPE_PRESET;
@@ -452,7 +458,73 @@ export function DateRangeInput({
   }
 
   function handleOpenFocus(): void {
-    (selectedDayRef.current ?? firstAvailableDayRef.current)?.focus();
+    (
+      selectedDayRef.current ??
+      todayDayRef.current ??
+      firstAvailableDayRef.current
+    )?.focus();
+  }
+
+  function handleStartKeyDown(event: KeyboardEvent<HTMLButtonElement>): void {
+    if (event.key !== 'ArrowDown') {
+      return;
+    }
+
+    event.preventDefault();
+    handleOpenStart();
+  }
+
+  function handleEndKeyDown(event: KeyboardEvent<HTMLButtonElement>): void {
+    if (event.key !== 'ArrowDown') {
+      return;
+    }
+
+    event.preventDefault();
+    handleOpenEnd();
+  }
+
+  function handleFooterKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    index: number
+  ): void {
+    const footerRefs = [commitButtonRef, resetButtonRef, dismissButtonRef];
+    const isRtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+    const nextKey = isRtl ? 'ArrowLeft' : 'ArrowRight';
+    const previousKey = isRtl ? 'ArrowRight' : 'ArrowLeft';
+    let nextIndex: number;
+
+    switch (event.key) {
+      case 'ArrowUp':
+      case previousKey: {
+        nextIndex = (index + footerRefs.length - 1) % footerRefs.length;
+        break;
+      }
+      case 'ArrowDown':
+      case nextKey: {
+        nextIndex = (index + 1) % footerRefs.length;
+        break;
+      }
+      case 'End': {
+        nextIndex = footerRefs.length - 1;
+        break;
+      }
+      case 'Home': {
+        nextIndex = 0;
+        break;
+      }
+      default: {
+        return;
+      }
+    }
+
+    event.preventDefault();
+
+    if (nextIndex === index) {
+      return;
+    }
+
+    setFooterTabStop(nextIndex);
+    footerRefs[nextIndex]?.current?.focus();
   }
 
   function handleOpenStart(): void {
@@ -476,6 +548,7 @@ export function DateRangeInput({
     textTone: startDay === '' ? ('muted' as const) : undefined,
     title: startLabel,
     onClick: handleOpenStart,
+    onKeyDown: handleStartKeyDown,
   };
 
   const rightSegment = {
@@ -491,6 +564,7 @@ export function DateRangeInput({
     textTone: endDay === '' ? ('muted' as const) : undefined,
     title: endLabel,
     onClick: handleOpenEnd,
+    onKeyDown: handleEndKeyDown,
   };
 
   const labelledBy = label ? labelId : undefined;
@@ -543,7 +617,6 @@ export function DateRangeInput({
         anchorRef={triggerRowRef}
         dismissZoneRefs={[rootRef, panelRef]}
         open={isOpen}
-        openFocusDeps={[viewMonth]}
         panelRef={panelRef}
         returnFocusRef={returnFocusRef}
         onDismiss={handlePanelDismiss}
@@ -568,6 +641,7 @@ export function DateRangeInput({
             selectedDayRef={selectedDayRef}
             shape={shape}
             size={size}
+            todayDayRef={todayDayRef}
             viewMonth={viewMonth}
             onSelectDay={handleSelectDay}
             onViewMonthChange={setViewMonth}
@@ -576,19 +650,31 @@ export function DateRangeInput({
             center={{
               dataAction: PANEL_RESET_ACTION,
               label: PANEL_RESET_LABEL,
+              ref: resetButtonRef,
+              tabIndex: footerTabStop === 1 ? 0 : -1,
               textTone: 'danger',
               onClick: handlePanelReset,
+              onFocus: () => setFooterTabStop(1),
+              onKeyDown: (event) => handleFooterKeyDown(event, 1),
             }}
             left={{
               dataAction: PANEL_COMMIT_ACTION,
               label: PANEL_COMMIT_LABEL,
+              ref: commitButtonRef,
+              tabIndex: footerTabStop === 0 ? 0 : -1,
               textTone: 'success',
               onClick: handleCommit,
+              onFocus: () => setFooterTabStop(0),
+              onKeyDown: (event) => handleFooterKeyDown(event, 0),
             }}
             right={{
               dataAction: PANEL_DISMISS_ACTION,
               label: PANEL_DISMISS_LABEL,
+              ref: dismissButtonRef,
+              tabIndex: footerTabStop === 2 ? 0 : -1,
               onClick: handlePanelDismiss,
+              onFocus: () => setFooterTabStop(2),
+              onKeyDown: (event) => handleFooterKeyDown(event, 2),
             }}
             shape={buttonShape}
             size={size}

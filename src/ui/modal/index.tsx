@@ -33,6 +33,9 @@
  * 2. Типизировать пропсы через `ModalProps` и `ModalAccessibleName`
  * 3. Связывать заголовок и диалог через `aria-labelledby`; без заголовка —
  *    `aria-label` на диалоге
+ * 4. Ставить фокус при открытии на сам `<dialog>`, если в диалоге нет узла
+ *    с `autofocus`. Панель открывают ради содержимого, Close остаётся
+ *    доступной по Tab и Esc
  *
  * Потребители:
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
@@ -141,6 +144,7 @@ function Modal({
   /**
    * Синхронизирует видимость с пропом `open` через `showModal` и `close`.
    * Задаёт `closedby="any"`, чтобы закрытие работало по Escape и клику по backdrop.
+   * Без узла с `autofocus` ставит фокус на сам диалог после `showModal`.
    */
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -154,6 +158,10 @@ function Modal({
     if (open) {
       if (!dialog.open) {
         dialog.showModal();
+      }
+
+      if (!dialog.querySelector('[autofocus]')) {
+        dialog.focus();
       }
 
       return;
@@ -185,6 +193,7 @@ function Modal({
       aria-label={ariaLabel}
       aria-labelledby={titleId}
       ref={dialogRef}
+      tabIndex={-1}
       onClose={onClose}
     >
       <Card

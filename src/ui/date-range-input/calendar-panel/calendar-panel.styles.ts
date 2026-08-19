@@ -10,7 +10,8 @@
  * 3. Предоставить функцию `getCalendarNavGlyphSize`, а также дефолт `DEFAULT_CALENDAR_PANEL_SIZE_PRESET`
  * 4. Предоставить styled-узлы `StyledCalendarPanelRoot`, `StyledCalendarHeader`,
  *    `StyledCalendarNavButton`, `StyledCalendarMonthTitle`, `StyledCalendarWeekdayRow`,
- *    `StyledCalendarWeekdayCell`, `StyledCalendarGrid` и `StyledCalendarDayButton`
+ *    `StyledCalendarWeekdayCell`, `StyledCalendarWeekRow`, `StyledCalendarDayCell`,
+ *    `StyledCalendarGrid` и `StyledCalendarDayButton`
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
@@ -289,16 +290,11 @@ export const StyledCalendarMonthTitle = styled.div`
  * Базируется на `<div>`.
  *
  * Встроенные стили:
- *  - `display: grid` — семь равных колонок
- *  - `grid-template-columns: repeat(7, minmax(0, 1fr))` — колонки сжимаются без переполнения
- *  - `inline-size: 100%` — занимает ширину панели
- *  - `min-inline-size: 0` — предотвращает переполнение
+ *  - `display: contents` — ячейки подписей становятся прямыми детьми сетки дней,
+ *    чтобы колонки совпали с кнопками дней
  */
 export const StyledCalendarWeekdayRow = styled.div`
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  inline-size: 100%;
-  min-inline-size: 0;
+  display: contents;
 `;
 
 /**
@@ -325,6 +321,29 @@ function getCalendarWeekdayCellStyles(): string {
  */
 export const StyledCalendarWeekdayCell = styled.span`
   ${getCalendarWeekdayCellStyles()}
+`;
+
+/**
+ * StyledCalendarWeekRow — задаёт ряд недели в сетке дней компонента CalendarPanel.
+ * Базируется на `<div>`.
+ *
+ * Встроенные стили:
+ *  - `display: contents` — ячейки дней становятся прямыми детьми сетки,
+ *    чтобы ряд не создавал вложенную сетку
+ */
+export const StyledCalendarWeekRow = styled.div`
+  display: contents;
+`;
+
+/**
+ * StyledCalendarDayCell — задаёт ячейку дня компонента CalendarPanel.
+ * Базируется на `<div>`.
+ *
+ * Встроенные стили:
+ *  - `display: contents` — кнопка дня становится прямым ребёнком сетки
+ */
+export const StyledCalendarDayCell = styled.div`
+  display: contents;
 `;
 
 /**
@@ -365,7 +384,7 @@ const CALENDAR_DAY_BUTTON_PROP_NAMES = new Set<string>(['dayShape', 'size']);
 /**
  * getCalendarDayButtonStyles — возвращает CSS-правила для узла
  * `StyledCalendarDayButton`: раскладку ячейки, псевдоэлемент подсветки и состояния
- * выбора, диапазона, прошлого соседнего месяца и неактивных дней. Недоступные
+ * выбора, диапазона, сегодняшнего дня, прошлого соседнего месяца и неактивных дней. Недоступные
  * дни берут `muted` и глобальный `opacity` disabled — двойное приглушение будущего.
  *
  * @param props пропсы стилизации кнопки дня и тема
@@ -435,6 +454,19 @@ function getCalendarDayButtonStyles(
       background-color: ${resolveColorMix(theme.colors.primary, theme.colors.shade)};
       opacity: 1;
     }
+    &[data-today='true']::after {
+      position: absolute;
+      inset-block-end: ${getSpacingValue(2)};
+      inset-inline-start: 50%;
+      z-index: 1;
+      inline-size: ${getSpacingValue(4)};
+      block-size: ${getSpacingValue(4)};
+      pointer-events: none;
+      content: '';
+      background-color: currentColor;
+      border-radius: 50%;
+      translate: -50% 0;
+    }
   `;
 }
 
@@ -448,6 +480,7 @@ function getCalendarDayButtonStyles(
  * Подсветка рисуется псевдоэлементом `::before`: выбор заливает `primary`, наведение
  * и `:focus-visible` на выбранный день смешивают заливку с `shade`, дни внутри
  * диапазона — нейтральный фон, на невыбранный день — вуаль `veil`.
+ * Сегодняшний день помечает точка `::after`.
  */
 export const StyledCalendarDayButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !CALENDAR_DAY_BUTTON_PROP_NAMES.has(prop),

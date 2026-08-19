@@ -5,9 +5,11 @@
  * Основные задачи:
  * 1. Типизировать вид месяца через `MonthView`
  * 2. Предоставить константы `DATE_PLACEHOLDER` и `WEEKDAY_LABELS`
- * 3. Предоставить `todayUtc`, `formatIsoDayCompact`, `isIsoDayAfter`,
- *    `isIsoDayBetweenRange` и `isIsoDayInBounds`
+ * 3. Предоставить `todayUtc`, `formatIsoDayCompact`, `formatIsoDayAccessible`,
+ *    `isIsoDayAfter`, `isIsoDayBetweenRange`, `isIsoDayInBounds`,
+ *    `monthViewFromIsoDay` и `clampIsoDayInBounds`
  * 4. Предоставить `monthViewFromIsoDayOrToday`, `addMonths`, `addYears`,
+ *    `addDaysToIsoDay`, `addMonthsToIsoDay`, `addYearsToIsoDay`,
  *    `formatMonthTitle`, `buildMonthGrid`, `canNavigateMonthPrevious`,
  *    `canNavigateMonthNext`, `canNavigateYearPrevious` и `canNavigateYearNext`
  *
@@ -81,6 +83,31 @@ export function formatIsoDayCompact(isoDay: string): string {
   const year = String(parts.year).slice(2);
 
   return `${day}.${month}.${year}`;
+}
+
+/**
+ * formatIsoDayAccessible — преобразует ISO-день в читаемую дату для `aria-label`.
+ * При неразбираемой строке возвращает исходное значение без изменений.
+ *
+ * @param isoDay день в формате ISO
+ * @returns дата вида `Monday, August 19, 2026` в локали `en-US`
+ */
+export function formatIsoDayAccessible(isoDay: string): string {
+  const parts = parseIsoDay(isoDay);
+
+  if (parts == null) {
+    return isoDay;
+  }
+
+  const date = new Date(Date.UTC(parts.year, parts.month - 1, parts.day));
+
+  return new Intl.DateTimeFormat('en-US', {
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'UTC',
+    weekday: 'long',
+    year: 'numeric',
+  }).format(date);
 }
 
 /**
@@ -207,7 +234,7 @@ export function isIsoDayInBounds(
  * @param isoDay день в формате ISO
  * @returns вид месяца или `null` при неразбираемой строке
  */
-function monthViewFromIsoDay(isoDay: string): MonthView | null {
+export function monthViewFromIsoDay(isoDay: string): MonthView | null {
   const parts = parseIsoDay(isoDay);
 
   if (parts == null) {
@@ -215,6 +242,31 @@ function monthViewFromIsoDay(isoDay: string): MonthView | null {
   }
 
   return { month: parts.month, year: parts.year };
+}
+
+/**
+ * clampIsoDayInBounds — возвращает день, ограниченный необязательными границами.
+ * Пустая или отсутствующая граница не ограничивает день с этой стороны.
+ *
+ * @param isoDay проверяемый день в формате ISO
+ * @param minDay нижняя граница включительно
+ * @param maxDay верхняя граница включительно
+ * @returns исходный день или ближайшая граница
+ */
+export function clampIsoDayInBounds(
+  isoDay: string,
+  minDay?: string,
+  maxDay?: string
+): string {
+  if (minDay != null && minDay !== '' && isIsoDayBefore(isoDay, minDay)) {
+    return minDay;
+  }
+
+  if (maxDay != null && maxDay !== '' && isIsoDayAfter(isoDay, maxDay)) {
+    return maxDay;
+  }
+
+  return isoDay;
 }
 
 /**
@@ -281,6 +333,29 @@ export function addYears(view: MonthView, delta: number): MonthView {
 }
 
 /**
+ * addDaysToIsoDay — возвращает ISO-день со сдвигом на число дней.
+ *
+ * @param isoDay исходный день в формате ISO
+ * @param delta сдвиг в днях, отрицательный — назад
+ * @returns новый день в формате ISO
+ */
+export function addDaysToIsoDay(isoDay: string, delta: number): string {
+  const parts = parseIsoDay(isoDay);
+
+  if (parts == null) {
+    return isoDay;
+  }
+
+  const date = new Date(Date.UTC(parts.year, parts.month - 1, parts.day + delta));
+
+  return toIsoDay({
+    day: date.getUTCDate(),
+    month: date.getUTCMonth() + 1,
+    year: date.getUTCFullYear(),
+  });
+}
+
+/**
  * daysInMonth — возвращает число дней в месяце вида.
  *
  * @param view вид месяца
@@ -288,6 +363,56 @@ export function addYears(view: MonthView, delta: number): MonthView {
  */
 function daysInMonth(view: MonthView): number {
   return new Date(Date.UTC(view.year, view.month, 0)).getUTCDate();
+}
+
+/**
+ * addMonthsToIsoDay — возвращает ISO-день со сдвигом на число месяцев.
+ * Номер дня ограничивается последним днём целевого месяца.
+ *
+ * @param isoDay исходный день в формате ISO
+ * @param delta сдвиг в месяцах, отрицательный — назад
+ * @returns новый день в формате ISO
+ */
+export function addMonthsToIsoDay(isoDay: string, delta: number): string {
+  const parts = parseIsoDay(isoDay);
+
+  if (parts == null) {
+    return isoDay;
+  }
+
+  const nextView = addMonths({ month: parts.month, year: parts.year }, delta);
+  const lastDay = daysInMonth(nextView);
+
+  return toIsoDay({
+    day: Math.min(parts.day, lastDay),
+    month: nextView.month,
+    year: nextView.year,
+  });
+}
+
+/**
+ * addYearsToIsoDay — возвращает ISO-день со сдвигом на число лет.
+ * Номер дня ограничивается последним днём целевого месяца.
+ *
+ * @param isoDay исходный день в формате ISO
+ * @param delta сдвиг в годах, отрицательный — назад
+ * @returns новый день в формате ISO
+ */
+export function addYearsToIsoDay(isoDay: string, delta: number): string {
+  const parts = parseIsoDay(isoDay);
+
+  if (parts == null) {
+    return isoDay;
+  }
+
+  const nextView = addYears({ month: parts.month, year: parts.year }, delta);
+  const lastDay = daysInMonth(nextView);
+
+  return toIsoDay({
+    day: Math.min(parts.day, lastDay),
+    month: nextView.month,
+    year: nextView.year,
+  });
 }
 
 /**

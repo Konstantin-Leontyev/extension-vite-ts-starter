@@ -16,7 +16,14 @@
  *  - `src/components/header/index.tsx` — рендерит меню профиля в шапке
  */
 
-import { Fragment, useId, useRef, useState, type ComponentPropsWithRef } from 'react';
+import {
+  Fragment,
+  useId,
+  useRef,
+  useState,
+  type ComponentPropsWithRef,
+  type KeyboardEvent,
+} from 'react';
 
 import { AddCircleIcon, AvatarIcon, CloseIcon, SignOutIcon } from '@icons';
 import { AnchoredPanel } from '@ui/anchored-panel';
@@ -143,6 +150,13 @@ export function ProfileMenu(props: ProfileMenuProps) {
     setIsOpen((current) => !current);
   }
 
+  function handleTriggerKeyDown(event: KeyboardEvent<HTMLButtonElement>): void {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setIsOpen(true);
+    }
+  }
+
   function handleOpenFocus(): void {
     profileActionRef.current?.focus();
   }
@@ -159,6 +173,7 @@ export function ProfileMenu(props: ProfileMenuProps) {
         shape="round"
         title={displayEmail}
         onClick={handleToggle}
+        onKeyDown={handleTriggerKeyDown}
       >
         <AvatarIcon />
       </Icon>
