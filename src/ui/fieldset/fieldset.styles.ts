@@ -19,7 +19,7 @@ import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
   getMinBlockSize,
-  getPadding,
+  getPaddingInline,
   resolveBlockRadius,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
@@ -92,13 +92,17 @@ const FIELDSET_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'borderTone']
 const DEFAULT_FIELDSET_BORDER_TONE: FieldsetBorderTonePreset = DEFAULT_TONE;
 
 /**
- * getFieldsetStyles — возвращает CSS-правила для корня `StyledFieldset`: габариты, отступы
- * и рамка.
+ * getFieldsetStyles — возвращает CSS-правила для корня `StyledFieldset`: габариты, отступы,
+ * рамка и посадка легенды на верхнюю границу рамки.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолт `borderTone`
- * 2. Собирает габариты, отступы через `getPadding`, рамку цветом через
- *    `getFieldsetBorderColor` и `border-radius` через `resolveBlockRadius`
+ * 2. Собирает габариты, оба отступа одним значением из `getPaddingInline`, рамку
+ *    цветом через `getFieldsetBorderColor` и `border-radius` через
+ *    `resolveBlockRadius`
+ * 3. Вынимает легенду из потока селектором `& > legend` и сажает на верхнюю
+ *    границу рамки: абсолютное позиционирование, `translateY(-50%)`, заливка
+ *    `theme.colors.surface` перекрывает черту
  *
  * @param props пропсы стилизации Fieldset и тема
  * @returns CSS-правила, каждое с новой строки
@@ -106,16 +110,24 @@ const DEFAULT_FIELDSET_BORDER_TONE: FieldsetBorderTonePreset = DEFAULT_TONE;
 function getFieldsetStyles(props: FieldsetStyleProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
   const { borderTone = DEFAULT_FIELDSET_BORDER_TONE } = props;
-  const padding = getPadding(DEFAULT_SIZE_PRESET);
+  const inset = getPaddingInline(DEFAULT_SIZE_PRESET);
 
   return `
     margin: 0;
     inline-size: 100%;
     min-inline-size: 0;
-    padding-block: ${padding.block};
-    padding-inline: ${padding.inline};
+    padding-block: ${inset};
+    padding-inline: ${inset};
     border: 1px solid ${getFieldsetBorderColor(theme, borderTone)};
     border-radius: ${resolveBlockRadius(DEFAULT_SHAPE_PRESET, getMinBlockSize(DEFAULT_SIZE_PRESET))};
+
+    & > legend {
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline-start: ${inset};
+      transform: translateY(-50%);
+      background-color: ${theme.colors.surface};
+    }
   `;
 }
 
@@ -124,18 +136,20 @@ function getFieldsetStyles(props: FieldsetStyleProps & { theme: AppTheme }): str
  * Базируется на `<fieldset>` и поддерживает пропсы из `FieldsetStyleProps`.
  *
  * Встроенные стили:
+ *  - `position: relative` — содержащий блок для легенды на рамке
  *  - `display: grid` — раскладка по дефолту проекта
  *  - `grid-auto-rows: min-content` — строки по высоте содержимого
- *  - `gap` — отступ между заголовком и полями
+ *  - `gap` — отступ между полями. Легенда вне потока и в `gap` не входит
  *  - `align-content: start` — содержимое прижато к началу
  *
  * Генерация стилей:
- *  - `getFieldsetStyles` — габариты, отступы и рамка
+ *  - `getFieldsetStyles` — габариты, отступы, рамка и посадка легенды
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  */
 export const StyledFieldset = styled.fieldset.withConfig({
   shouldForwardProp: (prop) => !FIELDSET_PROP_NAMES.has(prop),
 })<FieldsetStyleProps>`
+  position: relative;
   display: grid;
   grid-auto-rows: min-content;
   gap: ${getSpacingValue(8)};

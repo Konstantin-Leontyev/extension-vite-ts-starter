@@ -18,6 +18,8 @@ import { getTextProperties } from '@ui/text';
  * getTableInlineFieldStyles — возвращает CSS-правила для узла `StyledTableInlineField`:
  * типографику нативного поля и сброс оформления `<input>`.
  * Поле живёт внутри строки таблицы и не рисует собственную поверхность.
+ * Форсирует `text-align: inherit`: стиль UA у `<input>` перебивает наследование
+ * выравнивания ячейки.
  * Гасит `outline` на фокусе и `aria-invalid`: нет рамки — нет контура.
  *
  * @returns CSS-правила, каждое с новой строки
@@ -25,6 +27,7 @@ import { getTextProperties } from '@ui/text';
 function getTableInlineFieldStyles(): string {
   return `
     ${getTextProperties(getTextSize())}
+    text-align: inherit;
     padding: 0;
     appearance: none;
     background: transparent;
