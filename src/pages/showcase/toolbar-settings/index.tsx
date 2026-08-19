@@ -1,8 +1,8 @@
 /**
  * Файл: `src/pages/showcase/toolbar-settings/index.tsx`
  * Определяет панель настроек компонента Toolbar в витрине дизайн-системы.
- * Содержит контролы для изменения размера, формы, рамки, тени, заливки
- * и набора действий в реальном времени.
+ * Содержит контролы для изменения размера, формы, рамки, тени, заливки,
+ * рамки и тени действий и набора действий в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `ToolbarWidgetState`
@@ -12,6 +12,9 @@
  *  - `src/pages/showcase/index.tsx` — подключает панель и синхронизирует состояние с превью виджета Toolbar
  */
 
+import { type ChangeEvent } from 'react';
+
+import { Checkbox } from '@ui/checkbox';
 import { ICON_SIZE_PRESET_KEYS, getIconPadding, type IconSizePreset } from '@ui/icon';
 import { SHAPE_PRESET_KEYS, type ShapePreset } from '@ui/presets';
 import { type SurfaceBackgroundPreset } from '@ui/surface';
@@ -27,14 +30,16 @@ import { SizeListbox } from '../size-listbox';
 /**
  * ToolbarWidgetState — представляет состояние настроек компонента Toolbar в витрине дизайн-системы.
  * Ключи совпадают с именами пропов компонента Toolbar.
- * `actions` хранит демо-ряд действий с ключом иконки, отступом окна Icon и флагом
- * `disabled` вместо `ReactNode` и обработчика.
+ * `actions` хранит демо-ряд действий с ключом иконки, подсказкой, отступом окна
+ * Icon и флагами `active` и `disabled` вместо `ReactNode` и обработчика.
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Toolbar.
  *
  * @property actions — демо-ряд действий
  * @property background — заливка панели инструментов
  * @property borderTone — тон рамки
  * @property shape — форма панели
+ * @property showActionBorder — включает рамку действий
+ * @property showActionShadow — включает тень действий при включённой рамке
  * @property showBorder — включает рамку
  * @property showShadow — включает тень при включённой рамке
  * @property size — размер окна действия
@@ -44,6 +49,8 @@ export type ToolbarWidgetState = {
   background: SurfaceBackgroundPreset;
   borderTone: TonePreset;
   shape: ShapePreset;
+  showActionBorder: boolean;
+  showActionShadow: boolean;
   showBorder: boolean;
   showShadow: boolean;
   size: IconSizePreset;
@@ -109,6 +116,26 @@ export function ToolbarSettings({ onChange, state }: ToolbarSettingsProps) {
         value={state.background}
         onChange={(background) => onChange('background', background)}
       />
+
+      <Checkbox
+        checked={state.showActionBorder}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('showActionBorder', event.target.checked)
+        }
+      >
+        Show action border
+      </Checkbox>
+
+      {state.showActionBorder && (
+        <Checkbox
+          checked={state.showActionShadow}
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            onChange('showActionShadow', event.target.checked)
+          }
+        >
+          Show action shadow
+        </Checkbox>
+      )}
 
       <IconRowGroup
         actions={state.actions}

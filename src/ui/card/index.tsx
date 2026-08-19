@@ -22,6 +22,8 @@
  *  - выравнивание подзаголовка через проп `subtitleAlign`
  *  - id заголовка для `aria-labelledby` через проп `titleId`
  *  - ряд действий в шапке через проп `headerActions`
+ *  - рамку действий шапки через проп `showActionBorder`
+ *  - тень действий шапки через проп `showActionShadow`
  *  - переопределение корневого элемента через проп `as`
  *
  * Основные задачи:
@@ -44,6 +46,7 @@ import {
   type ComponentPropsWithRef,
 } from 'react';
 
+import { resolveBorderProps, type ShowActionBorderProps } from '@ui/border';
 import { IconButtonRow, type IconButtonRowAction } from '@ui/icon-button-row';
 import {
   Text,
@@ -104,7 +107,8 @@ type CardProps<T extends CardHtmlTag = 'div'> = {
   as?: T;
   headerActions?: IconButtonRowAction[];
   titleId?: string;
-} & TextNodeProps<'title'> &
+} & ShowActionBorderProps &
+  TextNodeProps<'title'> &
   TextNodeProps<'subtitle'> &
   Omit<CardStyleProps, 'hasHeader'> &
   Omit<ComponentPropsWithRef<T>, 'className' | 'style' | 'title' | keyof CardStyleProps>;
@@ -121,6 +125,8 @@ function Card<T extends CardHtmlTag = 'div'>({
   as,
   children,
   headerActions = DEFAULT_CARD_HEADER_ACTIONS,
+  showActionBorder,
+  showActionShadow,
   subtitle,
   subtitleAlign,
   subtitleItalic,
@@ -140,6 +146,11 @@ function Card<T extends CardHtmlTag = 'div'>({
   const headingId = titleId ?? fallbackTitleId;
   const hasRootRole = as === 'article' || as === 'section';
   const labelledBy = title && hasRootRole ? headingId : undefined;
+  const actionBorderProps = resolveBorderProps(
+    showActionBorder ?? false,
+    undefined,
+    showActionShadow
+  );
 
   // Подзаголовок остаётся абзацем и уровня не получает: он поясняет карточку
   // целиком, а не открывает часть содержимого. Попав в оглавление, обещал бы
@@ -192,6 +203,7 @@ function Card<T extends CardHtmlTag = 'div'>({
       insetInlineEnd={CARD_PADDING}
       position="absolute"
       size={CARD_HEADER_ACTION_SIZE_PRESET}
+      {...actionBorderProps}
       zIndex={1}
     />,
     Boolean(children) && <StyledCardBody>{children}</StyledCardBody>

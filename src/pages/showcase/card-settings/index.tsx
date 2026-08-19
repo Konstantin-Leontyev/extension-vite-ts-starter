@@ -1,8 +1,8 @@
 /**
  * Файл: `src/pages/showcase/card-settings/index.tsx`
  * Определяет панель настроек компонента Card в витрине дизайн-системы.
- * Содержит контролы для изменения рамки и тени, фона, заголовка, подзаголовка
- * и набора действий в реальном времени.
+ * Содержит контролы для изменения рамки и тени, фона, заголовка, подзаголовка,
+ * рамки и тени действий и набора действий в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `CardWidgetState`
@@ -12,7 +12,10 @@
  *  - `src/pages/showcase/index.tsx` — подключает панель и синхронизирует состояние с превью виджета Card
  */
 
+import { type ChangeEvent } from 'react';
+
 import { CARD_HEADER_ACTION_SIZE_PRESET } from '@ui/card';
+import { Checkbox } from '@ui/checkbox';
 import { getIconPadding } from '@ui/icon';
 import { type SurfaceBackgroundPreset } from '@ui/surface';
 import {
@@ -38,9 +41,9 @@ const DEFAULT_CARD_HEADER_ACTION_ICON_PADDING = getIconPadding(
 
 /**
  * CardWidgetState — представляет состояние настроек компонента Card в витрине дизайн-системы.
- * Ключи совпадают с именами пропов компонента Card, кроме витринного ключа:
- * `headerActions` хранит демо-ряд действий с ключом иконки, отступом окна Icon и флагом
- * `disabled` вместо `ReactNode` и обработчика.
+ * Ключи совпадают с именами пропов компонента Card.
+ * `headerActions` хранит демо-ряд действий с ключом иконки, подсказкой, отступом окна
+ * Icon и флагами `active` и `disabled` вместо `ReactNode` и обработчика.
  * Пустая строка заголовка или подзаголовка означает вызов без пропа. Отметка `Set*`
  * живёт внутри TextGroup.
  * Используется для синхронизации значений между панелью управления и демонстрационным виджетом Card.
@@ -48,6 +51,8 @@ const DEFAULT_CARD_HEADER_ACTION_ICON_PADDING = getIconPadding(
  * @property background — заливка карточки
  * @property borderTone — тон рамки
  * @property headerActions — демо-ряд действий шапки
+ * @property showActionBorder — включает рамку действий шапки
+ * @property showActionShadow — включает тень действий шапки при включённой рамке
  * @property showBorder — включает рамку
  * @property showShadow — включает тень при включённой рамке
  * @property subtitle — подзаголовок
@@ -65,6 +70,8 @@ export type CardWidgetState = {
   background: SurfaceBackgroundPreset;
   borderTone: TonePreset;
   headerActions: IconRowGroupAction[];
+  showActionBorder: boolean;
+  showActionShadow: boolean;
   showBorder: boolean;
   showShadow: boolean;
   subtitle: string;
@@ -157,6 +164,26 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
         onItalicChange={(value) => onChange('subtitleItalic', value)}
         onSizeChange={(size) => onChange('subtitleSize', size)}
       />
+
+      <Checkbox
+        checked={state.showActionBorder}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('showActionBorder', event.target.checked)
+        }
+      >
+        Show action border
+      </Checkbox>
+
+      {state.showActionBorder && (
+        <Checkbox
+          checked={state.showActionShadow}
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            onChange('showActionShadow', event.target.checked)
+          }
+        >
+          Show action shadow
+        </Checkbox>
+      )}
 
       <IconRowGroup
         actions={state.headerActions}

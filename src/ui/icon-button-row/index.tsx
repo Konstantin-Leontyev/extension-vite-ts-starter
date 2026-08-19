@@ -6,6 +6,8 @@
  *  - layout-пропсы: отступы, позиционирование, размеры
  *  - размерный ряд через проп `size`
  *  - форму через проп `shape`
+ *  - рамку действий через проп `showBorder`
+ *  - тень действий через проп `showShadow`
  *  - ряд действий через проп `actions`. Пустой ряд не рендерит компонент
  *  - roving focus через проп `rovingFocus`
  *
@@ -31,8 +33,10 @@ import {
   type ReactNode,
 } from 'react';
 
+import { resolveBorderProps, type ShowBorderProps } from '@ui/border';
 import { Icon, type IconShapePreset, type IconSizePreset } from '@ui/icon';
 import { type SpacingValue } from '@ui/spacing';
+import { type DistributiveOmit } from '@ui/type-utils';
 
 import {
   StyledIconButtonRow,
@@ -42,6 +46,7 @@ import {
 /**
  * IconButtonRowAction — представляет одно действие ряда иконочных кнопок.
  *
+ * @property active — включает зафиксированное нажатое состояние
  * @property ariaControls — id элемента, которым управляет кнопка
  * @property ariaExpanded — раскрытое состояние управляемого элемента
  * @property ariaLabel — доступное имя кнопки. Без имени кнопка скрыта от вспомогательных технологий
@@ -52,6 +57,7 @@ import {
  * @property title — текст нативного tooltip. Из `ariaLabel` не выводится
  */
 type IconButtonRowAction = {
+  active?: boolean;
   ariaControls?: string;
   ariaExpanded?: boolean;
   ariaLabel?: string;
@@ -75,6 +81,12 @@ const DEFAULT_ICON_BUTTON_ROW_SHAPE: IconShapePreset = 'round';
 const DEFAULT_ICON_BUTTON_ROW_ROVING_FOCUS = false;
 
 /**
+ * DEFAULT_ICON_BUTTON_ROW_SHOW_BORDER — задаёт режим рамки действий по умолчанию.
+ * Используется, когда вызывающий код не передал проп `showBorder`.
+ */
+const DEFAULT_ICON_BUTTON_ROW_SHOW_BORDER = false;
+
+/**
  * IconButtonRowProps — представляет пропсы компонента IconButtonRow.
  *
  * @property actions — ряд действий
@@ -87,7 +99,8 @@ type IconButtonRowProps = {
   rovingFocus?: boolean;
   shape?: IconShapePreset;
   size?: IconSizePreset;
-} & IconButtonRowStyleProps &
+} & DistributiveOmit<ShowBorderProps, 'borderTone'> &
+  IconButtonRowStyleProps &
   Omit<
     ComponentPropsWithRef<'div'>,
     'className' | 'style' | keyof IconButtonRowStyleProps
@@ -216,6 +229,8 @@ function IconButtonRow({
   actions,
   rovingFocus = DEFAULT_ICON_BUTTON_ROW_ROVING_FOCUS,
   shape = DEFAULT_ICON_BUTTON_ROW_SHAPE,
+  showBorder = DEFAULT_ICON_BUTTON_ROW_SHOW_BORDER,
+  showShadow,
   size,
   ...rest
 }: IconButtonRowProps) {
@@ -235,6 +250,12 @@ function IconButtonRow({
   if (actions.length === 0) {
     return null;
   }
+
+  const actionBorderProps: ShowBorderProps = resolveBorderProps(
+    showBorder,
+    undefined,
+    showShadow
+  );
 
   const handleActionKeyDown = (
     event: KeyboardEvent<HTMLButtonElement>,
@@ -278,6 +299,7 @@ function IconButtonRow({
     <StyledIconButtonRow {...rest}>
       {actions.map((action, index) => (
         <Icon
+          active={action.active}
           aria-controls={action.ariaControls}
           aria-expanded={action.ariaExpanded}
           aria-hidden={action.ariaLabel ? undefined : true}
@@ -291,6 +313,7 @@ function IconButtonRow({
           }}
           shape={shape}
           size={size}
+          {...actionBorderProps}
           tabIndex={resolveActionTabIndex(
             rovingFocus,
             index === currentIndex,

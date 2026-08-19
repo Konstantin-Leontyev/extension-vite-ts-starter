@@ -20,6 +20,8 @@
  *  - рамку панели через проп `showBorder`
  *  - тень панели через проп `showShadow`
  *  - тон рамки панели через проп `borderTone`
+ *  - рамку действий через проп `showActionBorder`
+ *  - тень действий через проп `showActionShadow`
  *  - заголовок панели через проп `title`
  *  - уровень заголовка панели через проп `titleLevel`
  *  - подзаголовок панели через проп `subtitle`
@@ -53,6 +55,7 @@ import {
 } from 'react';
 
 import { SidebarIcon } from '@icons';
+import { type ShowActionBorderProps } from '@ui/border';
 import { Card } from '@ui/card';
 import { type IconButtonRowAction } from '@ui/icon-button-row';
 import { type DistributiveOmit } from '@ui/type-utils';
@@ -90,8 +93,14 @@ const DEFAULT_SIDEBAR_ICON_ARIA_LABEL = 'Close panel';
  */
 type CardForwardProps = DistributiveOmit<
   ComponentProps<typeof Card>,
-  'children' | 'headerActions' | 'id' | 'titleId' | keyof SidebarStyleProps
->;
+  | 'children'
+  | 'headerActions'
+  | 'id'
+  | 'titleId'
+  | keyof ShowActionBorderProps
+  | keyof SidebarStyleProps
+> &
+  ShowActionBorderProps;
 
 /**
  * SidebarProps — представляет пропсы компонента Sidebar.

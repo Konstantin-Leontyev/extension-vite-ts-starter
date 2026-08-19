@@ -16,7 +16,13 @@ import { useState, type ReactNode } from 'react';
 import { useShellOutletContext } from '@components/router';
 import { useToast } from '@hooks/use-toast';
 import { SettingsIcon } from '@icons';
-import { resolveBorderProps, type BorderProps, type ShowBorderProps } from '@ui/border';
+import {
+  resolveActionBorderProps,
+  resolveBorderProps,
+  type BorderProps,
+  type ShowActionBorderProps,
+  type ShowBorderProps,
+} from '@ui/border';
 import { Button, type ButtonIconProps } from '@ui/button';
 import { CARD_HEADER_ACTION_SIZE_PRESET, Card } from '@ui/card';
 import { Checkbox } from '@ui/checkbox';
@@ -630,11 +636,15 @@ const DEFAULT_CARD_STATE: CardWidgetState = {
   borderTone: 'neutral',
   headerActions: [
     {
+      active: false,
       disabled: false,
       iconKey: 'close',
       iconPadding: getIconPadding(CARD_HEADER_ACTION_SIZE_PRESET),
+      title: '',
     },
   ],
+  showActionBorder: false,
+  showActionShadow: true,
   showBorder: true,
   showShadow: true,
   subtitle: 'Subtitle text',
@@ -666,34 +676,46 @@ const DEFAULT_TEXT_STATE: TextWidgetState = {
 const DEFAULT_TOOLBAR_STATE: ToolbarWidgetState = {
   actions: [
     {
+      active: false,
       disabled: false,
       iconKey: 'search',
       iconPadding: getIconPadding(DEFAULT_SIZE_PRESET),
+      title: '',
     },
     {
+      active: false,
       disabled: false,
       iconKey: 'copy',
       iconPadding: getIconPadding(DEFAULT_SIZE_PRESET),
+      title: '',
     },
     {
+      active: false,
       disabled: false,
       iconKey: 'download',
       iconPadding: getIconPadding(DEFAULT_SIZE_PRESET),
+      title: '',
     },
     {
+      active: false,
       disabled: false,
       iconKey: 'settings',
       iconPadding: getIconPadding(DEFAULT_SIZE_PRESET),
+      title: '',
     },
     {
+      active: false,
       disabled: false,
       iconKey: 'sign-out',
       iconPadding: getIconPadding(DEFAULT_SIZE_PRESET),
+      title: '',
     },
   ],
   background: 'surface',
   borderTone: 'neutral',
   shape: DEFAULT_SHAPE_PRESET,
+  showActionBorder: false,
+  showActionShadow: true,
   showBorder: true,
   showShadow: true,
   size: DEFAULT_SIZE_PRESET,
@@ -1244,10 +1266,18 @@ export function ShowcasePage() {
     card.borderTone,
     card.showShadow
   );
+  const cardActionBorderProps: ShowActionBorderProps = resolveActionBorderProps(
+    card.showActionBorder,
+    card.showActionShadow
+  );
   const toolbarBorderProps: BorderProps = resolveBorderProps(
     toolbar.showBorder,
     toolbar.borderTone,
     toolbar.showShadow
+  );
+  const toolbarActionBorderProps: ShowActionBorderProps = resolveActionBorderProps(
+    toolbar.showActionBorder,
+    toolbar.showActionShadow
   );
   const inputBorderProps: BorderProps = resolveBorderProps(
     input.showBorder,
@@ -1390,6 +1420,7 @@ export function ShowcasePage() {
                 <Card
                   background={card.background}
                   headerActions={card.headerActions.map(resolveIconButtonRowAction)}
+                  {...cardActionBorderProps}
                   {...cardBorderProps}
                   {...cardTitleProps}
                   {...cardSubtitleProps}
@@ -1421,6 +1452,7 @@ export function ShowcasePage() {
                   placeSelf="center"
                   shape={toolbar.shape}
                   size={toolbar.size}
+                  {...toolbarActionBorderProps}
                   {...toolbarBorderProps}
                 />
               )}

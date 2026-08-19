@@ -8,6 +8,8 @@
  *  - рамку через проп `showBorder`
  *  - тень через проп `showShadow`
  *  - тон рамки через проп `borderTone`
+ *  - рамку действий через проп `showActionBorder`
+ *  - тень действий через проп `showActionShadow`
  *  - заголовок через проп `title`
  *  - уровень заголовка через проп `titleLevel`
  *  - подзаголовок через проп `subtitle`
@@ -39,7 +41,11 @@
 import { useEffect, useId, useRef, type ComponentProps, type ReactNode } from 'react';
 
 import { CloseIcon } from '@icons';
-import { resolveBorderProps, type ShowBorderProps } from '@ui/border';
+import {
+  resolveBorderProps,
+  type ShowActionBorderProps,
+  type ShowBorderProps,
+} from '@ui/border';
 import { Card } from '@ui/card';
 import { type SpacingValue } from '@ui/spacing';
 import { type TextNodeProps } from '@ui/text';
@@ -87,9 +93,15 @@ type ModalAccessibleName =
  */
 type ModalProps = DistributiveOmit<
   ComponentProps<typeof Card>,
-  'aria-label' | 'aria-labelledby' | 'children' | 'headerActions' | keyof ShowBorderProps
+  | 'aria-label'
+  | 'aria-labelledby'
+  | 'children'
+  | 'headerActions'
+  | keyof ShowActionBorderProps
+  | keyof ShowBorderProps
 > &
   ModalAccessibleName &
+  ShowActionBorderProps &
   ShowBorderProps & {
     children: ReactNode;
     closeAriaLabel?: string;

@@ -22,14 +22,18 @@ import { getIcon, type IconKey } from '../showcase-icon-options';
 /**
  * IconRowGroupAction — представляет одно действие ряда в состоянии витрины.
  *
+ * @property active — включает зафиксированное нажатое состояние
  * @property disabled — включает недоступное состояние
  * @property iconKey — ключ глифа из витринного набора
  * @property iconPadding — отступ окна Icon
+ * @property title — текст нативного tooltip
  */
 export type IconRowGroupAction = {
+  active: boolean;
   disabled: boolean;
   iconKey: IconKey;
   iconPadding: SpacingValue;
+  title: string;
 };
 
 /**
@@ -42,10 +46,12 @@ export function resolveIconButtonRowAction(
   action: IconRowGroupAction
 ): IconButtonRowAction {
   return {
+    active: action.active,
     ariaLabel: action.iconKey,
     disabled: action.disabled,
     icon: getIcon(action.iconKey),
     iconPadding: action.iconPadding,
     onClick: () => undefined,
+    ...(action.title === '' ? {} : { title: action.title }),
   };
 }

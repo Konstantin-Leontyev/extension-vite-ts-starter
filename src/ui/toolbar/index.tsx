@@ -11,6 +11,8 @@
  *  - рамку через проп `showBorder`
  *  - тень через проп `showShadow`
  *  - тон рамки через проп `borderTone`
+ *  - рамку действий через проп `showActionBorder`
+ *  - тень действий через проп `showActionShadow`
  *  - ряд действий через проп `actions`
  *  - доступное имя для скринридера через проп `ariaLabel`
  *
@@ -27,6 +29,7 @@
 
 import { type ComponentPropsWithRef } from 'react';
 
+import { resolveBorderProps, type ShowActionBorderProps } from '@ui/border';
 import { resolveIconShape } from '@ui/icon';
 import { IconButtonRow, type IconButtonRowAction } from '@ui/icon-button-row';
 
@@ -41,7 +44,8 @@ import { StyledToolbar, type ToolbarStyleProps } from './toolbar.styles';
 type ToolbarProps = {
   actions: IconButtonRowAction[];
   ariaLabel: string;
-} & ToolbarStyleProps &
+} & ShowActionBorderProps &
+  ToolbarStyleProps &
   Omit<
     ComponentPropsWithRef<'div'>,
     'aria-label' | 'className' | 'role' | 'style' | keyof ToolbarStyleProps
@@ -56,8 +60,21 @@ type ToolbarProps = {
  *   ariaLabel="Toolbar"
  * />
  */
-function Toolbar({ actions, ariaLabel, shape, size, ...rest }: ToolbarProps) {
+function Toolbar({
+  actions,
+  ariaLabel,
+  shape,
+  showActionBorder,
+  showActionShadow,
+  size,
+  ...rest
+}: ToolbarProps) {
   const actionShape = resolveIconShape(shape);
+  const actionBorderProps = resolveBorderProps(
+    showActionBorder ?? false,
+    undefined,
+    showActionShadow
+  );
 
   return (
     <StyledToolbar
@@ -67,7 +84,13 @@ function Toolbar({ actions, ariaLabel, shape, size, ...rest }: ToolbarProps) {
       size={size}
       {...rest}
     >
-      <IconButtonRow actions={actions} rovingFocus shape={actionShape} size={size} />
+      <IconButtonRow
+        actions={actions}
+        rovingFocus
+        shape={actionShape}
+        size={size}
+        {...actionBorderProps}
+      />
     </StyledToolbar>
   );
 }

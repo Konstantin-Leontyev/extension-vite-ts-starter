@@ -13,8 +13,8 @@
  * 1. Экспортировать компонент IconRowGroup
  * 2. Типизировать пропсы через `IconRowGroupProps`
  * 3. Реэкспортировать тип `IconRowGroupAction`
- * 4. Рендерить блок каждого действия в порядке: глиф, отступ окна, отключение,
- *    удаление, затем кнопку добавления
+ * 4. Рендерить блок каждого действия в порядке: глиф, подсказка, отступ окна,
+ *    Active, отключение, удаление, затем кнопку добавления
  * 5. Добавлять, удалять и обновлять поле действия внутри сателлита
  * 6. Собирать подписи контролов через `resolveGroupFieldLabel`,
  *    `resolveGroupContentLabel` и `resolveGroupFlagLabel` из
@@ -45,6 +45,7 @@ import {
   resolveGroupFlagLabel,
 } from '../showcase-labels';
 import { SizeListbox } from '../size-listbox';
+import { TextGroup } from '../text-group';
 import { type IconRowGroupAction } from './icon-row-group';
 
 export type { IconRowGroupAction };
@@ -103,9 +104,11 @@ export function IconRowGroup({
     onActionsChange([
       ...actions,
       {
+        active: false,
         disabled: false,
         iconKey: ICON_ROW_GROUP_ICON_KEY,
         iconPadding: defaultIconPadding,
+        title: '',
       },
     ]);
   }
@@ -128,6 +131,16 @@ export function IconRowGroup({
               onChange={(value) => updateAction(index, { iconKey: value as IconKey })}
             />
 
+            <TextGroup
+              contents={[
+                {
+                  onChange: (value) => updateAction(index, { title: value }),
+                  value: action.title,
+                },
+              ]}
+              labelPrefix={`${actionPrefix} tooltip`}
+            />
+
             <SizeListbox
               label={resolveGroupFieldLabel(actionPrefix, 'padding')}
               sizes={ICON_SIZE_PRESET_KEYS}
@@ -139,6 +152,15 @@ export function IconRowGroup({
                 updateAction(index, { iconPadding: getIconPadding(size) })
               }
             />
+
+            <Checkbox
+              checked={action.active}
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                updateAction(index, { active: event.target.checked })
+              }
+            >
+              Active
+            </Checkbox>
 
             <Checkbox
               checked={action.disabled}

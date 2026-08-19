@@ -21,7 +21,7 @@ import { Button } from '@ui/button';
 import { Card } from '@ui/card';
 import { ProgressBar } from '@ui/progress-bar';
 import { Spinner } from '@ui/spinner';
-import { Text } from '@ui/text';
+import { Text, type TextNodeProps } from '@ui/text';
 
 /**
  * SMOKE_PROBE_TITLE_ID — задаёт id заголовка карточки зонда для связи с `aria-labelledby`
@@ -349,14 +349,16 @@ export function BrowserAiSmokeProbe() {
     : state.phase === 'prompting'
       ? undefined
       : CARD_DESCRIPTION;
+  const subtitleProps: TextNodeProps<'subtitle'> =
+    cardSubtitle === undefined ? {} : { subtitle: cardSubtitle };
 
   return (
     <Card
       as="section"
       padding={CARD_PADDING}
-      subtitle={cardSubtitle}
       title={CARD_TITLE}
       titleId={SMOKE_PROBE_TITLE_ID}
+      {...subtitleProps}
     >
       {state.phase === 'checking' && <Spinner aria-labelledby={SMOKE_PROBE_TITLE_ID} />}
 
