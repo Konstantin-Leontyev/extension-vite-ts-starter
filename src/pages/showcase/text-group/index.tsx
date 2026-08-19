@@ -108,7 +108,8 @@ type TextGroupTone = {
  * TextGroupProps — представляет пропсы компонента TextGroup.
  * При переданных `contents` контролы размера, выравнивания, тона, обрезания и курсива
  * скрыты, пока все поля содержимого пустые: нет текста — не к чему применять настройки.
- * Пустое содержимое после blur схлопывается в чекбокс `Set*`.
+ * Пустое содержимое после blur схлопывается в чекбокс `Set*`, отметка раскрывает
+ * поле ввода с кареткой в нём. Видно всегда одно: либо отметка, либо поле.
  * Без `contents` эти контролы остаются.
  *
  * @property align — текущее выравнивание текста
@@ -174,26 +175,18 @@ export function TextGroup({
   const [isSetChecked, setIsSetChecked] = useState(false);
   const [isContentFocused, setIsContentFocused] = useState(false);
   const contentInputRef = useRef<HTMLInputElement>(null);
-  const setCheckboxRef = useRef<HTMLInputElement>(null);
-  const shouldReturnFocusToSetCheckboxRef = useRef(false);
   const hasContents = contents !== undefined;
   const hasContentValue =
     !hasContents || contents.some((content) => content.value.trim() !== '');
   const isSetExpanded = hasContentValue || isSetChecked || isContentFocused;
-  const showSetCheckbox = hasContents && !isSetExpanded;
+  const showSetCheckbox = hasContents && !hasContentValue;
   const shouldFocusContent = hasContents && isSetChecked && !hasContentValue;
 
   useLayoutEffect(() => {
-    if (shouldReturnFocusToSetCheckboxRef.current) {
-      shouldReturnFocusToSetCheckboxRef.current = false;
-      setCheckboxRef.current?.focus();
-      return;
-    }
-
     if (shouldFocusContent) {
       contentInputRef.current?.focus();
     }
-  }, [isSetChecked, shouldFocusContent]);
+  }, [shouldFocusContent]);
 
   function handleContentFocus() {
     setIsContentFocused(true);
@@ -206,7 +199,6 @@ export function TextGroup({
       return;
     }
 
-    shouldReturnFocusToSetCheckboxRef.current = true;
     setIsSetChecked(false);
   }
 
@@ -217,9 +209,13 @@ export function TextGroup({
   return (
     <>
       {showSetCheckbox && (
-        <Checkbox checked={isSetChecked} ref={setCheckboxRef} onChange={handleSetChange}>
-          {resolveGroupFlagLabel(labelPrefix, 'Text', 'Set')}
-        </Checkbox>
+        // Отметка скрывается, а не снимается с дерева: узел, удалённый обработчиком
+        // собственного клика, уводит фокус на страницу, и каретка не доходит до поля.
+        <div hidden={isSetExpanded}>
+          <Checkbox checked={isSetChecked} onChange={handleSetChange}>
+            {resolveGroupFlagLabel(labelPrefix, 'Text', 'Set')}
+          </Checkbox>
+        </div>
       )}
 
       {isSetExpanded && (
