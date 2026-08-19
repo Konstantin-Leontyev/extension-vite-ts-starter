@@ -30,14 +30,14 @@ import { TextGroup } from '../text-group';
 
 /**
  * CheckboxWidgetState — представляет состояние настроек компонента Checkbox в витрине дизайн-системы.
- * Ключи совпадают с именами пропов компонента Checkbox, кроме витринного ключа:
+ * Ключи совпадают с именами пропов компонента Checkbox, кроме витринных ключей:
  * `text` хранит содержимое `children`.
  * Используется для синхронизации значений между панелью управления и демонстрационным чекбоксом.
  *
  * @property checked — включает отмеченное состояние бокса
  * @property checkedMark — марка в checked-состоянии
  * @property disabled — включает недоступное состояние
- * @property inverted — включает инвертированную палитру
+ * @property inverted — включает рамку тона `primary` в покое и красит марки в `primary`
  * @property size — размер бокса
  * @property text — подпись бокса
  * @property uncheckedMark — марка в unchecked-состоянии
@@ -115,15 +115,6 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
       />
 
       <Checkbox
-        checked={state.inverted}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('inverted', event.target.checked)
-        }
-      >
-        Show inverted
-      </Checkbox>
-
-      <Checkbox
         checked={state.checked}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           onChange('checked', event.target.checked)
@@ -147,6 +138,15 @@ export function CheckboxSettings({ onChange, state }: CheckboxSettingsProps) {
           onChange={(value) => onChange('uncheckedMark', value as CheckboxUncheckedMark)}
         />
       )}
+
+      <Checkbox
+        checked={state.inverted}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onChange('inverted', event.target.checked)
+        }
+      >
+        Show inverted
+      </Checkbox>
 
       <Checkbox
         checked={state.disabled}

@@ -116,7 +116,7 @@ export const StyledCheckboxRoot = styled.label.withConfig({
  * CheckboxStyleProps — представляет пропсы стилизации Checkbox и layout-пропсы.
  *
  * @property checkedMark — марка в checked-состоянии
- * @property inverted — включает инверсию палитры бокса и марки
+ * @property inverted — включает рамку тона `primary` в покое и красит марки в `primary`
  * @property size — размер бокса
  * @property uncheckedMark — марка в unchecked-состоянии
  */
@@ -151,7 +151,7 @@ const DEFAULT_CHECKBOX_CHECKED_MARK: CheckboxCheckedMark = 'check';
 const DEFAULT_CHECKBOX_UNCHECKED_MARK: CheckboxUncheckedMark = 'none';
 
 /**
- * DEFAULT_CHECKBOX_INVERTED — задаёт инверсию палитры по умолчанию.
+ * DEFAULT_CHECKBOX_INVERTED — задаёт режим `inverted` по умолчанию.
  * Используется, когда вызывающий код не передал проп `inverted`.
  */
 const DEFAULT_CHECKBOX_INVERTED = false;
@@ -223,13 +223,14 @@ function markBackground(mark: string, iconSize: string): string {
  * габариты, рамку с тенью, марки unchecked и checked.
  *
  * Как работает:
- * 1. Берёт тему, размер и марки, подставляет дефолт `inverted`
- * 2. При `inverted` красит checked-поле в `inverse` и марки в `primary` для
- *    подсветки строки, иначе — поле в `primary`, checked-марку в `inverse`
- *    и unchecked-марку в `default`
+ * 1. Берёт тему и подставляет дефолты `checkedMark`, `inverted`, `size` и
+ *    `uncheckedMark`
+ * 2. При `inverted` красит checked-поле в `inverse`, марки в `primary` и
+ *    рамку покоя тоном `primary`. Иначе — поле в `primary`, checked-марку в
+ *    `inverse`, unchecked-марку в `default`, рамку покоя дефолтом хелпера
  * 3. Собирает начальный массив: габариты, сброс layout-рамки UA через
- *    `border: none`, рамку с тенью через `getBorderStyles` и безусловный
- *    `&:checked` с заливкой, фоновой маркой и рамкой с тенью тона `primary`
+ *    `border: none`, рамку с тенью и безусловный `&:checked` с заливкой,
+ *    фоновой маркой и рамкой с тенью тона `primary`
  * 4. При значении `plus` у `uncheckedMark` добавляет `&:not(:checked)` с
  *    фоновой маркой
  *
@@ -252,6 +253,9 @@ function getCheckboxControlStyles(
   const checkedBackground = inverted ? theme.colors.inverse : theme.colors.primary;
   const uncheckedStroke = inverted ? theme.colors.primary : theme.colors.default;
   const checkedStroke = inverted ? theme.colors.primary : theme.colors.inverse;
+  const restBorder = inverted
+    ? getBorderStyles(theme, true, true, 'primary')
+    : getBorderStyles(theme);
   const checkedMarkIcon =
     checkedMark === 'minus' ? minusIcon(checkedStroke) : checkIcon(checkedStroke);
 
@@ -262,7 +266,7 @@ function getCheckboxControlStyles(
     'appearance: none;',
     'border: none;',
     `background-color: ${theme.colors.surface};`,
-    getBorderStyles(theme),
+    restBorder,
     `border-radius: ${getSpacingValue(4)};`,
     `&:checked {
       background-color: ${checkedBackground};
