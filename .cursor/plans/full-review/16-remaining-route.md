@@ -41,23 +41,23 @@ Table красная: у полей Product / Stock / Price нет нормал�
 ### Очередь подшагов
 
 1. Text — закрыто
-2. Input
-3. SearchField
-4. RangeInput — в чеклисте: поля From / To названы только подсказкой в пустом поле
-5. Button
-6. Icon
-7. SegmentButton
-8. Tag
-9. Checkbox
-10. RadioButton
-11. Fieldset
-12. ProgressBar
-13. Spinner
-14. Stepper
-15. Switch
-16. Toast
-17. Sidebar — если есть на витрине
-18. Table — починить имена Product / Stock / Price, прогнать, снимок уже лежит
+2. Input — закрыто
+3. SearchField — закрыто
+4. RangeInput — закрыто (панель открыли кликом по триггеру; From / To в слепке есть, проверка имён не упала)
+5. Button — закрыто
+6. Icon — закрыто
+7. SegmentButton — закрыто
+8. Tag — закрыто
+9. Checkbox — закрыто
+10. RadioButton — закрыто
+11. Fieldset — закрыто
+12. ProgressBar — закрыто
+13. Spinner — закрыто
+14. Stepper — закрыто
+15. Switch — закрыто
+16. Toast — закрыто
+17. Sidebar — на витрине нет своей карточки, пропускаем
+18. Table — снимок есть, зелёного ещё нет (имена полей)
 
 Конец шага 2: все пункты зелёные, снимки в репо.
 

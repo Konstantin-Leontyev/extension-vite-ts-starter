@@ -1,0 +1,46 @@
+{
+  "children": [
+    {
+      "children": [],
+      "name": "Custom range:",
+      "role": "heading",
+      "states": {
+        "level": 2
+      }
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "From",
+          "role": "textbox",
+          "states": {}
+        },
+        {
+          "children": [],
+          "name": "To",
+          "role": "textbox",
+          "states": {}
+        }
+      ],
+      "name": "Custom range:",
+      "role": "group",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "",
+      "role": "paragraph",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Apply",
+      "role": "button",
+      "states": {}
+    }
+  ],
+  "name": "Custom range:",
+  "role": "dialog",
+  "states": {}
+}

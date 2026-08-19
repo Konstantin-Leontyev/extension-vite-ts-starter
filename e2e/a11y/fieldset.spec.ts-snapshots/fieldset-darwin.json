@@ -1,0 +1,39 @@
+{
+  "children": [
+    {
+      "children": [],
+      "name": "Legend",
+      "role": "text",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Option A",
+      "role": "radio",
+      "states": {
+        "checked": true
+      }
+    },
+    {
+      "children": [],
+      "name": "Option A",
+      "role": "text",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Option B",
+      "role": "radio",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Option B",
+      "role": "text",
+      "states": {}
+    }
+  ],
+  "name": "Legend",
+  "role": "group",
+  "states": {}
+}

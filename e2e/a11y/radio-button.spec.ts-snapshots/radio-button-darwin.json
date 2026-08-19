@@ -1,0 +1,8 @@
+{
+  "children": [],
+  "name": "Option A",
+  "role": "radio",
+  "states": {
+    "checked": true
+  }
+}

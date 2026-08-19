@@ -1,0 +1,8 @@
+{
+  "children": [],
+  "name": "Switch",
+  "role": "switch",
+  "states": {
+    "checked": true
+  }
+}
