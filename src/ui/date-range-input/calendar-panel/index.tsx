@@ -288,7 +288,6 @@ export function CalendarPanel({
   const navGlyphSize = getCalendarNavGlyphSize(size);
   const navButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const dayButtonRefs = useRef(new Map<string, HTMLButtonElement>());
-  const pendingFocusIsoRef = useRef<null | string>(null);
   const [navTabStop, setNavTabStop] = useState(() =>
     resolveFirstEnabledIndex(navEnabled)
   );
@@ -307,7 +306,10 @@ export function CalendarPanel({
       );
 
     setTabStopIso(pendingInGrid ? pendingFocusIso : defaultTabStopIso);
-    setPendingFocusIso(null);
+
+    if (!pendingInGrid) {
+      setPendingFocusIso(null);
+    }
   }
 
   if (navTabStop < 0 || !navEnabled[navTabStop]) {
@@ -347,7 +349,6 @@ export function CalendarPanel({
       !isInCurrentGrid &&
       (nextView.month !== viewMonth.month || nextView.year !== viewMonth.year)
     ) {
-      pendingFocusIsoRef.current = nextIso;
       setPendingFocusIso(nextIso);
       setTabStopIso(nextIso);
       onViewMonthChange(nextView);
@@ -622,7 +623,7 @@ export function CalendarPanel({
               return (
                 <StyledCalendarDayCell
                   aria-current={isToday ? 'date' : undefined}
-                  aria-selected={isSelected}
+                  aria-selected={isSelected ? true : undefined}
                   key={cell.isoDay}
                   role="gridcell"
                 >
@@ -653,9 +654,9 @@ export function CalendarPanel({
                         assignRef(firstAvailableDayRef, node);
                       }
 
-                      if (pendingFocusIsoRef.current === cell.isoDay && node != null) {
-                        pendingFocusIsoRef.current = null;
+                      if (pendingFocusIso === cell.isoDay && node != null) {
                         node.focus();
+                        setPendingFocusIso(null);
                       }
                     }}
                     size={size}

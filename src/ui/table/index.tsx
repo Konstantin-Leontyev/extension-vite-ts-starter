@@ -53,9 +53,9 @@
  *    и дефолты осей
  * 5. Реэкспортировать сателлиты `TableCell`, `TableCellAlign`, `TableGroupCell`,
  *    `TableInlineField`, `TableMemberPrefix` и `TableNestedCell`
- * 6. Ставить фокус при открытии панелей add и edit на узел с `autofocus`
- *    внутри панели, иначе на первое поле ввода. Панель открывают ради
- *    правки строки, кнопка шапки и чекбокс в обход не входят
+ * 6. Ставить фокус при открытии панелей add и edit на первое поле ввода
+ *    внутри узла панели. Панель открывают ради правки строки, кнопка
+ *    шапки и чекбокс в обход не входят
  *
  * Потребители:
  *  - `src/pages/showcase/table-demo/index.tsx` — собирает демо-таблицу каталога
@@ -405,13 +405,6 @@ type TableProps<Row> = {
  * @param panel DOM-узел панели
  */
 function handleTablePanelOpenFocus(panel: HTMLElement): void {
-  const autofocusNode = panel.querySelector<HTMLElement>('[autofocus]');
-
-  if (autofocusNode) {
-    autofocusNode.focus();
-    return;
-  }
-
   panel
     .querySelector<HTMLElement>(
       'input:not([disabled]):not([type="checkbox"]):not([type="hidden"]):not([type="radio"])'
@@ -1010,10 +1003,9 @@ export function Table<Row>(props: TableProps<Row>) {
 
   const renderErrorRow = (variant: 'add' | 'edit'): ReactNode => {
     const isAdd = variant === 'add';
-    const errorRowProps = isAdd ? { 'data-add-error': '' } : { 'data-edit-error': '' };
 
     return (
-      <StyledTableRow {...errorRowProps} size={size}>
+      <StyledTableRow size={size}>
         <StyledTablePanelErrorCell colSpan={addColumnCount} size={size}>
           <FieldError
             id={isAdd ? addErrorId : editErrorId}
@@ -1103,16 +1095,12 @@ export function Table<Row>(props: TableProps<Row>) {
                 <StyledTableRow data-add-header size={size}>
                   {renderHeaderCells(true, 'head', false)}
                 </StyledTableRow>
-                <StyledTableRow data-add-row size={size}>
-                  {renderAddCells()}
-                </StyledTableRow>
+                <StyledTableRow size={size}>{renderAddCells()}</StyledTableRow>
                 {renderErrorRow('add')}
               </>
             ) : (
               <>
-                <StyledTableRow data-add-row size={size}>
-                  {renderAddCells()}
-                </StyledTableRow>
+                <StyledTableRow size={size}>{renderAddCells()}</StyledTableRow>
                 {renderErrorRow('add')}
                 <StyledTableRow data-add-footer size={size}>
                   {renderHeaderCells(false, 'foot', false)}
@@ -1147,9 +1135,7 @@ export function Table<Row>(props: TableProps<Row>) {
           <StyledTableRowPanelTable tableLayout={fixed ? 'fixed' : 'auto'}>
             {renderColgroup()}
             <tbody>
-              <StyledTableRow data-edit-row size={size}>
-                {renderEditCells(editingRow)}
-              </StyledTableRow>
+              <StyledTableRow size={size}>{renderEditCells(editingRow)}</StyledTableRow>
               {renderErrorRow('edit')}
             </tbody>
           </StyledTableRowPanelTable>

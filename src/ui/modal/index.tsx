@@ -26,6 +26,7 @@
  *  - тело через `children`
  *  - видимость через проп `open`
  *  - закрытие через проп `onClose`
+ *  - начальный фокус после открытия через проп `initialFocusRef`
  *  - доступное имя кнопки закрытия через проп `closeAriaLabel`
  *
  * Основные задачи:
@@ -33,15 +34,22 @@
  * 2. Типизировать пропсы через `ModalProps` и `ModalAccessibleName`
  * 3. Связывать заголовок и диалог через `aria-labelledby`; без заголовка —
  *    `aria-label` на диалоге
- * 4. Ставить фокус при открытии на сам `<dialog>`, если в диалоге нет узла
- *    с `autofocus`. Панель открывают ради содержимого, Close остаётся
- *    доступной по Tab и Esc
+ * 4. Ставить фокус при открытии на узел `initialFocusRef` после `showModal`;
+ *    без пропа — на сам `<dialog>`. Панель открывают ради содержимого,
+ *    Close остаётся доступной по Tab и Esc
  *
  * Потребители:
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { useEffect, useId, useRef, type ComponentProps, type ReactNode } from 'react';
+import {
+  useEffect,
+  useId,
+  useRef,
+  type ComponentProps,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 
 import { CloseIcon } from '@icons';
 import {
@@ -91,6 +99,7 @@ type ModalAccessibleName =
  *
  * @property children — содержимое тела модального окна
  * @property closeAriaLabel — доступное имя кнопки закрытия
+ * @property initialFocusRef — узел начального фокуса после открытия
  * @property onClose — обработчик закрытия модального окна
  * @property open — включает видимость модального окна
  */
@@ -108,6 +117,7 @@ type ModalProps = DistributiveOmit<
   ShowBorderProps & {
     children: ReactNode;
     closeAriaLabel?: string;
+    initialFocusRef?: RefObject<HTMLElement | null>;
     onClose: () => void;
     open: boolean;
   };
@@ -124,6 +134,7 @@ function Modal({
   ariaLabel,
   children,
   closeAriaLabel = DEFAULT_MODAL_CLOSE_ARIA_LABEL,
+  initialFocusRef,
   onClose,
   open,
   ...cardForward
@@ -144,7 +155,9 @@ function Modal({
   /**
    * Синхронизирует видимость с пропом `open` через `showModal` и `close`.
    * Задаёт `closedby="any"`, чтобы закрытие работало по Escape и клику по backdrop.
-   * Без узла с `autofocus` ставит фокус на сам диалог после `showModal`.
+   * Перед `showModal` ставит `autofocus` на диалог, чтобы браузер не уводил
+   * фокус на Close. После открытия ставит фокус на узел `initialFocusRef`,
+   * если ссылка передана.
    */
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -157,12 +170,11 @@ function Modal({
 
     if (open) {
       if (!dialog.open) {
+        dialog.setAttribute('autofocus', '');
         dialog.showModal();
       }
 
-      if (!dialog.querySelector('[autofocus]')) {
-        dialog.focus();
-      }
+      initialFocusRef?.current?.focus();
 
       return;
     }
@@ -170,7 +182,7 @@ function Modal({
     if (dialog.open) {
       dialog.close();
     }
-  }, [open]);
+  }, [initialFocusRef, open]);
 
   /**
    * handleCloseClick — закрывает диалог через `close` на узле `<dialog>`.
@@ -193,7 +205,6 @@ function Modal({
       aria-label={ariaLabel}
       aria-labelledby={titleId}
       ref={dialogRef}
-      tabIndex={-1}
       onClose={onClose}
     >
       <Card

@@ -465,21 +465,18 @@ export function DateRangeInput({
     )?.focus();
   }
 
-  function handleStartKeyDown(event: KeyboardEvent<HTMLButtonElement>): void {
+  function handleSegmentKeyDown(event: KeyboardEvent<HTMLButtonElement>): void {
     if (event.key !== 'ArrowDown') {
       return;
     }
 
     event.preventDefault();
-    handleOpenStart();
-  }
 
-  function handleEndKeyDown(event: KeyboardEvent<HTMLButtonElement>): void {
-    if (event.key !== 'ArrowDown') {
+    if (event.currentTarget === startTriggerRef.current) {
+      handleOpenStart();
       return;
     }
 
-    event.preventDefault();
     handleOpenEnd();
   }
 
@@ -548,7 +545,7 @@ export function DateRangeInput({
     textTone: startDay === '' ? ('muted' as const) : undefined,
     title: startLabel,
     onClick: handleOpenStart,
-    onKeyDown: handleStartKeyDown,
+    onKeyDown: handleSegmentKeyDown,
   };
 
   const rightSegment = {
@@ -564,7 +561,7 @@ export function DateRangeInput({
     textTone: endDay === '' ? ('muted' as const) : undefined,
     title: endLabel,
     onClick: handleOpenEnd,
-    onKeyDown: handleEndKeyDown,
+    onKeyDown: handleSegmentKeyDown,
   };
 
   const labelledBy = label ? labelId : undefined;
