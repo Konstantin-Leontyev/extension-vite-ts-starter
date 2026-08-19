@@ -7,6 +7,10 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `TableDemoProps`
  * 2. Экспортировать компонент `TableDemo`
+ * 3. Задавать доступное имя полей Product, Stock и Price в add- и edit-панелях
+ *    через `aria-label` из `column.header`. Проп `placeholder` задаёт подсказку
+ *    пустого значения, не имя. `aria-labelledby` на заголовок колонки из демо
+ *    недоступен: заголовки add-панели без id, edit-панель заголовков не содержит
  *
  * Потребители:
  *  - `src/pages/showcase/index.tsx` — рендерит демо в карточке виджета Table
@@ -567,6 +571,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
         return (
           <TableInlineField
             aria-describedby={addErrorId}
+            aria-label={column.header}
             placeholder="Product"
             value={addDraft.product}
             onChange={(event) =>
@@ -594,6 +599,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
         return (
           <TableInlineField
             aria-describedby={addErrorId}
+            aria-label={column.header}
             inputMode="numeric"
             placeholder="Stock"
             value={addDraft.stock}
@@ -617,6 +623,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
         return (
           <TableInlineField
             aria-describedby={addErrorId}
+            aria-label={column.header}
             placeholder="Price"
             value={addDraft.price}
             onChange={(event) =>
@@ -654,6 +661,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
         const field = (
           <TableInlineField
             aria-describedby={editErrorId}
+            aria-label={column.header}
             placeholder="Product"
             value={editDraft.product}
             onChange={(event) =>
@@ -688,6 +696,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
         return (
           <TableInlineField
             aria-describedby={editErrorId}
+            aria-label={column.header}
             inputMode="numeric"
             placeholder="Stock"
             value={editDraft.stock}
@@ -711,6 +720,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
         return (
           <TableInlineField
             aria-describedby={editErrorId}
+            aria-label={column.header}
             placeholder="Price"
             value={editDraft.price}
             onChange={(event) =>
