@@ -22,7 +22,7 @@ import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { ControlGroup } from '../control-group';
 import { IconGroup } from '../icon-group';
-import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
+import { ICON_OPTIONS, type IconKey } from '../showcase-icon-options';
 import { StyledSettingsForm } from '../showcase.styles';
 import { TextGroup } from '../text-group';
 import { ToneListbox } from '../tone-listbox';
@@ -121,7 +121,7 @@ export function ButtonSettings({ onChange, state }: ButtonSettingsProps) {
 
       <IconGroup
         fill={state.iconFill}
-        iconOptions={COMBOBOX_OPTIONS}
+        iconOptions={ICON_OPTIONS}
         iconValue={state.iconKey}
         labelPrefix="Icon"
         position={state.iconPosition}

@@ -3,7 +3,7 @@
   бекенд. Только анализ, без правок. По команде «сделай ревью» или перед
   коммитом.
 name: project-reviewer
-model: grok-4.6[]
+model: grok-4.6-xhigh[]
 description: >-
 readonly: true
 ---

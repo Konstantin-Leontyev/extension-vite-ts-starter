@@ -60,9 +60,11 @@
 
 **Обёртка-`label`.** Checkbox, RadioButton, Switch: подпись — `children` внутри `<label>`, нативный клик по тексту переключает контрол. Без `children` обёртки нет (кроме Switch — он всегда в `label`), имя должно прийти через `aria-label` / `aria-labelledby` на сам `input`.
 
-**Отдельная подпись через `FieldLabel`.** Input, SearchField, Listbox, Combobox, RangeInput, Button: `FieldLabel` с `htmlFor` на id контрола. Пустой `label` → `FieldLabel` возвращает `null`, связи нет.
+**Отдельная подпись через `FieldLabel`.** Input, SearchField, Button: `FieldLabel` с `htmlFor` на id контрола. Пустой `label` → `FieldLabel` возвращает `null`, связи нет. У нативного поля значение читается вместе с этой связью.
 
 **Подпись как цель `aria-labelledby`.** DateRangeInput, Stepper, SegmentButton: `FieldLabel` несёт `id`, не `htmlFor`. Корень группы или поле ссылается на этот id. Это не `htmlFor`-связь.
+
+**Подпись и значение кнопки-триггера.** Listbox вида `field` и RangeInput: `FieldLabel` несёт и `htmlFor` (клик по подписи), и `id`. Кнопка называет себя через `aria-labelledby` подписи и узла значения. Иначе `<label for>` на `<button>` перебивает видимое значение. Вид Listbox `icon` подпись не рисует: имя — `resolveTriggerAccessibleName` в `aria-label`.
 
 ---
 
@@ -101,15 +103,6 @@
 4. **Фокус.** Нет панели.
 5. **Состояния.** Нативный `checked` / `disabled`. В Listbox презентационный экземпляр несёт `aria-hidden`, `readOnly`, `tabIndex={-1}`.
 6. **Находки.** Публичное имя `Checkbox` в карту не внесено: корень то `label`, то `input`.
-
-## Combobox
-
-1. **Роль.** Корень — `div`. Триггер — `<button>` с `aria-haspopup="listbox"` и `aria-expanded`. Поле поиска в панели — `SearchField` с `role="combobox"` и `aria-autocomplete="list"`. Список — `<ul role="listbox">`. Опция — `<button role="option">` внутри `<li role="presentation">`.
-2. **Имя.** Подпись над триггером — `FieldLabel htmlFor={triggerId}`; без `label` подписи нет. Имя триггера — видимый текст выбранной опции или `placeholder`, плюс опциональный `aria-label`. Список — `aria-label={label ?? placeholder}`. Пустой результат — `li` с `role="presentation"`, не опция.
-3. **Клавиши.** Закрытый триггер: Enter, Space, ArrowDown открывают; Escape закрывает. В панели фокус на поле поиска: стрелки / Home / End двигают активную опцию без смены DOM-фокуса; Enter подтверждает; Escape закрывает. Space в панели из кода не обрабатывается (идёт в поле). Остановки Tab закрытого контрола: триггер + кнопка сброса, если видна. В открытой панели ловушка AnchoredPanel: поле поиска, кнопка сброса поиска, опции-кнопки.
-4. **Фокус.** При открытии — на поле поиска (`searchInputRef`). При закрытии — на триггер (`returnFocusRef`). Ловушка Tab есть. Активная опция ведётся через `aria-activedescendant` на поле поиска, DOM-фокус со строки не снимается — его там нет.
-5. **Состояния.** Триггер: `aria-expanded`, `aria-controls`, `aria-haspopup`. Поле: `aria-expanded`, `aria-controls`, `aria-activedescendant`. Опция: `aria-selected`. Недоступная опция — нативный `disabled` на кнопке, не `aria-disabled`.
-6. **Находки.** Модель фокуса другая, чем у Listbox: здесь `aria-activedescendant`, там DOM-фокус на `<li>`. Опция — интерактивная кнопка с ролью `option` внутри презентационного `li`.
 
 ## DateRangeInput
 
@@ -150,7 +143,7 @@
 ## FieldLabel
 
 1. **Роль.** `Text as="label"` → `<label>`. Без `children` возвращает `null` — узла нет.
-2. **Имя.** Содержимое `children`. Связь с контролом — только если вызывающий код передал `htmlFor`. Вариант с `id` (Stepper, DateRangeInput, SegmentButton) сам контрол не помечает: связь должна быть обратной, через `aria-labelledby`.
+2. **Имя.** Содержимое `children`. Связь с контролом — `htmlFor`, `id` как цель `aria-labelledby`, или оба: Listbox вида `field` и RangeInput ставят `htmlFor` и `id`, кнопку называют через `aria-labelledby`. Вариант только с `id` (Stepper, DateRangeInput, SegmentButton) сам контрол не помечает: связь должна быть обратной.
 3. **Клавиши.** Не остановка Tab.
 4. **Фокус.** Нет.
 5. **Состояния.** Нет.
@@ -181,12 +174,12 @@
 3. **Клавиши.** Без `rovingFocus` каждая именованная кнопка — своя остановка Tab; Enter / Space нативные. С `rovingFocus` одна остановка Tab, стрелки влево и вправо, вверх и вниз, Home, End ходят по доступным именованным действиям. Горизонтальная пара читает `direction` узла и в `rtl` разворачивается. Если проходимого действия нет, у всех кнопок `tabIndex={-1}`. Escape не обрабатывается.
 4. **Фокус.** Нет панели. При смене индекса roving вызывает `focus()` на соседе.
 5. **Состояния.** Пробрасывает `aria-expanded`, `aria-controls` с действия. `disabled` — нативный.
-6. **Находки.** Действие без `ariaLabel` скрыто от вспомогательных технологий намеренно.
+6. **Находки.** Действие без `ariaLabel` скрыто от вспомогательных технологий намеренно. Слот `control` именуется сам; ряд `ariaLabel` ему запрещает. Цель фокуса слота — первая кнопка внутри; слот рассчитан на вид `icon` с одной кнопкой.
 
 ## Input
 
 1. **Роль.** Корень — `div`. Поле — `<input>` с типом `text` по умолчанию: в JSX `type="text"` стоит до спреда `inputProps`, поэтому вызывающий код тип переопределяет.
-2. **Имя.** `FieldLabel htmlFor={id}`. Без `label` подписи нет; имя только из `aria-label` / `aria-labelledby` в rest, иначе поле безымянное. Кнопка сброса — `resolveClearAriaLabel(label)`: без подписи имя сброса — «Clear».
+2. **Имя.** `FieldLabel htmlFor={id}`. Без `label` подписи нет; имя только из `aria-label` / `aria-labelledby` в rest, иначе поле безымянное. Кнопка сброса — `clearAriaLabel` или `resolveClearAriaLabel(label)`: без подписи имя сброса — «Clear». Хвостовое двоеточие подписи в имени сброса срезают.
 3. **Клавиши.** Набор текста нативный. Остановки Tab: поле + сброс (если значение непустое и `showClear`).
 4. **Фокус.** После сброса фокус возвращается в поле.
 5. **Состояния.** `aria-invalid` при ошибке или `invalid`. `aria-describedby` склеивает id ошибки и внешний describedby. Нативный `disabled`.
@@ -194,12 +187,21 @@
 
 ## Listbox
 
-1. **Роль.** Корень — `div`. Триггер — `<button aria-haspopup="listbox" aria-expanded>`. Панель — `<ul role="listbox">`. Строка — `<li role="option">`.
-2. **Имя.** Подпись — `FieldLabel htmlFor={triggerId}`; без `label` подписи нет. Имя триггера — видимый текст выбранного значения или `placeholder`. У панели своего `aria-label` нет: связь через `aria-controls` / id. Имя опции — текст `option.label`.
-3. **Клавиши.** Триггер: Enter / Space переключают; ArrowDown открывает; Escape закрывает. В панели одна остановка Tab на активной строке (`tabIndex={0}` у tab-stop, `-1` у остальных). Стрелки, Home, End двигают DOM-фокус по видимому порядку барабана без смены выбора. Enter / Space на строке подтверждают. Escape — через dismiss, не через `handlePanelKeyDown`. Чекбокс в строке из таба исключён.
-4. **Фокус.** При открытии — на выбранную или первую доступную строку (`optionRefs[targetIndex].focus()`). При закрытии — на триггер. Ловушка Tab есть. Это DOM-фокус на строке, не `aria-activedescendant`.
-5. **Состояния.** Триггер: `aria-expanded`, `aria-controls`, `aria-haspopup`. Панель: `aria-multiselectable` при `multiple`. Опция: `aria-selected`, `aria-disabled` (не нативный `disabled`). Чекбокс: `aria-hidden`.
-6. **Находки.** Сверять с Combobox как с другой моделью фокуса, не как с копией.
+1. **Роль.** Корень — `div`. Триггер — `<button aria-haspopup="listbox" aria-expanded>`. Панель без поиска — `<ul role="listbox">`. С `showSearch` поле — `SearchField` с `role="combobox"` и `aria-autocomplete="list"`, список — `<ul role="listbox">`. Строка — `<li role="option">`. Пустой результат поиска — `li` с `role="presentation"`, не опция.
+2. **Имя.** Вид `field`: подпись — `FieldLabel` с `htmlFor` и `id`; имя триггера — `aria-labelledby` подписи и узла значения (пустое: подпись и плейсхолдер). Без `label` в имени остаётся значение или плейсхолдер. Вид `icon`: подпись не рисуется; `aria-label` — `resolveTriggerAccessibleName` из `@ui/a11y` (подпись и значение через пробел). Панель — `aria-label={label || placeholder}`. Имя опции — текст `option.label`. Кнопка сброса — `clearAriaLabel` или `resolveClearAriaLabel(label)`.
+3. **Клавиши.** Триггер: Enter / Space переключают; ArrowDown открывает, кроме слота `control` в Toolbar; Escape закрывает. Без поиска в панели одна остановка Tab на активной строке (`tabIndex={0}` у tab-stop, `-1` у остальных). Стрелки, Home, End двигают активную строку без смены выбора. Enter / Space на строке подтверждают. С поиском фокус в поле (`aria-label` из `label` или `placeholder`): стрелки / Home / End без смены DOM-фокуса; Enter подтверждает; Space идёт в поле. Escape — через dismiss. Чекбокс в строке из таба исключён. Остановки закрытого `field`: триггер + сброс, если виден.
+4. **Фокус.** Без поиска при открытии — DOM-фокус на выбранную или первую доступную строку. С поиском — каретка в поле, активная строка через `aria-activedescendant`. При закрытии — на триггер. Ловушка Tab есть.
+5. **Состояния.** Триггер: `aria-expanded`, `aria-controls`, `aria-haspopup`. Поле поиска: `aria-expanded`, `aria-controls`, `aria-activedescendant`. Панель: `aria-multiselectable` при `multiple`. Опция: `aria-selected`, `aria-disabled` (не нативный `disabled`). Чекбокс: `aria-hidden`.
+6. **Находки.** Две модели фокуса в одном компоненте: без поиска — DOM-фокус на `<li>`, с поиском — `aria-activedescendant` на поле.
+
+## LocalePicker
+
+1. **Роль.** Обёртка над Listbox, своего корня нет. `showSearch` всегда включён. `multiple` и `inlineCheckbox` не отдаёт.
+2. **Имя.** Как у Listbox. Вид `icon` в тулбаре обязан получить `label` (превью — `Language:`): имя — `Language:` и значение или плейсхолдер.
+3. **Клавиши.** Как у Listbox с поиском. В слоте Toolbar закрытый триггер отдаёт стрелки ряду; открывает `Enter` / пробел.
+4. **Фокус.** Как у Listbox с поиском: при открытии — поле поиска.
+5. **Состояния.** Как у Listbox с поиском.
+6. **Находки.** Превью витрины и открытый снимок — срез 10 кодов, не полный iso-639-1.
 
 ## Modal
 
@@ -231,7 +233,7 @@
 ## RangeInput
 
 1. **Роль.** Корень — `div`. Триггер — `<button aria-haspopup="dialog">`. Панель — `div` с `role="dialog"` и `aria-modal`. Пресеты — `<ul>` / `<li>` / `<button>`. Поля — группа `role="group"`.
-2. **Имя.** Подпись триггера — `FieldLabel htmlFor={triggerId}`; без `label` подписи нет, имя триггера — видимый текст диапазона или `placeholder`. Панель: при `title` — `aria-labelledby` на `h2`; без title — `aria-label` «Custom range». Группа полей — тот же `aria-labelledby` заголовка. Поля From/To своего `label` не получают.
+2. **Имя.** Подпись триггера — `FieldLabel` с `htmlFor` и `id`; имя триггера — `aria-labelledby` подписи и узла значения (пустое: подпись и `placeholder`). Без `label` в имени остаётся значение или плейсхолдер. Панель: при `title` — `aria-labelledby` на `h2`; без title — `aria-label` «Custom range». Группа полей — тот же `aria-labelledby` заголовка. Поля From/To своего `label` не получают. Кнопка сброса при `onClear` — `clearAriaLabel` или `resolveClearAriaLabel(label)`: без подписи имя сброса — «Clear».
 3. **Клавиши.** Триггер: Enter / Space. Escape закрывает (`useAnchoredDismiss`); отдельного обработчика Escape в модуле нет. Enter в поле From/To применяет черновик. Стрелки панель не обрабатывает. Остановки Tab закрытого: триггер + сброс. В панели: пресеты (каждая кнопка), два поля, их сбросы, кнопка Apply.
 4. **Фокус.** При открытии — поле From (`fromInputRef`). При закрытии — триггер. Ловушка Tab есть.
 5. **Состояния.** Триггер: `aria-expanded`, `aria-controls`, `aria-haspopup="dialog"`. Поля: `aria-invalid` / `aria-describedby` при ошибке панели.
@@ -249,11 +251,11 @@
 ## SearchField
 
 1. **Роль.** Корень — `div`. Поле — `<input type="search">`. Иконка секции — `span`. Сброс — `FieldClear` / кнопка.
-2. **Имя.** `FieldLabel htmlFor={id}`. Без `label` подписи нет; имя поля — только если вызывающий код передал aria-пропы в rest. Сброс — `resolveClearAriaLabel(label, 'Clear search')`: без подписи имя всё равно есть («Clear search»).
+2. **Имя.** `FieldLabel htmlFor={id}`. Без `label` подписи нет; имя поля — только если вызывающий код передал aria-пропы в rest, иначе поле безымянное. Кнопка сброса — `clearAriaLabel` или `resolveClearAriaLabel(label, 'Clear search')`: без подписи имя сброса — «Clear search». Хвостовое двоеточие подписи в имени сброса срезают.
 3. **Клавиши.** Набор текста нативный. Остановки Tab: поле + сброс при непустом значении. Иконка секции не фокусируется.
 4. **Фокус.** После сброса фокус возвращается в поле.
-5. **Состояния.** Нативный `disabled`. Combobox навешивает на это поле `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-activedescendant`, `aria-autocomplete`.
-6. **Находки.** В панели Combobox `label` полю не передаётся — имя тогда из роли и `aria-*` родителя, не из подписи.
+5. **Состояния.** Нативный `disabled`. Listbox с `showSearch` навешивает на это поле `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-activedescendant`, `aria-autocomplete`.
+6. **Находки.** В панели Listbox с поиском видимый `label` полю не передаётся — имя даёт `aria-label` из `label` или `placeholder`.
 
 ## SegmentButton
 
@@ -388,7 +390,7 @@
 3. **Клавиши.** Ряд действий с `rovingFocus`: одна остановка Tab, стрелки влево и вправо, вверх и вниз, Home / End. Горизонтальная пара в `rtl` разворачивается. Enter / Space — нативные на текущей кнопке. Если проходимого действия нет, у всех кнопок `tabIndex={-1}`.
 4. **Фокус.** Нет панели.
 5. **Состояния.** Пробрасываются с действий ряда.
-6. **Находки.** Нет.
+6. **Находки.** Превью витрины ставит LocalePicker вида `icon` первым действием; имя триггера — `Language:` и значение или плейсхолдер. Панель выбора языка в этом спеке не открывают.
 
 ## ProfileMenu
 

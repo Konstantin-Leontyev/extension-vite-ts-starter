@@ -37,18 +37,17 @@
  * Потребители:
  *  - панели настроек витрины дизайн-системы — настраивают иконку компонента:
  *     - `src/pages/showcase/button-settings/index.tsx`
- *     - `src/pages/showcase/combobox-settings/index.tsx`
  *     - `src/pages/showcase/listbox-settings/index.tsx`
  *     - `src/pages/showcase/range-input-settings/index.tsx`
  *     - `src/pages/showcase/search-field-settings/index.tsx`
  *     - `src/pages/showcase/icon-settings/index.tsx`
  *     - `src/pages/showcase/segment-button-settings/index.tsx`
+ *     - `src/pages/showcase/locale-picker-settings/index.tsx`
  */
 
 import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
-import { Combobox, type ComboboxOption } from '@ui/combobox';
 import {
   ICON_POSITION_KEYS,
   ICON_SHAPE_PRESET_KEYS,
@@ -82,7 +81,7 @@ function getIconPositionListboxOptions(): ListboxOption[] {
  * IconGroupProps — представляет пропсы компонента IconGroup.
  *
  * @property fill — текущий тон глифа иконки
- * @property iconOptions — опции Combobox с глифами. Без него контрол `Icon:` не рендерится
+ * @property iconOptions — опции Listbox с глифами. Без него контрол `Icon:` не рендерится
  * @property iconValue — текущий ключ глифа
  * @property labelPrefix — префикс подписей контролов, например `Icon A`.
  *   Без пропа подписи без префикса
@@ -102,7 +101,7 @@ function getIconPositionListboxOptions(): ListboxOption[] {
  */
 type IconGroupProps = {
   fill: TonePreset;
-  iconOptions?: readonly ComboboxOption[];
+  iconOptions?: readonly ListboxOption[];
   iconValue?: string;
   labelPrefix?: string;
   onFillChange: (tone: TonePreset) => void;
@@ -124,7 +123,7 @@ type IconGroupProps = {
  * // Button: флаг, выбор глифа, тона и позиция
  * <IconGroup
  *   fill={state.iconFill}
- *   iconOptions={COMBOBOX_OPTIONS}
+ *   iconOptions={ICON_OPTIONS}
  *   iconValue={state.iconKey}
  *   position={state.iconPosition}
  *   show={state.withIcon}
@@ -138,7 +137,7 @@ type IconGroupProps = {
  * // Icon: без позиции, флага показа и префикса
  * <IconGroup
  *   fill={state.iconFill}
- *   iconOptions={COMBOBOX_OPTIONS}
+ *   iconOptions={ICON_OPTIONS}
  *   iconValue={state.iconKey}
  *   tone={state.iconTone}
  *   onFillChange={(tone) => onChange('iconFill', tone)}
@@ -180,11 +179,16 @@ export function IconGroup({
       {isExpanded && (
         <>
           {iconOptions !== undefined && onIconChange !== undefined && (
-            <Combobox
+            <Listbox
               label={resolveGroupContentLabel(labelPrefix, 'Icon')}
               options={iconOptions}
+              showSearch
               value={iconValue}
-              onChange={onIconChange}
+              onChange={(value) => {
+                if (typeof value === 'string') {
+                  onIconChange(value);
+                }
+              }}
             />
           )}
 

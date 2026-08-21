@@ -1,0 +1,67 @@
+{
+  "children": [
+    {
+      "children": [],
+      "name": "English",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Русский",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Deutsch",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Français",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Español",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "日本語",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "中文",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "العربية",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Português",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "한국어",
+      "role": "option",
+      "states": {}
+    }
+  ],
+  "name": "Label:",
+  "role": "listbox",
+  "states": {}
+}

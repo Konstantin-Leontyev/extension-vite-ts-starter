@@ -23,7 +23,12 @@
  *     - `src/pages/showcase/card-settings/index.tsx`
  *     - `src/pages/showcase/icon-settings/index.tsx`
  *     - `src/pages/showcase/input-settings/index.tsx`
+ *     - `src/pages/showcase/listbox-settings/index.tsx`
+ *     - `src/pages/showcase/locale-picker-settings/index.tsx`
+ *     - `src/pages/showcase/modal-settings/index.tsx`
+ *     - `src/pages/showcase/search-field-settings/index.tsx`
  *     - `src/pages/showcase/tag-settings/index.tsx`
+ *     - `src/pages/showcase/toolbar-settings/index.tsx`
  */
 
 import { type ChangeEvent } from 'react';

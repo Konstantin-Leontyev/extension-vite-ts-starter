@@ -876,7 +876,7 @@ export function getSpacingStyles(props: SpacingProps): string {
  *    `getTextProperties`
  *  - `@ui/stepper` — стилизует нативное поле ввода через `getTextProperties`
  *    и `getTextToneColor`
- *  - `@ui/input`, `@ui/combobox`, `@ui/listbox`, `@ui/range-input`, `@ui/spinner`,
+ *  - `@ui/input`, `@ui/listbox`, `@ui/range-input`, `@ui/spinner`,
  *    `@ui/table` — резервируют место под однострочный текст через `getTextLineHeight`
  *  - `@ui/table/table-cell` — обрезает содержимое ячейки через `getEllipsisStyles`
  */
@@ -1262,7 +1262,6 @@ export function getSpacingStyles(props: SpacingProps): string {
 
 - Button — «лейбл»: «тон лейбла», «содержимое лейбла», «отступ лейбла»; секция текста в split-раскладке — «слот лейбла»
 - Listbox — «текст триггера и опций»: «размер текста триггера и опций»
-- Combobox — «текст триггера и опций»: «размер текста триггера и опций»
 - RangeInput — «текст триггера и пресетов»: «размер текста триггера и пресетов»
 - SegmentButton — «текст сегмента»: «размер текста сегмента», «включает курсив текста сегмента»
 

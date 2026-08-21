@@ -10,6 +10,7 @@
  *  - `@ui/text` — собирает `TextNodeProps` через `AllOrNone`
  *  - `@ui/icon` — вычитает ключи HTML-пропсов через `DistributiveOmit`
  *  - `@ui/modal` и `@ui/sidebar` — вычитают ключи из пропсов Card через `DistributiveOmit`
+ *  - `@ui/locale-picker` — вычитает ключи Listbox через `DistributiveOmit`
  */
 
 /**

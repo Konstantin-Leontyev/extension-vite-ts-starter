@@ -30,12 +30,12 @@ import { Fragment, type ChangeEvent } from 'react';
 
 import { Button } from '@ui/button';
 import { Checkbox } from '@ui/checkbox';
-import { Combobox } from '@ui/combobox';
 import { ICON_SIZE_PRESET_KEYS, getIconPadding, type IconSizePreset } from '@ui/icon';
+import { Listbox } from '@ui/listbox';
 import { type SpacingValue } from '@ui/spacing';
 
 import {
-  COMBOBOX_OPTIONS,
+  ICON_OPTIONS,
   resolveIconPaddingSizePreset,
   type IconKey,
 } from '../showcase-icon-options';
@@ -124,11 +124,16 @@ export function IconRowGroup({
 
         return (
           <Fragment key={index}>
-            <Combobox
+            <Listbox
               label={resolveGroupContentLabel(actionPrefix, 'Icon')}
-              options={COMBOBOX_OPTIONS}
+              options={ICON_OPTIONS}
+              showSearch
               value={action.iconKey}
-              onChange={(value) => updateAction(index, { iconKey: value as IconKey })}
+              onChange={(value) => {
+                if (typeof value === 'string') {
+                  updateAction(index, { iconKey: value as IconKey });
+                }
+              }}
             />
 
             <TextGroup

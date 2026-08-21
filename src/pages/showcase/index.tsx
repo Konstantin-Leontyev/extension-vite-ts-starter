@@ -26,23 +26,39 @@ import {
 import { Button, type ButtonIconProps } from '@ui/button';
 import { CARD_HEADER_ACTION_SIZE_PRESET, Card } from '@ui/card';
 import { Checkbox } from '@ui/checkbox';
-import { Combobox } from '@ui/combobox';
 import { DateRangeInput, todayUtc } from '@ui/date-range-input';
 import { Fieldset } from '@ui/fieldset';
 import { Icon, getIconPadding } from '@ui/icon';
-import { Input } from '@ui/input';
-import { Listbox, type ListboxMultipleProps } from '@ui/listbox';
+import { type IconButtonRowAction } from '@ui/icon-button-row';
+import { Input, type InputClearProps } from '@ui/input';
+import {
+  DEFAULT_LISTBOX_EMPTY_MESSAGE,
+  DEFAULT_LISTBOX_PLACEHOLDER,
+  Listbox,
+  type ListboxAppearanceProps,
+  type ListboxMultipleProps,
+} from '@ui/listbox';
+import { LocalePicker } from '@ui/locale-picker';
 import { Modal, type ModalAccessibleName } from '@ui/modal';
 import { DEFAULT_SHAPE_PRESET, DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
 import { ProgressBar } from '@ui/progress-bar';
 import { RadioButton } from '@ui/radio-button';
 import {
+  DEFAULT_RANGE_INPUT_FROM_PLACEHOLDER,
+  DEFAULT_RANGE_INPUT_PLACEHOLDER,
+  DEFAULT_RANGE_INPUT_TO_PLACEHOLDER,
   DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
   RangeInput,
+  type RangeInputClearProps,
   type RangeValue,
 } from '@ui/range-input';
 import { ScrollPort } from '@ui/scroll-port';
-import { SearchField, type SearchFieldShowIconProps } from '@ui/search-field';
+import {
+  DEFAULT_SEARCH_FIELD_PLACEHOLDER,
+  SearchField,
+  type SearchFieldClearProps,
+  type SearchFieldShowIconProps,
+} from '@ui/search-field';
 import { SegmentButton } from '@ui/segment-button';
 import { type SegmentButtonPartsActionIconProps } from '@ui/segment-button-parts';
 import { Sidebar } from '@ui/sidebar';
@@ -65,7 +81,6 @@ import { BrowserAiSmokeProbe } from './browser-ai-smoke-probe';
 import { ButtonSettings, type ButtonWidgetState } from './button-settings';
 import { CardSettings, type CardWidgetState } from './card-settings';
 import { CheckboxSettings, type CheckboxWidgetState } from './checkbox-settings';
-import { ComboboxSettings, type ComboboxWidgetState } from './combobox-settings';
 import {
   DateRangeInputSettings,
   type DateRangeInputWidgetState,
@@ -76,7 +91,11 @@ import { resolveIconButtonRowAction } from './icon-row-group/icon-row-group';
 import { IconSettings, type IconWidgetState } from './icon-settings';
 import { InputSettings, type InputWidgetState } from './input-settings';
 import { ListboxSettings, type ListboxWidgetState } from './listbox-settings';
-import { LISTBOX_DEMO_OPTIONS } from './listbox-settings/options';
+import {
+  LocalePickerSettings,
+  type LocalePickerWidgetState,
+} from './locale-picker-settings';
+import { LOCALE_SLICE_OPTIONS } from './locale-slice';
 import { ModalSettings, type ModalWidgetState } from './modal-settings';
 import {
   ProgressBarSettings,
@@ -95,7 +114,7 @@ import {
   SegmentButtonSettings,
   type SegmentButtonWidgetState,
 } from './segment-button-settings';
-import { COMBOBOX_OPTIONS, LIST_OPTIONS, getIcon } from './showcase-icon-options';
+import { ICON_OPTIONS, LIST_OPTIONS, getIcon } from './showcase-icon-options';
 import { resolveTextNodeProps } from './showcase-text-node';
 import {
   StyledMain,
@@ -197,12 +216,12 @@ type WidgetSettingsKey =
   | 'button'
   | 'card'
   | 'checkbox'
-  | 'combobox'
   | 'date-range-input'
   | 'fieldset'
   | 'icon'
   | 'input'
   | 'listbox'
+  | 'locale-picker'
   | 'modal'
   | 'progress'
   | 'radio-button'
@@ -226,7 +245,7 @@ const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   input: 'Input',
   'search-field': 'SearchField',
   listbox: 'Listbox',
-  combobox: 'Combobox',
+  'locale-picker': 'LocalePicker',
   'range-input': 'Range input',
   'date-range-input': 'Date range',
   button: 'Button',
@@ -289,7 +308,7 @@ const DEFAULT_SEARCH_FIELD_STATE: SearchFieldWidgetState = {
   iconPosition: 'start',
   iconTone: 'neutral',
   label: 'Label:',
-  placeholder: 'Search…',
+  placeholder: DEFAULT_SEARCH_FIELD_PLACEHOLDER,
   shape: DEFAULT_SHAPE_PRESET,
   showBorder: true,
   showClearButton: true,
@@ -344,49 +363,60 @@ const DEFAULT_ICON_STATE: IconWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
+  appearance: 'field',
+  borderTone: 'neutral',
   disabled: false,
+  emptyMessage: DEFAULT_LISTBOX_EMPTY_MESSAGE,
   iconFill: 'neutral',
   iconPosition: 'end',
   iconTone: 'neutral',
   inlineCheckbox: false,
   label: 'Label:',
   multiple: false,
-  placeholder: 'Select…',
+  placeholder: DEFAULT_LISTBOX_PLACEHOLDER,
+  searchPlaceholder: DEFAULT_SEARCH_FIELD_PLACEHOLDER,
   shape: DEFAULT_SHAPE_PRESET,
+  showBorder: true,
   showClearButton: false,
-  size: DEFAULT_SIZE_PRESET,
-  value: '',
-};
-
-/**
- * DEFAULT_COMBOBOX_STATE — задаёт начальное состояние виджета Combobox в витрине.
- * Используется при инициализации состояния в `ShowcasePage`.
- */
-const DEFAULT_COMBOBOX_STATE: ComboboxWidgetState = {
-  disabled: false,
-  emptyMessage: 'Nothing found',
-  iconFill: 'neutral',
-  iconPosition: 'end',
-  iconTone: 'neutral',
-  label: 'Label:',
-  placeholder: 'Select…',
-  searchPlaceholder: 'Search…',
-  shape: DEFAULT_SHAPE_PRESET,
-  showClearButton: false,
+  showSearch: false,
+  showShadow: true,
   size: DEFAULT_SIZE_PRESET,
   value: '',
   withIcon: false,
 };
 
 /**
- * COMBOBOX_DEMO_DISABLED_OPTION — задаёт недоступную опцию Combobox в демо витрины.
- * Используется в превью Combobox витрины дизайн-системы.
+ * LISTBOX_DEMO_DISABLED_OPTION — задаёт недоступную опцию Listbox в демо витрины.
+ * Используется в превью Listbox витрины дизайн-системы.
  */
-const COMBOBOX_DEMO_DISABLED_OPTION = {
+const LISTBOX_DEMO_DISABLED_OPTION = {
   disabled: true,
   label: 'Unavailable',
   value: 'unavailable',
 } as const;
+
+/**
+ * DEFAULT_LOCALE_PICKER_STATE — задаёт начальное состояние виджета LocalePicker в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
+const DEFAULT_LOCALE_PICKER_STATE: LocalePickerWidgetState = {
+  appearance: 'field',
+  borderTone: 'neutral',
+  disabled: false,
+  emptyMessage: DEFAULT_LISTBOX_EMPTY_MESSAGE,
+  iconFill: 'neutral',
+  iconPosition: 'end',
+  iconTone: 'neutral',
+  label: 'Label:',
+  placeholder: DEFAULT_LISTBOX_PLACEHOLDER,
+  searchPlaceholder: DEFAULT_SEARCH_FIELD_PLACEHOLDER,
+  shape: DEFAULT_SHAPE_PRESET,
+  showBorder: true,
+  showClearButton: false,
+  showShadow: true,
+  size: DEFAULT_SIZE_PRESET,
+  value: '',
+};
 
 /**
  * DEFAULT_RANGE_INPUT_STATE — задаёт начальное состояние виджета RangeInput в витрине.
@@ -399,14 +429,14 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   buttonTextTone: 'neutral',
   buttonTone: 'primary',
   disabled: false,
-  fromPlaceholder: 'From',
+  fromPlaceholder: DEFAULT_RANGE_INPUT_FROM_PLACEHOLDER,
   iconFill: 'neutral',
   iconPosition: 'end',
   iconTone: 'neutral',
   inputShape: DEFAULT_SHAPE_PRESET,
   inputSize: DEFAULT_SIZE_PRESET,
   label: 'Label:',
-  placeholder: 'Range: any',
+  placeholder: DEFAULT_RANGE_INPUT_PLACEHOLDER,
   reserveErrorSpace: true,
   shape: DEFAULT_SHAPE_PRESET,
   size: DEFAULT_SIZE_PRESET,
@@ -415,7 +445,7 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   titleItalic: false,
   titleSize: 'normal',
   titleTone: DEFAULT_TONE,
-  toPlaceholder: 'To',
+  toPlaceholder: DEFAULT_RANGE_INPUT_TO_PLACEHOLDER,
   validationMessages: { ...DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES },
   value: { from: '', to: '' },
   withClear: false,
@@ -782,7 +812,9 @@ export function ShowcasePage() {
   const [button, setButton] = useState<ButtonWidgetState>(DEFAULT_BUTTON_STATE);
   const [icon, setIcon] = useState<IconWidgetState>(DEFAULT_ICON_STATE);
   const [listbox, setListbox] = useState<ListboxWidgetState>(DEFAULT_LISTBOX_STATE);
-  const [combobox, setCombobox] = useState<ComboboxWidgetState>(DEFAULT_COMBOBOX_STATE);
+  const [localePicker, setLocalePicker] = useState<LocalePickerWidgetState>(
+    DEFAULT_LOCALE_PICKER_STATE
+  );
   const [rangeInput, setRangeInput] = useState<RangeInputWidgetState>(
     DEFAULT_RANGE_INPUT_STATE
   );
@@ -898,6 +930,7 @@ export function ShowcasePage() {
 
       if (key === 'inlineCheckbox' && value === true) {
         next.multiple = true;
+        next.withIcon = false;
         next.value = Array.isArray(current.value)
           ? current.value
           : current.value
@@ -905,20 +938,29 @@ export function ShowcasePage() {
             : [];
       }
 
+      if (key === 'withIcon' && value === true) {
+        next.inlineCheckbox = false;
+      }
+
       return next;
     });
   }
 
-  function updateCombobox<K extends keyof ComboboxWidgetState>(
+  function updateLocalePicker<K extends keyof LocalePickerWidgetState>(
     key: K,
-    value: ComboboxWidgetState[K]
+    value: LocalePickerWidgetState[K]
   ): void {
-    setCombobox((current) => ({ ...current, [key]: value }));
+    setLocalePicker((current) => ({ ...current, [key]: value }));
   }
 
-  const comboboxDemoOptions = [
-    ...(combobox.withIcon ? COMBOBOX_OPTIONS : LIST_OPTIONS),
-    COMBOBOX_DEMO_DISABLED_OPTION,
+  /**
+   * listboxDemoOptions — формирует опции превью Listbox: с иконками или текстовые
+   * и недоступную строку.
+   * Используется в превью виджета Listbox.
+   */
+  const listboxDemoOptions = [
+    ...(listbox.withIcon && !listbox.inlineCheckbox ? ICON_OPTIONS : LIST_OPTIONS),
+    LISTBOX_DEMO_DISABLED_OPTION,
   ];
 
   function updateRangeInput<K extends keyof RangeInputWidgetState>(
@@ -1060,8 +1102,8 @@ export function ShowcasePage() {
       return <ListboxSettings state={listbox} onChange={updateListbox} />;
     }
 
-    if (activeSettings === 'combobox') {
-      return <ComboboxSettings state={combobox} onChange={updateCombobox} />;
+    if (activeSettings === 'locale-picker') {
+      return <LocalePickerSettings state={localePicker} onChange={updateLocalePicker} />;
     }
 
     if (activeSettings === 'range-input') {
@@ -1279,6 +1321,23 @@ export function ShowcasePage() {
     toolbar.showActionBorder,
     toolbar.showActionShadow
   );
+  /**
+   * toolbarActions — формирует ряд превью Toolbar: слот LocalePicker вида `icon`
+   * и действия панели.
+   * Используется в превью виджета Toolbar.
+   */
+  const toolbarActions: IconButtonRowAction[] = [
+    {
+      control: (
+        <LocalePicker
+          appearance="icon"
+          label="Language:"
+          options={LOCALE_SLICE_OPTIONS}
+        />
+      ),
+    },
+    ...toolbar.actions.map(resolveIconButtonRowAction),
+  ];
   const inputBorderProps: BorderProps = resolveBorderProps(
     input.showBorder,
     input.borderTone,
@@ -1321,12 +1380,97 @@ export function ShowcasePage() {
         iconPosition: searchField.iconPosition,
       }
     : { showIcon: false };
+  /**
+   * searchFieldClearProps — формирует пропсы кнопки сброса превью SearchField.
+   * Используется в превью виджета SearchField.
+   */
+  const searchFieldClearProps: SearchFieldClearProps = searchField.showClearButton
+    ? { showClearButton: true }
+    : { showClearButton: false };
+  /**
+   * inputClearProps — формирует пропсы кнопки сброса превью Input.
+   * Используется в превью виджета Input.
+   */
+  const inputClearProps: InputClearProps = input.showClearButton
+    ? { showClearButton: true }
+    : { showClearButton: false };
+  /**
+   * rangeInputClearProps — формирует пропсы кнопки сброса превью RangeInput.
+   * Используется в превью виджета RangeInput.
+   */
+  const rangeInputClearProps: RangeInputClearProps = rangeInput.withClear
+    ? {
+        onClear: () => {
+          clearRangeInputValue();
+        },
+      }
+    : {};
   const listboxMultipleProps: ListboxMultipleProps = listbox.multiple
     ? {
         multiple: true,
         inlineCheckbox: listbox.inlineCheckbox,
       }
     : {};
+  /**
+   * listboxAppearanceProps — формирует пропсы вида триггера превью Listbox.
+   * Для `icon` передаёт рамку с тенью. Для `field` отдаёт вид, пропы шеврона
+   * и ветвит `showClearButton`: рамка ряда-триггера постоянная.
+   * Используется в превью виджета Listbox.
+   */
+  const listboxAppearanceProps: ListboxAppearanceProps =
+    listbox.appearance === 'icon'
+      ? {
+          appearance: 'icon',
+          ...resolveBorderProps(
+            listbox.showBorder,
+            listbox.borderTone,
+            listbox.showShadow
+          ),
+        }
+      : listbox.showClearButton
+        ? {
+            appearance: 'field',
+            iconFill: listbox.iconFill,
+            iconPosition: listbox.iconPosition,
+            iconTone: listbox.iconTone,
+            showClearButton: true,
+          }
+        : {
+            appearance: 'field',
+            iconFill: listbox.iconFill,
+            iconPosition: listbox.iconPosition,
+            iconTone: listbox.iconTone,
+          };
+  /**
+   * localePickerAppearanceProps — формирует пропсы вида триггера превью LocalePicker.
+   * Для `icon` передаёт рамку с тенью. Для `field` отдаёт вид, пропы шеврона
+   * и ветвит `showClearButton`: рамка ряда-триггера постоянная.
+   * Используется в превью виджета LocalePicker.
+   */
+  const localePickerAppearanceProps: ListboxAppearanceProps =
+    localePicker.appearance === 'icon'
+      ? {
+          appearance: 'icon',
+          ...resolveBorderProps(
+            localePicker.showBorder,
+            localePicker.borderTone,
+            localePicker.showShadow
+          ),
+        }
+      : localePicker.showClearButton
+        ? {
+            appearance: 'field',
+            iconFill: localePicker.iconFill,
+            iconPosition: localePicker.iconPosition,
+            iconTone: localePicker.iconTone,
+            showClearButton: true,
+          }
+        : {
+            appearance: 'field',
+            iconFill: localePicker.iconFill,
+            iconPosition: localePicker.iconPosition,
+            iconTone: localePicker.iconTone,
+          };
   const buttonIconProps: ButtonIconProps = button.withIcon
     ? {
         icon: getIcon(button.iconKey),
@@ -1446,7 +1590,7 @@ export function ShowcasePage() {
               {renderWidgetCard(
                 'toolbar',
                 <Toolbar
-                  actions={toolbar.actions.map(resolveIconButtonRowAction)}
+                  actions={toolbarActions}
                   ariaLabel={TOOLBAR_DEMO_ARIA_LABEL}
                   background={toolbar.background}
                   placeSelf="center"
@@ -1473,12 +1617,12 @@ export function ShowcasePage() {
                   }
                   reserveErrorSpace={input.reserveErrorSpace}
                   shape={input.shape}
-                  showClearButton={input.showClearButton}
                   size={input.size}
                   value={input.value}
                   onChange={(event) => updateInput('value', event.target.value)}
                   onClear={() => updateInput('value', '')}
                   {...inputBorderProps}
+                  {...inputClearProps}
                 />
               )}
 
@@ -1492,12 +1636,12 @@ export function ShowcasePage() {
                   label={searchField.label || undefined}
                   placeholder={searchField.placeholder}
                   shape={searchField.shape}
-                  showClearButton={searchField.showClearButton}
                   size={searchField.size}
                   value={searchField.value}
                   onChange={(event) => updateSearchField('value', event.target.value)}
                   onClear={() => updateSearchField('value', '')}
                   {...searchFieldBorderProps}
+                  {...searchFieldClearProps}
                   {...searchFieldShowIconProps}
                 />
               )}
@@ -1507,39 +1651,45 @@ export function ShowcasePage() {
                 <Listbox
                   alignSelf="center"
                   disabled={listbox.disabled}
-                  iconFill={listbox.iconFill}
-                  iconPosition={listbox.iconPosition}
-                  iconTone={listbox.iconTone}
+                  emptyMessage={listbox.showSearch ? listbox.emptyMessage : undefined}
                   label={listbox.label || undefined}
-                  options={LISTBOX_DEMO_OPTIONS}
+                  options={listboxDemoOptions}
+                  placeItems={listbox.appearance === 'icon' ? 'center' : undefined}
                   placeholder={listbox.placeholder}
+                  searchPlaceholder={
+                    listbox.showSearch ? listbox.searchPlaceholder : undefined
+                  }
                   shape={listbox.shape}
-                  showClearButton={listbox.showClearButton}
+                  showSearch={listbox.showSearch}
                   size={listbox.size}
                   value={listbox.value}
                   onChange={(value) => updateListbox('value', value)}
+                  {...listboxAppearanceProps}
                   {...listboxMultipleProps}
                 />
               )}
 
               {renderWidgetCard(
-                'combobox',
-                <Combobox
+                'locale-picker',
+                <LocalePicker
                   alignSelf="center"
-                  disabled={combobox.disabled}
-                  emptyMessage={combobox.emptyMessage}
-                  iconFill={combobox.iconFill}
-                  iconPosition={combobox.iconPosition}
-                  iconTone={combobox.iconTone}
-                  label={combobox.label || undefined}
-                  options={comboboxDemoOptions}
-                  placeholder={combobox.placeholder}
-                  searchPlaceholder={combobox.searchPlaceholder}
-                  shape={combobox.shape}
-                  showClearButton={combobox.showClearButton}
-                  size={combobox.size}
-                  value={combobox.value}
-                  onChange={(value) => updateCombobox('value', value)}
+                  disabled={localePicker.disabled}
+                  emptyMessage={localePicker.emptyMessage}
+                  label={localePicker.label || undefined}
+                  options={LOCALE_SLICE_OPTIONS}
+                  placeItems={localePicker.appearance === 'icon' ? 'center' : undefined}
+                  placeholder={localePicker.placeholder}
+                  searchPlaceholder={localePicker.searchPlaceholder}
+                  shape={localePicker.shape}
+                  size={localePicker.size}
+                  value={localePicker.value}
+                  onChange={(value) =>
+                    updateLocalePicker(
+                      'value',
+                      Array.isArray(value) ? (value[0] ?? '') : value
+                    )
+                  }
+                  {...localePickerAppearanceProps}
                 />
               )}
 
@@ -1572,13 +1722,7 @@ export function ShowcasePage() {
                   validationMessages={rangeInput.validationMessages}
                   value={rangeInput.value}
                   onChange={(next) => updateRangeInput('value', next)}
-                  onClear={
-                    rangeInput.withClear
-                      ? () => {
-                          clearRangeInputValue();
-                        }
-                      : undefined
-                  }
+                  {...rangeInputClearProps}
                 />
               )}
 

@@ -6,6 +6,7 @@
  * 1. Экспортировать компонент EarthIcon
  *
  * Потребители:
+ *  - `@ui/locale-picker` — ставит глиф, когда SVG флага нет, и как запасной вид `icon`
  *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины
  */
 

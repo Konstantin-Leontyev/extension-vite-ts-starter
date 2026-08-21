@@ -1,0 +1,105 @@
+{
+  "children": [
+    {
+      "children": [],
+      "name": "Add-circle",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Caption",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Close",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Chevron-down",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Chevron-up",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Clock",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Copy",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Download",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Dual",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Earth",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Plus",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Upload",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Search",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Settings",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Sign-out",
+      "role": "option",
+      "states": {}
+    },
+    {
+      "children": [],
+      "name": "Unavailable",
+      "role": "option",
+      "states": {
+        "disabled": true
+      }
+    }
+  ],
+  "name": "Label:",
+  "role": "listbox",
+  "states": {}
+}

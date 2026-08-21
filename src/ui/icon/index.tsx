@@ -33,12 +33,12 @@
  *    кладут Icon внутрь своего узла-места: секция триггера, кнопка-половинка
  *  - компоненты приложения, например Header, Card, ThemeToggle и ProfileMenu —
  *    показывают иконочные действия через `as="button"`
- *  - контролы с секцией иконки, например Button, Listbox, Combobox и RangeInput —
+ *  - контролы с секцией иконки, например Button, Listbox и RangeInput —
  *    подключают хелперы секции и читают позицию через `@ui/icon`
  *  - `@ui/toolbar` — читает `resolveIconShape` для формы действий
  *  - `@ui/button`, `@ui/input` и `@ui/search-field` — читают `resolveIconShape`
  *    для формы секции иконки или сброса; SearchField — для обоих
- *  - `@ui/listbox`, `@ui/combobox` и `@ui/range-input` —
+ *  - `@ui/listbox` и `@ui/range-input` —
  *    читают `resolveIconShape` для формы окна сброса и шеврона
  *  - `src/pages/showcase` — читает `getIconPadding` и демонстрирует состояния
  *    в витрине

@@ -6,9 +6,8 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы поверхности через `OpenControlSurfaceStyleProps`
- *    и вариант clear через `OpenControlTriggerRowClearLayout`
- * 2. Задать константы панели и шкалы: `OPEN_CONTROL_PANEL_MAX_OPTION_ROWS`,
- *    `OPEN_CONTROL_SELECTABLE_INSET` и `OPEN_CONTROL_ROW_GAP`
+ * 2. Задать константы панели и шкалы: `OPEN_CONTROL_SELECTABLE_INSET` и
+ *    `OPEN_CONTROL_ROW_GAP`
  * 3. Предоставить `getOpenControlRootStyles`,
  *    `getOpenControlTriggerRowStyles`, `getOpenControlTriggerStyles`,
  *    `getOpenControlSelectableRowSurfaceStyles`,
@@ -18,11 +17,9 @@
  *    `resolveEnabledOpenControlIndex`
  *
  * Потребители:
- *  - `src/ui/listbox/listbox.styles.ts` и `src/ui/combobox/combobox.styles.ts` —
- *    подставляют корень, ряд и кнопку-триггер, панель, скролл списка,
- *    поверхность опции и подсветку активной строки
- *  - `src/ui/listbox/index.tsx` и `src/ui/combobox/index.tsx` — берут потолок
- *    видимых строк барабана и поиск ближайшей доступной строки
+ *  - `src/ui/listbox/listbox.styles.ts` — подставляет корень, ряд и кнопку-триггер,
+ *    панель, скролл списка, поверхность опции и подсветку активной строки
+ *  - `src/ui/listbox/index.tsx` — ищет ближайшую доступную строку
  *  - `src/ui/range-input/range-input.styles.ts` — подставляет корень, ряд и
  *    кнопку-триггер и поверхность пресета
  *  - `src/ui/date-range-input/date-range-input.styles.ts` — подставляет корень,
@@ -52,7 +49,7 @@ import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
  * `both-branches` — trailing clear и ветка `[data-slot='clear']:first-child`.
  * `trailing-only` — только trailing clear без first-child ветки.
  */
-export type OpenControlTriggerRowClearLayout = 'both-branches' | 'trailing-only';
+type OpenControlTriggerRowClearLayout = 'both-branches' | 'trailing-only';
 
 /**
  * OpenControlSurfaceStyleProps — представляет пропсы стилизации поверхности open-control.
@@ -92,22 +89,21 @@ type OpenControlSelectableRowSurfaceOptions = {
 
 /**
  * OPEN_CONTROL_PANEL_MAX_OPTION_ROWS — задаёт максимум видимых строк опций в панели.
- * Используется в `getOpenControlOptionsListScrollStyles` для `max-block-size`
- * и в `src/ui/listbox/index.tsx` как потолок видимой высоты барабана.
+ * Используется в `getOpenControlOptionsListScrollStyles` для `max-block-size`.
  */
-export const OPEN_CONTROL_PANEL_MAX_OPTION_ROWS = 6;
+const OPEN_CONTROL_PANEL_MAX_OPTION_ROWS = 6;
 
 /**
  * OPEN_CONTROL_SELECTABLE_INSET — задаёт отступ подложки выбираемой строки от края.
  * Используется в `getOpenControlSelectableRowSurfaceStyles` и как
- * `padding-block` списка Combobox.
+ * `padding-block` списка Listbox.
  */
 export const OPEN_CONTROL_SELECTABLE_INSET: SpacingValue = 4;
 
 /**
  * OPEN_CONTROL_ROW_GAP — задаёт зазор между элементами ряда open-control.
  * Используется в `getOpenControlStackedPanelStyles`, стилях опций Listbox и
- * Combobox и секциях панели RangeInput.
+ * секциях панели RangeInput.
  */
 export const OPEN_CONTROL_ROW_GAP: SpacingValue = 12;
 
@@ -166,13 +162,14 @@ function resolveOpenControlBlockRadius(shape: ShapePreset, size: SizePreset): st
  * getOpenControlRootStyles — возвращает CSS-правила корня open-control:
  * раскладку, зазор и ширину.
  *
+ * @param inlineSize ширина корня, по умолчанию `100%`
  * @returns CSS-правила, каждое с новой строки
  */
-export function getOpenControlRootStyles(): string {
+export function getOpenControlRootStyles(inlineSize: string = '100%'): string {
   return `
     display: grid;
     gap: ${getSpacingValue(8)};
-    inline-size: 100%;
+    inline-size: ${inlineSize};
     min-inline-size: 0;
   `;
 }

@@ -17,7 +17,7 @@
  *
  * Потребители:
  *  - styles-файлы с рамкой и тенью и дефолтом «рамка есть», например Card,
- *    Input, SearchField, Tag и Toolbar — подключают `BorderProps` /
+ *    Input, SearchField, Tag, Toolbar и Listbox вида `icon` — подключают `BorderProps` /
  *    `BORDER_PROP_NAMES` и подставляют рамку с тенью через `getBorderStyles`
  *  - styles-файлы с дефолтом «рамки нет», например Icon — подключают
  *    `ShowBorderProps` / `BORDER_PROP_NAMES`
@@ -29,7 +29,7 @@
  *  - `src/pages/showcase` — собирает пакет рамки действий через
  *    `resolveActionBorderProps`
  *  - styles-файлы с постоянной рамкой без публичных пропсов, например Button,
- *    Listbox, Checkbox, RadioButton, AnchoredPanel, SegmentButton и Toast —
+ *    ряд-триггер Listbox вида `field`, Checkbox, RadioButton, AnchoredPanel, SegmentButton и Toast —
  *    подставляют `getBorderStyles` с дефолтами
  */
 
@@ -199,8 +199,8 @@ function getBorderColor(theme: AppTheme, borderTone: TonePreset = DEFAULT_TONE):
  * UA-стиль тега, например `<input>` и `<dialog>`: у `<button>` её снял reset,
  * у `<div>` рамки нет — повтор запрещён.
  * Пропсы `showBorder` и `showShadow` подключает потребитель осознанно: эталоны
- * Icon, Card, Input, SearchField, Tag и Toolbar. Составные триггеры, например
- * Listbox, Combobox, Stepper и RangeInput, пропсы не получают без отдельного
+ * Icon, Card, Input, SearchField, Tag, Toolbar и Listbox вида `icon`. Составные триггеры, например
+ * ряд-триггер Listbox вида `field`, Stepper и RangeInput, пропсы не получают без отдельного
  * кейса и вызывают хелпер с дефолтами. Оболочка композита и поверхность с
  * постоянной рамкой, например Checkbox, RadioButton и Toast, вызывают функцию
  * без флагов.

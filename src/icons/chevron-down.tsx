@@ -6,7 +6,7 @@
  * 1. Экспортировать компонент ChevronDownIcon
  *
  * Потребители:
- *  - контролы с раскрытием, например Listbox, Combobox и RangeInput — показывают направление
+ *  - контролы с раскрытием, например Listbox и RangeInput — показывают направление
  *  - `src/ui/stepper/index.tsx` — показывает стрелку уменьшения
  *  - `src/pages/showcase/table-demo/index.tsx` — показывает состояние раскрытия строки
  *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины

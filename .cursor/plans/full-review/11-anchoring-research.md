@@ -87,7 +87,7 @@
 По [Chrome Developers — customizable select (2025-03-24)](https://developer.chrome.com/blog/a-customizable-select), [Open UI explainer](https://open-ui.org/components/customizable-select.explainer/), [MDN Customizable select](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Customizable_select):
 
 - opt-in: `appearance: base-select` на `select` **и** на `::picker(select)`;
-- пикер в top layer, позиционирование через anchor;
+- выбор `::picker` в top layer, позиционирование через anchor;
 - стилизация кнопки, списка, `option::checkmark`, `select::picker-icon`;
 - rich HTML внутри `<option>` (картинки, разметка) при поддержке парсера;
 - `<button>` + `<selectedcontent>` для кастомного триггера;

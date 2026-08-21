@@ -19,9 +19,16 @@ import {
 } from './helpers';
 
 /**
- * TOOLBAR_ACTIONS — хранит доступные имена действий демо-ряда Toolbar на витрине.
+ * TOOLBAR_ACTIONS — задаёт доступные имена действий демо-ряда Toolbar на витрине.
  */
-const TOOLBAR_ACTIONS = ['search', 'copy', 'download', 'settings', 'sign-out'] as const;
+const TOOLBAR_ACTIONS = [
+  'Language: Select…',
+  'search',
+  'copy',
+  'download',
+  'settings',
+  'sign-out',
+] as const;
 
 test.describe('Toolbar showcase', () => {
   test('one tab stop, arrows walk actions, named toolbar role', async ({ page }) => {
@@ -65,16 +72,16 @@ test.describe('Toolbar showcase', () => {
     expect((await getFocusedAnnouncement(page)).name).toBe(TOOLBAR_ACTIONS[2]);
 
     await page.keyboard.press('End');
-    expect((await getFocusedAnnouncement(page)).name).toBe(TOOLBAR_ACTIONS[4]);
+    expect((await getFocusedAnnouncement(page)).name).toBe(TOOLBAR_ACTIONS[5]);
 
     await page.keyboard.press('Home');
     expect((await getFocusedAnnouncement(page)).name).toBe(TOOLBAR_ACTIONS[0]);
 
     await page.keyboard.press('ArrowLeft');
-    expect((await getFocusedAnnouncement(page)).name).toBe(TOOLBAR_ACTIONS[4]);
+    expect((await getFocusedAnnouncement(page)).name).toBe(TOOLBAR_ACTIONS[5]);
 
     await page.keyboard.press('ArrowUp');
-    expect((await getFocusedAnnouncement(page)).name).toBe(TOOLBAR_ACTIONS[3]);
+    expect((await getFocusedAnnouncement(page)).name).toBe(TOOLBAR_ACTIONS[4]);
 
     const axe = await runAxeAudit(page, toolbar);
 

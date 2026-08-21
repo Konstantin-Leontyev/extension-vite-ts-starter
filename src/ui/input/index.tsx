@@ -13,6 +13,8 @@
  *  - кнопку сброса через проп `showClearButton`. Дефолт — сброс есть; кнопка
  *    появляется при непустом значении
  *  - обработчик сброса через проп `onClear`
+ *  - доступное имя кнопки сброса через проп `clearAriaLabel`. Без пропа имя —
+ *    `resolveClearAriaLabel`
  *  - подпись над полем через проп `label`
  *  - встроенную строку ошибки через проп `error`
  *  - серую подсказку в полоске ошибки через проп `errorPlaceholder`
@@ -22,7 +24,8 @@
  * Основные задачи:
  * 1. Экспортировать компонент Input
  * 2. Типизировать пропсы через `InputProps`
- * 3. Связывать подпись, поле и строку ошибки для доступности
+ * 3. Экспортировать тип `InputClearProps`
+ * 4. Связывать подпись, поле и строку ошибки для доступности
  *
  * Потребители:
  *  - контролы и панели настроек витрины дизайн-системы, например TextGroup и InputSettings —
@@ -84,6 +87,23 @@ type InputValueProps =
     };
 
 /**
+ * InputClearProps — представляет пропсы кнопки сброса Input.
+ * Имя сброса допустимо, пока кнопка сброса включена: дефолт флага — сброс есть.
+ *
+ * @property clearAriaLabel — доступное имя кнопки сброса
+ * @property showClearButton — включает кнопку сброса
+ */
+export type InputClearProps =
+  | {
+      clearAriaLabel?: never;
+      showClearButton: false;
+    }
+  | {
+      clearAriaLabel?: string;
+      showClearButton?: true;
+    };
+
+/**
  * InputProps — представляет пропсы компонента Input.
  *
  * @property error — текст ошибки под полем
@@ -91,16 +111,15 @@ type InputValueProps =
  * @property invalid — включает обводку ошибки без текста, если проп `error` не передан
  * @property label — подпись над полем
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки, чтобы появление текста не сдвигало соседей
- * @property showClearButton — включает кнопку сброса
  */
 type InputProps = InputStyleProps &
-  InputValueProps & {
+  InputValueProps &
+  InputClearProps & {
     error?: string;
     errorPlaceholder?: string;
     invalid?: boolean;
     label?: string;
     reserveErrorSpace?: boolean;
-    showClearButton?: boolean;
   } & Omit<
     ComponentPropsWithRef<'input'>,
     'className' | 'style' | 'value' | keyof InputStyleProps
@@ -115,6 +134,7 @@ type InputProps = InputStyleProps &
  */
 export function Input({
   borderTone,
+  clearAriaLabel,
   error,
   errorPlaceholder,
   invalid = DEFAULT_INPUT_INVALID,
@@ -202,7 +222,7 @@ export function Input({
         />
         {hasClear && (
           <FieldClear
-            ariaLabel={resolveClearAriaLabel(label)}
+            ariaLabel={clearAriaLabel ?? resolveClearAriaLabel(label)}
             disabled={disabled}
             shape={clearShape}
             size={size}

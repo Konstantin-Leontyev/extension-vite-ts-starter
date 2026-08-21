@@ -9,7 +9,6 @@
  * Потребители:
  *  - anchored-контролы — держат open-state и ссылку на панель:
  *     - `src/ui/listbox/index.tsx`
- *     - `src/ui/combobox/index.tsx`
  *     - `src/ui/range-input/index.tsx`
  *     - `src/ui/date-range-input/index.tsx`
  */

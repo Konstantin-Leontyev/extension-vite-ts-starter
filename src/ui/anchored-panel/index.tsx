@@ -27,7 +27,7 @@
  *    `src/ui/anchored-panel/position-try.ts`
  *
  * Потребители:
- *  - контролы, например Combobox, DateRangeInput, Listbox и RangeInput —
+ *  - контролы, например DateRangeInput, Listbox и RangeInput —
  *    рендерят выпадающие панели с CSS-привязкой
  *  - `@ui/table` — рендерит панели add и edit с CSS-привязкой
  *  - `src/components/profile-menu/index.tsx` — рендерит меню профиля

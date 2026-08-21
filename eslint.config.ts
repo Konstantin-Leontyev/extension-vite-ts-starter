@@ -81,9 +81,6 @@ const config: Config[] = defineConfig([
           StyledCalendarNavButton: 'button',
           StyledCheckboxControl: 'input',
           StyledCheckboxRoot: 'label',
-          StyledComboboxList: 'ul',
-          StyledComboboxOption: 'button',
-          StyledComboboxTrigger: 'button',
           StyledFieldset: 'fieldset',
           StyledHeaderBrand: 'a',
           StyledInputControl: 'input',
@@ -214,9 +211,10 @@ const config: Config[] = defineConfig([
     },
     rules: {
       ...Object.fromEntries(
-        Object.keys(jsxA11y.flatConfigs.recommended.rules as object).map(
-          (rule) => [rule, 'off']
-        )
+        Object.keys(jsxA11y.flatConfigs.recommended.rules as object).map((rule) => [
+          rule,
+          'off',
+        ])
       ),
       'no-empty-pattern': 'off',
       'react-hooks/rules-of-hooks': 'off',

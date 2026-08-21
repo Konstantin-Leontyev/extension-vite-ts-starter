@@ -49,13 +49,17 @@ function formatUtcDayAccessible(isoDay: string): string {
 }
 
 /**
- * todayUtcIso — возвращает сегодняшний календарный день в UTC.
- *
- * @returns строка `YYYY-MM-DD`
+ * FROZEN_TODAY_ISO — задаёт календарный день UTC, которым тест считает «сегодня».
+ * Часы страницы ставятся на эту дату до загрузки витрины, чтобы серость дней
+ * не плыла от даты прогона.
  */
-function todayUtcIso(): string {
-  return new Date().toISOString().slice(0, 10);
-}
+const FROZEN_TODAY_ISO = '2026-08-21';
+
+/**
+ * FROZEN_TODAY_UTC — задаёт момент времени UTC для `page.clock.install`.
+ * Полдень 21 августа 2026, чтобы календарный день не съехал из-за зоны.
+ */
+const FROZEN_TODAY_UTC = new Date(`${FROZEN_TODAY_ISO}T12:00:00.000Z`);
 
 /**
  * stabilizeDateTree — преобразует слепок в стабильный: имена дней и месяца
@@ -85,13 +89,14 @@ test.describe('DateRangeInput showcase', () => {
   test('ArrowDown opens panel with three tab stops and a roving day grid', async ({
     page,
   }) => {
+    await page.clock.install({ time: FROZEN_TODAY_UTC });
     await openShowcase(page);
 
     const section = getShowcaseSection(page, 'Date range');
     const group = section.getByRole('group', { name: 'Label:' });
     const startSegment = group.getByRole('button', { name: 'DD.MM.YY' }).first();
     const panel = page.getByRole('dialog', { name: 'Date range calendar' });
-    const todayName = formatUtcDayAccessible(todayUtcIso());
+    const todayName = formatUtcDayAccessible(FROZEN_TODAY_ISO);
 
     await expect(group).toBeVisible();
     await expect(panel).toBeHidden();

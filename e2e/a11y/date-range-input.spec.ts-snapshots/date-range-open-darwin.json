@@ -426,9 +426,7 @@
                   "children": [],
                   "name": "[date]",
                   "role": "button",
-                  "states": {
-                    "disabled": true
-                  }
+                  "states": {}
                 }
               ],
               "name": "[date]",
@@ -441,9 +439,7 @@
                   "children": [],
                   "name": "[date]",
                   "role": "button",
-                  "states": {
-                    "disabled": true
-                  }
+                  "states": {}
                 }
               ],
               "name": "[date]",

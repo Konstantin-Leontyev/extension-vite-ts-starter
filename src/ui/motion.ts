@@ -8,8 +8,8 @@
  * 2. Предоставить функцию `getTransitionStyles`
  *
  * Потребители:
- *  - стили компонентов, например Switch, ProgressBar, Listbox, Combobox,
- *    RangeInput и Header — задают CSS-переходы через `getTransitionStyles`
+ *  - стили компонентов, например Switch, ProgressBar и Header —
+ *    задают CSS-переходы через `getTransitionStyles`
  */
 
 /**

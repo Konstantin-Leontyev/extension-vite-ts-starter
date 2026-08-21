@@ -6,7 +6,7 @@
   запрещён. Используй по команде «прокомментируй» / «приведи
   комментарии к канону».
 name: project-commenter
-model: grok-4.6[]
+model: grok-4.6-xhigh[]
 description: >-
 ---
 

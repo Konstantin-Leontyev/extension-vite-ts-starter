@@ -13,10 +13,9 @@
  *    `getOpenControlPanelStyles`
  *  - `src/ui/table/table.styles.ts` — подставляет хром add- и edit-панели строк
  *    и `getCssAnchorBindingStyles`
- *  - `@ui/combobox`, `@ui/date-range-input` и `@ui/range-input` — подставляют
+ *  - `@ui/listbox`, `@ui/date-range-input` и `@ui/range-input` — подставляют
  *    `getCssAnchorPlacementStyles`
- *  - `@ui/listbox` и `src/components/profile-menu` — подставляют
- *    `getCssAnchorBindingStyles`
+ *  - `src/components/profile-menu` — подставляет `getCssAnchorBindingStyles`
  */
 
 import { getBorderStyles } from '@ui/border';
@@ -39,7 +38,7 @@ import {
  * `position-visibility: always` оставляет панель видимой, когда триггер скрыт
  * через `visibility: hidden`. Начальное `anchors-visible` прячет панель вместе
  * с триггером.
- * Используется в `getCssAnchorPlacementStyles`, `@ui/listbox`, `@ui/table` и
+ * Используется в `getCssAnchorPlacementStyles`, `@ui/table` и
  * `src/components/profile-menu`.
  *
  * @returns CSS-правила, каждое с новой строки
@@ -56,33 +55,53 @@ export function getCssAnchorBindingStyles(): string {
  * привязку к неявному якорю, верх, ширину, `margin-block-end` и запасные
  * позиции `@position-try`.
  * `viewport-edge` ограничивает `inset-inline-start` через `clamp`, чтобы
- * панель не выходила за отступ края вьюпорта. `trigger-start` ставит
- * `inset-inline-start: anchor(start)`.
- * Используется в `@ui/combobox` и `@ui/date-range-input` с `viewport-edge`,
+ * панель не выходила за отступ края вьюпорта, и ставит ширину по якорю.
+ * `trigger-start` ставит `inset-inline-start: anchor(start)` и ширину по якорю.
+ * `content` ставит ширину по содержимому с потолком вьюпорта: формула
+ * `viewport-edge` предполагает ширину панели равной якорю и для кнопки-иконки
+ * не годится. При нехватке места по строке первой запасной позицией идёт
+ * `flip-inline`.
+ * Используется в `@ui/listbox` вида `field` и `@ui/date-range-input` с
+ * `viewport-edge`, в `@ui/listbox` вида `icon` с `content`,
  * в `@ui/range-input` с `trigger-start`.
  *
- * @param inlinePlacement режим горизонтального размещения панели
+ * @param placement режим размещения и ширины панели
  * @returns CSS-правила, каждое с новой строки
  */
 export function getCssAnchorPlacementStyles(
-  inlinePlacement: 'trigger-start' | 'viewport-edge'
+  placement: 'content' | 'trigger-start' | 'viewport-edge'
 ): string {
-  return `
-    ${getCssAnchorBindingStyles()}
-    inset-block-start: anchor(start);
-    inset-inline-start: ${
-      inlinePlacement === 'viewport-edge'
-        ? `clamp(
+  const styles = [getCssAnchorBindingStyles(), 'inset-block-start: anchor(start);'];
+
+  if (placement === 'content') {
+    styles.push(
+      `inset-inline-start: max(${PANEL_VIEWPORT_EDGE_INSET}px, anchor(start));`,
+      'inline-size: max-content;',
+      `max-inline-size: calc(100% - ${PANEL_VIEWPORT_EDGE_INSET}px * 2);`
+    );
+  } else {
+    styles.push(
+      `inset-inline-start: ${
+        placement === 'viewport-edge'
+          ? `clamp(
       ${PANEL_VIEWPORT_EDGE_INSET}px,
       anchor(start),
       calc(100% - ${PANEL_VIEWPORT_EDGE_INSET}px - anchor-size(width))
     )`
-        : 'anchor(start)'
-    };
-    inline-size: anchor-size(width);
-    margin-block-end: ${PANEL_VIEWPORT_EDGE_INSET}px;
-    position-try-fallbacks: ${ANCHORED_PANEL_POSITION_TRY_ABOVE}, ${ANCHORED_PANEL_POSITION_TRY_VIEWPORT};
-  `;
+          : 'anchor(start)'
+      };`,
+      'inline-size: anchor-size(width);'
+    );
+  }
+
+  styles.push(
+    `margin-block-end: ${PANEL_VIEWPORT_EDGE_INSET}px;`,
+    `position-try-fallbacks: ${
+      placement === 'content' ? 'flip-inline, ' : ''
+    }${ANCHORED_PANEL_POSITION_TRY_ABOVE}, ${ANCHORED_PANEL_POSITION_TRY_VIEWPORT};`
+  );
+
+  return styles.join('\n');
 }
 
 /**

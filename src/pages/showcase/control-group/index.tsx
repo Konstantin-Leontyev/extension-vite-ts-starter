@@ -24,11 +24,12 @@
  *     - `src/pages/showcase/input-settings/index.tsx`
  *     - `src/pages/showcase/listbox-settings/index.tsx`
  *     - `src/pages/showcase/range-input-settings/index.tsx`
- *     - `src/pages/showcase/combobox-settings/index.tsx`
  *     - `src/pages/showcase/button-settings/index.tsx`
  *     - `src/pages/showcase/date-range-input-settings/index.tsx`
  *     - `src/pages/showcase/segment-button-settings/index.tsx`
  *     - `src/pages/showcase/stepper-settings/index.tsx`
+ *     - `src/pages/showcase/search-field-settings/index.tsx`
+ *     - `src/pages/showcase/locale-picker-settings/index.tsx`
  */
 
 import {

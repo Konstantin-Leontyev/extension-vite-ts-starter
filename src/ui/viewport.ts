@@ -8,8 +8,7 @@
  *
  * Потребители:
  *  - `@ui/sidebar` — зонный отступ края панели и контента
- *  - `@ui/listbox` — отступ в арифметике барабана
- *  - `@ui/combobox`, `@ui/date-range-input`, `@ui/range-input`,
+ *  - `@ui/listbox`, `@ui/date-range-input`, `@ui/range-input`,
  *    `src/components/profile-menu` и `src/ui/anchored-panel` —
  *    отступ CSS-привязки панели от края вьюпорта
  *  - `src/context/toast/toast.styles.ts` — отступ контейнера уведомлений от края вьюпорта
@@ -32,8 +31,8 @@ export const VIEWPORT_EDGE_INSET: SpacingValue = 8;
  * PANEL_VIEWPORT_EDGE_INSET — формирует отступ clamp привязанных панелей от края
  * вьюпорта из `VIEWPORT_EDGE_INSET` и `OUTLINE_OVERHANG_PX`, чтобы обводка панели
  * оставалась внутри отступа оболочки, а не заходила в него. Число px для
- * CSS-привязки панелей и для арифметики барабана списка.
- * Используется в `@ui/listbox`, `@ui/combobox`, `@ui/date-range-input`,
+ * CSS-привязки панелей.
+ * Используется в `@ui/listbox`, `@ui/date-range-input`,
  * `@ui/range-input`, `src/components/profile-menu` и
  * `src/ui/anchored-panel`.
  */

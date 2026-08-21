@@ -13,7 +13,8 @@
  *  - тон рамки через проп `borderTone`
  *  - рамку действий через проп `showActionBorder`
  *  - тень действий через проп `showActionShadow`
- *  - ряд действий через проп `actions`
+ *  - ряд действий через проп `actions`. Элемент — иконочное действие или слот
+ *    `control`
  *  - доступное имя для скринридера через проп `ariaLabel`
  *
  * Основные задачи:
@@ -38,7 +39,7 @@ import { StyledToolbar, type ToolbarStyleProps } from './toolbar.styles';
 /**
  * ToolbarProps — представляет пропсы компонента Toolbar.
  *
- * @property actions — ряд действий
+ * @property actions — ряд действий. Элемент — иконочная кнопка или слот `control`
  * @property ariaLabel — доступное имя для скринридера
  */
 type ToolbarProps = {

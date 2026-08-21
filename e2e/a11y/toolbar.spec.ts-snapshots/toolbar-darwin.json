@@ -2,6 +2,12 @@
   "children": [
     {
       "children": [],
+      "name": "Language: Select…",
+      "role": "button",
+      "states": {}
+    },
+    {
+      "children": [],
       "name": "search",
       "role": "button",
       "states": {}

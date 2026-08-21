@@ -21,7 +21,7 @@
  * 3. Фиксировать типографику подписи и корневой элемент `label`
  *
  * Потребители:
- *  - контролы, например Input, Listbox, Combobox, RangeInput, Button, SegmentButton,
+ *  - контролы, например Input, Listbox, RangeInput, Button, SegmentButton,
  *    DateRangeInput и Stepper — рендерят подпись поля
  */
 

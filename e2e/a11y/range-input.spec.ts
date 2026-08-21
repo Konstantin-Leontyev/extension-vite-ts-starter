@@ -1,7 +1,7 @@
 /**
  * Файл: `e2e/a11y/range-input.spec.ts`
  * Снимает дерево доступности открытой панели RangeInput.
- * Корень слепка — диалог панели, не карточка витрины.
+ * Берёт корнем слепка диалог панели, не карточку витрины.
  *
  * Потребители:
  *  - команда `test:a11y` из `package.json` — запускает сценарий
@@ -21,14 +21,16 @@ test.describe('RangeInput', () => {
     await openShowcase(page);
 
     const section = getShowcaseSection(page, 'Range input');
-    const trigger = section.getByRole('button', { name: 'Label:' });
+    const trigger = section.getByRole('button', { name: 'Label: Select range' });
     const panel = page.getByRole('dialog', { name: 'Custom range:' });
 
     await trigger.click();
     await expect(panel).toBeVisible();
 
     const tree = await snapshotA11yTree(panel);
-    expect(`${JSON.stringify(tree, null, 2)}\n`).toMatchSnapshot('range-input-open.json');
+    expect(`${JSON.stringify(tree, null, 2)}\n`).toMatchSnapshot(
+      'range-input-open.json'
+    );
 
     expect(tree.role).toBe('dialog');
     expect(tree.role).not.toBe('article');

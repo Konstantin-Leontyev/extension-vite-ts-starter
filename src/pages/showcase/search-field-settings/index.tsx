@@ -22,7 +22,7 @@ import { type TonePreset } from '@ui/tones';
 import { BorderGroup } from '../border-group';
 import { ControlGroup } from '../control-group';
 import { IconGroup } from '../icon-group';
-import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
+import { ICON_OPTIONS, type IconKey } from '../showcase-icon-options';
 import { StyledSettingsForm } from '../showcase.styles';
 import { TextGroup } from '../text-group';
 
@@ -119,7 +119,7 @@ export function SearchFieldSettings({ onChange, state }: SearchFieldSettingsProp
 
       <IconGroup
         fill={state.iconFill}
-        iconOptions={COMBOBOX_OPTIONS}
+        iconOptions={ICON_OPTIONS}
         iconValue={state.iconKey}
         labelPrefix="Icon"
         position={state.iconPosition}

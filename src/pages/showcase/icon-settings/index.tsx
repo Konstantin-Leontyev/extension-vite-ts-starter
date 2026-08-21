@@ -32,7 +32,7 @@ import { BorderGroup } from '../border-group';
 import { IconGroup } from '../icon-group';
 import { ShapeListbox } from '../shape-listbox';
 import {
-  COMBOBOX_OPTIONS,
+  ICON_OPTIONS,
   resolveIconPaddingSizePreset,
   type IconKey,
 } from '../showcase-icon-options';
@@ -133,7 +133,7 @@ export function IconSettings({ onChange, state }: IconSettingsProps) {
 
       <IconGroup
         fill={state.iconFill}
-        iconOptions={COMBOBOX_OPTIONS}
+        iconOptions={ICON_OPTIONS}
         iconValue={state.iconKey}
         tone={state.iconTone}
         onFillChange={(tone) => onChange('iconFill', tone)}

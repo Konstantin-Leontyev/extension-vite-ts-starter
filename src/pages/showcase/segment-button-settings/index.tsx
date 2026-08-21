@@ -24,7 +24,7 @@ import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
 import { ControlGroup } from '../control-group';
 import { IconGroup } from '../icon-group';
-import { COMBOBOX_OPTIONS, type IconKey } from '../showcase-icon-options';
+import { ICON_OPTIONS, type IconKey } from '../showcase-icon-options';
 import { StyledSettingsForm } from '../showcase.styles';
 import { TextGroup } from '../text-group';
 import { ToneListbox } from '../tone-listbox';
@@ -162,7 +162,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
 
       <IconGroup
         fill={state.leftIconFill}
-        iconOptions={COMBOBOX_OPTIONS}
+        iconOptions={ICON_OPTIONS}
         iconValue={state.leftIconKey}
         labelPrefix="Left icon"
         position={state.leftIconPosition}
@@ -184,7 +184,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
 
           <IconGroup
             fill={state.centerIconFill}
-            iconOptions={COMBOBOX_OPTIONS}
+            iconOptions={ICON_OPTIONS}
             iconValue={state.centerIconKey}
             labelPrefix="Center icon"
             position={state.centerIconPosition}
@@ -206,7 +206,7 @@ export function SegmentButtonSettings({ onChange, state }: SegmentButtonSettings
 
       <IconGroup
         fill={state.rightIconFill}
-        iconOptions={COMBOBOX_OPTIONS}
+        iconOptions={ICON_OPTIONS}
         iconValue={state.rightIconKey}
         labelPrefix="Right icon"
         position={state.rightIconPosition}

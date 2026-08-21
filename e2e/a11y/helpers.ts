@@ -277,12 +277,35 @@ function parseAriaSnapshot(aria: string): A11yNodeSnapshot | null {
 }
 
 /**
+ * unwrapAriaSnapshotYamlLine — возвращает строку слепка без YAML-кавычек вокруг роли и имени.
+ * Имя с `: ` заставляет Playwright обернуть ключ узла: `- 'button "Label: Select…"': Select…`.
+ * Без снятия кавычек роль парсится вместе с открывающей кавычкой.
+ *
+ * @param line строка слепка
+ * @returns строка в форме `- role "name"` или `- role "name": text`
+ */
+function unwrapAriaSnapshotYamlLine(line: string): string {
+  const quoted = /^- (?<quote>['"])(?<inner>.*)\k<quote>(?<rest>.*)$/.exec(line);
+
+  if (!quoted?.groups) {
+    return line;
+  }
+
+  const { inner, quote, rest } = quoted.groups;
+  const unescaped =
+    quote === "'" ? inner.replaceAll("''", "'") : inner.replaceAll('\\"', '"');
+
+  return `- ${unescaped}${rest}`;
+}
+
+/**
  * parseAriaSnapshotLine — преобразует одну строку `ariaSnapshot` в узел слепка.
  *
- * @param line строка слепка без учёта отступа
+ * @param rawLine строка слепка без учёта отступа
  * @returns роль, имя и состояния узла
  */
-function parseAriaSnapshotLine(line: string): A11yNodeSnapshot {
+function parseAriaSnapshotLine(rawLine: string): A11yNodeSnapshot {
+  const line = unwrapAriaSnapshotYamlLine(rawLine);
   const match = /^- (?<role>[^\s:]+)(?<rest>.*)$/.exec(line);
 
   if (!match?.groups) {

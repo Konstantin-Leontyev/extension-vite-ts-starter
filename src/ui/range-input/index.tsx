@@ -26,6 +26,8 @@
  *  - подпись над триггером через проп `label`
  *  - обработчик изменения значения через проп `onChange`
  *  - обработчик сброса значения через проп `onClear`
+ *  - доступное имя кнопки сброса через проп `clearAriaLabel`. Без пропа имя —
+ *    `resolveClearAriaLabel`
  *  - плейсхолдер неактивного триггера через проп `placeholder`
  *  - пресеты диапазона через проп `presets`
  *  - серую подсказку в полоске ошибки панели через проп `errorPlaceholder`
@@ -45,9 +47,13 @@
  * 1. Экспортировать компонент RangeInput
  * 2. Типизировать пропсы через `RangeInputProps`
  * 3. Экспортировать типы `RangeValue`, `RangePreset`,
- *    `RangeInputValidationMessages` и `ResolvedRangeInputValidationMessages`
- * 4. Экспортировать дефолты `DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES`
- * 5. Выставлять `role` и `aria`-атрибуты панели и триггера
+ *    `RangeInputValidationMessages`, `ResolvedRangeInputValidationMessages`
+ *    и `RangeInputClearProps`
+ * 4. Экспортировать дефолты `DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES`,
+ *    `DEFAULT_RANGE_INPUT_PLACEHOLDER`, `DEFAULT_RANGE_INPUT_FROM_PLACEHOLDER`
+ *    и `DEFAULT_RANGE_INPUT_TO_PLACEHOLDER`
+ * 5. Выставлять `role` и `aria`-атрибуты панели и триггера. Имя триггера —
+ *    `aria-labelledby` подписи и узла значения
  *
  * Потребители:
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
@@ -64,7 +70,7 @@ import {
 
 import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { ChevronDownIcon, CloseIcon } from '@icons';
-import { resolveClearAriaLabel } from '@ui/a11y';
+import { resolveAriaLabelledBy, resolveClearAriaLabel } from '@ui/a11y';
 import { AnchoredPanel } from '@ui/anchored-panel';
 import { Button } from '@ui/button';
 import { FieldError } from '@ui/field-error';
@@ -148,19 +154,19 @@ const DEFAULT_RANGE_INPUT_TITLE_LEVEL = 'h2' as const;
  * DEFAULT_RANGE_INPUT_PLACEHOLDER — задаёт плейсхолдер неактивного триггера по умолчанию.
  * Используется, когда вызывающий код не передал проп `placeholder`.
  */
-const DEFAULT_RANGE_INPUT_PLACEHOLDER = 'Select range';
+export const DEFAULT_RANGE_INPUT_PLACEHOLDER = 'Select range';
 
 /**
  * DEFAULT_RANGE_INPUT_FROM_PLACEHOLDER — задаёт плейсхолдер поля `from` по умолчанию.
  * Используется, когда вызывающий код не передал проп `fromPlaceholder`.
  */
-const DEFAULT_RANGE_INPUT_FROM_PLACEHOLDER = 'From';
+export const DEFAULT_RANGE_INPUT_FROM_PLACEHOLDER = 'From';
 
 /**
  * DEFAULT_RANGE_INPUT_TO_PLACEHOLDER — задаёт плейсхолдер поля `to` по умолчанию.
  * Используется, когда вызывающий код не передал проп `toPlaceholder`.
  */
-const DEFAULT_RANGE_INPUT_TO_PLACEHOLDER = 'To';
+export const DEFAULT_RANGE_INPUT_TO_PLACEHOLDER = 'To';
 
 /**
  * RangeInputValidationMessages — представляет частичные тексты встроенной валидации RangeInput.
@@ -253,6 +259,23 @@ type RangeInputInputProps = {
 const RANGE_INPUT_PANEL_ARIA_LABEL = 'Custom range';
 
 /**
+ * RangeInputClearProps — представляет пропсы кнопки сброса RangeInput.
+ * Имя сброса допустимо только вместе с обработчиком сброса.
+ *
+ * @property clearAriaLabel — доступное имя кнопки сброса
+ * @property onClear — обработчик сброса значения. Без обработчика кнопка сброса не показывается
+ */
+export type RangeInputClearProps =
+  | {
+      clearAriaLabel?: never;
+      onClear?: never;
+    }
+  | {
+      clearAriaLabel?: string;
+      onClear: () => void;
+    };
+
+/**
  * RangeInputProps — представляет пропсы компонента RangeInput.
  *
  * @property defaultValue — начальное значение в неконтролируемом режиме
@@ -264,7 +287,6 @@ const RANGE_INPUT_PANEL_ARIA_LABEL = 'Custom range';
  * @property iconPosition — позиция шеврона и кнопки сброса относительно значения
  * @property label — подпись над триггером
  * @property onChange — обработчик изменения значения
- * @property onClear — обработчик сброса значения. Без обработчика кнопка сброса не показывается
  * @property placeholder — плейсхолдер неактивного триггера
  * @property presets — пресеты диапазона в панели
  * @property reserveErrorSpace — включает резерв высоты под строку ошибки
@@ -276,6 +298,7 @@ const RANGE_INPUT_PANEL_ARIA_LABEL = 'Custom range';
 type RangeInputProps = RangeInputStyleProps &
   RangeInputButtonProps &
   RangeInputInputProps &
+  RangeInputClearProps &
   TextNodeProps<'title'> & {
     defaultValue?: RangeValue;
     disabled?: boolean;
@@ -286,7 +309,6 @@ type RangeInputProps = RangeInputStyleProps &
     iconPosition?: IconPosition;
     label?: string;
     onChange: (value: RangeValue) => void;
-    onClear?: () => void;
     placeholder?: string;
     presets?: RangePreset[];
     reserveErrorSpace?: boolean;
@@ -406,6 +428,7 @@ export function RangeInput({
   buttonText,
   buttonTextTone,
   buttonTone = DEFAULT_RANGE_INPUT_BUTTON_TONE,
+  clearAriaLabel,
   defaultValue = EMPTY_RANGE_VALUE,
   disabled = DEFAULT_RANGE_INPUT_DISABLED,
   errorPlaceholder,
@@ -455,6 +478,8 @@ export function RangeInput({
   const triggerRowRef = useRef<HTMLDivElement>(null);
   const panelId = useId();
   const triggerId = useId();
+  const labelId = useId();
+  const valueId = useId();
   const titleId = useId();
   const panelErrorId = useId();
   const fromInputRef = useRef<HTMLInputElement>(null);
@@ -629,7 +654,7 @@ export function RangeInput({
 
   const clearNode = showClear && (
     <Icon
-      aria-label={resolveClearAriaLabel(label)}
+      aria-label={clearAriaLabel ?? resolveClearAriaLabel(label)}
       as="button"
       data-slot="clear"
       disabled={disabled}
@@ -652,7 +677,9 @@ export function RangeInput({
       {...layoutProps}
       {...restProps}
     >
-      <FieldLabel htmlFor={triggerId}>{label}</FieldLabel>
+      <FieldLabel htmlFor={triggerId} id={labelId}>
+        {label}
+      </FieldLabel>
       <StyledRangeInputTriggerRow
         data-has-clear={showClear ? true : undefined}
         data-open={isOpen ? 'true' : undefined}
@@ -665,6 +692,7 @@ export function RangeInput({
           aria-controls={panelId}
           aria-expanded={isOpen}
           aria-haspopup="dialog"
+          aria-labelledby={resolveAriaLabelledBy(label ? labelId : undefined, valueId)}
           disabled={disabled}
           id={triggerId}
           ref={triggerRef}
@@ -674,7 +702,7 @@ export function RangeInput({
           onKeyDown={handleTriggerKeyDown}
         >
           {iconPosition === 'start' && iconNode}
-          <StyledRangeInputValue {...surfaceProps}>
+          <StyledRangeInputValue id={valueId} {...surfaceProps}>
             <Text ellipsis size={textSizePreset} tone={isActive ? undefined : 'muted'}>
               {triggerLabel}
             </Text>

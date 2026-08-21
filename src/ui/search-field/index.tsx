@@ -16,21 +16,26 @@
  *  - тон глифа иконки через проп `iconFill`
  *  - секцию иконки через проп `showIcon`
  *  - подпись над полем через проп `label`
+ *  - плейсхолдер поля через проп `placeholder`. Без пропа — `Search…`, пустая строка перебивает
  *  - контролируемое значение через проп `value`
  *  - обработчик изменения значения через проп `onChange`
  *  - кнопку сброса через проп `showClearButton`. Дефолт — сброс есть; кнопка
  *    появляется при непустом значении
  *  - обработчик сброса значения через проп `onClear`
+ *  - доступное имя кнопки сброса через проп `clearAriaLabel`. Без пропа имя —
+ *    `resolveClearAriaLabel`
  *
  * Основные задачи:
  * 1. Экспортировать компонент SearchField
  * 2. Типизировать пропсы через `SearchFieldProps`
- * 3. Экспортировать тип `SearchFieldShowIconProps`
- * 4. Связывать подпись и поле для доступности
- * 5. Выставлять `aria-label` кнопки сброса через `resolveClearAriaLabel`
+ * 3. Экспортировать типы `SearchFieldShowIconProps` и `SearchFieldClearProps`
+ * 4. Экспортировать дефолт `DEFAULT_SEARCH_FIELD_PLACEHOLDER`
+ * 5. Связывать подпись и поле для доступности
+ * 6. Выставлять `aria-label` кнопки сброса через `clearAriaLabel` или
+ *    `resolveClearAriaLabel`
  *
  * Потребители:
- *  - `@ui/combobox` — рендерит поле поиска в панели
+ *  - `@ui/listbox` — рендерит поле поиска в панели
  *  - страницы и виджеты приложения — собирают фильтры и поиск
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
@@ -72,13 +77,19 @@ const DEFAULT_SEARCH_FIELD_ICON = <SearchIcon />;
 const DEFAULT_SEARCH_FIELD_ICON_POSITION: IconPosition = 'start';
 
 /**
- * DEFAULT_SEARCH_FIELD_SHOW_ICON — задаёт показ секции иконки по умолчанию.
+ * DEFAULT_SEARCH_FIELD_PLACEHOLDER — задаёт плейсхолдер поля поиска по умолчанию.
+ * Используется, когда вызывающий код не передал проп `placeholder`.
+ */
+export const DEFAULT_SEARCH_FIELD_PLACEHOLDER = 'Search…';
+
+/**
+ * DEFAULT_SEARCH_FIELD_SHOW_ICON — задаёт режим показа секции иконки по умолчанию.
  * Используется, когда вызывающий код не передал проп `showIcon`.
  */
 const DEFAULT_SEARCH_FIELD_SHOW_ICON = true;
 
 /**
- * DEFAULT_SEARCH_FIELD_SHOW_CLEAR_BUTTON — задаёт показ кнопки сброса по умолчанию.
+ * DEFAULT_SEARCH_FIELD_SHOW_CLEAR_BUTTON — задаёт режим показа кнопки сброса по умолчанию.
  * Используется, когда вызывающий код не передал проп `showClearButton`.
  */
 const DEFAULT_SEARCH_FIELD_SHOW_CLEAR_BUTTON = true;
@@ -110,6 +121,23 @@ type SearchFieldShowIconProps =
     };
 
 /**
+ * SearchFieldClearProps — представляет пропсы кнопки сброса SearchField.
+ * Имя сброса допустимо, пока кнопка сброса включена: дефолт флага — сброс есть.
+ *
+ * @property clearAriaLabel — доступное имя кнопки сброса
+ * @property showClearButton — включает кнопку сброса
+ */
+type SearchFieldClearProps =
+  | {
+      clearAriaLabel?: never;
+      showClearButton: false;
+    }
+  | {
+      clearAriaLabel?: string;
+      showClearButton?: true;
+    };
+
+/**
  * SearchFieldProps — представляет пропсы компонента SearchField.
  *
  * @property iconFill — тон глифа иконки при нейтральном `iconTone`
@@ -117,7 +145,6 @@ type SearchFieldShowIconProps =
  * @property label — подпись над полем
  * @property onChange — обработчик изменения значения
  * @property onClear — обработчик сброса значения
- * @property showClearButton — включает кнопку сброса
  * @property value — контролируемое значение
  */
 type SearchFieldProps = {
@@ -126,9 +153,9 @@ type SearchFieldProps = {
   label?: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
   onClear: () => void;
-  showClearButton?: boolean;
   value: string;
-} & SearchFieldShowIconProps &
+} & SearchFieldClearProps &
+  SearchFieldShowIconProps &
   SearchFieldStyleProps &
   Omit<
     ComponentPropsWithRef<'input'>,
@@ -155,6 +182,7 @@ type SearchFieldProps = {
  */
 function SearchField({
   borderTone,
+  clearAriaLabel,
   icon = DEFAULT_SEARCH_FIELD_ICON,
   iconFill,
   iconPosition = DEFAULT_SEARCH_FIELD_ICON_POSITION,
@@ -162,6 +190,7 @@ function SearchField({
   label,
   onChange,
   onClear,
+  placeholder = DEFAULT_SEARCH_FIELD_PLACEHOLDER,
   shape,
   showBorder,
   showClearButton = DEFAULT_SEARCH_FIELD_SHOW_CLEAR_BUTTON,
@@ -202,7 +231,7 @@ function SearchField({
 
   const clearNode = hasClear && (
     <FieldClear
-      ariaLabel={resolveClearAriaLabel(label, CLEAR_SEARCH_ARIA_LABEL)}
+      ariaLabel={clearAriaLabel ?? resolveClearAriaLabel(label, CLEAR_SEARCH_ARIA_LABEL)}
       disabled={disabled}
       iconFill={iconFill}
       iconTone={iconTone}
@@ -229,6 +258,7 @@ function SearchField({
           {...inputProps}
           disabled={disabled}
           id={id}
+          placeholder={placeholder}
           ref={(node) => {
             inputRef.current = node;
             assignRef(ref, node);
@@ -245,4 +275,4 @@ function SearchField({
   );
 }
 
-export { SearchField, type SearchFieldShowIconProps };
+export { SearchField, type SearchFieldClearProps, type SearchFieldShowIconProps };
