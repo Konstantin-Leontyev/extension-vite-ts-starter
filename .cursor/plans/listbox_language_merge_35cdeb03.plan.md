@@ -15,8 +15,8 @@ todos:
     content: "Этап 4: слот Toolbar, LocalePicker в превью, снимок Toolbar"
     status: pending
   - id: lite-parity
-    content: "Этап 5: паритет lite — шаг 4 в 16-remaining-route.md"
-    status: pending
+    content: "Паритет lite — снят с очереди, не делать"
+    status: cancelled
 isProject: false
 ---
 
@@ -116,7 +116,7 @@ isProject: false
 
 ## Этап 5 — lite
 
-Паритет `vite-ts-starter-lite` по [kit-hub.mdc](.cursor/rules/kit-hub.mdc). Шаг 4 в [16-remaining-route.md](.cursor/plans/full-review/16-remaining-route.md). По закрытии этапов 1–4 в том файле шаг 3 — закрыто.
+Снят с очереди. `vite-ts-starter-lite` не трогаем. Шаг 4 витрины — [16-remaining-route.md](.cursor/plans/full-review/16-remaining-route.md).
 
 ## Граница плана
 

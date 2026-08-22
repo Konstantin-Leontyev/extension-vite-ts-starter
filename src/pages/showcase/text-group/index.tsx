@@ -38,12 +38,16 @@
  *     - `src/pages/showcase/switch-settings/index.tsx`
  *     - `src/pages/showcase/fieldset-settings/index.tsx`
  *     - `src/pages/showcase/input-settings/index.tsx`
+ *     - `src/pages/showcase/search-field-settings/index.tsx`
+ *     - `src/pages/showcase/listbox-settings/index.tsx`
+ *     - `src/pages/showcase/locale-picker-settings/index.tsx`
  *     - `src/pages/showcase/segment-button-settings/index.tsx`
  *     - `src/pages/showcase/card-settings/index.tsx`
  *     - `src/pages/showcase/modal-settings/index.tsx`
  *     - `src/pages/showcase/range-input-settings/index.tsx`
  *     - `src/pages/showcase/control-group/index.tsx`
  *     - `src/pages/showcase/field-error-group/index.tsx`
+ *     - `src/pages/showcase/icon-row-group/index.tsx`
  */
 
 import {
@@ -77,12 +81,15 @@ import { ToneListbox } from '../tone-listbox';
 /**
  * TextGroupContent — представляет одно поле ввода содержимого текстовой группы.
  *
+ * @property boxedString — коробочная строка содержимого. Отметка `Set*` подставляет
+ *   её в поле. Без значения поле остаётся пустым
  * @property label — подпись поля, например `Text A:` или `Sample:`. Без значения
  *   собирается из `labelPrefix` — `Text:`, `Legend:`. Без префикса — `Text:`
  * @property onChange — обработчик изменения содержимого
  * @property value — текущее содержимое
  */
 type TextGroupContent = {
+  boxedString?: string;
   label?: string;
   onChange: (value: string) => void;
   value: string;
@@ -180,7 +187,7 @@ export function TextGroup({
     !hasContents || contents.some((content) => content.value.trim() !== '');
   const isSetExpanded = hasContentValue || isSetChecked || isContentFocused;
   const showSetCheckbox = hasContents && !hasContentValue;
-  const shouldFocusContent = hasContents && isSetChecked && !hasContentValue;
+  const shouldFocusContent = hasContents && isSetChecked;
 
   useLayoutEffect(() => {
     if (shouldFocusContent) {
@@ -203,7 +210,18 @@ export function TextGroup({
   }
 
   function handleSetChange(event: ChangeEvent<HTMLInputElement>) {
-    setIsSetChecked(event.target.checked);
+    const checked = event.target.checked;
+    setIsSetChecked(checked);
+
+    if (!checked) {
+      return;
+    }
+
+    contents?.forEach((content) => {
+      if (content.boxedString !== undefined) {
+        content.onChange(content.boxedString);
+      }
+    });
   }
 
   return (

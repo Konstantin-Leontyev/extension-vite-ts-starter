@@ -17,6 +17,7 @@ import { type ChangeEvent } from 'react';
 import { Checkbox } from '@ui/checkbox';
 import { type IconPosition } from '@ui/icon';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
+import { DEFAULT_SEARCH_FIELD_PLACEHOLDER } from '@ui/search-field';
 import { type TonePreset } from '@ui/tones';
 
 import { BorderGroup } from '../border-group';
@@ -110,6 +111,7 @@ export function SearchFieldSettings({ onChange, state }: SearchFieldSettingsProp
       <TextGroup
         contents={[
           {
+            boxedString: DEFAULT_SEARCH_FIELD_PLACEHOLDER,
             value: state.placeholder,
             onChange: (value) => onChange('placeholder', value),
           },

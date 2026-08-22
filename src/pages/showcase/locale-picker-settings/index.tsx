@@ -18,8 +18,15 @@ import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { type IconPosition } from '@ui/icon';
-import { Listbox, type ListboxAppearance, type ListboxOption } from '@ui/listbox';
+import {
+  DEFAULT_LISTBOX_EMPTY_MESSAGE,
+  DEFAULT_LISTBOX_PLACEHOLDER,
+  Listbox,
+  type ListboxAppearance,
+  type ListboxOption,
+} from '@ui/listbox';
 import { type ShapePreset, type SizePreset } from '@ui/presets';
+import { DEFAULT_SEARCH_FIELD_PLACEHOLDER } from '@ui/search-field';
 import { type TonePreset } from '@ui/tones';
 
 import { BorderGroup } from '../border-group';
@@ -131,6 +138,7 @@ export function LocalePickerSettings({ onChange, state }: LocalePickerSettingsPr
       <TextGroup
         contents={[
           {
+            boxedString: DEFAULT_LISTBOX_PLACEHOLDER,
             value: state.placeholder,
             onChange: (value) => onChange('placeholder', value),
           },
@@ -164,6 +172,7 @@ export function LocalePickerSettings({ onChange, state }: LocalePickerSettingsPr
       <TextGroup
         contents={[
           {
+            boxedString: DEFAULT_SEARCH_FIELD_PLACEHOLDER,
             value: state.searchPlaceholder,
             onChange: (value) => onChange('searchPlaceholder', value),
           },
@@ -174,6 +183,7 @@ export function LocalePickerSettings({ onChange, state }: LocalePickerSettingsPr
       <TextGroup
         contents={[
           {
+            boxedString: DEFAULT_LISTBOX_EMPTY_MESSAGE,
             value: state.emptyMessage,
             onChange: (value) => onChange('emptyMessage', value),
           },

@@ -50,6 +50,7 @@ import {
   DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
   RangeInput,
   type RangeInputClearProps,
+  type RangeInputValidationMessages,
   type RangeValue,
 } from '@ui/range-input';
 import { ScrollPort } from '@ui/scroll-port';
@@ -1405,6 +1406,23 @@ export function ShowcasePage() {
         },
       }
     : {};
+  /**
+   * rangeInputValidationMessages — формирует тексты валидации превью RangeInput.
+   * Пустой ключ в объект не входит: иначе слияние в RangeInput оставляет пустую строку
+   * вместо коробочного текста.
+   * Используется в превью виджета RangeInput.
+   */
+  const rangeInputValidationMessages: RangeInputValidationMessages = {
+    ...(rangeInput.validationMessages.emptyBounds.trim() !== ''
+      ? { emptyBounds: rangeInput.validationMessages.emptyBounds }
+      : {}),
+    ...(rangeInput.validationMessages.invalidFrom.trim() !== ''
+      ? { invalidFrom: rangeInput.validationMessages.invalidFrom }
+      : {}),
+    ...(rangeInput.validationMessages.invalidTo.trim() !== ''
+      ? { invalidTo: rangeInput.validationMessages.invalidTo }
+      : {}),
+  };
   const listboxMultipleProps: ListboxMultipleProps = listbox.multiple
     ? {
         multiple: true,
@@ -1609,7 +1627,12 @@ export function ShowcasePage() {
                   error={
                     input.invalid && input.error.trim() !== '' ? input.error : undefined
                   }
-                  errorPlaceholder={input.errorPlaceholder}
+                  errorPlaceholder={
+                    input.errorPlaceholder !== undefined &&
+                    input.errorPlaceholder.trim() !== ''
+                      ? input.errorPlaceholder
+                      : undefined
+                  }
                   invalid={input.invalid || undefined}
                   label={input.label.trim() !== '' ? input.label : undefined}
                   placeholder={
@@ -1633,8 +1656,12 @@ export function ShowcasePage() {
                   disabled={searchField.disabled}
                   iconFill={searchField.iconFill}
                   iconTone={searchField.iconTone}
-                  label={searchField.label || undefined}
-                  placeholder={searchField.placeholder}
+                  label={searchField.label.trim() !== '' ? searchField.label : undefined}
+                  placeholder={
+                    searchField.placeholder.trim() !== ''
+                      ? searchField.placeholder
+                      : undefined
+                  }
                   shape={searchField.shape}
                   size={searchField.size}
                   value={searchField.value}
@@ -1651,13 +1678,21 @@ export function ShowcasePage() {
                 <Listbox
                   alignSelf="center"
                   disabled={listbox.disabled}
-                  emptyMessage={listbox.showSearch ? listbox.emptyMessage : undefined}
-                  label={listbox.label || undefined}
+                  emptyMessage={
+                    listbox.showSearch && listbox.emptyMessage.trim() !== ''
+                      ? listbox.emptyMessage
+                      : undefined
+                  }
+                  label={listbox.label.trim() !== '' ? listbox.label : undefined}
                   options={listboxDemoOptions}
                   placeItems={listbox.appearance === 'icon' ? 'center' : undefined}
-                  placeholder={listbox.placeholder}
+                  placeholder={
+                    listbox.placeholder.trim() !== '' ? listbox.placeholder : undefined
+                  }
                   searchPlaceholder={
-                    listbox.showSearch ? listbox.searchPlaceholder : undefined
+                    listbox.showSearch && listbox.searchPlaceholder.trim() !== ''
+                      ? listbox.searchPlaceholder
+                      : undefined
                   }
                   shape={listbox.shape}
                   showSearch={listbox.showSearch}
@@ -1674,12 +1709,26 @@ export function ShowcasePage() {
                 <LocalePicker
                   alignSelf="center"
                   disabled={localePicker.disabled}
-                  emptyMessage={localePicker.emptyMessage}
-                  label={localePicker.label || undefined}
+                  emptyMessage={
+                    localePicker.emptyMessage.trim() !== ''
+                      ? localePicker.emptyMessage
+                      : undefined
+                  }
+                  label={
+                    localePicker.label.trim() !== '' ? localePicker.label : undefined
+                  }
                   options={LOCALE_SLICE_OPTIONS}
                   placeItems={localePicker.appearance === 'icon' ? 'center' : undefined}
-                  placeholder={localePicker.placeholder}
-                  searchPlaceholder={localePicker.searchPlaceholder}
+                  placeholder={
+                    localePicker.placeholder.trim() !== ''
+                      ? localePicker.placeholder
+                      : undefined
+                  }
+                  searchPlaceholder={
+                    localePicker.searchPlaceholder.trim() !== ''
+                      ? localePicker.searchPlaceholder
+                      : undefined
+                  }
                   shape={localePicker.shape}
                   size={localePicker.size}
                   value={localePicker.value}
@@ -1703,23 +1752,42 @@ export function ShowcasePage() {
                   buttonTextTone={rangeInput.buttonTextTone}
                   buttonTone={rangeInput.buttonTone}
                   disabled={rangeInput.disabled}
-                  errorPlaceholder={rangeInput.errorPlaceholder}
+                  errorPlaceholder={
+                    rangeInput.errorPlaceholder !== undefined &&
+                    rangeInput.errorPlaceholder.trim() !== ''
+                      ? rangeInput.errorPlaceholder
+                      : undefined
+                  }
                   formatActiveLabel={formatDemoRangeLabel}
-                  fromPlaceholder={rangeInput.fromPlaceholder}
+                  fromPlaceholder={
+                    rangeInput.fromPlaceholder.trim() !== ''
+                      ? rangeInput.fromPlaceholder
+                      : undefined
+                  }
                   iconFill={rangeInput.iconFill}
                   iconPosition={rangeInput.iconPosition}
                   iconTone={rangeInput.iconTone}
                   inputShape={rangeInput.inputShape}
                   inputSize={rangeInput.inputSize}
-                  label={rangeInput.label || undefined}
-                  placeholder={rangeInput.placeholder}
+                  label={rangeInput.label.trim() !== '' ? rangeInput.label : undefined}
+                  placeholder={
+                    rangeInput.placeholder.trim() !== ''
+                      ? rangeInput.placeholder
+                      : undefined
+                  }
                   reserveErrorSpace={rangeInput.reserveErrorSpace}
                   shape={rangeInput.shape}
                   size={rangeInput.size}
-                  toPlaceholder={rangeInput.toPlaceholder}
+                  toPlaceholder={
+                    rangeInput.toPlaceholder.trim() !== ''
+                      ? rangeInput.toPlaceholder
+                      : undefined
+                  }
                   {...rangeInputTitleProps}
                   validate={validateDemoRange}
-                  validationMessages={rangeInput.validationMessages}
+                  {...(Object.keys(rangeInputValidationMessages).length > 0
+                    ? { validationMessages: rangeInputValidationMessages }
+                    : {})}
                   value={rangeInput.value}
                   onChange={(next) => updateRangeInput('value', next)}
                   {...rangeInputClearProps}

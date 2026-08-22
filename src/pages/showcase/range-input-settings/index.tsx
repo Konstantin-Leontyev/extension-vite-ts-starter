@@ -24,6 +24,10 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import {
+  DEFAULT_RANGE_INPUT_FROM_PLACEHOLDER,
+  DEFAULT_RANGE_INPUT_PLACEHOLDER,
+  DEFAULT_RANGE_INPUT_TO_PLACEHOLDER,
+  DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES,
   type RangeValue,
   type ResolvedRangeInputValidationMessages,
 } from '@ui/range-input';
@@ -153,6 +157,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       <TextGroup
         contents={[
           {
+            boxedString: DEFAULT_RANGE_INPUT_PLACEHOLDER,
             value: state.placeholder,
             onChange: (value) => onChange('placeholder', value),
           },
@@ -218,6 +223,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       <TextGroup
         contents={[
           {
+            boxedString: DEFAULT_RANGE_INPUT_FROM_PLACEHOLDER,
             value: state.fromPlaceholder,
             onChange: (value) => onChange('fromPlaceholder', value),
           },
@@ -228,6 +234,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       <TextGroup
         contents={[
           {
+            boxedString: DEFAULT_RANGE_INPUT_TO_PLACEHOLDER,
             value: state.toPlaceholder,
             onChange: (value) => onChange('toPlaceholder', value),
           },
@@ -247,6 +254,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       <TextGroup
         contents={[
           {
+            boxedString: DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES.emptyBounds,
             value: state.validationMessages.emptyBounds,
             onChange: (value) =>
               onChange('validationMessages', {
@@ -261,6 +269,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       <TextGroup
         contents={[
           {
+            boxedString: DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES.invalidFrom,
             value: state.validationMessages.invalidFrom,
             onChange: (value) =>
               onChange('validationMessages', {
@@ -275,6 +284,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
       <TextGroup
         contents={[
           {
+            boxedString: DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES.invalidTo,
             value: state.validationMessages.invalidTo,
             onChange: (value) =>
               onChange('validationMessages', {
