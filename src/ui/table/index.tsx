@@ -46,7 +46,7 @@
  * Основные задачи:
  * 1. Экспортировать компонент Table
  * 2. Типизировать пропсы через `TableProps`
- * 3. Экспортировать типы `TableAlign`, `TableAddRowSource`, `TableAddRowActiveProps`,
+ * 3. Экспортировать типы `TableAddRowSource`, `TableAddRowActiveProps`,
  *    `TableCellRenderContext`, `TableColumn`, `TableEditRowActiveProps` и
  *    `TableEditableProps`
  * 4. Реэкспортировать утилиту `computeTableColumnInlineSizes`, тип `TableColumnSizeConfig`
@@ -108,19 +108,9 @@ import {
 } from './table.styles';
 
 /**
- * TableAlign — представляет горизонтальное выравнивание ячейки таблицы.
- */
-export type TableAlign = TableCellAlign;
-
-/**
  * NUMBER_COLUMN_INLINE_SIZE — задаёт ширину колонки нумерации в режиме `fixed`.
  */
 const NUMBER_COLUMN_INLINE_SIZE = '3.5rem';
-
-/**
- * CHECKBOX_COLUMN_INLINE_SIZE — задаёт ширину отдельной колонки чекбокса в режиме `fixed`.
- */
-const CHECKBOX_COLUMN_INLINE_SIZE = '2.75rem';
 
 /**
  * BULK_SELECTION_MIN — задаёт минимум выбранных строк для групповых действий
@@ -171,10 +161,10 @@ export type TableCellRenderContext = {
  * @property renderCell — кастомный рендер ячейки данных
  */
 export type TableColumn<Row> = {
-  align?: TableAlign;
+  align?: TableCellAlign;
   ellipsis?: boolean;
   header: string;
-  headerAlign?: TableAlign;
+  headerAlign?: TableCellAlign;
   inlineSize?: string;
   key: Extract<keyof Row, string>;
   nowrap?: boolean;
@@ -199,6 +189,38 @@ const DEFAULT_ADD_HINT =
 const DEFAULT_EDIT_HINT = 'Press Esc to close without saving, or Enter to save changes.';
 
 /**
+ * DEFAULT_TABLE_ADD_ROW_ACTIVE — задаёт режим панели добавления строки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `addRowActive`.
+ */
+const DEFAULT_TABLE_ADD_ROW_ACTIVE = false;
+
+/**
+ * DEFAULT_TABLE_EDIT_ROW_ACTIVE — задаёт режим панели редактирования строки по умолчанию.
+ * Используется, когда вызывающий код не передал проп `editRowActive`.
+ */
+const DEFAULT_TABLE_EDIT_ROW_ACTIVE = false;
+
+/**
+ * DEFAULT_TABLE_EDITABLE — задаёт режим редактирования таблицы по умолчанию.
+ * Используется, когда вызывающий код не передал проп `editable`.
+ */
+const DEFAULT_TABLE_EDITABLE = false;
+
+/**
+ * DEFAULT_TABLE_HEADER_RESERVE_ADD_BUTTON — задаёт резерв слота кнопки «+» в шапке
+ * по умолчанию.
+ * Используется, когда вызывающий код не передал проп `reserveAddButton`.
+ */
+const DEFAULT_TABLE_HEADER_RESERVE_ADD_BUTTON = false;
+
+/**
+ * DEFAULT_TABLE_HEADER_RESERVE_CHECKBOX — задаёт резерв слота чекбокса в шапке
+ * по умолчанию.
+ * Используется, когда вызывающий код не передал проп `reserveCheckbox`.
+ */
+const DEFAULT_TABLE_HEADER_RESERVE_CHECKBOX = false;
+
+/**
  * DEFAULT_TABLE_NUMBERED — задаёт показ колонки нумерации по умолчанию.
  * Используется, когда вызывающий код не передал проп `numbered`.
  */
@@ -213,11 +235,6 @@ const TABLE_ADD_ROW_ARIA_LABEL = 'Add row';
  * TABLE_EDIT_ROW_ARIA_LABEL — задаёт `aria-label` диалога редактирования строки.
  */
 const TABLE_EDIT_ROW_ARIA_LABEL = 'Edit row';
-
-/**
- * TABLE_SELECT_COLUMN_LABEL — задаёт подпись отдельной колонки выбора для `.visually-hidden`.
- */
-const TABLE_SELECT_COLUMN_LABEL = 'Select';
 
 /**
  * TABLE_SELECT_ALL_ARIA_LABEL — задаёт `aria-label` чекбокса выбора всех строк.
@@ -352,7 +369,7 @@ export type TableEditableProps<Row> =
  * @property renderBulkSelectionActions — действия шапки при множественном выборе
  * @property renderSelectedRowActions — действия в ячейке выбранной строки
  * @property rowCheckboxColumnKey — ключ колонки, в которой рендерится чекбокс строки.
- *   Без ключа чекбокс выносится в отдельную колонку
+ *   В шапке этой колонки стоят select-all, «+» и bulk
  * @property selectedKeys — выбранные ключи строк
  * @property selectedRowActionsColumnKey — ключ колонки для действий выбранной строки
  */
@@ -365,7 +382,7 @@ type TableSelectionProps<Row> = {
   onSelectedKeysChange: (keys: Set<string>) => void;
   renderBulkSelectionActions?: () => ReactNode;
   renderSelectedRowActions?: (row: Row) => ReactNode;
-  rowCheckboxColumnKey?: Extract<keyof Row, string>;
+  rowCheckboxColumnKey: Extract<keyof Row, string>;
   selectedKeys: ReadonlySet<string>;
   selectedRowActionsColumnKey?: Extract<keyof Row, string>;
 };
@@ -439,8 +456,8 @@ function TableCheckbox({
  * чекбокс или кнопка «+» не рендерятся.
  */
 function TableHeaderLeadSpacers({
-  reserveAddButton = false,
-  reserveCheckbox = false,
+  reserveAddButton = DEFAULT_TABLE_HEADER_RESERVE_ADD_BUTTON,
+  reserveCheckbox = DEFAULT_TABLE_HEADER_RESERVE_CHECKBOX,
 }: {
   reserveAddButton?: boolean;
   reserveCheckbox?: boolean;
@@ -473,7 +490,6 @@ function TableHeaderLeadSpacers({
  * @property rowIndex — индекс строки в видимом списке
  * @property rowKey — стабильный ключ строки
  * @property rowSelectable — признак, можно ли выбрать строку
- * @property separateCheckboxColumn — признак отдельной колонки чекбокса
  * @property showRowActions — признак показа действий выбранной строки в ячейке
  * @property size — размер таблицы
  * @property textSize — размер текста ячейки
@@ -498,7 +514,6 @@ type TableBodyRowProps<Row> = {
   rowIndex: number;
   rowKey: string;
   rowSelectable: boolean;
-  separateCheckboxColumn: boolean;
   showRowActions: boolean;
   size: TableStyleProps['size'];
   textSize: TextSizePreset;
@@ -527,7 +542,6 @@ function TableBodyRow<Row>({
   rowIndex,
   rowKey,
   rowSelectable,
-  separateCheckboxColumn,
   showRowActions,
   size,
   textSize,
@@ -563,20 +577,6 @@ function TableBodyRow<Row>({
       size={size}
       {...(pointerProps ?? {})}
     >
-      {separateCheckboxColumn && (
-        <TableCell size={size} textAlign="center">
-          {(rowSelectable && (
-            <TableCheckbox
-              ariaLabel={`Select row ${rowKey}`}
-              checked={isSelected}
-              onToggle={() => {
-                toggleRowKey(rowKey);
-              }}
-            />
-          )) ||
-            groupCheckbox}
-        </TableCell>
-      )}
       {resolvedNumbered && (
         <TableCell size={size} textAlign="end">
           <Text size={textSize}>{rowIndex + 1}</Text>
@@ -588,10 +588,7 @@ function TableBodyRow<Row>({
         ) : (
           <Text size={textSize}>{String(row[column.key] ?? '')}</Text>
         );
-        const isCheckboxColumn =
-          checkable &&
-          rowCheckboxColumnKey !== undefined &&
-          column.key === rowCheckboxColumnKey;
+        const isCheckboxColumn = checkable && column.key === rowCheckboxColumnKey;
         const showRowCheckbox = rowSelectable && isCheckboxColumn;
         const showGroupCheckbox = isGroupSelector && isCheckboxColumn;
         const showRowActionsInColumn = showRowActions && column.key === actionsColumnKey;
@@ -657,6 +654,7 @@ function TableBodyRow<Row>({
  *   columns={columns}
  *   editable
  *   getRowKey={(row) => row.rowId}
+ *   rowCheckboxColumnKey="product"
  *   rows={tableRows}
  *   selectedKeys={selectedKeys}
  *   onSelectedKeysChange={setSelectedKeys}
@@ -666,14 +664,14 @@ export function Table<Row>(props: TableProps<Row>) {
   const {
     addError,
     addHint = DEFAULT_ADD_HINT,
-    addRowActive: addRowActiveProp = false,
+    addRowActive: addRowActiveProp = DEFAULT_TABLE_ADD_ROW_ACTIVE,
     addRowSource,
     columns,
     editError,
     editHint = DEFAULT_EDIT_HINT,
-    editRowActive: editRowActiveProp = false,
+    editRowActive: editRowActiveProp = DEFAULT_TABLE_EDIT_ROW_ACTIVE,
     editRowKey,
-    editable = false,
+    editable = DEFAULT_TABLE_EDITABLE,
     hoverHighlight,
     numbered,
     onAddCancel,
@@ -705,9 +703,7 @@ export function Table<Row>(props: TableProps<Row>) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
   const textSize = getTextSize(size ?? DEFAULT_TABLE_SIZE_PRESET);
   const rowCheckboxColumnKey = checkable ? props.rowCheckboxColumnKey : undefined;
-  const separateCheckboxColumn = checkable && rowCheckboxColumnKey === undefined;
-  const fixed =
-    separateCheckboxColumn || columns.some((column) => column.inlineSize !== undefined);
+  const fixed = columns.some((column) => column.inlineSize !== undefined);
 
   const headAnchorRef = useRef<HTMLTableSectionElement>(null);
   const footAnchorRef = useRef<HTMLTableSectionElement>(null);
@@ -886,11 +882,6 @@ export function Table<Row>(props: TableProps<Row>) {
 
     return (
       <>
-        {separateCheckboxColumn && (
-          <TableCell size={size} textAlign="center" {...headProps}>
-            <span className="visually-hidden">{TABLE_SELECT_COLUMN_LABEL}</span>
-          </TableCell>
-        )}
         {resolvedNumbered && (
           <TableCell size={size} textAlign="end" {...headProps}>
             <Text size={textSize}>#</Text>
@@ -905,9 +896,7 @@ export function Table<Row>(props: TableProps<Row>) {
             textAlign={column.headerAlign ?? column.align}
             {...headProps}
           >
-            {checkable &&
-            rowCheckboxColumnKey !== undefined &&
-            column.key === rowCheckboxColumnKey ? (
+            {checkable && column.key === rowCheckboxColumnKey ? (
               renderKeywordColumnHeader(column, addSource, interactive)
             ) : (
               <Text size={textSize}>{column.header}</Text>
@@ -918,22 +907,28 @@ export function Table<Row>(props: TableProps<Row>) {
     );
   };
 
-  const renderAddCells = (): ReactNode => (
+  const renderPanelCells = ({
+    renderCell,
+    reserveAddButton = DEFAULT_TABLE_HEADER_RESERVE_ADD_BUTTON,
+  }: {
+    renderCell: (column: TableColumn<Row>) => ReactNode;
+    reserveAddButton?: boolean;
+  }): ReactNode => (
     <>
-      {separateCheckboxColumn && <TableCell size={size} textAlign="center" />}
       {resolvedNumbered && <TableCell size={size} textAlign="end" />}
       {columns.map((column) => {
-        const addCellContent = renderAddCell?.(column, addCellContext);
+        const cellContent = renderCell(column);
         const cellBody =
-          (checkable &&
-            rowCheckboxColumnKey !== undefined &&
-            column.key === rowCheckboxColumnKey && (
-              <StyledTableCellLead>
-                <TableHeaderLeadSpacers reserveAddButton reserveCheckbox />
-                {addCellContent}
-              </StyledTableCellLead>
-            )) ||
-          addCellContent;
+          (checkable && column.key === rowCheckboxColumnKey && (
+            <StyledTableCellLead>
+              <TableHeaderLeadSpacers
+                reserveAddButton={reserveAddButton}
+                reserveCheckbox
+              />
+              {cellContent}
+            </StyledTableCellLead>
+          )) ||
+          cellContent;
 
         return (
           <TableCell
@@ -949,36 +944,16 @@ export function Table<Row>(props: TableProps<Row>) {
     </>
   );
 
-  const renderEditCells = (row: Row): ReactNode => (
-    <>
-      {separateCheckboxColumn && <TableCell size={size} textAlign="center" />}
-      {resolvedNumbered && <TableCell size={size} textAlign="end" />}
-      {columns.map((column) => {
-        const editCellContent = renderEditCell?.(column, row, editCellContext);
-        const cellBody =
-          (checkable &&
-            rowCheckboxColumnKey !== undefined &&
-            column.key === rowCheckboxColumnKey && (
-              <StyledTableCellLead>
-                <TableHeaderLeadSpacers reserveCheckbox />
-                {editCellContent}
-              </StyledTableCellLead>
-            )) ||
-          editCellContent;
+  const renderAddCells = (): ReactNode =>
+    renderPanelCells({
+      renderCell: (column) => renderAddCell?.(column, addCellContext),
+      reserveAddButton: true,
+    });
 
-        return (
-          <TableCell
-            key={column.key}
-            nowrap={column.nowrap}
-            size={size}
-            textAlign={column.align}
-          >
-            {cellBody}
-          </TableCell>
-        );
-      })}
-    </>
-  );
+  const renderEditCells = (row: Row): ReactNode =>
+    renderPanelCells({
+      renderCell: (column) => renderEditCell?.(column, row, editCellContext),
+    });
 
   const renderColgroup = (): ReactNode => {
     if (!fixed) {
@@ -987,9 +962,6 @@ export function Table<Row>(props: TableProps<Row>) {
 
     return (
       <colgroup>
-        {separateCheckboxColumn && (
-          <StyledTableCol inlineSize={CHECKBOX_COLUMN_INLINE_SIZE} />
-        )}
         {resolvedNumbered && <StyledTableCol inlineSize={NUMBER_COLUMN_INLINE_SIZE} />}
         {columns.map((column) => (
           <StyledTableCol inlineSize={column.inlineSize} key={column.key} />
@@ -998,8 +970,7 @@ export function Table<Row>(props: TableProps<Row>) {
     );
   };
 
-  const addColumnCount =
-    (separateCheckboxColumn ? 1 : 0) + (resolvedNumbered ? 1 : 0) + columns.length;
+  const addColumnCount = (resolvedNumbered ? 1 : 0) + columns.length;
 
   const renderErrorRow = (variant: 'add' | 'edit'): ReactNode => {
     const isAdd = variant === 'add';
@@ -1192,7 +1163,6 @@ export function Table<Row>(props: TableProps<Row>) {
                 rowIndex={rowIndex}
                 rowKey={rowKey}
                 rowSelectable={isRowSelectable(row)}
-                separateCheckboxColumn={separateCheckboxColumn}
                 showRowActions={Boolean(showRowActions)}
                 size={size}
                 textSize={textSize}

@@ -31,5 +31,5 @@ type TableMemberPrefixProps = Omit<ComponentPropsWithRef<'span'>, 'className' | 
  * <TableMemberPrefix>↳</TableMemberPrefix>
  */
 export function TableMemberPrefix(props: TableMemberPrefixProps) {
-  return <StyledTableMemberPrefix aria-hidden="true" {...props} />;
+  return <StyledTableMemberPrefix {...props} aria-hidden="true" />;
 }

@@ -3,7 +3,7 @@
  * Определяет внешний вид компонента Table.
  *
  * Основные задачи:
- * 1. Типизировать пропсы через `TableStyleProps` и `TableSizePreset`
+ * 1. Типизировать пропсы через `TableStyleProps`
  * 2. Хранить габарит бокса Checkbox / Icon `tiny` в `TABLE_HEADER_MARK_BLOCK_SIZE`
  *    для спейсера выравнивания в шапке
  * 3. Предоставить дефолты `DEFAULT_TABLE_SIZE_PRESET`,
@@ -41,16 +41,10 @@ import { resolveColorMix } from '@ui/tones';
 export { splitLayoutProps } from '@ui/layout';
 
 /**
- * TableSizePreset — представляет размерный ряд таблицы.
- * Совпадает с каноническим `SizePreset` контролов проекта.
- */
-export type TableSizePreset = SizePreset;
-
-/**
  * DEFAULT_TABLE_SIZE_PRESET — задаёт размер таблицы по умолчанию.
  * Используется, когда вызывающий код не передал проп `size`.
  */
-export const DEFAULT_TABLE_SIZE_PRESET: TableSizePreset = DEFAULT_SIZE_PRESET;
+export const DEFAULT_TABLE_SIZE_PRESET: SizePreset = DEFAULT_SIZE_PRESET;
 
 /**
  * DEFAULT_TABLE_SHOW_BORDER — задаёт показ рамки таблицы по умолчанию.
@@ -71,6 +65,12 @@ export const DEFAULT_TABLE_HOVER_HIGHLIGHT = true;
 export const DEFAULT_TABLE_STRIPED = true;
 
 /**
+ * TABLE_HEADER_MARK_BLOCK_SIZE — задаёт габарит спейсера лид-слота шапки.
+ * Совпадает с боксом Checkbox `small` и окном Icon `tiny`.
+ */
+const TABLE_HEADER_MARK_BLOCK_SIZE = getSpacingValue(checkboxSizePresets.small.size);
+
+/**
  * TABLE_EDGE_BORDER_WIDTH — задаёт толщину рамки шапки и подвала таблицы.
  * Используется в `StyledTableHead`, `StyledTableFoot` и строках add-панели.
  */
@@ -87,11 +87,6 @@ const TABLE_HEAD_FILL_MIX_PERCENT = 22;
  * Слабый сдвиг, чтобы полосы не спорили с наведением.
  */
 const TABLE_STRIPE_FILL_MIX_PERCENT = 3;
-
-/**
- * TABLE_ROW_HOVER_FILL_MIX_PERCENT — задаёт долю `primary` в смеси заливки строки при наведении.
- */
-const TABLE_ROW_HOVER_FILL_MIX_PERCENT = 6;
 
 /**
  * resolveTableHeadFill — возвращает приглушённую заливку шапки и подвала.
@@ -123,20 +118,6 @@ function resolveTableStripeFill(theme: AppTheme): string {
 }
 
 /**
- * resolveTableRowHoverFill — возвращает заливку строки при наведении.
- *
- * @param theme текущая тема
- * @returns значение для CSS-свойства `background-color`
- */
-function resolveTableRowHoverFill(theme: AppTheme): string {
-  return resolveColorMix(
-    theme.colors.primary,
-    theme.colors.surface,
-    TABLE_ROW_HOVER_FILL_MIX_PERCENT
-  );
-}
-
-/**
  * TableStyleProps — представляет пропсы стилизации Table и layout-пропсы.
  *
  * @property hoverHighlight — включает подсветку строки при наведении
@@ -148,7 +129,7 @@ function resolveTableRowHoverFill(theme: AppTheme): string {
 export type TableStyleProps = LayoutProps & {
   hoverHighlight?: boolean;
   showBorder?: boolean;
-  size?: TableSizePreset;
+  size?: SizePreset;
   striped?: boolean;
 };
 
@@ -190,7 +171,7 @@ function getTableClipStyles(props: { $showBorder?: boolean; theme: AppTheme }): 
  *  - `getTableClipStyles` — рамка без тени и заливка `surface` при `$showBorder`
  *
  * При включённой рамке хром лежит на этом узле, без отдельной обёртки:
- * ScrollPort остаётся корнем скролла, отступ под трек скроллбара — в padding Card.
+ * ScrollPort остаётся корнем скролла, отступ под трек скроллбара — в отступе Card.
  */
 export const StyledTableClip = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== '$showBorder',
@@ -205,13 +186,26 @@ export const StyledTableClip = styled.div.withConfig({
 `;
 
 /**
+ * getTableRootStyles — возвращает CSS-правила корня `<table>`: полную ширину,
+ * режим раскладки колонок и `border-collapse`.
+ *
+ * @param tableLayout режим `table-layout`
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getTableRootStyles(tableLayout: 'auto' | 'fixed'): string {
+  return `
+    inline-size: 100%;
+    table-layout: ${tableLayout};
+    border-collapse: collapse;
+  `;
+}
+
+/**
  * StyledTable — задаёт нативную таблицу компонента Table.
  * Базируется на `<table>` и принимает проп `tableLayout`.
  *
- * Встроенные стили:
- *  - `inline-size: 100%` — таблица занимает ширину контейнера
- *  - `table-layout` — режим раскладки колонок; по умолчанию `auto`
- *  - `border-collapse: collapse` — общие границы ячеек без зазоров
+ * Генерация стилей:
+ *  - `getTableRootStyles` — ширина, `table-layout` и `border-collapse`
  *
  * При `table-layout: fixed` ширины колонок берутся из `colgroup` и не зависят
  * от данных: нет скачка ширины при смене содержимого.
@@ -219,9 +213,7 @@ export const StyledTableClip = styled.div.withConfig({
 export const StyledTable = styled.table.withConfig({
   shouldForwardProp: (prop) => prop !== 'tableLayout',
 })<{ tableLayout?: 'auto' | 'fixed' }>`
-  inline-size: 100%;
-  table-layout: ${(props) => props.tableLayout ?? 'auto'};
-  border-collapse: collapse;
+  ${(props) => getTableRootStyles(props.tableLayout ?? 'auto')}
 `;
 
 /**
@@ -229,8 +221,8 @@ export const StyledTable = styled.table.withConfig({
  * Базируется на `<col>` и принимает проп `inlineSize`.
  *
  * Встроенные стили:
- *  - `inline-size` и `width` — ширина колонки при переданном `inlineSize`;
- *    работает при `table-layout: fixed`
+ *  - `inline-size` и `width` — ширина колонки при переданном `inlineSize`.
+ *    Работает при `table-layout: fixed`
  */
 export const StyledTableCol = styled.col.withConfig({
   shouldForwardProp: (prop) => prop !== 'inlineSize',
@@ -244,6 +236,30 @@ export const StyledTableCol = styled.col.withConfig({
 `;
 
 /**
+ * getTableSectionEdgeStyles — возвращает CSS-правила заливки и шва секции шапки
+ * или подвала на ячейках селектора.
+ *
+ * @param cellSel селектор ячеек относительно секции
+ * @param side сторона блочного шва
+ * @param theme текущая тема
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getTableSectionEdgeStyles({
+  cellSel,
+  side,
+  theme,
+}: {
+  cellSel: string;
+  side: 'block-end' | 'block-start';
+  theme: AppTheme;
+}): string {
+  return `& ${cellSel} {
+      background-color: ${resolveTableHeadFill(theme)};
+      border-${side}: ${TABLE_EDGE_BORDER_WIDTH} solid ${theme.colors.border};
+    }`;
+}
+
+/**
  * getTableHeadStyles — возвращает CSS-правила для узла `StyledTableHead`:
  * заливку и нижнюю границу `th`, скрытие якоря при `$addHidden`.
  *
@@ -253,10 +269,7 @@ export const StyledTableCol = styled.col.withConfig({
 function getTableHeadStyles(props: { $addHidden?: boolean; theme: AppTheme }): string {
   const theme = getTheme(props);
   const styles = [
-    `& th {
-      background-color: ${resolveTableHeadFill(theme)};
-      border-block-end: ${TABLE_EDGE_BORDER_WIDTH} solid ${theme.colors.border};
-    }`,
+    getTableSectionEdgeStyles({ cellSel: 'th', side: 'block-end', theme }),
   ];
 
   if (props.$addHidden) {
@@ -289,10 +302,7 @@ export const StyledTableHead = styled.thead.withConfig({
 function getTableFootStyles(props: { $addHidden?: boolean; theme: AppTheme }): string {
   const theme = getTheme(props);
   const styles = [
-    `& td {
-      background-color: ${resolveTableHeadFill(theme)};
-      border-block-start: ${TABLE_EDGE_BORDER_WIDTH} solid ${theme.colors.border};
-    }`,
+    getTableSectionEdgeStyles({ cellSel: 'td', side: 'block-start', theme }),
   ];
 
   if (props.$addHidden) {
@@ -328,8 +338,8 @@ const TABLE_BODY_PROP_NAMES = new Set<string>(['$hoverHighlight', '$striped']);
  * 1. Берёт тему и флаги `$striped` и `$hoverHighlight`
  * 2. Кладёт нижнюю границу на ячейки тела
  * 3. При включённом `$striped` заливает чётные строки через `resolveTableStripeFill`
- * 4. При включённом `$hoverHighlight` заливает строку при наведении через
- *    `resolveTableRowHoverFill`
+ * 4. При включённом `$hoverHighlight` кладёт вуаль `theme.colors.veil` слоем
+ *    `background-image` поверх зебры
  * 5. У последней строки снимает нижнюю границу, чтобы не дублировать шов с подвалом
  * 6. Склеивает правила через перенос строки
  *
@@ -359,7 +369,7 @@ function getTableBodyStyles(props: {
   if (props.$hoverHighlight ?? DEFAULT_TABLE_HOVER_HIGHLIGHT) {
     styles.push(
       `& tr:hover {
-        background-color: ${resolveTableRowHoverFill(theme)};
+        background-image: linear-gradient(${theme.colors.veil}, ${theme.colors.veil});
       }`
     );
   }
@@ -400,7 +410,7 @@ const TABLE_ROW_PROP_NAMES = new Set<string>(['$editHidden', 'size']);
  */
 export const StyledTableRow = styled.tr.withConfig({
   shouldForwardProp: (prop) => !TABLE_ROW_PROP_NAMES.has(prop),
-})<{ $editHidden?: boolean; size?: TableSizePreset }>`
+})<{ $editHidden?: boolean; size?: SizePreset }>`
   block-size: ${(props) => getMinBlockSize(props.size ?? DEFAULT_TABLE_SIZE_PRESET)};
   ${(props) => props.$editHidden && 'visibility: hidden;'}
 `;
@@ -497,14 +507,16 @@ function getTableRowPanelTableStyles(props: { theme: AppTheme }): string {
   const theme = getTheme(props);
 
   return `
-    & [data-add-header] th {
-      background-color: ${resolveTableHeadFill(theme)};
-      border-block-end: ${TABLE_EDGE_BORDER_WIDTH} solid ${theme.colors.border};
-    }
-    & [data-add-footer] td {
-      background-color: ${resolveTableHeadFill(theme)};
-      border-block-start: ${TABLE_EDGE_BORDER_WIDTH} solid ${theme.colors.border};
-    }
+    ${getTableSectionEdgeStyles({
+      cellSel: '[data-add-header] th',
+      side: 'block-end',
+      theme,
+    })}
+    ${getTableSectionEdgeStyles({
+      cellSel: '[data-add-footer] td',
+      side: 'block-start',
+      theme,
+    })}
   `;
 }
 
@@ -512,12 +524,8 @@ function getTableRowPanelTableStyles(props: { theme: AppTheme }): string {
  * StyledTableRowPanelTable — задаёт внутреннюю таблицу add- и edit-панели.
  * Базируется на `<table>` и принимает проп `tableLayout`.
  *
- * Встроенные стили:
- *  - `inline-size: 100%` — совпадает с шириной панели
- *  - `table-layout` — режим раскладки колонок; по умолчанию `fixed`
- *  - `border-collapse: collapse` — общие границы ячеек без зазоров
- *
  * Генерация стилей:
+ *  - `getTableRootStyles` — ширина, `table-layout` и `border-collapse`
  *  - `getTableRowPanelTableStyles` — заливка и границы шапки и подвала панели
  *
  * Собственной рамки у таблицы нет: хром несёт `StyledTableRowPanel`.
@@ -527,9 +535,7 @@ function getTableRowPanelTableStyles(props: { theme: AppTheme }): string {
 export const StyledTableRowPanelTable = styled.table.withConfig({
   shouldForwardProp: (prop) => prop !== 'tableLayout',
 })<{ tableLayout?: 'auto' | 'fixed' }>`
-  inline-size: 100%;
-  table-layout: ${(props) => props.tableLayout ?? 'fixed'};
-  border-collapse: collapse;
+  ${(props) => getTableRootStyles(props.tableLayout ?? 'fixed')}
   ${(props) => getTableRowPanelTableStyles(props)}
 `;
 
@@ -540,23 +546,15 @@ export const StyledTableRowPanelTable = styled.table.withConfig({
  * Встроенные стили:
  *  - `padding-block` и `padding-inline` — отступы содержимого по размеру таблицы
  *  - `vertical-align: middle` — выравнивание полоски ошибки по вертикали
- *  - `border-block-end: none` — без нижнего шва: строка замыкает панель
  */
 export const StyledTablePanelErrorCell = styled.td.withConfig({
   shouldForwardProp: (prop) => prop !== 'size',
-})<{ size?: TableSizePreset }>`
+})<{ size?: SizePreset }>`
   padding-block: ${getSpacingValue(8)};
   padding-inline: ${(props) =>
     getPaddingInline(props.size ?? DEFAULT_TABLE_SIZE_PRESET)};
   vertical-align: middle;
-  border-block-end: none;
 `;
-
-/**
- * TABLE_HEADER_MARK_BLOCK_SIZE — задаёт габарит спейсера лид-слота шапки.
- * Совпадает с боксом Checkbox `small` и окном Icon `tiny`.
- */
-const TABLE_HEADER_MARK_BLOCK_SIZE = getSpacingValue(checkboxSizePresets.small.size);
 
 /**
  * StyledTableHeaderMarkSpacer — задаёт спейсер лид-слота шапки компонента Table.
@@ -568,8 +566,8 @@ const TABLE_HEADER_MARK_BLOCK_SIZE = getSpacingValue(checkboxSizePresets.small.s
  *  - `inline-size` и `block-size` — габарит по `TABLE_HEADER_MARK_BLOCK_SIZE`
  *
  * Элемент `colgroup` выравнивает ширину колонок, но lead внутри keyword-ячейки
- * должен совпадать с интерактивной шапкой; без спейсера поля add съезжают
- * относительно заголовка Keyword.
+ * должен совпадать с интерактивной шапкой. Без спейсера поля add съезжают
+ * относительно заголовка keyword-колонки.
  */
 export const StyledTableHeaderMarkSpacer = styled.span`
   flex-shrink: 0;

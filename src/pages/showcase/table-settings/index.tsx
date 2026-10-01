@@ -24,8 +24,7 @@ import { SizeListbox } from '../size-listbox';
  * TableWidgetState — представляет состояние настроек компонента Table в витрине дизайн-системы.
  * Ключи совпадают с именами пропов компонента Table, кроме витринных ключей:
  * `showIndexColumn` управляет колонкой нумерации каталога в превью, `continuousNumbering`
- * задаёт сквозную нумерацию членов групп, `separateCheckboxColumn` выносит чекбокс
- * в отдельную колонку.
+ * задаёт сквозную нумерацию членов групп.
  * Используется для синхронизации значений между панелью управления и демонстрационной таблицей.
  *
  * @property checkable — включает режим выбора строк
@@ -33,8 +32,6 @@ import { SizeListbox } from '../size-listbox';
  *   нумерация сбрасывается в каждой группе
  * @property editable — включает добавление и редактирование строк
  * @property hoverHighlight — включает подсветку строки при наведении
- * @property separateCheckboxColumn — витринный ключ отдельной колонки чекбокса. Выключенный —
- *   чекбокс рендерится в колонке Product
  * @property showBorder — включает рамку вокруг таблицы
  * @property showIndexColumn — витринный ключ показа колонки нумерации каталога. Выключенный —
  *   таблица без колонки `#`
@@ -46,7 +43,6 @@ export type TableWidgetState = {
   continuousNumbering: boolean;
   editable: boolean;
   hoverHighlight: boolean;
-  separateCheckboxColumn: boolean;
   showBorder: boolean;
   showIndexColumn: boolean;
   size: SizePreset;
@@ -129,17 +125,6 @@ export function TableSettings({ onChange, state }: TableSettingsProps) {
       >
         Checkable
       </Checkbox>
-
-      {state.checkable && (
-        <Checkbox
-          checked={state.separateCheckboxColumn}
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            onChange('separateCheckboxColumn', event.target.checked)
-          }
-        >
-          Separate checkbox column
-        </Checkbox>
-      )}
 
       <Checkbox
         checked={state.hoverHighlight}

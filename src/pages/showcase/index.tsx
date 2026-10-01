@@ -632,7 +632,6 @@ const DEFAULT_TABLE_STATE: TableWidgetState = {
   continuousNumbering: false,
   editable: true,
   hoverHighlight: DEFAULT_TABLE_HOVER_HIGHLIGHT,
-  separateCheckboxColumn: false,
   showBorder: DEFAULT_TABLE_SHOW_BORDER,
   showIndexColumn: true,
   size: DEFAULT_TABLE_SIZE_PRESET,

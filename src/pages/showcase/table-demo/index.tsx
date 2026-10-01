@@ -235,7 +235,7 @@ function buildCatalogColumns(
         }
 
         return (
-          <TableNestedCell nestDepth={row.nestDepth ?? 1}>
+          <TableNestedCell nestDepth={row.nestDepth === 2 ? 2 : 1}>
             <TableMemberPrefix>↳</TableMemberPrefix>
             <Text ellipsis size={textSize}>
               {row.product}
@@ -826,13 +826,9 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
           Delete
         </Button>
       )}
+      rowCheckboxColumnKey="product"
       selectedKeys={selectedKeys}
-      {...(settings.separateCheckboxColumn
-        ? { selectedRowActionsColumnKey: 'product' as const }
-        : {
-            rowCheckboxColumnKey: 'product' as const,
-            selectedRowActionsColumnKey: 'product' as const,
-          })}
+      selectedRowActionsColumnKey="product"
       onSelectedKeysChange={setSelectedKeys}
     />
   );

@@ -27,14 +27,14 @@ import { StyledTableNestedCell } from './table-nested-cell.styles';
  */
 type TableNestedCellProps = {
   children: ReactNode;
-  nestDepth: number;
+  nestDepth: 1 | 2;
 };
 
 /**
  * TableNestedCell — отображает вложенную ячейку member-строки таблицы.
  *
  * @example
- * <TableNestedCell nestDepth={row.nestDepth ?? 1}>
+ * <TableNestedCell nestDepth={row.nestDepth === 2 ? 2 : 1}>
  *   <TableMemberPrefix>↳</TableMemberPrefix>
  *   <Text ellipsis size={textSize}>
  *     {row.product}
