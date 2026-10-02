@@ -30,7 +30,11 @@ function getTableMemberPrefixStyles(props: { theme: AppTheme }): string {
  *
  * Генерация стилей:
  *  - `getTableMemberPrefixStyles` — приглушённый цвет из темы
+ *  - `$reserve` — прячет глиф через `visibility: hidden`, ширину оставляет
  */
-export const StyledTableMemberPrefix = styled.span`
+export const StyledTableMemberPrefix = styled.span.withConfig({
+  shouldForwardProp: (prop) => prop !== '$reserve',
+})<{ $reserve?: boolean }>`
   ${(props) => getTableMemberPrefixStyles(props)}
+  ${(props) => props.$reserve && 'visibility: hidden;'}
 `;

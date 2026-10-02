@@ -27,7 +27,6 @@ import {
   TableGroupCell,
   TableInlineField,
   TableMemberPrefix,
-  TableNestedCell,
   computeTableColumnInlineSizes,
   type TableAddRowActiveProps,
   type TableAddRowSource,
@@ -73,6 +72,27 @@ const GROUP_EXPANDER_SIZE_PRESET: IconSizePreset = 'tiny';
  * Используется в expander голов групп демо-таблицы.
  */
 const GROUP_EXPANDER_SHAPE: IconShapePreset = 'rounded';
+
+/**
+ * CatalogMemberProduct — собирает подпись товара в колонке шеврона родителя.
+ * При `nestDepth` 0 значок стоит первым. При 1 перед ним резерв той же ширины,
+ * чтобы значок встал под шевроном вложенной головы.
+ */
+function CatalogMemberProduct({
+  children,
+  nestDepth,
+}: {
+  children: ReactNode;
+  nestDepth: number;
+}) {
+  return (
+    <TableGroupCell>
+      {nestDepth > 0 && <TableMemberPrefix reserve>↳</TableMemberPrefix>}
+      <TableMemberPrefix>↳</TableMemberPrefix>
+      {children}
+    </TableGroupCell>
+  );
+}
 
 /**
  * CATALOG_TABLE_DEMO_ARIA_LABEL — задаёт `aria-label` демо-таблицы каталога.
@@ -216,18 +236,9 @@ function buildCatalogColumns(
             </Text>
           );
 
-          if (nestDepth > 0) {
-            return (
-              <TableGroupCell>
-                <TableMemberPrefix>↳</TableMemberPrefix>
-                {expander}
-                {label}
-              </TableGroupCell>
-            );
-          }
-
           return (
             <TableGroupCell>
+              {nestDepth > 0 && <TableMemberPrefix>↳</TableMemberPrefix>}
               {expander}
               {label}
             </TableGroupCell>
@@ -235,12 +246,11 @@ function buildCatalogColumns(
         }
 
         return (
-          <TableNestedCell nestDepth={row.nestDepth === 2 ? 2 : 1}>
-            <TableMemberPrefix>↳</TableMemberPrefix>
+          <CatalogMemberProduct nestDepth={row.nestDepth ?? 0}>
             <Text ellipsis size={textSize}>
               {row.product}
             </Text>
-          </TableNestedCell>
+          </CatalogMemberProduct>
         );
       },
     },
@@ -685,10 +695,7 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
         );
 
         return (
-          <TableNestedCell nestDepth={1}>
-            <TableMemberPrefix>↳</TableMemberPrefix>
-            {field}
-          </TableNestedCell>
+          <CatalogMemberProduct nestDepth={row.nestDepth ?? 0}>{field}</CatalogMemberProduct>
         );
       }
 

@@ -83,8 +83,9 @@ const TABLE_EDGE_BORDER_WIDTH = '2px';
 const TABLE_HEAD_FILL_MIX_PERCENT = 22;
 
 /**
- * TABLE_STRIPE_FILL_MIX_PERCENT — задаёт долю `default` в смеси заливки чётной строки.
- * Слабый сдвиг, чтобы полосы не спорили с наведением.
+ * TABLE_STRIPE_FILL_MIX_PERCENT — задаёт долю краски в смеси полоски и наведения.
+ * Полоска мешает `default` в `surface`. Наведение мешает `primary` в прозрачный слой
+ * и этим слоем заменяет заливку строки.
  */
 const TABLE_STRIPE_FILL_MIX_PERCENT = 3;
 
@@ -113,6 +114,22 @@ function resolveTableStripeFill(theme: AppTheme): string {
   return resolveColorMix(
     theme.colors.default,
     theme.colors.surface,
+    TABLE_STRIPE_FILL_MIX_PERCENT
+  );
+}
+
+/**
+ * resolveTableRowHoverFill — возвращает слой наведения строки.
+ * Доля `primary` та же, что у полоски. База прозрачная: слой кладётся
+ * шорткатом `background` на `surface` и заменяет полоску, а не ложится сверху.
+ *
+ * @param theme текущая тема
+ * @returns цвет слоя `linear-gradient` для `background`
+ */
+function resolveTableRowHoverFill(theme: AppTheme): string {
+  return resolveColorMix(
+    theme.colors.primary,
+    'transparent',
     TABLE_STRIPE_FILL_MIX_PERCENT
   );
 }
@@ -338,8 +355,9 @@ const TABLE_BODY_PROP_NAMES = new Set<string>(['$hoverHighlight', '$striped']);
  * 1. Берёт тему и флаги `$striped` и `$hoverHighlight`
  * 2. Кладёт нижнюю границу на ячейки тела
  * 3. При включённом `$striped` заливает чётные строки через `resolveTableStripeFill`
- * 4. При включённом `$hoverHighlight` кладёт вуаль `theme.colors.veil` слоем
- *    `background-image` поверх зебры
+ * 4. При включённом `$hoverHighlight` заменяет заливку строки слоем `primary`
+ *    той же доли, что у полоски: шорткат `background` ставит `surface` и градиент,
+ *    полоска под слоем не остаётся
  * 5. У последней строки снимает нижнюю границу, чтобы не дублировать шов с подвалом
  * 6. Склеивает правила через перенос строки
  *
@@ -367,9 +385,11 @@ function getTableBodyStyles(props: {
   }
 
   if (props.$hoverHighlight ?? DEFAULT_TABLE_HOVER_HIGHLIGHT) {
+    const hoverFill = resolveTableRowHoverFill(theme);
+
     styles.push(
       `& tr:hover {
-        background-image: linear-gradient(${theme.colors.veil}, ${theme.colors.veil});
+        background: linear-gradient(${hoverFill}, ${hoverFill}) ${theme.colors.surface};
       }`
     );
   }

@@ -41,7 +41,8 @@ export type CatalogTableRowKind = 'brand-head' | 'group-head' | 'group-member';
  * @property groupExpanded — признак раскрытой группы для головы группы
  * @property groupId — идентификатор группы строки
  * @property indexLabel — текст колонки нумерации для member-строк
- * @property nestDepth — глубина вложенности для голов подгрупп и member-строк
+ * @property nestDepth — сколько колонок значка пропустить до шеврона родителя.
+ *   `0` — шеврон родителя в первой колонке. `1` — шеврон родителя стоит после значка
  * @property price — значение колонки Price
  * @property product — значение колонки Product
  * @property rowId — стабильный ключ строки для Table
@@ -303,7 +304,7 @@ export function buildCatalogTableRows(
           dataRowKey: member.id,
           groupId,
           indexLabel: String(memberIndex),
-          nestDepth: 1,
+          nestDepth: 0,
           price: member.price,
           product: member.product,
           rowId: catalogTableRowId('group-member', groupId, member.id),

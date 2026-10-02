@@ -4,6 +4,7 @@
  *
  * Поддерживает:
  *  - содержимое через `children`
+ *  - резерв колонки значка через проп `reserve`. Глиф не виден, ширина та же
  *
  * Основные задачи:
  * 1. Экспортировать компонент TableMemberPrefix
@@ -21,8 +22,12 @@ import { StyledTableMemberPrefix } from './table-member-prefix.styles';
 
 /**
  * TableMemberPrefixProps — представляет пропсы компонента TableMemberPrefix.
+ *
+ * @property reserve — включает невидимый резерв той же ширины, что у значка
  */
-type TableMemberPrefixProps = Omit<ComponentPropsWithRef<'span'>, 'className' | 'style'>;
+type TableMemberPrefixProps = Omit<ComponentPropsWithRef<'span'>, 'className' | 'style'> & {
+  reserve?: boolean;
+};
 
 /**
  * TableMemberPrefix — отображает префикс member-строки таблицы.
@@ -30,6 +35,6 @@ type TableMemberPrefixProps = Omit<ComponentPropsWithRef<'span'>, 'className' | 
  * @example
  * <TableMemberPrefix>↳</TableMemberPrefix>
  */
-export function TableMemberPrefix(props: TableMemberPrefixProps) {
-  return <StyledTableMemberPrefix {...props} aria-hidden="true" />;
+export function TableMemberPrefix({ reserve, ...props }: TableMemberPrefixProps) {
+  return <StyledTableMemberPrefix $reserve={reserve} {...props} aria-hidden="true" />;
 }
