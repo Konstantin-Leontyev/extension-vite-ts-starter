@@ -25,7 +25,10 @@ import { StyledTableMemberPrefix } from './table-member-prefix.styles';
  *
  * @property reserve — включает невидимый резерв той же ширины, что у значка
  */
-type TableMemberPrefixProps = Omit<ComponentPropsWithRef<'span'>, 'className' | 'style'> & {
+type TableMemberPrefixProps = Omit<
+  ComponentPropsWithRef<'span'>,
+  'className' | 'style'
+> & {
   reserve?: boolean;
 };
 

@@ -7,7 +7,7 @@
  *  - горизонтальное выравнивание через проп `textAlign`
  *  - обрезку с многоточием через проп `ellipsis`
  *  - запрет переноса строк через проп `nowrap`
- *  - ячейку шапки или подвала через проп `head`
+ *  - ячейку шапки через проп `head`
  *  - область заголовка через проп `scope`
  *
  * Основные задачи:
@@ -29,7 +29,7 @@ import { StyledTableCell, type TableCellStyleProps } from './table-cell.styles';
  * TableCellHeadProps — представляет пропсы заголовочной ячейки TableCell.
  * Поле `scope` допустимо только вместе с `head`.
  *
- * @property head — включает ячейку шапки или подвала: корневой тег становится `<th>`
+ * @property head — включает ячейку шапки: корневой тег становится `<th>`
  * @property scope — область заголовка для ячейки шапки
  */
 type TableCellHeadProps =
@@ -64,7 +64,7 @@ type TableCellProps = TableCellStyleProps &
  * </TableCell>
  */
 export function TableCell({ head, ...props }: TableCellProps) {
-  return <StyledTableCell as={head ? 'th' : undefined} {...props} />;
+  return <StyledTableCell as={head ? 'th' : undefined} head={head} {...props} />;
 }
 
 export { StyledTableCellLead, type TableCellAlign } from './table-cell.styles';

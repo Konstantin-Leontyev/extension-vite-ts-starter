@@ -328,7 +328,8 @@ export function getOpenControlSelectableRowSurfaceStyles(
 
 /**
  * getOpenControlActiveRowHighlightStyles — возвращает CSS-правила подсветки
- * активной строки open-control: цвет текста и слота галочки на `[data-active='true']`.
+ * активной строки open-control: цвет текста на `[data-active='true']`.
+ * Галочка этот цвет наследует: свой `color` она пишет только вне активной строки.
  *
  * @param theme текущая тема
  * @returns CSS-правила, каждое с новой строки
@@ -336,9 +337,6 @@ export function getOpenControlSelectableRowSurfaceStyles(
 export function getOpenControlActiveRowHighlightStyles(theme: AppTheme): string {
   return `
     &[data-active='true'] {
-      color: ${theme.colors.inverse};
-    }
-    &[data-active='true'] [data-slot='check'] {
       color: ${theme.colors.inverse};
     }
   `;

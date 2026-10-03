@@ -4,7 +4,7 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `ButtonStyleProps`
- * 2. Предоставить styled-узлы `StyledButtonRoot` и `StyledButton`
+ * 2. Предоставить styled-узлы `StyledButtonRoot`, `StyledButton` и `StyledButtonLabel`
  * 3. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
@@ -30,6 +30,7 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
+import { Text } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import {
   DEFAULT_TONE,
@@ -162,18 +163,17 @@ const DEFAULT_BUTTON_ACTIVE = false;
 
 /**
  * getButtonSplitStyles — возвращает CSS-правила для узла `StyledButton`:
- * раскладку позиции иконки, отступ лейбла и канал состояний секции иконки.
+ * раскладку позиции иконки и канал состояний секции иконки.
  * Статику секции красит внутренний Icon своими пропсами, фон лейбла —
- * собственная заливка узла.
+ * собственная заливка узла. Отступ лейбла пишет `StyledButtonLabel`.
  *
  * Как работает:
  * 1. Кладёт раскладку позиции через `getIconPositionStyles`: колонки под
  *    позицию `[data-slot='icon']` и `block-size: 100%` на слоте
- * 2. Переносит `padding-inline` с узла на слот лейбла — секция иконки прижата к краю
- * 3. На наведении и `:focus-visible` выставляет `--icon-state-background`
+ * 2. На наведении и `:focus-visible` выставляет `--icon-state-background`
  *    через `resolveIconStateBackground`: цветной тон — сдвиг к `shade`,
  *    нейтральный — вуаль. Тело на этих состояниях заливку не меняет
- * 4. При `active` фиксирует значение канала: для цветной секции — сдвигом
+ * 3. При `active` фиксирует значение канала: для цветной секции — сдвигом
  *    тона к `shade`, для нейтральной — смесь `primary` с `surface` через
  *    `VARIANT_SURFACE_MIX_PERCENT`
  *
@@ -182,19 +182,12 @@ const DEFAULT_BUTTON_ACTIVE = false;
  */
 function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): string {
   const theme = getTheme(props);
-  const {
-    active = DEFAULT_BUTTON_ACTIVE,
-    iconTone = DEFAULT_TONE,
-    size = DEFAULT_SIZE_PRESET,
-  } = props;
+  const { active = DEFAULT_BUTTON_ACTIVE, iconTone = DEFAULT_TONE } = props;
   const iconColorKey = getToneColorKey(iconTone);
   const hoverStateBackground = resolveIconStateBackground(theme, iconTone);
 
   const styles = [
     getIconPositionStyles(),
-    `[data-slot='label'] {`,
-    `padding-inline: ${getPaddingInline(size)};`,
-    `}`,
     `&:not(:disabled):hover {`,
     `--icon-state-background: ${hoverStateBackground};`,
     `}`,
@@ -235,7 +228,7 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
  * 2. На `:active` и при `active` красит тело заливкой нажатия и дописывает
  *    `shadow.pressed` через `getBorderStyles`. Подъём `shadow.surface` не
  *    снимается. Положение узла не меняется
- * 3. При `hasIcon` делегирует раскладку позиции, отступ лейбла и канал
+ * 3. При `hasIcon` делегирует раскладку позиции и канал
  *    секции иконки в `getButtonSplitStyles`
  * 4. Без иконки кладёт `padding-inline` на узел
  *
@@ -316,8 +309,9 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
  *  - `getButtonStyles` — размер, рамка с тенью через `getBorderStyles`,
  *    радиус, цвет, заливка. При иконке — раскладка и канал секции
  *
- * Слоты: отступ лейбла и канал состояний секции иконки задаёт узел
- * по `[data-slot]`. Статику секции красит внутренний Icon.
+ * Слоты: канал состояний секции иконки задаёт узел по `[data-slot='icon']`.
+ * Статику секции красит внутренний Icon. Отступ лейбла при секции иконки —
+ * на `StyledButtonLabel`.
  */
 export const StyledButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !BUTTON_PROP_NAMES.has(prop),
@@ -329,4 +323,47 @@ export const StyledButton = styled.button.withConfig({
   min-inline-size: 0;
   overflow: hidden;
   ${(props) => getButtonStyles(props)}
+`;
+
+/**
+ * ButtonLabelStyleProps — представляет пропсы стилизации слота лейбла.
+ * Проп называется `controlSize`, потому что у Text проп `size` задаёт типографику.
+ *
+ * @property controlSize — размер кнопки, из которого считается `padding-inline`
+ */
+type ButtonLabelStyleProps = {
+  controlSize?: SizePreset;
+};
+
+/**
+ * BUTTON_LABEL_PROP_NAMES — хранит имена пропсов узла `StyledButtonLabel`.
+ */
+const BUTTON_LABEL_PROP_NAMES = new Set<string>(['controlSize']);
+
+/**
+ * getButtonLabelStyles — возвращает CSS-правила для узла `StyledButtonLabel`:
+ * `padding-inline` лейбла при секции иконки.
+ * Тот же отступ, что кнопка без иконки кладёт на себя через `getPaddingInline`.
+ *
+ * @param props пропсы стилизации слота лейбла
+ * @returns CSS-правила, каждое с новой строки
+ */
+function getButtonLabelStyles(props: ButtonLabelStyleProps): string {
+  return `padding-inline: ${getPaddingInline(props.controlSize ?? DEFAULT_SIZE_PRESET)};`;
+}
+
+/**
+ * StyledButtonLabel — задаёт слот лейбла компонента Button при секции иконки.
+ * Базируется на Text, тот же `<span>` без обёртки, и принимает проп `controlSize`.
+ *
+ * Генерация стилей:
+ *  - `getButtonLabelStyles` — `padding-inline` по размеру кнопки
+ *
+ * Типографику и обрезку по-прежнему пишет Text. Секция иконки прижата к краю,
+ * потому что отступ сидит на лейбле, а не на кнопке.
+ */
+export const StyledButtonLabel = styled(Text).withConfig({
+  shouldForwardProp: (prop) => !BUTTON_LABEL_PROP_NAMES.has(prop),
+})<ButtonLabelStyleProps>`
+  ${(props) => getButtonLabelStyles(props)}
 `;

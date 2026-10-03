@@ -99,10 +99,10 @@ import {
   StyledTableHead,
   StyledTableHeaderKeywordBar,
   StyledTableHeaderMarkSpacer,
+  StyledTablePanel,
   StyledTablePanelErrorCell,
   StyledTableRow,
   StyledTableRowPanel,
-  StyledTableRowPanelTable,
   splitLayoutProps,
   type TableStyleProps,
 } from './table.styles';
@@ -1058,12 +1058,12 @@ export function Table<Row>(props: TableProps<Row>) {
         ref={panelRef}
         role="dialog"
       >
-        <StyledTableRowPanelTable tableLayout={fixed ? 'fixed' : 'auto'}>
+        <StyledTablePanel tableLayout={fixed ? 'fixed' : 'auto'}>
           {renderColgroup()}
           <tbody>
             {addRowSource === 'head' ? (
               <>
-                <StyledTableRow data-add-header size={size}>
+                <StyledTableRow size={size}>
                   {renderHeaderCells(true, 'head', false)}
                 </StyledTableRow>
                 <StyledTableRow size={size}>{renderAddCells()}</StyledTableRow>
@@ -1079,7 +1079,7 @@ export function Table<Row>(props: TableProps<Row>) {
               </>
             )}
           </tbody>
-        </StyledTableRowPanelTable>
+        </StyledTablePanel>
       </StyledTableRowPanel>
     </AnchoredPanel>
   );
@@ -1103,13 +1103,13 @@ export function Table<Row>(props: TableProps<Row>) {
           ref={editPanelRef}
           role="dialog"
         >
-          <StyledTableRowPanelTable tableLayout={fixed ? 'fixed' : 'auto'}>
+          <StyledTablePanel tableLayout={fixed ? 'fixed' : 'auto'}>
             {renderColgroup()}
             <tbody>
               <StyledTableRow size={size}>{renderEditCells(editingRow)}</StyledTableRow>
               {renderErrorRow('edit')}
             </tbody>
-          </StyledTableRowPanelTable>
+          </StyledTablePanel>
         </StyledTableRowPanel>
       </AnchoredPanel>
     ) : null;

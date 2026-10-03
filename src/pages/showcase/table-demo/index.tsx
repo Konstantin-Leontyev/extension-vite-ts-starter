@@ -695,7 +695,9 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
         );
 
         return (
-          <CatalogMemberProduct nestDepth={row.nestDepth ?? 0}>{field}</CatalogMemberProduct>
+          <CatalogMemberProduct nestDepth={row.nestDepth ?? 0}>
+            {field}
+          </CatalogMemberProduct>
         );
       }
 

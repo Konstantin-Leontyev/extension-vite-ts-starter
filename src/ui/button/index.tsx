@@ -43,6 +43,7 @@ import { type TonePreset } from '@ui/tones';
 
 import {
   StyledButton,
+  StyledButtonLabel,
   StyledButtonRoot,
   splitLayoutProps,
   type ButtonStyleProps,
@@ -160,15 +161,21 @@ export function Button({
         {...restProps}
       >
         {iconPosition === 'start' && iconNode}
-        <Text
-          align="center"
-          data-slot="label"
-          ellipsis
-          size={getTextSize(size)}
-          tone={textTone}
-        >
-          {children}
-        </Text>
+        {hasIcon ? (
+          <StyledButtonLabel
+            align="center"
+            controlSize={size}
+            ellipsis
+            size={getTextSize(size)}
+            tone={textTone}
+          >
+            {children}
+          </StyledButtonLabel>
+        ) : (
+          <Text align="center" ellipsis size={getTextSize(size)} tone={textTone}>
+            {children}
+          </Text>
+        )}
         {iconPosition === 'end' && iconNode}
       </StyledButton>
     </StyledButtonRoot>

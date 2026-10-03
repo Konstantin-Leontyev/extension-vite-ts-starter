@@ -4,11 +4,13 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `TableCellAlign` и `TableCellStyleProps`
- * 2. Предоставить styled-узлы `StyledTableCell` и `StyledTableCellLead`
+ * 2. Предоставить функции `getTableCellEdgeStyles`
+ * 3. Предоставить styled-узлы `StyledTableCell` и `StyledTableCellLead`
  *
  * Потребители:
  *  - `src/ui/table/table-cell/index.tsx` — собирает компонент TableCell и реэкспортирует публичное API
  *  - `src/ui/table/index.tsx` — использует `StyledTableCellLead` в раскладке строк Table
+ *  - `src/ui/table/table.styles.ts` — берёт `getTableCellEdgeStyles` для шва подвала
  */
 
 import styled from 'styled-components';
@@ -16,6 +18,55 @@ import styled from 'styled-components';
 import { DEFAULT_SIZE_PRESET, getPaddingInline, type SizePreset } from '@ui/presets';
 import { getSpacingValue } from '@ui/spacing';
 import { getEllipsisStyles } from '@ui/text';
+import { getTheme, type AppTheme } from '@ui/theme';
+import { resolveColorMix } from '@ui/tones';
+
+/**
+ * TABLE_EDGE_BORDER_WIDTH — задаёт толщину шва секции шапки и подвала.
+ * Используется в `getTableCellEdgeStyles`.
+ */
+const TABLE_EDGE_BORDER_WIDTH = '2px';
+
+/**
+ * TABLE_HEAD_FILL_MIX_PERCENT — задаёт долю цвета рамки в смеси заливки шапки и подвала.
+ * Подбирает приглушённый фон относительно `surface` Card.
+ */
+const TABLE_HEAD_FILL_MIX_PERCENT = 22;
+
+/**
+ * resolveTableHeadFill — возвращает приглушённую заливку шапки и подвала.
+ * Контрастирует с телом таблицы на поверхности Card.
+ *
+ * @param theme текущая тема
+ * @returns значение для CSS-свойства `background-color`
+ */
+function resolveTableHeadFill(theme: AppTheme): string {
+  return resolveColorMix(
+    theme.colors.border,
+    theme.colors.surface,
+    TABLE_HEAD_FILL_MIX_PERCENT
+  );
+}
+
+/**
+ * getTableCellEdgeStyles — возвращает CSS-правила заливки и шва секции шапки
+ * или подвала.
+ * Ячейка с `head` пишет нижний шов сама. Подвал ещё адресует ячейки селектором
+ * и берёт те же CSS-правила, чтобы толщина и заливка не разъехались.
+ *
+ * @param theme текущая тема
+ * @param side сторона блочного шва
+ * @returns CSS-правила, каждое с новой строки
+ */
+export function getTableCellEdgeStyles(
+  theme: AppTheme,
+  side: 'block-end' | 'block-start'
+): string {
+  return `
+    background-color: ${resolveTableHeadFill(theme)};
+    border-${side}: ${TABLE_EDGE_BORDER_WIDTH} solid ${theme.colors.border};
+  `;
+}
 
 /**
  * TableCellAlign — представляет горизонтальное выравнивание содержимого ячейки.
@@ -44,10 +95,20 @@ export type TableCellStyleProps = {
 };
 
 /**
+ * TableCellStyledProps — представляет пропсы стилизации узла `StyledTableCell`.
+ *
+ * @property head — включает заливку и нижний шов секции шапки
+ */
+type TableCellStyledProps = TableCellStyleProps & {
+  head?: boolean;
+};
+
+/**
  * TABLE_CELL_PROP_NAMES — хранит имена пропсов стилизации TableCell.
  */
 const TABLE_CELL_PROP_NAMES = new Set<string>([
   'ellipsis',
+  'head',
   'nowrap',
   'size',
   'textAlign',
@@ -55,18 +116,20 @@ const TABLE_CELL_PROP_NAMES = new Set<string>([
 
 /**
  * getTableCellStyles — возвращает CSS-правила для корня `StyledTableCell`: отступы,
- * выравнивание и режим переноса или обрезки.
+ * выравнивание, режим переноса или обрезки и при `head` заливку с нижним швом
+ * секции шапки.
  *
  * Как работает:
  * 1. Берёт `size` или `DEFAULT_SIZE_PRESET` и задаёт `padding-inline`
  * 2. Задаёт `vertical-align: middle` и `text-align` по `textAlign`
  * 3. При `ellipsis` подставляет `getEllipsisStyles`, при `nowrap` — `white-space: nowrap`,
  *    иначе `overflow-wrap: break-word`
+ * 4. При `head` добавляет заливку и нижний шов секции через `getTableCellEdgeStyles`
  *
- * @param props пропсы стилизации ячейки
+ * @param props пропсы стилизации ячейки и тема
  * @returns CSS-правила, каждое с новой строки
  */
-function getTableCellStyles(props: TableCellStyleProps): string {
+function getTableCellStyles(props: TableCellStyledProps & { theme: AppTheme }): string {
   const size = props.size ?? DEFAULT_SIZE_PRESET;
   const styles = [
     `padding-inline: ${getPaddingInline(size)};`,
@@ -82,15 +145,20 @@ function getTableCellStyles(props: TableCellStyleProps): string {
     styles.push('overflow-wrap: break-word;');
   }
 
+  if (props.head) {
+    styles.push(getTableCellEdgeStyles(getTheme(props), 'block-end'));
+  }
+
   return styles.join('\n');
 }
 
 /**
  * StyledTableCell — задаёт корневой узел компонента TableCell.
- * Базируется на `<td>` и поддерживает все пропсы из `TableCellStyleProps`.
+ * Базируется на `<td>` и поддерживает все пропсы из `TableCellStyledProps`.
  *
  * Генерация стилей:
- *  - `getTableCellStyles` — отступы, выравнивание, перенос или обрезка
+ *  - `getTableCellStyles` — отступы, выравнивание, перенос или обрезка,
+ *    при `head` — заливка и нижний шов секции шапки
  *
  * На `td` и `th` нельзя задавать `display: grid` или `display: flex`: теряется
  * форматный контекст ячейки таблицы, высота строки и `vertical-align`. Горизонталь
@@ -99,7 +167,7 @@ function getTableCellStyles(props: TableCellStyleProps): string {
  */
 export const StyledTableCell = styled.td.withConfig({
   shouldForwardProp: (prop) => !TABLE_CELL_PROP_NAMES.has(prop),
-})<TableCellStyleProps>`
+})<TableCellStyledProps>`
   ${(props) => getTableCellStyles(props)}
 `;
 

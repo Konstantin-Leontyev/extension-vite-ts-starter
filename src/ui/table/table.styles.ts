@@ -10,7 +10,7 @@
  *    `DEFAULT_TABLE_SHOW_BORDER`, `DEFAULT_TABLE_HOVER_HIGHLIGHT` и `DEFAULT_TABLE_STRIPED`
  * 4. Предоставить styled-узлы `StyledTableClip`, `StyledTable`, `StyledTableCol`,
  *    `StyledTableHead`, `StyledTableFoot`, `StyledTableBody`, `StyledTableRow`,
- *    `StyledTableRowPanel`, `StyledTableRowPanelTable`,
+ *    `StyledTableRowPanel`, `StyledTablePanel`,
  *    `StyledTablePanelErrorCell`, `StyledTableHeaderMarkSpacer`,
  *    `StyledTableHeaderKeywordBar` и `StyledTableCellTrailing`
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
@@ -37,6 +37,8 @@ import {
 import { getSpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { resolveColorMix } from '@ui/tones';
+
+import { getTableCellEdgeStyles } from './table-cell/table-cell.styles';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -71,38 +73,11 @@ export const DEFAULT_TABLE_STRIPED = true;
 const TABLE_HEADER_MARK_BLOCK_SIZE = getSpacingValue(checkboxSizePresets.small.size);
 
 /**
- * TABLE_EDGE_BORDER_WIDTH — задаёт толщину рамки шапки и подвала таблицы.
- * Используется в `StyledTableHead`, `StyledTableFoot` и строках add-панели.
- */
-const TABLE_EDGE_BORDER_WIDTH = '2px';
-
-/**
- * TABLE_HEAD_FILL_MIX_PERCENT — задаёт долю цвета рамки в смеси заливки шапки и подвала.
- * Подбирает приглушённый фон относительно `surface` Card.
- */
-const TABLE_HEAD_FILL_MIX_PERCENT = 22;
-
-/**
  * TABLE_STRIPE_FILL_MIX_PERCENT — задаёт долю краски в смеси полоски и наведения.
  * Полоска мешает `default` в `surface`. Наведение мешает `primary` в прозрачный слой
  * и этим слоем заменяет заливку строки.
  */
 const TABLE_STRIPE_FILL_MIX_PERCENT = 3;
-
-/**
- * resolveTableHeadFill — возвращает приглушённую заливку шапки и подвала.
- * Контрастирует с телом таблицы на поверхности Card.
- *
- * @param theme текущая тема
- * @returns значение для CSS-свойства `background-color`
- */
-function resolveTableHeadFill(theme: AppTheme): string {
-  return resolveColorMix(
-    theme.colors.border,
-    theme.colors.surface,
-    TABLE_HEAD_FILL_MIX_PERCENT
-  );
-}
 
 /**
  * resolveTableStripeFill — возвращает заливку чётной строки тела при `striped`.
@@ -253,8 +228,8 @@ export const StyledTableCol = styled.col.withConfig({
 `;
 
 /**
- * getTableSectionEdgeStyles — возвращает CSS-правила заливки и шва секции шапки
- * или подвала на ячейках селектора.
+ * getTableSectionEdgeStyles — возвращает CSS-правила заливки и шва секции
+ * на ячейках селектора.
  *
  * @param cellSel селектор ячеек относительно секции
  * @param side сторона блочного шва
@@ -271,42 +246,23 @@ function getTableSectionEdgeStyles({
   theme: AppTheme;
 }): string {
   return `& ${cellSel} {
-      background-color: ${resolveTableHeadFill(theme)};
-      border-${side}: ${TABLE_EDGE_BORDER_WIDTH} solid ${theme.colors.border};
+      ${getTableCellEdgeStyles(theme, side)}
     }`;
-}
-
-/**
- * getTableHeadStyles — возвращает CSS-правила для узла `StyledTableHead`:
- * заливку и нижнюю границу `th`, скрытие якоря при `$addHidden`.
- *
- * @param props флаг скрытия и тема
- * @returns CSS-правила, каждое с новой строки
- */
-function getTableHeadStyles(props: { $addHidden?: boolean; theme: AppTheme }): string {
-  const theme = getTheme(props);
-  const styles = [
-    getTableSectionEdgeStyles({ cellSel: 'th', side: 'block-end', theme }),
-  ];
-
-  if (props.$addHidden) {
-    styles.push('visibility: hidden;');
-  }
-
-  return styles.join('\n');
 }
 
 /**
  * StyledTableHead — задаёт шапку компонента Table.
  * Базируется на `<thead>` и принимает проп `$addHidden`.
+ * Заливку и нижний шов ячеек шапки пишет `TableCell` с `head`.
  *
- * Генерация стилей:
- *  - `getTableHeadStyles` — заливка и граница `th`, скрытие якоря add-панели
+ * Встроенные стили:
+ *  - `visibility: hidden` при `$addHidden` — скрывает якорную шапку под add-панелью,
+ *    оставляя место в потоке
  */
 export const StyledTableHead = styled.thead.withConfig({
   shouldForwardProp: (prop) => prop !== '$addHidden',
 })<{ $addHidden?: boolean }>`
-  ${(props) => getTableHeadStyles(props)}
+  ${(props) => props.$addHidden && 'visibility: hidden;'}
 `;
 
 /**
@@ -510,53 +466,46 @@ export const StyledTableRowPanel = styled.div.withConfig({
 `;
 
 /**
- * getTableRowPanelTableStyles — возвращает CSS-правила для узла
- * `StyledTableRowPanelTable`: заливку и границы строк шапки и подвала панели
- * по data-маркерам.
+ * getTablePanelFooterEdgeStyles — возвращает CSS-правила для узла
+ * `StyledTablePanel`: заливку и верхнюю границу подвала панели
+ * по `data-add-footer`.
  *
  * Как работает:
  * 1. Берёт тему
- * 2. Красит `[data-add-header] th` заливкой шапки и нижней границей секции
- * 3. Красит `[data-add-footer] td` той же заливкой и верхней границей
- * 4. Отдаёт правила для подстановки в CSS-шаблон
+ * 2. Красит `[data-add-footer] td` заливкой секции и верхней границей.
+ *    Шов шапки панели пишет ячейка с `head`, не селектор строки
+ * 3. Отдаёт правила для подстановки в CSS-шаблон
  *
  * @param props объект с темой
  * @returns CSS-правила, каждое с новой строки
  */
-function getTableRowPanelTableStyles(props: { theme: AppTheme }): string {
+function getTablePanelFooterEdgeStyles(props: { theme: AppTheme }): string {
   const theme = getTheme(props);
 
-  return `
-    ${getTableSectionEdgeStyles({
-      cellSel: '[data-add-header] th',
-      side: 'block-end',
-      theme,
-    })}
-    ${getTableSectionEdgeStyles({
-      cellSel: '[data-add-footer] td',
-      side: 'block-start',
-      theme,
-    })}
-  `;
+  return getTableSectionEdgeStyles({
+    cellSel: '[data-add-footer] td',
+    side: 'block-start',
+    theme,
+  });
 }
 
 /**
- * StyledTableRowPanelTable — задаёт внутреннюю таблицу add- и edit-панели.
+ * StyledTablePanel — задаёт внутреннюю таблицу add- и edit-панели.
  * Базируется на `<table>` и принимает проп `tableLayout`.
  *
  * Генерация стилей:
  *  - `getTableRootStyles` — ширина, `table-layout` и `border-collapse`
- *  - `getTableRowPanelTableStyles` — заливка и границы шапки и подвала панели
+ *  - `getTablePanelFooterEdgeStyles` — заливка и верхняя граница подвала панели
  *
  * Собственной рамки у таблицы нет: хром несёт `StyledTableRowPanel`.
- * Секций `thead` и `tfoot` в панели нет — фон и границы шапки и подвала панели
- * задаются по data-маркерам строк.
+ * Секций `thead` и `tfoot` в панели нет. Шов шапки пишет ячейка с `head`.
+ * Шов подвала задаётся по `data-add-footer`.
  */
-export const StyledTableRowPanelTable = styled.table.withConfig({
+export const StyledTablePanel = styled.table.withConfig({
   shouldForwardProp: (prop) => prop !== 'tableLayout',
 })<{ tableLayout?: 'auto' | 'fixed' }>`
   ${(props) => getTableRootStyles(props.tableLayout ?? 'fixed')}
-  ${(props) => getTableRowPanelTableStyles(props)}
+  ${(props) => getTablePanelFooterEdgeStyles(props)}
 `;
 
 /**

@@ -890,8 +890,7 @@ export function Listbox({
         </Text>
         {!showCheckbox && isSelected && (
           <Icon
-            data-slot="check"
-            iconFill="primary"
+            iconFill={isActive ? undefined : 'primary'}
             marginInlineStart={hasOptionIcon ? 'auto' : undefined}
             position="relative"
             showHover={false}
