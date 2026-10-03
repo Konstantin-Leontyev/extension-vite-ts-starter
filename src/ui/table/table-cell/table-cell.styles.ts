@@ -83,24 +83,17 @@ const DEFAULT_TABLE_CELL_TEXT_ALIGN: TableCellAlign = 'center';
  * TableCellStyleProps — представляет пропсы стилизации TableCell.
  *
  * @property ellipsis — включает обрезку с многоточием
+ * @property head — включает заливку и нижний шов секции шапки
  * @property nowrap — включает запрет переноса строк
  * @property size — размер ячейки
  * @property textAlign — горизонтальное выравнивание содержимого
  */
 export type TableCellStyleProps = {
   ellipsis?: boolean;
+  head?: boolean;
   nowrap?: boolean;
   size?: SizePreset;
   textAlign?: TableCellAlign;
-};
-
-/**
- * TableCellStyledProps — представляет пропсы стилизации узла `StyledTableCell`.
- *
- * @property head — включает заливку и нижний шов секции шапки
- */
-type TableCellStyledProps = TableCellStyleProps & {
-  head?: boolean;
 };
 
 /**
@@ -129,7 +122,7 @@ const TABLE_CELL_PROP_NAMES = new Set<string>([
  * @param props пропсы стилизации ячейки и тема
  * @returns CSS-правила, каждое с новой строки
  */
-function getTableCellStyles(props: TableCellStyledProps & { theme: AppTheme }): string {
+function getTableCellStyles(props: TableCellStyleProps & { theme: AppTheme }): string {
   const size = props.size ?? DEFAULT_SIZE_PRESET;
   const styles = [
     `padding-inline: ${getPaddingInline(size)};`,
@@ -154,7 +147,7 @@ function getTableCellStyles(props: TableCellStyledProps & { theme: AppTheme }): 
 
 /**
  * StyledTableCell — задаёт корневой узел компонента TableCell.
- * Базируется на `<td>` и поддерживает все пропсы из `TableCellStyledProps`.
+ * Базируется на `<td>` и поддерживает все пропсы из `TableCellStyleProps`.
  *
  * Генерация стилей:
  *  - `getTableCellStyles` — отступы, выравнивание, перенос или обрезка,
@@ -167,7 +160,7 @@ function getTableCellStyles(props: TableCellStyledProps & { theme: AppTheme }): 
  */
 export const StyledTableCell = styled.td.withConfig({
   shouldForwardProp: (prop) => !TABLE_CELL_PROP_NAMES.has(prop),
-})<TableCellStyledProps>`
+})<TableCellStyleProps>`
   ${(props) => getTableCellStyles(props)}
 `;
 
