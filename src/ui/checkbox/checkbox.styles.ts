@@ -5,8 +5,7 @@
  * Основные задачи:
  * 1. Типизировать пропсы через `CheckboxStyleProps`, `CheckboxCheckedMark` и `CheckboxUncheckedMark`
  * 2. Хранить габариты бокса и размер марки в `checkboxSizePresets`
- * 3. Предоставить перечни `CHECKBOX_CHECKED_MARK_KEYS`
- *    и `CHECKBOX_UNCHECKED_MARK_KEYS`
+ * 3. Предоставить перечни `CHECKBOX_CHECKED_MARK_KEYS` и `CHECKBOX_UNCHECKED_MARK_KEYS`
  * 4. Предоставить styled-узлы `StyledCheckboxRoot` и `StyledCheckboxControl`
  * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
@@ -17,6 +16,7 @@
 import styled from 'styled-components';
 
 import { getBorderStyles } from '@ui/border';
+import { getChoiceControlRootStyles } from '@ui/choice-control';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
@@ -91,25 +91,13 @@ export const CHECKBOX_UNCHECKED_MARK_KEYS = Object.freeze([
  * StyledCheckboxRoot — задаёт корневой узел компонента Checkbox.
  * Базируется на `<label>` и поддерживает пропсы из `LayoutProps`.
  *
- * Встроенные стили:
- *  - `display: inline-grid` — строчный контейнер под бокс и подпись
- *  - `grid-auto-flow: column` — бокс и подпись в одной строке
- *  - `gap` — отступ между боксом и подписью
- *  - `justify-content: start` — при растяжении родителем подпись остаётся у бокса
- *
  * Генерация стилей:
- *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ *  - `getChoiceControlRootStyles` — ряд бокса и подписи, layout-пропсы
  */
 export const StyledCheckboxRoot = styled.label.withConfig({
   shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
-  display: inline-grid;
-  grid-auto-flow: column;
-  gap: ${getSpacingValue(8)};
-  align-items: center;
-  justify-content: start;
-  cursor: pointer;
-  ${(props) => getLayoutStyles(props)}
+  ${(props) => getChoiceControlRootStyles(props)}
 `;
 
 /**
@@ -221,6 +209,8 @@ function markBackground(mark: string, iconSize: string): string {
 /**
  * getCheckboxControlStyles — возвращает CSS-правила для узла `StyledCheckboxControl`:
  * габариты, рамку с тенью, марки unchecked и checked.
+ * `flex-shrink: 0` оставляет бокс несжимаемым: без подписи бокс может быть
+ * flex-элементом родителя, и свойство действует.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты `checkedMark`, `inverted`, `size` и

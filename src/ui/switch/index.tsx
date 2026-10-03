@@ -7,6 +7,8 @@
  *  - размерный ряд через проп `size`
  *  - семантический тон через проп `tone`
  *  - подпись справа от дорожки через `children`. Без `children` — дорожка без подписи
+ *  - текстовую метку через проп `aria-label`
+ *  - id метки через проп `aria-labelledby`
  *
  * Основные задачи:
  * 1. Экспортировать компонент Switch
@@ -19,8 +21,9 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { type ComponentPropsWithRef } from 'react';
 
+import { type ChildrenAccessibleName } from '@ui/a11y';
 import { getTextSize } from '@ui/presets';
 import { Text } from '@ui/text';
 
@@ -33,14 +36,18 @@ import {
 
 /**
  * SwitchProps — представляет пропсы компонента Switch.
- *
- * @property children — подпись
  */
-type SwitchProps = SwitchStyleProps & {
-  children?: ReactNode;
-} & Omit<
+type SwitchProps = SwitchStyleProps &
+  ChildrenAccessibleName &
+  Omit<
     ComponentPropsWithRef<'input'>,
-    'children' | 'className' | 'style' | 'type' | keyof SwitchStyleProps
+    | 'aria-label'
+    | 'aria-labelledby'
+    | 'children'
+    | 'className'
+    | 'style'
+    | 'type'
+    | keyof SwitchStyleProps
   >;
 
 /**

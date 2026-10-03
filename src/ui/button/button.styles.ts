@@ -14,12 +14,13 @@
 import styled from 'styled-components';
 
 import { getBorderStyles } from '@ui/border';
+import { getFieldLabelRootStyles } from '@ui/field-label';
 import {
   ICON_SETTING_PROP_NAMES,
   getIconPositionStyles,
   resolveIconStateBackground,
 } from '@ui/icon';
-import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
+import { LAYOUT_PROP_NAMES, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
   DEFAULT_SIZE_PRESET,
@@ -29,7 +30,6 @@ import {
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
-import { getSpacingValue } from '@ui/spacing';
 import { Text } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import {
@@ -115,23 +115,13 @@ export type ButtonStyleProps = LayoutProps & {
  * StyledButtonRoot — задаёт корневой узел компонента Button.
  * Базируется на `<div>` и поддерживает layout-пропсы.
  *
- * Встроенные стили:
- *  - `display: grid` — вертикальный поток подписи и кнопки
- *  - `gap` — отступ между подписью и кнопкой
- *  - `inline-size: 100%` — занимает ширину родителя
- *  - `min-inline-size: 0` — предотвращает переполнение
- *
  * Генерация стилей:
- *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ *  - `getFieldLabelRootStyles` — колонка подписи и кнопки, layout-пропсы
  */
 export const StyledButtonRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
-  display: grid;
-  gap: ${getSpacingValue(8)};
-  inline-size: 100%;
-  min-inline-size: 0;
-  ${(props) => getLayoutStyles(props)}
+  ${(props) => getFieldLabelRootStyles(props)}
 `;
 
 /**

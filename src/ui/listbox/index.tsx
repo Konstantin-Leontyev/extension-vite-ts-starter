@@ -48,8 +48,9 @@
  *    активная строка через `aria-activedescendant`. Имя поля поиска —
  *    `aria-label` из `label` или `placeholder`: в панели видимой подписи нет.
  *    Имя триггера вида `field` — `aria-labelledby` подписи и узла значения.
- *    Имя триггера вида `icon` — `resolveTriggerAccessibleName` в `aria-label`. Чекбокс в строке —
- *    презентационный
+ *    Имя триггера вида `icon` — `resolveTriggerAccessibleName` в `aria-label`.
+ *    Чекбокс в строке — презентационный через `aria-hidden`, без подписи.
+ *    `optionSearchText` задаёт `aria-label`
  * 6. Вести клавиатуру панели: стрелки, `Home` и `End` по порядку опций
  *    без смены выбора
  *
@@ -873,6 +874,7 @@ export function Listbox({
         {showCheckbox && (
           <Checkbox
             aria-hidden
+            aria-label={optionSearchText(option)}
             checked={isSelected}
             inverted
             readOnly

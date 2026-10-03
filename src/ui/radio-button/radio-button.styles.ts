@@ -15,6 +15,7 @@
 import styled from 'styled-components';
 
 import { getBorderStyles } from '@ui/border';
+import { getChoiceControlRootStyles } from '@ui/choice-control';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import { DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
@@ -46,25 +47,13 @@ function getRadioSize(size: SizePreset): string {
  * StyledRadioButtonRoot — задаёт корневой узел компонента RadioButton.
  * Базируется на `<label>` и поддерживает пропсы из `LayoutProps`.
  *
- * Встроенные стили:
- *  - `display: inline-grid` — строчный контейнер под кружок и подпись
- *  - `grid-auto-flow: column` — кружок и подпись в одной строке
- *  - `gap` — отступ между кружком и подписью
- *  - `justify-content: start` — при растяжении родителем подпись остаётся у кружка
- *
  * Генерация стилей:
- *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ *  - `getChoiceControlRootStyles` — ряд кружка и подписи, layout-пропсы
  */
 export const StyledRadioButtonRoot = styled.label.withConfig({
   shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
-  display: inline-grid;
-  grid-auto-flow: column;
-  gap: ${getSpacingValue(8)};
-  align-items: center;
-  justify-content: start;
-  cursor: pointer;
-  ${(props) => getLayoutStyles(props)}
+  ${(props) => getChoiceControlRootStyles(props)}
 `;
 
 /**
@@ -103,7 +92,6 @@ function getRadioButtonControlStyles(
   const { size = DEFAULT_SIZE_PRESET } = props;
 
   return `
-    flex-shrink: 0;
     inline-size: ${getRadioSize(size)};
     block-size: ${getRadioSize(size)};
     appearance: none;

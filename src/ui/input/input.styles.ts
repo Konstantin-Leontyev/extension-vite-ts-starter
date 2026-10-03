@@ -21,7 +21,8 @@ import {
   getBorderStyles,
   type BorderProps,
 } from '@ui/border';
-import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
+import { getFieldLabelRootStyles } from '@ui/field-label';
+import { LAYOUT_PROP_NAMES, type LayoutProps } from '@ui/layout';
 import { getOutlineStyles } from '@ui/outline';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -33,7 +34,6 @@ import {
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
-import { getSpacingValue } from '@ui/spacing';
 import { getSurfaceBackgroundColor } from '@ui/surface';
 import { getTextProperties } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
@@ -56,23 +56,13 @@ export type InputStyleProps = LayoutProps &
  * StyledInputRoot — задаёт корневой узел компонента Input.
  * Базируется на `<div>` и поддерживает все пропсы из `LayoutProps`.
  *
- * Встроенные стили:
- *  - `display: grid` — вертикальный поток подписи, поля и строки ошибки
- *  - `gap` — отступ между подписью, полем и строкой ошибки
- *  - `inline-size: 100%` — поле занимает ширину родителя
- *  - `min-inline-size: 0` — предотвращает переполнение во flex-контейнерах
- *
  * Генерация стилей:
- *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ *  - `getFieldLabelRootStyles` — колонка подписи, поля и строки ошибки, layout-пропсы
  */
 export const StyledInputRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
-  display: grid;
-  gap: ${getSpacingValue(8)};
-  inline-size: 100%;
-  min-inline-size: 0;
-  ${(props) => getLayoutStyles(props)}
+  ${(props) => getFieldLabelRootStyles(props)}
 `;
 
 /**

@@ -2,12 +2,15 @@
  * Файл: `src/ui/a11y.ts`
  * Содержит общие хелперы доступности для контролов со сбросом значения
  * и составным именем триггера.
+ * Определяет обязательное доступное имя чекбокса, переключателя и тумблера
+ * через `ChildrenAccessibleName`.
  *
  * Основные задачи:
  * 1. Задать текст `aria-label` кнопки сброса по умолчанию через `DEFAULT_CLEAR_ARIA_LABEL`
  * 2. Предоставить функцию `resolveClearAriaLabel`
  * 3. Предоставить функцию `resolveAriaLabelledBy`
  * 4. Предоставить функцию `resolveTriggerAccessibleName`
+ * 5. Типизировать обязательное доступное имя через `ChildrenAccessibleName`
  *
  * Потребители:
  *  - `@ui/input`, `@ui/listbox`, `@ui/range-input` — собирают `aria-label`
@@ -18,7 +21,14 @@
  *    `resolveTriggerAccessibleName`
  *  - `@ui/search-field`, `@ui/date-range-input` — собирают `aria-label` кнопки
  *    сброса через `resolveClearAriaLabel` с запасным текстом
+ *  - Checkbox, RadioButton и Switch — требуют доступное имя через
+ *    `ChildrenAccessibleName`:
+ *     - `src/ui/checkbox/index.tsx`
+ *     - `src/ui/radio-button/index.tsx`
+ *     - `src/ui/switch/index.tsx`
  */
+
+import { type ReactNode } from 'react';
 
 /**
  * DEFAULT_CLEAR_ARIA_LABEL — задаёт текст `aria-label` кнопки сброса по умолчанию.
@@ -94,3 +104,18 @@ export function resolveTriggerAccessibleName(
 
   return `${trimmed} ${valueText}`;
 }
+
+/**
+ * ChildrenAccessibleName — представляет обязательное доступное имя чекбокса,
+ * переключателя и тумблера.
+ * Требует один из пропов: `children`, `aria-label` или `aria-labelledby`.
+ * Используется в пропсах Checkbox, RadioButton и Switch.
+ *
+ * @property aria-label — текстовая метка
+ * @property aria-labelledby — id элемента с меткой
+ * @property children — подпись
+ */
+export type ChildrenAccessibleName =
+  | { 'aria-label': string; 'aria-labelledby'?: never; children?: never }
+  | { 'aria-label'?: never; 'aria-labelledby': string; children?: never }
+  | { 'aria-label'?: never; 'aria-labelledby'?: never; children: ReactNode };

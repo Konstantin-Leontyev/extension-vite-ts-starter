@@ -14,7 +14,8 @@
 import styled from 'styled-components';
 
 import { getBorderStyles } from '@ui/border';
-import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
+import { getFieldLabelRootStyles } from '@ui/field-label';
+import { LAYOUT_PROP_NAMES, type LayoutProps } from '@ui/layout';
 import { getOutlineStyles } from '@ui/outline';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -55,23 +56,13 @@ export type StepperStyleProps = LayoutProps & StepperRootStyleProps;
  * StyledStepperFieldRoot — задаёт корневой узел компонента Stepper.
  * Базируется на `<div>` и поддерживает layout-пропсы.
  *
- * Встроенные стили:
- *  - `display: grid` — вертикальный поток подписи и поля
- *  - `gap` — отступ между подписью и полем
- *  - `inline-size: 100%` — занимает ширину родителя
- *  - `min-inline-size: 0` — предотвращает переполнение
- *
  * Генерация стилей:
- *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ *  - `getFieldLabelRootStyles` — колонка подписи и поля, layout-пропсы
  */
 export const StyledStepperFieldRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
-  display: grid;
-  gap: ${getSpacingValue(8)};
-  inline-size: 100%;
-  min-inline-size: 0;
-  ${(props) => getLayoutStyles(props)}
+  ${(props) => getFieldLabelRootStyles(props)}
 `;
 
 /**

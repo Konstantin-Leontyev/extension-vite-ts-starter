@@ -7,6 +7,8 @@
  *  - размерный ряд через проп `size`
  *  - подпись справа от бокса через `children`. Без `children` рендерится один бокс
  *    без обёртки
+ *  - текстовую метку через проп `aria-label`
+ *  - id метки через проп `aria-labelledby`
  *  - рамку тона `primary` в покое и окраску марок через проп `inverted`
  *  - марку checked-состояния через проп `checkedMark`
  *  - марку unchecked-состояния через проп `uncheckedMark`
@@ -26,8 +28,9 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { type ComponentPropsWithRef } from 'react';
 
+import { type ChildrenAccessibleName } from '@ui/a11y';
 import { getTextSize } from '@ui/presets';
 import { Text } from '@ui/text';
 
@@ -45,14 +48,18 @@ import {
 
 /**
  * CheckboxProps — представляет пропсы компонента Checkbox.
- *
- * @property children — подпись
  */
-type CheckboxProps = CheckboxStyleProps & {
-  children?: ReactNode;
-} & Omit<
+type CheckboxProps = CheckboxStyleProps &
+  ChildrenAccessibleName &
+  Omit<
     ComponentPropsWithRef<'input'>,
-    'children' | 'className' | 'style' | 'type' | keyof CheckboxStyleProps
+    | 'aria-label'
+    | 'aria-labelledby'
+    | 'children'
+    | 'className'
+    | 'style'
+    | 'type'
+    | keyof CheckboxStyleProps
   >;
 
 /**
@@ -60,7 +67,7 @@ type CheckboxProps = CheckboxStyleProps & {
  *
  * @example
  * <Checkbox checked={agreed} onChange={handleChange}>Согласен</Checkbox>
- * <Checkbox checked={selected} onChange={handleChange} />
+ * <Checkbox aria-label="Selected" checked={selected} onChange={handleChange} />
  * <Checkbox inverted checkedMark="minus">Опция</Checkbox>
  */
 function Checkbox({

@@ -15,7 +15,8 @@
 import styled from 'styled-components';
 
 import { getBorderStyles } from '@ui/border';
-import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
+import { getFieldLabelRootStyles } from '@ui/field-label';
+import { LAYOUT_PROP_NAMES, type LayoutProps } from '@ui/layout';
 import { getOutlineStyles } from '@ui/outline';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -25,7 +26,6 @@ import {
   type ShapePreset,
   type SizePreset,
 } from '@ui/presets';
-import { getSpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
 import { type TonePreset } from '@ui/tones';
 
@@ -48,23 +48,13 @@ export type SegmentButtonStyleProps = LayoutProps & {
  * StyledSegmentButtonRoot — задаёт корневой узел компонента SegmentButton.
  * Базируется на `<div>` и поддерживает layout-пропсы.
  *
- * Встроенные стили:
- *  - `display: grid` — вертикальный поток подписи и оболочки
- *  - `gap` — отступ между подписью и оболочкой
- *  - `inline-size: 100%` — занимает ширину родителя
- *  - `min-inline-size: 0` — предотвращает переполнение
- *
  * Генерация стилей:
- *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ *  - `getFieldLabelRootStyles` — колонка подписи и оболочки, layout-пропсы
  */
 export const StyledSegmentButtonRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
-  display: grid;
-  gap: ${getSpacingValue(8)};
-  inline-size: 100%;
-  min-inline-size: 0;
-  ${(props) => getLayoutStyles(props)}
+  ${(props) => getFieldLabelRootStyles(props)}
 `;
 
 /**

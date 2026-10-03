@@ -15,7 +15,8 @@
 
 import styled from 'styled-components';
 
-import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
+import { getChoiceControlRootStyles } from '@ui/choice-control';
+import { LAYOUT_PROP_NAMES, type LayoutProps } from '@ui/layout';
 import { MOTION_CONTROL_DURATION, getTransitionStyles } from '@ui/motion';
 import { getOutlineStyles } from '@ui/outline';
 import { DEFAULT_SIZE_PRESET, resolveBlockRadius, type SizePreset } from '@ui/presets';
@@ -101,27 +102,13 @@ export type SwitchStyleProps = LayoutProps & {
  * StyledSwitchRoot — задаёт корневой узел компонента Switch.
  * Базируется на `<label>` и поддерживает layout-пропсы.
  *
- * Встроенные стили:
- *  - `display: inline-grid` — дорожка и подпись в одной строке
- *  - `grid-auto-flow: column` — элементы в ряд
- *  - `gap` — отступ между дорожкой и подписью
- *  - `align-items: center` — выравнивание по поперечной оси
- *  - `justify-content: start` — при растяжении родителем подпись остаётся у дорожки
- *  - `cursor: pointer` — кликабельная область корня
- *
  * Генерация стилей:
- *  - `getLayoutStyles` — отступы, позиционирование, размеры
+ *  - `getChoiceControlRootStyles` — ряд дорожки и подписи, layout-пропсы
  */
 export const StyledSwitchRoot = styled.label.withConfig({
   shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
-  display: inline-grid;
-  grid-auto-flow: column;
-  gap: ${getSpacingValue(8)};
-  align-items: center;
-  justify-content: start;
-  cursor: pointer;
-  ${(props) => getLayoutStyles(props)}
+  ${(props) => getChoiceControlRootStyles(props)}
 `;
 
 /**
@@ -141,12 +128,6 @@ const SWITCH_TRACK_PROP_NAMES = new Set<string>(['size', 'tone']);
 const DEFAULT_SWITCH_TONE: TonePreset = 'primary';
 
 /**
- * TRACK_BORDER — задаёт ширину рамки дорожки.
- * Вычитается из смещения бегунка, иначе `border-box` смещает его вниз.
- */
-const TRACK_BORDER = '1px';
-
-/**
  * getSwitchTrackStyles — возвращает CSS-правила для узла `StyledSwitchTrack`:
  * габариты, скругление, бегунок и checked/focus-вид по пропам `size` и `tone`.
  * Состояния читаются со скрытого соседнего input через селектор `input:checked + &`.
@@ -154,11 +135,10 @@ const TRACK_BORDER = '1px';
  * Как работает:
  * 1. Берёт тему и подставляет дефолты `size` и `tone`
  * 2. Считает габариты дорожки и бегунка по `size`
- * 3. Центрирует бегунок смещением от края: из расчёта вычитает `TRACK_BORDER`,
- *    потому что `inset` отсчитывается от края области отступа
- * 4. Задаёт ход бегунка как ширину дорожки минус её высоту — обе позиции смещены
- *    рамкой одинаково
- * 5. Собирает заливку, рамку, `border-radius` через `resolveBlockRadius` с формой
+ * 3. Центрирует бегунок смещением от края: половина разницы высоты дорожки
+ *    и диаметра бегунка
+ * 4. Задаёт ход бегунка как ширину дорожки минус её высоту
+ * 5. Собирает заливку, `border-radius` через `resolveBlockRadius` с формой
  *    `pill` по высоте дорожки, бегунок и checked/focus-вид. Цвет checked —
  *    через `getToneColor` с запасным `theme.colors.border`
  *
@@ -173,7 +153,7 @@ function getSwitchTrackStyles(
   const trackInlineSize = getSwitchTrackInlineSize(size);
   const trackBlockSize = getSwitchTrackBlockSize(size);
   const knobSize = getSwitchKnobSize(size);
-  const knobInset = `calc((${trackBlockSize} - ${knobSize}) / 2 - ${TRACK_BORDER})`;
+  const knobInset = `calc((${trackBlockSize} - ${knobSize}) / 2)`;
   const knobTravel = `calc(${trackInlineSize} - ${trackBlockSize})`;
   const checkedBackground = getToneColor(theme, tone, theme.colors.border);
 
@@ -182,9 +162,8 @@ function getSwitchTrackStyles(
     inline-size: ${trackInlineSize};
     block-size: ${trackBlockSize};
     background-color: ${theme.colors.border};
-    border: ${TRACK_BORDER} solid ${theme.colors.border};
     border-radius: ${resolveBlockRadius('pill', trackBlockSize)};
-    ${getTransitionStyles('background-color, border-color', MOTION_CONTROL_DURATION)}
+    ${getTransitionStyles('background-color', MOTION_CONTROL_DURATION)}
 
     &::after {
       position: absolute;
@@ -201,7 +180,6 @@ function getSwitchTrackStyles(
 
     input:checked + & {
       background-color: ${checkedBackground};
-      border-color: ${checkedBackground};
     }
 
     input:checked + &::after {

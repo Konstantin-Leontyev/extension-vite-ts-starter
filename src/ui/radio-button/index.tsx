@@ -8,6 +8,8 @@
  *  - размерный ряд через проп `size`
  *  - подпись справа от кружка через `children`. Без `children` рендерится один кружок
  *    без обёртки
+ *  - текстовую метку через проп `aria-label`
+ *  - id метки через проп `aria-labelledby`
  *
  * Основные задачи:
  * 1. Экспортировать компонент RadioButton
@@ -18,8 +20,9 @@
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 
-import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { type ComponentPropsWithRef } from 'react';
 
+import { type ChildrenAccessibleName } from '@ui/a11y';
 import { getTextSize } from '@ui/presets';
 import { Text } from '@ui/text';
 
@@ -32,14 +35,18 @@ import {
 
 /**
  * RadioButtonProps — представляет пропсы компонента RadioButton.
- *
- * @property children — подпись
  */
-type RadioButtonProps = RadioButtonStyleProps & {
-  children?: ReactNode;
-} & Omit<
+type RadioButtonProps = RadioButtonStyleProps &
+  ChildrenAccessibleName &
+  Omit<
     ComponentPropsWithRef<'input'>,
-    'children' | 'className' | 'style' | 'type' | keyof RadioButtonStyleProps
+    | 'aria-label'
+    | 'aria-labelledby'
+    | 'children'
+    | 'className'
+    | 'style'
+    | 'type'
+    | keyof RadioButtonStyleProps
   >;
 
 /**
@@ -47,7 +54,7 @@ type RadioButtonProps = RadioButtonStyleProps & {
  *
  * @example
  * <RadioButton name="plan" value="a">Option A</RadioButton>
- * <RadioButton name="plan" value="b" />
+ * <RadioButton aria-label="Option B" name="plan" value="b" />
  */
 function RadioButton({ children, size, ...rest }: RadioButtonProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
