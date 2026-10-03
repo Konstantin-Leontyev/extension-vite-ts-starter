@@ -250,7 +250,6 @@ function SegmentButtonPartsPart({
         align={hasIcon ? undefined : 'center'}
         ellipsis
         italic={textItalic}
-        minInlineSize="0"
         size={textSize}
         tone={resolvedTextTone}
       >

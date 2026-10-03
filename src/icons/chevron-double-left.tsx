@@ -27,17 +27,17 @@ export function ChevronDoubleLeftIcon() {
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g stroke="currentColor">
+      <g opacity={ICON_MUTED_LAYER_OPACITY} stroke="currentColor">
         <path
-          d="M13 19L7 12L13 5"
+          d="M16.9998 19L10.9998 12L16.9998 5"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="1.5"
         />
       </g>
-      <g opacity={ICON_MUTED_LAYER_OPACITY} stroke="currentColor">
+      <g stroke="currentColor">
         <path
-          d="M16.9998 19L10.9998 12L16.9998 5"
+          d="M13 19L7 12L13 5"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="1.5"

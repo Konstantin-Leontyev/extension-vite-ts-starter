@@ -229,7 +229,7 @@ export function getTextToneColor(
  * @property whiteSpace — управление переносами
  */
 export type TextStyleProps = LayoutProps & {
-  align?: CSSProperties['textAlign'];
+  align?: TextAlignPreset;
   color?: string;
   ellipsis?: boolean;
   fontSize?: string;

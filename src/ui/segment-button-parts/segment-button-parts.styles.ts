@@ -34,7 +34,6 @@ import { getTheme, type AppTheme } from '@ui/theme';
 import {
   DEFAULT_TONE,
   getToneColorKey,
-  resolveColorMix,
   resolvePressedBackground,
   type TonePreset,
 } from '@ui/tones';
@@ -208,13 +207,14 @@ const SEGMENT_BUTTON_PARTS_PART_PROP_NAMES = new Set<string>([
  * Как работает:
  * 1. Берёт тему и дефолты пропсов
  * 2. Красит заливку и цвет текста по `tone`. Нейтраль — без собственной заливки.
- *    На наведении цветного тона смешивает заливку с `shade` через `resolveColorMix`
+ *    Наведение цветного тона берёт уже посчитанный `hoverStateBackground`
  * 3. Кладёт `padding-inline` из `getPaddingInline` на сегмент. С иконкой — колоночный
  *    грид с `gap` и `justify-content: center`, без track и seam. Без иконки лейбл
  *    растягивается на сегмент без `justify-items: center`, чтобы `ellipsis` имел
  *    потолок ширины
  * 4. На наведении и `:focus-visible` нейтрали ставит вуаль сегмента. Цветной
- *    `tone` дополнительно отдаёт в `--icon-state-background` цвет из
+ *    сегмент с иконкой пишет заливку наведения и канал `--icon-state-background`
+ *    в селекторе `&:not(:disabled):hover, &:focus-visible`. Канал даёт
  *    `resolveIconStateBackground` с политикой `'none'` для нейтрали
  * 5. `outline` на фокусе не рисует: снятие даёт статика `:focus { outline: none }`
  *    в шаблоне узла. Акцент фокуса совпадает с наведением. Фокус-контур несёт
@@ -258,12 +258,22 @@ function getSegmentButtonPartsPartStyles(
   if (colorKey) {
     const color = theme.colors[colorKey];
 
-    styles.push(
-      `background-color: ${color};`,
-      `color: ${theme.colors.inverse};`,
-      `&:not(:disabled):hover,`,
-      `&:focus-visible { background-color: ${resolveColorMix(color, theme.colors.shade)}; }`
-    );
+    styles.push(`background-color: ${color};`, `color: ${theme.colors.inverse};`);
+
+    if (hasIcon && hoverStateBackground) {
+      styles.push(
+        `&:not(:disabled):hover,`,
+        `&:focus-visible {`,
+        `background-color: ${hoverStateBackground};`,
+        `--icon-state-background: ${hoverStateBackground};`,
+        `}`
+      );
+    } else {
+      styles.push(
+        `&:not(:disabled):hover,`,
+        `&:focus-visible { background-color: ${hoverStateBackground}; }`
+      );
+    }
   } else {
     styles.push(
       `&:not(:disabled):hover,`,
@@ -277,15 +287,6 @@ function getSegmentButtonPartsPartStyles(
       'justify-content: center;',
       `gap: ${getSpacingValue(SEGMENT_BUTTON_PARTS_ICON_LABEL_GAP)};`
     );
-
-    if (hoverStateBackground) {
-      styles.push(
-        `&:not(:disabled):hover,`,
-        `&:focus-visible {`,
-        `--icon-state-background: ${hoverStateBackground};`,
-        '}'
-      );
-    }
   }
 
   if (radius) {

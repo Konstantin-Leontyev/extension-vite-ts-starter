@@ -30,7 +30,7 @@ import {
   type SizePreset,
 } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
-import { type TextSizePreset } from '@ui/text';
+import { textSizePresets, type TextSizePreset } from '@ui/text';
 import { getTheme, type AppTheme } from '@ui/theme';
 import {
   DEFAULT_TONE,
@@ -239,9 +239,9 @@ const DEFAULT_TAG_TONE: TonePreset = 'primary';
  * 1. Берёт тему и подставляет дефолты `borderTone`, `shape`, `showBorder`,
  *    `showShadow`, `size`, `tinted` и `tone`
  * 2. Считает пару цветов поверхности через `resolveTagSurface` по `tone` и `tinted`
- * 3. Собирает `min-block-size`, `padding-inline`, рамку с тенью через
- *    `getBorderStyles`, `border-radius` через `resolveBlockRadius` и цвета
- *    поверхности
+ * 3. Собирает `min-block-size`, `padding-inline`, `font-size` текста метки,
+ *    рамку с тенью через `getBorderStyles`, `border-radius` через
+ *    `resolveBlockRadius` и цвета поверхности
  *
  * @param props пропсы стилизации Tag и тема
  * @returns CSS-правила, каждое с новой строки
@@ -262,6 +262,7 @@ function getTagStyles(props: TagStyleProps & { theme: AppTheme }): string {
   return `
     min-block-size: ${getTagMinBlockSize(size)};
     padding-inline: ${getSpacingValue(tagPaddingInline[size])};
+    font-size: ${textSizePresets[getTagTextSize(size)].fontSize};
     ${getBorderStyles(theme, showBorder, showShadow, borderTone)}
     border-radius: ${resolveBlockRadius(shape, getTagMinBlockSize(size))};
     background-color: ${surface.backgroundColor};
@@ -317,9 +318,8 @@ function getTagDotStyles(props: { dotTone?: TonePreset; theme: AppTheme }): stri
  *
  * Встроенные стили:
  *  - `flex-shrink: 0` — точка не сжимается при нехватке места
- *  - `inline-size` и `block-size: 0.5em` — половина высоты кегля из унаследованного
- *    `font-size`: точка масштабируется с типографикой контекста; от `size`
- *    метки не зависит — корень `StyledTag` не задаёт `font-size`
+ *  - `inline-size` и `block-size: 0.5em` — половина `font-size` оболочки.
+ *    Оболочка ставит кегль текста метки, поэтому точка меняется вместе с `size`
  *  - `border-radius: 50%` — круглая форма
  *
  * Генерация стилей:

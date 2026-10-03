@@ -17,9 +17,9 @@
  * Потребители:
  *  - `src/ui/icon/index.tsx` — собирает компонент Icon и реэкспортирует
  *    публичное API
- *  - контролы с секцией иконки, например Button, Listbox, RangeInput,
- *    SearchField и SegmentButtonParts — подключают хелперы секции и читают
- *    позицию через `@ui/icon`
+ *  - `@ui/button`, `@ui/search-field` и `@ui/open-control` — читают
+ *    `getIconPositionStyles` и `resolveIconStateBackground`
+ *  - `@ui/segment-button-parts` — читает `resolveIconStateBackground`
  *  - `@ui/toolbar` — читает `resolveIconShape` для формы действий
  *  - `@ui/button`, `@ui/input` и `@ui/search-field` — читают `resolveIconShape`
  *    для формы секции иконки или сброса; SearchField — для обоих

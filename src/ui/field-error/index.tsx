@@ -1,8 +1,9 @@
 /**
  * Файл: `src/ui/field-error/index.tsx`
  * Предоставляет компонент FieldError для отображения строки ошибки или подсказки поля.
- * Вид строки вшит: размер `thin`, выравнивание `center`, ошибка — тон `danger`,
- * подсказка — тон `muted`. Вызывающий код тон, выравнивание и курсив не переопределяет.
+ * Фиксирует вид строки: размер `thin`, выравнивание `center`, ошибка — тон `danger`,
+ * подсказка — тон `muted`. Не даёт вызывающему коду переопределить тон, выравнивание
+ * и курсив.
  *
  * Поддерживает:
  *  - layout-пропсы: отступы, позиционирование, размеры
@@ -18,16 +19,16 @@
  * 4. Выставлять `aria-live="polite"`
  *
  * Потребители:
- *  - контролы Input и RangeInput — рендерят строку ошибки поля и резерв высоты под неё
- *  - `src/ui/table` — полоска ошибки или подсказки в панелях добавления и редактирования
- *    строки
+ *  - контролы, например Input и RangeInput — рендерят строку ошибки поля и резерв
+ *    высоты под неё
+ *  - `src/ui/table` — рендерит полоску ошибки или подсказки в панелях добавления
+ *    и редактирования строки
  */
-
-import { type CSSProperties } from 'react';
 
 import {
   Text,
   getTextLineHeight,
+  type TextAlignPreset,
   type TextProps,
   type TextSizePreset,
   type TextTonePreset,
@@ -43,7 +44,7 @@ const DEFAULT_FIELD_ERROR_RESERVE_ERROR_SPACE = false;
  * FIELD_ERROR_ALIGN — задаёт горизонтальное выравнивание строки.
  * Выравнивание вшито в FieldError, вызывающий код его не переопределяет.
  */
-const FIELD_ERROR_ALIGN: CSSProperties['textAlign'] = 'center';
+const FIELD_ERROR_ALIGN: TextAlignPreset = 'center';
 
 /**
  * FIELD_ERROR_SIZE_PRESET — задаёт типографический пресет строки.

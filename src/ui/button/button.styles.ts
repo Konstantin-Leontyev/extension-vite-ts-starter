@@ -163,8 +163,8 @@ const DEFAULT_BUTTON_ACTIVE = false;
  * 2. На наведении и `:focus-visible` выставляет `--icon-state-background`
  *    через `resolveIconStateBackground`: цветной тон — сдвиг к `shade`,
  *    нейтральный — вуаль. Тело на этих состояниях заливку не меняет
- * 3. При `active` фиксирует значение канала: для цветной секции — сдвигом
- *    тона к `shade`, для нейтральной — смесь `primary` с `surface` через
+ * 3. При `active` фиксирует значение канала: для цветной секции — уже посчитанный
+ *    `hoverStateBackground`, для нейтральной — смесь `primary` с `surface` через
  *    `VARIANT_SURFACE_MIX_PERCENT`
  *
  * @param props пропсы стилизации узла и текущая тема
@@ -191,7 +191,7 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
       `&:not(:disabled) {`,
       `--icon-state-background: ${
         iconColorKey
-          ? resolveColorMix(theme.colors[iconColorKey], theme.colors.shade)
+          ? hoverStateBackground
           : resolveColorMix(
               theme.colors.primary,
               theme.colors.surface,
@@ -212,12 +212,14 @@ function getButtonSplitStyles(props: ButtonStyledProps & { theme: AppTheme }): s
  *
  * Как работает:
  * 1. Собирает общие правила узла: размер, рамку с тенью через `getBorderStyles`,
- *    радиус, цвет и заливка. Без иконки наведение красит тело целиком.
- *    С иконкой тело на `:hover` и `:focus-visible` заливку не меняет —
- *    подсветку несёт канал секции. Наведение тень не меняет
- * 2. На `:active` и при `active` красит тело заливкой нажатия и дописывает
- *    `shadow.pressed` через `getBorderStyles`. Подъём `shadow.surface` не
- *    снимается. Положение узла не меняется
+ *    радиус, цвет и заливка. Без иконки наведение красит тело целиком:
+ *    нейтральный тон пишет шорткат `background`, потому что заливка наведения —
+ *    слой вуали, цветной тон пишет `background-color`. С иконкой тело на
+ *    `:hover` и `:focus-visible` заливку не меняет — подсветку несёт канал
+ *    секции. Наведение тень не меняет
+ * 2. На `:active` и при `active` пишет заливку нажатия в `background-color`
+ *    и дописывает `shadow.pressed` через `getBorderStyles`. Подъём
+ *    `shadow.surface` не снимается. Положение узла не меняется
  * 3. При `hasIcon` делегирует раскладку позиции и канал
  *    секции иконки в `getButtonSplitStyles`
  * 4. Без иконки кладёт `padding-inline` на узел
@@ -250,12 +252,16 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
   ];
 
   if (!hasIcon) {
-    styles.push(`&:not(:disabled):hover { background: ${surface.hoverBackground}; }`);
+    styles.push(
+      getToneColorKey(tone)
+        ? `&:not(:disabled):hover { background-color: ${surface.hoverBackground}; }`
+        : `&:not(:disabled):hover { background: ${surface.hoverBackground}; }`
+    );
   }
 
   styles.push(
     `&:not(:disabled):active {`,
-    `background: ${surface.activeBackground};`,
+    `background-color: ${surface.activeBackground};`,
     pressedBorder,
     '}'
   );
@@ -263,7 +269,7 @@ function getButtonStyles(props: ButtonStyledProps & { theme: AppTheme }): string
   if (active) {
     styles.push(
       `&:not(:disabled) {`,
-      `background: ${surface.activeBackground};`,
+      `background-color: ${surface.activeBackground};`,
       pressedBorder,
       '}'
     );
