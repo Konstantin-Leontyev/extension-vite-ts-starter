@@ -1,9 +1,8 @@
 /**
  * Файл: `src/pages/showcase/date-range-input-settings/index.tsx`
  * Определяет панель настроек компонента DateRangeInput в витрине дизайн-системы.
- * Содержит контролы для изменения подписи, размера, формы, текстов `title` сегментов,
- * границ диапазона, границ дней, формы подсветки дня, формы кнопок подвала
- * и состояния `disabled` в реальном времени.
+ * Содержит контролы для изменения подписи, размера, формы, границ дней,
+ * формы подсветки дня, формы кнопок подвала и состояния `disabled` в реальном времени.
  *
  * Основные задачи:
  * 1. Типизировать состояние витрины через `DateRangeInputWidgetState`
@@ -31,29 +30,25 @@ import { StyledSettingsForm } from '../showcase.styles';
  * @property buttonShape — форма кнопок подвала панели. Стартует с формы контрола
  * @property dayShape — форма подсветки дня в панели. Стартует с формы контрола
  * @property disabled — включает недоступное состояние
- * @property endDay — конечный день диапазона в превью в формате ISO
- * @property endLabel — текст `title` конечного сегмента и фрагмент `aria-label` сброса
+ * @property endDay — буфер конечного дня диапазона в превью. В панель не выносится
  * @property label — подпись над рядом сегментов
  * @property maxDay — верхняя граница допустимых дней в формате ISO
  * @property minDay — нижняя граница допустимых дней в формате ISO
  * @property shape — форма поверхности
  * @property size — размер компонента
- * @property startDay — начальный день диапазона в превью в формате ISO
- * @property startLabel — текст `title` начального сегмента и фрагмент `aria-label` сброса
+ * @property startDay — буфер начального дня диапазона в превью. В панель не выносится
  */
 export type DateRangeInputWidgetState = {
   buttonShape: ShapePreset;
   dayShape: ShapePreset;
   disabled: boolean;
   endDay: string;
-  endLabel: string;
   label: string;
   maxDay: string;
   minDay: string;
   shape: ShapePreset;
   size: SizePreset;
   startDay: string;
-  startLabel: string;
 };
 
 /**
@@ -93,42 +88,6 @@ export function DateRangeInputSettings({
           onChange('buttonShape', shape);
         }}
         onSizeChange={(size) => onChange('size', size)}
-      />
-
-      <Input
-        label="Start label:"
-        value={state.startLabel}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          onChange('startLabel', event.target.value);
-        }}
-        onClear={() => onChange('startLabel', '')}
-      />
-
-      <Input
-        label="End label:"
-        value={state.endLabel}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          onChange('endLabel', event.target.value);
-        }}
-        onClear={() => onChange('endLabel', '')}
-      />
-
-      <Input
-        label="Start day:"
-        value={state.startDay}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          onChange('startDay', event.target.value);
-        }}
-        onClear={() => onChange('startDay', '')}
-      />
-
-      <Input
-        label="End day:"
-        value={state.endDay}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          onChange('endDay', event.target.value);
-        }}
-        onClear={() => onChange('endDay', '')}
       />
 
       <Input

@@ -4,16 +4,16 @@ overview: Combobox вливается в Listbox. LocalePicker — обёртк�
 todos:
   - id: canon-listbox
     content: "Этап 1: канон — все пункты этого файла"
-    status: cancelled
+    status: completed
   - id: merge-listbox
     content: "Этап 2: слить Listbox + снимок Listbox"
-    status: cancelled
+    status: completed
   - id: locale-picker
     content: "Этап 3: LocalePicker, срез 10, секция витрины + снимок"
-    status: pending
+    status: completed
   - id: toolbar-slot
     content: "Этап 4: слот Toolbar, LocalePicker в превью, снимок Toolbar"
-    status: pending
+    status: completed
   - id: lite-parity
     content: "Паритет lite — снят с очереди, не делать"
     status: cancelled

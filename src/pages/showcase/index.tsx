@@ -465,14 +465,12 @@ const DEFAULT_DATE_RANGE_INPUT_STATE: DateRangeInputWidgetState = {
   dayShape: DEFAULT_SHAPE_PRESET,
   disabled: false,
   endDay: '',
-  endLabel: 'End date',
   label: 'Label:',
   maxDay: todayUtc(),
   minDay: '',
   shape: DEFAULT_SHAPE_PRESET,
   size: DEFAULT_SIZE_PRESET,
   startDay: '',
-  startLabel: 'Start date',
 };
 
 /**
@@ -1664,14 +1662,12 @@ export function ShowcasePage() {
                   dayShape={dateRangeInput.dayShape}
                   disabled={dateRangeInput.disabled}
                   endDay={dateRangeInput.endDay}
-                  endLabel={dateRangeInput.endLabel}
                   label={dateRangeInput.label || undefined}
                   maxDay={dateRangeInput.maxDay || undefined}
                   minDay={dateRangeInput.minDay || undefined}
                   shape={dateRangeInput.shape}
                   size={dateRangeInput.size}
                   startDay={dateRangeInput.startDay}
-                  startLabel={dateRangeInput.startLabel}
                   onClear={() => {
                     updateDateRangeInput('startDay', '');
                     updateDateRangeInput('endDay', '');

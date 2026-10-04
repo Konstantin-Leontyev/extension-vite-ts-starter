@@ -103,7 +103,7 @@ export function TableSettings({ onChange, state }: TableSettingsProps) {
           onChange('showIndexColumn', event.target.checked)
         }
       >
-        Index column
+        Show index column
       </Checkbox>
 
       {state.showIndexColumn && (
