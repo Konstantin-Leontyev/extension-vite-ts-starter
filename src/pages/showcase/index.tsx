@@ -1184,6 +1184,7 @@ export function ShowcasePage() {
         ]}
         maxBlockSize={fullRow ? '100%' : undefined}
         minBlockSize={fullRow ? '0' : undefined}
+        paddingBlockEnd={widgetKey === 'table' ? 0 : undefined}
         title={SETTINGS_TITLES[widgetKey]}
         titleId={titleId}
       >

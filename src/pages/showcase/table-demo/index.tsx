@@ -797,6 +797,8 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
     return (
       <Table
         aria-label={CATALOG_TABLE_DEMO_ARIA_LABEL}
+        paddingBlockEnd={16}
+        paddingBlockStart={4}
         {...tableProps}
         {...editableProps}
       />
@@ -806,6 +808,8 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
   return (
     <Table
       aria-label={CATALOG_TABLE_DEMO_ARIA_LABEL}
+      paddingBlockEnd={16}
+      paddingBlockStart={4}
       {...tableProps}
       {...editableProps}
       allSelectableKeys={allSelectableKeys}
