@@ -33,7 +33,7 @@
 import { Listbox } from '@ui/listbox';
 import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
 
-import { getListboxOptions } from '../get-listbox-options';
+import { getListboxOptions } from '../showcase-listbox-options';
 
 /**
  * resolveAvailableTones — возвращает перечень допустимых тонов из переданного списка.

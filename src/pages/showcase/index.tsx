@@ -85,7 +85,6 @@ import { BrowserAiSmokeProbe } from './browser-ai-smoke-probe';
 import { ButtonSettings, type ButtonWidgetState } from './button-settings';
 import { CardSettings, type CardWidgetState } from './card-settings';
 import { CheckboxSettings, type CheckboxWidgetState } from './checkbox-settings';
-import { createWidgetStateUpdater } from './create-widget-state-updater';
 import {
   DateRangeInputSettings,
   type DateRangeInputWidgetState,
@@ -121,6 +120,7 @@ import {
 } from './segment-button-settings';
 import { ICON_OPTIONS, LIST_OPTIONS, getIcon } from './showcase-icon-options';
 import { resolveTextNodeProps } from './showcase-text-node';
+import { createWidgetStateUpdater } from './showcase-widget-state-updater';
 import {
   StyledMain,
   StyledRadioButtonDemo,

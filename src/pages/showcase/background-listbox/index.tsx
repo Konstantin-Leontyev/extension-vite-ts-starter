@@ -27,7 +27,7 @@ import {
   type SurfaceBackgroundPreset,
 } from '@ui/surface';
 
-import { getListboxOptions } from '../get-listbox-options';
+import { getListboxOptions } from '../showcase-listbox-options';
 
 /**
  * DEFAULT_BACKGROUND_LISTBOX_VALUE — задаёт заливку по умолчанию.

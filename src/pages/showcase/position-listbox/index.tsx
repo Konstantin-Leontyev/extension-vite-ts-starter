@@ -20,7 +20,7 @@
 import { DEFAULT_ICON_POSITION, type IconPosition } from '@ui/icon';
 import { Listbox } from '@ui/listbox';
 
-import { getListboxOptions } from '../get-listbox-options';
+import { getListboxOptions } from '../showcase-listbox-options';
 
 /**
  * DEFAULT_POSITION_LISTBOX_VALUE — задаёт позицию по умолчанию.

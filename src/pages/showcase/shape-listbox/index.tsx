@@ -28,7 +28,7 @@
 import { Listbox } from '@ui/listbox';
 import { DEFAULT_SHAPE_PRESET, type ShapePreset } from '@ui/presets';
 
-import { getListboxOptions } from '../get-listbox-options';
+import { getListboxOptions } from '../showcase-listbox-options';
 
 /**
  * DEFAULT_SHAPE_LISTBOX_VALUE — задаёт форму по умолчанию.

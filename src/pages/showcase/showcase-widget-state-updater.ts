@@ -1,5 +1,5 @@
 /**
- * Файл: `src/pages/showcase/create-widget-state-updater.ts`
+ * Файл: `src/pages/showcase/showcase-widget-state-updater.ts`
  * Предоставляет фабрику `createWidgetStateUpdater` для записи одного ключа состояния виджета витрины.
  *
  * Основные задачи:

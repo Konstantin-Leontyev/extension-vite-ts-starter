@@ -35,7 +35,7 @@
 import { Listbox } from '@ui/listbox';
 import { DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
 
-import { getListboxOptions } from '../get-listbox-options';
+import { getListboxOptions } from '../showcase-listbox-options';
 
 /**
  * DEFAULT_SIZE_LISTBOX_VALUE — задаёт размер для отображения в листбоксе по умолчанию.

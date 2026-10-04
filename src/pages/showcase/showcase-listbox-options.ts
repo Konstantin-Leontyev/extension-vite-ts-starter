@@ -1,5 +1,5 @@
 /**
- * Файл: `src/pages/showcase/get-listbox-options.ts`
+ * Файл: `src/pages/showcase/showcase-listbox-options.ts`
  * Предоставляет функцию `getListboxOptions` для сборки опций Listbox в витрине дизайн-системы.
  *
  * Основные задачи:

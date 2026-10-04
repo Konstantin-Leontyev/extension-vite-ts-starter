@@ -21,7 +21,7 @@
 import { Listbox } from '@ui/listbox';
 import { type TextAlignPreset } from '@ui/text';
 
-import { getListboxOptions } from '../get-listbox-options';
+import { getListboxOptions } from '../showcase-listbox-options';
 
 /**
  * DEFAULT_ALIGN_LISTBOX_VALUE — задаёт выравнивание по умолчанию.
