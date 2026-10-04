@@ -9,7 +9,7 @@
  *  - ключ глифа через проп `iconValue`
  *  - префикс подписей контролов через проп `labelPrefix`. Без пропа подписи
  *    без префикса, например `Tone:` и `Fill:` у панели Icon. Сегменты SegmentButton
- *    передают `Left icon` и `Right icon`
+ *    передают `Left icon`, `Center icon` и `Right icon`
  *  - обработчик изменения тона глифа через проп `onFillChange`
  *  - обработчик изменения ключа глифа через проп `onIconChange`
  *  - обработчик изменения позиции через проп `onPositionChange`. Без `onPositionChange`
@@ -57,6 +57,7 @@ import {
 import { Listbox, type ListboxOption } from '@ui/listbox';
 import { TONE_PRESET_KEYS, type TonePreset } from '@ui/tones';
 
+import { PositionListbox } from '../position-listbox';
 import { ShapeListbox } from '../shape-listbox';
 import {
   resolveGroupContentLabel,
@@ -64,18 +65,6 @@ import {
   resolveGroupFlagLabel,
 } from '../showcase-labels';
 import { ToneListbox } from '../tone-listbox';
-
-/**
- * getIconPositionListboxOptions — преобразует `ICON_POSITION_KEYS` в опции Listbox.
- *
- * @returns опции для Listbox позиции
- */
-function getIconPositionListboxOptions(): ListboxOption[] {
-  return ICON_POSITION_KEYS.map((position) => ({
-    label: position,
-    value: position,
-  }));
-}
 
 /**
  * IconGroupProps — представляет пропсы компонента IconGroup.
@@ -218,12 +207,12 @@ export function IconGroup({
             onChange={onFillChange}
           />
 
-          {onPositionChange !== undefined && position !== undefined && (
-            <Listbox
+          {onPositionChange !== undefined && (
+            <PositionListbox
               label={resolveGroupFieldLabel(labelPrefix, 'position')}
-              options={getIconPositionListboxOptions()}
+              positions={ICON_POSITION_KEYS}
               value={position}
-              onChange={(value) => onPositionChange(value as IconPosition)}
+              onChange={onPositionChange}
             />
           )}
         </>

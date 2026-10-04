@@ -17,6 +17,8 @@ import { useShellOutletContext } from '@components/router';
 import { useToast } from '@hooks/use-toast';
 import { SettingsIcon } from '@icons';
 import {
+  DEFAULT_SHOW_BORDER,
+  DEFAULT_SHOW_SHADOW,
   resolveActionBorderProps,
   resolveBorderProps,
   type BorderProps,
@@ -28,7 +30,7 @@ import { CARD_HEADER_ACTION_SIZE_PRESET, Card } from '@ui/card';
 import { Checkbox } from '@ui/checkbox';
 import { DateRangeInput, todayUtc } from '@ui/date-range-input';
 import { Fieldset } from '@ui/fieldset';
-import { Icon, getIconPadding } from '@ui/icon';
+import { DEFAULT_ICON_POSITION, Icon, getIconPadding } from '@ui/icon';
 import { type IconButtonRowAction } from '@ui/icon-button-row';
 import { Input, type InputClearProps } from '@ui/input';
 import {
@@ -65,6 +67,7 @@ import { type SegmentButtonPartsActionIconProps } from '@ui/segment-button-parts
 import { Sidebar } from '@ui/sidebar';
 import { Spinner } from '@ui/spinner';
 import { Stepper } from '@ui/stepper';
+import { DEFAULT_SURFACE_BACKGROUND } from '@ui/surface';
 import { Switch } from '@ui/switch';
 import {
   DEFAULT_TABLE_HOVER_HIGHLIGHT,
@@ -82,6 +85,7 @@ import { BrowserAiSmokeProbe } from './browser-ai-smoke-probe';
 import { ButtonSettings, type ButtonWidgetState } from './button-settings';
 import { CardSettings, type CardWidgetState } from './card-settings';
 import { CheckboxSettings, type CheckboxWidgetState } from './checkbox-settings';
+import { createWidgetStateUpdater } from './create-widget-state-updater';
 import {
   DateRangeInputSettings,
   type DateRangeInputWidgetState,
@@ -107,6 +111,7 @@ import {
   type RadioButtonWidgetState,
 } from './radio-button-settings';
 import { RangeInputSettings, type RangeInputWidgetState } from './range-input-settings';
+import { ScrollPortSettings, type ScrollPortWidgetState } from './scroll-port-settings';
 import {
   SearchFieldSettings,
   type SearchFieldWidgetState,
@@ -120,9 +125,12 @@ import { resolveTextNodeProps } from './showcase-text-node';
 import {
   StyledMain,
   StyledRadioButtonDemo,
+  StyledScrollPortPreview,
   StyledShowcaseWidgetFullRow,
   StyledShowcaseWidgets,
+  StyledSidebarPreview,
 } from './showcase.styles';
+import { SidebarSettings, type SidebarWidgetState } from './sidebar-settings';
 import { SpinnerSettings, type SpinnerWidgetState } from './spinner-settings';
 import { StepperSettings, type StepperWidgetState } from './stepper-settings';
 import { SwitchSettings, type SwitchWidgetState } from './switch-settings';
@@ -227,8 +235,10 @@ type WidgetSettingsKey =
   | 'progress'
   | 'radio-button'
   | 'range-input'
+  | 'scroll-port'
   | 'search-field'
   | 'segment-button'
+  | 'sidebar'
   | 'spinner'
   | 'stepper'
   | 'switch'
@@ -262,6 +272,8 @@ const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   stepper: 'Stepper',
   switch: 'Switch',
   toast: 'Toast',
+  'scroll-port': 'ScrollPort',
+  sidebar: 'Sidebar',
   modal: 'Modal',
   card: 'Card',
   text: 'Text',
@@ -283,16 +295,16 @@ const MODAL_INLINE_SIZE: Record<SizePreset, string> = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_INPUT_STATE: InputWidgetState = {
-  borderTone: 'neutral',
+  borderTone: DEFAULT_TONE,
   disabled: false,
   error: '',
   invalid: false,
   label: 'Label:',
   placeholder: 'e.g. value',
   shape: DEFAULT_SHAPE_PRESET,
-  showBorder: true,
+  showBorder: DEFAULT_SHOW_BORDER,
   showClearButton: true,
-  showShadow: true,
+  showShadow: DEFAULT_SHOW_SHADOW,
   size: DEFAULT_SIZE_PRESET,
   value: '',
 };
@@ -302,19 +314,19 @@ const DEFAULT_INPUT_STATE: InputWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_SEARCH_FIELD_STATE: SearchFieldWidgetState = {
-  borderTone: 'neutral',
+  borderTone: DEFAULT_TONE,
   disabled: false,
-  iconFill: 'neutral',
+  iconFill: DEFAULT_TONE,
   iconKey: 'search',
   iconPosition: 'start',
-  iconTone: 'neutral',
+  iconTone: DEFAULT_TONE,
   label: 'Label:',
   placeholder: DEFAULT_SEARCH_FIELD_PLACEHOLDER,
   shape: DEFAULT_SHAPE_PRESET,
-  showBorder: true,
+  showBorder: DEFAULT_SHOW_BORDER,
   showClearButton: true,
   showIcon: true,
-  showShadow: true,
+  showShadow: DEFAULT_SHOW_SHADOW,
   size: DEFAULT_SIZE_PRESET,
   value: '',
 };
@@ -326,16 +338,16 @@ const DEFAULT_SEARCH_FIELD_STATE: SearchFieldWidgetState = {
 const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
   active: false,
   disabled: false,
-  iconFill: 'neutral',
+  iconFill: DEFAULT_TONE,
   iconKey: 'search',
-  iconPosition: 'end',
-  iconTone: 'neutral',
+  iconPosition: DEFAULT_ICON_POSITION,
+  iconTone: DEFAULT_TONE,
   label: 'Label:',
   shape: DEFAULT_SHAPE_PRESET,
   size: DEFAULT_SIZE_PRESET,
   text: 'Button',
-  textTone: 'neutral',
-  tone: 'neutral',
+  textTone: DEFAULT_TONE,
+  tone: DEFAULT_TONE,
   withIcon: false,
 };
 
@@ -346,16 +358,16 @@ const DEFAULT_BUTTON_STATE: ButtonWidgetState = {
 const DEFAULT_ICON_STATE: IconWidgetState = {
   active: false,
   as: 'button',
-  borderTone: 'neutral',
+  borderTone: DEFAULT_TONE,
   disabled: false,
-  iconFill: 'neutral',
+  iconFill: DEFAULT_TONE,
   iconKey: 'settings',
-  iconTone: 'neutral',
+  iconTone: DEFAULT_TONE,
   padding: getIconPadding(DEFAULT_SIZE_PRESET),
   shape: 'square',
   showBorder: false,
   showHover: true,
-  showShadow: true,
+  showShadow: DEFAULT_SHOW_SHADOW,
   size: DEFAULT_SIZE_PRESET,
 };
 
@@ -365,22 +377,22 @@ const DEFAULT_ICON_STATE: IconWidgetState = {
  */
 const DEFAULT_LISTBOX_STATE: ListboxWidgetState = {
   appearance: 'field',
-  borderTone: 'neutral',
+  borderTone: DEFAULT_TONE,
   disabled: false,
   emptyMessage: DEFAULT_LISTBOX_EMPTY_MESSAGE,
-  iconFill: 'neutral',
-  iconPosition: 'end',
-  iconTone: 'neutral',
+  iconFill: DEFAULT_TONE,
+  iconPosition: DEFAULT_ICON_POSITION,
+  iconTone: DEFAULT_TONE,
   inlineCheckbox: false,
   label: 'Label:',
   multiple: false,
   placeholder: DEFAULT_LISTBOX_PLACEHOLDER,
   searchPlaceholder: DEFAULT_SEARCH_FIELD_PLACEHOLDER,
   shape: DEFAULT_SHAPE_PRESET,
-  showBorder: true,
+  showBorder: DEFAULT_SHOW_BORDER,
   showClearButton: false,
   showSearch: false,
-  showShadow: true,
+  showShadow: DEFAULT_SHOW_SHADOW,
   size: DEFAULT_SIZE_PRESET,
   value: '',
   withIcon: false,
@@ -402,19 +414,19 @@ const LISTBOX_DEMO_DISABLED_OPTION = {
  */
 const DEFAULT_LOCALE_PICKER_STATE: LocalePickerWidgetState = {
   appearance: 'field',
-  borderTone: 'neutral',
+  borderTone: DEFAULT_TONE,
   disabled: false,
   emptyMessage: DEFAULT_LISTBOX_EMPTY_MESSAGE,
-  iconFill: 'neutral',
-  iconPosition: 'end',
-  iconTone: 'neutral',
+  iconFill: DEFAULT_TONE,
+  iconPosition: DEFAULT_ICON_POSITION,
+  iconTone: DEFAULT_TONE,
   label: 'Label:',
   placeholder: DEFAULT_LISTBOX_PLACEHOLDER,
   searchPlaceholder: DEFAULT_SEARCH_FIELD_PLACEHOLDER,
   shape: DEFAULT_SHAPE_PRESET,
-  showBorder: true,
+  showBorder: DEFAULT_SHOW_BORDER,
   showClearButton: false,
-  showShadow: true,
+  showShadow: DEFAULT_SHOW_SHADOW,
   size: DEFAULT_SIZE_PRESET,
   value: '',
 };
@@ -427,13 +439,13 @@ const DEFAULT_RANGE_INPUT_STATE: RangeInputWidgetState = {
   buttonShape: DEFAULT_SHAPE_PRESET,
   buttonSize: DEFAULT_SIZE_PRESET,
   buttonText: 'Apply',
-  buttonTextTone: 'neutral',
+  buttonTextTone: DEFAULT_TONE,
   buttonTone: 'primary',
   disabled: false,
   fromPlaceholder: DEFAULT_RANGE_INPUT_FROM_PLACEHOLDER,
-  iconFill: 'neutral',
-  iconPosition: 'end',
-  iconTone: 'neutral',
+  iconFill: DEFAULT_TONE,
+  iconPosition: DEFAULT_ICON_POSITION,
+  iconTone: DEFAULT_TONE,
   inputShape: DEFAULT_SHAPE_PRESET,
   inputSize: DEFAULT_SIZE_PRESET,
   label: 'Label:',
@@ -503,7 +515,7 @@ const DEFAULT_RADIO_BUTTON_STATE: RadioButtonWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_FIELDSET_STATE: FieldsetWidgetState = {
-  borderTone: 'neutral',
+  borderTone: DEFAULT_TONE,
   legend: 'Legend',
   selected: 'a',
 };
@@ -575,31 +587,31 @@ const DEFAULT_TOAST_STATE: ToastWidgetState = {
 const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
   centerActive: false,
   centerDisabled: false,
-  centerIconFill: 'neutral',
+  centerIconFill: DEFAULT_TONE,
   centerIconKey: 'settings',
-  centerIconPosition: 'end',
+  centerIconPosition: DEFAULT_ICON_POSITION,
   centerLabel: 'Change',
   centerTextTone: 'success',
-  centerTone: 'neutral',
+  centerTone: DEFAULT_TONE,
   centerWithIcon: false,
   label: 'Label:',
   leftActive: false,
   leftDisabled: false,
-  leftIconFill: 'neutral',
+  leftIconFill: DEFAULT_TONE,
   leftIconKey: 'search',
   leftIconPosition: 'start',
   leftLabel: 'Select',
-  leftTextTone: 'neutral',
-  leftTone: 'neutral',
+  leftTextTone: DEFAULT_TONE,
+  leftTone: DEFAULT_TONE,
   leftWithIcon: false,
   rightActive: false,
   rightDisabled: false,
-  rightIconFill: 'neutral',
+  rightIconFill: DEFAULT_TONE,
   rightIconKey: 'close',
-  rightIconPosition: 'end',
+  rightIconPosition: DEFAULT_ICON_POSITION,
   rightLabel: 'Delete',
   rightTextTone: 'danger',
-  rightTone: 'neutral',
+  rightTone: DEFAULT_TONE,
   rightWithIcon: false,
   segmentCount: '2',
   shape: DEFAULT_SHAPE_PRESET,
@@ -611,12 +623,12 @@ const DEFAULT_SEGMENT_BUTTON_STATE: SegmentButtonWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_TAG_STATE: TagWidgetState = {
-  borderTone: 'neutral',
-  dotTone: 'neutral',
+  borderTone: DEFAULT_TONE,
+  dotTone: DEFAULT_TONE,
   shape: 'pill',
-  showBorder: true,
+  showBorder: DEFAULT_SHOW_BORDER,
   showDot: true,
-  showShadow: true,
+  showShadow: DEFAULT_SHOW_SHADOW,
   size: 'tiny',
   text: 'Tag',
   tinted: false,
@@ -643,10 +655,10 @@ const DEFAULT_TABLE_STATE: TableWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_MODAL_STATE: ModalWidgetState = {
-  background: 'surface',
-  borderTone: 'neutral',
+  background: DEFAULT_SURFACE_BACKGROUND,
+  borderTone: DEFAULT_TONE,
   showBorder: false,
-  showShadow: true,
+  showShadow: DEFAULT_SHOW_SHADOW,
   size: DEFAULT_SIZE_PRESET,
   subtitle: 'Modal subtitle',
   subtitleItalic: false,
@@ -662,8 +674,8 @@ const DEFAULT_MODAL_STATE: ModalWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_CARD_STATE: CardWidgetState = {
-  background: 'surface',
-  borderTone: 'neutral',
+  background: DEFAULT_SURFACE_BACKGROUND,
+  borderTone: DEFAULT_TONE,
   headerActions: [
     {
       active: false,
@@ -675,8 +687,8 @@ const DEFAULT_CARD_STATE: CardWidgetState = {
   ],
   showActionBorder: false,
   showActionShadow: true,
-  showBorder: true,
-  showShadow: true,
+  showBorder: DEFAULT_SHOW_BORDER,
+  showShadow: DEFAULT_SHOW_SHADOW,
   subtitle: 'Subtitle text',
   subtitleItalic: false,
   subtitleTone: 'muted',
@@ -741,14 +753,72 @@ const DEFAULT_TOOLBAR_STATE: ToolbarWidgetState = {
       title: '',
     },
   ],
-  background: 'surface',
-  borderTone: 'neutral',
+  background: DEFAULT_SURFACE_BACKGROUND,
+  borderTone: DEFAULT_TONE,
   shape: DEFAULT_SHAPE_PRESET,
   showActionBorder: false,
   showActionShadow: true,
-  showBorder: true,
-  showShadow: true,
+  showBorder: DEFAULT_SHOW_BORDER,
+  showShadow: DEFAULT_SHOW_SHADOW,
   size: DEFAULT_SIZE_PRESET,
+};
+
+/**
+ * SCROLL_PORT_PREVIEW_TEXT — задаёт длинное содержимое превью ScrollPort.
+ * Используется в карточке виджета, чтобы прокрутка и вуаль были видны.
+ */
+const SCROLL_PORT_PREVIEW_TEXT = 'Scrollable preview line. '.repeat(24);
+
+/**
+ * SIDEBAR_PREVIEW_ID — задаёт id превью Sidebar.
+ * Не совпадает с `SIDEBAR_ID` каркаса страницы.
+ */
+const SIDEBAR_PREVIEW_ID = 'showcase-sidebar-preview';
+
+/**
+ * SIDEBAR_PREVIEW_ICON_ARIA_LABEL — задаёт доступное имя кнопки сворачивания превью Sidebar.
+ */
+const SIDEBAR_PREVIEW_ICON_ARIA_LABEL = 'Close preview panel';
+
+/**
+ * SIDEBAR_PREVIEW_PAGE_TEXT — задаёт короткий образец области страницы в превью Sidebar.
+ */
+const SIDEBAR_PREVIEW_PAGE_TEXT = 'Page';
+
+/**
+ * SIDEBAR_PREVIEW_PANEL_TEXT — задаёт короткий образец содержимого панели в превью Sidebar.
+ */
+const SIDEBAR_PREVIEW_PANEL_TEXT = 'Panel';
+
+/**
+ * DEFAULT_SCROLL_PORT_STATE — задаёт начальное состояние виджета ScrollPort в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
+const DEFAULT_SCROLL_PORT_STATE: ScrollPortWidgetState = {
+  showVeil: true,
+  veilInsetInline: 4,
+};
+
+/**
+ * DEFAULT_SIDEBAR_STATE — задаёт начальное состояние виджета Sidebar в витрине.
+ * Используется при инициализации состояния в `ShowcasePage`.
+ */
+const DEFAULT_SIDEBAR_STATE: SidebarWidgetState = {
+  background: DEFAULT_SURFACE_BACKGROUND,
+  borderTone: DEFAULT_TONE,
+  headerActions: [],
+  open: true,
+  showActionBorder: false,
+  showActionShadow: true,
+  showBorder: DEFAULT_SHOW_BORDER,
+  showShadow: DEFAULT_SHOW_SHADOW,
+  subtitle: 'Subtitle text',
+  subtitleItalic: false,
+  subtitleTone: 'muted',
+  title: 'Sidebar title',
+  titleItalic: false,
+  titleSize: 'bold',
+  titleTone: DEFAULT_TONE,
 };
 
 /**
@@ -842,6 +912,10 @@ export function ShowcasePage() {
   const [card, setCard] = useState<CardWidgetState>(DEFAULT_CARD_STATE);
   const [text, setText] = useState<TextWidgetState>(DEFAULT_TEXT_STATE);
   const [toolbar, setToolbar] = useState<ToolbarWidgetState>(DEFAULT_TOOLBAR_STATE);
+  const [scrollPort, setScrollPort] = useState<ScrollPortWidgetState>(
+    DEFAULT_SCROLL_PORT_STATE
+  );
+  const [sidebar, setSidebar] = useState<SidebarWidgetState>(DEFAULT_SIDEBAR_STATE);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Настройки шапки приоритетны: при открытии сбрасывают выбранный виджет, чтобы
@@ -876,33 +950,10 @@ export function ShowcasePage() {
     setIsHeaderSettingsOpen(false);
   }
 
-  function updateInput<K extends keyof InputWidgetState>(
-    key: K,
-    value: InputWidgetState[K]
-  ): void {
-    setInput((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateSearchField<K extends keyof SearchFieldWidgetState>(
-    key: K,
-    value: SearchFieldWidgetState[K]
-  ): void {
-    setSearchField((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateButton<K extends keyof ButtonWidgetState>(
-    key: K,
-    value: ButtonWidgetState[K]
-  ): void {
-    setButton((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateIcon<K extends keyof IconWidgetState>(
-    key: K,
-    value: IconWidgetState[K]
-  ): void {
-    setIcon((current) => ({ ...current, [key]: value }));
-  }
+  const updateInput = createWidgetStateUpdater(setInput);
+  const updateSearchField = createWidgetStateUpdater(setSearchField);
+  const updateButton = createWidgetStateUpdater(setButton);
+  const updateIcon = createWidgetStateUpdater(setIcon);
 
   function updateListbox<K extends keyof ListboxWidgetState>(
     key: K,
@@ -946,12 +997,7 @@ export function ShowcasePage() {
     });
   }
 
-  function updateLocalePicker<K extends keyof LocalePickerWidgetState>(
-    key: K,
-    value: LocalePickerWidgetState[K]
-  ): void {
-    setLocalePicker((current) => ({ ...current, [key]: value }));
-  }
+  const updateLocalePicker = createWidgetStateUpdater(setLocalePicker);
 
   /**
    * listboxDemoOptions — формирует опции превью Listbox: с иконками или текстовые
@@ -963,12 +1009,7 @@ export function ShowcasePage() {
     LISTBOX_DEMO_DISABLED_OPTION,
   ];
 
-  function updateRangeInput<K extends keyof RangeInputWidgetState>(
-    key: K,
-    value: RangeInputWidgetState[K]
-  ): void {
-    setRangeInput((current) => ({ ...current, [key]: value }));
-  }
+  const updateRangeInput = createWidgetStateUpdater(setRangeInput);
 
   function clearRangeInputValue(): void {
     setRangeInput((current) => ({
@@ -977,117 +1018,24 @@ export function ShowcasePage() {
     }));
   }
 
-  function updateDateRangeInput<K extends keyof DateRangeInputWidgetState>(
-    key: K,
-    value: DateRangeInputWidgetState[K]
-  ): void {
-    setDateRangeInput((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateCheckbox<K extends keyof CheckboxWidgetState>(
-    key: K,
-    value: CheckboxWidgetState[K]
-  ): void {
-    setCheckbox((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateRadioButton<K extends keyof RadioButtonWidgetState>(
-    key: K,
-    value: RadioButtonWidgetState[K]
-  ): void {
-    setRadioButton((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateFieldset<K extends keyof FieldsetWidgetState>(
-    key: K,
-    value: FieldsetWidgetState[K]
-  ): void {
-    setFieldset((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateProgress<K extends keyof ProgressBarWidgetState>(
-    key: K,
-    value: ProgressBarWidgetState[K]
-  ): void {
-    setProgress((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateSpinner<K extends keyof SpinnerWidgetState>(
-    key: K,
-    value: SpinnerWidgetState[K]
-  ): void {
-    setSpinner((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateStepper<K extends keyof StepperWidgetState>(
-    key: K,
-    value: StepperWidgetState[K]
-  ): void {
-    setStepper((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateSwitch<K extends keyof SwitchWidgetState>(
-    key: K,
-    value: SwitchWidgetState[K]
-  ): void {
-    setSwitchState((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateToast<K extends keyof ToastWidgetState>(
-    key: K,
-    value: ToastWidgetState[K]
-  ): void {
-    setToast((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateSegmentButton<K extends keyof SegmentButtonWidgetState>(
-    key: K,
-    value: SegmentButtonWidgetState[K]
-  ): void {
-    setSegmentButton((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateTag<K extends keyof TagWidgetState>(
-    key: K,
-    value: TagWidgetState[K]
-  ): void {
-    setTag((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateTable<K extends keyof TableWidgetState>(
-    key: K,
-    value: TableWidgetState[K]
-  ): void {
-    setTable((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateModal<K extends keyof ModalWidgetState>(
-    key: K,
-    value: ModalWidgetState[K]
-  ): void {
-    setModal((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateCard<K extends keyof CardWidgetState>(
-    key: K,
-    value: CardWidgetState[K]
-  ): void {
-    setCard((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateText<K extends keyof TextWidgetState>(
-    key: K,
-    value: TextWidgetState[K]
-  ): void {
-    setText((current) => ({ ...current, [key]: value }));
-  }
-
-  function updateToolbar<K extends keyof ToolbarWidgetState>(
-    key: K,
-    value: ToolbarWidgetState[K]
-  ): void {
-    setToolbar((current) => ({ ...current, [key]: value }));
-  }
+  const updateDateRangeInput = createWidgetStateUpdater(setDateRangeInput);
+  const updateCheckbox = createWidgetStateUpdater(setCheckbox);
+  const updateRadioButton = createWidgetStateUpdater(setRadioButton);
+  const updateFieldset = createWidgetStateUpdater(setFieldset);
+  const updateProgress = createWidgetStateUpdater(setProgress);
+  const updateSpinner = createWidgetStateUpdater(setSpinner);
+  const updateStepper = createWidgetStateUpdater(setStepper);
+  const updateSwitch = createWidgetStateUpdater(setSwitchState);
+  const updateToast = createWidgetStateUpdater(setToast);
+  const updateSegmentButton = createWidgetStateUpdater(setSegmentButton);
+  const updateTag = createWidgetStateUpdater(setTag);
+  const updateTable = createWidgetStateUpdater(setTable);
+  const updateModal = createWidgetStateUpdater(setModal);
+  const updateCard = createWidgetStateUpdater(setCard);
+  const updateText = createWidgetStateUpdater(setText);
+  const updateToolbar = createWidgetStateUpdater(setToolbar);
+  const updateScrollPort = createWidgetStateUpdater(setScrollPort);
+  const updateSidebar = createWidgetStateUpdater(setSidebar);
 
   function renderSettingsPanel(): ReactNode {
     if (activeSettings === 'input') {
@@ -1186,6 +1134,14 @@ export function ShowcasePage() {
       return <ToolbarSettings state={toolbar} onChange={updateToolbar} />;
     }
 
+    if (activeSettings === 'scroll-port') {
+      return <ScrollPortSettings state={scrollPort} onChange={updateScrollPort} />;
+    }
+
+    if (activeSettings === 'sidebar') {
+      return <SidebarSettings state={sidebar} onChange={updateSidebar} />;
+    }
+
     return null;
   }
 
@@ -1280,6 +1236,32 @@ export function ShowcasePage() {
     size: card.subtitleSize,
     tone: card.subtitleTone,
   });
+  const resolvedSidebarPreviewTitleProps: TextNodeProps<'title'> = resolveTextNodeProps({
+    prefix: 'title',
+    text: sidebar.title,
+    align: sidebar.titleAlign,
+    italic: sidebar.titleItalic,
+    size: sidebar.titleSize,
+    tone: sidebar.titleTone,
+  });
+  const sidebarPreviewTitleProps: TextNodeProps<'title'> =
+    resolvedSidebarPreviewTitleProps.title
+      ? { ...resolvedSidebarPreviewTitleProps, titleLevel: 'h3' }
+      : resolvedSidebarPreviewTitleProps;
+  const sidebarPreviewSubtitleProps: TextNodeProps<'subtitle'> = resolveTextNodeProps({
+    prefix: 'subtitle',
+    text: sidebar.subtitle,
+    align: sidebar.subtitleAlign,
+    italic: sidebar.subtitleItalic,
+    size: sidebar.subtitleSize,
+    tone: sidebar.subtitleTone,
+  });
+  const scrollPortVeilProps = scrollPort.showVeil
+    ? {
+        showVeil: true as const,
+        veilInsetInline: scrollPort.veilInsetInline,
+      }
+    : { showVeil: false as const };
   const rangeInputTitleProps: TextNodeProps<'title'> = resolveTextNodeProps({
     prefix: 'title',
     text: rangeInput.title,
@@ -1312,6 +1294,13 @@ export function ShowcasePage() {
     card.showActionBorder,
     card.showActionShadow
   );
+  const sidebarPreviewBorderProps: BorderProps = resolveBorderProps(
+    sidebar.showBorder,
+    sidebar.borderTone,
+    sidebar.showShadow
+  );
+  const sidebarPreviewActionBorderProps: ShowActionBorderProps =
+    resolveActionBorderProps(sidebar.showActionBorder, sidebar.showActionShadow);
   const toolbarBorderProps: BorderProps = resolveBorderProps(
     toolbar.showBorder,
     toolbar.borderTone,
@@ -2057,6 +2046,36 @@ export function ShowcasePage() {
 
               {/* Только extension: smoke probe Browser AI в витрине. В lite не синхронизируется. */}
               <BrowserAiSmokeProbe />
+
+              {renderWidgetCard(
+                'scroll-port',
+                <StyledScrollPortPreview>
+                  <ScrollPort {...scrollPortVeilProps}>
+                    <Text>{SCROLL_PORT_PREVIEW_TEXT}</Text>
+                  </ScrollPort>
+                </StyledScrollPortPreview>
+              )}
+
+              {renderWidgetCard(
+                'sidebar',
+                <StyledSidebarPreview>
+                  <Sidebar
+                    background={sidebar.background}
+                    headerActions={sidebar.headerActions.map(resolveIconButtonRowAction)}
+                    iconAriaLabel={SIDEBAR_PREVIEW_ICON_ARIA_LABEL}
+                    id={SIDEBAR_PREVIEW_ID}
+                    open={sidebar.open}
+                    sidebarContent={<Text>{SIDEBAR_PREVIEW_PANEL_TEXT}</Text>}
+                    onClose={() => updateSidebar('open', false)}
+                    {...sidebarPreviewActionBorderProps}
+                    {...sidebarPreviewBorderProps}
+                    {...sidebarPreviewSubtitleProps}
+                    {...sidebarPreviewTitleProps}
+                  >
+                    <Text>{SIDEBAR_PREVIEW_PAGE_TEXT}</Text>
+                  </Sidebar>
+                </StyledSidebarPreview>
+              )}
             </StyledShowcaseWidgets>
           </ScrollPort>
         </Card>

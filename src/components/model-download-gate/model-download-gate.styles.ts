@@ -20,13 +20,14 @@ import { getSpacingValue } from '@ui/spacing';
  *
  * Встроенные стили:
  *  - `display: grid` и `place-items: center` — центрирует карточку гейта в области страницы
- *  - `min-block-size: 100%` — занимает всю высоту родителя
+ *  - `grid-row: 1 / -1` — единственный потоковый ребёнок `body` занимает обе строки
+ *    сетки. Строка `auto` высоты не задаёт, и карточка без этого не центрируется во вьюпорте
  *  - `padding` — отступ содержимого от краёв области гейта
  */
 export const StyledModelDownloadGate = styled.main`
   display: grid;
+  grid-row: 1 / -1;
   place-items: center;
-  min-block-size: 100%;
   padding: ${getSpacingValue(24)};
 `;
 

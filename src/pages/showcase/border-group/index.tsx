@@ -29,6 +29,7 @@
  *     - `src/pages/showcase/search-field-settings/index.tsx`
  *     - `src/pages/showcase/tag-settings/index.tsx`
  *     - `src/pages/showcase/toolbar-settings/index.tsx`
+ *     - `src/pages/showcase/sidebar-settings/index.tsx`
  */
 
 import { type ChangeEvent } from 'react';

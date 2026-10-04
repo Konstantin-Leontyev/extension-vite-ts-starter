@@ -30,8 +30,10 @@
  *     - `src/pages/showcase/toast-settings/index.tsx`
  */
 
-import { Listbox, type ListboxOption } from '@ui/listbox';
+import { Listbox } from '@ui/listbox';
 import { DEFAULT_TONE, type TonePreset } from '@ui/tones';
+
+import { getListboxOptions } from '../get-listbox-options';
 
 /**
  * resolveAvailableTones — возвращает перечень допустимых тонов из переданного списка.
@@ -56,21 +58,6 @@ function resolveAvailableTones<Tone extends string>(
   }
 
   return tones.filter((tone) => tone !== excludeTone || tone === DEFAULT_TONE);
-}
-
-/**
- * getToneListboxOptions — преобразует перечень тонов в опции Listbox.
- *
- * @param tones исходный перечень тонов
- * @returns опции для Listbox
- */
-function getToneListboxOptions<Tone extends string>(
-  tones: readonly Tone[]
-): ListboxOption[] {
-  return tones.map((tone) => ({
-    label: tone,
-    value: tone,
-  }));
 }
 
 /**
@@ -142,7 +129,7 @@ export function ToneListbox<Tone extends string = TonePreset>({
   return (
     <Listbox
       label={label}
-      options={getToneListboxOptions(availableTones)}
+      options={getListboxOptions(availableTones)}
       value={resolveToneListboxValue(value, availableTones)}
       onChange={(nextTone) => onChange(nextTone as Tone)}
     />

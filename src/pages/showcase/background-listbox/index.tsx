@@ -17,25 +17,24 @@
  *  - панели настроек витрины — выбирают заливку:
  *     - `src/pages/showcase/card-settings/index.tsx`
  *     - `src/pages/showcase/modal-settings/index.tsx`
+ *     - `src/pages/showcase/sidebar-settings/index.tsx`
+ *     - `src/pages/showcase/toolbar-settings/index.tsx`
  */
 
-import { Listbox, type ListboxOption } from '@ui/listbox';
+import { Listbox } from '@ui/listbox';
 import {
+  DEFAULT_SURFACE_BACKGROUND,
   SURFACE_BACKGROUND_PRESET_KEYS,
   type SurfaceBackgroundPreset,
 } from '@ui/surface';
 
+import { getListboxOptions } from '../get-listbox-options';
+
 /**
- * getBackgroundListboxOptions — преобразует `SURFACE_BACKGROUND_PRESET_KEYS` в опции Listbox.
- *
- * @returns опции для Listbox
+ * DEFAULT_BACKGROUND_LISTBOX_VALUE — задаёт заливку по умолчанию.
+ * Используется, когда вызывающий код не передал проп `value`.
  */
-function getBackgroundListboxOptions(): ListboxOption[] {
-  return SURFACE_BACKGROUND_PRESET_KEYS.map((background) => ({
-    label: background,
-    value: background,
-  }));
-}
+const DEFAULT_BACKGROUND_LISTBOX_VALUE = DEFAULT_SURFACE_BACKGROUND;
 
 /**
  * BackgroundListboxProps — представляет пропсы компонента BackgroundListbox.
@@ -47,7 +46,7 @@ function getBackgroundListboxOptions(): ListboxOption[] {
 type BackgroundListboxProps = {
   label: string;
   onChange: (background: SurfaceBackgroundPreset) => void;
-  value: SurfaceBackgroundPreset;
+  value?: SurfaceBackgroundPreset;
 };
 
 /**
@@ -60,11 +59,15 @@ type BackgroundListboxProps = {
  *   onChange={(background) => onChange('background', background)}
  * />
  */
-export function BackgroundListbox({ label, onChange, value }: BackgroundListboxProps) {
+export function BackgroundListbox({
+  label,
+  onChange,
+  value = DEFAULT_BACKGROUND_LISTBOX_VALUE,
+}: BackgroundListboxProps) {
   return (
     <Listbox
       label={label}
-      options={getBackgroundListboxOptions()}
+      options={getListboxOptions(SURFACE_BACKGROUND_PRESET_KEYS)}
       value={value}
       onChange={(nextBackground) => onChange(nextBackground as SurfaceBackgroundPreset)}
     />

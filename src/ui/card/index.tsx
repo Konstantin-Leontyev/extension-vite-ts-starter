@@ -203,7 +203,6 @@ function Card<T extends CardHtmlTag = 'div'>({
       insetBlockStart={resolvePaddingEdge(rest, 'blockStart', CARD_PADDING)}
       insetInlineEnd={resolvePaddingEdge(rest, 'inlineEnd', CARD_PADDING)}
       position="absolute"
-      shape="round"
       size={CARD_HEADER_ACTION_SIZE_PRESET}
       {...actionBorderProps}
       zIndex={1}

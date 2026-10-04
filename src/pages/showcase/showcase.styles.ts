@@ -8,6 +8,8 @@
  *    для сетки виджетов
  * 3. Предоставить styled-узел `StyledSettingsForm` для формы настроек в Sidebar
  * 4. Предоставить styled-узел демо-превью `StyledRadioButtonDemo`
+ * 5. Предоставить styled-узлы `StyledScrollPortPreview` и `StyledSidebarPreview`
+ *    для превью карточек ScrollPort и Sidebar
  *
  * Потребители:
  *  - `src/pages/showcase/index.tsx` — собирает layout витрины и оборачивает карточки
@@ -33,7 +35,7 @@ const PLAYGROUND_MAX_BLOCK_SIZE = `calc(100dvb - var(--shell-header-block-size, 
 
 /**
  * SHOWCASE_WIDGET_FULL_ROW_BLOCK_SIZE — задаёт фиксированную высоту полноширинного
- * ряда виджетов (Table и аналоги). Менять вместе с плотностью демо-таблицы.
+ * ряда виджетов, например Table. Менять вместе с плотностью демо-таблицы.
  */
 const SHOWCASE_WIDGET_FULL_ROW_BLOCK_SIZE = '22rem';
 
@@ -42,6 +44,19 @@ const SHOWCASE_WIDGET_FULL_ROW_BLOCK_SIZE = '22rem';
  * Ниже этого порога `auto-fit` уменьшает число колонок.
  */
 const SHOWCASE_WIDGET_MIN_INLINE_SIZE = '16.75rem';
+
+/**
+ * SCROLL_PORT_PREVIEW_BLOCK_SIZE — задаёт фиксированную высоту превью ScrollPort.
+ * Используется в `StyledScrollPortPreview`, чтобы прокрутка и вуаль были видны.
+ */
+const SCROLL_PORT_PREVIEW_BLOCK_SIZE = '10rem';
+
+/**
+ * SIDEBAR_PREVIEW_BLOCK_SIZE — задаёт фиксированную высоту превью Sidebar.
+ * Используется в `StyledSidebarPreview`: корень Sidebar заполняет родителя
+ * через `block-size: 100%`, заданную высоту обеспечивает обёртка.
+ */
+const SIDEBAR_PREVIEW_BLOCK_SIZE = '12rem';
 
 /**
  * StyledMain — задаёт корневой landmark витрины дизайн-системы.
@@ -134,4 +149,43 @@ export const StyledRadioButtonDemo = styled.div`
   display: grid;
   gap: ${getSpacingValue(8)};
   place-content: center;
+`;
+
+/**
+ * StyledScrollPortPreview — задаёт обёртку превью ScrollPort в карточке виджета.
+ * Базируется на `<div>`.
+ *
+ * Встроенные стили:
+ *  - `display: grid` и `grid-template-rows: minmax(0, 1fr)` — задают строке высоту,
+ *    чтобы корень ScrollPort с `block-size: 100%` заполнял обёртку
+ *  - `block-size` из `SCROLL_PORT_PREVIEW_BLOCK_SIZE` — фиксированная высота превью,
+ *    чтобы прокрутка и вуаль были видны
+ *  - `min-inline-size: 0` и `min-block-size: 0` — сжимается в сетке карточки
+ */
+export const StyledScrollPortPreview = styled.div`
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  min-inline-size: 0;
+  block-size: ${SCROLL_PORT_PREVIEW_BLOCK_SIZE};
+  min-block-size: 0;
+`;
+
+/**
+ * StyledSidebarPreview — задаёт обёртку превью Sidebar в карточке виджета.
+ * Базируется на `<div>`.
+ *
+ * Встроенные стили:
+ *  - `display: grid` и `grid-template-rows: minmax(0, 1fr)` — задают строке высоту,
+ *    чтобы корень Sidebar с `block-size: 100%` заполнял обёртку
+ *  - `block-size` из `SIDEBAR_PREVIEW_BLOCK_SIZE` — фиксированная высота превью
+ *  - `overflow: hidden` — обрезает выезд панели по границе обёртки
+ *  - `min-inline-size: 0` и `min-block-size: 0` — сжимается в сетке карточки
+ */
+export const StyledSidebarPreview = styled.div`
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  min-inline-size: 0;
+  block-size: ${SIDEBAR_PREVIEW_BLOCK_SIZE};
+  min-block-size: 0;
+  overflow: hidden;
 `;

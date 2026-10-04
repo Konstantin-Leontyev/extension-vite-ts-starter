@@ -14,7 +14,7 @@ disable-model-invocation: true
 **Только анализ и отчёт — правки в код не вносишь.**
 
 Субагент readonly: `.cursor/agents/project-reviewer.md`.  
-**Модель:** `cursor-grok-4.6-xhigh`.
+**Модель:** `grok-4.7-xhigh`.
 
 Общий UI-чеклист (тот же, что у `project-coder`): прочитай и применяй **целиком**
 

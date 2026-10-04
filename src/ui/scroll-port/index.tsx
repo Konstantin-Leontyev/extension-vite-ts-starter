@@ -156,21 +156,6 @@ export function ScrollPort({
   ...rest
 }: ScrollPortProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const paddingBlockStart = resolvePaddingEdge(
-    layoutProps,
-    'blockStart',
-    DEFAULT_SCROLL_PORT_PADDING_BLOCK_START
-  );
-  const paddingBlockEnd = resolvePaddingEdge(
-    layoutProps,
-    'blockEnd',
-    DEFAULT_SCROLL_PORT_PADDING_BLOCK_END
-  );
-  const paddingInlineStart = resolvePaddingEdge(
-    layoutProps,
-    'inlineStart',
-    DEFAULT_SCROLL_PORT_PADDING_INLINE_START
-  );
   const paddingInlineEnd = resolvePaddingEdge(
     layoutProps,
     'inlineEnd',
@@ -233,10 +218,22 @@ export function ScrollPort({
     >
       <StyledScrollPortContainer>
         <StyledScrollPortViewport
-          paddingBlockEnd={paddingBlockEnd}
-          paddingBlockStart={paddingBlockStart}
+          paddingBlockEnd={resolvePaddingEdge(
+            layoutProps,
+            'blockEnd',
+            DEFAULT_SCROLL_PORT_PADDING_BLOCK_END
+          )}
+          paddingBlockStart={resolvePaddingEdge(
+            layoutProps,
+            'blockStart',
+            DEFAULT_SCROLL_PORT_PADDING_BLOCK_START
+          )}
           paddingInlineEnd={paddingInlineEnd}
-          paddingInlineStart={paddingInlineStart}
+          paddingInlineStart={resolvePaddingEdge(
+            layoutProps,
+            'inlineStart',
+            DEFAULT_SCROLL_PORT_PADDING_INLINE_START
+          )}
           ref={setViewportRef}
           {...restProps}
         >

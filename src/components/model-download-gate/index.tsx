@@ -170,6 +170,7 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
         padding={GATE_CARD_PADDING}
         title={resolveGateTitle(phase)}
         titleId={GATE_TITLE_ID}
+        titleLevel="h1"
       >
         <StyledModelDownloadGateContent>
           <StyledModelDownloadGateCopy>

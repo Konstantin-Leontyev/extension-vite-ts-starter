@@ -18,7 +18,7 @@ disable-model-invocation: true
 **Канон `.mdc` сам не редактируешь.** Предложения в канон — только в findings-файл (full-repo) или в секцию отчёта (обычный режим).
 
 Для субагента: `.cursor/agents/project-coder.md`.  
-**Модель:** `cursor-grok-4.6-xhigh`.
+**Модель:** `grok-4.7-xhigh`.
 
 ---
 

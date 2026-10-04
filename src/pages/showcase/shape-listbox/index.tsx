@@ -16,7 +16,6 @@
  * Потребители:
  *  - `src/pages/showcase/icon-group/index.tsx` — выбирает форму окна иконки
  *  - панели настроек витрины — выбирают форму:
- *     - `src/pages/showcase/card-settings/index.tsx`
  *     - `src/pages/showcase/control-group/index.tsx`
  *     - `src/pages/showcase/date-range-input-settings/index.tsx`
  *     - `src/pages/showcase/icon-settings/index.tsx`
@@ -26,23 +25,16 @@
  *     - `src/pages/showcase/toolbar-settings/index.tsx`
  */
 
-import { Listbox, type ListboxOption } from '@ui/listbox';
-import { type ShapePreset } from '@ui/presets';
+import { Listbox } from '@ui/listbox';
+import { DEFAULT_SHAPE_PRESET, type ShapePreset } from '@ui/presets';
+
+import { getListboxOptions } from '../get-listbox-options';
 
 /**
- * getShapeListboxOptions — преобразует перечень форм в опции Listbox.
- *
- * @param shapes исходный перечень форм
- * @returns опции для Listbox
+ * DEFAULT_SHAPE_LISTBOX_VALUE — задаёт форму по умолчанию.
+ * Используется, когда вызывающий код не передал проп `value`.
  */
-function getShapeListboxOptions<Shape extends string>(
-  shapes: readonly Shape[]
-): ListboxOption[] {
-  return shapes.map((shape) => ({
-    label: shape,
-    value: shape,
-  }));
-}
+const DEFAULT_SHAPE_LISTBOX_VALUE = DEFAULT_SHAPE_PRESET;
 
 /**
  * ShapeListboxProps — представляет пропсы компонента ShapeListbox.
@@ -57,7 +49,7 @@ type ShapeListboxProps<Shape extends string> = {
   label: string;
   onChange: (shape: Shape) => void;
   shapes: readonly Shape[];
-  value: Shape;
+  value?: Shape;
 };
 
 /**
@@ -75,12 +67,12 @@ export function ShapeListbox<Shape extends string = ShapePreset>({
   label,
   onChange,
   shapes,
-  value,
+  value = DEFAULT_SHAPE_LISTBOX_VALUE as Shape,
 }: ShapeListboxProps<Shape>) {
   return (
     <Listbox
       label={label}
-      options={getShapeListboxOptions(shapes)}
+      options={getListboxOptions(shapes)}
       value={value}
       onChange={(nextShape) => onChange(nextShape as Shape)}
     />

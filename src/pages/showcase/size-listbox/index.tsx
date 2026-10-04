@@ -32,23 +32,10 @@
  *     - `src/pages/showcase/toolbar-settings/index.tsx`
  */
 
-import { Listbox, type ListboxOption } from '@ui/listbox';
+import { Listbox } from '@ui/listbox';
 import { DEFAULT_SIZE_PRESET, type SizePreset } from '@ui/presets';
 
-/**
- * getSizeListboxOptions — преобразует перечень размеров в опции Listbox.
- *
- * @param sizes исходный перечень размеров
- * @returns опции для Listbox
- */
-function getSizeListboxOptions<Size extends string>(
-  sizes: readonly Size[]
-): ListboxOption[] {
-  return sizes.map((size) => ({
-    label: size,
-    value: size,
-  }));
-}
+import { getListboxOptions } from '../get-listbox-options';
 
 /**
  * DEFAULT_SIZE_LISTBOX_VALUE — задаёт размер для отображения в листбоксе по умолчанию.
@@ -100,7 +87,7 @@ export function SizeListbox<Size extends string = SizePreset>({
   return (
     <Listbox
       label={label}
-      options={getSizeListboxOptions(sizes)}
+      options={getListboxOptions(sizes)}
       value={value}
       onChange={(nextSize) => onChange(nextSize as Size)}
     />
