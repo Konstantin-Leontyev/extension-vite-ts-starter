@@ -33,8 +33,8 @@
  * 4. Связывать имя области с заголовком через `aria-labelledby`, когда у корня есть роль
  *
  * Потребители:
- *  - `src/ui/modal/index.tsx` — собирает модальный диалог на Card
- *  - `src/ui/sidebar/index.tsx` — собирает выезжающую панель на Card
+ *  - `src/ui/modal/index.tsx` — рендерит Card внутри модального диалога
+ *  - `src/ui/sidebar/index.tsx` — рендерит Card внутри выезжающей панели
  *  - страницы и виджеты приложения, например ProfileMenu — показывают карточки с шапкой и действиями
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
@@ -48,6 +48,7 @@ import {
 
 import { resolveBorderProps, type ShowActionBorderProps } from '@ui/border';
 import { IconButtonRow, type IconButtonRowAction } from '@ui/icon-button-row';
+import { resolvePaddingEdge } from '@ui/spacing';
 import {
   Text,
   type TextNodeProps,
@@ -199,9 +200,10 @@ function Card<T extends CardHtmlTag = 'div'>({
     header,
     <IconButtonRow
       actions={headerActions}
-      insetBlockStart={CARD_PADDING}
-      insetInlineEnd={CARD_PADDING}
+      insetBlockStart={resolvePaddingEdge(rest, 'blockStart', CARD_PADDING)}
+      insetInlineEnd={resolvePaddingEdge(rest, 'inlineEnd', CARD_PADDING)}
       position="absolute"
+      shape="round"
       size={CARD_HEADER_ACTION_SIZE_PRESET}
       {...actionBorderProps}
       zIndex={1}

@@ -27,15 +27,18 @@ import {
 } from 'react';
 
 import { assignRef } from '@ui/ref';
-import { type SpacingValue } from '@ui/spacing';
+import { resolvePaddingEdge, type SpacingValue } from '@ui/spacing';
 
 import {
+  DEFAULT_SCROLL_PORT_PADDING_BLOCK_END,
+  DEFAULT_SCROLL_PORT_PADDING_BLOCK_START,
+  DEFAULT_SCROLL_PORT_PADDING_INLINE_END,
+  DEFAULT_SCROLL_PORT_PADDING_INLINE_START,
   DEFAULT_SCROLL_PORT_SHOW_VEIL,
   StyledScrollPortContainer,
   StyledScrollPortRoot,
   StyledScrollPortViewport,
   omitScrollPortRoutedPaddingProps,
-  resolveScrollPortPaddingEdge,
   splitLayoutProps,
   type ScrollPortStyleProps,
 } from './scroll-port.styles';
@@ -99,7 +102,7 @@ function resolveScrollPortVeilEdges(viewport: HTMLElement): {
 
 /**
  * applyScrollPortVeilEdges — выставляет `data-veil-block-*` на корне по позиции скролла.
- * Пишет в DOM напрямую: без React-state, чтобы не плодить ререндеры на `scroll`.
+ * Пишет в DOM напрямую, без состояния React, чтобы событие `scroll` не вызывало лишние отрисовки.
  *
  * @param root корневой узел ScrollPort
  * @param viewport вьюпорт прокрутки или `null`
@@ -153,10 +156,26 @@ export function ScrollPort({
   ...rest
 }: ScrollPortProps) {
   const { layoutProps, restProps } = splitLayoutProps(rest);
-  const paddingBlockStart = resolveScrollPortPaddingEdge(layoutProps, 'blockStart');
-  const paddingBlockEnd = resolveScrollPortPaddingEdge(layoutProps, 'blockEnd');
-  const paddingInlineStart = resolveScrollPortPaddingEdge(layoutProps, 'inlineStart');
-  const paddingInlineEnd = resolveScrollPortPaddingEdge(layoutProps, 'inlineEnd');
+  const paddingBlockStart = resolvePaddingEdge(
+    layoutProps,
+    'blockStart',
+    DEFAULT_SCROLL_PORT_PADDING_BLOCK_START
+  );
+  const paddingBlockEnd = resolvePaddingEdge(
+    layoutProps,
+    'blockEnd',
+    DEFAULT_SCROLL_PORT_PADDING_BLOCK_END
+  );
+  const paddingInlineStart = resolvePaddingEdge(
+    layoutProps,
+    'inlineStart',
+    DEFAULT_SCROLL_PORT_PADDING_INLINE_START
+  );
+  const paddingInlineEnd = resolvePaddingEdge(
+    layoutProps,
+    'inlineEnd',
+    DEFAULT_SCROLL_PORT_PADDING_INLINE_END
+  );
   const rootLayoutProps = omitScrollPortRoutedPaddingProps(layoutProps);
   const isVeilEnabled = showVeil ?? DEFAULT_SCROLL_PORT_SHOW_VEIL;
   const rootNodeRef = useRef<HTMLDivElement | null>(null);
@@ -208,7 +227,7 @@ export function ScrollPort({
     <StyledScrollPortRoot
       gutterInlineEnd={paddingInlineEnd}
       ref={rootNodeRef}
-      showVeil={showVeil}
+      showVeil={isVeilEnabled}
       veilInsetInline={veilInsetInline}
       {...rootLayoutProps}
     >

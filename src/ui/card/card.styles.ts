@@ -4,9 +4,9 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `CardStyleProps`
- * 2. Хранить внутренний отступ поверхности в `CARD_PADDING`
- * 3. Предоставить константу `CARD_HEADER_ACTION_SIZE_PRESET`
- * 4. Предоставить styled-узлы `StyledCard`, `StyledCardHeader`,
+ * 2. Хранить внутренний отступ поверхности в `CARD_PADDING` и размер кнопок
+ *    ряда действий в `CARD_HEADER_ACTION_SIZE_PRESET`
+ * 3. Предоставить styled-узлы `StyledCard`, `StyledCardHeader`,
  *    `StyledCardHeaderFirstLine` и `StyledCardBody`
  *
  * Потребители:
@@ -44,8 +44,7 @@ import { getTheme, type AppTheme } from '@ui/theme';
  * Размер ряда — контракт Card, собственного пропа размера у действия нет:
  * под этот пресет всегда резервируется высота первой строки шапки,
  * заголовок не смещается при добавлении и удалении действий.
- * Тип `SizePreset`: oversized-габарит через layout на Icon в хроме карточки
- * ломает композицию.
+ * Габарит крупнее ряда через layout-пропсы на Icon в карточке ломает композицию.
  */
 export const CARD_HEADER_ACTION_SIZE_PRESET: SizePreset = 'normal';
 
@@ -73,7 +72,8 @@ const CARD_PROP_NAMES = new Set<string>([
 
 /**
  * CARD_PADDING — задаёт внутренний отступ поверхности карточки.
- * Тем же значением позиционируется абсолютный ряд действий шапки.
+ * Ряд действий берёт `insetBlockStart` и `insetInlineEnd` через `resolvePaddingEdge`.
+ * Запасное значение — эта константа.
  */
 export const CARD_PADDING: SpacingValue = 16;
 
@@ -157,7 +157,7 @@ export const StyledCardHeader = styled.header`
  *
  * Встроенные стили:
  *  - `display: grid` — раскладка по дефолту проекта
- *  - `min-inline-size: 0` — сжимается при длинном тексте рядом с actions
+ *  - `min-inline-size: 0` — сжимается при длинном тексте рядом с действиями шапки
  *  - `align-content: center` — центрирует текст по высоте ряда действий
  *  - `min-block-size` — постоянный резерв высоты под ряд действий
  *    `CARD_HEADER_ACTION_SIZE_PRESET`: заголовок не смещается при их
@@ -175,13 +175,11 @@ export const StyledCardHeaderFirstLine = styled.div`
  * Базируется на `<div>`.
  *
  * Встроенные стили:
- *  - `position: relative` — якорь для вложенного позиционирования
  *  - `display: grid` — раскладка по дефолту проекта
  *  - `min-inline-size: 0` и `min-block-size: 0` — сжимается во flex/grid-родителе
- *  - `background-color: inherit` — прозрачный фон карточки наследуется телом
+ *  - `background-color: inherit` — тело берёт заливку карточки
  */
 export const StyledCardBody = styled.div`
-  position: relative;
   display: grid;
   min-inline-size: 0;
   min-block-size: 0;

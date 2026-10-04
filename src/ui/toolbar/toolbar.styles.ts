@@ -28,7 +28,12 @@ import {
   resolveBlockRadius,
   type ShapePreset,
 } from '@ui/presets';
-import { getSpacingValue, type SpacingValue } from '@ui/spacing';
+import {
+  getSpacingValue,
+  resolvePaddingEdge,
+  type SpacingProps,
+  type SpacingValue,
+} from '@ui/spacing';
 import {
   DEFAULT_SURFACE_BACKGROUND,
   getSurfaceBackgroundColor,
@@ -68,14 +73,23 @@ const TOOLBAR_PADDING: SpacingValue = 8;
 
 /**
  * resolveToolbarBlockRadius — возвращает скругление поверхности панели по `shape`
- * и `size`: высота = размер иконки плюс два `TOOLBAR_PADDING`.
+ * и `size`.
+ * Для `pill` высота — размер иконки плюс отступы `blockStart` и `blockEnd`
+ * из `resolvePaddingEdge`. Без `padding*` оба отступа равны `TOOLBAR_PADDING`.
  *
  * @param shape форма панели
  * @param size размер окна действия
+ * @param props spacing-пропсы панели
  * @returns значение для CSS-свойства `border-radius`
  */
-function resolveToolbarBlockRadius(shape: ShapePreset, size: IconSizePreset): string {
-  const surfaceBlockSize = `calc(${getSpacingValue(getIconSize(size))} + ${getSpacingValue(TOOLBAR_PADDING)} + ${getSpacingValue(TOOLBAR_PADDING)})`;
+function resolveToolbarBlockRadius(
+  shape: ShapePreset,
+  size: IconSizePreset,
+  props: SpacingProps
+): string {
+  const surfaceBlockSize = `calc(${getSpacingValue(getIconSize(size))} + ${getSpacingValue(
+    resolvePaddingEdge(props, 'blockStart', TOOLBAR_PADDING)
+  )} + ${getSpacingValue(resolvePaddingEdge(props, 'blockEnd', TOOLBAR_PADDING))})`;
 
   return resolveBlockRadius(shape, surfaceBlockSize);
 }
@@ -101,7 +115,7 @@ function getToolbarStyles(props: ToolbarStyleProps & { theme: AppTheme }): strin
   return `
     background-color: ${getSurfaceBackgroundColor(theme, background)};
     ${getBorderStyles(theme, showBorder, showShadow, borderTone)}
-    border-radius: ${resolveToolbarBlockRadius(shape, size)};
+    border-radius: ${resolveToolbarBlockRadius(shape, size, props)};
   `;
 }
 

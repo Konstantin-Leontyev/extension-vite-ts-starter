@@ -21,12 +21,7 @@ import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout
 import { MOTION_SHELL_DURATION, getTransitionStyles } from '@ui/motion';
 import { POSITIONING_PROPERTY_NAMES } from '@ui/positioning';
 import { SIZING_PROPERTY_NAMES } from '@ui/sizing';
-import {
-  PADDING_PROPERTY_NAMES,
-  getSpacingValue,
-  type SpacingProps,
-  type SpacingValue,
-} from '@ui/spacing';
+import { PADDING_PROPERTY_NAMES, getSpacingValue, resolvePaddingEdge } from '@ui/spacing';
 import { STACKING_SIDEBAR } from '@ui/stacking';
 import { VIEWPORT_EDGE_INSET } from '@ui/viewport';
 
@@ -144,7 +139,7 @@ export const StyledSidebarTrack = styled.div`
 `;
 
 /**
- * SidebarStyleProps — представляет пропсы стилизации Sidebar.
+ * SidebarStyleProps — представляет пропсы стилизации Sidebar и layout-пропсы.
  */
 export type SidebarStyleProps = LayoutProps;
 
@@ -176,54 +171,13 @@ function omitSidebarShellLayoutProps(props: LayoutProps): LayoutProps {
 }
 
 /**
- * resolveSidebarPaddingEdge — вычисляет отступ края оболочки с каскадом
- * шорткатов layout: сторона → ось → `padding` → `VIEWPORT_EDGE_INSET`.
- *
- * @param props spacing-пропсы Sidebar
- * @param edge край оболочки
- * @returns значение шкалы отступов
- */
-function resolveSidebarPaddingEdge(
-  props: SpacingProps,
-  edge: 'blockEnd' | 'blockStart' | 'inlineEnd' | 'inlineStart'
-): SpacingValue {
-  if (edge === 'blockStart') {
-    return (
-      props.paddingBlockStart ??
-      props.paddingBlock ??
-      props.padding ??
-      VIEWPORT_EDGE_INSET
-    );
-  }
-
-  if (edge === 'blockEnd') {
-    return (
-      props.paddingBlockEnd ?? props.paddingBlock ?? props.padding ?? VIEWPORT_EDGE_INSET
-    );
-  }
-
-  if (edge === 'inlineStart') {
-    return (
-      props.paddingInlineStart ??
-      props.paddingInline ??
-      props.padding ??
-      VIEWPORT_EDGE_INSET
-    );
-  }
-
-  return (
-    props.paddingInlineEnd ?? props.paddingInline ?? props.padding ?? VIEWPORT_EDGE_INSET
-  );
-}
-
-/**
  * getSidebarStyles — возвращает CSS-правила для корня `StyledSidebar`: отступы зон
  * каркаса, зазор при открытой панели, ширину слота, слой `STACKING_SIDEBAR`
  * на узком экране и поведение выезда.
  *
  * Как работает:
- * 1. Для каждого края оболочки берёт отступ по каскаду сторона → ось → `padding` →
- *    `VIEWPORT_EDGE_INSET` и переводит метку шкалы в CSS-длину
+ * 1. Для каждого края оболочки берёт отступ через `resolvePaddingEdge`
+ *    с запасным значением `VIEWPORT_EDGE_INSET` и переводит метку шкалы в CSS-длину
  * 2. Пишет отступы в `StyledSidebarContent` и `StyledSidebarSlot` по состоянию
  *    панели и ширине вьюпорта
  * 3. На широком экране при открытой панели задаёт зазор между зонами и ширину
@@ -237,14 +191,16 @@ function resolveSidebarPaddingEdge(
  */
 function getSidebarStyles(props: SidebarStyleProps): string {
   const paddingBlockStart = getSpacingValue(
-    resolveSidebarPaddingEdge(props, 'blockStart')
+    resolvePaddingEdge(props, 'blockStart', VIEWPORT_EDGE_INSET)
   );
-  const paddingBlockEnd = getSpacingValue(resolveSidebarPaddingEdge(props, 'blockEnd'));
+  const paddingBlockEnd = getSpacingValue(
+    resolvePaddingEdge(props, 'blockEnd', VIEWPORT_EDGE_INSET)
+  );
   const paddingInlineStart = getSpacingValue(
-    resolveSidebarPaddingEdge(props, 'inlineStart')
+    resolvePaddingEdge(props, 'inlineStart', VIEWPORT_EDGE_INSET)
   );
   const paddingInlineEnd = getSpacingValue(
-    resolveSidebarPaddingEdge(props, 'inlineEnd')
+    resolvePaddingEdge(props, 'inlineEnd', VIEWPORT_EDGE_INSET)
   );
 
   return `

@@ -7,7 +7,7 @@
  * 2. Предоставить styled-узел `StyledToast`
  *
  * Потребители:
- *  - `src/ui/toast/index.tsx` — собирает компонент Toast и реэкспортирует публичное API
+ *  - `src/ui/toast/index.tsx` — собирает компонент Toast
  */
 
 import styled from 'styled-components';
@@ -45,14 +45,14 @@ const TOAST_PROP_NAMES = new Set<string>([...LAYOUT_PROP_NAMES, 'size', 'tone'])
 
 /**
  * getToastStyles — возвращает CSS-правила для корня `StyledToast`:
- * размер, отступы, фон, цвет, рамку с тенью и акцентную полосу.
+ * размер, отступы, фон, рамку с тенью и акцентную полосу.
  * Рамка — `box-shadow` вне layout-box: блочные стороны не входят в пол
  * `min-block-size`, однострочный Toast держит инвариант §7.3. Реальный `border`
  * остаётся только у акцентной полосы — инлайновая сторона высоту не растит.
  *
  * Как работает:
  * 1. Берёт тему и подставляет дефолты `size` и `tone`
- * 2. Собирает габариты, отступы, заливку `surface` и цвет текста
+ * 2. Собирает габариты, отступы и заливку `surface`
  * 3. Кладёт рамку с тенью через `getBorderStyles` без флагов — рамка с тенью
  *    по дефолтам
  * 4. Красит акцентную полосу слева через `border-inline-start` цветом тона
@@ -72,7 +72,6 @@ function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
     padding-block: ${padding.block};
     padding-inline: ${padding.inline};
     background-color: ${theme.colors.surface};
-    color: ${theme.colors.default};
     ${getBorderStyles(theme)}
     border-inline-start: ${getSpacingValue(4)} solid ${getToneColor(theme, tone, theme.colors.border)};
     border-radius: ${resolveBlockRadius(DEFAULT_SHAPE_PRESET, minBlockSize)};
@@ -88,7 +87,7 @@ function getToastStyles(props: ToastStyleProps & { theme: AppTheme }): string {
  *  - `align-content: center` — центрирует текст по вертикали
  *
  * Генерация стилей:
- *  - `getToastStyles` — размер, отступы, фон, цвет, рамка с тенью, акцентная полоса
+ *  - `getToastStyles` — размер, отступы, фон, рамка с тенью, акцентная полоса
  *  - `getLayoutStyles` — отступы, позиционирование, размеры
  *
  * Высота задана через `min-block-size` без фиксированного `block-size`:

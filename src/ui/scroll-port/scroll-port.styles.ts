@@ -4,11 +4,14 @@
  *
  * Основные задачи:
  * 1. Типизировать пропсы через `ScrollPortStyleProps`
- * 2. Предоставить функции `resolveScrollPortPaddingEdge` и
- *    `omitScrollPortRoutedPaddingProps`, а также дефолт `DEFAULT_SCROLL_PORT_SHOW_VEIL`
- * 3. Предоставить styled-узлы `StyledScrollPortRoot`, `StyledScrollPortContainer`
+ * 2. Хранить отступы краёв вьюпорта в `DEFAULT_SCROLL_PORT_PADDING_BLOCK_START`,
+ *    `DEFAULT_SCROLL_PORT_PADDING_BLOCK_END`, `DEFAULT_SCROLL_PORT_PADDING_INLINE_START`
+ *    и `DEFAULT_SCROLL_PORT_PADDING_INLINE_END`
+ * 3. Предоставить функцию `omitScrollPortRoutedPaddingProps`, а также дефолт показа вуали
+ *    `DEFAULT_SCROLL_PORT_SHOW_VEIL`
+ * 4. Предоставить styled-узлы `StyledScrollPortRoot`, `StyledScrollPortContainer`
  *    и `StyledScrollPortViewport`
- * 4. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
+ * 5. Реэкспортировать `splitLayoutProps` для сборки в `index.tsx`
  *
  * Потребители:
  *  - `src/ui/scroll-port/index.tsx` — собирает компонент ScrollPort
@@ -20,7 +23,6 @@ import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout
 import {
   PADDING_PROPERTY_NAMES,
   getSpacingValue,
-  type SpacingProps,
   type SpacingValue,
 } from '@ui/spacing';
 
@@ -44,75 +46,28 @@ export type ScrollPortStyleProps = LayoutProps & {
  * Используется, когда вызывающий код не передал проп `paddingInlineEnd`, `paddingInline`
  * или `padding`.
  */
-const DEFAULT_SCROLL_PORT_PADDING_INLINE_END: SpacingValue = 16;
+export const DEFAULT_SCROLL_PORT_PADDING_INLINE_END: SpacingValue = 16;
 
 /**
  * DEFAULT_SCROLL_PORT_PADDING_INLINE_START — задаёт отступ inline-start вьюпорта по умолчанию.
  * Используется, когда вызывающий код не передал проп `paddingInlineStart`, `paddingInline`
  * или `padding`.
  */
-const DEFAULT_SCROLL_PORT_PADDING_INLINE_START: SpacingValue = 4;
+export const DEFAULT_SCROLL_PORT_PADDING_INLINE_START: SpacingValue = 4;
 
 /**
  * DEFAULT_SCROLL_PORT_PADDING_BLOCK_START — задаёт отступ block-start вьюпорта по умолчанию.
  * Используется, когда вызывающий код не передал проп `paddingBlockStart`, `paddingBlock`
  * или `padding`.
  */
-const DEFAULT_SCROLL_PORT_PADDING_BLOCK_START: SpacingValue = 0;
+export const DEFAULT_SCROLL_PORT_PADDING_BLOCK_START: SpacingValue = 0;
 
 /**
  * DEFAULT_SCROLL_PORT_PADDING_BLOCK_END — задаёт отступ block-end вьюпорта по умолчанию.
  * Используется, когда вызывающий код не передал проп `paddingBlockEnd`, `paddingBlock`
  * или `padding`.
  */
-const DEFAULT_SCROLL_PORT_PADDING_BLOCK_END: SpacingValue = 0;
-
-/**
- * resolveScrollPortPaddingEdge — вычисляет отступ края вьюпорта с каскадом шорткатов
- * layout: сторона → ось → `padding` → дефолт края.
- *
- * @param props spacing-пропсы ScrollPort
- * @param edge край вьюпорта
- * @returns значение шкалы отступов
- */
-export function resolveScrollPortPaddingEdge(
-  props: SpacingProps,
-  edge: 'blockEnd' | 'blockStart' | 'inlineEnd' | 'inlineStart'
-): SpacingValue {
-  if (edge === 'blockStart') {
-    return (
-      props.paddingBlockStart ??
-      props.paddingBlock ??
-      props.padding ??
-      DEFAULT_SCROLL_PORT_PADDING_BLOCK_START
-    );
-  }
-
-  if (edge === 'blockEnd') {
-    return (
-      props.paddingBlockEnd ??
-      props.paddingBlock ??
-      props.padding ??
-      DEFAULT_SCROLL_PORT_PADDING_BLOCK_END
-    );
-  }
-
-  if (edge === 'inlineStart') {
-    return (
-      props.paddingInlineStart ??
-      props.paddingInline ??
-      props.padding ??
-      DEFAULT_SCROLL_PORT_PADDING_INLINE_START
-    );
-  }
-
-  return (
-    props.paddingInlineEnd ??
-    props.paddingInline ??
-    props.padding ??
-    DEFAULT_SCROLL_PORT_PADDING_INLINE_END
-  );
-}
+export const DEFAULT_SCROLL_PORT_PADDING_BLOCK_END: SpacingValue = 0;
 
 /**
  * omitScrollPortRoutedPaddingProps — убирает пропсы отступов, маршрутизируемые во вьюпорт
@@ -143,7 +98,7 @@ export function omitScrollPortRoutedPaddingProps(props: LayoutProps): LayoutProp
  */
 type ScrollPortRootStyleProps = {
   gutterInlineEnd: SpacingValue;
-  showVeil?: boolean;
+  showVeil: boolean;
   veilInsetInline?: SpacingValue;
 };
 
@@ -215,7 +170,7 @@ function resolveScrollPortTrackMarginInlineEnd(gutterInlineEnd: SpacingValue): s
 function getScrollPortRootStyles(props: ScrollPortRootStyleProps): string {
   const {
     gutterInlineEnd,
-    showVeil = DEFAULT_SCROLL_PORT_SHOW_VEIL,
+    showVeil,
     veilInsetInline = DEFAULT_SCROLL_PORT_VEIL_INSET_INLINE,
   } = props;
 

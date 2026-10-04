@@ -11,6 +11,7 @@
  * 4. Генерировать CSS-правила через `getSpacingStyles` и значения шкалы через `getSpacingValue`
  * 5. Предоставить перечень имён пропсов через `SPACING_PROPERTY_NAMES`
  * 6. Предоставить перечень имён пропсов отступа содержимого через `PADDING_PROPERTY_NAMES`
+ * 7. Вычислять отступ края через `resolvePaddingEdge`
  *
  * Потребители:
  *  - `@ui/layout` — включает spacing-пропсы в `LayoutProps` и вызывает `getSpacingStyles`
@@ -18,6 +19,8 @@
  *  - `@ui/positioning` — преобразует значения `gap` и `inset` через `getSpacingValue`
  *  - `@ui/scroll-port`, `@ui/sidebar` — фильтруют маршрутизируемые `padding*` через
  *    `PADDING_PROPERTY_NAMES`
+ *  - `@ui/card`, `@ui/scroll-port`, `@ui/sidebar` и `@ui/toolbar` — вычисляют
+ *    отступ края через `resolvePaddingEdge`
  *  - компоненты со своими наборами размеров, например Tag, Switch и ProgressBar —
  *    получают значения шкалы через `getSpacingValue`
  */
@@ -147,6 +150,35 @@ export const SPACING_PROPERTY_NAMES = new Set<string>(Object.keys(SPACING_PROPER
 export const PADDING_PROPERTY_NAMES = new Set<string>(
   Object.keys(SPACING_PROPERTIES).filter((key) => key.startsWith('padding'))
 );
+
+/**
+ * resolvePaddingEdge — вычисляет отступ края с каскадом шорткатов layout:
+ * сторона → ось → `padding` → `fallback`.
+ *
+ * @param props spacing-пропсы
+ * @param edge край
+ * @param fallback запасное значение, когда шорткаты не переданы
+ * @returns значение шкалы отступов
+ */
+export function resolvePaddingEdge(
+  props: SpacingProps,
+  edge: 'blockEnd' | 'blockStart' | 'inlineEnd' | 'inlineStart',
+  fallback: SpacingValue
+): SpacingValue {
+  if (edge === 'blockStart') {
+    return props.paddingBlockStart ?? props.paddingBlock ?? props.padding ?? fallback;
+  }
+
+  if (edge === 'blockEnd') {
+    return props.paddingBlockEnd ?? props.paddingBlock ?? props.padding ?? fallback;
+  }
+
+  if (edge === 'inlineStart') {
+    return props.paddingInlineStart ?? props.paddingInline ?? props.padding ?? fallback;
+  }
+
+  return props.paddingInlineEnd ?? props.paddingInline ?? props.padding ?? fallback;
+}
 
 /**
  * getSpacingStyles — преобразует spacing-пропсы в готовые CSS-правила.
