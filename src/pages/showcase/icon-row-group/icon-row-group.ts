@@ -10,7 +10,7 @@
  * Потребители:
  *  - `src/pages/showcase/icon-row-group/index.tsx` — типизирует пропсы и реэкспортирует
  *    `IconRowGroupAction`
- *  - `src/pages/showcase/index.tsx` — собирает действия превью Card, Toolbar и Sidebar
+ *  - `src/pages/showcase/index.tsx` — собирает действия превью Card и Toolbar
  *    через `resolveIconButtonRowAction`
  */
 
@@ -40,7 +40,7 @@ export type IconRowGroupAction = {
  * resolveIconButtonRowAction — преобразует действие витрины в действие ряда.
  *
  * @param action действие в состоянии витрины
- * @returns действие для превью Card, Toolbar и Sidebar
+ * @returns действие для превью Card и Toolbar
  */
 export function resolveIconButtonRowAction(
   action: IconRowGroupAction

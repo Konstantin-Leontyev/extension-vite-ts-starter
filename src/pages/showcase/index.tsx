@@ -111,7 +111,6 @@ import {
   type RadioButtonWidgetState,
 } from './radio-button-settings';
 import { RangeInputSettings, type RangeInputWidgetState } from './range-input-settings';
-import { ScrollPortSettings, type ScrollPortWidgetState } from './scroll-port-settings';
 import {
   SearchFieldSettings,
   type SearchFieldWidgetState,
@@ -125,12 +124,9 @@ import { resolveTextNodeProps } from './showcase-text-node';
 import {
   StyledMain,
   StyledRadioButtonDemo,
-  StyledScrollPortPreview,
   StyledShowcaseWidgetFullRow,
   StyledShowcaseWidgets,
-  StyledSidebarPreview,
 } from './showcase.styles';
-import { SidebarSettings, type SidebarWidgetState } from './sidebar-settings';
 import { SpinnerSettings, type SpinnerWidgetState } from './spinner-settings';
 import { StepperSettings, type StepperWidgetState } from './stepper-settings';
 import { SwitchSettings, type SwitchWidgetState } from './switch-settings';
@@ -235,10 +231,8 @@ type WidgetSettingsKey =
   | 'progress'
   | 'radio-button'
   | 'range-input'
-  | 'scroll-port'
   | 'search-field'
   | 'segment-button'
-  | 'sidebar'
   | 'spinner'
   | 'stepper'
   | 'switch'
@@ -272,8 +266,6 @@ const SETTINGS_TITLES: Record<WidgetSettingsKey, string> = {
   stepper: 'Stepper',
   switch: 'Switch',
   toast: 'Toast',
-  'scroll-port': 'ScrollPort',
-  sidebar: 'Sidebar',
   modal: 'Modal',
   card: 'Card',
   text: 'Text',
@@ -764,64 +756,6 @@ const DEFAULT_TOOLBAR_STATE: ToolbarWidgetState = {
 };
 
 /**
- * SCROLL_PORT_PREVIEW_TEXT — задаёт длинное содержимое превью ScrollPort.
- * Используется в карточке виджета, чтобы прокрутка и вуаль были видны.
- */
-const SCROLL_PORT_PREVIEW_TEXT = 'Scrollable preview line. '.repeat(24);
-
-/**
- * SIDEBAR_PREVIEW_ID — задаёт id превью Sidebar.
- * Не совпадает с `SIDEBAR_ID` каркаса страницы.
- */
-const SIDEBAR_PREVIEW_ID = 'showcase-sidebar-preview';
-
-/**
- * SIDEBAR_PREVIEW_ICON_ARIA_LABEL — задаёт доступное имя кнопки сворачивания превью Sidebar.
- */
-const SIDEBAR_PREVIEW_ICON_ARIA_LABEL = 'Close preview panel';
-
-/**
- * SIDEBAR_PREVIEW_PAGE_TEXT — задаёт короткий образец области страницы в превью Sidebar.
- */
-const SIDEBAR_PREVIEW_PAGE_TEXT = 'Page';
-
-/**
- * SIDEBAR_PREVIEW_PANEL_TEXT — задаёт короткий образец содержимого панели в превью Sidebar.
- */
-const SIDEBAR_PREVIEW_PANEL_TEXT = 'Panel';
-
-/**
- * DEFAULT_SCROLL_PORT_STATE — задаёт начальное состояние виджета ScrollPort в витрине.
- * Используется при инициализации состояния в `ShowcasePage`.
- */
-const DEFAULT_SCROLL_PORT_STATE: ScrollPortWidgetState = {
-  showVeil: true,
-  veilInsetInline: 4,
-};
-
-/**
- * DEFAULT_SIDEBAR_STATE — задаёт начальное состояние виджета Sidebar в витрине.
- * Используется при инициализации состояния в `ShowcasePage`.
- */
-const DEFAULT_SIDEBAR_STATE: SidebarWidgetState = {
-  background: DEFAULT_SURFACE_BACKGROUND,
-  borderTone: DEFAULT_TONE,
-  headerActions: [],
-  open: true,
-  showActionBorder: false,
-  showActionShadow: true,
-  showBorder: DEFAULT_SHOW_BORDER,
-  showShadow: DEFAULT_SHOW_SHADOW,
-  subtitle: 'Subtitle text',
-  subtitleItalic: false,
-  subtitleTone: 'muted',
-  title: 'Sidebar title',
-  titleItalic: false,
-  titleSize: 'bold',
-  titleTone: DEFAULT_TONE,
-};
-
-/**
  * formatDemoRangeLabel — возвращает подпись активного диапазона для демо RangeInput.
  *
  * @param value текущее значение диапазона
@@ -912,10 +846,6 @@ export function ShowcasePage() {
   const [card, setCard] = useState<CardWidgetState>(DEFAULT_CARD_STATE);
   const [text, setText] = useState<TextWidgetState>(DEFAULT_TEXT_STATE);
   const [toolbar, setToolbar] = useState<ToolbarWidgetState>(DEFAULT_TOOLBAR_STATE);
-  const [scrollPort, setScrollPort] = useState<ScrollPortWidgetState>(
-    DEFAULT_SCROLL_PORT_STATE
-  );
-  const [sidebar, setSidebar] = useState<SidebarWidgetState>(DEFAULT_SIDEBAR_STATE);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Настройки шапки приоритетны: при открытии сбрасывают выбранный виджет, чтобы
@@ -1034,8 +964,6 @@ export function ShowcasePage() {
   const updateCard = createWidgetStateUpdater(setCard);
   const updateText = createWidgetStateUpdater(setText);
   const updateToolbar = createWidgetStateUpdater(setToolbar);
-  const updateScrollPort = createWidgetStateUpdater(setScrollPort);
-  const updateSidebar = createWidgetStateUpdater(setSidebar);
 
   function renderSettingsPanel(): ReactNode {
     if (activeSettings === 'input') {
@@ -1134,14 +1062,6 @@ export function ShowcasePage() {
       return <ToolbarSettings state={toolbar} onChange={updateToolbar} />;
     }
 
-    if (activeSettings === 'scroll-port') {
-      return <ScrollPortSettings state={scrollPort} onChange={updateScrollPort} />;
-    }
-
-    if (activeSettings === 'sidebar') {
-      return <SidebarSettings state={sidebar} onChange={updateSidebar} />;
-    }
-
     return null;
   }
 
@@ -1237,32 +1157,6 @@ export function ShowcasePage() {
     size: card.subtitleSize,
     tone: card.subtitleTone,
   });
-  const resolvedSidebarPreviewTitleProps: TextNodeProps<'title'> = resolveTextNodeProps({
-    prefix: 'title',
-    text: sidebar.title,
-    align: sidebar.titleAlign,
-    italic: sidebar.titleItalic,
-    size: sidebar.titleSize,
-    tone: sidebar.titleTone,
-  });
-  const sidebarPreviewTitleProps: TextNodeProps<'title'> =
-    resolvedSidebarPreviewTitleProps.title
-      ? { ...resolvedSidebarPreviewTitleProps, titleLevel: 'h3' }
-      : resolvedSidebarPreviewTitleProps;
-  const sidebarPreviewSubtitleProps: TextNodeProps<'subtitle'> = resolveTextNodeProps({
-    prefix: 'subtitle',
-    text: sidebar.subtitle,
-    align: sidebar.subtitleAlign,
-    italic: sidebar.subtitleItalic,
-    size: sidebar.subtitleSize,
-    tone: sidebar.subtitleTone,
-  });
-  const scrollPortVeilProps = scrollPort.showVeil
-    ? {
-        showVeil: true as const,
-        veilInsetInline: scrollPort.veilInsetInline,
-      }
-    : { showVeil: false as const };
   const rangeInputTitleProps: TextNodeProps<'title'> = resolveTextNodeProps({
     prefix: 'title',
     text: rangeInput.title,
@@ -1295,13 +1189,6 @@ export function ShowcasePage() {
     card.showActionBorder,
     card.showActionShadow
   );
-  const sidebarPreviewBorderProps: BorderProps = resolveBorderProps(
-    sidebar.showBorder,
-    sidebar.borderTone,
-    sidebar.showShadow
-  );
-  const sidebarPreviewActionBorderProps: ShowActionBorderProps =
-    resolveActionBorderProps(sidebar.showActionBorder, sidebar.showActionShadow);
   const toolbarBorderProps: BorderProps = resolveBorderProps(
     toolbar.showBorder,
     toolbar.borderTone,
@@ -2047,36 +1934,6 @@ export function ShowcasePage() {
 
               {/* Только extension: smoke probe Browser AI в витрине. В lite не синхронизируется. */}
               <BrowserAiSmokeProbe />
-
-              {renderWidgetCard(
-                'scroll-port',
-                <StyledScrollPortPreview>
-                  <ScrollPort {...scrollPortVeilProps}>
-                    <Text>{SCROLL_PORT_PREVIEW_TEXT}</Text>
-                  </ScrollPort>
-                </StyledScrollPortPreview>
-              )}
-
-              {renderWidgetCard(
-                'sidebar',
-                <StyledSidebarPreview>
-                  <Sidebar
-                    background={sidebar.background}
-                    headerActions={sidebar.headerActions.map(resolveIconButtonRowAction)}
-                    iconAriaLabel={SIDEBAR_PREVIEW_ICON_ARIA_LABEL}
-                    id={SIDEBAR_PREVIEW_ID}
-                    open={sidebar.open}
-                    sidebarContent={<Text>{SIDEBAR_PREVIEW_PANEL_TEXT}</Text>}
-                    onClose={() => updateSidebar('open', false)}
-                    {...sidebarPreviewActionBorderProps}
-                    {...sidebarPreviewBorderProps}
-                    {...sidebarPreviewSubtitleProps}
-                    {...sidebarPreviewTitleProps}
-                  >
-                    <Text>{SIDEBAR_PREVIEW_PAGE_TEXT}</Text>
-                  </Sidebar>
-                </StyledSidebarPreview>
-              )}
             </StyledShowcaseWidgets>
           </ScrollPort>
         </Card>

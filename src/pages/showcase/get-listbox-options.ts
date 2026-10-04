@@ -13,7 +13,6 @@
  *     - `src/pages/showcase/shape-listbox/index.tsx`
  *     - `src/pages/showcase/size-listbox/index.tsx`
  *     - `src/pages/showcase/tone-listbox/index.tsx`
- *  - `src/pages/showcase/scroll-port-settings/index.tsx` — собирает опции выступа вуали
  */
 
 import { type ListboxOption } from '@ui/listbox';

@@ -24,7 +24,6 @@
  *  - панели настроек витрины — настраивают действия ряда:
  *     - `src/pages/showcase/card-settings/index.tsx`
  *     - `src/pages/showcase/toolbar-settings/index.tsx`
- *     - `src/pages/showcase/sidebar-settings/index.tsx`
  */
 
 import { Fragment, type ChangeEvent } from 'react';

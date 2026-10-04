@@ -48,7 +48,6 @@
  *     - `src/pages/showcase/control-group/index.tsx`
  *     - `src/pages/showcase/field-error-group/index.tsx`
  *     - `src/pages/showcase/icon-row-group/index.tsx`
- *     - `src/pages/showcase/sidebar-settings/index.tsx`
  */
 
 import {

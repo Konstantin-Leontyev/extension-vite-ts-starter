@@ -17,7 +17,6 @@
  *  - панели настроек витрины — выбирают заливку:
  *     - `src/pages/showcase/card-settings/index.tsx`
  *     - `src/pages/showcase/modal-settings/index.tsx`
- *     - `src/pages/showcase/sidebar-settings/index.tsx`
  *     - `src/pages/showcase/toolbar-settings/index.tsx`
  */
 
