@@ -798,6 +798,48 @@ function validateDemoRange(value: RangeValue): null | string {
 }
 
 /**
+ * resolveListboxAppearanceProps — возвращает пропсы вида триггера по состоянию виджета.
+ * Используется в превью Listbox и LocalePicker: каждое передаёт своё состояние.
+ *
+ * Как работает:
+ * 1. При виде `icon` отдаёт `appearance: 'icon'` и пакет пропсов рамки
+ *    через `resolveBorderProps`
+ * 2. При виде `field` и включённом `showClearButton` отдаёт вид `field`, пропы шеврона
+ *    и `showClearButton: true`
+ * 3. Иначе при виде `field` отдаёт вид `field` и пропы шеврона без `showClearButton`
+ *
+ * @param state состояние виджета Listbox или LocalePicker
+ * @returns пропсы вида триггера
+ */
+function resolveListboxAppearanceProps(
+  state: ListboxWidgetState | LocalePickerWidgetState
+): ListboxAppearanceProps {
+  if (state.appearance === 'icon') {
+    return {
+      appearance: 'icon',
+      ...resolveBorderProps(state.showBorder, state.borderTone, state.showShadow),
+    };
+  }
+
+  if (state.showClearButton) {
+    return {
+      appearance: 'field',
+      iconFill: state.iconFill,
+      iconPosition: state.iconPosition,
+      iconTone: state.iconTone,
+      showClearButton: true,
+    };
+  }
+
+  return {
+    appearance: 'field',
+    iconFill: state.iconFill,
+    iconPosition: state.iconPosition,
+    iconTone: state.iconTone,
+  };
+}
+
+/**
  * ShowcasePage — отображает витрину дизайн-системы с превью виджетов и панелью настроек.
  *
  * @example
@@ -1307,64 +1349,16 @@ export function ShowcasePage() {
     : {};
   /**
    * listboxAppearanceProps — формирует пропсы вида триггера превью Listbox.
-   * Для `icon` передаёт рамку с тенью. Для `field` отдаёт вид, пропы шеврона
-   * и ветвит `showClearButton`: рамка ряда-триггера постоянная.
    * Используется в превью виджета Listbox.
    */
   const listboxAppearanceProps: ListboxAppearanceProps =
-    listbox.appearance === 'icon'
-      ? {
-          appearance: 'icon',
-          ...resolveBorderProps(
-            listbox.showBorder,
-            listbox.borderTone,
-            listbox.showShadow
-          ),
-        }
-      : listbox.showClearButton
-        ? {
-            appearance: 'field',
-            iconFill: listbox.iconFill,
-            iconPosition: listbox.iconPosition,
-            iconTone: listbox.iconTone,
-            showClearButton: true,
-          }
-        : {
-            appearance: 'field',
-            iconFill: listbox.iconFill,
-            iconPosition: listbox.iconPosition,
-            iconTone: listbox.iconTone,
-          };
+    resolveListboxAppearanceProps(listbox);
   /**
    * localePickerAppearanceProps — формирует пропсы вида триггера превью LocalePicker.
-   * Для `icon` передаёт рамку с тенью. Для `field` отдаёт вид, пропы шеврона
-   * и ветвит `showClearButton`: рамка ряда-триггера постоянная.
    * Используется в превью виджета LocalePicker.
    */
   const localePickerAppearanceProps: ListboxAppearanceProps =
-    localePicker.appearance === 'icon'
-      ? {
-          appearance: 'icon',
-          ...resolveBorderProps(
-            localePicker.showBorder,
-            localePicker.borderTone,
-            localePicker.showShadow
-          ),
-        }
-      : localePicker.showClearButton
-        ? {
-            appearance: 'field',
-            iconFill: localePicker.iconFill,
-            iconPosition: localePicker.iconPosition,
-            iconTone: localePicker.iconTone,
-            showClearButton: true,
-          }
-        : {
-            appearance: 'field',
-            iconFill: localePicker.iconFill,
-            iconPosition: localePicker.iconPosition,
-            iconTone: localePicker.iconTone,
-          };
+    resolveListboxAppearanceProps(localePicker);
   const buttonIconProps: ButtonIconProps = button.withIcon
     ? {
         icon: getIcon(button.iconKey),
