@@ -21,7 +21,11 @@ import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout
 import { MOTION_SHELL_DURATION, getTransitionStyles } from '@ui/motion';
 import { POSITIONING_PROPERTY_NAMES } from '@ui/positioning';
 import { SIZING_PROPERTY_NAMES } from '@ui/sizing';
-import { PADDING_PROPERTY_NAMES, getSpacingValue, resolvePaddingEdge } from '@ui/spacing';
+import {
+  PADDING_PROPERTY_NAMES,
+  getSpacingValue,
+  resolvePaddingEdge,
+} from '@ui/spacing';
 import { STACKING_SIDEBAR } from '@ui/stacking';
 import { VIEWPORT_EDGE_INSET } from '@ui/viewport';
 

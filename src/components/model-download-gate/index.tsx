@@ -145,8 +145,7 @@ export function ModelDownloadGate({ children }: ModelDownloadGateProps) {
  * модели.
  */
 function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
-  const { error, loadedRatio, phase, retryDownload, startDownload } =
-    useBrowserAiBootstrap();
+  const { error, loadedRatio, phase, startDownload } = useBrowserAiBootstrap();
 
   if (phase === 'ready') {
     return children;
@@ -241,7 +240,7 @@ function ModelDownloadGateActive({ children }: ModelDownloadGateProps) {
           )}
 
           {phase === 'error' && (
-            <Button tone="primary" onClick={retryDownload}>
+            <Button tone="primary" onClick={startDownload}>
               Try again
             </Button>
           )}

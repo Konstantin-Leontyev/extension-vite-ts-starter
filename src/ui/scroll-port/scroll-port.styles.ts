@@ -20,11 +20,7 @@
 import styled from 'styled-components';
 
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
-import {
-  PADDING_PROPERTY_NAMES,
-  getSpacingValue,
-  type SpacingValue,
-} from '@ui/spacing';
+import { PADDING_PROPERTY_NAMES, getSpacingValue, type SpacingValue } from '@ui/spacing';
 
 export { splitLayoutProps } from '@ui/layout';
 

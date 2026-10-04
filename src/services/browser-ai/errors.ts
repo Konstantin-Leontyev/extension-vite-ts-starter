@@ -11,6 +11,8 @@
  * Потребители:
  *  - `src/services/browser-ai/session.ts` — нормализует ошибки сессии и разбирает
  *    структурированные ответы
+ *  - `src/services/browser-ai/index.ts` — реэкспортирует классы ошибок, тип `BrowserAiError`
+ *    и `normalizeBrowserAiError`
  */
 
 /**
@@ -120,7 +122,8 @@ function truncateStructuredResponseSnippet(rawResponse: string): string {
  *
  * Как работает:
  * 1. Если ошибка уже принадлежит семейству Browser AI, выбрасывает её как есть
- * 2. Для `DOMException` с именем `AbortError` выбрасывает `BrowserAiAbortedError`
+ * 2. Для `DOMException` с именем `AbortError` выбрасывает `BrowserAiAbortedError`.
+ *    К тексту добавляет `error.message`, когда браузер его дал
  * 3. Для `DOMException` с именем `QuotaExceededError` выбрасывает `BrowserAiQuotaError`
  *    с полями квоты
  * 4. Для остальных `DOMException` и `Error` выбрасывает `BrowserAiOperationError`
@@ -142,9 +145,12 @@ export function normalizeBrowserAiError(error: unknown, operation: string): neve
 
   if (error instanceof DOMException) {
     if (error.name === 'AbortError') {
-      throw new BrowserAiAbortedError(`Browser AI ${operation} was aborted.`, {
-        cause: error,
-      });
+      const browserMessage = error.message;
+      const message = browserMessage
+        ? `Browser AI ${operation} was aborted: ${browserMessage}`
+        : `Browser AI ${operation} was aborted.`;
+
+      throw new BrowserAiAbortedError(message, { cause: error });
     }
 
     if (error.name === 'QuotaExceededError') {

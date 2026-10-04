@@ -11,7 +11,7 @@
 
 import { Text } from '@ui/text';
 
-import { StyledPrivacyPage } from './privacy.styles';
+import { StyledAppPage } from '../app-page.styles';
 
 /**
  * PrivacyPage — отображает страницу политики конфиденциальности.
@@ -21,10 +21,10 @@ import { StyledPrivacyPage } from './privacy.styles';
  */
 export function PrivacyPage() {
   return (
-    <StyledPrivacyPage>
+    <StyledAppPage>
       <Text as="h1" size="extraBold">
         Privacy Policy
       </Text>
-    </StyledPrivacyPage>
+    </StyledAppPage>
   );
 }

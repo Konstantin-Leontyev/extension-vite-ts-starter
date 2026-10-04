@@ -11,7 +11,7 @@
 
 import { Text } from '@ui/text';
 
-import { StyledHomePage } from './home.styles';
+import { StyledAppPage } from '../app-page.styles';
 
 /**
  * HomePage — отображает домашнюю страницу.
@@ -21,8 +21,10 @@ import { StyledHomePage } from './home.styles';
  */
 export function HomePage() {
   return (
-    <StyledHomePage>
-      <Text>Home</Text>
-    </StyledHomePage>
+    <StyledAppPage>
+      <Text as="h1" size="extraBold">
+        Home
+      </Text>
+    </StyledAppPage>
   );
 }

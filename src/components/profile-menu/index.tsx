@@ -20,11 +20,11 @@ import {
   Fragment,
   useId,
   useRef,
-  useState,
   type ComponentPropsWithRef,
   type KeyboardEvent,
 } from 'react';
 
+import { useAnchoredOpen } from '@hooks/use-anchored-open';
 import { AddCircleIcon, AvatarIcon, CloseIcon, SignOutIcon } from '@icons';
 import { AnchoredPanel } from '@ui/anchored-panel';
 import { Icon } from '@ui/icon';
@@ -134,26 +134,18 @@ type ProfileMenuProps = ProfileMenuStyleProps &
  * <ProfileMenu />
  */
 export function ProfileMenu(props: ProfileMenuProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const { handleClose, handleOpen, handleToggle, isOpen, panelRef } =
+    useAnchoredOpen<HTMLDivElement>();
   const menuId = useId();
   const titleId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
   const profileActionRef = useRef<HTMLButtonElement>(null);
   const { displayEmail, displayName } = PROFILE_STUB;
-
-  function handleClose(): void {
-    setIsOpen(false);
-  }
-
-  function handleToggle(): void {
-    setIsOpen((current) => !current);
-  }
 
   function handleTriggerKeyDown(event: KeyboardEvent<HTMLButtonElement>): void {
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      setIsOpen(true);
+      handleOpen();
     }
   }
 

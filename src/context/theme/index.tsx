@@ -41,8 +41,8 @@ const THEME_STORAGE_KEY = 'app-theme';
 
 /**
  * readStoredMode — возвращает сохранённый режим темы из `localStorage`.
- * При отсутствии `window`, сохранённого значения или при некорректном формате
- * возвращает светлую тему.
+ * При отсутствии `window`, сохранённого значения, некорректном формате или ошибке
+ * чтения возвращает светлую тему.
  *
  * @returns сохранённый режим темы или `light`
  */
@@ -51,9 +51,13 @@ function readStoredMode(): ThemeMode {
     return 'light';
   }
 
-  const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+  try {
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
 
-  return stored === 'dark' || stored === 'light' ? stored : 'light';
+    return stored === 'dark' || stored === 'light' ? stored : 'light';
+  } catch {
+    return 'light';
+  }
 }
 
 /**
@@ -69,10 +73,15 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   /**
    * Сохраняет выбор темы в `localStorage`.
+   * Ошибка записи остаётся без последствий.
    * Побочный эффект без влияния на разметку.
    */
   useEffect(() => {
-    window.localStorage.setItem(THEME_STORAGE_KEY, mode);
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, mode);
+    } catch {
+      return;
+    }
   }, [mode]);
 
   /**

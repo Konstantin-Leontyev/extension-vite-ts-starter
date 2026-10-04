@@ -16,14 +16,14 @@ import { getSpacingValue } from '@ui/spacing';
 
 /**
  * StyledModelDownloadGate — задаёт корневой узел компонента ModelDownloadGate.
- * Базируется на `<div>`.
+ * Базируется на `<main>`.
  *
  * Встроенные стили:
  *  - `display: grid` и `place-items: center` — центрирует карточку гейта в области страницы
  *  - `min-block-size: 100%` — занимает всю высоту родителя
  *  - `padding` — отступ содержимого от краёв области гейта
  */
-export const StyledModelDownloadGate = styled.div`
+export const StyledModelDownloadGate = styled.main`
   display: grid;
   place-items: center;
   min-block-size: 100%;

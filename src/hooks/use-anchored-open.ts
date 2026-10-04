@@ -11,6 +11,7 @@
  *     - `src/ui/listbox/index.tsx`
  *     - `src/ui/range-input/index.tsx`
  *     - `src/ui/date-range-input/index.tsx`
+ *  - `src/components/profile-menu/index.tsx` — держит open-state и ссылку на панель ProfileMenu
  */
 
 import { useRef, useState, type RefObject } from 'react';
