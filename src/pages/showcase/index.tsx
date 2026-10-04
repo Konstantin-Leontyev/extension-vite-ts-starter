@@ -982,14 +982,6 @@ export function ShowcasePage() {
   ];
 
   const updateRangeInput = createWidgetStateUpdater(setRangeInput);
-
-  function clearRangeInputValue(): void {
-    setRangeInput((current) => ({
-      ...current,
-      value: { from: '', to: '' },
-    }));
-  }
-
   const updateDateRangeInput = createWidgetStateUpdater(setDateRangeInput);
   const updateCheckbox = createWidgetStateUpdater(setCheckbox);
   const updateRadioButton = createWidgetStateUpdater(setRadioButton);
@@ -1320,7 +1312,7 @@ export function ShowcasePage() {
   const rangeInputClearProps: RangeInputClearProps = rangeInput.withClear
     ? {
         onClear: () => {
-          clearRangeInputValue();
+          updateRangeInput('value', { from: '', to: '' });
         },
       }
     : {};
