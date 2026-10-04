@@ -12,10 +12,7 @@
  *  - `src/pages/showcase/index.tsx` — подключает панель и синхронизирует состояние с превью виджета Card
  */
 
-import { type ChangeEvent } from 'react';
-
 import { CARD_HEADER_ACTION_SIZE_PRESET } from '@ui/card';
-import { Checkbox } from '@ui/checkbox';
 import { getIconPadding } from '@ui/icon';
 import { type SurfaceBackgroundPreset } from '@ui/surface';
 import {
@@ -25,6 +22,7 @@ import {
 } from '@ui/text';
 import { type TonePreset } from '@ui/tones';
 
+import { ActionBorderGroup } from '../action-border-group';
 import { BackgroundListbox } from '../background-listbox';
 import { BorderGroup } from '../border-group';
 import { IconRowGroup, type IconRowGroupAction } from '../icon-row-group';
@@ -165,25 +163,12 @@ export function CardSettings({ onChange, state }: CardSettingsProps) {
         onSizeChange={(size) => onChange('subtitleSize', size)}
       />
 
-      <Checkbox
-        checked={state.showActionBorder}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onChange('showActionBorder', event.target.checked)
-        }
-      >
-        Show action border
-      </Checkbox>
-
-      {state.showActionBorder && (
-        <Checkbox
-          checked={state.showActionShadow}
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            onChange('showActionShadow', event.target.checked)
-          }
-        >
-          Show action shadow
-        </Checkbox>
-      )}
+      <ActionBorderGroup
+        showActionBorder={state.showActionBorder}
+        showActionShadow={state.showActionShadow}
+        onShowActionBorderChange={(show) => onChange('showActionBorder', show)}
+        onShowActionShadowChange={(show) => onChange('showActionShadow', show)}
+      />
 
       <IconRowGroup
         actions={state.headerActions}
