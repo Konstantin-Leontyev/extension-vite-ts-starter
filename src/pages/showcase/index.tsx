@@ -796,7 +796,7 @@ function validateDemoRange(value: RangeValue): null | string {
 }
 
 /**
- * resolveListboxAppearanceProps — возвращает пропсы вида триггера по состоянию виджета.
+ * resolveListboxAppearanceProps — возвращает пропсы стилизации триггера по состоянию виджета.
  * Используется в превью Listbox и LocalePicker: каждое передаёт своё состояние.
  *
  * Как работает:
@@ -807,7 +807,7 @@ function validateDemoRange(value: RangeValue): null | string {
  * 3. Иначе при виде `field` отдаёт вид `field` и пропы шеврона без `showClearButton`
  *
  * @param state состояние виджета Listbox или LocalePicker
- * @returns пропсы вида триггера
+ * @returns пропсы стилизации триггера
  */
 function resolveListboxAppearanceProps(
   state: ListboxWidgetState | LocalePickerWidgetState
@@ -1338,13 +1338,13 @@ export function ShowcasePage() {
       }
     : {};
   /**
-   * listboxAppearanceProps — формирует пропсы вида триггера превью Listbox.
+   * listboxAppearanceProps — формирует пропсы стилизации триггера превью Listbox.
    * Используется в превью виджета Listbox.
    */
   const listboxAppearanceProps: ListboxAppearanceProps =
     resolveListboxAppearanceProps(listbox);
   /**
-   * localePickerAppearanceProps — формирует пропсы вида триггера превью LocalePicker.
+   * localePickerAppearanceProps — формирует пропсы стилизации триггера превью LocalePicker.
    * Используется в превью виджета LocalePicker.
    */
   const localePickerAppearanceProps: ListboxAppearanceProps =

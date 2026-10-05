@@ -21,7 +21,7 @@
  * Основные задачи:
  * 1. Экспортировать полиморфный компонент Icon
  * 2. Типизировать пропсы через `IconProps`
- * 3. Реэкспортировать публичное API оси иконки: `IconPosition`,
+ * 3. Реэкспортировать публичное API вида иконки: `IconPosition`,
  *    `IconShapePreset`, `IconSizePreset`, `DEFAULT_ICON_POSITION`,
  *    `ICON_POSITION_KEYS`, `ICON_SHAPE_PRESET_KEYS`, `ICON_SIZE_PRESET_KEYS`,
  *    `ICON_SETTING_PROP_NAMES`, мосты `getIconPadding` и `getIconSize`,

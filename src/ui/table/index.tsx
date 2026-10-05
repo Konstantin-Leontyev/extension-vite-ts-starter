@@ -50,7 +50,7 @@
  *    `TableCellRenderContext`, `TableColumn`, `TableEditRowActiveProps` и
  *    `TableEditableProps`
  * 4. Реэкспортировать утилиту `computeTableColumnInlineSizes`, тип `TableColumnSizeConfig`
- *    и дефолты осей
+ *    и дефолты пропов стилизации
  * 5. Реэкспортировать сателлиты `TableCell`, `TableCellAlign`, `TableGroupCell`,
  *    `TableInlineField`, `TableMemberPrefix` и `TableNestedCell`
  * 6. Ставить фокус при открытии панелей add и edit на первое поле ввода
@@ -1198,7 +1198,7 @@ export { TableGroupCell } from './table-group-cell';
 export { TableInlineField } from './table-inline-field';
 export { TableMemberPrefix } from './table-member-prefix';
 export { TableNestedCell } from './table-nested-cell';
-/* eslint-disable react-refresh/only-export-components -- реэкспорт утилит sizing и дефолтов осей Table */
+/* eslint-disable react-refresh/only-export-components -- реэкспорт утилит sizing и дефолтов пропов стилизации Table */
 export {
   DEFAULT_TABLE_HOVER_HIGHLIGHT,
   DEFAULT_TABLE_SHOW_BORDER,
