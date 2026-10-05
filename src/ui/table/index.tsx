@@ -189,7 +189,8 @@ export const DEFAULT_ADD_HINT =
  * DEFAULT_EDIT_HINT — задаёт подсказку в полоске ошибки панели редактирования по умолчанию.
  * Используется, когда вызывающий код не передал проп `editHint`.
  */
-export const DEFAULT_EDIT_HINT = 'Press Esc to close without saving, or Enter to save changes.';
+export const DEFAULT_EDIT_HINT =
+  'Press Esc to close without saving, or Enter to save changes.';
 
 /**
  * DEFAULT_TABLE_ADD_ROW_ACTIVE — задаёт режим панели добавления строки по умолчанию.
