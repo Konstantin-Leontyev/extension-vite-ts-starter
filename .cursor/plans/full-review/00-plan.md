@@ -598,7 +598,7 @@ Card → Modal → Text → Toolbar → Input → SearchField → Listbox + Comb
 
 **Закрыто в панелях:** у DateRangeInput сняты `Start label` / `End label` / `Start day` / `End day`. Подписи сегментов берёт дефолт компонента, выбранные дни остаются буфером превью. Чекбокс таблицы подписан `Show index column`.
 
-Проверено по коду и закрыто: `??` в панели DateRange нет, `BorderGroup` у Modal подключён, резолвер отступа — `5516f28`, пустая строка — `d6f30dd`. Подписи `Show inverted` и `Show tinted` оставлены поздним каноном, находка «переименовать в Inverted / Tinted» отменена. Остальные пункты списка 18.08 в эту пометку не входят.
+Проверено по коду и закрыто: `??` в панели DateRange нет, `BorderGroup` у Modal подключён, резолвер отступа — `5516f28`, пустая строка — `d6f30dd`. Подписи `Show inverted` и `Show tinted` оставлены поздним каноном, находка «переименовать в Inverted / Tinted» отменена. Остаток списка 18.08 закрыт `a8650b5`, запись — в [16-remaining-route.md](16-remaining-route.md), пункт 7.
 
 ---
 
