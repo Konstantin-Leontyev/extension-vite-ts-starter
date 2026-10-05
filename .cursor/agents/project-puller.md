@@ -3,7 +3,7 @@
   и кросс рынков не копирует.   Первый случай: seolizer, Listbox /
   LocalePicker. Команды «puller», «стяни из стартера».
 name: project-puller
-model: grok-4.6-xhigh[]
+model: grok-4.7[context=500k,reasoning_effort=xhigh,fast=false]
 description: >-
 ---
 

@@ -3,7 +3,7 @@
   project-coder и project-commenter; summary лиду в блоке text.
   Команда «оркестратор» или вставка промпта от лида.
 name: project-orchestrator
-model: grok-4.6-xhigh[]
+model: grok-4.7[context=500k,reasoning_effort=xhigh,fast=false]
 description: >-
 ---
 

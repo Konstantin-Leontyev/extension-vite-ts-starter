@@ -3,7 +3,7 @@
   лишние обёртки, мёртвые ветки, расхождения с каноном. Отчёт пишет
   в файл плана, код не правит. Запускается ведущим аудита.
 name: project-auditor
-model: grok-4.6-xhigh[]
+model: grok-4.7[context=500k,reasoning_effort=xhigh,fast=false]
 description: >-
 ---
 

@@ -11,7 +11,7 @@ alwaysApply: false
 
 Перед реализацией опирайся на канон **целиком**, подтянутый по скилу или явным чтением: `project.mdc`, `comments.mdc`, `icons.mdc`, `showcase.mdc`, `kit-hub.mdc`. Они с `alwaysApply: false` — в чат сами не грузятся. Не дублируй их здесь и не работай по памяти вразрез с ними.
 
-Исполнители узких ролей: `project-coder` (код), `project-commenter` (комментарии), `project-reviewer` (только отчёт). Цикл с ручной передачей промптов: `project-lead` → `project-orchestrator` → ревью лидом → коммит. Канон цикла — скилы ролей в `.cursor/skills/`; файла `workflow.mdc` в этом репозитории нет. Конвейера tasker/featurer/fixerrorer/sync-* нет.
+Исполнители узких ролей: `project-coder` (код), `project-commenter` (комментарии), `project-reviewer` (только отчёт). Цикл с ручной передачей промптов: `project-lead` → `project-orchestrator` → ревью лидом → коммит; канон цикла — `workflow.mdc`. Конвейера tasker/featurer/fixerrorer/sync-* нет.
 
 ## Язык общения с пользователем
 
