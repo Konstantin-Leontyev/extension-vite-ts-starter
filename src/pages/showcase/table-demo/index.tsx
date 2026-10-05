@@ -780,6 +780,8 @@ export function TableDemo({ settings }: TableDemoProps): ReactNode {
     : {};
   const editableProps: TableEditableProps<CatalogTableRow> = settings.editable
     ? {
+        ...(settings.addHint.trim() !== '' ? { addHint: settings.addHint } : {}),
+        ...(settings.editHint.trim() !== '' ? { editHint: settings.editHint } : {}),
         editable: true,
         onAddCancel: resetAddRow,
         onAddRow: handleAddRowRequest,

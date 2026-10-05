@@ -135,6 +135,22 @@ type RangeInputSettingsProps = {
  * <RangeInputSettings state={rangeInput} onChange={updateRangeInput} />
  */
 export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps) {
+  /**
+   * handleValidationMessageChange — записывает один текст валидации в состояние витрины.
+   *
+   * @param key ключ текста валидации
+   * @param value введённый текст
+   */
+  function handleValidationMessageChange(
+    key: keyof ResolvedRangeInputValidationMessages,
+    value: string
+  ): void {
+    onChange('validationMessages', {
+      ...state.validationMessages,
+      [key]: value,
+    });
+  }
+
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
       <ControlGroup
@@ -256,11 +272,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
           {
             boxedString: DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES.emptyBounds,
             value: state.validationMessages.emptyBounds,
-            onChange: (value) =>
-              onChange('validationMessages', {
-                ...state.validationMessages,
-                emptyBounds: value,
-              }),
+            onChange: (value) => handleValidationMessageChange('emptyBounds', value),
           },
         ]}
         labelPrefix="Validation empty bounds"
@@ -271,11 +283,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
           {
             boxedString: DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES.invalidFrom,
             value: state.validationMessages.invalidFrom,
-            onChange: (value) =>
-              onChange('validationMessages', {
-                ...state.validationMessages,
-                invalidFrom: value,
-              }),
+            onChange: (value) => handleValidationMessageChange('invalidFrom', value),
           },
         ]}
         labelPrefix="From validation error"
@@ -286,11 +294,7 @@ export function RangeInputSettings({ onChange, state }: RangeInputSettingsProps)
           {
             boxedString: DEFAULT_RANGE_INPUT_VALIDATION_MESSAGES.invalidTo,
             value: state.validationMessages.invalidTo,
-            onChange: (value) =>
-              onChange('validationMessages', {
-                ...state.validationMessages,
-                invalidTo: value,
-              }),
+            onChange: (value) => handleValidationMessageChange('invalidTo', value),
           },
         ]}
         labelPrefix="To validation error"

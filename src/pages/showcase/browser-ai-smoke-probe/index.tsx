@@ -140,7 +140,50 @@ function needsModelDownload(availability: BrowserAiAvailability): boolean {
 }
 
 /**
+ * probeAvailability — проверяет доступность модели и записывает фазу зонда.
+ * Результат отменённой проверки не записывает, в том числе ответ эффекта после размонтирования.
+ * Перед записью фаз `ready` и `error` проверяет отмену одинаково.
+ * Используется эффектом монтирования с флагом `cancelled` и в `handleRetry` без отмены.
+ *
+ * @param setState запись состояния зонда
+ * @param isCancelled признак отмены проверки
+ */
+async function probeAvailability(
+  setState: (state: SmokeProbeState) => void,
+  isCancelled: () => boolean = () => false
+): Promise<void> {
+  setState(INITIAL_SMOKE_PROBE_STATE);
+
+  try {
+    const availability = await checkBrowserAiAvailability();
+
+    if (isCancelled()) {
+      return;
+    }
+
+    setState({
+      ...INITIAL_SMOKE_PROBE_STATE,
+      availability,
+      phase: 'ready',
+    });
+  } catch (error) {
+    if (isCancelled()) {
+      return;
+    }
+
+    setState({
+      ...INITIAL_SMOKE_PROBE_STATE,
+      errorMessage:
+        error instanceof Error ? error.message : AVAILABILITY_CHECK_FAILED_MESSAGE,
+      phase: 'error',
+    });
+  }
+}
+
+/**
  * BrowserAiSmokeProbe — отображает зонд Prompt API в витрине.
+ * Не переносить в продуктовый код: в реальном проекте проверка доступности модели
+ * и пробный запрос живут в задаче продукта, а не в карточке витрины.
  * До загрузки модели предлагает `Download model`. После — текст промпта и `Run prompt`.
  * Во время запроса подзаголовок скрыт, в теле карточки только Spinner с подписью `THINKING_LABEL`.
  * Ответ — подзаголовок `CARD_ANSWER_SUBTITLE` и текст модели. Системную инструкцию длины ответа
@@ -165,36 +208,7 @@ export function BrowserAiSmokeProbe() {
   useEffect(() => {
     let cancelled = false;
 
-    async function probeAvailability(): Promise<void> {
-      setState(INITIAL_SMOKE_PROBE_STATE);
-
-      try {
-        const availability = await checkBrowserAiAvailability();
-
-        if (cancelled) {
-          return;
-        }
-
-        setState({
-          ...INITIAL_SMOKE_PROBE_STATE,
-          availability,
-          phase: 'ready',
-        });
-      } catch (error) {
-        if (cancelled) {
-          return;
-        }
-
-        setState({
-          ...INITIAL_SMOKE_PROBE_STATE,
-          errorMessage:
-            error instanceof Error ? error.message : AVAILABILITY_CHECK_FAILED_MESSAGE,
-          phase: 'error',
-        });
-      }
-    }
-
-    void probeAvailability();
+    void probeAvailability(setState, () => cancelled);
 
     return () => {
       cancelled = true;
@@ -306,29 +320,8 @@ export function BrowserAiSmokeProbe() {
     void runPrompt();
   }
 
-  async function retryFromError(): Promise<void> {
-    setState(INITIAL_SMOKE_PROBE_STATE);
-
-    try {
-      const availability = await checkBrowserAiAvailability();
-
-      setState({
-        ...INITIAL_SMOKE_PROBE_STATE,
-        availability,
-        phase: 'ready',
-      });
-    } catch (error) {
-      setState({
-        ...INITIAL_SMOKE_PROBE_STATE,
-        errorMessage:
-          error instanceof Error ? error.message : AVAILABILITY_CHECK_FAILED_MESSAGE,
-        phase: 'error',
-      });
-    }
-  }
-
   function handleRetry(): void {
-    void retryFromError();
+    void probeAvailability(setState);
   }
 
   const isIdle = state.phase === 'ready' || state.phase === 'done';

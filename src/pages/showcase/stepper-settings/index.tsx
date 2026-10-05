@@ -70,6 +70,30 @@ type StepperSettingsProps = {
  * <StepperSettings state={stepper} onChange={updateStepper} />
  */
 export function StepperSettings({ onChange, state }: StepperSettingsProps) {
+  /**
+   * handleOptionalBoundChange — записывает границу Min или Max из ввода поля.
+   * Пустая строка снимает границу. Нечисловой ввод границу не меняет.
+   *
+   * @param key ключ границы в состоянии витрины
+   * @param event событие поля ввода
+   */
+  function handleOptionalBoundChange(
+    key: 'max' | 'min',
+    event: ChangeEvent<HTMLInputElement>
+  ): void {
+    const rawValue = event.target.value;
+    const parsed = Number(rawValue);
+
+    if (rawValue.trim() === '') {
+      onChange(key, undefined);
+      return;
+    }
+
+    if (Number.isFinite(parsed)) {
+      onChange(key, parsed);
+    }
+  }
+
   return (
     <StyledSettingsForm onSubmit={(event) => event.preventDefault()}>
       <ControlGroup
@@ -94,15 +118,9 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
         inputMode="numeric"
         label="Min:"
         value={state.min === undefined ? '' : String(state.min)}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          const parsed = Number(event.target.value);
-
-          if (event.target.value.trim() === '') {
-            onChange('min', undefined);
-          } else if (Number.isFinite(parsed)) {
-            onChange('min', parsed);
-          }
-        }}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          handleOptionalBoundChange('min', event)
+        }
         onClear={() => onChange('min', undefined)}
       />
 
@@ -110,15 +128,9 @@ export function StepperSettings({ onChange, state }: StepperSettingsProps) {
         inputMode="numeric"
         label="Max:"
         value={state.max === undefined ? '' : String(state.max)}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          const parsed = Number(event.target.value);
-
-          if (event.target.value.trim() === '') {
-            onChange('max', undefined);
-          } else if (Number.isFinite(parsed)) {
-            onChange('max', parsed);
-          }
-        }}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          handleOptionalBoundChange('max', event)
+        }
         onClear={() => onChange('max', undefined)}
       />
 

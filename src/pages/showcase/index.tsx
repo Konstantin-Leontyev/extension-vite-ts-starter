@@ -630,9 +630,11 @@ const DEFAULT_TAG_STATE: TagWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_TABLE_STATE: TableWidgetState = {
+  addHint: '',
   checkable: true,
   continuousNumbering: false,
   editable: true,
+  editHint: '',
   hoverHighlight: DEFAULT_TABLE_HOVER_HIGHLIGHT,
   showBorder: DEFAULT_TABLE_SHOW_BORDER,
   showIndexColumn: true,
@@ -793,6 +795,30 @@ function validateDemoRange(value: RangeValue): null | string {
   }
 
   return null;
+}
+
+/**
+ * resolveDemoRangeValidationMessage — возвращает фрагмент текстов встроенной валидации
+ * превью RangeInput.
+ * Пробелы по краям отбрасывает только, чтобы признать сообщение пустым, и не кладёт пустой ключ.
+ * В объект кладёт исходную строку, без обрезки.
+ * Используется в `rangeInputValidationMessages` для превью виджета RangeInput.
+ *
+ * @param key ключ текста встроенной валидации
+ * @param message текст из состояния витрины
+ * @returns фрагмент с одним ключом или пустой объект
+ */
+function resolveDemoRangeValidationMessage(
+  key: keyof RangeInputValidationMessages,
+  message: string
+): RangeInputValidationMessages {
+  if (message.trim() === '') {
+    return {};
+  }
+
+  return {
+    [key]: message,
+  };
 }
 
 /**
@@ -1321,15 +1347,18 @@ export function ShowcasePage() {
    * Используется в превью виджета RangeInput.
    */
   const rangeInputValidationMessages: RangeInputValidationMessages = {
-    ...(rangeInput.validationMessages.emptyBounds.trim() !== ''
-      ? { emptyBounds: rangeInput.validationMessages.emptyBounds }
-      : {}),
-    ...(rangeInput.validationMessages.invalidFrom.trim() !== ''
-      ? { invalidFrom: rangeInput.validationMessages.invalidFrom }
-      : {}),
-    ...(rangeInput.validationMessages.invalidTo.trim() !== ''
-      ? { invalidTo: rangeInput.validationMessages.invalidTo }
-      : {}),
+    ...resolveDemoRangeValidationMessage(
+      'emptyBounds',
+      rangeInput.validationMessages.emptyBounds
+    ),
+    ...resolveDemoRangeValidationMessage(
+      'invalidFrom',
+      rangeInput.validationMessages.invalidFrom
+    ),
+    ...resolveDemoRangeValidationMessage(
+      'invalidTo',
+      rangeInput.validationMessages.invalidTo
+    ),
   };
   const listboxMultipleProps: ListboxMultipleProps = listbox.multiple
     ? {
