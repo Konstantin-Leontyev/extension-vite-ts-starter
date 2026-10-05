@@ -1686,29 +1686,6 @@ export function ShowcasePage() {
               )}
 
               {renderWidgetCard(
-                'date-range-input',
-                <DateRangeInput
-                  alignSelf="center"
-                  buttonShape={dateRangeInput.buttonShape}
-                  dayShape={dateRangeInput.dayShape}
-                  disabled={dateRangeInput.disabled}
-                  endDay={dateRangeInput.endDay}
-                  label={dateRangeInput.label || undefined}
-                  maxDay={dateRangeInput.maxDay || undefined}
-                  minDay={dateRangeInput.minDay || undefined}
-                  shape={dateRangeInput.shape}
-                  size={dateRangeInput.size}
-                  startDay={dateRangeInput.startDay}
-                  onClear={() => {
-                    updateDateRangeInput('startDay', '');
-                    updateDateRangeInput('endDay', '');
-                  }}
-                  onEndDayChange={(value) => updateDateRangeInput('endDay', value)}
-                  onStartDayChange={(value) => updateDateRangeInput('startDay', value)}
-                />
-              )}
-
-              {renderWidgetCard(
                 'button',
                 <Button
                   active={button.active}
@@ -1723,23 +1700,6 @@ export function ShowcasePage() {
                 >
                   {button.text}
                 </Button>
-              )}
-
-              {renderWidgetCard(
-                'icon',
-                <Icon
-                  iconFill={icon.iconFill}
-                  iconTone={icon.iconTone}
-                  padding={icon.padding}
-                  placeSelf="center"
-                  shape={icon.shape}
-                  showHover={icon.showHover}
-                  size={icon.size}
-                  {...iconBorderProps}
-                  {...iconRoleProps}
-                >
-                  {getIcon(icon.iconKey)}
-                </Icon>
               )}
 
               {renderWidgetCard(
@@ -1778,6 +1738,65 @@ export function ShowcasePage() {
                   shape={segmentButton.shape}
                   size={segmentButton.size}
                 />
+              )}
+
+              {renderWidgetCard(
+                'date-range-input',
+                <DateRangeInput
+                  alignSelf="center"
+                  buttonShape={dateRangeInput.buttonShape}
+                  dayShape={dateRangeInput.dayShape}
+                  disabled={dateRangeInput.disabled}
+                  endDay={dateRangeInput.endDay}
+                  label={dateRangeInput.label || undefined}
+                  maxDay={dateRangeInput.maxDay || undefined}
+                  minDay={dateRangeInput.minDay || undefined}
+                  shape={dateRangeInput.shape}
+                  size={dateRangeInput.size}
+                  startDay={dateRangeInput.startDay}
+                  onClear={() => {
+                    updateDateRangeInput('startDay', '');
+                    updateDateRangeInput('endDay', '');
+                  }}
+                  onEndDayChange={(value) => updateDateRangeInput('endDay', value)}
+                  onStartDayChange={(value) => updateDateRangeInput('startDay', value)}
+                />
+              )}
+
+              {renderWidgetCard(
+                'stepper',
+                <Stepper
+                  alignSelf="center"
+                  disabled={stepper.disabled}
+                  max={stepper.max}
+                  min={stepper.min}
+                  shape={stepper.shape}
+                  size={stepper.size}
+                  step={stepper.step}
+                  suffix={stepper.suffix}
+                  value={stepper.value}
+                  onChange={(value) => updateStepper('value', value)}
+                  {...(stepper.label.trim()
+                    ? { label: stepper.label }
+                    : { 'aria-label': DEMO_STEPPER_ARIA_LABEL })}
+                />
+              )}
+
+              {renderWidgetCard(
+                'icon',
+                <Icon
+                  iconFill={icon.iconFill}
+                  iconTone={icon.iconTone}
+                  padding={icon.padding}
+                  placeSelf="center"
+                  shape={icon.shape}
+                  showHover={icon.showHover}
+                  size={icon.size}
+                  {...iconBorderProps}
+                  {...iconRoleProps}
+                >
+                  {getIcon(icon.iconKey)}
+                </Icon>
               )}
 
               {renderWidgetCard(
@@ -1887,25 +1906,6 @@ export function ShowcasePage() {
                   size={spinner.size}
                   tone={spinner.tone}
                   {...spinnerTextProps}
-                />
-              )}
-
-              {renderWidgetCard(
-                'stepper',
-                <Stepper
-                  alignSelf="center"
-                  disabled={stepper.disabled}
-                  max={stepper.max}
-                  min={stepper.min}
-                  shape={stepper.shape}
-                  size={stepper.size}
-                  step={stepper.step}
-                  suffix={stepper.suffix}
-                  value={stepper.value}
-                  onChange={(value) => updateStepper('value', value)}
-                  {...(stepper.label.trim()
-                    ? { label: stepper.label }
-                    : { 'aria-label': DEMO_STEPPER_ARIA_LABEL })}
                 />
               )}
 

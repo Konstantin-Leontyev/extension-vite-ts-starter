@@ -38,6 +38,12 @@ const PLAYGROUND_MAX_BLOCK_SIZE = `calc(100dvb - var(--shell-header-block-size, 
 const SHOWCASE_WIDGET_FULL_ROW_BLOCK_SIZE = '22rem';
 
 /**
+ * SHOWCASE_WIDGET_COLUMN_COUNT — задаёт максимальное число карточек в одном ряду.
+ * `auto-fit` не ставит колонок больше этого числа.
+ */
+const SHOWCASE_WIDGET_COLUMN_COUNT = 4;
+
+/**
  * SHOWCASE_WIDGET_MIN_INLINE_SIZE — задаёт минимальную ширину колонки сетки карточек.
  * Ниже этого порога `auto-fit` уменьшает число колонок.
  */
@@ -88,7 +94,8 @@ export const StyledShowcaseWidgetFullRow = styled.div`
  * Базируется на `<div>`.
  *
  * Встроенные стили:
- *  - `grid-template-columns` с `SHOWCASE_WIDGET_MIN_INLINE_SIZE` — адаптивное число колонок
+ *  - `grid-template-columns` — не больше `SHOWCASE_WIDGET_COLUMN_COUNT` колонок,
+ *    уже `SHOWCASE_WIDGET_MIN_INLINE_SIZE` число колонок уменьшается
  *  - `gap` — отступ между карточками
  *  - `align-items: start` — карточки выравниваются по верхнему краю
  *  - `aspect-ratio: 1 / 1` на дочерних узлах, кроме `StyledShowcaseWidgetFullRow` —
@@ -98,7 +105,19 @@ export const StyledShowcaseWidgets = styled.div`
   display: grid;
   grid-template-columns: repeat(
     auto-fit,
-    minmax(${SHOWCASE_WIDGET_MIN_INLINE_SIZE}, 1fr)
+    minmax(
+      min(
+        100%,
+        max(
+          ${SHOWCASE_WIDGET_MIN_INLINE_SIZE},
+          calc(
+            (100% - ${SHOWCASE_WIDGET_COLUMN_COUNT - 1} * ${getSpacingValue(8)}) /
+              ${SHOWCASE_WIDGET_COLUMN_COUNT}
+          )
+        )
+      ),
+      1fr
+    )
   );
   gap: ${getSpacingValue(8)};
   align-items: start;

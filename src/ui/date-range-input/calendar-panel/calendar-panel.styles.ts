@@ -20,6 +20,7 @@
 
 import styled from 'styled-components';
 
+import { getBorderStyles } from '@ui/border';
 import { LAYOUT_PROP_NAMES, getLayoutStyles, type LayoutProps } from '@ui/layout';
 import {
   DEFAULT_SHAPE_PRESET,
@@ -30,7 +31,7 @@ import {
 } from '@ui/presets';
 import { getSpacingValue, type SpacingValue } from '@ui/spacing';
 import { getTheme, type AppTheme } from '@ui/theme';
-import { resolveColorMix } from '@ui/tones';
+import { DEFAULT_TONE, resolvePressedBackground } from '@ui/tones';
 
 export { splitLayoutProps } from '@ui/layout';
 
@@ -230,7 +231,7 @@ const CALENDAR_NAV_BUTTON_PROP_NAMES = new Set<string>(['shape', 'size']);
 /**
  * getCalendarNavButtonStyles — возвращает CSS-правила для узла
  * `StyledCalendarNavButton`: квадрат не шире колонки и не выше потолка из
- * `calendarNavButtonMaxSize`, цвет, радиус и наведение. Глиф Icon задаёт JSX
+ * `calendarNavButtonMaxSize`, цвет, радиус, наведение и нажатие. Глиф Icon задаёт JSX
  * через `getCalendarNavGlyphSize` без паддинга.
  *
  * @param props пропсы стилизации кнопки и тема
@@ -255,6 +256,10 @@ function getCalendarNavButtonStyles(
     border-radius: ${resolveBlockRadius(shape, maxSize)};
     &:not(:disabled):hover,
     &:focus-visible { background-color: ${theme.colors.veil}; }
+    &:not(:disabled):active {
+      background-color: ${resolvePressedBackground(theme)};
+      ${getBorderStyles(theme, false, false, DEFAULT_TONE, true)}
+    }
   `;
 }
 
@@ -264,7 +269,7 @@ function getCalendarNavButtonStyles(
  * Базируется на `<button>` и принимает пропсы из `CalendarNavButtonStyleProps`.
  *
  * Генерация стилей:
- *  - `getCalendarNavButtonStyles` — квадрат по колонке с потолком модуля и наведение
+ *  - `getCalendarNavButtonStyles` — квадрат по колонке с потолком модуля, наведение и нажатие
  */
 export const StyledCalendarNavButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !CALENDAR_NAV_BUTTON_PROP_NAMES.has(prop),
@@ -398,6 +403,8 @@ function getCalendarDayButtonStyles(
   const size = props.size ?? DEFAULT_CALENDAR_PANEL_SIZE_PRESET;
   const highlightMaxSize = getCalendarDayHighlightMaxSize(size);
   const highlightRadius = resolveCalendarDayHighlightRadius(dayShape, size);
+  const pressedShadow = getBorderStyles(theme, false, false, DEFAULT_TONE, true);
+  const selectedPressedBackground = resolvePressedBackground(theme, 'primary');
 
   return `
     position: relative;
@@ -451,8 +458,18 @@ function getCalendarDayButtonStyles(
     }
     &[data-selected='true']:not(:disabled):hover::before,
     &[data-selected='true']:focus-visible::before {
-      background-color: ${resolveColorMix(theme.colors.primary, theme.colors.shade)};
+      background-color: ${selectedPressedBackground};
       opacity: 1;
+    }
+    &:not(:disabled):active:not([data-selected='true'])::before {
+      background-color: ${resolvePressedBackground(theme)};
+      opacity: 1;
+      ${pressedShadow}
+    }
+    &[data-selected='true']:not(:disabled):active::before {
+      background-color: ${selectedPressedBackground};
+      opacity: 1;
+      ${pressedShadow}
     }
     &[data-today='true']::after {
       position: absolute;
@@ -478,8 +495,9 @@ function getCalendarDayButtonStyles(
  *  - `getCalendarDayButtonStyles` — раскладка, подсветка и состояния дня
  *
  * Подсветка рисуется псевдоэлементом `::before`: выбор заливает `primary`, наведение
- * и `:focus-visible` на выбранный день смешивают заливку с `shade`, дни внутри
+ * и `:focus-visible` на выбранный день сдвигают заливку к `shade`, дни внутри
  * диапазона — нейтральный фон, на невыбранный день — вуаль `veil`.
+ * Нажатие красит кружок заливкой нажатия и внутренней тенью.
  * Сегодняшний день помечает точка `::after`.
  */
 export const StyledCalendarDayButton = styled.button.withConfig({
