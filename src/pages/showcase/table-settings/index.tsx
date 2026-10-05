@@ -16,6 +16,7 @@ import { type ChangeEvent } from 'react';
 
 import { Checkbox } from '@ui/checkbox';
 import { SIZE_PRESET_KEYS, type SizePreset } from '@ui/presets';
+import { DEFAULT_ADD_HINT, DEFAULT_EDIT_HINT } from '@ui/table';
 
 import { StyledSettingsForm } from '../showcase.styles';
 import { SizeListbox } from '../size-listbox';
@@ -155,6 +156,7 @@ export function TableSettings({ onChange, state }: TableSettingsProps) {
           <TextGroup
             contents={[
               {
+                boxedString: DEFAULT_ADD_HINT,
                 value: state.addHint,
                 onChange: (value) => onChange('addHint', value),
               },
@@ -165,6 +167,7 @@ export function TableSettings({ onChange, state }: TableSettingsProps) {
           <TextGroup
             contents={[
               {
+                boxedString: DEFAULT_EDIT_HINT,
                 value: state.editHint,
                 onChange: (value) => onChange('editHint', value),
               },

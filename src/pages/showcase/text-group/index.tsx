@@ -45,6 +45,7 @@
  *     - `src/pages/showcase/card-settings/index.tsx`
  *     - `src/pages/showcase/modal-settings/index.tsx`
  *     - `src/pages/showcase/range-input-settings/index.tsx`
+ *     - `src/pages/showcase/table-settings/index.tsx`
  *     - `src/pages/showcase/control-group/index.tsx`
  *     - `src/pages/showcase/field-error-group/index.tsx`
  *     - `src/pages/showcase/icon-row-group/index.tsx`

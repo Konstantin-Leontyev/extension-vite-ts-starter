@@ -49,16 +49,19 @@
  * 3. Экспортировать типы `TableAddRowSource`, `TableAddRowActiveProps`,
  *    `TableCellRenderContext`, `TableColumn`, `TableEditRowActiveProps` и
  *    `TableEditableProps`
- * 4. Реэкспортировать утилиту `computeTableColumnInlineSizes`, тип `TableColumnSizeConfig`
+ * 4. Экспортировать дефолты подсказок `DEFAULT_ADD_HINT` и `DEFAULT_EDIT_HINT`
+ * 5. Реэкспортировать утилиту `computeTableColumnInlineSizes`, тип `TableColumnSizeConfig`
  *    и дефолты пропов стилизации
- * 5. Реэкспортировать сателлиты `TableCell`, `TableCellAlign`, `TableGroupCell`,
+ * 6. Реэкспортировать сателлиты `TableCell`, `TableCellAlign`, `TableGroupCell`,
  *    `TableInlineField`, `TableMemberPrefix` и `TableNestedCell`
- * 6. Ставить фокус при открытии панелей add и edit на первое поле ввода
+ * 7. Ставить фокус при открытии панелей add и edit на первое поле ввода
  *    внутри узла панели. Панель открывают ради правки строки, кнопка
  *    шапки и чекбокс в обход не входят
  *
  * Потребители:
  *  - `src/pages/showcase/table-demo/index.tsx` — собирает демо-таблицу каталога
+ *  - `src/pages/showcase/table-settings/index.tsx` — подставляет дефолты подсказок
+ *    в поля панели
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 import {
@@ -179,14 +182,14 @@ export type TableColumn<Row> = {
  * DEFAULT_ADD_HINT — задаёт подсказку в полоске ошибки панели добавления по умолчанию.
  * Используется, когда вызывающий код не передал проп `addHint`.
  */
-const DEFAULT_ADD_HINT =
+export const DEFAULT_ADD_HINT =
   'Press Esc to close without saving, or Enter to add the row. Use Tab to move between fields.';
 
 /**
  * DEFAULT_EDIT_HINT — задаёт подсказку в полоске ошибки панели редактирования по умолчанию.
  * Используется, когда вызывающий код не передал проп `editHint`.
  */
-const DEFAULT_EDIT_HINT = 'Press Esc to close without saving, or Enter to save changes.';
+export const DEFAULT_EDIT_HINT = 'Press Esc to close without saving, or Enter to save changes.';
 
 /**
  * DEFAULT_TABLE_ADD_ROW_ACTIVE — задаёт режим панели добавления строки по умолчанию.

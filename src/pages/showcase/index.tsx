@@ -70,6 +70,8 @@ import { Stepper } from '@ui/stepper';
 import { DEFAULT_SURFACE_BACKGROUND } from '@ui/surface';
 import { Switch } from '@ui/switch';
 import {
+  DEFAULT_ADD_HINT,
+  DEFAULT_EDIT_HINT,
   DEFAULT_TABLE_HOVER_HIGHLIGHT,
   DEFAULT_TABLE_SHOW_BORDER,
   DEFAULT_TABLE_SIZE_PRESET,
@@ -630,11 +632,11 @@ const DEFAULT_TAG_STATE: TagWidgetState = {
  * Используется при инициализации состояния в `ShowcasePage`.
  */
 const DEFAULT_TABLE_STATE: TableWidgetState = {
-  addHint: '',
+  addHint: DEFAULT_ADD_HINT,
   checkable: true,
   continuousNumbering: false,
   editable: true,
-  editHint: '',
+  editHint: DEFAULT_EDIT_HINT,
   hoverHighlight: DEFAULT_TABLE_HOVER_HIGHLIGHT,
   showBorder: DEFAULT_TABLE_SHOW_BORDER,
   showIndexColumn: true,
