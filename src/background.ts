@@ -1,19 +1,15 @@
 /**
  * Файл: `src/background.ts`
- * Обрабатывает клик по иконке расширения в service worker.
+ * Задаёт открытие страницы `chrome.sidePanel` по клику на иконку расширения в service worker.
  *
  * Основные задачи:
- * 1. Открывать вкладку с интерфейсом по клику на иконку расширения
+ * 1. Открывать страницу `chrome.sidePanel` по клику на иконку расширения
  *
  * Потребители:
  *  - `src/manifest.json` — регистрирует файл как service worker
  */
 
 /**
- * handleActionClick — открывает вкладку с интерфейсом расширения.
+ * Открывает страницу `chrome.sidePanel` по клику на иконку расширения.
  */
-function handleActionClick(): void {
-  void chrome.tabs.create({ url: chrome.runtime.getURL('index.html') });
-}
-
-chrome.action.onClicked.addListener(handleActionClick);
+void chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });

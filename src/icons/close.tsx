@@ -9,6 +9,7 @@
  *  - контролы с очисткой и закрытием, например Modal, DateRangeInput и RangeInput —
  *    показывают действие закрытия
  *  - `src/components/profile-menu/index.tsx` — показывает действие закрытия
+ *  - `src/side-panel/app.tsx` — показывает действие закрытия
  *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины
  */
 
