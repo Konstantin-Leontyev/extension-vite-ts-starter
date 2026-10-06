@@ -12,8 +12,6 @@
 
 import styled, { createGlobalStyle } from 'styled-components';
 
-import { getSpacingValue } from '@ui/spacing';
-
 /**
  * GlobalSidePanelStyle — задаёт прозрачный фон страницы `chrome.sidePanel`.
  * Перекрывает заливку `<body>` из `GlobalThemeStyle`, чтобы была видна
@@ -36,9 +34,7 @@ export const GlobalSidePanelStyle = createGlobalStyle`
  *
  * Встроенные стили:
  *  - `display: grid` — раскладка страницы по умолчанию
- *  - `gap` — отступ между детьми
  */
 export const StyledSidePanel = styled.main`
   display: grid;
-  gap: ${getSpacingValue(12)};
 `;

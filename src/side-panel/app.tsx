@@ -9,9 +9,6 @@
  *  - `src/side-panel/main.tsx` — монтирует `SidePanelApp`
  */
 
-import { CloseIcon, SearchIcon, SettingsIcon } from '@icons';
-import { Toolbar } from '@ui/toolbar';
-
 import { GlobalSidePanelStyle, StyledSidePanel } from './side-panel.styles';
 
 /**
@@ -24,16 +21,7 @@ export function SidePanelApp() {
   return (
     <>
       <GlobalSidePanelStyle />
-      <StyledSidePanel>
-        <Toolbar
-          actions={[
-            { ariaLabel: 'Search', icon: <SearchIcon /> },
-            { ariaLabel: 'Settings', icon: <SettingsIcon /> },
-            { ariaLabel: 'Close', icon: <CloseIcon /> },
-          ]}
-          ariaLabel="Toolbar"
-        />
-      </StyledSidePanel>
+      <StyledSidePanel />
     </>
   );
 }

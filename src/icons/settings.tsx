@@ -7,7 +7,6 @@
  *
  * Потребители:
  *  - `src/components/header/index.tsx` — показывает вход в настройки
- *  - `src/side-panel/app.tsx` — показывает действие настроек
  *  - `src/pages/showcase/index.tsx` — показывает вход в настройки
  *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины
  */

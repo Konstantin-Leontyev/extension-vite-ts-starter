@@ -7,7 +7,6 @@
  *
  * Потребители:
  *  - `src/ui/search-field/index.tsx` — показывает иконку поля поиска
- *  - `src/side-panel/app.tsx` — показывает действие поиска
  *  - `src/pages/showcase/showcase-icon-options.tsx` — включает в опции витрины
  */
 

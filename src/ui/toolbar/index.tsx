@@ -24,7 +24,6 @@
  *    roving focus у ряда действий
  *
  * Потребители:
- *  - `src/side-panel/app.tsx` — показывает ряд действий страницы `chrome.sidePanel`
  *  - `src/pages/showcase` — демонстрирует состояния в витрине
  */
 

@@ -46,8 +46,11 @@ const SHOWCASE_WIDGET_COLUMN_COUNT = 4;
 /**
  * SHOWCASE_WIDGET_MIN_INLINE_SIZE — задаёт минимальную ширину колонки сетки карточек.
  * Ниже этого порога `auto-fit` уменьшает число колонок.
+ * Порог — ширина карточки Toolbar в витрине по умолчанию: два отступа карточки
+ * по 16 px, два отступа Toolbar по 8 px, пять окон действий по 40 px
+ * и четыре промежутка по 8 px.
  */
-const SHOWCASE_WIDGET_MIN_INLINE_SIZE = '16.75rem';
+const SHOWCASE_WIDGET_MIN_INLINE_SIZE = '17.5rem';
 
 /**
  * StyledMain — задаёт корневой landmark витрины дизайн-системы.

@@ -125,7 +125,9 @@ function getToolbarStyles(props: ToolbarStyleProps & { theme: AppTheme }): strin
  *
  * Встроенные стили:
  *  - `display: grid` — раскладка по дефолту проекта
- *  - `min-inline-size: 0` и `min-block-size: 0` — сжимается во flex/grid-родителе
+ *  - `min-inline-size: max-content` — ширина панели не меньше ряда действий
+ *  - `justify-self: center` — выравнивает панель по центру родителя по горизонтали
+ *  - `min-block-size: 0` — сжимается по высоте во flex/grid-родителе
  *  - `padding` — внутренний отступ поверхности
  *  - `overflow: hidden` — обрезает содержимое по скруглению
  *
@@ -137,7 +139,8 @@ export const StyledToolbar = styled.div.withConfig({
   shouldForwardProp: (prop) => !TOOLBAR_PROP_NAMES.has(prop),
 })<ToolbarStyleProps>`
   display: grid;
-  min-inline-size: 0;
+  justify-self: center;
+  min-inline-size: max-content;
   min-block-size: 0;
   padding: ${getSpacingValue(TOOLBAR_PADDING)};
   overflow: hidden;

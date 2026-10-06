@@ -1,15 +1,31 @@
 /**
  * Файл: `src/background.ts`
- * Задаёт открытие страницы `chrome.sidePanel` по клику на иконку расширения в service worker.
+ * Обрабатывает клик по иконке расширения в service worker.
  *
  * Основные задачи:
- * 1. Открывать страницу `chrome.sidePanel` по клику на иконку расширения
+ * 1. Открывать вкладку с интерфейсом по клику на иконку расширения
  *
  * Потребители:
  *  - `src/manifest.json` — регистрирует файл как service worker
  */
 
 /**
- * Открывает страницу `chrome.sidePanel` по клику на иконку расширения.
+ * handleActionClick — открывает вкладку с интерфейсом расширения.
+ * Создаёт вкладку по адресу `index.html` пакета расширения.
  */
-void chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+function handleActionClick(): void {
+  void chrome.tabs.create({ url: chrome.runtime.getURL('index.html') });
+}
+
+/**
+ * Клик по иконке расширения вызывает `handleActionClick`.
+ */
+chrome.action.onClicked.addListener(handleActionClick);
+
+/**
+ * Код ниже закомментирован, чтобы не мешать работе стартера и демонстрации витрины.
+ * В продукте его берут как готовую механику и не придумывают реализацию заново:
+ * клик по иконке расширения открывает `chrome.sidePanel`.
+ * Порт, вкладки и список субтитров в пример не входят.
+ */
+// void chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
