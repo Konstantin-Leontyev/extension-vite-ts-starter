@@ -28,7 +28,6 @@ import { type ReactNode } from 'react';
 
 import {
   AddCircleIcon,
-  CaptionIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   ClockIcon,
@@ -37,10 +36,12 @@ import {
   DownloadIcon,
   DualIcon,
   EarthIcon,
+  EpisodeIcon,
   PlusIcon,
   SearchIcon,
   SettingsIcon,
   SignOutIcon,
+  SubtitlesIcon,
   UploadIcon,
 } from '@icons';
 import { ICON_SIZE_PRESET_KEYS, getIconPadding, type IconSizePreset } from '@ui/icon';
@@ -53,7 +54,6 @@ import { type SpacingValue } from '@ui/spacing';
  */
 const ICONS = {
   'add-circle': () => <AddCircleIcon />,
-  caption: () => <CaptionIcon />,
   close: () => <CloseIcon />,
   'chevron-down': () => <ChevronDownIcon />,
   'chevron-up': () => <ChevronUpIcon />,
@@ -62,11 +62,13 @@ const ICONS = {
   download: () => <DownloadIcon />,
   dual: () => <DualIcon />,
   earth: () => <EarthIcon />,
+  episode: () => <EpisodeIcon />,
   plus: () => <PlusIcon />,
   upload: () => <UploadIcon />,
   search: () => <SearchIcon />,
   settings: () => <SettingsIcon />,
   'sign-out': () => <SignOutIcon />,
+  subtitles: () => <SubtitlesIcon />,
 } satisfies Record<string, () => ReactNode>;
 
 /**
