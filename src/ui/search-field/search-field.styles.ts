@@ -22,7 +22,7 @@ import {
   getBorderStyles,
   type BorderProps,
 } from '@ui/border';
-import { getFieldLabelRootStyles } from '@ui/field-label';
+import { getControlRootStyles } from '@ui/control-root';
 import { getIconPositionStyles, resolveIconStateBackground } from '@ui/icon';
 import { LAYOUT_PROP_NAMES, type LayoutProps } from '@ui/layout';
 import { getOutlineStyles } from '@ui/outline';
@@ -60,12 +60,12 @@ export type SearchFieldStyleProps = LayoutProps &
  * Базируется на `<div>` и поддерживает все пропсы из `LayoutProps`.
  *
  * Генерация стилей:
- *  - `getFieldLabelRootStyles` — колонка подписи и ряда поля, layout-пропсы
+ *  - `getControlRootStyles` — колонка подписи и ряда поля, layout-пропсы
  */
 export const StyledSearchFieldRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
-  ${(props) => getFieldLabelRootStyles(props)}
+  ${(props) => getControlRootStyles(props)}
 `;
 
 /**

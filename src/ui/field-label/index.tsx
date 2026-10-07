@@ -19,18 +19,10 @@
  * 1. Экспортировать компонент FieldLabel
  * 2. Типизировать пропсы через `FieldLabelProps`
  * 3. Фиксировать типографику подписи и корневой элемент `label`
- * 4. Экспортировать генератор `getFieldLabelRootStyles`
  *
  * Потребители:
  *  - контролы, например Input, Listbox, RangeInput, Button, SegmentButton,
  *    DateRangeInput и Stepper — рендерят подпись поля
- *  - styles-файлы Button, Input, SearchField, SegmentButton и Stepper —
- *    подключают `getFieldLabelRootStyles`:
- *     - `src/ui/button/button.styles.ts`
- *     - `src/ui/input/input.styles.ts`
- *     - `src/ui/search-field/search-field.styles.ts`
- *     - `src/ui/segment-button/segment-button.styles.ts`
- *     - `src/ui/stepper/stepper.styles.ts`
  */
 
 import {
@@ -39,8 +31,6 @@ import {
   type TextSizePreset,
   type TextTonePreset,
 } from '@ui/text';
-
-import { getFieldLabelRootStyles } from './field-label.styles';
 
 /**
  * FIELD_LABEL_SIZE_PRESET — задаёт типографический пресет подписи поля.
@@ -88,5 +78,4 @@ function FieldLabel({ children, htmlFor, ...rest }: FieldLabelProps) {
   );
 }
 
-/* eslint-disable react-refresh/only-export-components -- реэкспорт генератора корня поля */
-export { FieldLabel, getFieldLabelRootStyles };
+export { FieldLabel };

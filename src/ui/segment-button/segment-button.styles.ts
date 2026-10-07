@@ -15,7 +15,7 @@
 import styled from 'styled-components';
 
 import { getBorderStyles } from '@ui/border';
-import { getFieldLabelRootStyles } from '@ui/field-label';
+import { getControlRootStyles } from '@ui/control-root';
 import { LAYOUT_PROP_NAMES, type LayoutProps } from '@ui/layout';
 import { getOutlineStyles } from '@ui/outline';
 import {
@@ -49,12 +49,12 @@ export type SegmentButtonStyleProps = LayoutProps & {
  * Базируется на `<div>` и поддерживает layout-пропсы.
  *
  * Генерация стилей:
- *  - `getFieldLabelRootStyles` — колонка подписи и оболочки, layout-пропсы
+ *  - `getControlRootStyles` — колонка подписи и оболочки, layout-пропсы
  */
 export const StyledSegmentButtonRoot = styled.div.withConfig({
   shouldForwardProp: (prop) => !LAYOUT_PROP_NAMES.has(prop),
 })<LayoutProps>`
-  ${(props) => getFieldLabelRootStyles(props)}
+  ${(props) => getControlRootStyles(props)}
 `;
 
 /**
